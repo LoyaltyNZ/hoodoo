@@ -17,23 +17,16 @@ describe '#schema' do
 
       end
 
-      class TestNestedPresenter < ApiTools::Presenters::BasePresenter
+      class TestPresenter2 < ApiTools::Presenters::BasePresenter
 
         schema do
-          integer :one, :length => 20, :required => true
-          boolean :two, :required => true
-          string :three, :length => 20, :required => true
-          object :four, :required => false do
+          object :four, :required => true do
             decimal :five, :precision => 20
             float :six
-            date :seven
-            object :eight, :required => true do
-              datetime :nine
-              array :ten
-            end
+            date :seven, :required => true
           end
         end
-        
+
       end
 
     end
@@ -71,6 +64,18 @@ describe '#schema' do
         {:code=>"generic.invalid_string", :message=>"Field `three` is an invalid string", :reference=>"three"},
       ])
     end
+
+    it 'should return correct errors if root object is required but not supplied and subobjects required' do
+
+      data = {
+      }
+
+      errors = TestPresenter2.validate(data)
+      expect(errors).to eq([
+        {:code=>"generic.required_field_missing", :message=>"Field `four` is required", :reference=>"four"}
+      ])
+    end
+
 
   end
 end

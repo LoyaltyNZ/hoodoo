@@ -19,13 +19,12 @@ describe ApiTools::Presenters::Object do
     end
 
     it 'should return correct error with non object types' do
-      err = [  {:code=>"generic.invalid_object", :message=>"Field `one` is an invalid object", :reference=>"one"}]
+      err = [{:code=>"generic.invalid_object", :message=>"Field `one` is an invalid object", :reference=>"one"}]
 
       expect(@inst.validate('asckn')).to eq(err)
       expect(@inst.validate(34534)).to eq(err)
       expect(@inst.validate(2123.23)).to eq(err)
       expect(@inst.validate(true)).to eq(err)
-      expect(@inst.validate(nil)).to eq(err)
       expect(@inst.validate([])).to eq(err)
     end
 
