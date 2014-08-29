@@ -17,15 +17,16 @@ module ApiTools
 
       def validate(data, path = '')
         errors = super data, path
-        return errors if errors.count > 0
+
         return [] if !@required and data.nil?
 
-        unless data.is_a? ::Hash
+        if !data.nil? and !data.is_a? ::Hash 
           errors << {:code=> 'generic.invalid_object', :message=>"Field `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
         end
 
         @properties.each do |property|
-          errors += property.validate(data[property.name], full_path(path))
+          rdata = (data.is_a?(::Hash) and data.has_key?(property.name)) ? data[property.name] : nil
+          errors += property.validate(rdata, full_path(path))
         end
         errors
       end

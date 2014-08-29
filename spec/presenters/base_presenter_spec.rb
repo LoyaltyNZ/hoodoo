@@ -72,7 +72,8 @@ describe '#schema' do
 
       errors = TestPresenter2.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.required_field_missing", :message=>"Field `four` is required", :reference=>"four"}
+        {:code=>"generic.required_field_missing", :message=>"Field `four` is required", :reference=>"four"},
+        {:code=>"generic.required_field_missing", :message=>"Field `four.seven` is required", :reference=>"four.seven"},
       ])
     end
 
