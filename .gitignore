@@ -1,0 +1,4 @@
+.elasticbeanstalk/
+coverage/
+log
+*.gem
