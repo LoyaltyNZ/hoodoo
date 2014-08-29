@@ -7,7 +7,7 @@ module ApiTools
         return errors unless errors.count == 0
 
         unless data.is_a? ::Integer
-          errors << {:code=> 'generic.invalid_integer', :message=>"The field at `#{full_path(path)}` is an invalid integer", :reference => full_path(path)}
+          errors << {:code=> 'generic.invalid_integer', :message=>"Field `#{full_path(path)}` is an invalid integer", :reference => full_path(path)}
         end
         errors
       end

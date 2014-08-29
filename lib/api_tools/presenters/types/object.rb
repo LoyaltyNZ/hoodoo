@@ -20,7 +20,7 @@ module ApiTools
         return errors unless errors.count == 0
 
         unless data.is_a? ::Hash
-          errors << {:code=> 'generic.invalid_object', :message=>"The field at `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
+          errors << {:code=> 'generic.invalid_object', :message=>"Field `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
         end
 
         @properties.each do |property|

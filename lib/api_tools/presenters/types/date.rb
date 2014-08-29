@@ -13,7 +13,7 @@ module ApiTools
         end
 
         unless valid
-          errors << {:code=> 'generic.invalid_date', :message=>"The field at `#{full_path(path)}` is an invalid ISO8601 date", :reference => full_path(path)}
+          errors << {:code=> 'generic.invalid_date', :message=>"Field `#{full_path(path)}` is an invalid ISO8601 date", :reference => full_path(path)}
         end
         errors
       end

@@ -7,7 +7,7 @@ module ApiTools
         return errors unless errors.count == 0
 
         unless data.is_a? ::Float
-          errors << {:code=> 'generic.invalid_float', :message=>"The field at `#{full_path(path)}` is an invalid float", :reference => full_path(path)}
+          errors << {:code=> 'generic.invalid_float', :message=>"Field `#{full_path(path)}` is an invalid float", :reference => full_path(path)}
         end
         errors
       end

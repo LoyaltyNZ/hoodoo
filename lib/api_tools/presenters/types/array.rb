@@ -11,7 +11,7 @@ module ApiTools
         return errors unless errors.count == 0
 
         unless data.is_a? ::Array
-          errors << {:code=> 'generic.invalid_array', :message=>"The field at `#{full_path(path)}` is an invalid array", :reference => full_path(path)}
+          errors << {:code=> 'generic.invalid_array', :message=>"Field `#{full_path(path)}` is an invalid array", :reference => full_path(path)}
         end
         errors
 

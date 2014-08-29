@@ -12,7 +12,7 @@ module ApiTools
       def validate(data, path = '')
         errors = []
         if data.nil? and @required
-          errors << {:code=> 'generic.required_field_missing', :message=>"The field at `#{full_path(path)}` is required", :reference => full_path(path)}
+          errors << {:code=> 'generic.required_field_missing', :message=>"Field `#{full_path(path)}` is required", :reference => full_path(path)}
         end
         errors
       end

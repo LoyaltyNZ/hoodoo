@@ -66,9 +66,9 @@ describe '#schema' do
 
       errors = TestPresenter.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.invalid_integer", :message=>"The field at `one` is an invalid integer", :reference=>"one"},
-        {:code=>"generic.required_field_missing", :message=>"The field at `two` is required", :reference=>"two"},
-        {:code=>"generic.invalid_string", :message=>"The field at `three` is an invalid string", :reference=>"three"},
+        {:code=>"generic.invalid_integer", :message=>"Field `one` is an invalid integer", :reference=>"one"},
+        {:code=>"generic.required_field_missing", :message=>"Field `two` is required", :reference=>"two"},
+        {:code=>"generic.invalid_string", :message=>"Field `three` is an invalid string", :reference=>"three"},
       ])
     end
 

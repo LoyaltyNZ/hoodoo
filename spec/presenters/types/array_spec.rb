@@ -14,12 +14,12 @@ describe ApiTools::Presenters::Array do
     it 'should return correct error when data is not a array' do
       errors = @inst.validate('asckn')
 
-      err = [  {:code=>"generic.invalid_array", :message=>"The field at `one` is an invalid array", :reference=>"one"}]
+      err = [  {:code=>"generic.invalid_array", :message=>"Field `one` is an invalid array", :reference=>"one"}]
       expect(errors).to eq(err)
     end
 
     it 'should return correct error with non array types' do
-      err = [  {:code=>"generic.invalid_array", :message=>"The field at `one` is an invalid array", :reference=>"one"}]
+      err = [  {:code=>"generic.invalid_array", :message=>"Field `one` is an invalid array", :reference=>"one"}]
       
       expect(@inst.validate('asckn')).to eq(err)
       expect(@inst.validate(34534)).to eq(err)
@@ -32,7 +32,7 @@ describe ApiTools::Presenters::Array do
     it 'should return correct error with path' do
       errors = @inst.validate('scdacs','ordinary')
       expect(errors).to eq([
-       {:code=>"generic.invalid_array", :message=>"The field at `ordinary.one` is an invalid array", :reference=>"ordinary.one"}
+       {:code=>"generic.invalid_array", :message=>"Field `ordinary.one` is an invalid array", :reference=>"ordinary.one"}
       ])
     end
   end

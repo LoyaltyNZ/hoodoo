@@ -7,7 +7,7 @@ module ApiTools
       return errors unless errors.count == 0
 
       unless !!data == data
-        errors << {:code=> 'generic.invalid_boolean', :message=>"The field at `#{full_path(path)}` is an invalid boolean", :reference => full_path(path)}
+        errors << {:code=> 'generic.invalid_boolean', :message=>"Field `#{full_path(path)}` is an invalid boolean", :reference => full_path(path)}
       end
       errors
     end
