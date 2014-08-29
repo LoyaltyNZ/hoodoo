@@ -12,7 +12,8 @@ module ApiTools
 
       def validate(data, path = '')
         errors = super data, path
-        return errors unless errors.count == 0
+        return errors if errors.count > 0
+        return [] if !@required and data.nil?
 
         if data.is_a? ::String
           if data.size > @length

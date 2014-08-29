@@ -26,13 +26,23 @@ describe ApiTools::Presenters::Decimal do
       expect(errors).to eq(err)
     end
 
+    it 'should not return error when not required and absent' do
+      expect(@inst.validate(nil)).to eq([])
+    end
+
+    it 'should return error when required and absent' do
+      @inst.required = true
+      expect(@inst.validate(nil)).to eq([
+        {:code=>"generic.required_field_missing", :message=>"Field `one` is required", :reference=>"one"}
+      ])
+    end
+
     it 'should return correct error with non decimal types' do
       err = [  {:code=>"generic.invalid_decimal", :message=>"Field `one` is an invalid decimal", :reference=>"one"}]
 
       expect(@inst.validate('asckn')).to eq(err)
       expect(@inst.validate(34534)).to eq(err)
       expect(@inst.validate(true)).to eq(err)
-      expect(@inst.validate(nil)).to eq(err)
       expect(@inst.validate({})).to eq(err)
       expect(@inst.validate([])).to eq(err)
     end

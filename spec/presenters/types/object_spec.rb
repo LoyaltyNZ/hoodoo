@@ -18,6 +18,17 @@ describe ApiTools::Presenters::Object do
       expect(errors).to eq(err)
     end
 
+    it 'should not return error when not required and absent' do
+      expect(@inst.validate(nil)).to eq([])
+    end
+
+    it 'should return error when required and absent' do
+      @inst.required = true
+      expect(@inst.validate(nil)).to eq([
+        {:code=>"generic.required_field_missing", :message=>"Field `one` is required", :reference=>"one"}
+      ])
+    end
+
     it 'should return correct error with non object types' do
       err = [{:code=>"generic.invalid_object", :message=>"Field `one` is an invalid object", :reference=>"one"}]
 

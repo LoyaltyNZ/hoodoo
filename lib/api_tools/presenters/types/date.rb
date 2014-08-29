@@ -4,7 +4,8 @@ module ApiTools
 
       def validate(data, path = '')
         errors = super data, path
-        return errors unless errors.count == 0
+        return errors if errors.count > 0
+        return [] if !@required and data.nil?
 
         begin
           valid = (/(\d{4})-(\d{2})-(\d{2})/=~data.to_s) == 0 && data.size == 10 && ::Date.parse(data).is_a?(::Date)
