@@ -26,6 +26,10 @@ describe ApiTools::Logger do
       expect(@logger).to receive(:info).with([1,2,3]).and_return 'two'
       expect(ApiTools::Logger::info(1,2,3)).to eq('two')
     end
+    it 'should get info logger' do
+      expect(@logger).to receive(:warn).with([1,2,3]).and_return 'two'
+      expect(ApiTools::Logger::warn(1,2,3)).to eq('two')
+    end
     it 'should get error logger' do
       expect(@logger).to receive(:error).with([1,2,3]).and_return 'three'
       expect(ApiTools::Logger::error(1,2,3)).to eq('three')
@@ -38,15 +42,19 @@ describe ApiTools::Logger do
     end
 
     it 'should get debug logger' do
-      expect($stdout).to receive(:puts).with([1,2,3]).and_return 'one'
+      expect($stdout).to receive(:puts).with('DEBUG',[1,2,3]).and_return 'one'
       expect(ApiTools::Logger::debug(1,2,3)).to eq('one')
     end
     it 'should get info logger' do
-      expect($stdout).to receive(:puts).with([1,2,3]).and_return 'two'
+      expect($stdout).to receive(:puts).with('INFO',[1,2,3]).and_return 'two'
       expect(ApiTools::Logger::info(1,2,3)).to eq('two')
     end
+    it 'should get warn logger' do
+      expect($stdout).to receive(:puts).with('WARN',[1,2,3]).and_return 'two'
+      expect(ApiTools::Logger::warn(1,2,3)).to eq('two')
+    end
     it 'should get error logger' do
-      expect($stderr).to receive(:puts).with([1,2,3]).and_return 'three'
+      expect($stderr).to receive(:puts).with('ERROR',[1,2,3]).and_return 'three'
       expect(ApiTools::Logger::error(1,2,3)).to eq('three')
     end
   end
