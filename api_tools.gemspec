@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec-mocks"
   s.add_development_dependency "simplecov-rcov"
   s.add_development_dependency "rake"
+  s.add_development_dependency "rdoc"
   s.add_runtime_dependency 'json_builder'
   s.add_runtime_dependency 'uuidtools'
 end
