@@ -55,17 +55,19 @@ The module provides the following methods in the API class, available in the sin
           # ...
         end
 
-    post "/service_resource" do
+        post "/service_resource" do
 
-      # ...
+          # ...
 
-      # Check Client Id
-      if settings.models[:fulfilment].client_id_exists?(
-          @platform_context[:subscriber_id],
-          @platform_context[:programme_id],
-          @payload[:client_id],
-        )
-        fail_with_error 409, "fulfilment.client_id_exists", "A fulfilment with client_id `#{@payload[:client_id]}` already exists for this subscriber and programme",'client_id'
+          # Check Client Id
+          if settings.models[:fulfilment].client_id_exists?(
+              @platform_context[:subscriber_id],
+              @platform_context[:programme_id],
+              @payload[:client_id],
+            )
+            fail_with_error 409, "fulfilment.client_id_exists", "A fulfilment with client_id `#{@payload[:client_id]}` already exists for this subscriber and programme",'client_id'
+          end
+
+        end
       end
-
     end

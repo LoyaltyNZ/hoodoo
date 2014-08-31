@@ -21,14 +21,18 @@ Functionality includes:
 | Unified Logger        | A single logger for eventual use with Platform logs         |
 | Presenter Layer       | A presenter framework including input validation            |
 
-Please see the [descriptivie documentation here](docs/usage.md).
-Please see the [rdoc documentation here](doc/index.html).
+Please see:
+
+* [Descriptivie documentation](docs/usage.md)
+* [rdoc documentation here](doc/index.html).
 
 ## Development
 
 ### Roadmap
 
-
+| Change                     | Description                                                 |
+|:---------------------------|:------------------------------------------------------------|
+| ApiTools::PlatformContext  | Change to use full `X-Session-ID` and Redis context.        |
 
 ### Specs
 

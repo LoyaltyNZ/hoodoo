@@ -44,10 +44,12 @@ The module provides the following methods in the API class, available in the sin
           # ...
         end
 
-    post "/service_resource" do
+        post "/service_resource" do
 
-      return JSON.fast_generate({
-        "request": @payload
-      })
+          return JSON.fast_generate({
+            "request": @payload
+          })
 
+        end
+      end
     end
