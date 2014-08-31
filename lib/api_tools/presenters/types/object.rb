@@ -20,7 +20,7 @@ module ApiTools
 
         return [] if !@required and data.nil?
 
-        if !data.nil? and !data.is_a? ::Hash 
+        if !data.nil? and !data.is_a? ::Hash
           errors << {:code=> 'generic.invalid_object', :message=>"Field `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
         end
 
