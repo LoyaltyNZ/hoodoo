@@ -31,14 +31,14 @@ An array of validation errors will be returned from `validate`, with the followi
 
 * If a field has the options `:required => true` and is absent in the data: `generic.required_field_missing` with a suitable message and the field path as the reference.
 * If a field is not of the correct type:
-** **array**: `generic.invalid_array`
-** **date**: `generic.invalid_date`
-** **datetime**: `generic.invalid_datetime`
-** **decimal**: `generic.invalid_decimal`
-** **float**: `generic.invalid_float`
-** **integer**: `generic.invalid_integer`
-** **object**: `generic.invalid_object`
-** **string**: `generic.invalid_string`
+  * **array**: `generic.invalid_array`
+  * **date**: `generic.invalid_date`
+  * **datetime**: `generic.invalid_datetime`
+  * **decimal**: `generic.invalid_decimal`
+  * **float**: `generic.invalid_float`
+  * **integer**: `generic.invalid_integer`
+  * **object**: `generic.invalid_object`
+  * **string**: `generic.invalid_string`
 
 `string` requires a `:length => <integer>` option, and validation will return `generic.max_length_exceeded` if the data exceeds the allowed length.
 
