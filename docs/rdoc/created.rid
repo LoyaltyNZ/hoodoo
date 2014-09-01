@@ -1,4 +1,4 @@
-Mon, 01 Sep 2014 16:42:49 +1200
+Mon, 01 Sep 2014 17:00:51 +1200
 lib/api_tools/json_errors.rb	Mon, 01 Sep 2014 13:35:58 +1200
 lib/api_tools/json_payload.rb	Mon, 01 Sep 2014 13:35:36 +1200
 lib/api_tools/logger.rb	Mon, 01 Sep 2014 13:35:24 +1200
@@ -13,7 +13,7 @@ lib/api_tools/presenters/types/decimal.rb	Mon, 01 Sep 2014 16:40:50 +1200
 lib/api_tools/presenters/types/field.rb	Mon, 01 Sep 2014 16:41:10 +1200
 lib/api_tools/presenters/types/float.rb	Mon, 01 Sep 2014 16:41:22 +1200
 lib/api_tools/presenters/types/integer.rb	Mon, 01 Sep 2014 16:41:28 +1200
-lib/api_tools/presenters/types/object.rb	Mon, 01 Sep 2014 16:41:36 +1200
+lib/api_tools/presenters/types/object.rb	Mon, 01 Sep 2014 16:59:59 +1200
 lib/api_tools/presenters/types/string.rb	Mon, 01 Sep 2014 16:41:44 +1200
 lib/api_tools/version.rb	Fri, 29 Aug 2014 14:49:22 +1200
 lib/api_tools.rb	Fri, 29 Aug 2014 15:16:42 +1200
