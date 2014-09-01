@@ -13,6 +13,7 @@ describe '#schema' do
           integer :one, :required => true
           boolean :two, :required => true
           string :three, :length => 15, :required => false
+          datetime :four
         end
 
       end
@@ -35,7 +36,7 @@ describe '#schema' do
     it 'should have a simple schema defined properly' do
       schema = TestPresenter.get_schema
 
-      expect(schema.properties.count).to eq(3)
+      expect(schema.properties.count).to eq(4)
       expect(schema.properties[0]).to be_a(ApiTools::Presenters::Integer)
       expect(schema.properties[0].required).to eq(true)
       expect(schema.properties[1]).to be_a(ApiTools::Presenters::Boolean)
@@ -43,6 +44,8 @@ describe '#schema' do
       expect(schema.properties[2]).to be_a(ApiTools::Presenters::String)
       expect(schema.properties[2].required).to eq(false)
       expect(schema.properties[2].length).to eq(15)
+      expect(schema.properties[3]).to be_a(ApiTools::Presenters::DateTime)
+      expect(schema.properties[3].required).to eq(false)
     end
 
     it 'should have a nested schema defined properly' do
