@@ -139,7 +139,8 @@
 
         <div class="method-description">
         
-        
+        <p>The properties of this object, an <code>array</code> of
++ApiTools::Presenters::Field+ instances.</p>
         
         </div>
       </div>
@@ -167,7 +168,15 @@
 
         <div class="method-description">
           
-          
+          <p>Initialize an <a href="Object.html">Object</a> instance with the
+appropriate name and options</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
           
           
             <div class="method-calls-super">
@@ -178,7 +187,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 8</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
   <span class="ruby-ivar">@properties</span> = []
@@ -227,7 +236,7 @@
 
           
           <div class="method-source-code" id="array-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 54</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">array</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -267,7 +276,7 @@
 
           
           <div class="method-source-code" id="boolean-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 94</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">boolean</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -307,7 +316,7 @@
 
           
           <div class="method-source-code" id="date-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 102</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">date</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -347,7 +356,7 @@
 
           
           <div class="method-source-code" id="datetime-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 110</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">datetime</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -387,7 +396,7 @@
 
           
           <div class="method-source-code" id="decimal-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 86</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">decimal</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -427,7 +436,7 @@
 
           
           <div class="method-source-code" id="float-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 78</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">float</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -467,7 +476,7 @@
 
           
           <div class="method-source-code" id="integer-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 62</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">integer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -507,7 +516,7 @@
 
           
           <div class="method-source-code" id="object-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 45</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">object</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">'ApiTools::Presenters::Object must have block'</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
@@ -551,7 +560,7 @@
 
           
           <div class="method-source-code" id="property-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 18</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">inst</span> = <span class="ruby-identifier">type</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
   <span class="ruby-identifier">inst</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
@@ -593,7 +602,7 @@
 
           
           <div class="method-source-code" id="string-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 70</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 74</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">string</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -632,7 +641,7 @@
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 25</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">''</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
 

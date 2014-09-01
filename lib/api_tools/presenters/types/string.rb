@@ -3,8 +3,12 @@ module ApiTools
     # A JSON string schema member
     class String < ApiTools::Presenters::Field
 
+      # The maximum length of the string
       attr_accessor :length
 
+      # Initialize a String instance with the appropriate name and options
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
       def initialize(name, options = {})
         super name, options
         raise ArgumentError.new('ApiTools::Presenters::String must have a :length') unless options.has_key?(:length)

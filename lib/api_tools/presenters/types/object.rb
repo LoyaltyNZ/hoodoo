@@ -3,8 +3,12 @@ module ApiTools
     # A JSON object schema member
     class Object < ApiTools::Presenters::Field
 
+      # The properties of this object, an +array+ of +ApiTools::Presenters::Field+ instances.
       attr_accessor :properties
 
+      # Initialize an Object instance with the appropriate name and options
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name = nil, options = {})
         super name, options
         @properties = []

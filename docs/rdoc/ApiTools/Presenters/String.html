@@ -119,7 +119,7 @@
 
         <div class="method-description">
         
-        
+        <p>The maximum length of the string</p>
         
         </div>
       </div>
@@ -147,7 +147,15 @@
 
         <div class="method-description">
           
-          
+          <p>Initialize a <a href="String.html">String</a> instance with the appropriate
+name and options</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :length =&gt; 10</p>
+</dd></dl>
           
           
             <div class="method-calls-super">
@@ -158,7 +166,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/string.rb, line 8</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/string.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">'ApiTools::Presenters::String must have a :length'</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:length</span>)
@@ -207,7 +215,7 @@
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/string.rb, line 15</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/string.rb, line 19</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">''</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>

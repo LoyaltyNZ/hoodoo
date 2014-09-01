@@ -122,7 +122,7 @@ validation.</p>
 
         <div class="method-description">
         
-        
+        <p>The schema graph.</p>
         
         </div>
       </div>
@@ -150,13 +150,13 @@ validation.</p>
 
         <div class="method-description">
           
-          
+          <p>Return the schema graph.</p>
           
           
 
           
           <div class="method-source-code" id="get_schema-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 19</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
@@ -183,13 +183,14 @@ validation.</p>
 
         <div class="method-description">
           
-          
+          <p>Validate the given parsed JSON data and return validation/schema structure
+errors if any.</p>
           
           
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 15</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 21</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
 <span class="ruby-keyword">end</span></pre>
