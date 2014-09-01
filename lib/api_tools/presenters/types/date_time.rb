@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON datetime schema member
     class DateTime < ApiTools::Presenters::Field
 
       # Check if data is a valid Datetime and return either [], or an array with a suitable error

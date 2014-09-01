@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON boolean schema member
     class Boolean < ApiTools::Presenters::Field
 
       # Check if data is a valid Boolean and return either [], or an array with a suitable error

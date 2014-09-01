@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON string schema member
     class String < ApiTools::Presenters::Field
 
       attr_accessor :length

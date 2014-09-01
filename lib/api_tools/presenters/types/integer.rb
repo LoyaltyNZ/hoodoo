@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON integer schema member
     class Integer < ApiTools::Presenters::Field
 
       # Check if data is a valid Integer and return either [], or an array with a suitable error

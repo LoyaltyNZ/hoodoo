@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON array schema member
     class Array < ApiTools::Presenters::Field
 
       # Check if data is a valid Array and return either [], or an array with a suitable error

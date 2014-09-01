@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON object schema member
     class Object < ApiTools::Presenters::Field
 
       attr_accessor :properties

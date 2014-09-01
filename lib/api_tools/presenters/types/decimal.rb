@@ -2,6 +2,7 @@ require 'bigdecimal'
 
 module ApiTools
   module Presenters
+    # A JSON decimal schema member
     class Decimal < ApiTools::Presenters::Field
 
       # Check if data is a valid Decimal and return either [], or an array with a suitable error

@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON float schema member
     class Float < ApiTools::Presenters::Field
 
       # Check if data is a valid Float and return either [], or an array with a suitable error

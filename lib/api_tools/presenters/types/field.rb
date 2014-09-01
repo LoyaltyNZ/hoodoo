@@ -1,5 +1,6 @@
 module ApiTools
   module Presenters
+    # A JSON schema member
     class Field
 
       attr_accessor :name, :required
