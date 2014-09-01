@@ -24,7 +24,7 @@ Functionality includes:
 Please see:
 
 * [Descriptivie documentation](docs/usage.md)
-* [rdoc documentation here](doc/index.html).
+* [rdoc documentation here](docs/rdoc/index.html).
 
 ## Development
 
@@ -38,4 +38,10 @@ Please see:
 
 Run the specs:
 
-    ```bundle exec rspec```
+    rspec
+
+### rdoc
+
+Regenerate rdoc:
+
+    bundle exec rdoc --op docs/rdoc lib/

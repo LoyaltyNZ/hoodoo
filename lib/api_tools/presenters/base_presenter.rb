@@ -1,5 +1,8 @@
 module ApiTools
   module Presenters
+    # A class intended as base functionality for presenter layers in sinatra services. 
+    # Although Parsing and rendering of JSON is left to the extender, `BasePresenter` 
+    # provides a rich DSL for JSON schema definition and validation.
     class BasePresenter
 
       class << self; attr_accessor :schema end

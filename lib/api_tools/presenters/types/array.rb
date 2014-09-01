@@ -2,10 +2,7 @@ module ApiTools
   module Presenters
     class Array < ApiTools::Presenters::Field
 
-      def initialize(name, options = {})
-        super name, options
-      end
-
+      # Check if data is a valid Array and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.count > 0

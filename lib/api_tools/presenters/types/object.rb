@@ -15,6 +15,7 @@ module ApiTools
         @properties << inst
       end
 
+      # Check if data is a valid Object and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
 

@@ -4,6 +4,7 @@ module ApiTools
   module Presenters
     class Decimal < ApiTools::Presenters::Field
 
+      # Check if data is a valid Decimal and return either [], or an array with a suitable error
       def initialize(name, options = {})
         super name, options
         raise ArgumentError.new('ApiTools::Presenters::Decimal must have a :precision') unless options.has_key?(:precision)

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module ApiTools::PlatformErrors - RDoc Documentation</title>
+
+<link href="../fonts.css" rel="stylesheet">
+<link href="../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/search_index.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/searcher.js"></script>
+<script src="../js/darkfish.js"></script>
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-add_error">#add_error</a>
+    
+    <li ><a href="#method-i-clear_errors">#clear_errors</a>
+    
+    <li ><a href="#method-i-has_errors-3F">#has_errors?</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-ApiTools::PlatformErrors">
+  <h1 id="module-ApiTools::PlatformErrors" class="module">
+    module ApiTools::PlatformErrors
+  </h1>
+
+  <section class="description">
+    
+<p>A module intended as a generic error handler for an instance of a class. 
+Provides multiple error capability for a class in the standard platform
+error  format.</p>
+
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-add_error" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_error</span><span
+            class="method-args">(code, message, reference = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Add an error with the specified `code`, `message`, and optionally
+`reference`  to the error list.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="add_error-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/platform_errors.rb, line 14</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_error</span>(<span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">clear_errors</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">err</span> = {<span class="ruby-value">:code=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">code</span>, <span class="ruby-value">:message=</span><span class="ruby-operator">&gt;</span><span class="ruby-identifier">message</span>}
+  <span class="ruby-identifier">err</span>[<span class="ruby-value">:reference</span>] = <span class="ruby-identifier">reference</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">err</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-clear_errors" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clear_errors</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Clear all errors.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="clear_errors-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/platform_errors.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">clear_errors</span>
+  <span class="ruby-ivar">@errors</span> = []
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-has_errors-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_errors?</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Return `true` if errors have been added.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_errors-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/platform_errors.rb, line 23</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_errors?</span>
+  <span class="ruby-operator">!</span><span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

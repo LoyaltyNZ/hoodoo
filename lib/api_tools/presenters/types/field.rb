@@ -9,6 +9,7 @@ module ApiTools
         @required = options.has_key?(:required) ? options[:required] : false
       end
 
+      # Check if data is required and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = []
         if data.nil? and @required

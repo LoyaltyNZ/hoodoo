@@ -10,6 +10,7 @@ module ApiTools
         @length = options[:length]
       end
 
+      # Check if data is a valid String and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.count > 0
