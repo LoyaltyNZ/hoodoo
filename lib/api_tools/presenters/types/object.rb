@@ -9,6 +9,11 @@ module ApiTools
         @properties = []
       end
 
+      # Define a JSON property with the supplied name, type and options
+      # Params
+      # +name+:: The JSON key
+      # +type+:: A +Class+ for validation
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def property(name, type, options = {}, &block)
         inst = type.new name, options
         inst.instance_eval &block if block_given?
@@ -32,39 +37,75 @@ module ApiTools
         errors
       end
 
+      # Define a JSON object with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def object(name, options = {}, &block)
         raise ArgumentError.new('ApiTools::Presenters::Object must have block') unless block_given?
         property(name, ApiTools::Presenters::Object, options, &block)
       end
 
+      # Define a JSON array with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def array(name, options = {})
         property(name, ApiTools::Presenters::Array, options)
       end
 
+      # Define a JSON integer with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def integer(name, options = {})
         property(name, ApiTools::Presenters::Integer, options)
       end
 
+      # Define a JSON string with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 20
       def string(name, options = {})
         property(name, ApiTools::Presenters::String, options)
       end
 
+      # Define a JSON float with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def float(name, options = {})
         property(name, ApiTools::Presenters::Float, options)
       end
 
+      # Define a JSON decimal with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def decimal(name, options = {})
         property(name, ApiTools::Presenters::Decimal, options)
       end
 
+      # Define a JSON boolean with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def boolean(name, options = {})
         property(name, ApiTools::Presenters::Boolean, options)
       end
 
+      # Define a JSON date with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def date(name, options = {})
         property(name, ApiTools::Presenters::Date, options)
       end
 
+      # Define a JSON datetime with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
       def datetime(name, options = {})
         property(name, ApiTools::Presenters::DateTime, options)
       end
