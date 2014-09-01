@@ -3,7 +3,7 @@ module ApiTools
     # A JSON object schema member
     class Object < ApiTools::Presenters::Field
 
-      # The properties of this object, an +array+ of +ApiTools::Presenters::Field+ instances.
+      # The properties of this object, an +array+ of +Field+ instances.
       attr_accessor :properties
 
       # Initialize an Object instance with the appropriate name and options
