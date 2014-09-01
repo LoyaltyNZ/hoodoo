@@ -10,9 +10,9 @@ describe '#schema' do
       class TestPresenter < ApiTools::Presenters::BasePresenter
 
         schema do
-          integer :one, :length => 20, :required => true
+          integer :one, :required => true
           boolean :two, :required => true
-          string :three, :length => 20, :required => true
+          string :three, :length => 15, :required => false
         end
 
       end
@@ -24,6 +24,7 @@ describe '#schema' do
             decimal :five, :precision => 20
             float :six
             date :seven, :required => true
+            array :eight
           end
         end
 
@@ -31,14 +32,31 @@ describe '#schema' do
 
     end
 
-    it 'should have the schema defined properly' do
+    it 'should have a simple schema defined properly' do
       schema = TestPresenter.get_schema
 
       expect(schema.properties.count).to eq(3)
       expect(schema.properties[0]).to be_a(ApiTools::Presenters::Integer)
+      expect(schema.properties[0].required).to eq(true)
       expect(schema.properties[1]).to be_a(ApiTools::Presenters::Boolean)
+      expect(schema.properties[1].required).to eq(true)
       expect(schema.properties[2]).to be_a(ApiTools::Presenters::String)
-      expect(schema.properties[2].length).to eq(20)
+      expect(schema.properties[2].required).to eq(false)
+      expect(schema.properties[2].length).to eq(15)
+    end
+
+    it 'should have a nested schema defined properly' do
+      schema = TestPresenter2.get_schema
+
+      expect(schema.properties.length).to eq(1)
+      expect(schema.properties[0]).to be_a(ApiTools::Presenters::Object)
+      expect(schema.properties[0].properties.length).to eq(4)
+      expect(schema.properties[0].properties[0]).to be_a(ApiTools::Presenters::Decimal)
+      expect(schema.properties[0].properties[0].precision).to eq(20)
+      expect(schema.properties[0].properties[1]).to be_a(ApiTools::Presenters::Float)
+      expect(schema.properties[0].properties[2]).to be_a(ApiTools::Presenters::Date)
+      expect(schema.properties[0].properties[2].required).to eq(true)
+      expect(schema.properties[0].properties[3]).to be_a(ApiTools::Presenters::Array)
     end
 
     it 'should return no errors with a simple schema and valid data' do
