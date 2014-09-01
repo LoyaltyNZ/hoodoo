@@ -23,7 +23,7 @@ Functionality includes:
 
 Please see:
 
-* [Descriptivie documentation](docs/usage.md)
+* [Descriptive documentation](docs/usage.md)
 * [rdoc documentation here](docs/rdoc/index.html).
 
 ## Development
