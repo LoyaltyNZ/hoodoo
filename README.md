@@ -1,5 +1,7 @@
 # api_tools
 
+[![Build Status](https://magnum.travis-ci.com/LoyaltyNZ/api_tools.svg?token=qenLSjTyBsExZFCraVut&branch=master)](https://magnum.travis-ci.com/LoyaltyNZ/api_tools)
+
 A gem for simplifying the implementation of Loyalty Platform services.
 
 ## Usage
