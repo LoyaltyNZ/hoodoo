@@ -22,6 +22,8 @@ Functionality includes:
 | Unified Error Helpers | Adds standard Platform error capability to any API/class    |
 | Unified Logger        | A single logger for eventual use with Platform logs         |
 | Presenter Layer       | A presenter framework including input validation            |
+| Platform Session Auth | Authenticates Sessions and gets session context |
+| Platform Events       | Publishes Platform Events |
 
 Please see:
 
@@ -34,7 +36,7 @@ Please see:
 
 | Change                     | Description                                                 |
 |:---------------------------|:------------------------------------------------------------|
-| ApiTools::PlatformContext  | Change to use full `X-Session-ID` and Redis context.        |
+| ApiTools::PlatformContext  | Change to use full `X-Session-ID` with Platform Session Auth.  |
 
 ### Specs
 
