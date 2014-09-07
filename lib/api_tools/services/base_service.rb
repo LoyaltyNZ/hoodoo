@@ -6,6 +6,8 @@ module ApiTools
   module Services
     class BaseService
 
+      attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :response_thread
+
       def initialize(amqp_uri, name)
         @amqp_uri = amqp_uri
         @service_instance_id = ApiTools::UUID.generate

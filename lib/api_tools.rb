@@ -6,6 +6,7 @@ require root+'platform_errors'
 require root+'json_errors'
 require root+'json_payload'
 require root+'platform_context'
+require root+'thread_safe'
 
 require root+'services/base_service'
 require root+'services/base_client'

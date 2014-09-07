@@ -1,5 +1,8 @@
 module ApiTools
   class ThreadSafeHash
+
+    attr_accessor :hash, :mutex 
+    
     def initialize
       @hash = Hash.new
       @mutex = Mutex.new
