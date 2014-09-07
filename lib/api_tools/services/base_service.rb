@@ -6,14 +6,16 @@ module ApiTools
   module Services
     class BaseService
 
-      attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :response_thread
+      attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :response_thread, :timeout
 
-      def initialize(amqp_uri, name)
+      def initialize(amqp_uri, name, options = {})
         @amqp_uri = amqp_uri
         @service_instance_id = ApiTools::UUID.generate
         @listener_endpoint = "service.#{name}"
         @response_endpoint = "service.#{name}.#{@service_instance_id}"
         @requests = ApiTools::ThreadSafeHash.new
+        @timeout ||= options[:timeout]
+        @timeout ||= 5000
       end
 
       def instance_id
@@ -93,9 +95,15 @@ module ApiTools
 
         queue = Queue.new
         @requests[message_id] = { :queue => queue }
-        response = queue.pop
-        @requests.delete(message_id)
-        response
+        begin
+          Timeout::timeout(@timeout / 1000.0) do
+            response = queue.pop
+            @requests.delete(message_id)
+            return response
+          end
+        rescue TimeoutError
+          return
+        end
       end
 
       def respond(exchange, to, correlation_id, type, data = {})

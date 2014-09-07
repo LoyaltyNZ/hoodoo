@@ -1,16 +1,21 @@
 require 'thread'
 require 'bunny'
 require 'json'
+require 'timeout'
 
 module ApiTools
   module Services
     class BaseClient
 
-      def initialize(amqp_uri)
+      attr_accessor :amqp_uri, :client_id, :response_endpoint, :requests, :timeout
+
+      def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri
         @client_id = ApiTools::UUID.generate
         @response_endpoint = "client.#{@client_id}"
         @requests = ApiTools::ThreadSafeHash.new
+        @timeout ||= options[:timeout]
+        @timeout ||= 5000
       end
 
       def start
@@ -59,9 +64,15 @@ module ApiTools
         queue = Queue.new
         @requests[message_id] = { :queue => queue }
 
-        response = queue.pop
-        @requests.delete(message_id)
-        response
+        begin
+          Timeout::timeout(@timeout / 1000.0) do
+            response = queue.pop
+            @requests.delete(message_id)
+            return response
+          end
+        rescue TimeoutError
+          return
+        end
       end
     end
   end
