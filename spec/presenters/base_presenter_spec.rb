@@ -149,5 +149,18 @@ describe '#schema' do
         }
       })
     end
+
+    it 'should not include fields that do not exist in the input' do
+      data = {
+        :map_ten=>{
+        },
+        :map_root_one=>"ten"
+      }
+      expect(TestPresenter2.parse(data)).to eq({
+        :four=>{
+          :seven=>"ten"
+        }
+      })
+    end
   end
 end
