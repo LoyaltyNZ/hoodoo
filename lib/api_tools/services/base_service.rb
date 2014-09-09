@@ -6,7 +6,9 @@ module ApiTools
   module Services
     class BaseService
 
-      attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :response_thread, :timeout
+      attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :timeout
+      
+      attr_accessor :requests, :request_thread, :response_thread
 
       def initialize(amqp_uri, name, options = {})
         @amqp_uri = amqp_uri
@@ -23,19 +25,18 @@ module ApiTools
       end
 
       def process(data, metadata, channel)
-        raise "Abstract!"
+        raise "#process is abstract. Please override it in your implementation."
       end
 
-      def start
-        wait_connection_queue = Queue.new
-
-        # This thread listens for requests
-        @request_thread = Thread.new do
+      def create_request_thread(wait_queue)
+        Thread.new do
           connection = Bunny.new(@amqp_uri)
           connection.start
           channel = connection.create_channel
           channel.prefetch(1)
           listener_queue = channel.queue(@listener_endpoint)
+
+          wait_queue << true
 
           loop do
             listener_queue.subscribe(:ack => true, :block => true, :timeout => 1) do |delivery_info, metadata, payload|
@@ -48,21 +49,19 @@ module ApiTools
                 respond(channel.default_exchange, metadata[:reply_to], metadata[:message_id], 'error', { :code => 500, :message => e.message})
                 channel.nack(delivery_info.delivery_tag, :requeue => false)
               end
-
             end
           end
-
-          connection.close
         end
+      end
 
-        # This thread enqeues responses
-        @response_thread = Thread.new do
+      def create_response_thread(wait_queue)
+        Thread.new do
           connection = Bunny.new(@amqp_uri)
           connection.start
           channel = connection.create_channel
           queue = channel.queue(@response_endpoint, :exclusive => true, :auto_delete => true)
 
-          wait_connection_queue << true
+          wait_queue << true
 
           loop do
             queue.subscribe(:block => true)  do |delivery_info, metadata, payload|
@@ -71,13 +70,22 @@ module ApiTools
               end
             end
           end
-
-          connection.close
         end
+      end
+
+      def start
+        wait_queue = Queue.new
+
+        # This thread listens for requests
+        @request_thread = create_request_thread(wait_queue)
+
+        # This thread enqeues responses
+        @response_thread = create_response_thread(wait_queue)
 
         @response_thread.run
-        wait_connection_queue.pop
+        wait_queue.pop
         @request_thread.run
+        wait_queue.pop
       end
 
       def join
@@ -117,6 +125,7 @@ module ApiTools
       end
 
       def stop
+        @request_thread.terminate
         @response_thread.terminate
       end
     end
