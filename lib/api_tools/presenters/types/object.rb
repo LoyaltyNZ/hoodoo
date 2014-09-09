@@ -11,7 +11,7 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name = nil, options = {})
         super name, options
-        @properties = []
+        @properties = {}
       end
 
       # Define a JSON property with the supplied name, type and options
@@ -22,7 +22,7 @@ module ApiTools
       def property(name, type, options = {}, &block)
         inst = type.new name, options
         inst.instance_eval &block if block_given?
-        @properties << inst
+        @properties[name] = inst
       end
 
       # Check if data is a valid Object and return either [], or an array with a suitable error
@@ -35,11 +35,25 @@ module ApiTools
           errors << {:code=> 'generic.invalid_object', :message=>"Field `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
         end
 
-        @properties.each do |property|
-          rdata = (data.is_a?(::Hash) and data.has_key?(property.name)) ? data[property.name] : nil
+        @properties.each do |name, property|
+          rdata = (data.is_a?(::Hash) and data.has_key?(name)) ? data[name] : nil
           errors += property.validate(rdata, full_path(path))
         end
         errors
+      end
+
+      def parse(data, target)
+        target[@name] = {}
+        @properties.each do |name, property|
+          property.parse(data, target[@name])
+        end
+        target[@name]
+      end
+
+      def render(data, target)
+        @properties.each do |name, property|
+          property.render(data[name], target) if (data.has_key?(name))
+        end
       end
 
       # Define a JSON object with the supplied name and options
