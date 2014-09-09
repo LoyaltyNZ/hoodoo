@@ -112,7 +112,7 @@ describe '#schema' do
   end
 
   describe '#render' do
-    it 'should render with correct mapping' do
+    it 'should render with correct mapping with a forward submap' do
 
       # 'four' maps into a subobject 'map_four.time'.
       data = {
@@ -130,7 +130,9 @@ describe '#schema' do
           :time=>"ten"
         }
       })
+    end
 
+    it 'should render with correct mapping with a reverse submap' do
       # 'four.seven' maps to 'map_root_one'
       data = {
         :four => {
@@ -141,9 +143,27 @@ describe '#schema' do
 
       expect(TestPresenter2.render(data)).to eq({
         :map_ten=>{
-          :map_five=>5
+          :map_five=>5,
+          :map_six=>nil,
+          :map_eight=>nil
         },
         :map_root_one=>"ten"
+      })
+    end
+
+    it 'should include all fields even when not supplied' do
+      data = {
+        :one => 1,
+        :three => 'hello',
+      }
+
+      expect(TestPresenter.render(data)).to eq({
+        :map_one=>1,
+        :map_two=>nil,
+        :map_three=>"hello",
+        :map_four=>{
+          :time=>nil
+        }
       })
     end
   end
@@ -177,7 +197,7 @@ describe '#schema' do
       })
     end
 
-    it 'should use default mapping if ot supplied' do
+    it 'should use default mapping if not supplied' do
       data = {
         :one => 1,
         :four => {

@@ -23,6 +23,8 @@ The class provides the following methods, plus a DSL for JSON schema definition.
 |:---------|:--------------|
 | `self.schema(&block)` | Define the JSON schema for validation, please see below. |
 | `self.validate(data)` | Validate the given parsed JSON data (e.g. from [`ApiTools::JsonPayload`](json_payload.md)) and return validation/schema structure errors if any. |
+| `self.parse(data)` | Parse the supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
+| `self.render(data)` | Render supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
 | `self.get_schema`     | Return the schema graph. |
 
 ## Validation Errors
@@ -48,6 +50,75 @@ An array of validation errors will be returned from `validate`, with the followi
 * datetime: `1978-12-24T13:24:11Z`, `2014-09-01T12:03:22+12:00`
 
 Validation will check for impossible dates (allowing Feb 29 in leap years), and will accept all timezones including `Z` (Zulu, +00:00 / UTC) for datetimes.
+
+## Parsing
+
+The `parse` method maps input data into the defined schema structure. By default, mappings are direct and one-to-one, i.e. the parser will expect the same field names and structure as defined. You can override this behaviour with the `:mapping` option on the field, e.g:
+
+    schema do
+      string :first_name, :required => true, :length => 128
+      string :family_name, :required => true, :length => 128, :mapping => [:surname]
+
+      string :address_1, :length => 128, :mapping => [ :address, :address_1 ]
+      string :address_2, :length => 128, :mapping => [ :address, :address_2 ]
+      string :address_3, :length => 128, :mapping => [ :address, :address_3 ]
+      string :suburb, :length => 128, :mapping => [ :address, :suburb ]
+      string :city_town, :length => 128, :mapping => [ :address, :city ]
+      string :region_state, :length => 128, :mapping => [ :address, :state ]
+      string :postcode_zip, :length => 128, :mapping => [ :address, :zip_code ]
+      string :country_code, :length => 3, :mapping => [ :address, :iso_country ]
+    end
+
+In the above example, `first_name` in the model maps directly to the `first_name` field in the input data. However, `family_name` maps to `surname` at the same level. The address fields exist at the root level in the model, but are mapped to a subobject `address` in the input data - in addition, `city_town` maps to `address.city`, `region_state` maps to `address.state`, `postcode_zip` maps to `address.zip_code`, and `country_code` maps to `address.iso_country`.
+
+**Note**: The parse method will return a Hash with *only* fields that are:
+
+* Defined in the schema
+* Present in the data to be parsed
+
+This is to support partial updates, e.g. Using `parse` with the schema above:
+
+  data = {
+    :one => "hello",
+    :address => {
+      :state => 'Idaho'
+    }
+  }
+
+  parsed = PresenterClass.parse(data)
+
+  # parsed = {
+  #   :region_state => 'Idaho' 
+  # }
+
+Here, neither the `one` field nor the rest of schema fields have been included, as either the schema does not define the field, or the parsed data does not contain schema defined fields.
+
+## Rendering
+
+The `render` method essentially performs the inverse of the `parse` method, using either default or defined mappings to render a ruby `Hash` from an input `Hash` using the schema.
+
+  parsed = {
+    :region_state => 'Idaho' 
+  }
+
+  rendered = PresenterClass.render(data)
+
+  rendered = {
+    :first_name => nil,
+    :family_name => nil,
+    :address {
+      :address_1 => nil,
+      :address_2 => nil,
+      :address_3 => nil,
+      :suburb => nil,
+      :city => nil,
+      :state => nil,
+      :zip_code => nil,
+      :iso_country => nil
+    }
+  }
+
+**Note**: In the case of `render`, *all fields* will be rendered regardless of whether the appear in the input `Hash` or not.
 
 ## Dependencies
 
@@ -82,9 +153,9 @@ Validation will check for impossible dates (allowing Feb 29 in leap years), and 
             string :client_id, :required => true, :length => 32 
             string :status_callback_uri, :required => false, :length => 256 
             object :reward, :required => true do
-              string :provider_code, :required => true, :length => 32 
-              string :supplier_code, :required => true, :length => 32 
-              string :reward_code, :required => true, :length => 32 
+              string :provider_code, :required => true, :length => 32, :mapping => [:reward_provider_code]
+              string :supplier_code, :required => true, :length => 32, :mapping => [:reward_supplier_code]
+              string :reward_code, :required => true, :length => 32, :mapping => [:reward_reward_code]
             end
             object :member, :required => true do
               string :id, :required => true, :length => 32 

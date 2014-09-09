@@ -52,7 +52,7 @@ module ApiTools
 
       def render(data, target)
         @properties.each do |name, property|
-          property.render(data[name], target) if (data.has_key?(name))
+          property.render(data[name], target) 
         end
       end
 

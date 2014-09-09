@@ -39,14 +39,7 @@ module ApiTools
       end
 
       def render(data, target)
-        self.class.write_to_hash(data, @mapping, target)
-      end
-
-      def self.read_from_hash(data, path)
-
-      end
-
-      def self.write_to_hash(data, path, target)
+        path =  (@mapping.nil? ? @path : @mapping).clone
         root = target
         final = path.pop
         path.each do |element|
