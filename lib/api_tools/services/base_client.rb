@@ -32,7 +32,7 @@ module ApiTools
 
           loop do
             response_queue.subscribe(:block=>true) do |delivery_info, metadata, payload|
-              if metadata[:type]=='response' and @requests.has_key?(metadata[:correlation_id]) 
+              if metadata[:type]=='response' and @requests.has_key?(metadata[:correlation_id])
                 @requests[metadata[:correlation_id]][:queue] << { :type => metadata[:type], :data => JSON.parse(payload, :symbolize_names => true) }
               end
             end
@@ -74,6 +74,7 @@ module ApiTools
             return response
           end
         rescue TimeoutError
+          @requests.delete(message_id)
           return
         end
       end

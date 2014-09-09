@@ -7,7 +7,7 @@ module ApiTools
     class BaseService
 
       attr_accessor :amqp_uri, :service_instance_id, :listener_endpoint, :response_endpoint, :timeout
-      
+
       attr_accessor :requests, :request_thread, :response_thread
 
       def initialize(amqp_uri, name, options = {})
@@ -110,6 +110,7 @@ module ApiTools
             return response
           end
         rescue TimeoutError
+          @requests.delete(message_id)
           return
         end
       end

@@ -60,6 +60,98 @@ describe ApiTools::Services::BaseService do
     end
   end
 
+   describe '#create_response_thread' do
+    it 'should create and return a thread' do
+      instance = ApiTools::Services::BaseService.new('one','two')
+      expect(Thread).to receive(:new) do |&block|
+        'thread'
+      end
+
+      expect(instance.create_response_thread(nil)).to eq('thread')
+    end
+
+    it 'should create, start and process a response correctly' do
+      instance = ApiTools::Services::BaseService.new('one','two')
+
+      mock_bunny = double()
+      mock_channel = double()
+      mock_queue = double()
+
+      expect(Bunny).to receive(:new).with('one').and_return(mock_bunny)
+      expect(mock_bunny).to receive(:start)
+      expect(mock_bunny).to receive(:create_channel).and_return(mock_channel)
+      expect(mock_channel).to receive(:queue).with(instance.response_endpoint, {
+        :exclusive => true,
+        :auto_delete => true,
+      }).and_return(mock_queue)
+
+      request_queue = Queue.new
+      instance.requests = {
+        '23423874' => {
+          :queue => request_queue
+        }
+      }
+
+      expect(mock_queue).to receive(:subscribe) do |options, &block|
+        expect(options).to eq({:block=>true})
+        block.call(nil, {:correlation_id => '23423874', :type=>"response"}, '{"data":"five"}')
+        break
+      end
+
+
+      wait_queue = Queue.new
+      expect(wait_queue).to receive(:<<).with(true).and_call_original
+
+      thread = instance.create_response_thread(wait_queue)
+
+      expect(wait_queue.pop).to eq(true)
+      expect(request_queue.pop).to eq({:type=>"response", :data=>{:data=>"five"}})
+
+      thread.kill
+    end
+
+    it 'should ignore non-response packets' do
+      instance = ApiTools::Services::BaseService.new('one','two')
+
+      mock_bunny = double()
+      mock_channel = double()
+      mock_queue = double()
+
+      expect(Bunny).to receive(:new).with('one').and_return(mock_bunny)
+      expect(mock_bunny).to receive(:start)
+      expect(mock_bunny).to receive(:create_channel).and_return(mock_channel)
+      expect(mock_channel).to receive(:queue).with(instance.response_endpoint, {
+        :exclusive => true,
+        :auto_delete => true,
+      }).and_return(mock_queue)
+
+      request_queue = Queue.new
+      instance.requests = {
+        '23423874' => {
+          :queue => request_queue
+        }
+      }
+
+      expect(mock_queue).to receive(:subscribe) do |options, &block|
+        expect(options).to eq({:block=>true})
+
+        expect(request_queue).not_to receive(:<<)
+        block.call(nil, {:correlation_id => '23423874', :type=>"other"}, '{"data":"five"}')
+        break
+      end
+
+
+      wait_queue = Queue.new
+      expect(wait_queue).to receive(:<<).with(true).and_call_original
+
+      thread = instance.create_response_thread(wait_queue)
+
+      expect(wait_queue.pop).to eq(true)
+      expect(request_queue.length).to eq(0)
+
+    end
+  end
+
   describe '#start' do
     it 'should create and run request and response threads' do
       instance = ApiTools::Services::BaseService.new('one','two')
