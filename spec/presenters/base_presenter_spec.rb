@@ -28,6 +28,20 @@ describe '#schema' do
       end
 
     end
+
+    class TestPresenter3 < ApiTools::Presenters::BasePresenter
+
+      schema do
+        integer :one, :required => true
+        object :four, :required => true do
+          decimal :five, :precision => 20
+          float :six
+          date :seven, :required => true
+          array :eight
+        end
+      end
+
+    end
   end
 
   describe '#validate' do
@@ -158,6 +172,24 @@ describe '#schema' do
       }
       expect(TestPresenter2.parse(data)).to eq({
         :four=>{
+          :seven=>"ten"
+        }
+      })
+    end
+
+    it 'should use default mapping if ot supplied' do
+      data = {
+        :one => 1,
+        :four => {
+          :five => 5,
+          :seven => 'ten'
+        }
+      }
+
+      expect(TestPresenter3.parse(data)).to eq({
+        :one=>1,
+        :four=>{
+          :five=>5,
           :seven=>"ten"
         }
       })

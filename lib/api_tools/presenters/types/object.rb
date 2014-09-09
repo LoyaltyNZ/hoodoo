@@ -20,7 +20,7 @@ module ApiTools
       # +type+:: A +Class+ for validation
       # +options+:: A +Hash+ of options, e.g. :required => true
       def property(name, type, options = {}, &block)
-        inst = type.new name, options
+        inst = type.new name, options.merge({:path => @path + [name]})
         inst.instance_eval &block if block_given?
         @properties[name] = inst
       end
