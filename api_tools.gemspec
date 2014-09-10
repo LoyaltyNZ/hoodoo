@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "simplecov-rcov"
   s.add_development_dependency "rake"
   s.add_development_dependency "rdoc"
+  s.add_development_dependency "sinatra"
   s.add_runtime_dependency 'json_builder'
   s.add_runtime_dependency 'uuidtools'
   s.add_runtime_dependency 'dalli'

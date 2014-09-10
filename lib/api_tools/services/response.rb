@@ -1,6 +1,6 @@
 module ApiTools
   module Services
-    class Response < ApiTools::Services::AMQPMessage
+    class Response < AMQPMessage
       attr_accessor :request
     end
   end

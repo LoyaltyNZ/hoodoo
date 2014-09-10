@@ -1,8 +1,8 @@
 module ApiTools
   module Services
-    class Request < ApiTools::Services::AMQPMessage
+    class Request < AMQPMessage
 
-      attr_accessor :is_async
+      attr_accessor :is_async, :timed_out, :respond_block
       attr_reader :queue
 
       def initialize(exchange, options)
@@ -12,6 +12,7 @@ module ApiTools
 
       def create_response(options = {})
         c_options = {
+          :routing_key => reply_to,
           :request => self,
           :correlation_id => @message_id,
           :type => 'response',
@@ -22,6 +23,10 @@ module ApiTools
 
       def is_async?
         @is_async
+      end
+
+      def timed_out?
+        @timed_out
       end
     end
   end

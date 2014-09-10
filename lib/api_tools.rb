@@ -11,6 +11,8 @@ require root+'thread_safe'
 require root+'services/amqp_message'
 require root+'services/request'
 require root+'services/response'
+
+require root+'services/amqp_endpoint'
 require root+'services/base_service'
 require root+'services/base_client'
 
