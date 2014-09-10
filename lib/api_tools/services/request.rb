@@ -1,23 +1,28 @@
 module ApiTools
   module Services
-    class Request
+    class Request < ApiTools::Services::AMQPMessage
 
-      attr_accessor :block, :queue, :message_id, :to
+      attr_accessor :is_async
+      attr_reader :queue
 
-      def initialize(to, queue, message_id)
-        @queue = queue
-        @message_id = message_id
-        @state = :created
+      def initialize(exchange, options)
+        super exchange, options
+        @queue = Queue.new
       end
 
-      def call_block
-        @block.call
+      def create_response(options = {})
+        c_options = {
+          :request => self,
+          :correlation_id => @message_id,
+          :type => 'response',
+        }
+        c_options.merge!(options)
+        ApiTools::Services::Response.new(exchange, c_options)
       end
 
-      def timed_out?
-        @state == :timeout
+      def is_async?
+        @is_async
       end
-
     end
   end
 end

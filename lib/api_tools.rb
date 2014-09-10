@@ -8,6 +8,8 @@ require root+'json_payload'
 require root+'platform_context'
 require root+'thread_safe'
 
+require root+'services/amqp_message'
+require root+'services/request'
 require root+'services/response'
 require root+'services/base_service'
 require root+'services/base_client'
