@@ -17,7 +17,7 @@ end
 post '/*' do
   request, response = client.request('service.test', @payload)
 
-  halt 408 if request.timed_out?
+  halt 408 if request.timeout?
 
   return response.payload
 end
