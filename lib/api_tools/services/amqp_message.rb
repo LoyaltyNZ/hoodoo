@@ -4,9 +4,16 @@ module ApiTools
       attr_accessor :message_id, :routing_key, :correlation_id, :type, :reply_to, :payload, :content_type, :received_by
       attr_reader :exchange
 
-      def initialize(exchange, options = {})
-        @exchange = exchange
-        options.each { |k,v| send("#{k}=".to_sym,v) }
+      def initialize(c_exchange, options = {})
+        @exchange = c_exchange
+        @message_id = options[:message_id] || ApiTools::UUID.generate
+        @routing_key = options[:routing_key]
+        @correlation_id = options[:correlation_id]
+        @type = options[:type] || 'other'
+        @reply_to = options[:reply_to]
+        @payload = options[:payload]
+        @content_type = options[:content_type]
+        @received_by = options[:received_by]
       end
 
       def send_message

@@ -6,15 +6,18 @@ module ApiTools
     class AQMPEndpoint
 
       attr_accessor :exchange, :amqp_uri, :endpoint_id, :response_endpoint, :timeout, :requests, :response_thread
+      attr_accessor :request_class, :response_class
 
       def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri
         @endpoint_id = ApiTools::UUID.generate
         @response_endpoint = "endpoint.#{@endpoint_id}"
         @requests = ApiTools::ThreadSafeHash.new
-        @timeout ||= options[:timeout]
-        @timeout ||= 5000
+        @timeout ||= options[:timeout] || 5000
         @boot_queue = Queue.new
+
+        @request_class = options[:request_class] || ApiTools::Services::Request
+        @response_class = options[:response_class] || ApiTools::Services::Response
       end
 
       def create_response_thread
@@ -32,7 +35,7 @@ module ApiTools
             loop do
               queue.subscribe(:block => true) do |delivery_info, metadata, payload|
                 if @requests.has_key?(metadata[:correlation_id])
-                  response = Response.new(@exchange, {
+                  response = response_class.new(@exchange, {
                     :message_id => metadata.message_id,
                     :type => metadata.type,
                     :correlation_id => metadata.correlation_id,
@@ -65,12 +68,12 @@ module ApiTools
         @response_thread.join
       end
 
-      def request(to, payload)
-        req = ApiTools::Services::Request.new(@exchange, {
+      def request(to, options = {})
+        options.merge!({
           :routing_key => to,
-          :type => 'request',
-          :payload => payload,
+          :type => 'request'
         })
+        req = request_class.new(@exchange, options)
         [ req, send_sync_request(req) ]
       end
 
@@ -89,7 +92,7 @@ module ApiTools
             response = request.queue.pop
           end
         rescue TimeoutError
-          request.timed_out = true
+          request.timeout = true
           @requests.delete(request.message_id)
         end
         @requests.delete(request.message_id)

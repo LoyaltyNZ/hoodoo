@@ -31,25 +31,28 @@ module ApiTools
             loop do
               listener_queue.subscribe(:ack => true, :block => true) do |delivery_info, metadata, payload|
                 begin
-                  request = ApiTools::Services::Request.new(channel.default_exchange, {
+                  request = request_class.new(channel.default_exchange, {
                     :message_id => metadata.message_id,
                     :type => metadata.type,
                     :correlation_id => metadata.correlation_id,
                     :reply_to => metadata.reply_to,
                     :content_type => metadata.content_type,
                     :received_by => delivery_info.routing_key,
+                    :response_class => response_class,
                     :payload => payload,
                   })
                   response = process(request)
                   response.send_message if !response.nil? && response.class <= ApiTools::Services::Response
                   channel.ack(delivery_info.delivery_tag)
                 rescue Exception => e
-                  ApiTools::Logger.error("Processing Response Failed #{e}")
-                  response = request.create_response({
-                    :type => 'error',
-                    :payload => { :code => 500, :message => e.message}
-                  })
-                  respond(response)
+                  ApiTools::Logger.error(e.message)
+                  # response = ApiTools::Services::Response.new(channel.default_exchange,{
+                  #   :routing_key => request.reply_to,
+                  #   :type => 'error',
+                  #   :payload => '{"error":"'+e.message+'"}',
+                  #   :content_type => 'application/json',
+                  # })
+                  # response.send_message
                   channel.nack(delivery_info.delivery_tag, :requeue => false)
                 end
               end
