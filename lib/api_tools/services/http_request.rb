@@ -4,7 +4,7 @@ module ApiTools
   module Services
     class HTTPRequest < ApiTools::Services::Request
 
-      attr_accessor :session_id, :host, :port, :path, :query, :verb, :headers, :body
+      attr_accessor :session_id, :host, :port, :path, :query, :verb, :scheme, :headers, :body
 
       def initialize(exchange, options = {})
         super exchange, options
@@ -17,6 +17,7 @@ module ApiTools
       def serialize
         @content = {
           :session_id => @session_id,
+          :scheme => @scheme,
           :host => @host,
           :port => @port,
           :path => @path,
@@ -37,12 +38,13 @@ module ApiTools
 
       def update(hash)
         @session_id = hash[:session_id]
+        @headers = hash[:headers]
+        @verb = hash[:verb]
+        @scheme = hash[:scheme]
         @host = hash[:host]
         @port = hash[:port]
         @path = hash[:path]
         @query = hash[:query]
-        @verb = hash[:verb]
-        @headers = hash[:headers]
         @body = hash[:body]
       end
     end
