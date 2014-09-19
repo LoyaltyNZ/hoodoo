@@ -18,8 +18,7 @@ module ApiTools
           :request => self,
           :correlation_id => @message_id,
           :type => 'response',
-        }
-        c_options.merge!(options)
+        }.merge(options)
         response_class.new(exchange, c_options)
       end
 

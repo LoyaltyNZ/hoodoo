@@ -1,8 +1,3 @@
-require 'thread'
-require 'bunny'
-require 'json'
-require 'timeout'
-
 module ApiTools
   module Services
     class BaseClient < AQMPEndpoint

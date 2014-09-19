@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'uuidtools'
   s.add_runtime_dependency 'dalli'
   s.add_runtime_dependency 'bunny'
+  s.add_runtime_dependency 'msgpack'
 end

@@ -1,7 +1,10 @@
+require 'msgpack'
+require 'base64'
+
 module ApiTools
   module Services
     class AMQPMessage
-      attr_accessor :message_id, :routing_key, :correlation_id, :type, :reply_to, :payload, :content_type, :received_by
+      attr_accessor :message_id, :routing_key, :correlation_id, :type, :reply_to, :payload, :content, :content_type, :received_by
       attr_reader :exchange
 
       def initialize(c_exchange, options = {})
@@ -12,8 +15,9 @@ module ApiTools
         @type = options[:type] || 'other'
         @reply_to = options[:reply_to]
         @payload = options[:payload]
-        @content_type = options[:content_type]
+        @content_type = options[:content_type] || 'application/octet-stream'
         @received_by = options[:received_by]
+        @payload = options[:payload]
       end
 
       def send_message
@@ -26,7 +30,16 @@ module ApiTools
           :content_type => content_type,
           :reply_to => reply_to,
         }
-        exchange.publish(payload, options)
+        serialize
+        exchange.publish(@payload, options)
+      end
+
+      def serialize
+        @payload = @content.to_msgpack
+      end
+
+      def deserialize
+        @content = MessagePack.unpack(@payload)
       end
     end
   end

@@ -11,6 +11,7 @@ module ApiTools
         super amqp_uri, options
         @service_endpoint = "service.#{name}"
         @response_endpoint = "service.#{name}.#{@endpoint_id}"
+        @prefetch = options[:prefetch] || 1
       end
 
       def process(request)
@@ -23,7 +24,7 @@ module ApiTools
             connection = Bunny.new(@amqp_uri)
             connection.start
             channel = connection.create_channel
-            channel.prefetch(1)
+            channel.prefetch(@prefetch)
             listener_queue = channel.queue(@service_endpoint)
 
             @boot_queue << true
@@ -41,18 +42,18 @@ module ApiTools
                     :response_class => response_class,
                     :payload => payload,
                   })
+                  request.deserialize
                   response = process(request)
                   response.send_message if !response.nil? && response.class <= ApiTools::Services::Response
                   channel.ack(delivery_info.delivery_tag)
                 rescue Exception => e
                   ApiTools::Logger.error(e.message)
-                  # response = ApiTools::Services::Response.new(channel.default_exchange,{
-                  #   :routing_key => request.reply_to,
-                  #   :type => 'error',
-                  #   :payload => '{"error":"'+e.message+'"}',
-                  #   :content_type => 'application/json',
-                  # })
-                  # response.send_message
+                  response = ApiTools::Services::Response.new(channel.default_exchange, {
+                    :routing_key => request.reply_to,
+                    :type => 'error',
+                    :payload => '{"error":"'+e.message+'"}',
+                  })
+                  response.send_message
                   channel.nack(delivery_info.delivery_tag, :requeue => false)
                 end
               end

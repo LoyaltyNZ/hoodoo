@@ -12,8 +12,8 @@ require root+'services/amqp_message'
 require root+'services/request'
 require root+'services/response'
 
-require root+'services/http_json_request'
-require root+'services/http_json_response'
+require root+'services/http_request'
+require root+'services/http_response'
 
 require root+'services/amqp_endpoint'
 require root+'services/base_service'
