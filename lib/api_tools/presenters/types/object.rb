@@ -52,7 +52,7 @@ module ApiTools
 
       def render(data, target)
         @properties.each do |name, property|
-          property.render(data[name], target) 
+          property.render(data[name], target)
         end
       end
 
@@ -60,6 +60,7 @@ module ApiTools
       # Params
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
+      # +&block+:: Block declaring the fields making up the nested object
       def object(name, options = {}, &block)
         raise ArgumentError.new('ApiTools::Presenters::Object must have block') unless block_given?
         property(name, ApiTools::Presenters::Object, options, &block)
@@ -69,8 +70,9 @@ module ApiTools
       # Params
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def array(name, options = {})
-        property(name, ApiTools::Presenters::Array, options)
+      # +&block+:: Optional block declaring the fields of each array item
+      def array(name, options = {}, &block)
+        property(name, ApiTools::Presenters::Array, options, &block)
       end
 
       # Define a JSON integer with the supplied name and options
@@ -84,7 +86,7 @@ module ApiTools
       # Define a JSON string with the supplied name and options
       # Params
       # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 20
+      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
       def string(name, options = {})
         property(name, ApiTools::Presenters::String, options)
       end
@@ -100,7 +102,7 @@ module ApiTools
       # Define a JSON decimal with the supplied name and options
       # Params
       # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: A +Hash+ of options, e.g. :required => true, :precision => 10
       def decimal(name, options = {})
         property(name, ApiTools::Presenters::Decimal, options)
       end
@@ -128,6 +130,27 @@ module ApiTools
       def datetime(name, options = {})
         property(name, ApiTools::Presenters::DateTime, options)
       end
+
+      # Define a JSON string of unlimited length with the supplied name
+      # and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
+      def text(name, options = {})
+        property(name, ApiTools::Presenters::Text, options)
+      end
+
+      # Define a JSON string which can only have a restricted set of exactly
+      # matched values, with the supplied name and options
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true and mandatory
+      #             :from => [array-of-allowed-strings-or-symbols]
+      def enum(name, options = {})
+        property(name, ApiTools::Presenters::Enum, options)
+      end
+      ## ***** DONT FORGET ARRAY & update docs
+
     end
   end
 end

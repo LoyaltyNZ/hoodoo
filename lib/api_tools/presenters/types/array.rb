@@ -9,7 +9,14 @@ module ApiTools
         return errors if errors.count > 0
         return [] if !@required and data.nil?
 
-        unless data.is_a? ::Array
+        if data.is_a? ::Array
+          # data.each_with_index do |item, index|
+          #   @properties.each do |name, property|
+          #     rdata = (data.is_a?(::Hash) and data.has_key?(name)) ? data[name] : nil
+          #     errors += property.validate(rdata, full_path(path))
+          #   end
+          # end
+        else
           errors << {:code=> 'generic.invalid_array', :message=>"Field `#{full_path(path)}` is an invalid array", :reference => full_path(path)}
         end
         errors

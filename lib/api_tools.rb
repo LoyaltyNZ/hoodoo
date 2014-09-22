@@ -23,6 +23,8 @@ require root+'presenters/types/field'
 require root+'presenters/types/object'
 require root+'presenters/types/array'
 require root+'presenters/types/string'
+require root+'presenters/types/text'
+require root+'presenters/types/enum'
 require root+'presenters/types/boolean'
 require root+'presenters/types/float'
 require root+'presenters/types/integer'
@@ -31,5 +33,19 @@ require root+'presenters/types/date'
 require root+'presenters/types/date_time'
 
 require root+'presenters/base_presenter.rb'
+
+require root+'data/documented_object.rb'
+require root+'data/types/basket_item.rb'
+require root+'data/types/basket.rb'
+require root+'data/types/currency_amount.rb'
+require root+'data/types/error_primitive.rb'
+require root+'data/types/product.rb'
+
+require root+'errors/error_descriptions.rb'
+require root+'errors/errors.rb'
+
+require root+'service_middleware/service_middleware.rb'
+
+require root+'utilities.rb'
 
 require root+'version.rb'
