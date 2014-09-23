@@ -230,7 +230,7 @@ module ApiTools
         options ||= {}
 
         begin
-          klass = ApiTools::Data.const_get( type_name )
+          klass = ApiTools::Data::Types.const_get( type_name )
         rescue
           raise "DocumentedObject#type: Unrecognised type name '#{type_name}'"
         end

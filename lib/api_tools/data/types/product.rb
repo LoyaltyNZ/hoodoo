@@ -1,20 +1,22 @@
 module ApiTools
   module Data
+    module Types
 
-    # Documented Platform API Type 'Product'.
-    #
-    class Product < ApiTools::Data::DocumentedKind
+      # Documented Platform API Type 'Product'.
+      #
+      class Product < ApiTools::Data::DocumentedKind
 
-      define do
-        internationalised
+        define do
+          internationalised
 
-        text :code
-        text :name
-        text :description
+          text :code
+          text :name
+          text :description
 
-        tags :tags
+          tags :tags
+        end
+
       end
-
     end
   end
 end

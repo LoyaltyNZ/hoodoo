@@ -25,14 +25,14 @@ module ApiTools
       # internal data will be ready for use by an
       # ApiTools::ServiceMiddleware::PostProcessor instance.
       #
-      # +app+ A Rack application instance - but in this case, it must be any
-      #       object instance that conforms to the service interface we define,
-      #       rather than something expecting "+call(env)}+".
+      # +svc+ An ApiTools::ServiceApplication subclass instance, which is
+      #       probably something instantiated by Rack via Rack's "run()"
+      #       method and passed to the middleware by Rack itself, though not
+      #       necessarily.
       #
-      def process( app )
-        unless app.is_a?( ApiTools::BaseService )
-          raise "ApiTools::ServiceMiddleware must be at the end of Rack's 'use' chain of middleware and expects to be run with an ApiTools::BaseService subclass as the Rack application."
-        end
+      def process( svc )
+
+        So we ask SVC for its list of components
 
       end
     end

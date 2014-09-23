@@ -43,7 +43,7 @@ module ApiTools
       #
       # Methods available from within the +define+ block are the union of those
       # provided by ApiTools::Data::DocumentedObject and the class from which
-      # this inherits, ApiTools::Data::Object.
+      # this inherits, ApiTools::Presenters::Object.
       #
       # +&block+:: Block that defines the schema for this type.
       #

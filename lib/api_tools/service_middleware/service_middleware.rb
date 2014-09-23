@@ -9,7 +9,14 @@ module ApiTools
     # +app+ Rack app instance to which calls should be passed.
     #
     def initialize( app )
-      @app = app
+      @service = app
+
+      unless @service.is_a?( ApiTools::ServiceApplication )
+        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ @service.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+      end
+
+      @service.component_interfaces.each do | interface |
+      end
 
       #   # e.g. version = "v1", endpoint - 'purchases'
       #   endpoints.each do | endpoint |
@@ -30,11 +37,19 @@ module ApiTools
       preprocessor = ApiTools::ServiceMiddleware::Preprocessor.new( env )
       preprocessor.preprocess()
 
-      processor = ApiTools::ServiceMiddleware::Processor.new( preprocessor )
-      response = processor.process( @app )
+      response = process( @service )
 
       postprocessor = ApiTools::ServiceMiddleware::Postprocessor.new( response )
       return postprocesor.postprocess()
+    end
+
+  private
+
+    # Process the client's call. The heart of service routing and application
+    # invocation. Relies entirely on data assembled during initialisation of
+    # this middleware instance or during handling in #call.
+    #
+    def process
     end
   end
 end
