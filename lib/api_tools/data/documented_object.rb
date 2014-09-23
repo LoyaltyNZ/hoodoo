@@ -12,6 +12,46 @@ module ApiTools
     #
     class DocumentedObject < ApiTools::Presenters::Object
 
+      # Does this instance state that it requires internationalisation?
+      # If so +true+, else +false+.
+      #
+      attr_reader( :internationalised )
+
+      # Initialize a DocumentedObject instance with the appropriate name and
+      # options; see ApiTools::Presenters::Object.
+      #
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
+      #
+      def initialize(name = nil, options = {})
+        @internationalised = false
+        super name, options
+      end
+
+      # As ApiTools::Presenters::Object#object but with the extended DSL in
+      # ApiTools::Data::DocumentedObject classes.
+      #
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +&block+:: Block declaring the fields making up the nested object
+      #
+      def object(name, options = {}, &block)
+        raise ArgumentError.new('ApiTools::Data::DocumentedObject must have block') unless block_given?
+        property(name, ApiTools::Data::DocumentedObject, options, &block)
+      end
+
+      # As ApiTools::Presenters::Object#array but with the extended DSL in
+      # ApiTools::Data::DocumentedObject / ApiTools::Data::DocumentedArray
+      # classes.
+      #
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +&block+:: Optional block declaring the fields of each array item
+      #
+      def array(name, options = {}, &block)
+        property(name, ApiTools::Data::DocumentedArray, options, &block)
+      end
+
       # Declares that this Type or Resource contains fields which will may
       # carry human-readable data subject to platform interntionalisation
       # rules. A Resource which is internationalised automatically gains a
@@ -20,7 +60,7 @@ module ApiTools
       # gains nothing until it is cross-referenced by a Resource definion,
       # at which point the cross-referencing resource becomes itself
       # implicitly internationalised (so it "taints" the resource). For
-      # cross-referencing, see #type and #embed_fields_of_type.
+      # cross-referencing, see #type.
       #
       # +options+:: Optional options hash. No option keys/values defined yet.
       #
@@ -43,12 +83,13 @@ module ApiTools
       #
       def internationalised( options = nil )
         options ||= {}
-        raise "Internationalised types not implemented yet"
+        @internationalised = true
       end
 
       # Declares that this Type or Resource has a string field of unlimited
       # length that contains comma-separated tag strings.
       #
+      # +field_name+:: Name of the field that will hold the tags.
       # +options+:: Optional options hash. No option keys/values defined yet.
       #
       # Example - a Product resource which supports product tagging:
@@ -60,13 +101,18 @@ module ApiTools
       #       text :name
       #       text :description
       #       string :sku, :length => 64
-      #       tags
+      #       tags :tags
       #
       #     end
       #
-      def tags( options = nil )
+      def tags( field_name, options = nil )
         options ||= {}
-        raise "Tagged types not implemented yet"
+
+        # TODO: Something more advanced than just treating this as a 'text'
+        #       field, with no additional validation. From a JSON perspective,
+        #       though, there might not be anything else to do.
+
+        property(field_name, ApiTools::Presenters::Text, options)
       end
 
       # Declares that this Type or Resource _refers to_ another Resource
@@ -99,13 +145,12 @@ module ApiTools
       #
       def uuid( field_name, options = nil )
         options ||= {}
-        resource  = options.delete( :resource )
-        raise "UUID type not implemented yet"
+        property(field_name, ApiTools::Data::DocumentedUUID, options)
       end
 
       # Declare that a nested type of a given name is included at this point.
-      # This is only valid within an +array+ or +object+ declaration. The
-      # fields of the given named type are considered to be defined inline
+      # This is only normally done within an +array+ or +object+ declaration.
+      # The fields of the given named type are considered to be defined inline
       # at the point of declaration - essentially, it's macro expansion.
       #
       # +type_name+:: Name of the type to nest as a symbol, e.g. +:BasketItem+.
@@ -157,23 +202,9 @@ module ApiTools
       #       }
       #     }
       #
-      def type( type_name, options = nil )
-        options ||= {}
-        raise "Cross-type references not implemented yet"
-      end
-
-      # Declares that the fields of a given type are to be copied inline at
-      # the declaration. It's essentially macro expansion for fields and has
-      # limited uses because of the potential for name collision between
-      # fields of the including Type or Resource and the thing it includes,
-      # given that over time new fields may be added to that included thing.
-      #
-      # +type_name+:: Name of the type to embed as a symbol, e.g. +:BasketItem+.
-      # +options+:: Optional options hash. See ApiTools::Presenters::Object.
-      #
-      # Most commonly, this is useful when a Resource is defined entirely in
-      # terms of something reused elsewhere as a Type. This is the case for
-      # a Currency - for example:
+      # It is also possible to use this mechanism for inline expansions when
+      # you have, say, a Resource defined entirely in terms of something reused
+      # elsewhere as a Type. This is the case for a Currency - for example:
       #
       #     type :Currency do
       #       string :curency_code, :required => true, :length => 8
@@ -185,17 +216,26 @@ module ApiTools
       #     end
       #
       #     resource :Currency do
-      #       fields_of_type :Currency
+      #       type :Currency
       #     end
       #
       # This means that the *Resource* of +Currency+ has exactly the same
       # fields as the *Type* of Currency. The Resource could define other
-      # fields too, though this would be risky as the Type might gain same
-      # named fields in future, leading to undefined behaviour.
+      # fields too, though this would be risky as the Type might gain
+      # same-named fields in future, leading to undefined behaviour. At such a
+      # time, a degree of cut-and-paste and removing the +type+ call from the
+      # Resource definition would be necessary.
       #
-      def fields_of_type( type_name, options = nil )
-        options ||= nil
-        raise "Cross-type references not implemented yet"
+      def type( type_name, options = nil )
+        options ||= {}
+
+        begin
+          klass = ApiTools::Data.const_get( type_name )
+        rescue
+          raise "DocumentedObject#type: Unrecognised type name '#{type_name}'"
+        end
+
+        self.instance_exec( &klass.definition() )
       end
     end
 

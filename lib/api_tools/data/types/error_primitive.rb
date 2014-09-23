@@ -3,17 +3,14 @@ module ApiTools
 
     # Documented Platform API Type 'ErrorPrimitive'.
     #
-    class ErrorPrimitive < ApiTools::Data::DocumentedObject
-      def initialize
+    class ErrorPrimitive < ApiTools::Data::DocumentedKind
 
-        super
-
+      define do
         text :code, :required => true
         text :message, :required => true
         text :reference
-
       end
-    end
 
+    end
   end
 end

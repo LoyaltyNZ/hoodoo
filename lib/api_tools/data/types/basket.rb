@@ -3,11 +3,9 @@ module ApiTools
 
     # Documented Platform API Type 'Basket'.
     #
-    class Basket < ApiTools::Data::DocumentedObject
-      def initialize
+    class Basket < ApiTools::Data::DocumentedKind
 
-        super
-
+      define do
         array :items do
           type :BasketItem
         end
@@ -15,9 +13,8 @@ module ApiTools
         array :totals do
           type :CurrencyAmount
         end
-
       end
-    end
 
+    end
   end
 end

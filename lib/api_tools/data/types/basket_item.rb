@@ -3,11 +3,9 @@ module ApiTools
 
     # Documented Platform API Type 'BasketItem'.
     #
-    class BasketItem < ApiTools::Data::DocumentedObject
-      def initialize
+    class BasketItem < ApiTools::Data::DocumentedKind
 
-        super
-
+      define do
         integer :quantity, :required => true
 
         array :currency_amounts, :required => true do
@@ -21,10 +19,9 @@ module ApiTools
           type :Product
         end
 
-        enum :accural, :from => [ :excluded ]
-
+        enum :accrual, :from => [ :excluded ]
       end
-    end
 
+    end
   end
 end

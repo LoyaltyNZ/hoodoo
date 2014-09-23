@@ -1,8 +1,10 @@
 module ApiTools
-  module Presenters
-    # A JSON array schema member
-    class Array < ApiTools::Presenters::Object
+  module Data
 
+    # As ApiTools::Presenters::Array but providing extended DSL facilities for
+    # the Platform API documented Types and Resources collection.
+    #
+    class DocumentedArray < ApiTools::Data::DocumentedObject
       # Check if data is a valid Array and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path

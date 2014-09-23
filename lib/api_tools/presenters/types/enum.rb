@@ -16,9 +16,14 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
       def initialize(name, options = {})
         super name, options
+
         @from = options[:from]
-        raise ArgumentError.new('ApiTools::Presenters::Enum must have a :from array listing allowed values') unless @from.is_a?(Array)
-        @from.map! { |entry| entry.to_s }
+
+        if @from.is_a?( ::Array )
+          @from = @from.map { |entry| entry.to_s }
+        else
+          raise ArgumentError.new('ApiTools::Presenters::Enum must have a :from array listing allowed values')
+        end
       end
 
       # Check if data is a valid String and return either [], or an array with a suitable error

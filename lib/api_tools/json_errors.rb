@@ -28,7 +28,7 @@ module ApiTools
     # +status+:: +Integer+ The HTTP status code to halt with (optional, defaults to 422)
     # +errors+:: +Array+ Any new errors to add. (optional)
     def fail_with_errors(status = 422, errors = nil)
-      if errors.is_a?(Array)
+      if errors.is_a?(::Array)
         @errors += errors
       end
       halt status, JSON.fast_generate({

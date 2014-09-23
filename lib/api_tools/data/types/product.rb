@@ -3,21 +3,18 @@ module ApiTools
 
     # Documented Platform API Type 'Product'.
     #
-    class Product < ApiTools::Data::DocumentedObject
-      def initialize
+    class Product < ApiTools::Data::DocumentedKind
 
-        super
-
+      define do
         internationalised
 
         text :code
         text :name
         text :description
 
-        tags
-
+        tags :tags
       end
-    end
 
+    end
   end
 end
