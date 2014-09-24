@@ -9,7 +9,7 @@ module ApiTools
     def create( request )
     end
 
-    def modify( request )
+    def update( request )
     end
 
     def delete( request )

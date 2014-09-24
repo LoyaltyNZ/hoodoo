@@ -35,21 +35,21 @@ module ApiTools
     # Endpoint path as declared by service, without preceding "/", possibly as
     # a symbol - e.g. +:products+ for "/products[...]" as an implied endpoint.
     #
-    attr_reader :endpoint
+    attr_reader :the_endpoint
 
     # Implementation class for the service. An ApiTools::ServiceImplementation
     # subclass.
     #
-    attr_reader :implementation
+    attr_reader :the_implementation
 
     # Supported action methods as a list of symbols, with one or more of
-    # +:list+, +:show+, +:create+, +:modify+ or +:delete+. If +nil+, assume
+    # +:list+, +:show+, +:create+, +:update+ or +:delete+. If +nil+, assume
     # all actions are supported.
     #
-    attr_reader :actions
+    attr_reader :the_actions
 
     #
-    attr_reader :to_list
+    attr_reader :the_list_extensions
 
     # An ApiTools::Data::DocumentedObject instance describing the schema for
     # client JSON coming in for calls that create instances of the resource
@@ -57,7 +57,7 @@ module ApiTools
     # acceptable (the implementation becomes entirely responsible for data
     # validation).
     #
-    attr_reader :to_create
+    attr_reader :the_creation_schema
 
     # An ApiTools::Data::DocumentedObject instance describing the schema for
     # client JSON coming in for calls that modify instances of the resource
@@ -65,7 +65,7 @@ module ApiTools
     # acceptable (the implementation becomes entirely responsible for data
     # validation).
     #
-    attr_reader :to_modify
+    attr_reader :the_modification_schema
 
     # A fully initialised instance of this class, or +nil+ if there has been
     # no interface definition made (yet).
@@ -119,8 +119,8 @@ module ApiTools
         raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses - #{ implementation_class.class } was given instead"
       end
 
-      @endpoint       = uri_path_fragment
-      @implementation = implementation_class
+      @the_endpoint       = uri_path_fragment
+      @the_implementation = implementation_class
     end
 
     # List the actions that the service implementation supports. If you don't
@@ -129,7 +129,7 @@ module ApiTools
     # implementation would never be called.
     #
     # +*supported_actions+:: One or more from +:list+, +:show+, +:create+,
-    #                        +:modify+ and +:delete+. Always use symbols, not
+    #                        +:update+ and +:delete+. Always use symbols, not
     #                        strings. An exception is raised if unrecognised
     #                        actions are given.
     #
@@ -138,19 +138,19 @@ module ApiTools
     #     actions :list, :show
     #
     def actions( *supported_actions )
-      allowed = [ :list, :show, :create, :modify, :delete ]
-      invalid = supported_actions - allowed
+      invalid = supported_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
         raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid }'"
       end
 
-      @actions = supported_actions
+      @the_actions = supported_actions
     end
 
     # Specify parameters related to common index parameters.
 
     def to_list( &block )
+      @the_list_extensions = nil # TODO
     end
 
     # Optional description of the JSON parameters (schema) that the interface's
@@ -180,20 +180,20 @@ module ApiTools
     #            the fields used for resource creation.
     #
     def to_create( &block )
-      @to_create = ApiTools::Data::DocumentedObject.new
-      @to_create.instance_eval( &block )
+      @the_creation_schema = ApiTools::Data::DocumentedObject.new
+      @the_creation_schema.instance_eval( &block )
     end
 
     # As #to_create, but applies when modifying existing resource instances.
     # To avoid repeating yourself, if your modification and creation parameter
-    # requirements are identical, call #modify_same_as_create.
+    # requirements are identical, call #update_same_as_create.
     #
     # +&block+:: Block, passed to ApiTools::Data::DocumentedKind, describing
     #            the fields used for resource modification.
     #
-    def to_modify( &block )
-      @to_modify = ApiTools::Data::DocumentedObject.new
-      @to_modify.instance_eval( &block )
+    def to_update( &block )
+      @the_modification_schema = ApiTools::Data::DocumentedObject.new
+      @the_modification_schema.instance_eval( &block )
     end
 
     # Declares that the expected JSON fields described in a #to_create call are
@@ -201,12 +201,12 @@ module ApiTools
     #
     # Example:
     #
-    #     modify_same_as_create
+    #     update_same_as_create
     #
     # ...and that's all. There are no parameters or blocks needed.
     #
-    def modify_same_as_create
-      @to_modify = @to_create
+    def update_same_as_create
+      @the_modification_schema = @the_creation_schema
     end
   end
 end

@@ -7,7 +7,7 @@ module ApiTools
   # ApiTools::ServiceImplementation - ApiTools::ServiceImplementation#list,
   # ApiTools::ServiceImplementation#show,
   # ApiTools::ServiceImplementation#create,
-  # ApiTools::ServiceImplementation#modify and
+  # ApiTools::ServiceImplementation#update and
   # ApiTools::ServiceImplementation#delete.
   #
   class ServiceResponse
