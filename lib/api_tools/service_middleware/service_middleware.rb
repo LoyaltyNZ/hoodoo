@@ -59,10 +59,29 @@ module ApiTools
       preprocessor = ApiTools::ServiceMiddleware::Preprocessor.new( env )
       preprocessed = preprocessor.preprocess()
 
+      # Global exception handler - catch problems in service implementations
+      # and send back a 500 response as per API documentation (if possible).
+      #
       begin
         response = process( preprocessed )
+
       rescue => exception
-        raise exception # TODO - return 500
+        begin
+          raise exception # TODO return 500 - platform.fault
+
+        rescue
+          # An exception in the exception handler! Oh dear. Return a
+          # HEAD-only response, more or less...
+          #
+          #   https://github.com/rack/rack/blob/master/lib/rack/head.rb#L12
+          #
+          return [
+            500, {}, Rack::BodyProxy.new([]) do
+              body.close if body.respond_to? :close
+            end
+          ]
+
+        end
       end
 
       postprocessor = ApiTools::ServiceMiddleware::Postprocessor.new( response )
@@ -120,7 +139,7 @@ module ApiTools
       end
 
       if supported_action.nil?
-        raise "405" # TODO return 405 properly
+        raise "405" # TODO return 405 properly - platform.method_not_allowed
         return
       end
 

@@ -51,7 +51,9 @@ module ApiTools
 
       errors_for 'platform' do
         error 'not_found',              status: 404, message: 'Not found',                    reference: [ :entity_name ]
+        error 'method_not_allowed',     status: 422, message: 'Method not allowed'
         error 'malformed',              status: 422, message: 'Malformed request'
+        error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 
       # Up to date at Preview Release 6, 2014-09-16.
@@ -62,10 +64,14 @@ module ApiTools
         error 'required_field_missing', status: 422, message: 'Required field missing',       reference: [ :field_name ]
         error 'invalid_string',         status: 422, message: 'Invalid string format',        reference: [ :field_name ]
         error 'invalid_integer',        status: 422, message: 'Invalid integer format',       reference: [ :field_name ]
+        error 'invalid_float',          status: 422, message: 'Invalid float format',         reference: [ :field_name ]
+        error 'invalid_decimal',        status: 422, message: 'Invalid decimal format',       reference: [ :field_name ]
         error 'invalid_boolean',        status: 422, message: 'Invalid boolean format',       reference: [ :field_name ]
         error 'invalid_date',           status: 422, message: 'Invalid date specifier',       reference: [ :field_name ]
         error 'invalid_time',           status: 422, message: 'Invalid time specifier',       reference: [ :field_name ]
         error 'invalid_datetime',       status: 422, message: 'Invalid date-time specifier',  reference: [ :field_name ]
+        error 'invalid_array',          status: 422, message: 'Invalid array',                reference: [ :field_name ]
+        error 'invalid_object',         status: 422, message: 'Invalid object',               reference: [ :field_name ]
         error 'invalid_duplication',    status: 422, message: 'Duplicates not allowed',       reference: [ :field_name ]
         error 'invalid_state',          status: 422, message: 'State transition not allowed', reference: [ :destination_state ]
         error 'invalid_parameters',     status: 422, message: 'Invalid parameters'
