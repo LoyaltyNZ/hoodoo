@@ -1,7 +1,15 @@
 module ApiTools
 
   # Common data definitions and descriptions - describe, through a DSL, the
-  # Types and Resources documented in the Loyalty Platform API.
+  # *representations* of Types and Resources documented in the Loyalty Platform
+  # API.
+  #
+  # These descriptions omit common fields like "kind" or "created_at", as those
+  # are implicit for any resource. Since resource representations are things
+  # returned by services, the definitions are used for automatic validation of
+  # service responses, not for validation of data sent in requests. That's done
+  # via the DSL available to ApiTools::ServiceInterface subclasses, e.g.
+  # ApiTools::ServiceInterface#to_create.
   #
   module Data
 
