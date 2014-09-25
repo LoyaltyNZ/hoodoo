@@ -32,9 +32,12 @@ module ApiTools
       #
       # Key              Value
       # =======================================================================
-      # regexp           Regexp for ".match" on the URI path component
-      # interface        ApiTools::ServiceInterface instance to use on match
+      # regexp           Regexp for +String#match+ on the URI path component
+      # interface        ApiTools::ServiceInterface subclass associated with
+      #                  the endpoint regular expression in +regexp+
       # actions          Array of symbols naming allowed actions
+      # implementation   ApiTools::ServiceImplementation subclass *instance* to
+      #                  use on match
 
       @services = @service_container.component_interfaces.map do | interface |
 
@@ -50,9 +53,10 @@ module ApiTools
         # endpoint ("/" or ".") while index 2 contains everything else.
 
         {
-          :actions   => interface.actions || ApiTools::ServiceInterface::ALLOWED_ACTIONS,
-          :interface => interface.implementation.new,
-          :regexp    => /\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :regexp         => /\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :interface      => interface,
+          :actions        => interface.actions || ApiTools::ServiceInterface::ALLOWED_ACTIONS,
+          :implementation => interface.implementation.new
         }
 
       end
@@ -85,12 +89,10 @@ module ApiTools
       rescue => exception
         begin
 
-          @response.add_error(
+          return @response.add_error(
             'platform.fault',
             :message => exception.message
           )
-
-          return @response.for_rack()
 
         rescue
 
@@ -130,14 +132,14 @@ module ApiTools
     # invocation. Relies entirely on data assembled during initialisation of
     # this middleware instance or during handling in #call.
     #
-    def process( preprocessed_request )
+    def process()
 
       # Select a service based on the escaped URI's path. If we find none,
       # then there's no matching endpoint; badly routed request; 404. If we
       # find many, raise an exception and rely on the exception handler to
       # send back a 500.
 
-      uri_path = CGI.unescape( preprocessed_request.path() )
+      uri_path = CGI.unescape( @request.path() )
 
       selected_services = @services.select do | service_data |
         @path_data = process_uri_path( uri_path, service_data[ :regexp ] )
@@ -145,8 +147,10 @@ module ApiTools
       end
 
       if selected_services.size == 0
-        # 404
-        return
+        return @response.add_error(
+          'platform.not_found',
+          :reference => { :entity_name => '' }
+        )
       elsif selected_services.size > 1
         raise "Multiple service endpoint matches - internal server configuration fault"
       else
@@ -154,20 +158,21 @@ module ApiTools
       end
 
       uri_path_components, uri_path_extension = @path_data
-      interface                               = selected_service[ :interface ]
-      actions                                 = selected_service[ :actions   ]
+      interface                               = selected_service[ :interface      ]
+      actions                                 = selected_service[ :actions        ]
+      implementation                          = selected_service[ :implementation ]
 
       # Check for a supported action. Clumsy code because there is no 1:1 map
       # from HTTP method to action (e.g. GET can be :show or :list).
 
-      supported_action = if preprocessed_request.post?
+      supported_action = if @request.post?
         :create if actions.include?( :create )
-      elsif preprocessed_request.patch?
+      elsif @request.patch?
         :update if actions.include?( :update )
-      elsif preprocessed_request.delete?
+      elsif @request.delete?
         :delete if actions.include?( :delete )
-      elsif preprocessed_request.get?
-        if path_components.size > 0
+      elsif @request.get?
+        if uri_path_components.size > 0
           :list if actions.include?( :list )
         else
           :show if actions.include?( :show )
@@ -175,15 +180,17 @@ module ApiTools
       end
 
       if supported_action.nil?
-        raise "405" # TODO return 405 properly - platform.method_not_allowed
-        return
+        return @response.add_error(
+          'platform.method_not_allowed',
+          :message => "Service endpoint '/#{ interface.endpoint }' does not support HTTP method '#{ env[ 'REQUEST_METHOD' ] }'"
+        )
       end
 
       # Looks good so far, so allocate a request object to pass on to the
       # interface and hold other higher level parsed data assembled below.
 
       service_request                     = ApiTools::ServiceRequest.new
-      service_request.rack_request        = preprocessed_request
+      service_request.rack_request        = @request
       service_request.uri_path_components = uri_path_components
       service_request.uri_path_extension  = uri_path_extension
 
@@ -192,7 +199,7 @@ module ApiTools
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
 
-      query_data = URI.decode_www_form( preprocessed_request.query_string )
+      query_data = URI.decode_www_form( @request.query_string )
       query_hash = Hash[ query_data ]
 
       # service_request.list_offset = query_hash[ 'offset' ] || 0
@@ -207,9 +214,11 @@ module ApiTools
       #   details match up with the endpoint's specification. For example, it might
       #   not support the HTTP Method. Do the query parameter checks here too
       #   (i.e. common stuff but not e.g. the broken down bits of sort or search).'
-      #
-      #   # Dispatch to service.
-      #
+
+      # Dispatch to service.
+
+      implementation.send( supported_action, @request, @response )
+
       #   # (After loads of validation up front based on service declarations and
       #   # data types, e.g. does the Rack
       #

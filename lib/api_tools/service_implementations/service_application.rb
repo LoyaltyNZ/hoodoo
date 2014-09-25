@@ -80,6 +80,16 @@ module ApiTools
     # Called by subclasses listing one or more ApiTools::ServiceInterface
     # subclasses that make up the service implementation as a whole.
     #
+    # Example:
+    #
+    #     class ShoppingService < ApiTools::ServiceApplication
+    #       comprised_of PurchaseInterface,
+    #                    RefundInterface
+    #     end
+    #
+    # See this class's general ApiTools::ServiceApplication documentation for
+    # more details.
+    #
     def self.comprised_of( *classes )
       @component_interfaces = classes
     end

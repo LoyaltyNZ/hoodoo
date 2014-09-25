@@ -17,7 +17,10 @@ module ApiTools
   class ServiceResponse
 
     # Obtain a reference to the ApiTools::Errors instance for this response;
-    # use ApiTools::Errors#add_error to add to the collection directly.
+    # use ApiTools::Errors#add_error to add to the collection directly. For
+    # convenience, this class also provides the #add_error proxy instance
+    # method (syntactic sugar for most service implementations, but with a
+    # return value that helps keep the service middleware code clean).
     #
     attr_reader :errors
 
@@ -80,6 +83,22 @@ module ApiTools
       else
         @headers[ name.downcase ] = { name => value }
       end
+    end
+
+    # Add an error to the internal collection. Passes input parameters through
+    # to ApiTools::Errors#add_error, so see that for details. For convenience,
+    # returns the for-rack representation of the response so far, so that code
+    # which wishes to add one error and abort request processing immediately
+    # can just do:
+    #
+    #     return response_object.add_error( ... )
+    #
+    # ...as part of processing a Rack invocation of the +call+ method. This is
+    # really only useful for the service middleware.
+    #
+    def add_error( code, options = nil )
+      @errors.add_error( code, options )
+      return for_rack()
     end
 
     # Convert the internal response data into something that Rack expects.
