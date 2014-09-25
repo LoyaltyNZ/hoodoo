@@ -60,7 +60,7 @@ module ApiTools
       # Params
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      # +&block+:: Block declaring the fields making up the nested object
+      # &block:: Block declaring the fields making up the nested object
       def object(name, options = {}, &block)
         raise ArgumentError.new('ApiTools::Presenters::Object must have block') unless block_given?
         property(name, ApiTools::Presenters::Object, options, &block)
@@ -70,7 +70,7 @@ module ApiTools
       # Params
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      # +&block+:: Optional block declaring the fields of each array item
+      # &block:: Optional block declaring the fields of each array item
       def array(name, options = {}, &block)
         property(name, ApiTools::Presenters::Array, options, &block)
       end

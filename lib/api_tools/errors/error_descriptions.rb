@@ -47,7 +47,7 @@ module ApiTools
 
       @descriptions = {}
 
-      # Up to date at Preview Release 6, 2014-09-16.
+      # Up to date at Preview Release 7, 2014-09-24.
 
       errors_for 'platform' do
         error 'not_found',              status: 404, message: 'Not found',                    reference: [ :entity_name ]
@@ -56,7 +56,7 @@ module ApiTools
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 
-      # Up to date at Preview Release 6, 2014-09-16.
+      # Up to date at Preview Release 7, 2014-09-24.
 
       errors_for 'generic' do
         error 'not_found',              status: 404, message: 'Resource not found',           reference: [ :uuid ]

@@ -16,8 +16,9 @@ module ApiTools
       #
       # +env+ Rack environment.
       #
-      def initialize( env )
-        @request = Rack::Request.new( env )
+      def initialize( for_request, using_response )
+        @request  = for_request
+        @response = using_response
       end
 
       # Run preprocessing actions. Once done, internal data will be ready for
@@ -31,6 +32,16 @@ module ApiTools
         @payload_hash   = json_to_hash()
 
         @errors = ApiTools::Errors.new()
+
+        return @request
+      end
+
+
+    private
+
+      #
+
+      def check_content_type_header()
       end
     end
 

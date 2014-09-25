@@ -1,4 +1,5 @@
 module ApiTools
+
   # During request processing, API service implementations create an
   # ApiTools::Errors instance and add error(s) to the collection as they arise
   # using #add_error. That same instance can then be returned for the on-error

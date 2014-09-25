@@ -4,9 +4,17 @@ module ApiTools
   #
   class ServiceMiddleware
 
-    # Allowed action names (see #actions, #the_actions).
+    # Allowed action names in implementations.
     #
     ALLOWED_ACTIONS = [ :list, :show, :create, :update, :delete ]
+
+    # Allowed media types in Content-Type headers.
+    #
+    SUPPORTED_MEDIA_TYPES = [ 'application/json' ]
+
+    # Allowed (required) charsets in Content-Type headers.
+    #
+    SUPPORTED_ENCODINGS = [ 'utf-8' ]
 
     # Initialize the middleware instance.
     #
@@ -30,7 +38,7 @@ module ApiTools
 
       @services = @service_container.component_interfaces.map do | interface |
 
-        if interface.nil? || interface.the_endpoint.nil? || interface.the_implementation.nil?
+        if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
           raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface.class } via service class #{ @app.class }"
         end
 
@@ -42,7 +50,7 @@ module ApiTools
         # endpoint ("/" or ".") while index 2 contains everything else.
 
         {
-          :actions   => interface.the_actions || ApiTools::ServiceInterface::ALLOWED_ACTIONS,
+          :actions   => interface.actions || ApiTools::ServiceInterface::ALLOWED_ACTIONS,
           :interface => interface.implementation.new,
           :regexp    => /\/#{ interface.endpoint }(\.|\/|$)(.*)/,
         }
@@ -50,26 +58,42 @@ module ApiTools
       end
     end
 
-    # Run a Rack request, returning the [status, headers, body-array]
-    # data as per the Rack protocol requirements.
+    # Run a Rack request, returning the [status, headers, body-array] data as
+    # per the Rack protocol requirements.
     #
     # +env+ Rack environment.
     #
     def call( env )
-      preprocessor = ApiTools::ServiceMiddleware::Preprocessor.new( env )
-      preprocessed = preprocessor.preprocess()
 
       # Global exception handler - catch problems in service implementations
       # and send back a 500 response as per API documentation (if possible).
       #
       begin
-        response = process( preprocessed )
+
+        @request  = Rack::Request.new( env )
+        @response = ApiTools::ServiceResponse.new
+
+        preprocess()
+        return @response.for_rack() if @response.halt_processing?
+
+        process()
+        return @response.for_rack() if @response.halt_processing?
+
+        postprocess()
+        return @response.for_rack()
 
       rescue => exception
         begin
-          raise exception # TODO return 500 - platform.fault
+
+          @response.add_error(
+            'platform.fault',
+            :message => exception.message
+          )
+
+          return @response.for_rack()
 
         rescue
+
           # An exception in the exception handler! Oh dear. Return a
           # HEAD-only response, more or less...
           #
@@ -83,12 +107,24 @@ module ApiTools
 
         end
       end
-
-      postprocessor = ApiTools::ServiceMiddleware::Postprocessor.new( response )
-      return postprocesor.postprocess()
     end
 
   private
+
+    # Run request preprocessing - common actions that occur prior to any service
+    # instance selection or service-specific processing.
+    #
+    # On exit, +@request+ or +@response+ may have been updated. Be sure to check
+    # +@request.halt_processing?+ to see if processing should abort and return
+    # immediately.
+    #
+    def preprocess
+      check_content_type_header()
+
+      @locale         = deal_with_language_header()
+      @interaction_id = find_or_generate_interaction_id()
+      @payload_hash   = json_to_hash()
+    end
 
     # Process the client's call. The heart of service routing and application
     # invocation. Relies entirely on data assembled during initialisation of
@@ -182,73 +218,146 @@ module ApiTools
       #   object then dispatch based on Rack method. Can have the unpacked unescaped
       #   data for search, filter, sort done here so it is structured not just a hash
       #   of parameters.
+    end
+
+    # Run request preprocessing - common actions that occur after service
+    # instance selection and service-specific processing.
+    #
+    # On exit, +@response+ may have been updated.
+    #
+    def postprocess
+      # TODO: Anything...?
+    end
+
+    # Check the client's +Content-Type+ header and if it doesn't ask for the
+    # supported content types or text encodings, set a response error to force
+    # a halt of any further processing (subject to the caller checking for
+    # response errors afterwards).
+    #
+    # On success, +@content_type+ contains the requested media type (e.g.
+    # +application/json+) and +@content_encoding+ contains the requested
+    # encoding (e.g. +utf-8+).
+    #
+    def check_content_type_header
+      unless SUPPORTED_MEDIA_TYPES.include?( @request.media_type ) &&
+             SUPPORTED_ENCODINGS.include?( @request.content_charset )
+
+        @errors.add_error(
+          'platform.malformed',
+          :message => "Content-Type '#{ @request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
+        )
+
       end
+    end
 
-    private
+    # Extract the +Content-Language+ header value from the client and store it
+    # in +@request_locale+.
+    #
+    # TODO: No processing or validation is done on the client's value, to
+    #       ensure it conforms to platform internationalisation rules.
+    #
+    def deal_with_language_header
+      @request_locale = @request.env[ 'HTTP_CONTENT_LANGUAGE' ]
+    end
 
-      # Match a URI string against a service endpoint regexp and return broken
-      # down path components and extension if there's a match, else nil.
-      #
-      # +uri_path+:: Path component of URI, percent-*unescaped*.
-      # +regexp+::   A regexp that should return the separator between service
-      #              endpoint and any other path data in match data index 1 and
-      #              the rest of the URI path, if any, in match data 2.
-      #
-      # Returns an array with two elements. The first is the array of pure path
-      # components, with no empty strings; it may be empty. The second is the
-      # filename extension if present, else an empty string.
-      #
-      # Returns nil if there's no endpoint match at all.
-      #
-      # Example - assuming the regexp matched a service endpoint of "/members"
-      # then URI paths yield example return values as follows:
-      #
-      #     /members
-      #     => [ [], '' ]
-      #
-      #     /members.json
-      #     => [ [], 'json' ]
-      #
-      #     /members/
-      #     => [ [], '' ]
-      #
-      #     /members/1234.json
-      #     => [ [ '1234' ], 'json' ]
-      #
-      #     /members/1234/hello.tar.gz
-      #     => [ [ '1234', 'hello' ], 'tar.gz' ]
-      #
-      def process_uri_path( uri_path, regexp )
-        match_data = uri_path.match( regexp )
-        return nil if match_data.nil?
+    # Find the value of an X-Interaction-ID header (if one is already present)
+    # or generate a new Interaction ID and store the result for the response,
+    # as a new X-Interaction-ID header.
+    #
+    def find_or_generate_interaction_id
+      iid   = @request.env[ 'HTTP_X_INTERACTION_ID' ]
+      iid ||= ApiTools::UUID.generate()
 
-        # Split the path into array entries and examine the last one for a
-        # filename extension, extracting it if found.
+      @response.add_header( 'X-Interaction-ID', iid )
+    end
 
-        remaining_path_components = []
-        extension                 = ''
+    # Safely parse the client payload for +POST+ and +PATCH+ into instance
+    # variable +@payload_hash+.
+    #
+    def parse_json_payload
+      return unless @request.post? or @request.patch?
 
-        if ( match_data[ 1 ] == '.' )
-          extension = match_data[ 2 ]
+      begin
+        case @content_type
+        when 'application/json'
 
-        elsif ( match_data[ 1 ] == '/' )
-          remaining_path_components = match_data[ 2 ].split( '/' ).reject { | str | str === '' }
-          last_item                 = remaining_path_components.last
+          # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
+          #
+          # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+          #
+          @payload_hash = JSON.parse( json, :create_additions => false )
 
-          unless ( last_item.nil? )
-            path, extension = last_item.split( '.', 2 )
-
-            if ( path == '' )
-              remaining_path_components.pop()
-            else
-              remaining_path_components[ -1 ] = path
-            end
-          end
+        else
+          raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
         end
 
-        [ remaining_path_components, extension ]
+      rescue => e
+        @errors.add_error( 'generic.malformed' )
+      end
+    end
+
+    # Match a URI string against a service endpoint regexp and return broken
+    # down path components and extension if there's a match, else nil.
+    #
+    # +uri_path+:: Path component of URI, percent-*unescaped*.
+    # +regexp+::   A regexp that should return the separator between service
+    #              endpoint and any other path data in match data index 1 and
+    #              the rest of the URI path, if any, in match data 2.
+    #
+    # Returns an array with two elements. The first is the array of pure path
+    # components, with no empty strings; it may be empty. The second is the
+    # filename extension if present, else an empty string.
+    #
+    # Returns nil if there's no endpoint match at all.
+    #
+    # Example - assuming the regexp matched a service endpoint of "/members"
+    # then URI paths yield example return values as follows:
+    #
+    #     /members
+    #     => [ [], '' ]
+    #
+    #     /members.json
+    #     => [ [], 'json' ]
+    #
+    #     /members/
+    #     => [ [], '' ]
+    #
+    #     /members/1234.json
+    #     => [ [ '1234' ], 'json' ]
+    #
+    #     /members/1234/hello.tar.gz
+    #     => [ [ '1234', 'hello' ], 'tar.gz' ]
+    #
+    def process_uri_path( uri_path, regexp )
+      match_data = uri_path.match( regexp )
+      return nil if match_data.nil?
+
+      # Split the path into array entries and examine the last one for a
+      # filename extension, extracting it if found.
+
+      remaining_path_components = []
+      extension                 = ''
+
+      if ( match_data[ 1 ] == '.' )
+        extension = match_data[ 2 ]
+
+      elsif ( match_data[ 1 ] == '/' )
+        remaining_path_components = match_data[ 2 ].split( '/' ).reject { | str | str === '' }
+        last_item                 = remaining_path_components.last
+
+        unless ( last_item.nil? )
+          path, extension = last_item.split( '.', 2 )
+
+          if ( path == '' )
+            remaining_path_components.pop()
+          else
+            remaining_path_components[ -1 ] = path
+          end
+        end
       end
 
+      [ remaining_path_components, extension ]
     end
+
   end
 end

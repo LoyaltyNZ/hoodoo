@@ -56,6 +56,14 @@ require root+'errors/error_descriptions.rb'
 require root+'errors/errors.rb'
 
 require root+'service_middleware/service_middleware.rb'
+require root+'service_middleware/preprocessor.rb'
+require root+'service_middleware/postprocessor.rb'
+
+require root+'service_implementations/service_application.rb'
+require root+'service_implementations/service_interface.rb'
+require root+'service_implementations/service_implementation.rb'
+require root+'service_implementations/service_request.rb'
+require root+'service_implementations/service_response.rb'
 
 require root+'utilities.rb'
 

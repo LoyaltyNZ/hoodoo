@@ -45,7 +45,7 @@ module ApiTools
       # provided by ApiTools::Data::DocumentedObject and the class from which
       # this inherits, ApiTools::Presenters::Object.
       #
-      # +&block+:: Block that defines the schema for this type.
+      # &block:: Block that defines the schema for this type.
       #
       def self.define( &block )
         @definition = block
