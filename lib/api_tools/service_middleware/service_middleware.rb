@@ -317,7 +317,7 @@ module ApiTools
     #
     def find_or_generate_interaction_id
       iid = @request.env[ 'HTTP_X_INTERACTION_ID' ]
-      iid = ApiTools::UUID.generate() if iid.nil? || iid = ''
+      iid = ApiTools::UUID.generate() if iid.nil? || iid == ''
 
       @response.add_header( 'X-Interaction-ID', iid )
     end
