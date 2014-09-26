@@ -1,3 +1,12 @@
+########################################################################
+# File::    currency_amount.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Define documented Platform API Type 'CurrencyAmount'.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module Data
     module Types

@@ -1,3 +1,14 @@
+########################################################################
+# File::    documented_array.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: ApiTools::Data::DocumentedObject DSL field implementation
+#           allowing for documented Types references. Instantiated via
+#           ApiTools::Data::DocumentedObject#array.
+# ----------------------------------------------------------------------
+#           23-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module Data
 

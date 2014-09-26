@@ -1,3 +1,15 @@
+########################################################################
+# File::    documented_object.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: ApiTools::Presenters::Object DSL extension used to allow a
+#           class to describe a well defined, documented Type or
+#           Resource which may refer to another documented Type. Such
+#           classes can then be used for JSON validation.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # Common data definitions and descriptions - describe, through a DSL, the

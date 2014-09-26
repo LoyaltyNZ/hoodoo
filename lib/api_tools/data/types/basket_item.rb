@@ -1,3 +1,12 @@
+########################################################################
+# File::    basket_item.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Define documented Platform API Type 'BasketItem'.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module Data
     module Types

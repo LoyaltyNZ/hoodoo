@@ -1,3 +1,15 @@
+########################################################################
+# File::    error_descriptions.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Error descriptions - provide a DSL and a container for a
+#           list of known error codes and associated data. Includes the
+#           Loyalty Platform API +platform+ and +generic+ domain codes
+#           by default. Services can declare additional errors.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # A collection of error descriptions. API service implementations create one

@@ -1,3 +1,15 @@
+########################################################################
+# File::    documented_kind.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Provide basic DSL allowing a class to declare a collection
+#           of fields as a named (through its class name) Type or
+#           Resource. A subclass's name is exactly its Type or Resource
+#           name. See ::define for more information.
+# ----------------------------------------------------------------------
+#           23-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module Data
 

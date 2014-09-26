@@ -1,3 +1,16 @@
+########################################################################
+# File::    documented_uuid.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: ApiTools::Data::DocumentedObject DSL field implementation
+#           which supports a field defined to contain a UUID that
+#           (optionally) can be verified as referring to a specific
+#           other Resource. Instantiated via
+#           ApiTools::Data::DocumentedObject#uuid.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module Data
     # A JSON UUID schema member
