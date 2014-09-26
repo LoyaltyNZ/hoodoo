@@ -76,5 +76,15 @@ module ApiTools
     #
     attr_accessor :list_filter_data
 
+    # Array of strings giving requested embedded items; +nil+ if there are
+    # none requested.
+    #
+    attr_accessor :list_embeds
+
+    # Array of strings giving requested referenced items; +nil+ if there are
+    # none requested.
+    #
+    attr_accessor :list_references
+
   end
 end

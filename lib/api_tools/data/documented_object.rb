@@ -35,7 +35,9 @@ module ApiTools
       # Does this instance state that it requires internationalisation?
       # If so +true+, else +false+.
       #
-      attr_reader( :internationalised )
+      def is_internationalised
+        @internationalised == true
+      end
 
       # Initialize a DocumentedObject instance with the appropriate name and
       # options; see ApiTools::Presenters::Object.

@@ -35,7 +35,12 @@ module ApiTools
     # method (syntactic sugar for most service implementations, but with a
     # return value that helps keep the service middleware code clean).
     #
-    attr_reader :errors
+    # It's possible to change the errors object if you want to swap it for any
+    # reason, though this is generally discouraged - especially if the existing
+    # errors collection isn't empty. The middleware does this as part of
+    # request handling, but generally speaking nobody else should need to.
+    #
+    attr_accessor :errors
 
     # HTTP status code that will be involved in the response. Default is 200.
     # Integer, or something that can be converted to one with +to_i+. If errors

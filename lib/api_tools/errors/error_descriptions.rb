@@ -14,16 +14,23 @@ module ApiTools
 
   # A collection of error descriptions. API service implementations create one
   # of these, which self-declares platform and generic error domain codes. A
-  # simple DSL is available to declare service-specific errors. Example:
+  # simple DSL is available to declare service-specific errors. Since the
+  # middleware is responsible for instantiating an error collection inside a
+  # response object which service implementations use to signal error
+  # conditions, the service's _interface_ class uses the interface description
+  # DSL to call through to here behind the scenes; for example:
   #
-  #     class SomeService
-  #       ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new
-  #       ERROR_DESCRIPTIONS.errors_for 'transaction' do
-  #         error 'duplicate_transaction', status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]
+  #     class TransactionImplementation < ApiTools::ServiceImplementation
+  #       # ...
+  #     end
+  #
+  #     class TransactionInterface < ApiTools::ServiceInterface
+  #       interface :Transaction do
+  #         endpoint :transactions, TransactionImplementation
+  #         errors_for 'transaction' do
+  #           error 'duplicate_transaction', status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]
+  #         end
   #       end
-  #
-  #       # ...rest of service code...
-  #
   #     end
   #
   # The #errors_for method takes the domain of the error as a string - the
@@ -31,12 +38,25 @@ module ApiTools
   # calls describe the individual error codes. See
   # ApiTools::ErrorDescriptions::DomainDescriptions#error for details.
   #
-  # There is a shorthand form where the constructor is used in the same way
-  # as #errors_for:
+  # An instance of the ApiTools::ErrorDescriptions class gets built behind
+  # the scenes as part of the service interface description. This is found by
+  # the middleware and passed to an ApiTools::Errors constructor. The result
+  # is stored in an ApiTools::ServiceResponse instance and passed to handler
+  # methods in the service's ApiTools::ServiceImplementation subclass for each
+  # request. Service implementations access the errors collection through
+  # ApiTools::ServiceResponse#errors and can then add errors using the generic
+  # or platform domains, or whatever additional custom domain(s) they defined
+  # in the service interface subclass.
+  #
+  # For direct callers (e.g. the middleware), there is a shorthand form to
+  # invoke the DSL where the constructor is used in the same way as
+  # #errors_for:
   #
   #     ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new( 'transaction' ) do
   #       error 'duplicate_transaction', status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]
   #     end
+  #
+  # Either way,
   #
   # As per the example above, services can share an instance across requests
   # (and threads) via a class's variable if the descriptions don't change. You

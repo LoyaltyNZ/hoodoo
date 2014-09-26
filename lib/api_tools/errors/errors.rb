@@ -1,9 +1,11 @@
 ########################################################################
-# File::    service_middleware.rb
+# File::    errors.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: Rack middleware, declared in a +config.ru+ file in the usual
-#           way - "use( ApiTools::ServiceMiddleware )".
+# Purpose:: A collection of error messages, starting empty, with one
+#           or more messages added to it as errors are encountered by
+#           some processing task. Errors are added according to codes
+#           described by ApiTools::ErrorDescriptions instances.
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
@@ -18,8 +20,8 @@ module ApiTools
   #
   class Errors
 
-    # Default ApiTools::ErrorDescriptions instance, used if the caller doesn't
-    # provide an alternative.
+    # Default ApiTools::ErrorDescriptions instance, used if the instantiator
+    # provides no alternative.
     #
     DEFAULT_ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new()
 

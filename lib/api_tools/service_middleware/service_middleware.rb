@@ -32,9 +32,34 @@ module ApiTools
   #
   class ServiceMiddleware
 
-    # Allowed action names in implementations.
+    # All allowed action names in implementations, used for internal checks.
+    # This is also the default supported set of actions. Symbols.
     #
-    ALLOWED_ACTIONS = [ :list, :show, :create, :update, :delete ]
+    ALLOWED_ACTIONS = [
+      :list,
+      :show,
+      :create,
+      :update,
+      :delete,
+    ]
+
+    # Allowed common fields in query strings (list actions only). Strings.
+    #
+    # Only ever *add* to this list. As the API evolves, legacy clients will
+    # be calling with previously documented query strings and removing any
+    # entries from the list below could cause their requests to be rejected
+    # with a 'platform.malformed' error.
+    #
+    ALLOWED_QUERIES = [
+      'offset',
+      'limit',
+      'sort',
+      'direction',
+      'search',
+      'filter',
+      '_embed',
+      '_reference',
+    ]
 
     # Allowed media types in Content-Type headers.
     #
@@ -222,35 +247,22 @@ module ApiTools
       service_request.uri_path_components = uri_path_components
       service_request.uri_path_extension  = uri_path_extension
 
-      # What about the query string? Only do this if we know we want to keep
-      # processing this request, because otherwise it's a waste of CPU cycles.
-      # The 'decode' call produces an array of two-element arrays, the first
-      # being the key and next being the value, already CGI unescaped once.
+      # Update the response object's errors collection in light of additional
+      # service interface error descriptions, if any.
 
-      query_data = URI.decode_www_form( @request.query_string )
-      query_hash = Hash[ query_data ]
+      unless interface.errors_for.nil?
+        @response.errors = ApiTools::Errors.new( interface.errors_for )
+      end
 
-      # service_request.list_offset = query_hash[ 'offset' ] || 0
-      # service_request.list_limit  = query_hash[ 'limit' ] || interface... || default
-      # service_request.list_sort_key = some_sort_key or default (string)
-      # service_request.list_sort_direction = some direction or default (string)
-      # service_request.list_search_data = hash or nil
-      # service_request.list_filter_data = hash or nil
+      # There should only be a query string for GET methods that ask for lists
+      # of resources.
 
-
-      #   ...missing part here, may as well immediately check that basic request
-      #   details match up with the endpoint's specification. For example, it might
-      #   not support the HTTP Method. Do the query parameter checks here too
-      #   (i.e. common stuff but not e.g. the broken down bits of sort or search).'
-
-      #   # (After loads of validation up front based on service declarations and
-      #   # data types, e.g. does the Rack
-      #
-      #   ...assemble endpoint, remaining path components, extension, query
-      #   parameters, parsed body data etc. into some formalised request details
-      #   object then dispatch based on Rack method. Can have the unpacked unescaped
-      #   data for search, filter, sort done here so it is structured not just a hash
-      #   of parameters.
+      if supported_action != :list && ( ! @request.query_string.nil? || @request.query_string != '' )
+        return @response.add_error( 'platform.malformed' )
+      else
+        error = process_query_string( @request.query_string, service_request )
+        return error unless error.nil?
+      end
 
       # Finally - dispatch to service.
 
@@ -304,8 +316,8 @@ module ApiTools
     # as a new X-Interaction-ID header.
     #
     def find_or_generate_interaction_id
-      iid   = @request.env[ 'HTTP_X_INTERACTION_ID' ]
-      iid ||= ApiTools::UUID.generate()
+      iid = @request.env[ 'HTTP_X_INTERACTION_ID' ]
+      iid = ApiTools::UUID.generate() if iid.nil? || iid = ''
 
       @response.add_header( 'X-Interaction-ID', iid )
     end
@@ -396,6 +408,102 @@ module ApiTools
       end
 
       [ remaining_path_components, extension ]
+    end
+
+    # Process query string data for list actions. Only call if there's a list
+    # action being requested.
+    #
+    # +query_string+::   The 'raw' query string from Rack.
+    # +service_request:: An ApiTools::ServiceRequest instance. This will be
+    #                    updated if successful with list parameter data.
+    #
+    # Returns +nil+ on success, else an error expressed as a Rack response
+    # array - this can be passed directly back to Rack.
+    #
+    def process_query_string( query_string, service_request )
+
+      # The 'decode' call produces an array of two-element arrays, the first
+      # being the key and next being the value, already CGI unescaped once.
+
+      query_data = URI.decode_www_form( query_string )
+      query_hash = Hash[ query_data ]
+
+      unrecognised_query_keys = query_hash - ALLOWED_QUERIES
+      malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
+
+      unless malformed
+        limit     = query_hash[ 'limit' ] || interface.to_list.limit
+        malformed = :limit unless limit.to_i.to_s == limit
+      end
+
+      unless malformed
+        offset    = query_hash[ 'offset' ] || 0
+        malformed = :offset unless offset.to_i.to_s == offset
+      end
+
+      unless malformed
+        sort_key  = query_hash[ 'sort' ] || interface.to_list.default_sort_key
+        malformed = :sort unless interface.to_list.sort.keys.include?( sort_key )
+      end
+
+      unless malformed
+        direction = query_hash[ 'direction' ] || interface.to_list.default_sort_direction
+        malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
+      end
+
+      unless malformed
+        search = query_hash[ 'search' ]
+        unless search.nil?
+          search = Hash[ URI.decode_www_form( search ) ]
+          unrecognised_search_keys = search.keys - interface.to_list.search
+          malformed = "search:#{ unrecognised_search_keys }" unless unrecognised_search_keys.empty?
+        end
+      end
+
+      unless malformed
+        filter = query_hash[ 'filter' ]
+        unless filter.nil?
+          filter = Hash[ URI.decode_www_form( filter ) ]
+          unrecognised_filter_keys = filter.keys - interface.to_list.filter
+          malformed = "filter:#{ unrecognised_filter_keys }" unless unrecognised_filter_keys.empty?
+        end
+      end
+
+      unless malformed
+        embeds = query_hash[ '_embed' ]
+        unless embeds.nil?
+          embeds = embeds.split( ',' )
+          unrecognised_embeds = embeds - interface.to_list.embeds
+          malformed = "_embed:#{ unrecognised_embeds }" unless unrecognised_embeds.empty?
+        end
+      end
+
+      unless malformed
+        references = query_hash[ '_reference' ]
+        unless references.nil?
+          references = references.split( ',' )
+          unrecognised_references = references - interface.to_list.references
+          malformed = "_reference:#{ unrecognised_references }" unless unrecognised_references.empty?
+        end
+      end
+
+      if malformed
+        return @response.add_error(
+          'platform.malformed',
+          :message => "One or more malformed or invalid query string parameters: '#{ malformed }'"
+        )
+      end
+
+      service_request.list_offset         = offset
+      service_request.list_limit          = limit
+      service_request.list_sort_key       = sort_key
+      service_request.list_sort_direction = direction
+      service_request.list_search_data    = search
+      service_request.list_filter_data    = filter
+      service_request.list_embeds         = embeds
+      service_request.list_references     = references
+
+      return nil
     end
 
   end

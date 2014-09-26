@@ -44,29 +44,36 @@ module ApiTools
 
       # Default sort key.
       #
-      attr_reader :default_sort
+      attr_reader :default_sort_key
 
-      # Array of supported search keys; +nil+ for none defined.
+      # Default sort direction.
+      #
+      def default_sort_direction
+        @sort[ default_sort_key() ][ 0 ]
+      end
+
+      # Array of supported search keys; empty for none defined.
       #
       attr_reader :search
 
-      # Array of supported filter keys; +nil+ for none defined.
+      # Array of supported filter keys; empty for none defined.
       #
       attr_reader :filter
 
-      # Array of supported embedded item names; +nil+ for none defined. Any
+      # Array of supported embedded item names; empty for none defined. Any
       # embeddable item is implicitly "referenceable" too (via the
       # +embed=...+ and +reference=...+ query string entries).
       #
       attr_reader :embed
 
+      # Create an instance with default settings.
+      #
       def initialize
-        @limit        = 50
-        @sort         = { :created_at => [ :desc, :asc ] }
-        @default_sort = :created_at
-        @search       = nil
-        @filter       = nil
-        @embed        = nil
+        @limit  = 50
+        @sort   = { default( :created_at ) => [ :desc, :asc ] }
+        @search = []
+        @filter = []
+        @embed  = []
       end
 
       private
@@ -83,11 +90,11 @@ module ApiTools
         #
         attr_writer :sort
 
-        # Private writer - see #default_sort - but there's a special contract
-        # with ApiTools::ServiceInterface::ToListDSL which permits it to call
-        # here bypassing +private+ via +send()+.
+        # Private writer - see #default_sort_key - but there's a special
+        # contract with ApiTools::ServiceInterface::ToListDSL which permits it
+        # to call here bypassing +private+ via +send()+.
         #
-        attr_writer :default_sort
+        attr_writer :default_sort_key
 
         # Private writer - see #search - but there's a special contract with
         # ApiTools::ServiceInterface::ToListDSL which permits it to call here
@@ -196,7 +203,7 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 
-        @tl.send( :default_sort=, sort_key )
+        @tl.send( :default_sort_key=, sort_key )
         return sort_key
       end
 
@@ -222,7 +229,7 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#search requires an Array - got '#{ search.class }'"
         end
 
-        @tl.send( :search=, search.map { | item | item.to_str } )
+        @tl.send( :search=, search.map { | item | item.to_s } )
       end
 
       # As #search, but for filtering.
@@ -235,7 +242,7 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#filter requires an Array - got '#{ filter.class }'"
         end
 
-        @tl.send( :filter=, filter.map { | item | item.to_str } )
+        @tl.send( :filter=, filter.map { | item | item.to_s } )
       end
 
       # An array of supported embed keys (as per documentation, so singular or
@@ -262,7 +269,7 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#embed requires an Array - got '#{ embed.class }'"
         end
 
-        @tl.send( :embed=, embed.map { | item | item.to_str } )
+        @tl.send( :embed=, embed.map { | item | item.to_s } )
       end
     end # 'class ToListDSL'
 
@@ -404,6 +411,35 @@ module ApiTools
       self.class.send( :to_update=, self.class.to_create )
     end
 
+    # Declares custom errors that are part of this defined interface. This
+    # calls directly through to ApiTools::ErrorDescriptions#errors_for, so
+    # see that for details.
+    #
+    # A service should usually define only a single domain of error using one
+    # call to #errors_for, but techncially can make as many calls for as many
+    # domains as required. Definitions are merged.
+    #
+    # +domain+:: Domain, e.g. 'purchase', 'transaction' - see
+    #            ApiTools::ErrorDescriptions#errors_for for details.
+    #
+    # &block::   Code block making ApiTools::ErrorDescriptions DSL calls.
+    #
+    # Example:
+    #
+    #     errors_for 'transaction' do
+    #       error 'duplicate_transaction', status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]
+    #     end
+    #
+    def errors_for( domain, &block )
+      descriptions = self.class.errors_for
+
+      if descriptions.nil?
+        descriptions = self.class.send( :errors_for=, ApiTools::ErrorDescriptions.new )
+      end
+
+      descriptions.errors_for( domain, &block )
+    end
+
   protected
 
     # Define the subclass service's interface. A DSL is used with methods
@@ -512,6 +548,13 @@ module ApiTools
         #
         attr_reader :to_update
 
+        # An ApiTools::ErrorDescriptions instance describing all errors that
+        # the interface might return, including the default set of platform
+        # and generic errors. If nil, there are no additional error codes
+        # beyond the default set.
+        #
+        attr_reader :errors_for
+
       private
 
         # Private property writer allows instances running the DSL to set
@@ -549,6 +592,12 @@ module ApiTools
         # See ::to_update.
         #
         attr_writer :to_update
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::errors_for.
+        #
+        attr_writer :errors_for
 
     end # 'class << self'
   end   # 'class ServiceInterface'
