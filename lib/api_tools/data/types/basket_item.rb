@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Type 'BasketItem'.
       #
-      class BasketItem < ApiTools::Data::DocumentedKind
+      class BasketItem < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           integer :quantity, :required => true
 
           array :currency_amounts, :required => true do

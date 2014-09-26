@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Resource 'Product'.
       #
-      class Product < ApiTools::Data::DocumentedKind
+      class Product < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           type :Product
         end
 

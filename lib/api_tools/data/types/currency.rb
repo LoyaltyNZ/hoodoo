@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Type 'Currency'.
       #
-      class Currency < ApiTools::Data::DocumentedKind
+      class Currency < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           string :currency_code, :required => true, :length => 8
           string :symbol, :length => 16
           integer :multiplier, :default => 100

@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Type 'Basket'.
       #
-      class Basket < ApiTools::Data::DocumentedKind
+      class Basket < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           array :items do
             type :BasketItem
           end

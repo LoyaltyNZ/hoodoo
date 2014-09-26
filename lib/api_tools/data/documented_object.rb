@@ -257,7 +257,7 @@ module ApiTools
           raise "DocumentedObject#type: Unrecognised type name '#{type_name}'"
         end
 
-        self.instance_exec( &klass.definition() )
+        self.instance_exec( &klass.schema_definition() )
       end
     end
 

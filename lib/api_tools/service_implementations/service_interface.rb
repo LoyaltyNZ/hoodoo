@@ -353,14 +353,14 @@ module ApiTools
 
     # Optional description of the JSON parameters (schema) that the interface's
     # implementation requires for calls creating resource instances. The block
-    # uses the DSL from ApiTools::Data::DocumentedKind, so you can specify
+    # uses the DSL from ApiTools::Data::DocumentedObject, so you can specify
     # basic object things like +string+, or higher level things like +type+.
     #
     # If a call comes into the middleware from a client which contains body
     # data that doesn't validate according to your schema, it'll be rejected
     # before even getting as far as your interface implementation.
     #
-    # The ApiTools::Data::DocumentedKind#internationalised DSL method can be
+    # The ApiTools::Data::DocumentedObject#internationalised DSL method can be
     # called within your block harmlessly, but it has no side effects. Any
     # resource interface that can take internationalised data for creation (or
     # modification) must already have an internationalised representation, so
@@ -374,7 +374,7 @@ module ApiTools
     #       text :description
     #     end
     #
-    # &block:: Block, passed to ApiTools::Data::DocumentedKind, describing
+    # &block:: Block, passed to ApiTools::Data::DocumentedObject, describing
     #          the fields used for resource creation.
     #
     def to_create( &block )
@@ -388,7 +388,7 @@ module ApiTools
     # To avoid repeating yourself, if your modification and creation parameter
     # requirements are identical, call #update_same_as_create.
     #
-    # &block:: Block, passed to ApiTools::Data::DocumentedKind, describing
+    # &block:: Block, passed to ApiTools::Data::DocumentedObject, describing
     #          the fields used for resource modification.
     #
     def to_update( &block )

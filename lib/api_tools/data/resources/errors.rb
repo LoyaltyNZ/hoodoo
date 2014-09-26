@@ -11,17 +11,17 @@ module ApiTools
   module Data
 
     # Module used as a namespace to collect classes that represent Resources
-    # documented by the Loyalty Platform API. Each can be instantiated and
-    # used for JSON validation purposes - see
-    # ApiTools::Data::DocumentedKind#initialize for details.
+    # documented by the Loyalty Platform API. Each is an
+    # ApiTools::Data::DocumentedPresenter subclass, so can be used to parse,
+    # render and validate JSON data.
     #
     module Resources
 
       # Documented Platform API Resource 'Errors'.
       #
-      class Errors < ApiTools::Data::DocumentedKind
+      class Errors < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           array :errors do
             type :ErrorPrimitive
           end

@@ -35,20 +35,22 @@ require root+'presenters/types/date_time'
 require root+'presenters/base_presenter.rb'
 
 require root+'data/documented_object.rb'
-require root+'data/documented_object.rb'
 require root+'data/documented_array.rb'
 require root+'data/documented_uuid.rb'
 require root+'data/documented_kind.rb'
+require root+'data/documented_presenter.rb'
 
-require root+'data/types/basket_item.rb'
-require root+'data/types/basket.rb'
+# Ordering matters, due to dependencies where one type references another
+
+require root+'data/types/error_primitive.rb'
 require root+'data/types/currency.rb'
 require root+'data/types/currency_amount.rb'
-require root+'data/types/error_primitive.rb'
 require root+'data/types/product.rb'
+require root+'data/types/basket_item.rb'
+require root+'data/types/basket.rb'
 
-require root+'data/resources/currency.rb'
 require root+'data/resources/errors.rb'
+require root+'data/resources/currency.rb'
 require root+'data/resources/product.rb'
 require root+'data/resources/purchase.rb'
 

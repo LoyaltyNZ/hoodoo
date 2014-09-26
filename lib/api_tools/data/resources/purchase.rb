@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Resource 'Purchase'.
       #
-      class Purchase < ApiTools::Data::DocumentedKind
+      class Purchase < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           text :token_identifier
           object :basket, :required => true do
             type :Basket

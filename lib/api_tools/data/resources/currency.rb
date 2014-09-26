@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Resource 'Currency'.
       #
-      class Currency < ApiTools::Data::DocumentedKind
+      class Currency < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           type :Currency
         end
 

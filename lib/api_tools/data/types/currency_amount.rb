@@ -13,9 +13,9 @@ module ApiTools
 
       # Documented Platform API Type 'CurrencyAmount'.
       #
-      class CurrencyAmount < ApiTools::Data::DocumentedKind
+      class CurrencyAmount < ApiTools::Data::DocumentedPresenter
 
-        define do
+        schema do
           string :curency_code, :required => true, :length => 8
           string :qualifier, :length => 32
           text :amount, :required => true
