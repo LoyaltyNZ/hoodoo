@@ -1,3 +1,22 @@
+########################################################################
+# File::    service_application.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Define a class that service authors subclass and use to
+#           declare the component interfaces within the service via a
+#           very small DSL.
+#
+#           This class is passed to Rack and treated like an endpoint
+#           Rack application, though the service middleware in practice
+#           does not pass on calls using the Rack interface; it uses the
+#           custom calls exposed by ApiTools::ServiceImplementation.
+#           Rack's involvement between the two is really limited to just
+#           passing an instance of the service application subclass to
+#           the middleware so it knows who to "talk to".
+# ----------------------------------------------------------------------
+#           23-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # ApiTools::ServiceApplication is subclassed by people writing service

@@ -1,6 +1,34 @@
+########################################################################
+# File::    service_middleware.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Rack middleware, declared in a +config.ru+ file in the usual
+#           way - "use( ApiTools::ServiceMiddleware )".
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
-  # A container for the Rack-based service middleware.
+  # Rack middleware, declared in (e.g.) a +config.ru+ file in the
+  # usual way:
+  #
+  #     use( ApiTools::ServiceMiddleware )
+  #
+  # This is the core of the common service implementation on the
+  # Rack client-request-handling side. It is run in the context
+  # of an ApiTools::ServiceApplication subclass that's been
+  # given to Rack as the Rack endpoint application; it looks at
+  # the component interfaces supported by the service and routes
+  # requests to the correct one (or raises a 404).
+  #
+  # Lots of preprocessing and postprocessing gets done to set up
+  # things like locale information, enforce content types and
+  # so-forth. Request data is assembled in a parsed, structured
+  # format for passing to service implementations and a response
+  # object built so that services have a consistent way to
+  # return results, which can be post-processed further by the
+  # middleware before returning the data to Rack.
   #
   class ServiceMiddleware
 
@@ -125,7 +153,7 @@ module ApiTools
 
       @locale         = deal_with_language_header()
       @interaction_id = find_or_generate_interaction_id()
-      @payload_hash   = json_to_hash()
+      @payload_hash   = payload_to_hash()
     end
 
     # Process the client's call. The heart of service routing and application
@@ -215,10 +243,6 @@ module ApiTools
       #   not support the HTTP Method. Do the query parameter checks here too
       #   (i.e. common stuff but not e.g. the broken down bits of sort or search).'
 
-      # Dispatch to service.
-
-      implementation.send( supported_action, @request, @response )
-
       #   # (After loads of validation up front based on service declarations and
       #   # data types, e.g. does the Rack
       #
@@ -227,6 +251,12 @@ module ApiTools
       #   object then dispatch based on Rack method. Can have the unpacked unescaped
       #   data for search, filter, sort done here so it is structured not just a hash
       #   of parameters.
+
+      # Finally - dispatch to service.
+
+      implementation.send( supported_action,
+                           service_request,
+                           @response )
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -283,21 +313,21 @@ module ApiTools
     # Safely parse the client payload for +POST+ and +PATCH+ into instance
     # variable +@payload_hash+.
     #
-    def parse_json_payload
+    def payload_to_hash
       return unless @request.post? or @request.patch?
 
       begin
         case @content_type
-        when 'application/json'
+          when 'application/json'
 
-          # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
-          #
-          # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
-          #
-          @payload_hash = JSON.parse( json, :create_additions => false )
+            # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
+            #
+            # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+            #
+            @payload_hash = JSON.parse( json, :create_additions => false )
 
-        else
-          raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
+          else
+            raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
         end
 
       rescue => e

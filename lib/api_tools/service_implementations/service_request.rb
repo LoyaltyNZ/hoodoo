@@ -1,3 +1,16 @@
+########################################################################
+# File::    service_request.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: A high level description of a client's request, with all of
+#           the "raw" Rack request data parsed, verified as far as
+#           possible and generally cleaned up. Instances of this class
+#           are given to ApiTools::ServiceImplementation methods for
+#           each new request.
+# ----------------------------------------------------------------------
+#           24-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # Instances of the ApiTools::ServiceRequest class are passed to service

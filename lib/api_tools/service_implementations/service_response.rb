@@ -1,3 +1,16 @@
+########################################################################
+# File::    service_response.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: A high level description of a service's response to a
+#           client's request. The middleware constructs instances and
+#           fills in some of the data for every client request, then
+#           passes it to ApiTools::ServiceImplementation methods so
+#           the service can fill in the rest of the data.
+# ----------------------------------------------------------------------
+#           24-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # The service middleware creates an ApiTools::ServiceResponse instance for
@@ -116,6 +129,10 @@ module ApiTools
 
         [
           http_headers,
+
+
+          #TODO!
+
         ]
 
       else

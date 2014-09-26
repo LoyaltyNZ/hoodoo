@@ -1,3 +1,21 @@
+########################################################################
+# File::    service_implementation.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Service authors create subclasses of
+#           ApiTools::ServiceApplication, which lists the one or more
+#           subclasses of ApiTools::ServiceInterface the service author
+#           writes; each of those declares an interface which refers,
+#           for each interface endpoint, to a subclass of the class
+#           described here. Service authors create the body of their
+#           service implementation within the subclass.
+#
+#           This file, then, does very little beyond describing the
+#           method framework that service authors use.
+# ----------------------------------------------------------------------
+#           24-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # Service authors subclass this to produce the body of their service
