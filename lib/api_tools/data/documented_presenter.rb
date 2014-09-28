@@ -38,6 +38,31 @@ module ApiTools
         @schema_definition
       end
 
+      # Return a to-JSON hash that represents this resource.
+      #
+      # +uuid+::       Unique ID of the resource instance that is to be
+      #                represented.
+      #
+      # +created_at+:: Date/Time of instance creation.
+      #
+      # +data+::       Hash or Array (depending on resource's top-level
+      #                data container type) to be represented. Data within
+      #                this is compared against the schema being called to
+      #                ensure that correct information is returned and
+      #                unknown data is ignored.
+      #
+      def self.render( uuid, created_at, data )
+        target = {}
+
+        @schema.render( data, target )
+
+        # TODO: Internationalisation key, "Kind" key
+
+        target.merge!( {
+          :id         => uuid,
+          :created_at => Time.parse( created_at.to_s )
+        } )
+      end
     end
   end
 end

@@ -37,7 +37,6 @@ require root+'presenters/base_presenter.rb'
 require root+'data/documented_object.rb'
 require root+'data/documented_array.rb'
 require root+'data/documented_uuid.rb'
-require root+'data/documented_kind.rb'
 require root+'data/documented_presenter.rb'
 
 # Ordering matters, due to dependencies where one type references another

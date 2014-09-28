@@ -131,33 +131,28 @@ module ApiTools
       end
 
       if @errors.has_errors?
-
-        [
-          http_headers,
-
-
-          #TODO!
-
-        ]
-
+        http_status_code = @errors.http_status_code
+        response_body    = @errors.render()
       else
-
-        # We're not using JSON5, so the Platform API says that outmost arrays
-        # are wrapped with a top-level object key "_data".
-
-        if @response_body.is_a?( Array )
-          response_hash = { '_data' => @response_body }
-        else
-          response_hash = @response_body
-        end
-
-        [
-          @http_status_code.to_i,
-          http_headers,
-          JSON.generate( response_hash )
-        ]
-
+        http_status_code = @http_status_code
+        response_body    = @response_body
       end
+
+      # We're not using JSON5, so the Platform API says that outmost arrays
+      # are wrapped with a top-level object key "_data".
+
+      if response_body.is_a?( Array )
+        response_hash = { '_data' => response_body }
+      else
+        response_hash = response_body
+      end
+
+      [
+        http_status_code.to_i,
+        http_headers,
+        [ JSON.generate( response_hash ) ]
+      ]
+
     end
   end
 end

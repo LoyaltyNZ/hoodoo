@@ -36,6 +36,10 @@ module ApiTools
     #
     attr_reader( :errors )
 
+    # HTTP status code associated with the first error in the #errors array.
+    #
+    attr_reader( :http_status_code )
+
     # Create an instance.
     #
     # +descriptions+:: (Optional) ApiTools::ErrorDescriptions instance with
@@ -44,9 +48,11 @@ module ApiTools
     #                  +generic+ error domains only.
     #
     def initialize( descriptions = DEFAULT_ERROR_DESCRIPTIONS )
-      @uuid         = ApiTools::UUID.generate()
-      @descriptions = descriptions
-      @errors       = []
+      @uuid             = ApiTools::UUID.generate()
+      @descriptions     = descriptions
+      @errors           = []
+      @http_status_code = 500
+      @created_at       = nil # See #persist!
     end
 
     # Add an error instance to this collection.
@@ -108,6 +114,8 @@ module ApiTools
 
       # All good!
 
+      @http_status_code = description.status if @errors.empty? # Use first in collection for overall HTTP status code
+
       error = {
         :code    => code,
         :message => message || description[ :message ] || code
@@ -134,19 +142,29 @@ module ApiTools
     # #has_errors? would always return +false+.
     #
     def clear_errors
-      @errors = []
+      @errors           = []
+      @http_status_code = 500
     end
 
-    # JSON representation
+    # Return an array rendered through the ApiTools::Data::Resources::Errors
+    # collection representing the formalised resource. 
     #
     def render
-      # ...drive the type/resource description engine (schema) to
-      # produce JavaScript output. "Render", in its parlance.
+      persist!
+
+      ApiTools::Data::Resources::Errors.render(
+        @uuid,
+        @created_at,
+        @errors
+      )
     end
 
     # TODO: Persistence - e.g. database locally, or queue if available.
     #
     def persist!
+      # unless persisted...
+      #   created_at = ...
+      @created_at = Time.now # TODO
     end
 
   private
