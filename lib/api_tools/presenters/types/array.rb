@@ -47,7 +47,7 @@ module ApiTools
           end
 
           target[ final ] << read_at_path( subtarget, path )
-        end
+        end unless data.nil?
       end
     end
   end

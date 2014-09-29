@@ -57,7 +57,7 @@ describe ApiTools::Presenters::String do
     it 'should return correct error when length is exceeded' do
       errors = @inst.validate('12345678901')
       expect(errors).to eq([
-        {:code=>"generic.max_length_exceeded", :message=>"Field `one` is larger than max length `10`", :reference=>"one"}
+        {:code=>"generic.invalid_string", :message=>"Field `one` is larger than max length `10`", :reference=>"one"}
       ])
     end
   end

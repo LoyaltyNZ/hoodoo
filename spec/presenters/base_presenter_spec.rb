@@ -145,7 +145,7 @@ describe '#schema' do
         :map_ten=>{
           :map_five=>5,
           :map_six=>nil,
-          :map_eight=>nil
+          :map_eight=>[]
         },
         :map_root_one=>"ten"
       })
