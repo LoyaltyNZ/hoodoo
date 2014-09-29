@@ -63,6 +63,10 @@ module ApiTools
 
         @schema.render( data, target )
 
+        # Common fields are added after rendering the data in case there are
+        # any same-named field collisions - platform defaults should take
+        # precedence, overwriting previous definitions intentionally.
+
         unless ( uuid.nil? )
 
           # Field "kind" is taken from the class name; this is a class method
@@ -71,8 +75,8 @@ module ApiTools
 
           target.merge!( {
             :id         => uuid,
-            :created_at => Time.parse( created_at.to_s ).iso8601,
-            :kind       => self.name.split( '::' ).last
+            :kind       => self.name.split( '::' ).last,
+            :created_at => Time.parse( created_at.to_s ).iso8601
           } )
 
           target[ :language ] = language if @internationalised

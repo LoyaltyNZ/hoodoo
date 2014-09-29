@@ -1,31 +1,65 @@
 module ApiTools
   module Data
 
-    # Analogous to ApiTools::Presenters::DSL, but holds the documented data
+    # Analogous to ApiTools::Presenters::BaseDSL, but holds the documented data
     # type and resource DSL extensions only. Same-named methods herein override
-    # those in ApiTools::Presenters::DSL.
+    # those in ApiTools::Presenters::BaseDSL.
+    #
+    # Excellent worked examples that cover a significant swathe of both the
+    # base DSL and the extensions defined here can be found in the
+    # _implementations_ of the following:
+    #
+    # * ApiTools::Data::Types::Basket
+    # * ApiTools::Data::Resources::Purchase
     #
     module DocumentedDSL
 
-      # As ApiTools::Presenters::Object#object but with the extended DSL in
-      # ApiTools::Data::DocumentedObject classes.
+      # As ApiTools::Presenters::BaseDSL#object but with the extended DSL in
+      # ApiTools::Data::DocumentedDSL available to the block.
       #
       # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
       # &block:: Block declaring the fields making up the nested object
+      #
+      # Example - mandatory JSON field "currencies" would lead to an object
+      # which had the same fields as ApiTools::Data::Types::Currency along with
+      # an up-to-32 character string with field name "notes", that field also
+      # being required. Whether or not the fields of the referenced Currency
+      # type are needed is up to the definition of that type. See #type for
+      # more information.
+      #
+      #     class WealthyMember < ApiTools::Data::DocumentedObject
+      #       object :currencies, :required => true do
+      #         type :Currency
+      #         string :notes, :required => true, :length => 32
+      #       end
+      #     end
       #
       def object(name, options = {}, &block)
         raise ArgumentError.new('ApiTools::Data::DocumentedObject must have block') unless block_given?
         property(name, ApiTools::Data::DocumentedObject, options, &block)
       end
 
-      # As ApiTools::Presenters::Object#array but with the extended DSL in
-      # ApiTools::Data::DocumentedObject / ApiTools::Data::DocumentedArray
-      # classes.
+      # As ApiTools::Presenters::BaseDSL#array but with the extended DSL in
+      # ApiTools::Data::DocumentedDSL available to the block.
       #
       # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
       # &block:: Optional block declaring the fields of each array item
+      #
+      # Example - mandatory JSON field "currencies" would lead to an array
+      # where each array entry contains the fields defined by
+      # ApiTools::Data::Types::Currency along with an up-to-32 character string
+      # with field name "notes", that field also being required. Whether or not
+      # the fields of the referenced Currency type are needed is up to the
+      # definition of that type. See #type for more information.
+      #
+      #     class VeryWealthyMember < ApiTools::Data::DocumentedObject
+      #       array :currencies, :required => true do
+      #         type :Currency
+      #         string :notes, :required => true, :length => 32
+      #       end
+      #     end
       #
       def array(name, options = {}, &block)
         property(name, ApiTools::Data::DocumentedArray, options, &block)
@@ -69,7 +103,7 @@ module ApiTools
       # length that contains comma-separated tag strings.
       #
       # +field_name+:: Name of the field that will hold the tags.
-      # +options+:: Optional options hash. No option keys/values defined yet.
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
       #
       # Example - a Product resource which supports product tagging:
       #
@@ -103,7 +137,7 @@ module ApiTools
       # +field_name+:: Name of the field that will hold the UUID.
       # +options+:: Options hash. See below.
       #
-      # In addition to standard options from ApiTools::Presenters::Object,
+      # In addition to standard options from ApiTools::Presenters::BaseDSL,
       # extra option keys and values are:
       #
       # +:resource+:: The name of a resource (as a symbol, e.g. +:Product+) that
@@ -133,7 +167,12 @@ module ApiTools
       # at the point of declaration - essentially, it's macro expansion.
       #
       # +type_name+:: Name of the type to nest as a symbol, e.g. +:BasketItem+.
-      # +options+:: Optional options hash. See ApiTools::Presenters::Object.
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      #
+      # It doesn't make sense to mark a +type+ 'field' as +:required+ in the
+      # options since the declaration just expands to the contents of the
+      # referenced type and it is the definition of that type that determines
+      # whether or not its various field(s) are optional or required.
       #
       # Example 1 - a basket includes an array of the type +BasketItems+.
       #

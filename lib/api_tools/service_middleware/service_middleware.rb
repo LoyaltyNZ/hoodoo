@@ -185,7 +185,7 @@ module ApiTools
     # invocation. Relies entirely on data assembled during initialisation of
     # this middleware instance or during handling in #call.
     #
-    def process()
+    def process
 
       # Select a service based on the escaped URI's path. If we find none,
       # then there's no matching endpoint; badly routed request; 404. If we

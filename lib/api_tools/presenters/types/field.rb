@@ -40,7 +40,7 @@ module ApiTools
       end
 
       def render(data, target)
-        path =  (@mapping.nil? ? @path : @mapping).clone
+        path = (@mapping.nil? ? @path : @mapping).clone
         root = target
         final = path.pop
         path.each do |element|

@@ -26,11 +26,39 @@ module ApiTools
         errors
       end
 
+
+
       def render(data, target)
+
+        puts "!"*80
+        puts "Render current target #{target.inspect}"
+        puts "Data #{data.inspect}"
+        puts "Path #{@path}"
+        puts "Properties #{@properties.inspect}"
+
+        # Work out where in the target data to build an array
+
+        path = (@mapping.nil? ? @path : @mapping).clone
+        root = target
+        final = path.pop
+        path.each do |element|
+          root[element] = {} unless root.has_key?(element)
+          root = root[element]
+        end
+
+        root[final] = []
+        path << final
+
         data.each do |item|
+          subtarget = {}
           @properties.each do |name, property|
-            property.render(item[name], target)
+            property.render(item[name], subtarget)
           end
+          path.each do |element|
+            puts "SUB #{element}"
+            subtarget = subtarget[element]
+          end
+          root[final] << subtarget
         end
       end
     end
