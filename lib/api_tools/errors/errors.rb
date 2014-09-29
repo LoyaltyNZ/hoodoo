@@ -146,7 +146,7 @@ module ApiTools
     # collection representing the formalised resource.
     #
     def render
-      store!
+      store! if @created_at.nil?
 
       ApiTools::Data::Resources::Errors.render(
         { :errors => @errors },
@@ -164,8 +164,8 @@ module ApiTools
       @created_at ||= Time.now # TODO
 
       ApiTools::Logger.error(
-        "Storing ApiTools::Errors instance"
-        JSON.pretty_generate( e.render )
+        "Storing ApiTools::Errors instance",
+        JSON.pretty_generate( render() )
       )
     end
 
