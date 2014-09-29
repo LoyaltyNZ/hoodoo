@@ -19,6 +19,9 @@ require root+'services/amqp_endpoint'
 require root+'services/base_service'
 require root+'services/base_client'
 
+require root+'presenters/base_dsl.rb'
+require root+'presenters/base_presenter.rb'
+
 require root+'presenters/types/field'
 require root+'presenters/types/object'
 require root+'presenters/types/array'
@@ -32,8 +35,7 @@ require root+'presenters/types/decimal'
 require root+'presenters/types/date'
 require root+'presenters/types/date_time'
 
-require root+'presenters/base_presenter.rb'
-
+require root+'data/documented_dsl.rb'
 require root+'data/documented_object.rb'
 require root+'data/documented_array.rb'
 require root+'data/documented_uuid.rb'

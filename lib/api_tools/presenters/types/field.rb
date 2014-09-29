@@ -14,6 +14,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name, options = {})
+        puts "Field #{name} init #{self.class.name}"
         @name = name
         @required = options.has_key?(:required) ? options[:required] : false
         @mapping = options.has_key?(:mapping) ? options[:mapping] : nil

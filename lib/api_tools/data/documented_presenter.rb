@@ -40,28 +40,46 @@ module ApiTools
 
       # Return a to-JSON hash that represents this resource.
       #
-      # +uuid+::       Unique ID of the resource instance that is to be
-      #                represented.
-      #
-      # +created_at+:: Date/Time of instance creation.
-      #
       # +data+::       Hash or Array (depending on resource's top-level
       #                data container type) to be represented. Data within
       #                this is compared against the schema being called to
       #                ensure that correct information is returned and
       #                unknown data is ignored.
       #
-      def self.render( uuid, created_at, data )
+      # +uuid+::       Unique ID of the resource instance that is to be
+      #                represented. If nil / omitted, this is assumed to be
+      #                a rendering of a type or other non-resource like item.
+      #                Otherwise the field is mandatory.
+      #
+      # +created_at+:: Date/Time of instance creation. Only required if UUID
+      #                has been provided.
+      #
+      # +language+::   Optional language. If the type/resource being rendered
+      #                is internationalised but this is omitted, then a value
+      #                of "en-nz" is used as a default.
+      #
+      def self.render( data, uuid = nil, created_at = nil, language = 'en-nz' )
         target = {}
 
         @schema.render( data, target )
 
-        # TODO: Internationalisation key, "Kind" key
+        unless ( uuid.nil? )
 
-        target.merge!( {
-          :id         => uuid,
-          :created_at => Time.parse( created_at.to_s )
-        } )
+          # Field "kind" is taken from the class name; this is a class method
+          # so "self.name" yields "ApiTools::Data::Resources::..." or similar.
+          # Split on "::" and take the last part as the Resource kind.
+
+          target.merge!( {
+            :id         => uuid,
+            :created_at => Time.parse( created_at.to_s ).iso8601,
+            :kind       => self.name.split( '::' ).last
+          } )
+
+          target[ :language ] = language if @internationalised
+
+        end
+
+        return target
       end
     end
   end

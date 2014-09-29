@@ -104,17 +104,13 @@ module ApiTools
       actual_keys   = reference.keys
       missing_keys  = required_keys - actual_keys
 
-      puts required_keys.inspect
-      puts actual_keys.inspect
-      puts missing_keys.inspect
-
       unless ( missing_keys.empty? )
         raise "In #add_error: Reference hash missing required keys: #{ missing_keys.join( ', ' ) }"
       end
 
       # All good!
 
-      @http_status_code = description.status if @errors.empty? # Use first in collection for overall HTTP status code
+      @http_status_code = description[ :status ] || 500 if @errors.empty? # Use first in collection for overall HTTP status code
 
       error = {
         :code    => code,
@@ -146,16 +142,16 @@ module ApiTools
       @http_status_code = 500
     end
 
-    # Return an array rendered through the ApiTools::Data::Resources::Errors
-    # collection representing the formalised resource. 
+    # Return a Hash rendered through the ApiTools::Data::Resources::Errors
+    # collection representing the formalised resource.
     #
     def render
       persist!
 
       ApiTools::Data::Resources::Errors.render(
+        { :errors => @errors },
         @uuid,
-        @created_at,
-        @errors
+        @created_at
       )
     end
 

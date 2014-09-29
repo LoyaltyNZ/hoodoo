@@ -92,7 +92,7 @@ module ApiTools
 
       errors_for 'generic' do
         error 'not_found',              status: 404, message: 'Resource not found',           reference: [ :uuid ]
-        error 'malformed',              status: 422, message: 'Malformed JSON'
+        error 'malformed',              status: 422, message: 'Malformed payload'
         error 'required_field_missing', status: 422, message: 'Required field missing',       reference: [ :field_name ]
         error 'invalid_string',         status: 422, message: 'Invalid string format',        reference: [ :field_name ]
         error 'invalid_integer',        status: 422, message: 'Invalid integer format',       reference: [ :field_name ]
