@@ -26,39 +26,27 @@ module ApiTools
         errors
       end
 
-
-
+      # Render an array into the target hash based on the internal state that
+      # describes this instance's current path (position in the heirarchy of
+      # nested schema entities).
+      #
+      # +data+::   The Array to render.
+      # +target+:: The Hash that we render into. A "path" of keys leading to
+      #            nested Hashes is built via +super()+, with the final
+      #            key entry yielding the rendered array.
+      #
       def render(data, target)
+        path  = super( [], target )
+        final = path.last
 
-        puts "!"*80
-        puts "Render current target #{target.inspect}"
-        puts "Data #{data.inspect}"
-        puts "Path #{@path}"
-        puts "Properties #{@properties.inspect}"
-
-        # Work out where in the target data to build an array
-
-        path = (@mapping.nil? ? @path : @mapping).clone
-        root = target
-        final = path.pop
-        path.each do |element|
-          root[element] = {} unless root.has_key?(element)
-          root = root[element]
-        end
-
-        root[final] = []
-        path << final
-
-        data.each do |item|
+        data.each do | item |
           subtarget = {}
-          @properties.each do |name, property|
-            property.render(item[name], subtarget)
+
+          @properties.each do | name, property |
+            property.render( item[ name ], subtarget )
           end
-          path.each do |element|
-            puts "SUB #{element}"
-            subtarget = subtarget[element]
-          end
-          root[final] << subtarget
+
+          target[ final ] << read_at_path( subtarget, path )
         end
       end
     end

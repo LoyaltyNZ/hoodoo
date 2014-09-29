@@ -146,7 +146,7 @@ module ApiTools
     # collection representing the formalised resource.
     #
     def render
-      persist!
+      store!
 
       ApiTools::Data::Resources::Errors.render(
         { :errors => @errors },
@@ -157,10 +157,16 @@ module ApiTools
 
     # TODO: Persistence - e.g. database locally, or queue if available.
     #
-    def persist!
+    def store!
       # unless persisted...
       #   created_at = ...
-      @created_at = Time.now # TODO
+
+      @created_at ||= Time.now # TODO
+
+      ApiTools::Logger.error(
+        "Storing ApiTools::Errors instance"
+        JSON.pretty_generate( e.render )
+      )
     end
 
   private

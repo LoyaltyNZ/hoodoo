@@ -53,12 +53,7 @@ module ApiTools
       end
 
       def render(data, target)
-        puts "*"*80
-        puts "Render current target #{target.inspect}"
-        puts "Data is #{data.inspect}"
-        puts "Properties #{@properties.inspect}"
         @properties.each do |name, property|
-          puts "Property name #{name} => #{property.inspect}"
           property.render(data[name], target)
         end
       end

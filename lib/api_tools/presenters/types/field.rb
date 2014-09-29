@@ -14,7 +14,6 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name, options = {})
-        puts "Field #{name} init #{self.class.name}"
         @name = name
         @required = options.has_key?(:required) ? options[:required] : false
         @mapping = options.has_key?(:mapping) ? options[:mapping] : nil
@@ -39,15 +38,31 @@ module ApiTools
         target[@name] = root
       end
 
+      # Dive down into a given hash along path arrays +@mapping+ or +@path+,
+      # building new hash entries if necessary at each path level until the
+      # last one. At that last level, assign the given object.
+      #
+      # +data::     The object to build at the final path entry - usually an
+      #             empty Array or Hash.
+      #
+      # +target+::  The Hash (may be initially empty) in which to build the
+      #             path of keys from internal data +@mapping+ or +@path+.
+      #
+      # Returns the full path array that was used (a clone of +@mapping+ or
+      # +@path+).
+      #
       def render(data, target)
-        path = (@mapping.nil? ? @path : @mapping).clone
-        root = target
+        root  = target
+        path  = ( @mapping.nil? ? @path : @mapping ).clone
         final = path.pop
-        path.each do |element|
-          root[element] = {} unless root.has_key?(element)
-          root = root[element]
+
+        path.each do | element |
+          root[ element ] = {} unless root.has_key?( element )
+          root = root[ element ]
         end
-        root[final] = data
+
+        root[ final ] = data
+        return path << final
       end
 
       # Return the full path and name of this field
@@ -57,6 +72,22 @@ module ApiTools
         return path.to_s if @name.nil? or @name.empty?
         path+'.'+@name.to_s
       end
+
+    protected
+
+      # Dive down into a given target data hash using the given array of path
+      # keys, returning the result at the final key in the path. E.g. if the
+      # Hash is "{ :foo => { :bar => { :baz => "hello" } } }" then a path of
+      # "[ :foo, :bar ]" would yield "{ :baz => "hello" }".
+      #
+      def read_at_path( from_target, with_path )
+        with_path.each do | element |
+          from_target = from_target[ element ]
+        end
+
+        return from_target
+      end
+
     end
   end
 end
