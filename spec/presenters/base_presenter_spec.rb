@@ -42,6 +42,19 @@ describe '#schema' do
       end
 
     end
+
+    class TestPresenter4 < ApiTools::Presenters::BasePresenter
+
+      schema do
+        array :an_array, :required => true do
+          integer :an_integer
+          datetime :a_datetime
+        end
+        enum :an_enum, :from => [ :one, 'two', 3 ]
+        text :some_text
+      end
+
+    end
   end
 
   describe '#validate' do
@@ -72,6 +85,23 @@ describe '#schema' do
       expect(schema.properties[:four].properties[:seven]).to be_a(ApiTools::Presenters::Date)
       expect(schema.properties[:four].properties[:seven].required).to eq(true)
       expect(schema.properties[:four].properties[:eight]).to be_a(ApiTools::Presenters::Array)
+    end
+
+    it 'should have a nested schema for arrays' do
+      schema = TestPresenter4.get_schema
+      expect(schema.properties.length).to eq(3)
+      expect(schema.properties[:an_array]).to be_a(ApiTools::Presenters::Array)
+      expect(schema.properties[:an_array].required).to eq(true)
+      expect(schema.properties[:an_array].properties.length).to eq(2)
+      expect(schema.properties[:an_array].properties[:an_integer]).to be_a(ApiTools::Presenters::Integer)
+      expect(schema.properties[:an_array].properties[:an_integer].required).to eq(false)
+      expect(schema.properties[:an_array].properties[:a_datetime]).to be_a(ApiTools::Presenters::DateTime)
+      expect(schema.properties[:an_array].properties[:a_datetime].required).to eq(false)
+      expect(schema.properties[:an_enum]).to be_a(ApiTools::Presenters::Enum)
+      expect(schema.properties[:an_enum].required).to eq(false)
+      expect(schema.properties[:an_enum].from).to eq(['one', 'two', '3'])
+      expect(schema.properties[:some_text]).to be_a(ApiTools::Presenters::Text)
+      expect(schema.properties[:some_text].required).to eq(false)
     end
 
     it 'should return no errors with a simple schema and valid data' do

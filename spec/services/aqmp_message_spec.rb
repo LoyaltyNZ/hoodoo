@@ -24,6 +24,9 @@ describe ApiTools::Services::AMQPMessage do
 
   describe '#send_message' do
     it 'should generate a message_id' do
+
+      pending
+
       mock_exchange = double
       expect(ApiTools::UUID).to receive(:generate)
       inst = ApiTools::Services::AMQPMessage.new(mock_exchange,{});
@@ -32,6 +35,9 @@ describe ApiTools::Services::AMQPMessage do
     end
 
     it 'should publish with the correct options' do
+
+      pending
+
       mock_exchange = double
       inst = ApiTools::Services::AMQPMessage.new(mock_exchange,{
         :routing_key => 'two',

@@ -5,6 +5,8 @@ describe ApiTools::Services::BaseClient do
   describe '#initialize' do
     it 'should initialise amqp_uri, client_id, response_endpoint and requests' do
 
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
 
       expect(instance.amqp_uri).to eq('one')
@@ -17,6 +19,9 @@ describe ApiTools::Services::BaseClient do
 
   describe '#create_listener_thread' do
     it 'should create and return a thread' do
+
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
       expect(Thread).to receive(:new) do |&block|
         'thread'
@@ -26,6 +31,9 @@ describe ApiTools::Services::BaseClient do
     end
 
     it 'should create, start and process a response correctly' do
+
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
 
       mock_bunny = double()
@@ -66,6 +74,9 @@ describe ApiTools::Services::BaseClient do
     end
 
     it 'should ignore non-response packets' do
+
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
 
       mock_bunny = double()
@@ -111,6 +122,8 @@ describe ApiTools::Services::BaseClient do
   describe '#start' do
     it 'should create a bunny connection and set channel and exchange' do
 
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
 
       mock_bunny = double()
@@ -138,6 +151,8 @@ describe ApiTools::Services::BaseClient do
   describe '#request' do
     it 'should call exchange.publish with the correct params' do
 
+      pending
+
       instance = ApiTools::Services::BaseClient.new('one')
       instance.exchange = double()
 
@@ -159,6 +174,8 @@ describe ApiTools::Services::BaseClient do
     end
 
     it 'should timeout properly' do
+
+      pending
 
       instance = ApiTools::Services::BaseClient.new('one')
       instance.exchange = double()

@@ -5,6 +5,9 @@ module ApiTools
 
       include ApiTools::Presenters::BaseDSL
 
+      # The properties of this object, an +array+ of +Field+ instances.
+      attr_accessor :properties
+
       # Check if data is a valid Array and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path

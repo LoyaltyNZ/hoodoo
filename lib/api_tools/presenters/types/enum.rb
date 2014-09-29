@@ -13,7 +13,8 @@ module ApiTools
 
       # Initialize a String instance with the appropriate name and options
       # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
+      # +options+:: A +Hash+ of options, e.g. :required => true,
+      #             :from => [ :array, :of, :allowed, :enum, :values ]
       def initialize(name, options = {})
         super name, options
 
