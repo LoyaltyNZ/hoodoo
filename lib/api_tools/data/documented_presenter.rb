@@ -21,7 +21,7 @@ module ApiTools
     #
     class DocumentedPresenter < ApiTools::Presenters::BasePresenter
 
-      # Define the JSON schema for validation.
+      # Define the JSON schema for validation. See also ::schema_definition.
       #
       # &block:: Block that makes calls to the DSL defined by
       #          ApiTools::Data::DocumentedObject.
@@ -32,7 +32,7 @@ module ApiTools
         @schema_definition = block
       end
 
-      # Read back the block that defined the schema.
+      # Read back the block that defined the schema. See also ::schema.
       #
       def self.schema_definition
         @schema_definition

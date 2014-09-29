@@ -2,7 +2,7 @@
 # File::    documented_object.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: ApiTools::Presenters::Object DSL extension used to allow a
+# Purpose:: ApiTools::Presenters::Object extension used to allow a
 #           class to describe a well defined, documented Type or
 #           Resource which may refer to another documented Type. Such
 #           classes can then be used for JSON validation.

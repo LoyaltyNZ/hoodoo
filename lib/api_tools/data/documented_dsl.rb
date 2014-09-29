@@ -1,3 +1,16 @@
+########################################################################
+# File::    documented_dsl.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: ApiTools::Presenters::BaseDSL extension mixin used to
+#           allow a class to describe a well defined, documented Type
+#           or Resource which may refer to another documented Type.
+#           Such classes can then be used for JSON validation. Include
+#           ApiTools::Presenters::BaseDSL first, then this module.
+# ----------------------------------------------------------------------
+#           29-Sep-2014 (ADH): Split out from +documented_object.rb+.
+########################################################################
+
 module ApiTools
   module Data
 
