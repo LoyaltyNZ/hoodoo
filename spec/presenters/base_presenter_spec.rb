@@ -196,6 +196,37 @@ describe '#schema' do
         }
       })
     end
+
+    it 'should render arrays' do
+      time = Time.now.iso8601
+      data = {
+        :an_enum => 'one',
+        :an_array => [
+          {},
+          { :an_integer => 2 },
+          { :a_datetime => time }
+        ]
+      }
+
+      expect(TestPresenter4.render(data)).to eq({
+        :an_array => [
+          {
+            :an_integer => nil,
+            :a_datetime => nil
+          },
+          {
+            :an_integer => 2,
+            :a_datetime => nil
+          },
+          {
+            :an_integer => nil,
+            :a_datetime => time
+          }
+        ],
+        :an_enum => "one",
+        :some_text => nil
+      })
+    end
   end
 
   describe '#parse' do
