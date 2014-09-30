@@ -39,8 +39,11 @@ module ApiTools
       #            key entry yielding the rendered array.
       #
       def render(data, target)
-        path  = super( [], target )
-        final = path.last
+
+        # This relies on pass-by-reference; we'll update 'array' later.
+
+        array = []
+        path  = super( array, target )
 
         data.each do | item |
           subtarget = {}
@@ -49,7 +52,7 @@ module ApiTools
             property.render( item[ name ], subtarget )
           end
 
-          target[ final ] << read_at_path( subtarget, path )
+          array << read_at_path( subtarget, path )
         end unless data.nil?
       end
     end

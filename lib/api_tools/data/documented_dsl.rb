@@ -52,7 +52,7 @@ module ApiTools
         raise ArgumentError.new('ApiTools::Data::DocumentedDSL#object must have block') unless block_given?
 
         obj = property(name, ApiTools::Data::DocumentedObject, options, &block)
-        internationalised() if obj.is_internationalised?
+        internationalised() if obj.is_internationalised?()
       end
 
       # As ApiTools::Presenters::BaseDSL#array but with the extended DSL in
@@ -80,7 +80,7 @@ module ApiTools
         raise ArgumentError.new('ApiTools::Data::DocumentedDSL#array must have block') unless block_given?
 
         ary = property(name, ApiTools::Data::DocumentedArray, options, &block)
-        internationalised() if ary.is_internationalised?
+        internationalised() if ary.is_internationalised?()
       end
 
       # Declares that this Type or Resource contains fields which will may

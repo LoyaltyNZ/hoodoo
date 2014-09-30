@@ -19,7 +19,17 @@ module ApiTools
         property(name, ApiTools::Presenters::Object, options, &block)
       end
 
-      # Define a JSON array with the supplied name and options
+      # Define a JSON array with the supplied name and options. If there is
+      # a block provided, then more DSL calls inside the block define how each
+      # array entry must look; otherwise array entries are not validated /
+      # are undefined.
+      #
+      # When an array field uses +:required => true+, this only says that at
+      # least an empty array must be present, nothing more. If the array uses
+      # a block with fields that themselves are required, then this is only
+      # checked for if the array contains one or more entries (and is checked
+      # for each of those entries).
+      #
       # Params
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
