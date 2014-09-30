@@ -99,4 +99,65 @@ describe ApiTools::Presenters::Array do
       ])
     end
   end
+
+  describe '#render' do
+    it 'should render correctly' do
+      time = Time.now.iso8601
+      data = {
+        :an_enum => 'one',
+        :an_array => [
+          {},
+          { :an_integer => 2 },
+          { :a_datetime => time }
+        ]
+      }
+
+      expect(TestPresenter4.render(data)).to eq({
+        :an_array => [
+          {
+            :an_integer => nil,
+            :a_datetime => nil
+          },
+          {
+            :an_integer => 2,
+            :a_datetime => nil
+          },
+          {
+            :an_integer => nil,
+            :a_datetime => time
+          }
+        ],
+        :an_enum => "one",
+        :some_text => nil
+      })
+    end
+  end
+
+  describe '#parse' do
+    it 'should parse correctly' do
+      time = Time.now.iso8601
+      data = {
+        :an_enum => 'one',
+        :an_array => [
+          {},
+          { :an_integer => 2 },
+          { :a_datetime => time }
+        ]
+      }
+
+      expect(TestPresenter4.parse(data)).to eq({
+        :an_array => [
+          {
+          },
+          {
+            :an_integer => 2
+          },
+          {
+            :a_datetime => time
+          }
+        ],
+        :an_enum => "one"
+      })
+    end
+  end
 end
