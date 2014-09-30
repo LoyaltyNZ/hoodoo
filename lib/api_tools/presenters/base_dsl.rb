@@ -106,6 +106,7 @@ module ApiTools
     private
 
       # Define a JSON property with the supplied name, type and options.
+      # Returns the new property instance.
       # Params
       # +name+:: The JSON key
       # +type+:: A +Class+ for validation
@@ -115,6 +116,7 @@ module ApiTools
         inst.instance_eval &block if block_given?
         @properties ||= {}
         @properties[name] = inst
+        return inst
       end
 
     end

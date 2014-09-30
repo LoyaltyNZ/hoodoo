@@ -31,16 +31,7 @@ module ApiTools
     # Platform API documentation.
     #
     class DocumentedObject < ApiTools::Presenters::Object
-
       include ApiTools::Data::DocumentedDSL
-
-      # Does this instance state that it requires internationalisation?
-      # If so +true+, else +false+.
-      #
-      def is_internationalised
-        @internationalised == true
-      end
-
     end
   end
 end

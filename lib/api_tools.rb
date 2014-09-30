@@ -38,6 +38,7 @@ require root+'presenters/types/date_time'
 require root+'data/documented_dsl.rb'
 require root+'data/documented_object.rb'
 require root+'data/documented_array.rb'
+require root+'data/documented_tags.rb'
 require root+'data/documented_uuid.rb'
 require root+'data/documented_presenter.rb'
 

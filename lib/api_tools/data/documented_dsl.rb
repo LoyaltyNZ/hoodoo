@@ -49,8 +49,10 @@ module ApiTools
       #     end
       #
       def object(name, options = {}, &block)
-        raise ArgumentError.new('ApiTools::Data::DocumentedObject must have block') unless block_given?
-        property(name, ApiTools::Data::DocumentedObject, options, &block)
+        raise ArgumentError.new('ApiTools::Data::DocumentedDSL#object must have block') unless block_given?
+
+        obj = property(name, ApiTools::Data::DocumentedObject, options, &block)
+        internationalised() if obj.is_internationalised?
       end
 
       # As ApiTools::Presenters::BaseDSL#array but with the extended DSL in
@@ -75,7 +77,10 @@ module ApiTools
       #     end
       #
       def array(name, options = {}, &block)
-        property(name, ApiTools::Data::DocumentedArray, options, &block)
+        raise ArgumentError.new('ApiTools::Data::DocumentedDSL#array must have block') unless block_given?
+
+        ary = property(name, ApiTools::Data::DocumentedArray, options, &block)
+        internationalised() if ary.is_internationalised?
       end
 
       # Declares that this Type or Resource contains fields which will may
@@ -112,6 +117,13 @@ module ApiTools
         @internationalised = true
       end
 
+      # An enquiry method related to, but not part of the DSL; returns +true+
+      # if the schema instance is internationalised, else +false+.
+      #
+      def is_internationalised?
+        !! @internationalised
+      end
+
       # Declares that this Type or Resource has a string field of unlimited
       # length that contains comma-separated tag strings.
       #
@@ -133,12 +145,7 @@ module ApiTools
       #
       def tags( field_name, options = nil )
         options ||= {}
-
-        # TODO: Something more advanced than just treating this as a 'text'
-        #       field, with no additional validation. From a JSON perspective,
-        #       though, there might not be anything else to do.
-
-        property(field_name, ApiTools::Presenters::Text, options)
+        property(field_name, ApiTools::Data::DocumentedTags, options)
       end
 
       # Declares that this Type or Resource _refers to_ another Resource

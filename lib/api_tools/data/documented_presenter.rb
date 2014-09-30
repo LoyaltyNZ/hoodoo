@@ -38,6 +38,12 @@ module ApiTools
         @schema_definition
       end
 
+      # Does this presenter use internationalisation?
+      #
+      def self.is_internationalised?
+        @schema.is_internationalised?
+      end
+
       # Return a to-JSON hash that represents this resource.
       #
       # +data+::       Hash or Array (depending on resource's top-level
@@ -79,7 +85,7 @@ module ApiTools
             :created_at => Time.parse( created_at.to_s ).iso8601
           } )
 
-          target[ :language ] = language if @internationalised
+          target[ :language ] = language if self.is_internationalised?()
 
         end
 
