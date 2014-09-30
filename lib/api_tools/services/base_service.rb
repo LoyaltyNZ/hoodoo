@@ -32,19 +32,9 @@ module ApiTools
             loop do
               listener_queue.subscribe(:ack => true, :block => true) do |delivery_info, metadata, payload|
                 begin
-                  request = request_class.new(channel.default_exchange, {
-                    :message_id => metadata.message_id,
-                    :type => metadata.type,
-                    :correlation_id => metadata.correlation_id,
-                    :reply_to => metadata.reply_to,
-                    :content_type => metadata.content_type,
-                    :received_by => delivery_info.routing_key,
-                    :response_class => response_class,
-                    :payload => payload,
-                  })
-                  request.deserialize
+                  request = ApiTools::Services::HTTPRequest.create_from_raw_message(delivery_info, metadata, payload)
                   response = process(request)
-                  response.send_message if !response.nil? && response.class <= ApiTools::Services::Response
+                  send_message(channel.default_exchange, response) if !response.nil? && response.class <= ApiTools::Services::Response
                   channel.ack(delivery_info.delivery_tag)
                 rescue Exception => e
                   ApiTools::Logger.error(e.message)
@@ -53,7 +43,7 @@ module ApiTools
                     :type => 'error',
                     :payload => '{"error":"'+e.message+'"}',
                   })
-                  response.send_message
+                  send_message(channel.default_exchange, response)
                   channel.nack(delivery_info.delivery_tag, :requeue => false)
                 end
               end

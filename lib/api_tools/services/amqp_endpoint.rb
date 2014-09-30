@@ -79,7 +79,7 @@ module ApiTools
 
       def send_async_request(request)
         request.reply_to = @response_endpoint
-        request.send_message
+        send_message(@exchange, request)
         @requests[request.message_id] = request
         request
       end
@@ -97,6 +97,19 @@ module ApiTools
         end
         @requests.delete(request.message_id)
         response
+      end
+
+      def send_message(exchange, msg)
+        options = {
+          :message_id => msg.message_id,
+          :routing_key => msg.routing_key,
+          :type => msg.type,
+          :correlation_id => msg.correlation_id,
+          :content_type => msg.content_type,
+          :reply_to => msg.reply_to,
+        }
+        msg.serialize
+        exchange.publish(msg.payload, options)
       end
 
       def stop

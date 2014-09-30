@@ -16,7 +16,10 @@ require root+'services/http_request'
 require root+'services/http_response'
 
 require root+'services/amqp_endpoint'
+require root+'services/amqp_multithreaded_endpoint'
+
 require root+'services/base_service'
+require root+'services/base_multithreaded_service'
 require root+'services/base_client'
 
 require root+'presenters/base_dsl.rb'

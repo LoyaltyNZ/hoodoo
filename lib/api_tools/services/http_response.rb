@@ -1,15 +1,12 @@
-require "json"
-
 module ApiTools
   module Services
     class HTTPResponse < ApiTools::Services::Response
 
-      attr_accessor :session_id, :headers, :status_code, :status_message, :body
+      attr_accessor :session_id, :headers, :status_code, :body
 
-      def initialize(exchange, options = {})
-        super exchange, options
-
-        update(options)
+      def initialize(options = {})
+        update options
+        super options
       end
 
       def serialize
@@ -19,21 +16,19 @@ module ApiTools
           :headers => @headers,
           :body => @body,
         }
-        @payload = @content.to_msgpack
+        super
       end
 
       def deserialize
-        @content = MessagePack.unpack(@payload, :symbolize_keys => true)
-        update(@content)
+        super
+        update @content
       end
 
-      private
-
-      def update(hash)
-        @session_id = hash[:session_id]
-        @status_code = hash[:status_code]
-        @headers = hash[:headers]
-        @body = hash[:body]
+      def update(options)
+        @session_id = options[:session_id]
+        @status_code = options[:status_code]
+        @headers = options[:headers]
+        @body = options[:body]
       end
 
     end
