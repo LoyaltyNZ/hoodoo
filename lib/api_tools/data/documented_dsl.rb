@@ -77,8 +77,6 @@ module ApiTools
       #     end
       #
       def array(name, options = {}, &block)
-        raise ArgumentError.new('ApiTools::Data::DocumentedDSL#array must have block') unless block_given?
-
         ary = property(name, ApiTools::Data::DocumentedArray, options, &block)
         internationalised() if ary.is_internationalised?()
       end

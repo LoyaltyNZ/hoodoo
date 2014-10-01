@@ -16,12 +16,10 @@ module ApiTools
       class Currency < ApiTools::Data::DocumentedPresenter
 
         schema do
-          string :currency_code, :required => true, :length => 8
-          string :symbol, :length => 16
+          string :currency_code, :required => true, :length => 16
+          string :symbol, :length => 8
           integer :multiplier, :default => 100
-          array :qualifiers do
-            string :qualifier, :length => 32
-          end
+          array :qualifiers
         end
 
       end

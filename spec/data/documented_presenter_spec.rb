@@ -1,9 +1,20 @@
 require "spec_helper"
-require "./lib/api_tools.rb"
 
 describe '#schema' do
 
   before do
+
+    # Just in case someone's deliberately excluding other source files to
+    # check on code coverage...
+    #
+    module ApiTools
+      module Data
+        module Types
+        end
+        module Resources
+        end
+      end
+    end
 
     # This exercises basic type definition using the Presenters DSL's #text
     # and #internationalised methods.
@@ -63,8 +74,10 @@ describe '#schema' do
 
   describe '#validate' do
     it 'should have schema defined properly' do
+
       schema = ApiTools::Data::Types::Hello.get_schema
 
+      expect(ApiTools::Data::Types::Hello.is_internationalised?()).to eq(true)
       expect(schema.is_internationalised?()).to eq(true)
       expect(schema.properties.count).to eq(1)
       expect(schema.properties[:name]).to be_a(ApiTools::Presenters::Text)
@@ -72,6 +85,7 @@ describe '#schema' do
 
       schema = ApiTools::Data::Resources::World.get_schema
 
+      expect(ApiTools::Data::Resources::World.is_internationalised?()).to eq(true)
       expect(schema.is_internationalised?()).to eq(true)
       expect(schema.properties.count).to eq(3)
       expect(schema.properties[:errors_id]).to be_a(ApiTools::Data::DocumentedUUID)
@@ -287,7 +301,7 @@ describe '#schema' do
   end
 
   describe '#render' do
-    it 'should render correctly' do
+    it 'should render correctly as a type without a UUID' do
       data = {
         :errors_id => ApiTools::UUID.generate,
         :test_tags => 'foo,bar,baz',
@@ -304,6 +318,50 @@ describe '#schema' do
       }
 
       expect(ApiTools::Data::Resources::World.render(data)).to eq({
+        :errors_id => data[:errors_id],
+        :test_tags => 'foo,bar,baz',
+        :test_object => {
+          :nested_object => {
+            :name => 'Some name',
+            :obj_suffix => '!'
+          },
+          :test_array => [
+            { :name => 'Some name 0', :ary_suffix => '00' },
+            { :name => 'Some name 1', :ary_suffix => nil }
+          ]
+        }
+      })
+    end
+
+    it 'should render correctly as a resource with a UUID' do
+      data = {
+        :errors_id => ApiTools::UUID.generate,
+        :test_tags => 'foo,bar,baz',
+        :test_object => {
+          :nested_object => {
+            :name => 'Some name',
+            :obj_suffix => '!'
+          },
+          :test_array => [
+            { :name => 'Some name 0', :ary_suffix => '00' },
+            { :name => 'Some name 1' }
+          ]
+        }
+      }
+
+      uuid = ApiTools::UUID.generate
+      time = Time.now
+
+      expect(ApiTools::Data::Resources::World.render(
+        data,
+        uuid,
+        time,
+        'en-gb'
+      )).to eq({
+        :id => uuid,
+        :kind => 'World',
+        :created_at => time.iso8601,
+        :language => 'en-gb',
         :errors_id => data[:errors_id],
         :test_tags => 'foo,bar,baz',
         :test_object => {

@@ -17,6 +17,18 @@ describe ApiTools::Presenters::Enum do
     end
   end
 
+  describe '::schema' do
+    it 'should raise an error if we use :from incorrectly' do
+      expect {
+        class ErroneousEnumTest < ApiTools::Presenters::BasePresenter
+          schema do
+            enum :from => "wrong!"
+          end
+        end
+      }.to raise_error(ArgumentError)
+    end
+  end
+
   describe '#validate' do
     it 'should insist on string values' do
       data = {

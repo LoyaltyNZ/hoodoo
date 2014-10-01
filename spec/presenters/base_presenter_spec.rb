@@ -1,5 +1,4 @@
 require "spec_helper"
-require "./lib/api_tools.rb"
 
 describe '#schema' do
 

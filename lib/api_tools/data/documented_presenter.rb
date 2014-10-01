@@ -58,7 +58,8 @@ module ApiTools
       #                Otherwise the field is mandatory.
       #
       # +created_at+:: Date/Time of instance creation. Only required if UUID
-      #                has been provided.
+      #                has been provided. This is a Ruby DateTime instance or
+      #                similar, _NOT_ a string!
       #
       # +language+::   Optional language. If the type/resource being rendered
       #                is internationalised but this is omitted, then a value
