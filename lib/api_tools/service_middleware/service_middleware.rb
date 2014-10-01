@@ -108,7 +108,7 @@ module ApiTools
         {
           :regexp         => /\/#{ interface.endpoint }(\.|\/|$)(.*)/,
           :interface      => interface,
-          :actions        => interface.actions || ApiTools::ServiceInterface::ALLOWED_ACTIONS,
+          :actions        => interface.actions || ALLOWED_ACTIONS,
           :implementation => interface.implementation.new
         }
 
@@ -144,20 +144,16 @@ module ApiTools
 
           return @response.add_error(
             'platform.fault',
-            :message => exception.message
+            :reference => { :exception => exception.message }
           )
 
         rescue
 
           # An exception in the exception handler! Oh dear. Return a
-          # HEAD-only response, more or less...
-          #
-          #   https://github.com/rack/rack/blob/master/lib/rack/head.rb#L12
+          # HEAD-only response.
           #
           return [
-            500, {}, Rack::BodyProxy.new([]) do
-              body.close if body.respond_to? :close
-            end
+            500, {}, Rack::BodyProxy.new([]) {}
           ]
 
         end

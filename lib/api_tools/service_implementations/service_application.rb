@@ -94,6 +94,17 @@ module ApiTools
       self.class.component_interfaces
     end
 
+    # Since service implementations are not pure Rack apps but really service
+    # middleware clients, they shouldn't ever have "call" invoked directly.
+    # This method is not intended to be overridden and just complains if Rack
+    # ends up calling here directly by accident.
+    #
+    # +env+:: Rack environment (ignored).
+    #
+    def call( env )
+      raise "ApiTools::ServiceImplementation subclasses should only be called through the middleware - add 'use ApiTools::ServiceMiddleware' to (e.g.) config.ru"
+    end
+
   protected
 
     # Called by subclasses listing one or more ApiTools::ServiceInterface

@@ -1,17 +1,14 @@
-require "msgpack"
-
 module ApiTools
   module Services
     class HTTPRequest < ApiTools::Services::Request
 
       attr_accessor :session_id, :host, :port, :path, :query, :verb, :scheme, :headers, :body
 
-      def initialize(exchange, options = {})
-        super exchange, options
+      def initialize(options = {})
+        update options
+        super options
 
-        update(options)
-
-        @response_class = options[:response_class] || ApiTools::Services::HTTPResponse
+        @response_class = ApiTools::Services::HTTPResponse
       end
 
       def serialize
@@ -26,26 +23,24 @@ module ApiTools
           :headers => @headers,
           :body => @body,
         }
-        @payload = @content.to_msgpack
+        super
       end
 
       def deserialize
-        @content = MessagePack.unpack(@payload, :symbolize_keys => true)
-        update(@content)
+        super
+        update @content
       end
 
-      private
-
-      def update(hash)
-        @session_id = hash[:session_id]
-        @headers = hash[:headers]
-        @verb = hash[:verb]
-        @scheme = hash[:scheme]
-        @host = hash[:host]
-        @port = hash[:port]
-        @path = hash[:path]
-        @query = hash[:query]
-        @body = hash[:body]
+      def update(options)
+        @session_id = options[:session_id]
+        @headers = options[:headers]
+        @verb = options[:verb]
+        @scheme = options[:scheme]
+        @host = options[:host]
+        @port = options[:port]
+        @path = options[:path]
+        @query = options[:query]
+        @body = options[:body]
       end
     end
   end
