@@ -105,7 +105,7 @@ module ApiTools
       missing_keys  = required_keys - actual_keys
 
       unless ( missing_keys.empty? )
-        raise "In #add_error: Reference hash missing required keys: #{ missing_keys.join( ', ' ) }"
+        raise "In #add_error: Reference hash missing required keys: '#{ missing_keys.join( ', ' ) }'"
       end
 
       # All good!
@@ -120,7 +120,7 @@ module ApiTools
       ordered_keys   = required_keys + ( actual_keys - required_keys )
       ordered_values = ordered_keys.map { | key | escape_commas( reference[ key ] ) }
 
-      # See private method #unjoin_and_unescape_commas to undo the join below.
+      # See #unjoin_and_unescape_commas to undo the join below.
 
       error[ :reference ] = ordered_values.join( ',' ) unless ordered_values.empty?
 
@@ -169,6 +169,32 @@ module ApiTools
       )
     end
 
+    # When reference data is specified for errors, the reference values are
+    # concatenated together into a comma-separated string. Since reference
+    # values can themselves contain commas, comma is escaped with "\," and
+    # "\" escaped with "\\".
+    #
+    # Call here with such a string; return an array of 'unescaped' values.
+    #
+    # +str+: Value-escaped ("\\" / "\,") comma-separated string. Unescaped
+    #        commas separate individual values.
+    #
+    def unjoin_and_unescape_commas( str )
+
+      # In Ruby regular expressions, '(?<!pat)' is a negative lookbehind
+      # assertion, making sure that the preceding characters do not match
+      # 'pat'. To split the string joined on ',' to an array but not splitting
+      # any escaped '\,', then, we can use this rather opaque split regexp:
+      #
+      #   error[ :reference ].split( /(?<!\\),/ )
+      #
+      # I.e. split on ',', provided it is not preceded by a '\' (escaped in the
+      # regexp to '\\').
+
+      ary = str.split( /(?<!\\),/ )
+      ary.map { | entry | unescape_commas( entry ) }
+    end
+
   private
 
     # Given a string, escape "," to "\," and "\" to "\\", returning the result.
@@ -189,26 +215,6 @@ module ApiTools
     #
     def unescape_commas( str )
       str.gsub( "\\,", "," ).gsub( "\\\\", "\\\\" )
-    end
-
-    # Given a string composed of values escaped with #escape_commas when those
-    # values are then concatenated together with a single comma, return an
-    # array of the unescaped original values.
-    #
-    def unjoin_and_unescape_commas( str )
-
-      # In Ruby regular expressions, '(?<!pat)' is a negative lookbehind
-      # assertion, making sure that the preceding characters do not match
-      # 'pat'. To split the string joined on ',' to an array but not splitting
-      # any escaped '\,', then, we can use this rather opaque split regexp:
-      #
-      #   error[ :reference ].split( /(?<!\\),/ )
-      #
-      # I.e. split on ',', provided it is not preceded by a '\' (escaped in the
-      # regexp to '\\').
-
-      ary = str.split( /(?<!\\),/ )
-      ary.map { | entry | unescape_commas( entry ) }
     end
   end
 end

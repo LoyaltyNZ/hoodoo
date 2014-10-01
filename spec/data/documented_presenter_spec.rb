@@ -376,6 +376,34 @@ describe '#schema' do
         }
       })
     end
+
+    it 'should complain about resources with no creation date' do
+      data = {
+        :errors_id => ApiTools::UUID.generate,
+        :test_tags => 'foo,bar,baz',
+        :test_object => {
+          :nested_object => {
+            :name => 'Some name',
+            :obj_suffix => '!'
+          },
+          :test_array => [
+            { :name => 'Some name 0', :ary_suffix => '00' },
+            { :name => 'Some name 1' }
+          ]
+        }
+      }
+
+      uuid = ApiTools::UUID.generate
+
+      expect {
+        ApiTools::Data::Resources::World.render(
+          data,
+          uuid,
+          nil,
+          'en-gb'
+        )
+      }.to raise_error(RuntimeError, "Can't render a Resource with a nil 'created_at'")
+    end
   end
 
   describe '#parse' do

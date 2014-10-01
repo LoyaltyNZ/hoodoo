@@ -76,6 +76,8 @@ module ApiTools
 
         unless ( uuid.nil? )
 
+          raise "Can't render a Resource with a nil 'created_at'" if created_at.nil?
+
           # Field "kind" is taken from the class name; this is a class method
           # so "self.name" yields "ApiTools::Data::Resources::..." or similar.
           # Split on "::" and take the last part as the Resource kind.
