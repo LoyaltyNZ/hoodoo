@@ -69,11 +69,12 @@ module ApiTools
       # Create an instance with default settings.
       #
       def initialize
-        @limit  = 50
-        @sort   = { default( :created_at ) => [ :desc, :asc ] }
-        @search = []
-        @filter = []
-        @embed  = []
+        @limit            = 50
+        @sort             = { :created_at => [ :desc, :asc ] }
+        @default_sort_key = :created_at
+        @search           = []
+        @filter           = []
+        @embed            = []
       end
 
       private
