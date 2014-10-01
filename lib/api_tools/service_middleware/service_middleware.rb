@@ -144,7 +144,7 @@ module ApiTools
 
           return @response.add_error(
             'platform.fault',
-            :message => exception.message
+            :reference => { :exception => exception.message }
           )
 
         rescue

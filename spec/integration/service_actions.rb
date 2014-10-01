@@ -38,7 +38,7 @@ describe RSpecTestServiceA do
       end
     end
 
-    it 'should complain about being called directly' do
+    it 'should list items' do
       get '/rspec_test_service_a'
       expect(last_response.status).to eq(200)
     end
