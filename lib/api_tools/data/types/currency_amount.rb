@@ -16,7 +16,7 @@ module ApiTools
       class CurrencyAmount < ApiTools::Data::DocumentedPresenter
 
         schema do
-          string :curency_code, :required => true, :length => 8
+          string :currency_code, :required => true, :length => 16
           string :qualifier, :length => 32
           text :amount, :required => true
         end

@@ -211,15 +211,6 @@ module ApiTools
 
         @descriptions[ "#{ @domain }.#{ name }" ] = options
       end
-
-      # Returns the options hash provided in #error, for a given error name.
-      #
-      # +name+:: The error name - the bit after the "+.+" in the code, e.g.
-      #          +invalid_parameters+.
-      #
-      def describe( name )
-        @descriptions[ "#{ @domain }.#{ name }" ]
-      end
     end
   end
 end
