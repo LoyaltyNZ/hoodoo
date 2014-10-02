@@ -7,17 +7,18 @@
 #           02-Oct-2014 (ADH): Copied from ActiveSupport 4.1.6.
 ########################################################################
 
-# Given a string, provides an object that takes the string's value and
-# turns it into a method "#{value}?", returning +true+; other methods
-# all respond +false+.
-#
-# Example:
-#
-#     greeting = ApiTools::StringInquirer.new( 'hello' )
-#     greeting.hello? # => true
-#     greeting.hi?    # => false
-#
 module ApiTools
+
+  # Given a string, provides an object that takes the string's value and
+  # turns it into a method "#{value}?", returning +true+; other methods
+  # all respond +false+.
+  #
+  # Example:
+  #
+  #     greeting = ApiTools::StringInquirer.new( 'hello' )
+  #     greeting.hello? # => true
+  #     greeting.hi?    # => false
+  #
   class StringInquirer < String
 
     private
