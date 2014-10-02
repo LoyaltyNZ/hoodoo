@@ -221,8 +221,14 @@ module ApiTools
       uri_path = CGI.unescape( @request.path() )
 
       selected_services = @services.select do | service_data |
-        @path_data = process_uri_path( uri_path, service_data[ :regexp ] )
-        not @path_data.nil?
+        path_data = process_uri_path( uri_path, service_data[ :regexp ] )
+
+        if path_data.nil?
+          false
+        else
+          @path_data = path_data
+          true
+        end
       end
 
       if selected_services.size == 0
@@ -261,7 +267,7 @@ module ApiTools
       unless actions.include?( action )
         return @response.add_error(
           'platform.method_not_allowed',
-          :message => "Service endpoint '/#{ interface.endpoint }' does not support HTTP method '#{ env[ 'REQUEST_METHOD' ] }' for action '#{ action }'"
+          :message => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ @request.env[ 'REQUEST_METHOD' ] }' yielding action '#{ action }'"
         )
       end
 
@@ -358,9 +364,13 @@ module ApiTools
       #
       # This is only called on service *success*. Potentially we can hook in
       # the validation of the service's output (internal self-check) according
-      # the expected returned Resource that we know 'somehow' (e.g. infer from
-      # interface declaration, or have declared explicitly - check existing
-      # DSL in service_inteface.rb).
+      # the expected returned Resource that the interface class defines (see
+      # the "interface.resource" property), so long as it's defined in the
+      # ApiTools::Data::Resources collection.
+      #
+      # The outgoing response body in the service response object is an Array
+      # or Hash. We can check, for known resource types, the "language" of the
+      # first item & set Content-Language, assuming an internationalised type.
       #
       # Can certainly make sure that we enforce all-call-resource-representation
       # here - for 200 cases, *all* calls should be returning a representation

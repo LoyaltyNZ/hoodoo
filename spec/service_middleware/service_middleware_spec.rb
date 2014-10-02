@@ -1,10 +1,16 @@
+# This unavoidably combines a lot of elements of integration testing since
+# little of the middleware is really usable in isolation. We could test its
+# component methods individually, but the interesting ones are all part of
+# request processing anyway. Code coverage lets us know if we missed any
+# internal methods when testing the request processing flow.
+
 require 'spec_helper'
 
 class RSpecTestServiceStubImplementation < ApiTools::ServiceImplementation
 end
 
 class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
-  interface :RSpecTestService do
+  interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
   end
@@ -15,6 +21,7 @@ class RSpecTestServiceStub < ApiTools::ServiceApplication
 end
 
 describe RSpecTestServiceStub do
+
   def app
     Rack::Builder.new do
       use ApiTools::ServiceMiddleware
@@ -22,7 +29,7 @@ describe RSpecTestServiceStub do
     end
   end
 
-  context 'malformed requests' do
+  context 'malformed basics in requests' do
 
     it 'should complain about entirely missing content type' do
       get '/v2/rspec_test_service_stub'
@@ -82,6 +89,26 @@ describe RSpecTestServiceStub do
     it 'no matching endpoint should return 404' do
       get '/v2/where_are_you', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(404)
+    end
+
+    it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
+      # We break the "::environment" class method so that it raises an error.
+      # This is used during normal exception handling to determine whether or
+      # not a backtrace should be encoded in the JSON response. By raising an
+      # exception here, we test the fallback exception handler.
+
+      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_raise("boo!")
+
+      # Route through to the unimplemented "list" call, so the subclass raises
+      # an exception. This is tested independently elsewhere too. This causes
+      # the normal exception handler to run, which breaks because of the above
+      # code, so we get the fallback.
+
+      expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).and_call_original
+      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(500)
+      expect(last_response.body).to eq('') # I.e., fell back to head-only
     end
 
     # -------------------------------------------------------------------------
@@ -233,6 +260,14 @@ describe RSpecTestServiceStub do
         expect(result['errors'][0]['code']).to eq('generic.malformed')
       end
 
+      it 'should complain if the payload is too large' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
+        post '/v2/rspec_test_service_stub', "{\"foo\": \"#{'*' * ApiTools::ServiceMiddleware::MAXIMUM_PAYLOAD_SIZE }\"}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+      end
+
       it 'should be happy with valid JSON' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create)
         post '/v2/rspec_test_service_stub', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -336,6 +371,165 @@ describe RSpecTestServiceStub do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
       end
     end
+  end
+end
 
+class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
+  comprised_of RSpecTestServiceStubInterface,
+               RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
+end
+
+describe RSpecTestServiceStub do
+  context 'bad endpoint configuration' do
+
+    def app
+      Rack::Builder.new do
+        use ApiTools::ServiceMiddleware
+        run RSpecTestBrokenServiceStub.new
+      end
+    end
+
+    it 'should cause a routing exception' do
+      expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+      get '/v2/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(500)
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.fault')
+      expect(result['errors'][0]['message']).to eq('Multiple service endpoint matches - internal server configuration fault')
+    end
+  end
+end
+
+class RSpecTestServiceV1StubImplementation < ApiTools::ServiceImplementation
+end
+
+class RSpecTestServiceV1StubInterface < ApiTools::ServiceInterface
+  interface :RSpecTestResource do
+    endpoint :rspec_test_service_stub, RSpecTestServiceV1StubImplementation
+    actions :list, :create, :update
+  end
+end
+
+class RSpecTestServiceAltStubImplementation < ApiTools::ServiceImplementation
+end
+
+class RSpecTestServiceAltStubInterface < ApiTools::ServiceInterface
+  interface :RSpecTestResource do
+    version 2
+    endpoint :rspec_test_service_alt_stub, RSpecTestServiceAltStubImplementation
+  end
+end
+
+class RSpecTestMultipleEndpointServiceStub < ApiTools::ServiceApplication
+  comprised_of RSpecTestServiceStubInterface,
+               RSpecTestServiceV1StubInterface,
+               RSpecTestServiceAltStubInterface
+end
+
+describe RSpecTestServiceStub do
+
+  def app
+    Rack::Builder.new do
+      use ApiTools::ServiceMiddleware
+      run RSpecTestMultipleEndpointServiceStub.new
+    end
+  end
+
+  context 'multiple endpoints and versions' do
+    it 'should return 404 with no matching route' do
+      get '/v1/nowhere/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(404)
+    end
+
+    it 'should route to the V1 endpoint' do
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:list)
+      get '/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'should route to the V2 endpoint' do
+      expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list)
+      get '/v2/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'should route to the V2 alternative endpoint' do
+      expect_any_instance_of(RSpecTestServiceAltStubImplementation).to receive(:list)
+      get '/v2/rspec_test_service_alt_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+    end
+  end
+
+  context 'with limited supported actions' do
+    it 'should accept supported actions' do
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:list)
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:create)
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:update)
+
+      get '/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+
+      post '/v1/rspec_test_service_stub/', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+
+      patch '/v1/rspec_test_service_stub/1234', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'should reject unsupported actions' do
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to_not receive(:show)
+      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to_not receive(:delete)
+
+      get '/v1/rspec_test_service_stub/1234', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(422)
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.method_not_allowed')
+      expect(result['errors'][0]['message']).to eq("Service endpoint '/v1/rspec_test_service_stub' does not support HTTP method 'GET' yielding action 'show'")
+
+      delete '/v1/rspec_test_service_stub/1234', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(422)
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.method_not_allowed')
+      expect(result['errors'][0]['message']).to eq("Service endpoint '/v1/rspec_test_service_stub' does not support HTTP method 'DELETE' yielding action 'delete'")
+    end
+  end
+end
+
+class RSpecTestServiceWithErrorsStubImplementation < ApiTools::ServiceImplementation
+end
+
+class RSpecTestServiceWithErrorsStubInterface < ApiTools::ServiceInterface
+  interface :RSpecTestResource do
+    version 44
+    endpoint :rspec_test_service_with_errors_stub, RSpecTestServiceWithErrorsStubImplementation
+    errors_for :rspec do
+      error 'hello', :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' }
+    end
+  end
+end
+
+class RSpecTestServiceWithErrorsStub < ApiTools::ServiceApplication
+  comprised_of RSpecTestServiceWithErrorsStubInterface
+end
+
+describe RSpecTestServiceStub do
+
+  def app
+    Rack::Builder.new do
+      use ApiTools::ServiceMiddleware
+      run RSpecTestServiceWithErrorsStub.new
+    end
+  end
+
+  it 'should define custom errors' do
+    expect_any_instance_of(RSpecTestServiceWithErrorsStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, request, response |
+      expect(request).to be_a(ApiTools::ServiceRequest)
+      expect(response).to be_a(ApiTools::ServiceResponse)
+
+      expect(response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' } })
+    end
+
+    get '/v44/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
   end
 end

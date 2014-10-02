@@ -302,7 +302,8 @@ module ApiTools
     # client requests are sent to a URL matching the endpoint.
     #
     # No two interfaces can use the same endpoint within a service application,
-    # unless the describe a different interface version - see #version.
+    # unless the describe a different interface version - see #version. If you
+    # call #version, you *MUST* call it before #endpoint.
     #
     # Example:
     #
@@ -331,6 +332,11 @@ module ApiTools
         raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class.class }' was given instead"
       end
 
+      # TODO: By now the resource, version and endpoint information is all
+      #       known. This is where we'd tell a router, edge splitter or some
+      #       other component about this instance as part of a wider
+      #       configuration set that allowed inter-service communication.
+
       self.class.send( :endpoint=,       uri_path_fragment    )
       self.class.send( :implementation=, implementation_class )
     end
@@ -343,9 +349,13 @@ module ApiTools
     # Two interfaces can exist on the same endpoint provided their versions are
     # different since the resulting route to reach them will be different too.
     #
+    # If you call #version, you *MUST* call it before #endpoint.
+    #
     # +version+:: Integer major version number, e.g +2+.
     #
     def version( major_version )
+      raise "You must call \#version before \#endpoint" unless self.class.endpoint.nil?
+
       self.class.send( :version=, major_version.to_s.to_i )
     end
 
