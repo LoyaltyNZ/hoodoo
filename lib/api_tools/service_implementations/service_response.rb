@@ -94,13 +94,29 @@ module ApiTools
     #
     def add_header( name, value, overwrite = false )
       name = name.to_s
+      dname = name.downcase
       value = value.to_s
 
-      if ( overwrite == false && @headers.has_key?( name.downcase ) )
+      if ( overwrite == false && @headers.has_key?( dname ) )
+        hash  = @headers[ dname ]
+        name  = hash.keys[ 0 ]
+        value = hash.values[ 0 ]
         raise "ApiTools::ServiceResponse\#add_header: Value '#{ value }' already defined for header '#{ name }'"
       else
-        @headers[ name.downcase ] = { name => value }
+        @headers[ dname ] = { name => value }
       end
+    end
+
+    # Check the stored value of a given HTTP header. Checks are case
+    # insensitive. Returns the value stored by a prior #add_header call, or
+    # +nil+ for no value (or an explicitly stored value of +nil+)
+    #
+    # +name+:: HTTP header name (e.g. "Content-Type", "CONTENT-TYPE").
+    #
+    def get_header( name )
+      value_hash = @headers[ name.downcase ]
+      return nil if value_hash.nil?
+      return value_hash.values[ 0 ]
     end
 
     # Add an error to the internal collection. Passes input parameters through
