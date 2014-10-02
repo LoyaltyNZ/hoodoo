@@ -158,7 +158,7 @@ describe ApiTools::Errors do
       @errors.clear_errors
       @errors.add_error('test_domain.http_567_has_references', :reference => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
 
-      expect(ApiTools::Logger).to receive(:error) # Keeps stdout quiet!
+      expect(ApiTools::Logger).to receive(:error)
       expect(@errors).to receive(:store!).and_call_original
 
       rendered = @errors.render

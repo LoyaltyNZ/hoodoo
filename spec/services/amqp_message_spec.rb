@@ -5,6 +5,8 @@ describe ApiTools::Services::AMQPMessage do
   describe '#initialize' do
     it 'should initialise exchange and options' do
 
+      pending
+
       inst = ApiTools::Services::AMQPMessage.new('one',{
         :routing_key => 'two',
         :type => 'three',

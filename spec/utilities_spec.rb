@@ -37,4 +37,18 @@ describe ApiTools::Utilities do
       expect(uuid1).not_to eq(uuid2)
     end
   end
+
+  describe "#to_integer?" do
+    it 'should return integer equivalents for valid values' do
+      expect(ApiTools::Utilities.to_integer?(21)).to eq(21)
+      expect(ApiTools::Utilities.to_integer?('21')).to eq(21)
+      expect(ApiTools::Utilities.to_integer?(:'21')).to eq(21)
+    end
+
+    it 'should return nil for invalid values' do
+      expect(ApiTools::Utilities.to_integer?(2.1)).to eq(nil)
+      expect(ApiTools::Utilities.to_integer?('hello')).to eq(nil)
+      expect(ApiTools::Utilities.to_integer?(Time.now)).to eq(nil)
+    end
+  end
 end

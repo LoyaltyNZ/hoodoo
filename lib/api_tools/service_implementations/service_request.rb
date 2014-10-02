@@ -18,6 +18,11 @@ module ApiTools
   # checks have been passed and a particular interface implementation has
   # been identified by endpoint.
   #
+  # Descriptions of default values expected out of accessors herein refer
+  # to the use case when driven through ApiTools::ServiceMiddleware. If the
+  # class is instantiated "bare" it gains no default values at all (all
+  # read accessors would report +nil+).
+  #
   class ServiceRequest
 
     # The originating Rack::Request, in case you want to dive inside it to
@@ -25,6 +30,10 @@ module ApiTools
     # ApiTools::ServiceRequest class.
     #
     attr_accessor :rack_request
+
+    # Parsed payload hash, for create and update actions only; else +nil+.
+    #
+    attr_accessor :payload
 
     # An array of zero or more path components making up the URI *after* the
     # service endpoint has been accounted for. For example, with a service
@@ -66,22 +75,22 @@ module ApiTools
     #
     attr_accessor :list_sort_direction
 
-    # List search key/value pairs as a hash, all keys/values strings; +nil+
+    # List search key/value pairs as a hash, all keys/values strings; {}
     # if there's no search data in the request URI query string.
     #
     attr_accessor :list_search_data
 
-    # List filter key/value pairs as a hash, all keys/values strings; +nil+
+    # List filter key/value pairs as a hash, all keys/values strings; {}
     # if there's no filter data in the request URI query string.
     #
     attr_accessor :list_filter_data
 
-    # Array of strings giving requested embedded items; +nil+ if there are
+    # Array of strings giving requested embedded items; [] if there are
     # none requested.
     #
     attr_accessor :list_embeds
 
-    # Array of strings giving requested referenced items; +nil+ if there are
+    # Array of strings giving requested referenced items; [] if there are
     # none requested.
     #
     attr_accessor :list_references

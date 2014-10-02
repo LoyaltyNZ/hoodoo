@@ -36,6 +36,11 @@ module ApiTools
       #
       attr_reader :limit
 
+      # Offset value; an integer that sets a list start offset in a sorted,
+      # paginated list.
+      #
+      attr_reader :offset
+
       # Sort hash. Keys are supported sort fields, values are arrays of
       # supported sort directions. The first array entry is the default sort
       # order for the sort field.
@@ -70,8 +75,9 @@ module ApiTools
       #
       def initialize
         @limit            = 50
-        @sort             = { :created_at => [ :desc, :asc ] }
-        @default_sort_key = :created_at
+        @offset           = 0
+        @sort             = { 'created_at' => [ 'desc', 'asc' ] }
+        @default_sort_key = 'created_at'
         @search           = []
         @filter           = []
         @embed            = []
@@ -84,6 +90,12 @@ module ApiTools
         # bypassing +private+ via +send()+.
         #
         attr_writer :limit
+
+        # Private writer - see #offset - but there's a special contract with
+        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
+        # bypassing +private+ via +send()+.
+        #
+        attr_writer :offset
 
         # Private writer - see #sort - but there's a special contract with
         # ApiTools::ServiceInterface::ToListDSL which permits it to call here
@@ -185,6 +197,15 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
+        # Convert hash keys to strings and values in arrays to strings too.
+
+        sort = sort.inject( {} ) do | memo, (k, v ) |
+          memo[ k.to_s ] = v.map do | entry |
+            entry.to_s
+          end
+          memo
+        end
+
         merged = @tl.sort().merge( sort )
         @tl.send( :sort=, merged )
       end
@@ -204,7 +225,7 @@ module ApiTools
           raise "ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 
-        @tl.send( :default_sort_key=, sort_key )
+        @tl.send( :default_sort_key=, sort_key.to_s )
         return sort_key
       end
 
@@ -280,6 +301,9 @@ module ApiTools
     # and the ApiTools::ServiceImplementation subclass to be invoked when
     # client requests are sent to a URL matching the endpoint.
     #
+    # No two interfaces can use the same endpoint within a service application,
+    # unless the describe a different interface version - see #version.
+    #
     # Example:
     #
     #     endpoint :estimations, PurchaseServiceImplementation
@@ -309,6 +333,20 @@ module ApiTools
 
       self.class.send( :endpoint=,       uri_path_fragment    )
       self.class.send( :implementation=, implementation_class )
+    end
+
+    # Declare the _major_ version of the interface being implemented. All
+    # service endpoints appear at "/v{version}/{endpoint}" relative to whatever
+    # root an edge layer defines. If a service interface does not specifiy its
+    # version, +1+ is assumed.
+    #
+    # Two interfaces can exist on the same endpoint provided their versions are
+    # different since the resulting route to reach them will be different too.
+    #
+    # +version+:: Integer major version number, e.g +2+.
+    #
+    def version( major_version )
+      self.class.send( :version=, major_version.to_s.to_i )
     end
 
     # List the actions that the service implementation supports. If you don't
@@ -481,9 +519,14 @@ module ApiTools
     def self.interface( resource, &block )
       self.resource = resource
 
+      raise "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once" unless @to_list.nil?
+
       @to_list = ApiTools::ServiceInterface::ToList.new
 
       interface = self.new
+      interface.instance_eval do
+        version 1
+      end
       interface.instance_eval( &block )
 
       if self.endpoint.nil?
@@ -506,6 +549,11 @@ module ApiTools
         # endpoint.
         #
         attr_reader :endpoint
+
+        # Major version of interface as an integer. All service endpoint routes
+        # have "v{version}/" as a prefix, e.g. "/v1/products[...]".
+        #
+        attr_reader :version
 
         # Name of the resource the interface addresses as a symbol, e.g.
         # +:Product+.
@@ -563,6 +611,12 @@ module ApiTools
         # See ::endpoint.
         #
         attr_writer :endpoint
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::version.
+        #
+        attr_writer :version
 
         # Private property writer allows instances running the DSL to set
         # values on the class for querying using the public readers.

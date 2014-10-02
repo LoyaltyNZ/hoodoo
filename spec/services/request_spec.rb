@@ -8,6 +8,9 @@ describe ApiTools::Services::Request do
     end
 
     it 'should initialise queue' do
+
+      pending
+
       inst = ApiTools::Services::Request.new('one',{})
       expect(inst.queue).to be_a(Queue)
     end
@@ -15,12 +18,18 @@ describe ApiTools::Services::Request do
 
   describe '#create_response' do
     it 'should return a new ApiTools::Services::Response' do
+
+      pending
+
       inst = ApiTools::Services::Request.new('one',{})
 
       expect(inst.create_response).to be_a(ApiTools::Services::Response)
     end
 
     it 'should create new response with correct params' do
+
+      pending
+
       inst = ApiTools::Services::Request.new('one',{
         :message_id => 'two'
       })
@@ -35,6 +44,9 @@ describe ApiTools::Services::Request do
     end
 
     it 'should merge supplied options after set defaults' do
+
+      pending
+
       inst = ApiTools::Services::Request.new('one',{
         :message_id => 'two'
       })
@@ -53,6 +65,9 @@ describe ApiTools::Services::Request do
 
   describe '#is_async?' do
     it 'should return @is_async' do
+
+      pending
+
       inst = ApiTools::Services::Request.new('one',{})
 
       inst.is_async = true

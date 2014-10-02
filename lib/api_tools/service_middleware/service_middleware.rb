@@ -69,6 +69,25 @@ module ApiTools
     #
     SUPPORTED_ENCODINGS = [ 'utf-8' ]
 
+    # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
+    # DOS attempts to consume RAM.
+    #
+    MAXIMUM_PAYLOAD_SIZE = 1048576 # 1MB Should Be Enough For Anyone
+
+    # Utility - returns the execution environment as a Rails-like environment
+    # object which answers queries like +production?+ or +staging?+ with +true+
+    # or +false+ according to the +RACK_ENV+ environment variable setting.
+    #
+    # Example:
+    #
+    #     if ApiTools::ServiceMiddleware.environment.production?
+    #       # ...do something only if RACK_ENV="production"
+    #     end
+    #
+    def self.environment
+      @_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
+    end
+
     # Initialize the middleware instance.
     #
     # +app+ Rack app instance to which calls should be passed.
@@ -100,13 +119,14 @@ module ApiTools
 
         # Regexp explanation:
         #
-        # Match "/", the endpoint text, then either another "/", a "." or the
-        # end of the string, followed by capturing everything else. Match data
-        # index 1 will be whatever character (if any) followed after the
-        # endpoint ("/" or ".") while index 2 contains everything else.
+        # Match "/", the version text, "/", the endpoint text, then either
+        # another "/", a "." or the end of the string, followed by capturing
+        # everything else. Match data index 1 will be whatever character (if
+        # any) followed after the endpoint ("/" or ".") while index 2 contains
+        # everything else.
 
         {
-          :regexp         => /\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :regexp         => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
           :interface      => interface,
           :actions        => interface.actions || ALLOWED_ACTIONS,
           :implementation => interface.implementation.new
@@ -142,9 +162,18 @@ module ApiTools
       rescue => exception
         begin
 
+          reference = {
+            :exception => exception.message
+          }
+
+          unless self.class.environment.production? || self.class.environment.uat?
+            reference[ :backtrace ] = exception.backtrace.join( " | " )
+          end
+
           return @response.add_error(
             'platform.fault',
-            :reference => { :exception => exception.message }
+            :message => exception.message,
+            :reference => reference
           )
 
         rescue
@@ -174,7 +203,8 @@ module ApiTools
 
       @locale         = deal_with_language_header()
       @interaction_id = find_or_generate_interaction_id()
-      @payload_hash   = payload_to_hash()
+
+      set_common_response_headers()
     end
 
     # Process the client's call. The heart of service routing and application
@@ -214,24 +244,24 @@ module ApiTools
       # Check for a supported action. Clumsy code because there is no 1:1 map
       # from HTTP method to action (e.g. GET can be :show or :list).
 
-      supported_action = if @request.post?
-        :create if actions.include?( :create )
+      action = if @request.post?
+        :create
       elsif @request.patch?
-        :update if actions.include?( :update )
+        :update
       elsif @request.delete?
-        :delete if actions.include?( :delete )
+        :delete
       elsif @request.get?
-        if uri_path_components.size > 0
-          :list if actions.include?( :list )
+        if uri_path_components.size == 0
+          :list
         else
-          :show if actions.include?( :show )
+          :show
         end
       end
 
-      if supported_action.nil?
+      unless actions.include?( action )
         return @response.add_error(
           'platform.method_not_allowed',
-          :message => "Service endpoint '/#{ interface.endpoint }' does not support HTTP method '#{ env[ 'REQUEST_METHOD' ] }'"
+          :message => "Service endpoint '/#{ interface.endpoint }' does not support HTTP method '#{ env[ 'REQUEST_METHOD' ] }' for action '#{ action }'"
         )
       end
 
@@ -253,16 +283,66 @@ module ApiTools
       # There should only be a query string for GET methods that ask for lists
       # of resources.
 
-      if supported_action != :list && ( ! @request.query_string.nil? || @request.query_string != '' )
-        return @response.add_error( 'platform.malformed' )
+      if action != :list && ! @request.params.empty?
+        return @response.add_error( 'platform.malformed',
+                                    :message => 'No query data is allowed for this action',
+                                    :reference => { :action => action } )
       else
-        error = process_query_string( @request.query_string, service_request )
+        error = process_query_string( @request.query_string, interface, service_request )
         return error unless error.nil?
+      end
+
+      # There should be no spurious path data for "list" or "create" actions -
+      # only "show", "update" and "delete" take extra data via the URL's path.
+      # Conversely, other actions require it.
+
+      if action == :list || action == :create
+        return @response.add_error( 'platform.malformed',
+                                    :message => 'Unexpected path components for this action',
+                                    :reference => { :action => action } ) unless uri_path_components.empty?
+      else
+        return @response.add_error( 'platform.malformed',
+                                    :message => 'Expected path components identifying target resource instance for this action',
+                                    :reference => { :action => action } ) if uri_path_components.empty?
+      end
+
+      # There should be no spurious body data for anything other than "create"
+      # or "update" actions. This is one of the last things we do as it is
+      # potentially very heavyweight.
+      #
+      # To try and be helpful to clients which may use HTTP libraries that
+      # always write body data of some kind, we permit white space; so always
+      # read the body, then strip the white space from it.
+      #
+      # Start by reading only a limited amount of data. Then try to read more.
+      # According the input stream documentation of the Rack specification:
+      #
+      #   http://rubydoc.info/github/rack/rack/master/file/SPEC
+      #
+      # ...then when we call "read" with a length value and there's no more
+      # data to read, it should return nil. If it doesn't, the payload is
+      # too big. Reject it.
+
+      body = @request.body.read( MAXIMUM_PAYLOAD_SIZE )
+
+      unless ( body.nil? || body.is_a?( String ) ) && @request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+        return @response.add_error( 'platform.malformed',
+                                    :message => 'Body data exceeds configured maximum size for platform' )
+      end
+
+      if action == :create || action == :update
+        service_request.payload = payload_to_hash( body )
+        return @response.for_rack() if @response.halt_processing?
+
+      elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
+        return @response.add_error( 'platform.malformed',
+                                    :message => 'Unexpected body data for this action',
+                                    :reference => { :action => action } )
       end
 
       # Finally - dispatch to service.
 
-      implementation.send( supported_action,
+      implementation.send( action,
                            service_request,
                            @response )
     end
@@ -273,7 +353,20 @@ module ApiTools
     # On exit, +@response+ may have been updated.
     #
     def postprocess
-      # TODO: Anything...?
+
+      # TODO: Nothing?
+      #
+      # This is only called on service *success*. Potentially we can hook in
+      # the validation of the service's output (internal self-check) according
+      # the expected returned Resource that we know 'somehow' (e.g. infer from
+      # interface declaration, or have declared explicitly - check existing
+      # DSL in service_inteface.rb).
+      #
+      # Can certainly make sure that we enforce all-call-resource-representation
+      # here - for 200 cases, *all* calls should be returning a representation
+      # or a list (even if the list is empty). That includes 'delete' ("here
+      # is what I just deleted" - aids stack-like coding in clients).
+
     end
 
     # Check the client's +Content-Type+ header and if it doesn't ask for the
@@ -286,15 +379,31 @@ module ApiTools
     # encoding (e.g. +utf-8+).
     #
     def check_content_type_header
-      unless SUPPORTED_MEDIA_TYPES.include?( @request.media_type ) &&
-             SUPPORTED_ENCODINGS.include?( @request.content_charset )
+      if SUPPORTED_MEDIA_TYPES.include?( @request.media_type ) &&
+         SUPPORTED_ENCODINGS.include?( @request.content_charset )
 
-        @errors.add_error(
+         @content_type     = @request.media_type
+         @content_encoding = @request.content_charset
+
+      else
+
+        @response.errors.add_error(
           'platform.malformed',
           :message => "Content-Type '#{ @request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
         )
 
       end
+    end
+
+    # Preprocessing stage that sets up common headers required in any reseponse.
+    # May vary according to inbound content type requested. If processing was
+    # aborted early (e.g. missing inbound Content-Type) we may fall to defaults.
+    #
+    # (At the time of writing, platform documentations say we're JSON only - but
+    # there's an strong chance of e.g. XML representation being demanded later).
+    #
+    def set_common_response_headers
+      @response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
     end
 
     # Extract the +Content-Language+ header value from the client and store it
@@ -318,11 +427,11 @@ module ApiTools
       @response.add_header( 'X-Interaction-ID', iid )
     end
 
-    # Safely parse the client payload for +POST+ and +PATCH+ into instance
-    # variable +@payload_hash+.
+    # Safely parse the client payload in the context of the defined content
+    # type (#check_content_type_header must have been run first). Pass the
+    # body payload string.
     #
-    def payload_to_hash
-      return unless @request.post? or @request.patch?
+    def payload_to_hash( body )
 
       begin
         case @content_type
@@ -332,14 +441,15 @@ module ApiTools
             #
             # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
             #
-            @payload_hash = JSON.parse( json, :create_additions => false )
+            @payload_hash = JSON.parse( body, :create_additions => false )
 
           else
             raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
         end
 
       rescue => e
-        @errors.add_error( 'generic.malformed' )
+        @response.errors.add_error( 'generic.malformed' )
+
       end
     end
 
@@ -403,20 +513,21 @@ module ApiTools
         end
       end
 
-      [ remaining_path_components, extension ]
+      [ remaining_path_components, extension || '' ]
     end
 
     # Process query string data for list actions. Only call if there's a list
     # action being requested.
     #
     # +query_string+::   The 'raw' query string from Rack.
+    # +interface+::      Interface definition for the service being targeted.
     # +service_request:: An ApiTools::ServiceRequest instance. This will be
     #                    updated if successful with list parameter data.
     #
     # Returns +nil+ on success, else an error expressed as a Rack response
     # array - this can be passed directly back to Rack.
     #
-    def process_query_string( query_string, service_request )
+    def process_query_string( query_string, interface, service_request )
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
@@ -424,17 +535,25 @@ module ApiTools
       query_data = URI.decode_www_form( query_string )
       query_hash = Hash[ query_data ]
 
-      unrecognised_query_keys = query_hash - ALLOWED_QUERIES
+      unrecognised_query_keys = query_hash.keys - ALLOWED_QUERIES
       malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
 
       unless malformed
-        limit     = query_hash[ 'limit' ] || interface.to_list.limit
-        malformed = :limit unless limit.to_i.to_s == limit
+        if query_hash.has_key?( 'limit' )
+          limit     = ApiTools::Utilities::to_integer?( query_hash[ 'limit' ] )
+          malformed = :limit if limit.nil?
+        else
+          limit = interface.to_list.limit.to_i
+        end
       end
 
       unless malformed
-        offset    = query_hash[ 'offset' ] || 0
-        malformed = :offset unless offset.to_i.to_s == offset
+        if query_hash.has_key?( 'offset' )
+          offset    = ApiTools::Utilities::to_integer?( query_hash[ 'offset' ] )
+          malformed = :offset if offset.nil?
+        else
+          offset = interface.to_list.offset.to_i
+        end
       end
 
       unless malformed
@@ -443,7 +562,7 @@ module ApiTools
       end
 
       unless malformed
-        direction = query_hash[ 'direction' ] || interface.to_list.default_sort_direction
+        direction = query_hash[ 'direction' ] || interface.to_list.default_sort_direction.to_s
         malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
       end
 

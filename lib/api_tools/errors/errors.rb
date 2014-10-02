@@ -118,7 +118,7 @@ module ApiTools
       }
 
       ordered_keys   = required_keys + ( actual_keys - required_keys )
-      ordered_values = ordered_keys.map { | key | escape_commas( reference[ key ] ) }
+      ordered_values = ordered_keys.map { | key | escape_commas( reference[ key ].to_s ) }
 
       # See #unjoin_and_unescape_commas to undo the join below.
 

@@ -1,6 +1,20 @@
 require 'spec_helper'
 
 class RSpecTestServiceAImplementation < ApiTools::ServiceImplementation
+  def list( request, response )
+  end
+
+  def show( request, response )
+  end
+
+  def create( request, response )
+  end
+
+  def update( request, response )
+  end
+
+  def delete( request, response )
+  end
 end
 
 class RSpecTestServiceAInterface < ApiTools::ServiceInterface
@@ -25,7 +39,7 @@ describe RSpecTestServiceA do
 
     it 'should complain about being called directly' do
       expect {
-        get '/rspec_test_service_a'
+        get '/v1/rspec_test_service_a'
       }.to raise_error(RuntimeError)
     end
   end
@@ -38,8 +52,14 @@ describe RSpecTestServiceA do
       end
     end
 
+    context 'malformed requests' do
+    end
+
+    context 'well formed requests' do
+    end
+
     it 'should list items' do
-      get '/rspec_test_service_a'
+      get '/v1/rspec_test_service_a'
       expect(last_response.status).to eq(200)
     end
   end

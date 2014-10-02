@@ -14,5 +14,15 @@ module ApiTools
       return obj.inject([]){|memo,v    | memo                << self.symbolize(v); memo} if obj.is_a?(::Array)
       return obj
     end
+
+    # Is a parameter convertable to an integer cleanly? Returns the integer
+    # value if so, else +nil+.
+    #
+    # +value+:: Value to check, e.g. 2, "44", :'55' (yields 2, 44, 55) or
+    #           "hello", Time.now (yields nil, nil).
+    #
+    def self.to_integer?( value )
+      value.to_s.to_i if value.to_s.to_i.to_s == value.to_s
+    end
   end
 end
