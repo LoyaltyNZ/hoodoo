@@ -36,11 +36,6 @@ module ApiTools
       #
       attr_reader :limit
 
-      # Offset value; an integer that sets a list start offset in a sorted,
-      # paginated list.
-      #
-      attr_reader :offset
-
       # Sort hash. Keys are supported sort fields, values are arrays of
       # supported sort directions. The first array entry is the default sort
       # order for the sort field.
@@ -75,7 +70,6 @@ module ApiTools
       #
       def initialize
         @limit            = 50
-        @offset           = 0
         @sort             = { 'created_at' => [ 'desc', 'asc' ] }
         @default_sort_key = 'created_at'
         @search           = []
@@ -90,12 +84,6 @@ module ApiTools
         # bypassing +private+ via +send()+.
         #
         attr_writer :limit
-
-        # Private writer - see #offset - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
-        # bypassing +private+ via +send()+.
-        #
-        attr_writer :offset
 
         # Private writer - see #sort - but there's a special contract with
         # ApiTools::ServiceInterface::ToListDSL which permits it to call here
@@ -244,13 +232,9 @@ module ApiTools
       #
       # Example - allow searches specifying +first_name+ and +last_name+ keys:
       #
-      #     search [ :first_name, :last_name ]
+      #     search :first_name, :last_name
       #
-      def search( search )
-        unless search.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#search requires an Array - got '#{ search.class }'"
-        end
-
+      def search( *search )
         @tl.send( :search=, search.map { | item | item.to_s } )
       end
 
@@ -259,11 +243,7 @@ module ApiTools
       # +filter+:: Array of permitted filter keys, as symbols or strings.
       #            The order of array entries is arbitrary.
       #
-      def filter( filter )
-        unless filter.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#filter requires an Array - got '#{ filter.class }'"
-        end
-
+      def filter( *filter )
         @tl.send( :filter=, filter.map { | item | item.to_s } )
       end
 
@@ -284,13 +264,9 @@ module ApiTools
       # Example: An interface permits lists that request embedding or
       # referencing of "vouchers", "balances" and "member":
       #
-      #     embed [ :vouchers, :balances, :member ]
+      #     embed :vouchers, :balances, :member
       #
-      def embed( embed )
-        unless embed.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#embed requires an Array - got '#{ embed.class }'"
-        end
-
+      def embed( *embed )
         @tl.send( :embed=, embed.map { | item | item.to_s } )
       end
     end # 'class ToListDSL'
@@ -302,8 +278,7 @@ module ApiTools
     # client requests are sent to a URL matching the endpoint.
     #
     # No two interfaces can use the same endpoint within a service application,
-    # unless the describe a different interface version - see #version. If you
-    # call #version, you *MUST* call it before #endpoint.
+    # unless the describe a different interface version - see #version.
     #
     # Example:
     #
@@ -326,16 +301,11 @@ module ApiTools
     #
     def endpoint( uri_path_fragment, implementation_class )
 
-      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C-3D
+      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
-      unless implementation_class <= ApiTools::ServiceImplementation
-        raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class.class }' was given instead"
+      unless implementation_class < ApiTools::ServiceImplementation
+        raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class }' was given instead"
       end
-
-      # TODO: By now the resource, version and endpoint information is all
-      #       known. This is where we'd tell a router, edge splitter or some
-      #       other component about this instance as part of a wider
-      #       configuration set that allowed inter-service communication.
 
       self.class.send( :endpoint=,       uri_path_fragment    )
       self.class.send( :implementation=, implementation_class )
@@ -349,13 +319,9 @@ module ApiTools
     # Two interfaces can exist on the same endpoint provided their versions are
     # different since the resulting route to reach them will be different too.
     #
-    # If you call #version, you *MUST* call it before #endpoint.
-    #
     # +version+:: Integer major version number, e.g +2+.
     #
     def version( major_version )
-      raise "You must call \#version before \#endpoint" unless self.class.endpoint.nil?
-
       self.class.send( :version=, major_version.to_s.to_i )
     end
 
@@ -377,7 +343,7 @@ module ApiTools
       invalid = supported_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid }'"
+        raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :actions=, supported_actions )
@@ -542,6 +508,12 @@ module ApiTools
       if self.endpoint.nil?
         raise "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
+
+      # TODO: By now the resource, version and endpoint information is all
+      #       known. This is where we'd tell a router, edge splitter or some
+      #       other component about this instance as part of a wider
+      #       configuration set that allowed inter-service communication.
+
     end
 
     # Define various class instance variable (sic.) accessors.

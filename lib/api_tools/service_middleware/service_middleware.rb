@@ -562,7 +562,7 @@ module ApiTools
           offset    = ApiTools::Utilities::to_integer?( query_hash[ 'offset' ] )
           malformed = :offset if offset.nil?
         else
-          offset = interface.to_list.offset.to_i
+          offset = 0
         end
       end
 

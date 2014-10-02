@@ -121,8 +121,16 @@ module ApiTools
     # more details.
     #
     def self.comprised_of( *classes )
+
+      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
+      #
+      classes.each do | klass |
+        unless klass < ApiTools::ServiceInterface
+          raise "ApiTools::ServiceImplementation::comprised_of expects ApiTools::ServiceInterface subclasses only - got '#{ klass }'"
+        end
+      end
+
       @component_interfaces = classes
     end
-
   end
 end

@@ -20,7 +20,7 @@ class RSpecTestServiceStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceStubInterface
 end
 
-describe RSpecTestServiceStub do
+describe ApiTools::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
@@ -379,7 +379,7 @@ class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
                RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
 end
 
-describe RSpecTestServiceStub do
+describe ApiTools::ServiceMiddleware do
   context 'bad endpoint configuration' do
 
     def app
@@ -426,7 +426,7 @@ class RSpecTestMultipleEndpointServiceStub < ApiTools::ServiceApplication
                RSpecTestServiceAltStubInterface
 end
 
-describe RSpecTestServiceStub do
+describe ApiTools::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
@@ -500,7 +500,7 @@ end
 
 class RSpecTestServiceWithErrorsStubInterface < ApiTools::ServiceInterface
   interface :RSpecTestResource do
-    version 44
+    version 42
     endpoint :rspec_test_service_with_errors_stub, RSpecTestServiceWithErrorsStubImplementation
     errors_for :rspec do
       error 'hello', :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' }
@@ -512,7 +512,7 @@ class RSpecTestServiceWithErrorsStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceWithErrorsStubInterface
 end
 
-describe RSpecTestServiceStub do
+describe ApiTools::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
@@ -529,7 +529,7 @@ describe RSpecTestServiceStub do
       expect(response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' } })
     end
 
-    get '/v44/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v42/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
   end
 end
