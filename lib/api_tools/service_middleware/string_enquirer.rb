@@ -7,6 +7,8 @@
 #           02-Oct-2014 (ADH): Copied from ActiveSupport 4.1.6.
 ########################################################################
 
+# Ruby namespace for the facilities provided by the ApiTools gem.
+#
 module ApiTools
 
   # Given a string, provides an object that takes the string's value and

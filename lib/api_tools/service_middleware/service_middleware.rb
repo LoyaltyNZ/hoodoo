@@ -8,6 +8,8 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
+# Ruby namespace for the facilities provided by the ApiTools gem.
+#
 module ApiTools
 
   # Rack middleware, declared in (e.g.) a +config.ru+ file in the
