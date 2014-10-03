@@ -60,12 +60,6 @@ module ApiTools
       #
       attr_reader :filter
 
-      # Array of supported embedded item names; empty for none defined. Any
-      # embeddable item is implicitly "referenceable" too (via the
-      # +embed=...+ and +reference=...+ query string entries).
-      #
-      attr_reader :embed
-
       # Create an instance with default settings.
       #
       def initialize
@@ -74,7 +68,6 @@ module ApiTools
         @default_sort_key = 'created_at'
         @search           = []
         @filter           = []
-        @embed            = []
       end
 
       private
@@ -109,11 +102,6 @@ module ApiTools
         #
         attr_writer :filter
 
-        # Private writer - see #embed - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
-        # bypassing +private+ via +send()+.
-        #
-        attr_writer :embed
     end # 'class ToList'
 
     ###########################################################################
@@ -246,29 +234,6 @@ module ApiTools
       def filter( *filter )
         @tl.send( :filter=, filter.map { | item | item.to_s } )
       end
-
-      # An array of supported embed keys (as per documentation, so singular or
-      # plural as per resource interface descriptions in the Loyalty Platform
-      # API). Things which can be embedded can also be referenced, via the
-      # +embed=...+ and +reference=...+ query string entries.
-      #
-      # The middleware uses the list to reject requests from clients which
-      # ask for embedded or referenced entities that were not listed by the
-      # interface. If you don't call here, or call here with an empty array,
-      # no embedding or referencing will be allowed for calls to the service
-      # implementation.
-      #
-      # +embed+:: Array of permitted embeddable entity names, as symbols or
-      #           strings. The order of array entries is arbitrary.
-      #
-      # Example: An interface permits lists that request embedding or
-      # referencing of "vouchers", "balances" and "member":
-      #
-      #     embed :vouchers, :balances, :member
-      #
-      def embed( *embed )
-        @tl.send( :embed=, embed.map { | item | item.to_s } )
-      end
     end # 'class ToListDSL'
 
     ###########################################################################
@@ -347,6 +312,33 @@ module ApiTools
       end
 
       self.class.send( :actions=, supported_actions )
+    end
+
+    # An array of supported embed keys (as per documentation, so singular or
+    # plural as per resource interface descriptions in the Loyalty Platform
+    # API). Things which can be embedded can also be referenced, via the
+    # +embed=...+ and +reference=...+ query string entries.
+    #
+    # The middleware uses the list to reject requests from clients which
+    # ask for embedded or referenced entities that were not listed by the
+    # interface. If you don't call here, or call here with an empty array,
+    # no embedding or referencing will be allowed for calls to the service
+    # implementation.
+    #
+    # +embed+:: Array of permitted embeddable entity names, as symbols or
+    #           strings. The order of array entries is arbitrary.
+    #
+    # Example: An interface permits lists that request embedding or
+    # referencing of "vouchers", "balances" and "member":
+    #
+    #     embed :vouchers, :balances, :member
+    #
+    # As a result, #embeds would return:
+    #
+    #     [ 'vouchers', 'balances', 'member' ]
+    #
+    def embeds( *embeds )
+      self.class.send( :embeds=, embeds.map { | item | item.to_s } )
     end
 
     # Specify parameters related to common index parameters. The block contains
@@ -554,6 +546,23 @@ module ApiTools
         #
         attr_reader :actions
 
+        # Array of strings listing allowed embeddable things. Each string
+        # matches the split up comma-separated value for query string
+        # "_embed" or "_reference" keys. For example:
+        #
+        #     ...&_embed=foo,bar
+        #
+        # ...would be valid provided there was an embedding declaration
+        # such as:
+        #
+        #     embeds :foo, :bar
+        #
+        # ...which would in turn lead this accessor to return:
+        #
+        #     [ 'foo', 'bar' ]
+        #
+        attr_reader :embeds
+
         # An ApiTools::ServiceInterface::ToList instance describing the list
         # parameters for the interface. See also
         # ApiTools::ServiceInterface::ToListDSL.
@@ -617,6 +626,12 @@ module ApiTools
         # See ::actions.
         #
         attr_writer :actions
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::embeds.
+        #
+        attr_writer :embeds
 
         # Private property writer allows instances running the DSL to set
         # values on the class for querying using the public readers.

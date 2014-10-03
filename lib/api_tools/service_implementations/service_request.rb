@@ -88,12 +88,12 @@ module ApiTools
     # Array of strings giving requested embedded items; [] if there are
     # none requested.
     #
-    attr_accessor :list_embeds
+    attr_accessor :embeds
 
     # Array of strings giving requested referenced items; [] if there are
     # none requested.
     #
-    attr_accessor :list_references
+    attr_accessor :references
 
   end
 end

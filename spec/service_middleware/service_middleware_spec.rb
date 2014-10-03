@@ -13,6 +13,12 @@ class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
   interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
+    embeds :emb, :embs
+    to_list do
+      sort :extra => [:up, :down]
+      search :foo, :bar
+      filter :baz, :boo
+    end
   end
 end
 
@@ -26,6 +32,35 @@ describe ApiTools::ServiceMiddleware do
     Rack::Builder.new do
       use ApiTools::ServiceMiddleware
       run RSpecTestServiceStub.new
+    end
+  end
+
+  context 'internal sanity checks' do
+    it 'should complain about bad instantiation' do
+      expect {
+        ApiTools::ServiceMiddleware.new( {} )
+      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
+    end
+
+    it 'should complain about bad applications' do
+      class RSpecTestServiceStubBadInterface < ApiTools::ServiceInterface
+      end
+      class RSpecTestServiceStubBad < ApiTools::ServiceApplication
+        comprised_of RSpecTestServiceStubBadInterface
+      end
+
+      expect {
+        ApiTools::ServiceMiddleware.new( RSpecTestServiceStubBad.new )
+      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
+    end
+
+    it 'should self-check content type' do
+      mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceStub.new )
+      mw.instance_variable_set( '@content_type', 'application/xml' )
+      mw.instance_variable_set( '@response', ApiTools::ServiceResponse.new )
+      expect {
+        mw.send( :payload_to_hash, '{}' )
+      }.to raise_error(RuntimeError, "Internal error - content type 'application/xml' is not supported here; \#check_content_type_header() should have caught that");
     end
   end
 
@@ -136,8 +171,8 @@ describe ApiTools::ServiceMiddleware do
           expect(request.list_sort_direction).to eq('desc')
           expect(request.list_search_data).to be_nil
           expect(request.list_filter_data).to be_nil
-          expect(request.list_embeds).to be_nil
-          expect(request.list_references).to be_nil
+          expect(request.embeds).to be_nil
+          expect(request.references).to be_nil
         end
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -181,6 +216,173 @@ describe ApiTools::ServiceMiddleware do
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
       end
+
+      it 'should respond to limit query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_offset).to eq(0)
+          expect(context.request.list_limit).to eq(42)
+        end
+
+        get '/v2/rspec_test_service_stub?limit=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad limit query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?limit=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('limit')
+      end
+
+      it 'should respond to offset query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_offset).to eq(42)
+          expect(context.request.list_limit).to eq(50)
+        end
+
+        get '/v2/rspec_test_service_stub?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad offset query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?offset=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('offset')
+      end
+
+      it 'should respond to sort query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_sort_key).to eq('extra')
+          expect(context.request.list_sort_direction).to eq('up')
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad sort query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?sort=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('sort')
+      end
+
+      it 'should respond to direction query parameter (1)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_sort_key).to eq('created_at')
+          expect(context.request.list_sort_direction).to eq('asc')
+        end
+
+        get '/v2/rspec_test_service_stub?direction=asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to direction query parameter (2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_sort_key).to eq('extra')
+          expect(context.request.list_sort_direction).to eq('down')
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra&direction=down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad direction query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?direction=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('direction')
+      end
+
+      it 'should respond to search query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_search_data).to eq({'foo' => 'val', 'bar' => 'more'})
+        end
+
+        get '/v2/rspec_test_service_stub?search=foo%3Dval%26bar%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad search query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?search=thing%3Dval%26thang%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: thing\\, thang')
+      end
+
+      it 'should respond to filter query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list_filter_data).to eq({'baz' => 'more', 'boo' => 'val'})
+        end
+
+        get '/v2/rspec_test_service_stub?filter=boo%3Dval%26baz%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad filter query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?filter=thung%3Dval%26theng%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('filter: thung\\, theng')
+      end
+
+      it 'should respond to embed query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.embeds).to eq(['embs', 'emb'])
+        end
+
+        get '/v2/rspec_test_service_stub?_embed=embs,emb', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad embed query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?_embed=one,emb,two', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('_embed: one\\, two')
+      end
+
+      it 'should respond to reference query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.references).to eq(['embs', 'emb'])
+        end
+
+        get '/v2/rspec_test_service_stub?_reference=embs,emb', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad reference query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?_reference=one,emb,two', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('_reference: one\\, two')
+      end
+
     end
 
     # -------------------------------------------------------------------------

@@ -96,7 +96,7 @@ module ApiTools
       @service_container = app
 
       unless @service_container.is_a?( ApiTools::ServiceApplication )
-        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ @service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ app.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
       end
 
       # Collect together the implementation instances and the matching regexps
@@ -114,7 +114,7 @@ module ApiTools
       @services = @service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
-          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface.class } via service class #{ @app.class }"
+          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ app.class }"
         end
 
         # Regexp explanation:
@@ -460,13 +460,16 @@ module ApiTools
             #
             @payload_hash = JSON.parse( body, :create_additions => false )
 
-          else
-            raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
         end
 
       rescue => e
+        @payload_hash = {}
         @response.errors.add_error( 'generic.malformed' )
 
+      end
+
+      if @payload_hash.nil?
+        raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
       end
     end
 
@@ -574,12 +577,12 @@ module ApiTools
       end
 
       unless malformed
-        sort_key  = query_hash[ 'sort' ] || interface.to_list.default_sort_key
+        sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
         malformed = :sort unless interface.to_list.sort.keys.include?( sort_key )
       end
 
       unless malformed
-        direction = query_hash[ 'direction' ] || interface.to_list.default_sort_direction.to_s
+        direction = query_hash[ 'direction' ] || interface.to_list.sort[ sort_key ][ 0 ]
         malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
       end
 
@@ -588,7 +591,7 @@ module ApiTools
         unless search.nil?
           search = Hash[ URI.decode_www_form( search ) ]
           unrecognised_search_keys = search.keys - interface.to_list.search
-          malformed = "search:#{ unrecognised_search_keys }" unless unrecognised_search_keys.empty?
+          malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
         end
       end
 
@@ -597,7 +600,7 @@ module ApiTools
         unless filter.nil?
           filter = Hash[ URI.decode_www_form( filter ) ]
           unrecognised_filter_keys = filter.keys - interface.to_list.filter
-          malformed = "filter:#{ unrecognised_filter_keys }" unless unrecognised_filter_keys.empty?
+          malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
         end
       end
 
@@ -605,8 +608,8 @@ module ApiTools
         embeds = query_hash[ '_embed' ]
         unless embeds.nil?
           embeds = embeds.split( ',' )
-          unrecognised_embeds = embeds - interface.to_list.embeds
-          malformed = "_embed:#{ unrecognised_embeds }" unless unrecognised_embeds.empty?
+          unrecognised_embeds = embeds - interface.embeds
+          malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
         end
       end
 
@@ -614,15 +617,16 @@ module ApiTools
         references = query_hash[ '_reference' ]
         unless references.nil?
           references = references.split( ',' )
-          unrecognised_references = references - interface.to_list.references
-          malformed = "_reference:#{ unrecognised_references }" unless unrecognised_references.empty?
+          unrecognised_references = references - interface.embeds # (sic.)
+          malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
         end
       end
 
       if malformed
         return @response.add_error(
           'platform.malformed',
-          :message => "One or more malformed or invalid query string parameters: '#{ malformed }'"
+          :message => "One or more malformed or invalid query string parameters",
+          :reference => { :including => malformed }
         )
       end
 
@@ -632,8 +636,8 @@ module ApiTools
       service_request.list_sort_direction = direction
       service_request.list_search_data    = search
       service_request.list_filter_data    = filter
-      service_request.list_embeds         = embeds
-      service_request.list_references     = references
+      service_request.embeds              = embeds
+      service_request.references          = references
 
       return nil
     end

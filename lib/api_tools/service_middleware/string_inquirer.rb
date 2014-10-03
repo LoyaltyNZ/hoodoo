@@ -1,7 +1,7 @@
 ########################################################################
-# File::    string_enquirer.rb
+# File::    string_inquirer.rb
 #
-# Purpose:: StringEnquirer class copied from ActiveSupport 4.1.6, to
+# Purpose:: StringInquirer class copied from ActiveSupport 4.1.6, to
 #           avoid dragging in that huge dependency for this one thing.
 # ----------------------------------------------------------------------
 #           02-Oct-2014 (ADH): Copied from ActiveSupport 4.1.6.

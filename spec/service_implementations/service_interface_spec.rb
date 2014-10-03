@@ -11,13 +11,13 @@ class RSpecTestServiceInterfaceInterfaceA < ApiTools::ServiceInterface
     version 42
     endpoint :rspec_test_service_interface_a, RSpecTestServiceInterfaceImplementationA
     actions :show, :create, :delete
+    embeds :embed_one, :embed_two, :embed_three
 
     to_list do
       limit  25
       sort   :sort_one => [ :left, :right ], default( :sort_two ) => [ :up, :down ]
       search :search_one, :search_two, :search_three
       filter :filter_one, :filter_two, :filter_three
-      embed  :embed_one, :embed_two, :embed_three
     end
 
     to_create do
@@ -60,13 +60,13 @@ describe ApiTools::ServiceInterface do
       expect(RSpecTestServiceInterfaceInterfaceA.resource).to eq(:RSpecTestServiceInterfaceAResource)
       expect(RSpecTestServiceInterfaceInterfaceA.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
       expect(RSpecTestServiceInterfaceInterfaceA.actions).to eq([:show, :create, :delete])
+      expect(RSpecTestServiceInterfaceInterfaceA.embeds).to eq(["embed_one", "embed_two", "embed_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.limit).to eq(25)
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.sort).to eq({"created_at" => [ "desc", "asc" ], "sort_one" => [ "left", "right" ], "sort_two" => [ "up", "down" ]})
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.default_sort_key).to eq("sort_two")
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.default_sort_direction).to eq("up")
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.embed).to eq(["embed_one", "embed_two", "embed_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:foo]).to be_a(ApiTools::Presenters::Text)
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:bar]).to be_a(ApiTools::Presenters::Enum)
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:bar].from).to eq(["baz", "boo"])
