@@ -140,11 +140,9 @@ module ApiTools
     # middleware or applications.
     #
     def for_rack
-      http_headers = {}
+      rack_response = Rack::Response.new
 
-      @headers.each do | downcased_guard_name, original_name_value_hash |
-        http_headers.merge!( original_name_value_hash )
-      end
+      # Work out the status code and basic response body
 
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
@@ -153,6 +151,8 @@ module ApiTools
         http_status_code = @http_status_code
         response_body    = @response_body
       end
+
+      rack_response.status = http_status_code.to_i
 
       # We're not using JSON5, so the Platform API says that outmost arrays
       # are wrapped with a top-level object key "_data".
@@ -163,12 +163,19 @@ module ApiTools
         response_hash = response_body
       end
 
-      [
-        http_status_code.to_i,
-        http_headers,
-        JSON.generate( response_hash )
-      ]
+      rack_response.write( JSON.generate( response_body ) )
 
+      # Finally, sort out the headers
+
+      @headers.each do | downcased_guard_name, original_name_value_hash |
+        header_name = original_name_value_hash.keys[ 0 ]
+        header_value = original_name_value_hash.values[ 0 ]
+        rack_response[ header_name ] = header_value
+      end
+
+      # Return the complete response
+
+      return rack_response.finish
     end
   end
 end
