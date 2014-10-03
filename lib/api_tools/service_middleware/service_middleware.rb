@@ -471,6 +471,8 @@ module ApiTools
       if @payload_hash.nil?
         raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
       end
+
+      return @payload_hash
     end
 
     # Match a URI string against a service endpoint regexp and return broken

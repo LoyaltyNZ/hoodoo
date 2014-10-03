@@ -474,6 +474,15 @@ describe ApiTools::ServiceMiddleware do
         expect(last_response.status).to eq(200)
       end
 
+      it 'should pass the JSON through' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.body).to eq({'one' => 'two'})
+        end
+
+        post '/v2/rspec_test_service_stub', '{"one": "two"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
       it 'should complain if there is irrelevant path data' do
         post '/v2/rspec_test_service_stub/12345', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
