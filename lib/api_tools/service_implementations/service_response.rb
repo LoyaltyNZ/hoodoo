@@ -20,8 +20,8 @@ module ApiTools
   # its own data to it.
   #
   # The instance carries data about both error conditions and successful work.
-  # In the successful case, #http_status_code and #response_body data is set by
-  # the service and used in the response. In the error case (see #errors), the
+  # In the successful case, #http_status_code and #body data is set by the
+  # service and used in the response. In the error case (see #errors), the
   # HTTP status code is taken from the first error in the errors collection and
   # the response body will be the JSON representation of that collection - any
   # HTTP status code or response body data previously set by the service will
@@ -55,7 +55,7 @@ module ApiTools
     #
     # The response body *MUST* be either a *Ruby Array* or a *Ruby Hash*.
     #
-    attr_accessor :response_body
+    attr_accessor :body
 
     # Create a new instance, ready to take on a response. The service
     # middleware responsible for doing this.
@@ -64,7 +64,7 @@ module ApiTools
       @errors           = ApiTools::Errors.new()
       @headers          = {}
       @http_status_code = 200
-      @response_body    = {}
+      @body             = {}
     end
 
     # Returns +true+ if processing should halt, e.g. because errors have been
@@ -146,10 +146,10 @@ module ApiTools
 
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
-        response_body    = @errors.render()
+        body_data        = @errors.render()
       else
         http_status_code = @http_status_code
-        response_body    = @response_body
+        body_data        = @body
       end
 
       rack_response.status = http_status_code.to_i
@@ -157,10 +157,10 @@ module ApiTools
       # We're not using JSON5, so the Platform API says that outmost arrays
       # are wrapped with a top-level object key "_data".
 
-      if response_body.is_a?( Array )
-        response_hash = { '_data' => response_body }
+      if body_data.is_a?( Array )
+        response_hash = { '_data' => body_data }
       else
-        response_hash = response_body
+        response_hash = body_data
       end
 
       rack_response.write( JSON.generate( response_hash ) )

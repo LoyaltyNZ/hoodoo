@@ -9,7 +9,7 @@ describe ApiTools::ServiceResponse do
     expect(@r.errors).to be_a(ApiTools::Errors)
     expect(@r.errors.has_errors?).to eq(false)
     expect(@r.http_status_code).to eq(200)
-    expect(@r.response_body).to eq({})
+    expect(@r.body).to eq({})
     expect(@r.instance_variable_get('@headers')).to eq({})
   end
 
@@ -76,7 +76,7 @@ describe ApiTools::ServiceResponse do
       @r.add_error('platform.malformed') # 422 status
       @r.add_error('platform.not_found', :reference => {:entity_name => 'hello'}) # 404 status
 
-      @r.response_body = { this: 'should be ignored' }
+      @r.body = { this: 'should be ignored' }
 
       errors_hash = @r.errors.render()
       status, headers, body = @r.for_rack
@@ -89,7 +89,7 @@ describe ApiTools::ServiceResponse do
 
     it 'should return non-error condition Rack data correctly with a Hash body' do
       response_hash = { this: 'should not be ignored' }
-      @r.response_body = response_hash
+      @r.body = response_hash
 
       status, headers, body = @r.for_rack
 
@@ -101,7 +101,7 @@ describe ApiTools::ServiceResponse do
 
     it 'should return non-error condition Rack data correctly with an Array body' do
       response_array = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
-      @r.response_body = response_array
+      @r.body = response_array
 
       status, headers, body = @r.for_rack
 
