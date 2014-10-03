@@ -58,7 +58,7 @@ describe ApiTools::ServiceResponse do
 
       expect(status).to eq(200)
       expect(headers).to eq({})
-      expect(body).to eq(["{}"]) # Yes, an array; containing one string which is the JSON representation of the original stored body hash
+      expect(body).to eq("{}")
     end
 
     it 'should return header data correctly' do
@@ -69,7 +69,7 @@ describe ApiTools::ServiceResponse do
 
       expect(status).to eq(200)
       expect(headers).to eq({'X-Foo' => 'baz', 'X-Bar' => 'boo' })
-      expect(body).to eq(["{}"]) # Yes, an array; containing one string which is the JSON representation of the original stored body hash
+      expect(body).to eq("{}")
     end
 
     it 'should return error condition Rack data correctly' do
@@ -83,7 +83,7 @@ describe ApiTools::ServiceResponse do
 
       expect(status).to eq(422) # From the first error we stored, not the second
       expect(headers).to eq({})
-      expect(body).to eq([JSON.generate(errors_hash)])
+      expect(body).to eq(JSON.generate(errors_hash))
     end
 
     it 'should return non-error condition Rack data correctly with a Hash body' do
@@ -94,7 +94,7 @@ describe ApiTools::ServiceResponse do
 
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({})
-      expect(body).to eq([JSON.generate(response_hash)])
+      expect(body).to eq(JSON.generate(response_hash))
     end
 
     it 'should return non-error condition Rack data correctly with an Array body' do
@@ -105,7 +105,7 @@ describe ApiTools::ServiceResponse do
 
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({})
-      expect(body).to eq([JSON.generate({'_data' => response_array})])
+      expect(body).to eq(JSON.generate({'_data' => response_array}))
     end
   end
 end

@@ -166,7 +166,7 @@ module ApiTools
       [
         http_status_code.to_i,
         http_headers,
-        [ JSON.generate( response_hash ) ]
+        JSON.generate( response_hash )
       ]
 
     end
