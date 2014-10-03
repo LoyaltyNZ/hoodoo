@@ -33,7 +33,7 @@ module ApiTools
 
     # Parsed payload hash, for create and update actions only; else +nil+.
     #
-    attr_accessor :payload
+    attr_accessor :body
 
     # An array of zero or more path components making up the URI *after* the
     # service endpoint has been accounted for. For example, with a service

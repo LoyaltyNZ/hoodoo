@@ -340,7 +340,7 @@ module ApiTools
       end
 
       if action == :create || action == :update
-        service_request.payload = payload_to_hash( body )
+        service_request.body = payload_to_hash( body )
         return @response.for_rack() if @response.halt_processing?
 
       elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
@@ -551,6 +551,10 @@ module ApiTools
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
+      #
+      # On some Ruby versions bad data here can cause an exception, so there's
+      # a catch-all "rescue" at the end of the function to return a 'malformed'
+      # response if necessary.
 
       query_data = URI.decode_www_form( query_string )
       query_hash = Hash[ query_data ]
@@ -640,6 +644,10 @@ module ApiTools
       service_request.references          = references
 
       return nil
+
+    rescue
+      return @response.add_error( 'platform.malformed' )
+
     end
 
   end
