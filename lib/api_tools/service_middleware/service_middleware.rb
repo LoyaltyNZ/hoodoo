@@ -149,6 +149,9 @@ module ApiTools
 
         @request  = Rack::Request.new( env )
         @response = ApiTools::ServiceResponse.new
+        @session  = ApiTools::ServiceSession.new
+
+        # TODO: Session validation/recovery, probably in preprocess()
 
         preprocess()
         return @response.for_rack() if @response.halt_processing?
@@ -348,9 +351,13 @@ module ApiTools
 
       # Finally - dispatch to service.
 
-      implementation.send( action,
-                           service_request,
-                           @response )
+      context = ApiTools::ServiceContext.new(
+        @session,
+        service_request,
+        @response
+      )
+
+      implementation.send( action, context )
     end
 
     # Run request preprocessing - common actions that occur after service

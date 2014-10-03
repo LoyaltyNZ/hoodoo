@@ -65,11 +65,13 @@ require root+'errors/errors.rb'
 require root+'service_middleware/string_enquirer.rb'
 require root+'service_middleware/service_middleware.rb'
 
+require root+'service_implementations/service_session.rb'
+require root+'service_implementations/service_request.rb'
+require root+'service_implementations/service_response.rb'
+require root+'service_implementations/service_context.rb'
 require root+'service_implementations/service_application.rb'
 require root+'service_implementations/service_interface.rb'
 require root+'service_implementations/service_implementation.rb'
-require root+'service_implementations/service_request.rb'
-require root+'service_implementations/service_response.rb'
 
 require root+'utilities.rb'
 

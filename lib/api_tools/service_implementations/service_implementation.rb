@@ -34,51 +34,56 @@ module ApiTools
 
     # Implement a "list" action (paginated, sorted list of resources).
     #
-    # +request+::  ApiTools::ServiceRequest instance for the inbound request.
-    # +response+:: ApiTools::ServiceResponse instance which the service updates
-    #              with the results of its processing of this action.
+    # +context+:: ApiTools::ServiceContext instance describing authorised
+    #             session information, inbound request information and holding
+    #             the response object that the service updates with the results
+    #             of its processing of this action.
     #
-    def list( request, response )
+    def list( context )
       raise "ApiTools::ServiceImplementation subclasses must implement 'list'"
     end
 
     # Implement a "show" action (represent one existing resource instance).
     #
-    # +request+::  ApiTools::ServiceRequest instance for the inbound request.
-    # +response+:: ApiTools::ServiceResponse instance which the service updates
-    #              with the results of its processing of this action.
+    # +context+:: ApiTools::ServiceContext instance describing authorised
+    #             session information, inbound request information and holding
+    #             the response object that the service updates with the results
+    #             of its processing of this action.
     #
-    def show( request, response )
+    def show( context )
       raise "ApiTools::ServiceImplementation subclasses must implement 'show'"
     end
 
     # Implement a "create" action (store one new resource instance).
     #
-    # +request+::  ApiTools::ServiceRequest instance for the inbound request.
-    # +response+:: ApiTools::ServiceResponse instance which the service updates
-    #              with the results of its processing of this action.
+    # +context+:: ApiTools::ServiceContext instance describing authorised
+    #             session information, inbound request information and holding
+    #             the response object that the service updates with the results
+    #             of its processing of this action.
     #
-    def create( request, response )
+    def create( context )
       raise "ApiTools::ServiceImplementation subclasses must implement 'create'"
     end
 
     # Implement a "update" action (modify one existing resource instance).
     #
-    # +request+::  ApiTools::ServiceRequest instance for the inbound request.
-    # +response+:: ApiTools::ServiceResponse instance which the service updates
-    #              with the results of its processing of this action.
+    # +context+:: ApiTools::ServiceContext instance describing authorised
+    #             session information, inbound request information and holding
+    #             the response object that the service updates with the results
+    #             of its processing of this action.
     #
-    def update( request, response )
+    def update( context )
       raise "ApiTools::ServiceImplementation subclasses must implement 'update'"
     end
 
     # Implement a "delete" action (delete one existing resource instance).
     #
-    # +request+::  ApiTools::ServiceRequest instance for the inbound request.
-    # +response+:: ApiTools::ServiceResponse instance which the service updates
-    #              with the results of its processing of this action.
+    # +context+:: ApiTools::ServiceContext instance describing authorised
+    #             session information, inbound request information and holding
+    #             the response object that the service updates with the results
+    #             of its processing of this action.
     #
-    def delete( request, response )
+    def delete( context )
       raise "ApiTools::ServiceImplementation subclasses must implement 'delete'"
     end
   end

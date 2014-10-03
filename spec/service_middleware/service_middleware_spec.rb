@@ -116,7 +116,14 @@ describe ApiTools::ServiceMiddleware do
     describe 'service implementation #list' do
       it 'should get called with default values' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, request, response |
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context).to be_a(ApiTools::ServiceContext)
+
+          session = context.session
+          request = context.request
+          response = context.response
+
+          expect(session).to be_a(ApiTools::ServiceSession)
           expect(request).to be_a(ApiTools::ServiceRequest)
           expect(response).to be_a(ApiTools::ServiceResponse)
 
@@ -181,13 +188,10 @@ describe ApiTools::ServiceMiddleware do
     describe 'service implementation #show' do
       it 'should get called with correct path data (1)' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, request, response |
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
-
-          expect(request.rack_request).to be_a(Rack::Request)
-          expect(request.uri_path_components).to eq(['12345'])
-          expect(request.uri_path_extension).to eq('tar.gz')
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.rack_request).to be_a(Rack::Request)
+          expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
         get '/v2/rspec_test_service_stub/12345.tar.gz', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -196,13 +200,10 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should get called with correct path data (2)' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, request, response |
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
-
-          expect(request.rack_request).to be_a(Rack::Request)
-          expect(request.uri_path_components).to eq(['12345', '67890'])
-          expect(request.uri_path_extension).to eq('json')
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.rack_request).to be_a(Rack::Request)
+          expect(context.request.uri_path_components).to eq(['12345', '67890'])
+          expect(context.request.uri_path_extension).to eq('json')
         end
 
         get '/v2/rspec_test_service_stub/12345/67890.json', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -211,13 +212,10 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should get called with correct path data (3)' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, request, response |
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
-
-          expect(request.rack_request).to be_a(Rack::Request)
-          expect(request.uri_path_components).to eq(['12345abc'])
-          expect(request.uri_path_extension).to eq('')
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.rack_request).to be_a(Rack::Request)
+          expect(context.request.uri_path_components).to eq(['12345abc'])
+          expect(context.request.uri_path_extension).to eq('')
         end
 
         get '/v2/rspec_test_service_stub/12345abc/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -315,13 +313,10 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should get called with correct path data' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update).once do | ignored_rspec_mock_instance, request, response |
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
-
-          expect(request.rack_request).to be_a(Rack::Request)
-          expect(request.uri_path_components).to eq(['12345'])
-          expect(request.uri_path_extension).to eq('tar.gz')
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.rack_request).to be_a(Rack::Request)
+          expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
         patch '/v2/rspec_test_service_stub/12345.tar.gz', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -342,13 +337,10 @@ describe ApiTools::ServiceMiddleware do
     describe 'service implementation #delete' do
       it 'should get called with correct path data' do
 
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:delete).once do | ignored_rspec_mock_instance, request, response |
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
-
-          expect(request.rack_request).to be_a(Rack::Request)
-          expect(request.uri_path_components).to eq(['12345'])
-          expect(request.uri_path_extension).to eq('tar.gz')
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:delete).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.rack_request).to be_a(Rack::Request)
+          expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
         delete '/v2/rspec_test_service_stub/12345.tar.gz', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -522,11 +514,8 @@ describe ApiTools::ServiceMiddleware do
   end
 
   it 'should define custom errors' do
-    expect_any_instance_of(RSpecTestServiceWithErrorsStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, request, response |
-      expect(request).to be_a(ApiTools::ServiceRequest)
-      expect(response).to be_a(ApiTools::ServiceResponse)
-
-      expect(response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' } })
+    expect_any_instance_of(RSpecTestServiceWithErrorsStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+      expect(context.response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' } })
     end
 
     get '/v42/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
