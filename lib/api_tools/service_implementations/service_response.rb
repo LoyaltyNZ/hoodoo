@@ -11,8 +11,6 @@
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
 
   # The service middleware creates an ApiTools::ServiceResponse instance for

@@ -9,8 +9,6 @@
 #           30-Sep-2014 (ADH): Created.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
   module Data
     # A JSON UUID schema member

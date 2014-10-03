@@ -10,8 +10,6 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
 
   # Service implementation authors subclass this to describe the interface that

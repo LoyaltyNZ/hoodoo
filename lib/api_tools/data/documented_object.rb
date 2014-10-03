@@ -10,8 +10,6 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
 
   # Common data definitions and descriptions - describe, through a DSL, the

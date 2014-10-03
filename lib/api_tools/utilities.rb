@@ -7,8 +7,6 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
 
   # Useful tools, especially for those working without Rails components.

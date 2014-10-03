@@ -11,8 +11,6 @@
 #           29-Sep-2014 (ADH): Split out from +documented_object.rb+.
 ########################################################################
 
-# Ruby namespace for the facilities provided by the ApiTools gem.
-#
 module ApiTools
   module Data
 
