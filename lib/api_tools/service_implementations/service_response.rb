@@ -103,7 +103,7 @@ module ApiTools
           )
         end
 
-        problem = false if @errors.count == thing.count
+        problem = false if @errors.errors.count == thing.count
       end
 
       if problem
