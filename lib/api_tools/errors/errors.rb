@@ -100,7 +100,7 @@ module ApiTools
 
       description = @descriptions.describe( code )
 
-      required_keys = options.delete( :ignore_requirements ) ? [] || description[ :reference ] || []
+      required_keys = options[ :ignore_requirements ] ? [] : ( description[ :reference ] || [] )
       actual_keys   = reference.keys
       missing_keys  = required_keys - actual_keys
 
