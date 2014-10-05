@@ -185,7 +185,7 @@ module ApiTools
           # HEAD-only response.
           #
           return [
-            500, {}, Rack::BodyProxy.new([]) {}
+            500, {}, Rack::BodyProxy.new(['Middleware: Exception during exception processing']) {}
           ]
 
         end
