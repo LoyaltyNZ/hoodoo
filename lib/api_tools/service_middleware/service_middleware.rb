@@ -181,11 +181,10 @@ module ApiTools
 
         rescue
 
-          # An exception in the exception handler! Oh dear. Return a
-          # HEAD-only response.
+          # An exception in the exception handler! Oh dear.
           #
           return [
-            500, {}, Rack::BodyProxy.new(['Middleware: Exception during exception processing']) {}
+            500, {}, Rack::BodyProxy.new(['Middleware exception in exception handler']) {}
           ]
 
         end

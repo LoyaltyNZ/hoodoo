@@ -143,7 +143,7 @@ describe ApiTools::ServiceMiddleware do
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to eq('') # I.e., fell back to head-only
+      expect(last_response.body).to eq('Middleware exception in exception handler')
     end
 
     # -------------------------------------------------------------------------
