@@ -70,6 +70,19 @@ describe '#schema' do
         end
       end
     end
+
+    # For testing resource validation for internationalised (or not) resources.
+
+    class Internationalised < ApiTools::Data::DocumentedPresenter
+      schema do
+        internationalised
+      end
+    end
+
+    class NotInternationalised < ApiTools::Data::DocumentedPresenter
+      schema do
+      end
+    end
   end
 
   describe '#validate' do
@@ -107,7 +120,7 @@ describe '#schema' do
       expect(schema.properties[:test_object].properties[:test_array].properties[:ary_suffix].length).to eq(2)
     end
 
-    it 'should return no errors with valid data' do
+    it 'should return no errors with valid data for type only' do
       data = {
         :errors_id => ApiTools::UUID.generate,
         :test_tags => 'foo,bar,baz',
@@ -123,7 +136,32 @@ describe '#schema' do
         }
       }
 
-      expect(ApiTools::Data::Resources::World.validate(data)).to eq([])
+      expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([])
+    end
+
+    it 'should return no errors with valid data for resource' do
+      data = {
+        :errors_id => ApiTools::UUID.generate,
+        :test_tags => 'foo,bar,baz',
+        :test_object => {
+          :nested_object => {
+            :name => 'Some name',
+            :obj_suffix => '!'
+          },
+          :test_array => [
+            { :name => 'Some name 0', :ary_suffix => '00' },
+            { :name => 'Some name 1' }
+          ]
+        }
+      }
+
+      rendered = ApiTools::Data::Resources::World.render(
+        data,
+        ApiTools::UUID.generate,
+        Time.now
+      )
+
+      expect(ApiTools::Data::Resources::World.validate(rendered)).to eq([])
     end
 
     it 'should return correct errors invalid data' do
@@ -143,7 +181,7 @@ describe '#schema' do
         }
       }
 
-      expect(ApiTools::Data::Resources::World.validate(data)).to eq([
+      expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([
         {
           :code => 'generic.invalid_string',
           :message => 'Field `test_object.nested_object.obj_suffix` is larger than max length `1`',
@@ -168,7 +206,7 @@ describe '#schema' do
       # the contents yet so we only have one error.
 
       data = {}
-      expect(NastyNesting.validate(data)).to eq([
+      expect(NastyNesting.validate(data, true)).to eq([
         {
           :code => 'generic.required_field_missing',
           :message => 'Field `outer_array` is required',
@@ -182,7 +220,7 @@ describe '#schema' do
       data = {
         :outer_array => []
       }
-      expect(NastyNesting.validate(data)).to eq([])
+      expect(NastyNesting.validate(data, true)).to eq([])
 
       # The outer array is present and has two entries that omit required
       # fields, so we expect errors for all of them.
@@ -190,7 +228,7 @@ describe '#schema' do
       data = {
         :outer_array => [{}, {}]
       }
-      expect(NastyNesting.validate(data)).to eq([
+      expect(NastyNesting.validate(data, true)).to eq([
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].one` is required',          :reference => "outer_array[0].one"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].two` is required',          :reference => "outer_array[0].two"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array` is required', :reference => "outer_array[0].middle_array"},
@@ -210,7 +248,7 @@ describe '#schema' do
           }
         ]
       }
-      expect(NastyNesting.validate(data)).to eq([])
+      expect(NastyNesting.validate(data, true)).to eq([])
 
       data = {
         :outer_array => [
@@ -221,7 +259,7 @@ describe '#schema' do
           }
         ]
       }
-      expect(NastyNesting.validate(data)).to eq([
+      expect(NastyNesting.validate(data, true)).to eq([
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].three` is required',       :reference => "outer_array[0].middle_array[0].three"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].four` is required',        :reference => "outer_array[0].middle_array[0].four"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array` is required', :reference => "outer_array[0].middle_array[0].inner_array"},
@@ -245,7 +283,7 @@ describe '#schema' do
           }
         ]
       }
-      expect(NastyNesting.validate(data)).to eq([])
+      expect(NastyNesting.validate(data, true)).to eq([])
 
       data = {
         :outer_array => [
@@ -262,7 +300,7 @@ describe '#schema' do
           }
         ]
       }
-      expect(NastyNesting.validate(data)).to eq([
+      expect(NastyNesting.validate(data, true)).to eq([
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].five` is required',               :reference => "outer_array[0].middle_array[0].inner_array[0].five"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].six` is required',                :reference => "outer_array[0].middle_array[0].inner_array[0].six"},
         {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object` is required',       :reference => "outer_array[0].middle_array[0].inner_array[0].inner_object"},
@@ -296,7 +334,18 @@ describe '#schema' do
           }
         ]
       }
-      expect(NastyNesting.validate(data)).to eq([])
+      expect(NastyNesting.validate(data, true)).to eq([])
+    end
+
+    it 'should validate resource fields for language correctly' do
+      expect(Internationalised.validate({}).count).to eq(4)
+      expect(NotInternationalised.validate({}).count).to eq(3)
+
+      # Check schema redefinition for the required language field is working
+      # OK by repeating the above two expectations.
+      #
+      expect(Internationalised.validate({}).count).to eq(4)
+      expect(NotInternationalised.validate({}).count).to eq(3)
     end
   end
 
