@@ -173,6 +173,11 @@ module ApiTools
             reference[ :backtrace ] = exception.backtrace.join( " | " )
           end
 
+          # A service can rewrite this field with a different object, leading
+          # to an exception within the exception handler; so use a new one!
+          #
+          @response.errors = ApiTools::Errors.new()
+
           return @response.add_error(
             'platform.fault',
             :message => exception.message,
