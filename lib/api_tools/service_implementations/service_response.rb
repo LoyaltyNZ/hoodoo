@@ -40,7 +40,7 @@ module ApiTools
     # errors collection isn't empty. The middleware does this as part of
     # request handling, but generally speaking nobody else should need to.
     #
-    attr_accessor :errors
+    attr_reader :errors
 
     # HTTP status code that will be involved in the response. Default is 200.
     # Integer, or something that can be converted to one with +to_i+. If errors
@@ -65,6 +65,50 @@ module ApiTools
       @headers          = {}
       @http_status_code = 200
       @body             = {}
+    end
+
+    # Assign a given ApiTools::Errors instance internally, or take an array of
+    # error structures (a hash of +:code+, +:message+ and precompiled
+    # +:reference+ string) or just the one hash and add that to an existing (or
+    # create a new instance in passing if there's none assinged) errors
+    # collection.
+    #
+    # WARNING: Calling with the Hash or Array approach bypasses reference data
+    # validation since the reference string is precompiled. This could lead to
+    # the production of errors that do not match documentation.
+    #
+    # +thing+: ApiTools::Errors instance, Hash of +:code+, +:message+ and
+    #          precompiled +:reference+ string, or Array of such Hashes.
+    #
+    def errors=( thing )
+      problem = true
+      thing   = [ thing ] if thing.is_a?( Hash )
+
+      if thing.is_a?( ApiTools::Errors )
+        @errors = thing
+        problem = false
+
+      elsif thing.is_a?( Array )
+        thing.each do | entry |
+          break unless entry.is_a?( Hash )
+
+          @errors ||= ApiTools::Errors.new
+          @errors.add_error(
+            entry[ :code ],
+            :message   => entry[ :message ],
+            :reference => {
+              :data => entry[ :reference ]
+            },
+            :ignore_requirements => true
+          )
+        end
+
+        problem = false if @errors.count == thing.count
+      end
+
+      if problem
+        raise "ApiTools::ServiceReponse\#errors: Unsupported assignment of class '#{ thing.class }'"
+      end
     end
 
     # Returns +true+ if processing should halt, e.g. because errors have been

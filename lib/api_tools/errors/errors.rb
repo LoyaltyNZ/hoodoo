@@ -104,7 +104,7 @@ module ApiTools
       actual_keys   = reference.keys
       missing_keys  = required_keys - actual_keys
 
-      unless ( missing_keys.empty? )
+      unless missing_keys.empty? || options.delete( :ignore_requirements )
         raise "In #add_error: Reference hash missing required keys: '#{ missing_keys.join( ', ' ) }'"
       end
 
