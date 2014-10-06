@@ -47,15 +47,68 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#connect'
-  describe '#close'
-  describe '#process'
+  describe '#connect' do
+    it  'should set connection to new Bunny client and start it' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      bunny = double('bunny')
+      expect(bunny).to receive(:start)
+      expect(Bunny).to receive(:new).with('TEST_URI').and_return(bunny)
+
+      inst.connect
+    end
+  end
+
+  describe '#close' do
+    it 'should call close on connection' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      cxn = double('connection')
+      expect(cxn).to receive(:close)
+
+      inst.instance_eval { @connection = cxn }
+      inst.close
+    end
+  end
+
+  describe '#process' do
+    it 'should throw an error' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+      expect { inst.process(nil) }.to raise_error
+    end
+  end
+
   describe '#create_worker_thread'
   describe '#create_rx_thread'
   describe '#create_tx_thread'
   describe '#start'
-  describe '#join'
+
+  describe '#join' do
+    it 'should call join on rx_thread' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      rxth = double('tx_thread')
+      expect(rxth).to receive(:join)
+
+      inst.instance_eval { @rx_thread = rxth }
+      inst.join
+    end
+  end
+
   describe '#stop'
-  describe '#send_message'
+
+  describe '#send_message' do
+    it 'should push msg on tx_queue' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      msg = double('message')
+      txq = double('tx_queue')
+      expect(txq).to receive(:<<).with(msg)
+
+      inst.instance_eval { @tx_queue = txq }
+      inst.send_message(msg)
+    end
+  end
+
   describe '#self.number_of_processors'
 end
