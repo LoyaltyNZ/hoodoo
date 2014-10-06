@@ -8,6 +8,7 @@ module ApiTools
         update options
         super options
 
+        @type = options[:type] || 'http_request'
         @response_class = ApiTools::Services::HTTPResponse
       end
 

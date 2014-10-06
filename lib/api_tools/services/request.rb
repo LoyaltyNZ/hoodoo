@@ -8,6 +8,8 @@ module ApiTools
       def initialize(options)
         super options
         @response_class = ApiTools::Services::Response
+
+        @type = options[:type] || 'request'
         @queue = Queue.new
       end
 

@@ -11,6 +11,11 @@ describe ApiTools::Services::HTTPResponse do
       options = { :one => 1}
       inst = ApiTools::Services::HTTPResponse.new(options)
     end
+
+    it 'should have correct type if not defined' do
+      inst = ApiTools::Services::HTTPResponse.new({})
+      expect(inst.type).to eq('http_response')
+    end
   end
 
   describe '#serialize' do
@@ -38,7 +43,7 @@ describe ApiTools::Services::HTTPResponse do
         :body => 'two',
       }
       inst = ApiTools::Services::HTTPResponse.new({:payload => options.to_msgpack})
-     
+
       expect(inst).to receive(:update).with(options)
       inst.deserialize
 

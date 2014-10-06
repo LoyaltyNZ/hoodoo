@@ -7,6 +7,8 @@ module ApiTools
       def initialize(options = {})
         update options
         super options
+
+        @type = options[:type] || 'http_response'
       end
 
       def serialize

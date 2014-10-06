@@ -65,9 +65,15 @@ module ApiTools
           @boot_queue << true
           @rx_channel.prefetch(@prefetch)
           loop do
-            queue.subscribe(:ack => true, :block => true) do |delivery_info, metadata, payload|
-              @rx_queue << request_class.create_from_raw_message(delivery_info, metadata, payload)
-              @rx_channel.ack(delivery_info.delivery_tag)
+            begin
+              queue.subscribe(:ack => true, :block => true) do |delivery_info, metadata, payload|
+                @rx_queue << request_class.create_from_raw_message(delivery_info, metadata, payload)
+                @rx_channel.ack(delivery_info.delivery_tag)
+              end
+            rescue Interrupt
+              break
+            rescue Exception => e
+              ApiTools::Logger.error e
             end
           end
         end
@@ -79,17 +85,23 @@ module ApiTools
 
           @boot_queue << true
           loop do
-            msg = @tx_queue.pop
-            options = {
-              :message_id => msg.message_id,
-              :routing_key => msg.routing_key,
-              :type => msg.type,
-              :correlation_id => msg.correlation_id,
-              :content_type => msg.content_type,
-              :reply_to => msg.reply_to,
-            }
-            msg.serialize
-            @tx_channel.default_exchange.publish(msg.payload, options)
+            begin
+              msg = @tx_queue.pop
+              options = {
+                :message_id => msg.message_id,
+                :routing_key => msg.routing_key,
+                :type => msg.type,
+                :correlation_id => msg.correlation_id,
+                :content_type => msg.content_type,
+                :reply_to => msg.reply_to,
+              }
+              msg.serialize
+              @tx_channel.default_exchange.publish(msg.payload, options)
+            rescue Interrupt
+              break
+            rescue Exception => e
+              ApiTools::Logger.error e
+            end
           end
         end
       end

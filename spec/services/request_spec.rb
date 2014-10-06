@@ -11,6 +11,11 @@ describe ApiTools::Services::Request do
       inst = ApiTools::Services::Request.new({})
       expect(inst.queue).to be_a(Queue)
     end
+
+    it 'should have correct type if not defined' do
+      inst = ApiTools::Services::Request.new({})
+      expect(inst.type).to eq('request')
+    end
   end
 
   describe '#create_response' do

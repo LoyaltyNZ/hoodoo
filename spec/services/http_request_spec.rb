@@ -11,6 +11,11 @@ describe ApiTools::Services::HTTPRequest do
       options = { :one => 1}
       inst = ApiTools::Services::HTTPRequest.new(options)
     end
+
+    it 'should have correct type if not defined' do
+      inst = ApiTools::Services::HTTPRequest.new({})
+      expect(inst.type).to eq('http_request')
+    end
   end
 
   describe '#serialize' do
@@ -41,7 +46,7 @@ describe ApiTools::Services::HTTPRequest do
         :scheme => 'two',
       }
       inst = ApiTools::Services::HTTPRequest.new({:payload => options.to_msgpack})
-     
+
       expect(inst).to receive(:update).with(options)
       inst.deserialize
 
