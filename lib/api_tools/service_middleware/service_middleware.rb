@@ -50,13 +50,24 @@ module ApiTools
     # entries from the list below could cause their requests to be rejected
     # with a 'platform.malformed' error.
     #
-    ALLOWED_QUERIES = [
+    ALLOWED_QUERIES_LIST = [
       'offset',
       'limit',
       'sort',
       'direction',
       'search',
-      'filter',
+      'filter'
+    ]
+
+    # Allowed common fields in query strings (all actions). Strings. Adds to
+    # the ::ALLOWED_QUERIES_LIST for list actions.
+    #
+    # Only ever *add* to this list. As the API evolves, legacy clients will
+    # be calling with previously documented query strings and removing any
+    # entries from the list below could cause their requests to be rejected
+    # with a 'platform.malformed' error.
+    #
+    ALLOWED_QUERIES_ALL = [
       '_embed',
       '_reference',
     ]
@@ -189,7 +200,7 @@ module ApiTools
           # An exception in the exception handler! Oh dear.
           #
           return [
-            500, {}, Rack::BodyProxy.new(['Middleware exception in exception handler']) {}
+            500, {}, Rack::BodyProxy.new( [ 'Middleware exception in exception handler' ] ) {}
           ]
 
         end
@@ -296,14 +307,8 @@ module ApiTools
       # There should only be a query string for GET methods that ask for lists
       # of resources.
 
-      if action != :list && ! @request.params.empty?
-        return @response.add_error( 'platform.malformed',
-                                    :message => 'No query data is allowed for this action',
-                                    :reference => { :action => action } )
-      else
-        error = process_query_string( @request.query_string, interface, service_request )
-        return error unless error.nil?
-      end
+      process_query_string( action, @request.query_string, interface, service_request )
+      return if @response.halt_processing?
 
       # There should be no spurious path data for "list" or "create" actions -
       # only "show", "update" and "delete" take extra data via the URL's path.
@@ -545,15 +550,18 @@ module ApiTools
     # Process query string data for list actions. Only call if there's a list
     # action being requested.
     #
+    # +action+::         Intended service action as a symbol, e.g. +:list+,
+    #                    +:create+. Different actions may allow/prohibit
+    #                    different things in the query string.
     # +query_string+::   The 'raw' query string from Rack.
     # +interface+::      Interface definition for the service being targeted.
     # +service_request:: An ApiTools::ServiceRequest instance. This will be
     #                    updated if successful with list parameter data.
     #
-    # Returns +nil+ on success, else an error expressed as a Rack response
-    # array - this can be passed directly back to Rack.
+    # On exit, +@response+ will be updated, containing errors or deciphered
+    # query data entered into attributes in the object.
     #
-    def process_query_string( query_string, interface, service_request )
+    def process_query_string( action, query_string, interface, service_request )
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
@@ -565,7 +573,10 @@ module ApiTools
       query_data = URI.decode_www_form( query_string )
       query_hash = Hash[ query_data ]
 
-      unrecognised_query_keys = query_hash.keys - ALLOWED_QUERIES
+      allowed    = ALLOWED_QUERIES_ALL
+      allowed   += ALLOWED_QUERIES_LIST if action == :list
+
+      unrecognised_query_keys = query_hash.keys - allowed
       malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
 
       unless malformed
@@ -649,10 +660,8 @@ module ApiTools
       service_request.embeds              = embeds
       service_request.references          = references
 
-      return nil
-
     rescue
-      return @response.add_error( 'platform.malformed' )
+      @response.add_error( 'platform.malformed' )
 
     end
 
