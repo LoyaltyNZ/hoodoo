@@ -7,9 +7,9 @@ module ApiTools
       def initialize(options = {})
         update options
         super options
+        @response_class = ApiTools::Services::HTTPResponse
 
         @type = options[:type] || 'http_request'
-        @response_class = ApiTools::Services::HTTPResponse
       end
 
       def serialize

@@ -5,7 +5,7 @@ module ApiTools
       attr_accessor :is_async, :timeout, :response_class
       attr_reader :queue
 
-      def initialize(options)
+      def initialize(options = {})
         super options
         @response_class = ApiTools::Services::Response
 
@@ -17,7 +17,6 @@ module ApiTools
         c_options = {
           :routing_key => reply_to,
           :correlation_id => message_id,
-          :type => 'response',
         }.merge(options)
         @response_class.new(c_options)
       end
