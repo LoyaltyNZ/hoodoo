@@ -12,13 +12,13 @@ module ApiTools
       def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri
         @endpoint_id = options[:endpoint_id] || ApiTools::UUID.generate
-        @request_endpoint = options[:response_endpoint] || "endpoint.#{@endpoint_id}"
+        @request_endpoint = options[:request_endpoint] || "endpoint.#{@endpoint_id}"
         @response_endpoint = options[:response_endpoint] || "endpoint.#{@endpoint_id}.response"
 
         @timeout = options[:timeout] || 5000
         @queue_options =options[:queue_options] || {:exclusive => true, :auto_delete => true}
         @request_class = options[:request_class] || ApiTools::Services::Request
-        @thread_count = options[:thread_count] || number_of_processors/2
+        @thread_count = options[:thread_count] || (self.class.number_of_processors/2).floor
 
         @worker_threads = []
         @boot_queue = Queue.new
@@ -41,7 +41,7 @@ module ApiTools
         raise "#process is abstract. Please override it in your implementation."
       end
 
-      def create_worker_thread(me)
+      def create_worker_thread
         Thread.new do
           loop do
             begin
@@ -103,7 +103,7 @@ module ApiTools
         create_rx_thread
 
         (1..@thread_count).each do |id|
-          @worker_threads << create_worker_thread(id)
+          @worker_threads << create_worker_thread
         end
 
         begin
@@ -132,7 +132,7 @@ module ApiTools
 
       private
 
-      def number_of_processors
+      def self.number_of_processors
         if RUBY_PLATFORM =~ /linux/
           return `cat /proc/cpuinfo | grep processor | wc -l`.to_i
         elsif RUBY_PLATFORM =~ /darwin/
