@@ -20,8 +20,8 @@ module ApiTools
   # its own data to it.
   #
   # The instance carries data about both error conditions and successful work.
-  # In the successful case, #http_status_code and #response_body data is set by
-  # the service and used in the response. In the error case (see #errors), the
+  # In the successful case, #http_status_code and #body data is set by the
+  # service and used in the response. In the error case (see #errors), the
   # HTTP status code is taken from the first error in the errors collection and
   # the response body will be the JSON representation of that collection - any
   # HTTP status code or response body data previously set by the service will
@@ -55,7 +55,7 @@ module ApiTools
     #
     # The response body *MUST* be either a *Ruby Array* or a *Ruby Hash*.
     #
-    attr_accessor :response_body
+    attr_accessor :body
 
     # Create a new instance, ready to take on a response. The service
     # middleware responsible for doing this.
@@ -64,7 +64,7 @@ module ApiTools
       @errors           = ApiTools::Errors.new()
       @headers          = {}
       @http_status_code = 200
-      @response_body    = {}
+      @body             = {}
     end
 
     # Returns +true+ if processing should halt, e.g. because errors have been
@@ -94,13 +94,29 @@ module ApiTools
     #
     def add_header( name, value, overwrite = false )
       name = name.to_s
+      dname = name.downcase
       value = value.to_s
 
-      if ( overwrite == false && @headers.has_key?( name.downcase ) )
+      if ( overwrite == false && @headers.has_key?( dname ) )
+        hash  = @headers[ dname ]
+        name  = hash.keys[ 0 ]
+        value = hash.values[ 0 ]
         raise "ApiTools::ServiceResponse\#add_header: Value '#{ value }' already defined for header '#{ name }'"
       else
-        @headers[ name.downcase ] = { name => value }
+        @headers[ dname ] = { name => value }
       end
+    end
+
+    # Check the stored value of a given HTTP header. Checks are case
+    # insensitive. Returns the value stored by a prior #add_header call, or
+    # +nil+ for no value (or an explicitly stored value of +nil+)
+    #
+    # +name+:: HTTP header name (e.g. "Content-Type", "CONTENT-TYPE").
+    #
+    def get_header( name )
+      value_hash = @headers[ name.downcase ]
+      return nil if value_hash.nil?
+      return value_hash.values[ 0 ]
     end
 
     # Add an error to the internal collection. Passes input parameters through
@@ -124,35 +140,42 @@ module ApiTools
     # middleware or applications.
     #
     def for_rack
-      http_headers = {}
+      rack_response = Rack::Response.new
 
-      @headers.each do | downcased_guard_name, original_name_value_hash |
-        http_headers.merge!( original_name_value_hash )
-      end
+      # Work out the status code and basic response body
 
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
-        response_body    = @errors.render()
+        body_data        = @errors.render()
       else
         http_status_code = @http_status_code
-        response_body    = @response_body
+        body_data        = @body
       end
+
+      rack_response.status = http_status_code.to_i
 
       # We're not using JSON5, so the Platform API says that outmost arrays
       # are wrapped with a top-level object key "_data".
 
-      if response_body.is_a?( Array )
-        response_hash = { '_data' => response_body }
+      if body_data.is_a?( Array )
+        response_hash = { '_data' => body_data }
       else
-        response_hash = response_body
+        response_hash = body_data
       end
 
-      [
-        http_status_code.to_i,
-        http_headers,
-        [ JSON.generate( response_hash ) ]
-      ]
+      rack_response.write( JSON.pretty_generate( response_hash ) )
 
+      # Finally, sort out the headers
+
+      @headers.each do | downcased_guard_name, original_name_value_hash |
+        header_name = original_name_value_hash.keys[ 0 ]
+        header_value = original_name_value_hash.values[ 0 ]
+        rack_response[ header_name ] = header_value
+      end
+
+      # Return the complete response
+
+      return rack_response.finish
     end
   end
 end

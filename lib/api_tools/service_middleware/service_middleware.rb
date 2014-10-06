@@ -96,7 +96,7 @@ module ApiTools
       @service_container = app
 
       unless @service_container.is_a?( ApiTools::ServiceApplication )
-        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ @service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ app.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
       end
 
       # Collect together the implementation instances and the matching regexps
@@ -114,7 +114,7 @@ module ApiTools
       @services = @service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
-          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface.class } via service class #{ @app.class }"
+          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ app.class }"
         end
 
         # Regexp explanation:
@@ -149,6 +149,9 @@ module ApiTools
 
         @request  = Rack::Request.new( env )
         @response = ApiTools::ServiceResponse.new
+        @session  = ApiTools::ServiceSession.new
+
+        # TODO: Session validation/recovery, probably in preprocess()
 
         preprocess()
         return @response.for_rack() if @response.halt_processing?
@@ -170,6 +173,11 @@ module ApiTools
             reference[ :backtrace ] = exception.backtrace.join( " | " )
           end
 
+          # A service can rewrite this field with a different object, leading
+          # to an exception within the exception handler; so use a new one!
+          #
+          @response.errors = ApiTools::Errors.new()
+
           return @response.add_error(
             'platform.fault',
             :message => exception.message,
@@ -178,11 +186,10 @@ module ApiTools
 
         rescue
 
-          # An exception in the exception handler! Oh dear. Return a
-          # HEAD-only response.
+          # An exception in the exception handler! Oh dear.
           #
           return [
-            500, {}, Rack::BodyProxy.new([]) {}
+            500, {}, Rack::BodyProxy.new(['Middleware exception in exception handler']) {}
           ]
 
         end
@@ -337,7 +344,7 @@ module ApiTools
       end
 
       if action == :create || action == :update
-        service_request.payload = payload_to_hash( body )
+        service_request.body = payload_to_hash( body )
         return @response.for_rack() if @response.halt_processing?
 
       elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
@@ -348,9 +355,13 @@ module ApiTools
 
       # Finally - dispatch to service.
 
-      implementation.send( action,
-                           service_request,
-                           @response )
+      context = ApiTools::ServiceContext.new(
+        @session,
+        service_request,
+        @response
+      )
+
+      implementation.send( action, context )
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -453,14 +464,19 @@ module ApiTools
             #
             @payload_hash = JSON.parse( body, :create_additions => false )
 
-          else
-            raise "Internal error - content type #{ @content_type } is not supported here; \#check_content_type_header() should have caught that"
         end
 
       rescue => e
+        @payload_hash = {}
         @response.errors.add_error( 'generic.malformed' )
 
       end
+
+      if @payload_hash.nil?
+        raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
+      end
+
+      return @payload_hash
     end
 
     # Match a URI string against a service endpoint regexp and return broken
@@ -541,6 +557,10 @@ module ApiTools
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
+      #
+      # On some Ruby versions bad data here can cause an exception, so there's
+      # a catch-all "rescue" at the end of the function to return a 'malformed'
+      # response if necessary.
 
       query_data = URI.decode_www_form( query_string )
       query_hash = Hash[ query_data ]
@@ -562,17 +582,17 @@ module ApiTools
           offset    = ApiTools::Utilities::to_integer?( query_hash[ 'offset' ] )
           malformed = :offset if offset.nil?
         else
-          offset = interface.to_list.offset.to_i
+          offset = 0
         end
       end
 
       unless malformed
-        sort_key  = query_hash[ 'sort' ] || interface.to_list.default_sort_key
+        sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
         malformed = :sort unless interface.to_list.sort.keys.include?( sort_key )
       end
 
       unless malformed
-        direction = query_hash[ 'direction' ] || interface.to_list.default_sort_direction.to_s
+        direction = query_hash[ 'direction' ] || interface.to_list.sort[ sort_key ][ 0 ]
         malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
       end
 
@@ -581,7 +601,7 @@ module ApiTools
         unless search.nil?
           search = Hash[ URI.decode_www_form( search ) ]
           unrecognised_search_keys = search.keys - interface.to_list.search
-          malformed = "search:#{ unrecognised_search_keys }" unless unrecognised_search_keys.empty?
+          malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
         end
       end
 
@@ -590,7 +610,7 @@ module ApiTools
         unless filter.nil?
           filter = Hash[ URI.decode_www_form( filter ) ]
           unrecognised_filter_keys = filter.keys - interface.to_list.filter
-          malformed = "filter:#{ unrecognised_filter_keys }" unless unrecognised_filter_keys.empty?
+          malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
         end
       end
 
@@ -598,8 +618,8 @@ module ApiTools
         embeds = query_hash[ '_embed' ]
         unless embeds.nil?
           embeds = embeds.split( ',' )
-          unrecognised_embeds = embeds - interface.to_list.embeds
-          malformed = "_embed:#{ unrecognised_embeds }" unless unrecognised_embeds.empty?
+          unrecognised_embeds = embeds - interface.embeds
+          malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
         end
       end
 
@@ -607,15 +627,16 @@ module ApiTools
         references = query_hash[ '_reference' ]
         unless references.nil?
           references = references.split( ',' )
-          unrecognised_references = references - interface.to_list.references
-          malformed = "_reference:#{ unrecognised_references }" unless unrecognised_references.empty?
+          unrecognised_references = references - interface.embeds # (sic.)
+          malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
         end
       end
 
       if malformed
         return @response.add_error(
           'platform.malformed',
-          :message => "One or more malformed or invalid query string parameters: '#{ malformed }'"
+          :message => "One or more malformed or invalid query string parameters",
+          :reference => { :including => malformed }
         )
       end
 
@@ -625,10 +646,14 @@ module ApiTools
       service_request.list_sort_direction = direction
       service_request.list_search_data    = search
       service_request.list_filter_data    = filter
-      service_request.list_embeds         = embeds
-      service_request.list_references     = references
+      service_request.embeds              = embeds
+      service_request.references          = references
 
       return nil
+
+    rescue
+      return @response.add_error( 'platform.malformed' )
+
     end
 
   end

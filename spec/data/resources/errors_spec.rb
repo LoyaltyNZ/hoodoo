@@ -1,17 +1,14 @@
 require 'spec_helper'
 
-describe ApiTools::Data::Resources::Errors do
+describe ApiTools::Data::Resources::Version do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(1)
-    expect(schema.properties[:errors]).to be_a(ApiTools::Data::DocumentedArray)
-
-    expect(schema.properties[:errors].properties.count).to eq(3)
-    expect(schema.properties[:errors].properties[:code]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:errors].properties[:message]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:errors].properties[:reference]).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties.count).to eq(3)
+    expect(schema.properties[:major]).to be_a(ApiTools::Presenters::Integer)
+    expect(schema.properties[:minor]).to be_a(ApiTools::Presenters::Integer)
+    expect(schema.properties[:patch]).to be_a(ApiTools::Presenters::Integer)
   end
 end

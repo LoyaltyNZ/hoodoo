@@ -94,6 +94,55 @@ module ApiTools
 
         return target
       end
+
+      # Is the given rendering of a resource valid? Returns an array of
+      # Error Primitive types (as hashes); this will be empty if the data
+      # given is valid.
+      #
+      # +data+:: Data to validate - the rendered representation of a
+      #          resource. See also #render.
+      #
+      # +type_data_only+:: Do not check for Resource common fields -
+      #                    +id+, +kind+, +created_at+ and (for an
+      #                    internationalised resource) +language+. This is
+      #                    useful if you just want to check that data matches
+      #                    the basic type schema *before* rendering as a
+      #                    resource representation.
+      #
+      def self.validate( data, type_data_only = false )
+        errors = super( data )
+
+        unless type_data_only
+          common_fields = {
+            id:         data[ :id         ],
+            created_at: data[ :created_at ],
+            kind:       data[ :kind       ]
+          }
+
+          if self.is_internationalised?
+            common_fields[ :internationalised ] = data[ :internationalised ]
+            CommonFields.get_schema.properties[ :language ].required = true
+          else
+            CommonFields.get_schema.properties[ :language ].required = false
+          end
+
+          errors += CommonFields.validate( data, true )
+        end
+
+        return errors
+      end
+
+      # Used internally for additional validation of common Resource fields.
+      # See ApiTools::Data::DocumentedPresenter::validate.
+      #
+      class CommonFields < ApiTools::Data::DocumentedPresenter
+        schema do
+          uuid     :id,         :required => true
+          datetime :created_at, :required => true
+          text     :kind,       :required => true
+          text     :language
+        end
+      end
     end
   end
 end

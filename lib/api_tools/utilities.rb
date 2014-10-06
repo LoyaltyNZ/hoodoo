@@ -1,3 +1,12 @@
+########################################################################
+# File::    utilities.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Miscellaneous useful functions.
+# ----------------------------------------------------------------------
+#           22-Sep-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # Useful tools, especially for those working without Rails components.
@@ -6,8 +15,11 @@ module ApiTools
 
     # Given a hash, returns the same hash with keys converted to symbols.
     # Works with nested hashes. Taken from:
-    #
     #   http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
+    #
+    # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
+    #         to symbols. Hashes with values that are Arrays of Hashes will be
+    #         dealt with properly.
     #
     def self.symbolize(obj)
       return obj.inject({}){|memo,(k,v)| memo[k.to_s.to_sym] =  self.symbolize(v); memo} if obj.is_a?(::Hash)

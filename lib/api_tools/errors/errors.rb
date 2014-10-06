@@ -100,11 +100,11 @@ module ApiTools
 
       description = @descriptions.describe( code )
 
-      required_keys = description[ :reference ] || []
+      required_keys = options[ :ignore_requirements ] ? [] : ( description[ :reference ] || [] )
       actual_keys   = reference.keys
       missing_keys  = required_keys - actual_keys
 
-      unless ( missing_keys.empty? )
+      unless missing_keys.empty?
         raise "In #add_error: Reference hash missing required keys: '#{ missing_keys.join( ', ' ) }'"
       end
 

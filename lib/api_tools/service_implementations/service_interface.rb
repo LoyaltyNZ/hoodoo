@@ -36,11 +36,6 @@ module ApiTools
       #
       attr_reader :limit
 
-      # Offset value; an integer that sets a list start offset in a sorted,
-      # paginated list.
-      #
-      attr_reader :offset
-
       # Sort hash. Keys are supported sort fields, values are arrays of
       # supported sort directions. The first array entry is the default sort
       # order for the sort field.
@@ -65,22 +60,14 @@ module ApiTools
       #
       attr_reader :filter
 
-      # Array of supported embedded item names; empty for none defined. Any
-      # embeddable item is implicitly "referenceable" too (via the
-      # +embed=...+ and +reference=...+ query string entries).
-      #
-      attr_reader :embed
-
       # Create an instance with default settings.
       #
       def initialize
         @limit            = 50
-        @offset           = 0
         @sort             = { 'created_at' => [ 'desc', 'asc' ] }
         @default_sort_key = 'created_at'
         @search           = []
         @filter           = []
-        @embed            = []
       end
 
       private
@@ -90,12 +77,6 @@ module ApiTools
         # bypassing +private+ via +send()+.
         #
         attr_writer :limit
-
-        # Private writer - see #offset - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
-        # bypassing +private+ via +send()+.
-        #
-        attr_writer :offset
 
         # Private writer - see #sort - but there's a special contract with
         # ApiTools::ServiceInterface::ToListDSL which permits it to call here
@@ -121,11 +102,6 @@ module ApiTools
         #
         attr_writer :filter
 
-        # Private writer - see #embed - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
-        # bypassing +private+ via +send()+.
-        #
-        attr_writer :embed
     end # 'class ToList'
 
     ###########################################################################
@@ -244,13 +220,9 @@ module ApiTools
       #
       # Example - allow searches specifying +first_name+ and +last_name+ keys:
       #
-      #     search [ :first_name, :last_name ]
+      #     search :first_name, :last_name
       #
-      def search( search )
-        unless search.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#search requires an Array - got '#{ search.class }'"
-        end
-
+      def search( *search )
         @tl.send( :search=, search.map { | item | item.to_s } )
       end
 
@@ -259,39 +231,8 @@ module ApiTools
       # +filter+:: Array of permitted filter keys, as symbols or strings.
       #            The order of array entries is arbitrary.
       #
-      def filter( filter )
-        unless filter.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#filter requires an Array - got '#{ filter.class }'"
-        end
-
+      def filter( *filter )
         @tl.send( :filter=, filter.map { | item | item.to_s } )
-      end
-
-      # An array of supported embed keys (as per documentation, so singular or
-      # plural as per resource interface descriptions in the Loyalty Platform
-      # API). Things which can be embedded can also be referenced, via the
-      # +embed=...+ and +reference=...+ query string entries.
-      #
-      # The middleware uses the list to reject requests from clients which
-      # ask for embedded or referenced entities that were not listed by the
-      # interface. If you don't call here, or call here with an empty array,
-      # no embedding or referencing will be allowed for calls to the service
-      # implementation.
-      #
-      # +embed+:: Array of permitted embeddable entity names, as symbols or
-      #           strings. The order of array entries is arbitrary.
-      #
-      # Example: An interface permits lists that request embedding or
-      # referencing of "vouchers", "balances" and "member":
-      #
-      #     embed [ :vouchers, :balances, :member ]
-      #
-      def embed( embed )
-        unless embed.is_a?( Array )
-          raise "ApiTools::ServiceInstance::ToListDSL\#embed requires an Array - got '#{ embed.class }'"
-        end
-
-        @tl.send( :embed=, embed.map { | item | item.to_s } )
       end
     end # 'class ToListDSL'
 
@@ -302,8 +243,7 @@ module ApiTools
     # client requests are sent to a URL matching the endpoint.
     #
     # No two interfaces can use the same endpoint within a service application,
-    # unless the describe a different interface version - see #version. If you
-    # call #version, you *MUST* call it before #endpoint.
+    # unless the describe a different interface version - see #version.
     #
     # Example:
     #
@@ -326,16 +266,11 @@ module ApiTools
     #
     def endpoint( uri_path_fragment, implementation_class )
 
-      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C-3D
+      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
-      unless implementation_class <= ApiTools::ServiceImplementation
-        raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class.class }' was given instead"
+      unless implementation_class < ApiTools::ServiceImplementation
+        raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class }' was given instead"
       end
-
-      # TODO: By now the resource, version and endpoint information is all
-      #       known. This is where we'd tell a router, edge splitter or some
-      #       other component about this instance as part of a wider
-      #       configuration set that allowed inter-service communication.
 
       self.class.send( :endpoint=,       uri_path_fragment    )
       self.class.send( :implementation=, implementation_class )
@@ -349,13 +284,9 @@ module ApiTools
     # Two interfaces can exist on the same endpoint provided their versions are
     # different since the resulting route to reach them will be different too.
     #
-    # If you call #version, you *MUST* call it before #endpoint.
-    #
     # +version+:: Integer major version number, e.g +2+.
     #
     def version( major_version )
-      raise "You must call \#version before \#endpoint" unless self.class.endpoint.nil?
-
       self.class.send( :version=, major_version.to_s.to_i )
     end
 
@@ -377,10 +308,37 @@ module ApiTools
       invalid = supported_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid }'"
+        raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :actions=, supported_actions )
+    end
+
+    # An array of supported embed keys (as per documentation, so singular or
+    # plural as per resource interface descriptions in the Loyalty Platform
+    # API). Things which can be embedded can also be referenced, via the
+    # +embed=...+ and +reference=...+ query string entries.
+    #
+    # The middleware uses the list to reject requests from clients which
+    # ask for embedded or referenced entities that were not listed by the
+    # interface. If you don't call here, or call here with an empty array,
+    # no embedding or referencing will be allowed for calls to the service
+    # implementation.
+    #
+    # +embed+:: Array of permitted embeddable entity names, as symbols or
+    #           strings. The order of array entries is arbitrary.
+    #
+    # Example: An interface permits lists that request embedding or
+    # referencing of "vouchers", "balances" and "member":
+    #
+    #     embed :vouchers, :balances, :member
+    #
+    # As a result, #embeds would return:
+    #
+    #     [ 'vouchers', 'balances', 'member' ]
+    #
+    def embeds( *embeds )
+      self.class.send( :embeds=, embeds.map { | item | item.to_s } )
     end
 
     # Specify parameters related to common index parameters. The block contains
@@ -542,6 +500,12 @@ module ApiTools
       if self.endpoint.nil?
         raise "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
+
+      # TODO: By now the resource, version and endpoint information is all
+      #       known. This is where we'd tell a router, edge splitter or some
+      #       other component about this instance as part of a wider
+      #       configuration set that allowed inter-service communication.
+
     end
 
     # Define various class instance variable (sic.) accessors.
@@ -581,6 +545,23 @@ module ApiTools
         # all actions are supported.
         #
         attr_reader :actions
+
+        # Array of strings listing allowed embeddable things. Each string
+        # matches the split up comma-separated value for query string
+        # "_embed" or "_reference" keys. For example:
+        #
+        #     ...&_embed=foo,bar
+        #
+        # ...would be valid provided there was an embedding declaration
+        # such as:
+        #
+        #     embeds :foo, :bar
+        #
+        # ...which would in turn lead this accessor to return:
+        #
+        #     [ 'foo', 'bar' ]
+        #
+        attr_reader :embeds
 
         # An ApiTools::ServiceInterface::ToList instance describing the list
         # parameters for the interface. See also
@@ -645,6 +626,12 @@ module ApiTools
         # See ::actions.
         #
         attr_writer :actions
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::embeds.
+        #
+        attr_writer :embeds
 
         # Private property writer allows instances running the DSL to set
         # values on the class for querying using the public readers.

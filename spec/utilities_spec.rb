@@ -30,11 +30,95 @@ describe ApiTools::Utilities do
       })
     end
 
-    it 'should not generate the same uuid twice' do
-      uuid1 = ApiTools::UUID.generate
-      uuid2 = ApiTools::UUID.generate
+    it 'should handle outer arrays' do
+      data = [
+        {
+          'one' => 1,
+          'two' => {
+            'three' => :three,
+            'four' => {
+              :five => 'five',
+              'six' => '6'
+            }
+          }
+        },
+        {
+          'one' => 5,
+          'two' => {
+            'three' => :three,
+            'four' => {
+              :five => 'five',
+              'six' => '6'
+            }
+          }
+        }
+      ]
 
-      expect(uuid1).not_to eq(uuid2)
+      expect(ApiTools::Utilities.symbolize(data)).to eq([
+        {
+          :one => 1,
+          :two => {
+            :three => :three,
+            :four => {
+              :five => 'five',
+              :six => '6'
+            }
+          }
+        },
+        {
+          :one => 5,
+          :two => {
+            :three => :three,
+            :four => {
+              :five => 'five',
+              :six => '6'
+            }
+          }
+        }
+      ])
+    end
+
+    it 'should handle inner arrays' do
+
+      data = {
+        'one' => 1,
+        'two' => [
+          {
+            'three' => :three,
+            'four' => {
+              :five => 'five',
+              'six' => '6'
+            }
+          },
+          {
+            'three' => :nine,
+            'four' => {
+              :five => 'five',
+              'six' => '6'
+            }
+          },
+        ]
+      }
+
+      expect(ApiTools::Utilities.symbolize(data)).to eq({
+        :one => 1,
+        :two => [
+          {
+            :three => :three,
+            :four => {
+              :five => 'five',
+              :six => '6'
+            }
+          },
+          {
+            :three => :nine,
+            :four => {
+              :five => 'five',
+              :six => '6'
+            }
+          }
+        ]
+      })
     end
   end
 
