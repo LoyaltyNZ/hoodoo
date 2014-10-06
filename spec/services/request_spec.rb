@@ -35,7 +35,7 @@ describe ApiTools::Services::Request do
 
       expect(ApiTools::Services::Response).to receive(:new) do |options|
         expect(options).to eq( {
-          :routing_key=>"three", :correlation_id=>"two", :type=>"response"
+          :routing_key=>"three", :correlation_id=>"two"
         })
       end
 
