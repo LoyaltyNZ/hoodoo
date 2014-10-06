@@ -14,7 +14,7 @@ module ApiTools
       def create_response(options = {})
         c_options = {
           :routing_key => reply_to,
-          :correlation_id => @message_id,
+          :correlation_id => message_id,
           :type => 'response',
         }.merge(options)
         @response_class.new(c_options)

@@ -8,36 +8,30 @@ describe ApiTools::Services::Request do
     end
 
     it 'should initialise queue' do
-
-      pending
-
-      inst = ApiTools::Services::Request.new('one',{})
+      inst = ApiTools::Services::Request.new({})
       expect(inst.queue).to be_a(Queue)
     end
   end
 
   describe '#create_response' do
     it 'should return a new ApiTools::Services::Response' do
-
-      pending
-
-      inst = ApiTools::Services::Request.new('one',{})
+      inst = ApiTools::Services::Request.new({})
 
       expect(inst.create_response).to be_a(ApiTools::Services::Response)
     end
 
     it 'should create new response with correct params' do
 
-      pending
+      msg_options ={
+        :message_id => 'two',
+        :reply_to => 'three',
+      }
+      inst = ApiTools::Services::Request.new(msg_options)
 
-      inst = ApiTools::Services::Request.new('one',{
-        :message_id => 'two'
-      })
-
-      expect(ApiTools::Services::Response).to receive(:new) do |exchange, options|
-        expect(options[:request]).to be(inst)
-        expect(options[:correlation_id]).to eq('two')
-        expect(options[:type]).to eq('response')
+      expect(ApiTools::Services::Response).to receive(:new) do |options|
+        expect(options).to eq( {
+          :routing_key=>"three", :correlation_id=>"two", :type=>"response"
+        })
       end
 
       inst.create_response
@@ -45,14 +39,12 @@ describe ApiTools::Services::Request do
 
     it 'should merge supplied options after set defaults' do
 
-      pending
 
-      inst = ApiTools::Services::Request.new('one',{
+      inst = ApiTools::Services::Request.new({
         :message_id => 'two'
       })
 
-      expect(ApiTools::Services::Response).to receive(:new) do |exchange, options|
-        expect(options[:request]).to be(inst)
+      expect(ApiTools::Services::Response).to receive(:new) do |options|
         expect(options[:correlation_id]).to eq('two')
         expect(options[:type]).to eq('error')
       end
@@ -66,15 +58,26 @@ describe ApiTools::Services::Request do
   describe '#is_async?' do
     it 'should return @is_async' do
 
-      pending
-
-      inst = ApiTools::Services::Request.new('one',{})
+      inst = ApiTools::Services::Request.new({})
 
       inst.is_async = true
       expect(inst.is_async?).to be(true)
 
       inst.is_async = false
       expect(inst.is_async?).to be(false)
+    end
+  end
+
+  describe '#timeout?' do
+    it 'should return @timeout' do
+
+      inst = ApiTools::Services::Request.new({})
+
+      inst.timeout = true
+      expect(inst.timeout?).to be(true)
+
+      inst.timeout = false
+      expect(inst.timeout?).to be(false)
     end
   end
 end

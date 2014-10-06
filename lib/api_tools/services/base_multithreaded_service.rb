@@ -1,7 +1,6 @@
 module ApiTools
   module Services
     class BaseMultithreadedService < AQMPMultithreadedEndpoint
-
       def initialize(amqp_uri, name, options = {})
         super amqp_uri, options
         @request_endpoint = "#{name}"

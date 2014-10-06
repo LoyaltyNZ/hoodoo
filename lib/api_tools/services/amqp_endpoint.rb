@@ -73,11 +73,12 @@ module ApiTools
           :routing_key => to,
           :type => 'request'
         })
-        req = request_class.new(@exchange, options)
+        req = request_class.new(options)
         [ req, send_sync_request(req) ]
       end
 
       def send_async_request(request)
+        request.timeout = false
         request.reply_to = @response_endpoint
         send_message(@exchange, request)
         @requests[request.message_id] = request
@@ -93,7 +94,6 @@ module ApiTools
           end
         rescue TimeoutError
           request.timeout = true
-          @requests.delete(request.message_id)
         end
         @requests.delete(request.message_id)
         response
