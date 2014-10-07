@@ -121,8 +121,13 @@ describe ApiTools::ServiceMiddleware do
 
   context 'well formed request for' do
 
-    it 'no matching endpoint should return 404' do
+    it 'no matching endpoint should return 404 with lower case in content type' do
       get '/v2/where_are_you', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(404)
+    end
+
+    it 'no matching endpoint should return 404 with mixed case in content type' do
+      get '/v2/where_are_you', nil, { 'CONTENT_TYPE' => 'APPLICATION/json; charset=UTF-8' }
       expect(last_response.status).to eq(404)
     end
 

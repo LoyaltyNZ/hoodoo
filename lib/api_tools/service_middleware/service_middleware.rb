@@ -477,8 +477,10 @@ module ApiTools
     # encoding (e.g. +utf-8+).
     #
     def check_content_type_header
-      @content_type     = ( @request.media_type      || '' ).downcase
-      @content_encoding = ( @request.content_charset || '' ).downcase
+      content_type      = @request.media_type
+      content_encoding  = @request.content_charset
+      @content_type     = content_type.nil?     ? nil : content_type.downcase
+      @content_encoding = content_encoding.nil? ? nil : content_encoding.downcase
 
       unless SUPPORTED_MEDIA_TYPES.include?( @content_type ) &&
              SUPPORTED_ENCODINGS.include?( @content_encoding )
