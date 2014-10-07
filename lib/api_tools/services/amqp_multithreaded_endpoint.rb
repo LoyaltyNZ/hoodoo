@@ -7,7 +7,7 @@ module ApiTools
 
       attr_accessor :exchange, :amqp_uri, :endpoint_id, :request_endpoint, :response_endpoint, :timeout, :response_thread
       attr_accessor :request_class, :queue_options, :thread_count
-      attr_accessor :rx_queue, :tx_queue
+      attr_reader :rx_queue, :tx_queue, :rx_thread, :tx_thread, :connection, :rx_channel, :tx_channel
 
       def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri
@@ -19,13 +19,13 @@ module ApiTools
         @queue_options =options[:queue_options] || {:exclusive => true, :auto_delete => true}
         @request_class = options[:request_class] || ApiTools::Services::Request
         @thread_count = options[:thread_count] || (self.class.number_of_processors/2).floor
+        @prefetch = options[:prefetch] || 1
 
         @worker_threads = []
         @boot_queue = Queue.new
         @rx_queue = Queue.new
         @tx_queue = Queue.new
 
-        @prefetch = 1
       end
 
       def connect

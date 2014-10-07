@@ -79,7 +79,6 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
   end
 
   describe '#create_worker_thread' do
-
     it 'should create and return a new thread, which pops rx_queue and calls process' do
       inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
 
@@ -124,9 +123,7 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
           raise ex
         end
         # Checks if pop is called again (continue loop), now exit
-        expect(inst.rx_queue).to receive(:pop) do
-          raise Interrupt
-        end
+        expect(inst.rx_queue).to receive(:pop) { raise Interrupt }
         inst.instance_eval(&block)
       end
 
@@ -134,7 +131,80 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#create_rx_thread'
+  describe '#create_rx_thread' do
+    it 'should create thread and set rx_thread and rx_channel' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      channel = double('channel')
+      queue = double('queue')
+      expect(channel).to receive(:queue).and_return(queue)
+      expect(channel).to receive(:prefetch).with(1)
+      expect(queue).to receive(:subscribe) { raise Interrupt }
+
+      expect(Thread).to receive(:new) do |&block|
+        expect(inst.connection).to receive(:create_channel).and_return(channel)
+
+        inst.instance_eval(&block)
+      end.and_return(:rx_thread)
+
+      inst.create_rx_thread
+      expect(inst.rx_thread).to eq(:rx_thread)
+    end
+
+    it 'should create thread that enqueues correct messages' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      channel = double('channel')
+      queue = double('queue')
+      expect(channel).to receive(:queue).and_return(queue)
+      expect(channel).to receive(:prefetch).with(1)
+      expect(queue).to receive(:subscribe) do |options, &block|
+        expect(options).to eq(:ack => true, :block => true)
+
+        di = OpenStruct.new(:delivery_tag => :di_tag)
+
+        expect(inst.request_class).to receive(:create_from_raw_message)
+        .with(di,:mt,:pl)
+        .and_return(:rawmsg)
+        expect(inst.rx_queue).to receive(:<<).with(:rawmsg)
+
+        expect(inst.rx_channel).to receive(:ack).with(:di_tag) { raise Interrupt }
+        block.call(di,:mt,:pl)
+      end
+
+      expect(Thread).to receive(:new) do |&block|
+        expect(inst.connection).to receive(:create_channel).and_return(channel)
+        inst.instance_eval(&block)
+      end
+
+      inst.create_rx_thread
+    end
+
+    it 'should create thread which logs error on failure and continues' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      channel = double('channel')
+      queue = double('queue')
+      ex = RuntimeError.new('one')
+      expect(channel).to receive(:queue).and_return(queue)
+      expect(channel).to receive(:prefetch).with(1)
+
+      expect(ApiTools::Logger).to receive(:error).with(ex)
+
+      expect(queue).to receive(:subscribe) { raise ex }
+
+      expect(Thread).to receive(:new) do |&block|
+        expect(inst.connection).to receive(:create_channel).and_return(channel)
+
+        # Checks if loop continues and exits
+        expect(queue).to receive(:subscribe) { raise Interrupt }
+        inst.instance_eval(&block)
+      end
+
+      inst.create_rx_thread
+    end
+  end
+
   describe '#create_tx_thread'
   describe '#start'
 
