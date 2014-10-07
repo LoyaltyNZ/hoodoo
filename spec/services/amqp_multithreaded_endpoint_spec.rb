@@ -78,7 +78,62 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#create_worker_thread'
+  describe '#create_worker_thread' do
+
+    it 'should create and return a new thread, which pops rx_queue and calls process' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(Thread).to receive(:new) do |&block|
+
+        expect(inst.rx_queue).to receive(:pop).and_return(123781273)
+        expect(inst).to receive(:process).with(123781273) do
+          raise Interrupt
+        end
+        inst.instance_eval(&block)
+      end.and_return(2381712873)
+
+      expect(inst.create_worker_thread).to eq(2381712873)
+    end
+
+    it 'should create thread which places response on tx_queue if it is the correct type' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(Thread).to receive(:new) do |&block|
+
+        resp = ApiTools::Services::Response.new
+        expect(inst.rx_queue).to receive(:pop).and_return(123781273)
+        expect(inst).to receive(:process).with(123781273).and_return(resp)
+        expect(inst.tx_queue).to receive(:<<) do |rmsg|
+          expect(rmsg).to be(resp)
+          raise Interrupt
+        end
+        inst.instance_eval(&block)
+      end.and_return(2381712873)
+
+      expect(inst.create_worker_thread).to eq(2381712873)
+    end
+
+    it 'should create thread which logs error on failure and continues' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(Thread).to receive(:new) do |&block|
+        ex = RuntimeError.new('one')
+        expect(inst.rx_queue).to receive(:pop).and_return(123781273)
+        expect(ApiTools::Logger).to receive(:error)
+        expect(inst).to receive(:process) do |rmsg|
+          raise ex
+        end
+        # Checks if pop is called again (continue loop), now exit
+        expect(inst.rx_queue).to receive(:pop) do
+          raise Interrupt
+        end
+        inst.instance_eval(&block)
+      end
+
+      inst.create_worker_thread
+    end
+  end
+
   describe '#create_rx_thread'
   describe '#create_tx_thread'
   describe '#start'
