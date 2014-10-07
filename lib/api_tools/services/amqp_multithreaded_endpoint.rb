@@ -7,7 +7,8 @@ module ApiTools
 
       attr_accessor :exchange, :amqp_uri, :endpoint_id, :request_endpoint, :response_endpoint, :timeout, :response_thread
       attr_accessor :request_class, :queue_options, :thread_count
-      attr_reader :rx_queue, :tx_queue, :rx_thread, :tx_thread, :connection, :rx_channel, :tx_channel
+      
+      attr_reader :rx_queue, :tx_queue, :rx_thread, :tx_thread, :worker_threads, :connection, :rx_channel, :tx_channel, :boot_queue
 
       def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri
@@ -133,9 +134,12 @@ module ApiTools
       end
 
       def stop
-        @rx_thread.kill
-        @tx_thread.kill
-        @worker_threads.each { |thread| thread.kill }
+        @rx_thread.kill unless @rx_thread.nil?
+        @tx_thread.kill unless @tx_thread.nil?
+        @worker_threads.each { |thread| thread.kill } unless @worker_threads.nil?
+
+        @rx_thread = @tx_thread = nil
+        @worker_threads = []
       end
 
       def send_message(msg)
