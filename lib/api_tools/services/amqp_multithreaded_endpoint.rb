@@ -7,7 +7,8 @@ module ApiTools
 
       attr_accessor :exchange, :amqp_uri, :endpoint_id, :request_endpoint, :response_endpoint, :timeout, :response_thread
       attr_accessor :request_class, :queue_options, :thread_count
-      attr_reader :rx_queue, :tx_queue, :rx_thread, :tx_thread, :worker_threads, :connection, :rx_channel, :tx_channel
+      
+      attr_reader :rx_queue, :tx_queue, :rx_thread, :tx_thread, :worker_threads, :connection, :rx_channel, :tx_channel, :boot_queue
 
       def initialize(amqp_uri, options = {})
         @amqp_uri = amqp_uri

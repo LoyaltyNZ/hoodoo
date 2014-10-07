@@ -206,7 +206,59 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
   end
 
   describe '#create_tx_thread'
-  describe '#start'
+
+  describe '#start' do
+    it 'should clear the boot queue, connect and create rx and tx threads' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(inst.boot_queue).to receive(:clear)
+      expect(inst).to receive(:connect)
+      expect(inst).to receive(:create_tx_thread)
+      expect(inst).to receive(:create_rx_thread)
+
+      inst.thread_count = 0
+
+      inst.boot_queue << true
+      inst.boot_queue << true
+
+      inst.start
+    end
+
+    it 'should create and store thread_count worker threads' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(inst.boot_queue).to receive(:clear)
+      expect(inst).to receive(:connect)
+      expect(inst).to receive(:create_tx_thread)
+      expect(inst).to receive(:create_rx_thread)
+
+      inst.thread_count = 3
+      expect(inst).to receive(:create_worker_thread).and_return(1)
+      expect(inst).to receive(:create_worker_thread).and_return(2)
+      expect(inst).to receive(:create_worker_thread).and_return(3)
+
+      inst.boot_queue << true
+      inst.boot_queue << true
+
+      inst.start
+
+      expect(inst.worker_threads).to eq([1,2,3])
+    end
+
+    it 'should timeout if rx and tx threads dont push onto boot_queue' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(inst.boot_queue).to receive(:clear)
+      expect(inst).to receive(:connect)
+      expect(inst).to receive(:create_tx_thread)
+      expect(inst).to receive(:create_rx_thread)
+
+      inst.thread_count = 0
+      inst.timeout = 1
+
+      expect { inst.start }.to raise_error(RuntimeError)
+    end
+  end
 
   describe '#join' do
     it 'should call join on rx_thread' do
@@ -224,7 +276,7 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
 
     it 'should kill tx_thread and tx_thread' do
       inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
-    
+
       rxt = double('rx_thread')
       txt = double('tx_thread')
       inst.instance_eval do
