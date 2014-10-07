@@ -15,11 +15,14 @@ module ApiTools
         return [] if !@required and data.nil?
 
         if data.is_a? ::Array
-          data.each_with_index do |item, index|
-            @properties.each do |name, property|
-              rdata = (item.is_a?(::Hash) and item.has_key?(name)) ? item[name] : nil
-              indexed_path = "#{full_path(path)}[#{index}]"
-              errors += property.validate(rdata, indexed_path )
+          # No array entry schema? No array entry validation, then.
+          unless @properties.nil?
+            data.each_with_index do |item, index|
+              @properties.each do |name, property|
+                rdata = (item.is_a?(::Hash) and item.has_key?(name)) ? item[name] : nil
+                indexed_path = "#{full_path(path)}[#{index}]"
+                errors += property.validate(rdata, indexed_path )
+              end
             end
           end
         else

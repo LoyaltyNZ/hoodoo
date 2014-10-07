@@ -66,4 +66,51 @@ describe ApiTools::Data::Resources::Currency do
       }
     )
   end
+
+  it 'should be valid with all data' do
+    result = described_class.validate(
+      {
+        currency_code: 'X-FBP',
+        symbol:        'pts',
+        multiplier:    100,
+        qualifiers:    [ 'standard', 'bonus' ]
+      },
+      true
+    )
+
+    expect(result).to eq([])
+  end
+
+  it 'should be valid with minimum data' do
+    result = described_class.validate(
+      {
+        currency_code: 'X-FBP'
+      },
+      true
+    )
+
+    expect(result).to eq([])
+  end
+
+  it 'should be invalid without mandatory= data' do
+    result = described_class.validate(
+      {
+        # Required field 'currency_code' omitted
+        symbol:     'pts',
+        multiplier: 100,
+        qualifiers: [ 'standard', 'bonus' ]
+      },
+      true
+    )
+
+    expect(result).to eq(
+      [
+        {
+          :code => 'generic.required_field_missing',
+          :message => 'Field `currency_code` is required',
+          :reference => 'currency_code'
+        }
+      ]
+    )
+  end
 end
