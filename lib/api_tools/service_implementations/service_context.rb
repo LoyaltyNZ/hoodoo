@@ -47,8 +47,9 @@ module ApiTools
       @endpoints  = {}
     end
 
-    # Request (and lazy-initialize) a new endpoint instance for talking to a
-    # resource's interface. See ApiTools::ServiceMiddleware::ServiceEndpoint.
+    # Request (and lazy-initialize) a new resource endpoint instance for
+    # talking to a resource's interface. See
+    # ApiTools::ServiceMiddleware::ServiceEndpoint.
     #
     # You can request an endpoint for any resource name, whether or not an
     # implementation actually exists for it. Until you try and talk to the
@@ -59,8 +60,8 @@ module ApiTools
     # +resource+:: Resource name for the endpoint, e.g. +:Purchase+. String
     #              or symbol.
     #
-    def endpoint( resource )
-      @endpoints[ resource.to_sym ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new( @middleware, resource )
+    def resource( resource_name )
+      @endpoints[ resource_name.to_sym ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new( @middleware, resource_name )
     end
   end
 end

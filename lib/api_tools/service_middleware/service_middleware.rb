@@ -354,7 +354,7 @@ module ApiTools
       # interface and hold other higher level parsed data assembled below.
 
       service_request                     = ApiTools::ServiceRequest.new
-      service_request.rack_request        = @request
+      service_request.locale              = @locale
       service_request.uri_path_components = uri_path_components
       service_request.uri_path_extension  = uri_path_extension
 
@@ -479,6 +479,7 @@ module ApiTools
     def check_content_type_header
       content_type      = @request.media_type
       content_encoding  = @request.content_charset
+
       @content_type     = content_type.nil?     ? nil : content_type.downcase
       @content_encoding = content_encoding.nil? ? nil : content_encoding.downcase
 
@@ -504,14 +505,26 @@ module ApiTools
       @response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
     end
 
-    # Extract the +Content-Language+ header value from the client and store it
-    # in +@request_locale+.
+    # Extract the +Content-Language+ header value from the client, or if that
+    # is missing, +Accept-Language+. Returns it, or a default of "en-nz",
+    # converted to lower case.
     #
-    # TODO: No processing or validation is done on the client's value, to
-    #       ensure it conforms to platform internationalisation rules.
+    # We support neither a list of preferences nor "qvalues", so if there is
+    # a list, we only take the first item; if there is a qvalue, we strip it
+    # leaving just the language part, e.g. "en-gb".
     #
     def deal_with_language_header
-      @request_locale = @request.env[ 'HTTP_CONTENT_LANGUAGE' ]
+      lang = @request.env[ 'HTTP_CONTENT_LANGUAGE' ]
+      lang = @request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
+
+      unless lang.nil? || lang.empty?
+        # E.g. "Accept-Language: da, en-gb;q=0.8, en;q=0.7" => 'da'
+        lang = lang.split( ',' )[ 0 ]
+        lang = lang.split( ';' )[ 0 ]
+      end
+
+      lang = 'en-nz' if lang.nil? || lang.empty?
+      lang.downcase
     end
 
     # Find the value of an X-Interaction-ID header (if one is already present)
@@ -645,6 +658,36 @@ module ApiTools
       query_data = URI.decode_www_form( query_string )
       query_hash = Hash[ query_data ]
 
+      str                       = query_hash[ 'search' ]
+      query_hash[ 'search' ]    = Hash[ URI.decode_www_form( str ) ] unless str.nil?
+
+      str                       = query_hash[ 'filter' ]
+      query_hash[ 'filter' ]    = Hash[ URI.decode_www_form( str ) ] unless str.nil?
+
+      str                       = query_hash[ '_embed' ]
+      query_hash[ '_embed']     = str.split( ',' ) unless str.nil?
+
+      str                       = query_hash[ '_reference' ]
+      query_hash[ '_reference'] = str.split( ',' ) unless str.nil?
+
+      return process_query_hash( action, query_hash, interface, service_request )
+    end
+
+    # Process a hash of URI-decoded form data in the same way as
+    # #process_query_string (and used as a back-end for that). Nested search
+    # and filter strings should be decoded as nested hashes. Nested _embed and
+    # _reference lists should be stored as arrays. Keys and values must be
+    # Strings.
+    #
+    # +action+::          See #process_query_string.
+    # +query_hash+::      Hash of data derived from query string.
+    # +interface+::       See #process_query_string.
+    # +service_request+:: See #process_query_string.
+    #
+    # On exit, +@response+ will be updated, containing errors or deciphered
+    # query data entered into attributes in the object.
+    #
+    def process_query_hash( action, query_hash, interface, service_request )
       allowed    = ALLOWED_QUERIES_ALL
       allowed   += ALLOWED_QUERIES_LIST if action == :list
 
@@ -682,7 +725,6 @@ module ApiTools
       unless malformed
         search = query_hash[ 'search' ]
         unless search.nil?
-          search = Hash[ URI.decode_www_form( search ) ]
           unrecognised_search_keys = search.keys - interface.to_list.search
           malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
         end
@@ -691,7 +733,6 @@ module ApiTools
       unless malformed
         filter = query_hash[ 'filter' ]
         unless filter.nil?
-          filter = Hash[ URI.decode_www_form( filter ) ]
           unrecognised_filter_keys = filter.keys - interface.to_list.filter
           malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
         end
@@ -700,7 +741,6 @@ module ApiTools
       unless malformed
         embeds = query_hash[ '_embed' ]
         unless embeds.nil?
-          embeds = embeds.split( ',' )
           unrecognised_embeds = embeds - interface.embeds
           malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
         end
@@ -709,7 +749,6 @@ module ApiTools
       unless malformed
         references = query_hash[ '_reference' ]
         unless references.nil?
-          references = references.split( ',' )
           unrecognised_references = references - interface.embeds # (sic.)
           malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
         end
@@ -776,13 +815,13 @@ module ApiTools
     # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
     #              symbol.
     #
-    # Returns an ApiTools::ServiceInterface instance if local, else +nil+.
+    # Returns a @services entry (see #initialize) if local, else +nil+.
     #
     def local_interface_for( resource )
       resource = resource.to_sym
 
       @services.find do | entry |
-        entry.resource = resource
+        entry[ :interface ].resource == resource
       end
     end
 
@@ -831,6 +870,10 @@ module ApiTools
     # methods instead, which makes sure it sets up the required parameters in
     # correct combinations. Undefined results will arise for incorrect calls.
     #
+    # +options+:: Options hash with keys and required values described below.
+    #
+    # Options are as follows - keys must be Symbols:
+    #
     # +interface+::   ApiTools::SerivceInterface to address or nil for
     #                 remote (non-local) call.
     # +http_method+:: HTTP method or equivalent, e.g. +:get+, +:delete+.
@@ -843,15 +886,21 @@ module ApiTools
     #
     # Returns an ApiTools::ServiceResponse describing the result of the call.
     #
-    def inter_service( interface, http_method, ident, query_hash, body_hash )
-      if ( interface.nil? )
-        inter_service_remote( interface, http_method, ident, query_hash, body_hash )
+    def inter_service( options )
+      if ( options[ :interface ].nil? )
+        inter_service_remote( options )
       else
-        inter_service_local( interface, http_method, ident, query_hash, body_hash )
+        inter_service_local( options )
       end
     end
 
-    def inter_service_remote( interface, http_method, ident, query_hash, body_hash )
+    def inter_service_remote( options )
+      interface   = options[ :interface   ]
+      http_method = options[ :http_method ]
+      ident       = options[ :ident       ]
+      body_hash   = options[ :body_hash   ]
+      query_hash  = options[ :query_hash  ]
+
       host = port = nil
 
       unless self.class.environment.development? || self.class.environment.test?
@@ -914,8 +963,46 @@ module ApiTools
       return our_response
     end
 
-    def inter_service_local( interface, http_method, indent, query_hash, body_hash )
 
+
+
+    def inter_service_local( options )
+      interface   = options[ :interface   ]
+      http_method = options[ :http_method ]
+      ident       = options[ :ident       ]
+      body_hash   = options[ :body_hash   ]
+      query_hash  = options[ :query_hash  ]
+
+
+
+      unless query_hash.nil?
+        query_hash = ApiTools::Utilities.stringify( query_hash )
+        query_hash[ '_embeds' ].map!( &:to_s ) unless query_hash[ '_embeds' ].nil?
+        query_hash[ '_reference' ].map!( &:to_s ) unless query_hash[ '_reference' ].nil?
+
+        process_query_hash( action, query_hash, interface[ :interface ], service_request )
+
+      end
+
+
+
+      # query_hash
+      #
+      # so the body hash is already processed.
+      # the query hash needs validating in the context of the interface
+      # the http method needs validating in the context of the interface
+      # so add methods for that
+
+      # array = context.resource( :Currency ).list(
+      #   :search => { :currency_code => 'X-FBP' }
+      # )
+      # return if context.response.halt_processing?
+      #
+      # hash = context.resource( :Currency ).show( 'X-FBP' )
+      # hash = context.resource( :Currency ).create(...)
+      # hash = context.resource( :Currency ).update(...)
+      # hash = context.resource( :Currency ).delete(...)
+      #
     end
 
     # Representation of a callable service endpoint for a specific resource.
@@ -928,6 +1015,16 @@ module ApiTools
     # results.
     #
     class ServiceEndpoint < ApiTools::ServiceMiddleware
+
+      # Find out the service interface class being used by this instance.
+      # If +nil+, the interface is remote - it isn't part of the middleware
+      # instance that owns the endpoint instance. The endpoint may not be
+      # available, but you won't know until you try to talk to it over the
+      # network.
+      #
+      def interface
+        @interface.nil? ? nil : @interface[ :interface ]
+      end
 
       # Create an endpoint instance on behalf of the given
       # ApiTools::ServiceMiddleware instance, directed at the given resource.
@@ -946,51 +1043,46 @@ module ApiTools
 
       def list( query_hash )
         @middleware.inter_service(
-          @interface,
-          :get,
-          nil,
-          query_hash,
-          nil
+          :interface   => @interface,
+          :http_method => get,
+          :query_hash  => query_hash
         )
       end
 
       def show( ident, query_hash )
         @middleware.inter_service(
-          @interface,
-          :get,
-          nil,
-          query_hash,
-          body_hash
+          :interface   => @interface,
+          :http_method => :get,
+          :ident       => ident,
+          :query_hash  => query_hash
         )
       end
 
-      def create( query_hash, body_hash )
+      def create( body_hash, query_hash )
         @middleware.inter_service(
-          @interface,
-          :post,
-          nil,
-          query_hash,
-          body_hash
+          :interface   => @interface,
+          :http_method => :post,
+          :body_hash   => body_hash,
+          :query_hash  => query_hash
         )
       end
 
-      def update( ident, query_hash, body_hash )
+      def update( ident, body_hash, query_hash )
         @middleware.inter_service(
-          @interface,
-          :patch,
-          ident,
-          query_hash,
-          body_hash
+          :interface   => @interface,
+          :http_method => :patch,
+          :ident       => ident,
+          :body_hash   => body_hash,
+          :query_hash  => query_hash
         )
       end
 
       def delete( ident, query_hash )
         @middleware.inter_service(
-          @interface,
-          :patch,
-          ident,
-          query_hash,
-          body_hash
+          :interface   => @interface,
+          :http_method => :delete,
+          :ident       => ident,
+          :query_hash  => query_hash
         )
       end
 

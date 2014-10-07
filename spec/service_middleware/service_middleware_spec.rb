@@ -167,7 +167,7 @@ describe ApiTools::ServiceMiddleware do
           expect(request).to be_a(ApiTools::ServiceRequest)
           expect(response).to be_a(ApiTools::ServiceResponse)
 
-          expect(request.rack_request).to be_a(Rack::Request)
+          expect(request.locale).to eq('en-nz')
           expect(request.uri_path_components).to be_empty
           expect(request.uri_path_extension).to eq('')
           expect(request.list_offset).to eq(0)
@@ -181,6 +181,26 @@ describe ApiTools::ServiceMiddleware do
         end
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should pass on locale correctly (1)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.locale).to eq('en-gb')
+        end
+
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                                                  'HTTP_CONTENT_LANGUAGE' => 'EN-GB' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should pass on locale correctly (2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.locale).to eq('en-gb')
+        end
+
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                                                  'HTTP_ACCEPT_LANGUAGE' => 'en-GB;q=0.8, en;q=0.7' }
         expect(last_response.status).to eq(200)
       end
 
@@ -404,7 +424,6 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with correct path data (1)' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.rack_request).to be_a(Rack::Request)
           expect(context.request.uri_path_components).to eq(['12345'])
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
@@ -416,7 +435,6 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with correct path data (2)' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.rack_request).to be_a(Rack::Request)
           expect(context.request.uri_path_components).to eq(['12345', '67890'])
           expect(context.request.uri_path_extension).to eq('json')
         end
@@ -428,7 +446,6 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with correct path data (3)' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.rack_request).to be_a(Rack::Request)
           expect(context.request.uri_path_components).to eq(['12345abc'])
           expect(context.request.uri_path_extension).to eq('')
         end
@@ -646,7 +663,6 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with correct path data' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.rack_request).to be_a(Rack::Request)
           expect(context.request.uri_path_components).to eq(['12345'])
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
@@ -724,7 +740,6 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with correct path data' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:delete).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.rack_request).to be_a(Rack::Request)
           expect(context.request.uri_path_components).to eq(['12345'])
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end

@@ -25,11 +25,10 @@ module ApiTools
   #
   class ServiceRequest
 
-    # The originating Rack::Request, in case you want to dive inside it to
-    # find something not already abstracted at a higher level by the
-    # ApiTools::ServiceRequest class.
+    # Requested locale for internationalised operations; +"en-nz"+ by
+    # default.
     #
-    attr_accessor :rack_request
+    attr_accessor :locale
 
     # Parsed payload hash, for create and update actions only; else +nil+.
     #

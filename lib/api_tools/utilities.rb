@@ -17,13 +17,41 @@ module ApiTools
     # Works with nested hashes. Taken from:
     #   http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
     #
+    # *WARNING!* In Ruby, Symbols are not garbage collected and will stay in
+    # RAM forever. *DO NOT* symbolize hashes containing data provided by an
+    # API caller (or any generalised external data) unless you've already
+    # made sure that the things you are turning into Symbols are white
+    # listed. Otherwise, a malicious (or accidentally misbehaving) caller
+    # could cause your code to symbolize a Hash with lots of different strings,
+    # filling up memory. Related to:
+    #
+    #   https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+    #
     # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
     #         to symbols. Hashes with values that are Arrays of Hashes will be
-    #         dealt with properly.
+    #         dealt with properly. Does not modify other types (e.g. an Array
+    #         of Strings would stay an Array of Strings).
+    #
+    # Returns a copy of your input object with keys converted to symbols.
     #
     def self.symbolize(obj)
       return obj.inject({}){|memo,(k,v)| memo[k.to_s.to_sym] =  self.symbolize(v); memo} if obj.is_a?(::Hash)
       return obj.inject([]){|memo,v    | memo                << self.symbolize(v); memo} if obj.is_a?(::Array)
+      return obj
+    end
+
+    # The keys-to-strings equivalnet of ::symbolize.
+    #
+    # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
+    #         to strings. Hashes with values that are Arrays of Hashes will be
+    #         dealt with properly. Does not modify other types (e.g. an Array
+    #         of Symbols would stay an Array of Symbols).
+    #
+    # Returns a copy of your input object with keys converted to strings.
+    #
+    def self.stringify(obj)
+      return obj.inject({}){|memo,(k,v)| memo[k.to_s] =  self.stringify(v); memo} if obj.is_a?(::Hash)
+      return obj.inject([]){|memo,v    | memo         << self.stringify(v); memo} if obj.is_a?(::Array)
       return obj
     end
 
