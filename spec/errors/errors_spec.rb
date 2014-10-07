@@ -39,6 +39,12 @@ describe ApiTools::Errors do
       expect(@errors.errors).to_not be_empty
     end
 
+    it 'should complain about unknown error codes' do
+      expect {
+        @errors.add_error('imaginary')
+      }.to raise_error(ApiTools::Errors::UnknownCode, "In \#add_error: Unknown error code 'imaginary'")
+    end
+
     it 'should let me add simple custom errors' do
       expect {
         @errors.add_error('test_domain.http_345_no_references')
@@ -54,15 +60,15 @@ describe ApiTools::Errors do
     it 'should complain about missing fields' do
       expect {
         @errors.add_error('test_domain.http_456_has_reference')
-      }.to raise_error(RuntimeError, "In #add_error: Reference hash missing required keys: 'ref1'")
+      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref1'")
 
       expect {
         @errors.add_error('test_domain.http_567_has_references')
-      }.to raise_error(RuntimeError, "In #add_error: Reference hash missing required keys: 'ref2, ref3, ref4'")
+      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref3, ref4'")
 
       expect {
         @errors.add_error('test_domain.http_567_has_references', :reference => {:ref3 => "hello"})
-      }.to raise_error(RuntimeError, "In #add_error: Reference hash missing required keys: 'ref2, ref4'")
+      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref4'")
     end
 
     it 'should let me specify mandatory reference data' do

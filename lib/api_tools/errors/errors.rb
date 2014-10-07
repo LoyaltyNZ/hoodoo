@@ -20,6 +20,18 @@ module ApiTools
   #
   class Errors
 
+    # Custom exception thrown when an unknown error code is added to a
+    # collection.
+    #
+    class UnknownCode < RuntimeError
+    end
+
+    # Custom exception thrown when an error is added to a collection without
+    # including required reference data
+    #
+    class MissingReferenceData < RuntimeError
+    end
+
     # Default ApiTools::ErrorDescriptions instance, used if the instantiator
     # provides no alternative.
     #
@@ -93,7 +105,7 @@ module ApiTools
 
       # Make sure nobody uses an undeclared error code.
 
-      raise "Unknown error code '#{code}'" unless @descriptions.recognised?( code )
+      raise UnknownCode, "In \#add_error: Unknown error code '#{code}'" unless @descriptions.recognised?( code )
 
       # If the error description specifies a list of required reference keys,
       # make sure all are present and complain if not.
@@ -105,7 +117,7 @@ module ApiTools
       missing_keys  = required_keys - actual_keys
 
       unless missing_keys.empty?
-        raise "In #add_error: Reference hash missing required keys: '#{ missing_keys.join( ', ' ) }'"
+        raise MissingReferenceData, "In \#add_error: Reference hash missing required keys: '#{ missing_keys.join( ', ' ) }'"
       end
 
       # All good!
