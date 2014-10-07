@@ -480,8 +480,8 @@ module ApiTools
       if SUPPORTED_MEDIA_TYPES.include?( @request.media_type ) &&
          SUPPORTED_ENCODINGS.include?( @request.content_charset )
 
-         @content_type     = @request.media_type
-         @content_encoding = @request.content_charset
+         @content_type     = @request.media_type.downcase
+         @content_encoding = @request.content_charset.downcase
 
       else
 
