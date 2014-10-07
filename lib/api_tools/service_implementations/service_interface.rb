@@ -485,7 +485,7 @@ module ApiTools
     #              #endpoint is the only mandatory call.
     #
     def self.interface( resource, &block )
-      self.resource = resource
+      self.resource = resource.to_sym
 
       raise "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once" unless @to_list.nil?
 
@@ -500,12 +500,6 @@ module ApiTools
       if self.endpoint.nil?
         raise "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
-
-      # TODO: By now the resource, version and endpoint information is all
-      #       known. This is where we'd tell a router, edge splitter or some
-      #       other component about this instance as part of a wider
-      #       configuration set that allowed inter-service communication.
-
     end
 
     # Define various class instance variable (sic.) accessors.

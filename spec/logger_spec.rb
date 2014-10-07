@@ -3,8 +3,8 @@ require 'api_tools/logger'
 
 describe ApiTools::Logger do
 
-  it 'should return a nil logger by default' do
-    expect(ApiTools::Logger::logger).to be(nil)
+  it 'should return the spec helper test logger by default' do
+    expect(ApiTools::Logger::logger).to be(StdErrTestLogger)
   end
 
   it 'should set logger' do

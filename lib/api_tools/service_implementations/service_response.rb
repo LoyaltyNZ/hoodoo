@@ -119,6 +119,14 @@ module ApiTools
       return value_hash.values[ 0 ]
     end
 
+    # Returns the list previously set headers in a name: value Hash.
+    #
+    def headers
+      @headers.inject( {} ) do | result, kv_array |
+        result.merge( kv_array[ 1 ] )
+      end
+    end
+
     # Add an error to the internal collection. Passes input parameters through
     # to ApiTools::Errors#add_error, so see that for details. For convenience,
     # returns the for-rack representation of the response so far, so that code
@@ -132,6 +140,25 @@ module ApiTools
     #
     def add_error( code, options = nil )
       @errors.add_error( code, options )
+      return for_rack()
+    end
+
+    # Add a precompiled error to the error collection. Pass error code,
+    # error message and reference data directly.
+    #
+    # In most cases you should be calling #add_error instead, *NOT* here.
+    #
+    # **No validation is performed**. You should only really call here if
+    # storing an error / errors from another, trusted source with assumed
+    # validity (e.g. another service called remotely with errors in the JSON
+    # response). It's possible to store invalid error data using this call,
+    # which means counter-to-documentation results could be returned to API
+    # clients. That is Very Bad.
+    #
+    # As with #add_error, returns a Rack representation of the response.
+    #
+    def add_precompiled_error( code, message, reference )
+      @errors.add_precompiled_error( code, message, reference )
       return for_rack()
     end
 
@@ -167,9 +194,7 @@ module ApiTools
 
       # Finally, sort out the headers
 
-      @headers.each do | downcased_guard_name, original_name_value_hash |
-        header_name = original_name_value_hash.keys[ 0 ]
-        header_value = original_name_value_hash.values[ 0 ]
+      headers().each do | header_name, header_value |
         rack_response[ header_name ] = header_value
       end
 

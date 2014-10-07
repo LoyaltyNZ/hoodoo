@@ -7,7 +7,7 @@ class RSpecTestServiceInterfaceImplementationB < ApiTools::ServiceImplementation
 end
 
 class RSpecTestServiceInterfaceInterfaceA < ApiTools::ServiceInterface
-  interface :RSpecTestServiceInterfaceAResource do
+  interface "RSpecTestServiceInterfaceAResource" do
     version 42
     endpoint :rspec_test_service_interface_a, RSpecTestServiceInterfaceImplementationA
     actions :show, :create, :delete
@@ -57,6 +57,7 @@ describe ApiTools::ServiceInterface do
     it 'should be correctly configured (A)' do
       expect(RSpecTestServiceInterfaceInterfaceA.version).to eq(42)
       expect(RSpecTestServiceInterfaceInterfaceA.endpoint).to eq(:rspec_test_service_interface_a)
+      expect(RSpecTestServiceInterfaceInterfaceA.resource).to be_a(Symbol)
       expect(RSpecTestServiceInterfaceInterfaceA.resource).to eq(:RSpecTestServiceInterfaceAResource)
       expect(RSpecTestServiceInterfaceInterfaceA.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
       expect(RSpecTestServiceInterfaceInterfaceA.actions).to eq([:show, :create, :delete])

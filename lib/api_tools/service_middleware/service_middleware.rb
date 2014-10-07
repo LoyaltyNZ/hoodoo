@@ -144,6 +144,16 @@ module ApiTools
         }
 
       end
+
+      # TODO: By now the resource, version and endpoint information is all
+      #       known. This is where we'd tell a router, edge splitter or some
+      #       other component about this instance as part of a wider
+      #       configuration set that allowed inter-service communication.
+
+      # TODO: If we can find out what port this thing is being served on (or
+      #       determine we're under Alchemy), then we can dynamically note
+      #       the endpoint and not have to hard-code development ports.
+
     end
 
     # Run a Rack request, returning the [status, headers, body-array] data as
@@ -159,43 +169,36 @@ module ApiTools
       begin
 
         @request  = Rack::Request.new( env )
+
+        log( :info )
+
         @response = ApiTools::ServiceResponse.new
         @session  = ApiTools::ServiceSession.new
 
         # TODO: Session validation/recovery, probably in preprocess()
 
         preprocess()
-        return @response.for_rack() if @response.halt_processing?
+        process()     unless @response.halt_processing?
+        postprocess() unless @response.halt_processing?
 
-        process()
-        return @response.for_rack() if @response.halt_processing?
-
-        postprocess()
-        return @response.for_rack()
+        return respond_with( @response.for_rack() )
 
       rescue => exception
         begin
-
-          reference = {
-            :exception => exception.message
-          }
-
-          unless self.class.environment.production? || self.class.environment.uat?
-            reference[ :backtrace ] = exception.backtrace.join( " | " )
-          end
-
-          # A service can rewrite this field with a different object, leading
-          # to an exception within the exception handler; so use a new one!
-          #
-          @response.errors = ApiTools::Errors.new()
-
-          return @response.add_error(
-            'platform.fault',
-            :message => exception.message,
-            :reference => reference
-          )
+          return respond_with( record_exception( @response, exception ) )
 
         rescue
+
+          begin
+            ApiTools::Logger.error(
+              'ApiTools::ServiceMiddleware#call',
+              'Middleware exception in exception handler',
+              exception.to_s
+            )
+          rescue
+            # Ignore logger exceptions. Can't do anything about them. Just
+            # try and get the response back to the client now.
+          end
 
           # An exception in the exception handler! Oh dear.
           #
@@ -208,6 +211,64 @@ module ApiTools
     end
 
   private
+
+    # Log that we're responding with the in the given Rack response def array,
+    # returning the same, so that in #call the idiom can be:
+    #
+    #     return respond_with( ... )
+    #
+    # ...to log the response and return data to Rack all in one go.
+    #
+    # +rack_data+:: Rack response array (HTTP status code integer, header
+    #               hash and body data as per Rack specification).
+    #
+    # Returns the +rack_data+ input parameter value without modifications.
+    #
+    def respond_with( rack_data )
+      body = ''
+      rack_data[ 2 ].each { | thing | body << thing.to_s }
+
+      log(
+        :info,
+        'Responding with',
+        rack_data[ 0 ],
+        rack_data[ 1 ],
+        body
+      )
+
+      return rack_data
+    end
+
+    # Log a message in a consistent way for middleware request processing.
+    # Pass the log level and optional extra arguments which will be used as
+    # strings that get appended to the log message.
+    #
+    # Before calling, +@request+ must be set up with the Rack::Request
+    # instance for the call environment.
+    #
+    # +level+:: Log level. If +:info+ but +@response+ is present and indicates
+    #           an error is being returned, then the level is automatically
+    #           changed to +:warn+. If omitted, default is +:info+ (which may
+    #           be promoted to +:warn+, as per previous sentence!).
+    #
+    # *args::   Optional extra arguments used as strings to add to log message.
+    #
+    def log( level = :info, *args )
+
+      full_uri         = "Full URI: #{ @request.scheme }://#{ @request.host_with_port }/#{ @request.fullpath }"
+      md5              = "Request MD5: #{ Digest::MD5.hexdigest( @request.env.to_s ) }"
+      interaction_info = @interaction_id.nil? ? "No interaction ID yet" : "Interaction ID: #{ @interaction_id }"
+      log_level        = :warn if log_level == :info && @response && @response.halt_processing?
+
+      ApiTools::Logger.send(
+        level,
+        'ApiTools::ServiceMiddleware#call',
+        full_uri,
+        md5,
+        interaction_info,
+        *args
+      )
+    end
 
     # Run request preprocessing - common actions that occur prior to any service
     # instance selection or service-specific processing.
@@ -348,6 +409,11 @@ module ApiTools
                                     :message => 'Body data exceeds configured maximum size for platform' )
       end
 
+      log(
+        :info,
+        "Raw body data read successfully: '#{ body }'"
+      )
+
       if action == :create || action == :update
         service_request.body = payload_to_hash( body )
         return @response.for_rack() if @response.halt_processing?
@@ -358,12 +424,18 @@ module ApiTools
                                     :reference => { :action => action } )
       end
 
+      log(
+        :info,
+        "Dispatching with parsed body data: '#{ service_request.body }'"
+      )
+
       # Finally - dispatch to service.
 
       context = ApiTools::ServiceContext.new(
         @session,
         service_request,
-        @response
+        @response,
+        self
       )
 
       implementation.send( action, context )
@@ -665,5 +737,263 @@ module ApiTools
 
     end
 
-  end
-end
+    # Record an exception in a given response object, overwriting any previous
+    # error data if present.
+    #
+    # +response+::  The ApiTools::ServiceResponse object to record in; its
+    #               ApiTools::ServiceResponse#errors collection is overwritten.
+    #
+    # +exception+:: The Exception instance to record.
+    #
+    # Returns the result of ApiTools::ServiceResponse#add_error.
+    #
+    def record_exception( response, exception )
+      reference = {
+        :exception => exception.message
+      }
+
+      unless self.class.environment.production? || self.class.environment.uat?
+        reference[ :backtrace ] = exception.backtrace.join( " | " )
+      end
+
+      # A service can rewrite this field with a different object, leading
+      # to an exception within the exception handler; so use a new one!
+      #
+      response.errors = ApiTools::Errors.new()
+
+      return response.add_error(
+        'platform.fault',
+        :message => exception.message,
+        :reference => reference
+      )
+    end
+
+  protected
+
+    # Is the given resource available as a local endpoint in this service
+    # application?
+    #
+    # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
+    #              symbol.
+    #
+    # Returns an ApiTools::ServiceInterface instance if local, else +nil+.
+    #
+    def local_interface_for( resource )
+      resource = resource.to_sym
+
+      @services.find do | entry |
+        entry.resource = resource
+      end
+    end
+
+    # PROVISIONAL!
+    #
+    # Local development no-queue port allocations on an assumed physical
+    # service grouping.
+    #
+    # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
+    #              symbol.
+    #
+    def development_port_for( resource )
+      case resource.to_sym
+
+        # Errors Service
+        when :Errors
+          3500
+
+        # Financial Service
+        when :Currency, :Balance, :Voucher, :Transaction
+          3510
+
+        # Programme API
+        when :Participant, :Outlet, :Involvement, :Programme
+          3520
+
+        # Member API
+        when :Account, :Member, :Membership, :MemberToken
+          3530
+
+        # Purchase API
+        when :Purchase, :Refund, :Estimation, :Forecast, :Calculator
+          3540
+
+        # Utility API
+        when :Version
+          3550
+
+        else
+          9393
+      end
+    end
+
+    # Perform an inter-service call. This shouldn't be called directly; call
+    # via the ApiTools::ServiceMiddleware::ServiceEndpoint subclass specialised
+    # methods instead, which makes sure it sets up the required parameters in
+    # correct combinations. Undefined results will arise for incorrect calls.
+    #
+    # +interface+::   ApiTools::SerivceInterface to address or nil for
+    #                 remote (non-local) call.
+    # +http_method+:: HTTP method or equivalent, e.g. +:get+, +:delete+.
+    # +ident+::       ID / UUID / similar; first and only path component.
+    # +query_hash+::  Converted to query string.
+    # +body_hash+::   Converted to body data.
+    #
+    # Parameters should be nil where the value would not be allowed given the
+    # HTTP method. HTTP methods must map to understood actions.
+    #
+    # Returns an ApiTools::ServiceResponse describing the result of the call.
+    #
+    def inter_service( interface, http_method, ident, query_hash, body_hash )
+      if ( interface.nil? )
+        inter_service_remote( interface, http_method, ident, query_hash, body_hash )
+      else
+        inter_service_local( interface, http_method, ident, query_hash, body_hash )
+      end
+    end
+
+    def inter_service_remote( interface, http_method, ident, query_hash, body_hash )
+      host = port = nil
+
+      unless self.class.environment.development? || self.class.environment.test?
+        host = @request.host
+        post = @request.port
+      end
+
+      host ||= '127.0.0.1'
+      port ||= development_port_for( interface.resource )
+      path   = "/v#{ interface.version }/#{ interface.endpoint }"
+      path  << "/#{ ident }" unless ident.nil?
+
+      unless query_hash.nil?
+        query_hash = query_hash.dup
+        query_hash[ :search ] = URI.encode_www_form( query_hash[ :search ] ) if ( query_hash[ :search ] ).is_a?( Hash )
+        query_hash[ :filter ] = URI.encode_www_form( query_hash[ :filter ] ) if ( query_hash[ :filter ] ).is_a?( Hash )
+      end
+
+      # Grey area over whether this encodes spaces as "%20" or "+", but so
+      # long as the middleware consistently uses the URI encode/decode calls,
+      # it should work out in the end anyway.
+
+      our_response = ApiTools::ServiceResponse.new
+
+      begin
+        uri = URI::HTTP.build( {
+          :host  => host,
+          :port  => port.to_i,
+          :path  => path,
+          :query => URI.encode_www_form( query_hash )
+        } )
+
+        remote_response = RestClient.send(
+          http_method,
+          uri.to_s,
+          body_hash.nil? ? '' : body_hash.to_json
+        )
+
+        our_response.http_status_code = remote_response.code
+        our_response.body             = JSON.parse( remote_response.to_str )
+
+        remote_response.headers.each do | name, value |
+          our_response.add_header( name, value, true )
+        end
+
+        # Since "our response" now has the decoded Hash payload, we use it
+        # to see if there is error data there. If so, add it verbatim into
+        # the errors collection.
+        #
+        if ( our_response.body[ 'kind' ] == 'Errors' )
+          our_response.body[ 'errors' ].each do | error |
+            our_response.add_precompiled_error( error )
+          end
+        end
+
+      rescue => exception
+        record_exception( our_response, exception )
+      end
+
+      return our_response
+    end
+
+    def inter_service_local( interface, http_method, indent, query_hash, body_hash )
+
+    end
+
+    # Representation of a callable service endpoint for a specific resource.
+    # Services that wish to call other services should obtain an endpoint
+    # instance via ApiTools::ServiceContext#endpoint then use the instance
+    # methods described for this class to call other services. The calls they
+    # use look very similar to the calls they implement for their own
+    # instances. The response they get is in the form of an
+    # ApiTools::ServiceResponse instance describing the inter-service call's
+    # results.
+    #
+    class ServiceEndpoint < ApiTools::ServiceMiddleware
+
+      # Create an endpoint instance on behalf of the given
+      # ApiTools::ServiceMiddleware instance, directed at the given resource.
+      #
+      # +middleware_instance+:: ApiTools::ServiceMiddleware used to handle
+      #                         onward requests.
+      #
+      # +resource+:: Resource name the endpoint targets, e.g. +:Purchase+.
+      #              String or symbol.
+      #
+      def initialize( middleware_instance, resource )
+        @middleware = middleware_instance
+        @resource   = resource.to_s
+        @interface  = @middleware.local_interface_for( @resource )
+      end
+
+      def list( query_hash )
+        @middleware.inter_service(
+          @interface,
+          :get,
+          nil,
+          query_hash,
+          nil
+        )
+      end
+
+      def show( ident, query_hash )
+        @middleware.inter_service(
+          @interface,
+          :get,
+          nil,
+          query_hash,
+          body_hash
+        )
+      end
+
+      def create( query_hash, body_hash )
+        @middleware.inter_service(
+          @interface,
+          :post,
+          nil,
+          query_hash,
+          body_hash
+        )
+      end
+
+      def update( ident, query_hash, body_hash )
+        @middleware.inter_service(
+          @interface,
+          :patch,
+          ident,
+          query_hash,
+          body_hash
+        )
+      end
+
+      def delete( ident, query_hash )
+        @middleware.inter_service(
+          @interface,
+          :patch,
+          ident,
+          query_hash,
+          body_hash
+        )
+      end
+
+    end # 'class ServiceEndpoint'
+  end   # 'class ServiceMiddleware'
+end     # 'module ApiTools'

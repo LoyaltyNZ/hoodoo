@@ -37,11 +37,30 @@ module ApiTools
     # +session+:: See #session.
     # +request+:: See #request.
     # +response+:: See #response.
+    # +middleware+:: ApiTools::ServiceMiddleware instance creating this item.
     #
-    def initialize( session, request, response )
-      @session = session
-      @request = request
-      @response = response
+    def initialize( session, request, response, middleware )
+      @session    = session
+      @request    = request
+      @response   = response
+      @middleware = middleware
+      @endpoints  = {}
+    end
+
+    # Request (and lazy-initialize) a new endpoint instance for talking to a
+    # resource's interface. See ApiTools::ServiceMiddleware::ServiceEndpoint.
+    #
+    # You can request an endpoint for any resource name, whether or not an
+    # implementation actually exists for it. Until you try and talk to the
+    # interface through the endpoint instance, you won't know if it is there.
+    # Examine the returned value's ApiTools::ServiceResponse#http_status_code
+    # to see if you got a 404.
+    #
+    # +resource+:: Resource name for the endpoint, e.g. +:Purchase+. String
+    #              or symbol.
+    #
+    def endpoint( resource )
+      @endpoints[ resource.to_sym ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new( @middleware, resource )
     end
   end
 end

@@ -127,6 +127,26 @@ module ApiTools
       @errors << error
     end
 
+    # Add a precompiled error to the error collection. Pass error code,
+    # error message and reference data directly.
+    #
+    # In most cases you should be calling #add_error instead, *NOT* here.
+    #
+    # **No validation is performed**. You should only really call here if
+    # storing an error / errors from another, trusted source with assumed
+    # validity (e.g. another service called remotely with errors in the JSON
+    # response). It's possible to store invalid error data using this call,
+    # which means counter-to-documentation results could be returned to API
+    # clients. That is Very Bad.
+    #
+    def add_precompiled_error( code, message, reference )
+      @errors << {
+        code:      code,
+        message:   message,
+        reference: reference
+      }
+    end
+
     # Does this instance have any errors added? Returns +true+ if so,
     # else +false+.
     #
