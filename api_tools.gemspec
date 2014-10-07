@@ -7,6 +7,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]
   s.email       = ['tom.cully@loyalty.co.nz', 'andrew.hodgkinson@loyalty.co.nz']
   s.files       = Dir.glob('lib/**/*.rb')
+  s.bindir      = 'bin'
+  s.executables = ['api_tools']
   s.test_files  = Dir.glob('spec/**/*.rb')
   s.homepage    = 'http://github.com/LoyaltyNZ/api_tools'
   s.required_ruby_version = '>= 1.9.2'
