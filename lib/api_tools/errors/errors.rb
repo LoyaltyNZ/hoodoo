@@ -140,11 +140,29 @@ module ApiTools
     # clients. That is Very Bad.
     #
     def add_precompiled_error( code, message, reference )
-      @errors << {
-        code:      code,
-        message:   message,
-        reference: reference
+      error = {
+        code:    code,
+        message: message
       }
+
+      error[ :reference ] = reference unless reference.nil? || reference.empty?
+
+      @errors << error
+    end
+
+    # Merge the contents of a source error object with this one, adding its
+    # errors to this collection. No checks are made for duplicates (in part
+    # because, depending on error code and source/target contexts, a
+    # duplicate may be a valid thing to have).
+    #
+    def merge!( source )
+      source.errors.each do | hash |
+        add_precompiled_error(
+          hash[ :code      ],
+          hash[ :message   ],
+          hash[ :reference ]
+        )
+      end
     end
 
     # Does this instance have any errors added? Returns +true+ if so,

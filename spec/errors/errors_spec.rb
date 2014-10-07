@@ -135,6 +135,126 @@ describe ApiTools::Errors do
     end
   end
 
+  describe '#add_precompiled_error' do
+    it 'should not complain about random data' do
+      @errors.clear_errors
+      @errors.add_precompiled_error( 'code', 'message', 'reference' )
+      expect(@errors.errors).to eq([
+        {
+          code: 'code',
+          message: 'message',
+          reference: 'reference'
+        }
+      ])
+    end
+
+    it 'should not store empty references' do
+      @errors.clear_errors
+      @errors.add_precompiled_error( 'code', 'message', '' )
+      expect(@errors.errors).to eq([
+        {
+          code: 'code',
+          message: 'message'
+        }
+      ])
+    end
+
+    it 'should not store nil references' do
+      @errors.clear_errors
+      @errors.add_precompiled_error( 'code', 'message', nil )
+      expect(@errors.errors).to eq([
+        {
+          code: 'code',
+          message: 'message'
+        }
+      ])
+    end
+  end
+
+  describe '#merge' do
+    it 'should merge when neither have errors' do
+      @errors.clear_errors
+      source = ApiTools::Errors.new
+      @errors.merge!( source )
+      expect(@errors.errors).to eq([])
+    end
+
+    it 'should merge when only the source has errors' do
+      @errors.clear_errors
+      source = ApiTools::Errors.new
+      source.add_error('platform.method_not_allowed', message: 'Method not allowed 1', reference: { :data => '1' })
+      source.add_error('platform.malformed', message: 'Malformed request 1', reference: { :data => '1' })
+      @errors.merge!( source )
+
+      expect(@errors.errors).to eq([
+        {
+          code: 'platform.method_not_allowed',
+          message: 'Method not allowed 1',
+          reference: '1'
+        },
+        {
+          code: 'platform.malformed',
+          message: 'Malformed request 1',
+          reference: '1'
+        }
+      ])
+    end
+
+    it 'should merge when only the destination has errors' do
+      @errors.clear_errors
+      source = ApiTools::Errors.new
+      @errors.add_error('platform.method_not_allowed', message: 'Method not allowed 2', reference: { :data => '2' })
+      @errors.add_error('platform.malformed', message: 'Malformed request 2', reference: { :data => '2' })
+      @errors.merge!( source )
+
+      expect(@errors.errors).to eq([
+        {
+          code: 'platform.method_not_allowed',
+          message: 'Method not allowed 2',
+          reference: '2'
+        },
+        {
+          code: 'platform.malformed',
+          message: 'Malformed request 2',
+          reference: '2'
+        }
+      ])
+    end
+
+    it 'should merge when both have errors' do
+      @errors.clear_errors
+      source = ApiTools::Errors.new
+      source.add_error('platform.method_not_allowed', message: 'Method not allowed 1', reference: { :data => '1' })
+      source.add_error('platform.malformed', message: 'Malformed request 1', reference: { :data => '1' })
+      @errors.add_error('platform.method_not_allowed', message: 'Method not allowed 2', reference: { :data => '2' })
+      @errors.add_error('platform.malformed', message: 'Malformed request 2', reference: { :data => '2' })
+      @errors.merge!( source )
+
+      expect(@errors.errors).to eq([
+        {
+          code: 'platform.method_not_allowed',
+          message: 'Method not allowed 2',
+          reference: '2'
+        },
+        {
+          code: 'platform.malformed',
+          message: 'Malformed request 2',
+          reference: '2'
+        },
+        {
+          code: 'platform.method_not_allowed',
+          message: 'Method not allowed 1',
+          reference: '1'
+        },
+        {
+          code: 'platform.malformed',
+          message: 'Malformed request 1',
+          reference: '1'
+        }
+      ])
+    end
+  end
+
   describe 'comma escaping' do
     it 'should escape commas' do
       str = @errors.send(:escape_commas, "This, that, one \\ another")
