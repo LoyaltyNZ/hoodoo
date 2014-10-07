@@ -477,13 +477,11 @@ module ApiTools
     # encoding (e.g. +utf-8+).
     #
     def check_content_type_header
-      if SUPPORTED_MEDIA_TYPES.include?( @request.media_type ) &&
-         SUPPORTED_ENCODINGS.include?( @request.content_charset )
+      @content_type     = ( @request.media_type      || '' ).downcase
+      @content_encoding = ( @request.content_charset || '' ).downcase
 
-         @content_type     = @request.media_type.downcase
-         @content_encoding = @request.content_charset.downcase
-
-      else
+      unless SUPPORTED_MEDIA_TYPES.include?( @content_type ) &&
+             SUPPORTED_ENCODINGS.include?( @content_encoding )
 
         @response.errors.add_error(
           'platform.malformed',
