@@ -45,15 +45,30 @@ module ApiTools
         array = []
         path  = super( array, target )
 
-        data.each do | item |
-          subtarget = {}
+        # No defined schema for the array contents? Just use the data as-is;
+        # we can do no validation. Have to hope the caller has given us data
+        # that would be valid as JSON. No data at all? Do nothing. Else
+        # run through the schema properties for each entry and validate them.
 
-          @properties.each do | name, property |
-            property.render( item[ name ], subtarget )
+        if data.nil?
+          return
+
+        elsif @properties.nil?
+          # Must modify existing instance of 'array', so use 'push()'
+          array.push( *data )
+
+        else
+          data.each do | item |
+            subtarget = {}
+
+            @properties.each do | name, property |
+              property.render( item[ name ], subtarget )
+            end
+
+            # Must modify existing instance of 'array', so use 'push()'
+            array.push( read_at_path( subtarget, path ) )
           end
-
-          array << read_at_path( subtarget, path )
-        end unless data.nil?
+        end
       end
     end
   end

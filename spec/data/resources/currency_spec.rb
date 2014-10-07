@@ -15,4 +15,55 @@ describe ApiTools::Data::Resources::Currency do
     expect(schema.properties[:multiplier]).to be_a(ApiTools::Presenters::Integer)
     expect(schema.properties[:qualifiers]).to be_a(ApiTools::Data::DocumentedArray)
   end
+
+  it 'should be renderable with all data' do
+    id         = ApiTools::UUID.generate
+    created_at = Time.now
+    json       = described_class.render(
+      {
+        currency_code: 'X-FBP',
+        symbol:        'pts',
+        multiplier:    100,
+        qualifiers:    [ 'standard', 'bonus' ]
+      },
+      id,
+      created_at
+    )
+
+    expect(json).to eq(
+      {
+        id: id,
+        created_at: created_at.iso8601,
+        kind: 'Currency',
+        currency_code: 'X-FBP',
+        symbol: 'pts',
+        multiplier: 100,
+        qualifiers: [ 'standard', 'bonus' ]
+      }
+    )
+  end
+
+  it 'should be renderable with minimum data' do
+    id         = ApiTools::UUID.generate
+    created_at = Time.now
+    json       = described_class.render(
+      {
+        currency_code: 'X-FBP',
+      },
+      id,
+      created_at
+    )
+
+    expect(json).to eq(
+      {
+        id: id,
+        created_at: created_at.iso8601,
+        kind: 'Currency',
+        currency_code: 'X-FBP',
+        symbol: nil,
+        multiplier: nil,
+        qualifiers: []
+      }
+    )
+  end
 end
