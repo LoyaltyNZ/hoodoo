@@ -220,7 +220,64 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#stop'
+  describe '#stop' do
+
+    it 'should kill tx_thread and tx_thread' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+    
+      rxt = double('rx_thread')
+      txt = double('tx_thread')
+      inst.instance_eval do
+        @rx_thread = rxt
+        @tx_thread = txt
+      end
+
+      expect(rxt).to receive(:kill)
+      expect(txt).to receive(:kill)
+
+      inst.stop
+    end
+
+    it 'should kill all worker threads' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      wht = [double('worker_thread_1'),double('worker_thread_2')]
+
+      expect(wht[0]).to receive(:kill)
+      expect(wht[1]).to receive(:kill)
+
+      inst.instance_eval do
+        @worker_threads = wht
+      end
+
+      inst.stop
+    end
+
+    it 'should set rx_thread, tx_thread to nil and worker_threads to []' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      rxt = double('rx_thread')
+      txt = double('tx_thread')
+      wht = [double('worker_thread')]
+
+      expect(rxt).to receive(:kill)
+      expect(txt).to receive(:kill)
+      expect(wht[0]).to receive(:kill)
+
+
+      inst.instance_eval do
+        @rx_thread = rxt
+        @tx_thread = txt
+        @worker_threads = wht
+      end
+
+      inst.stop
+
+      expect(inst.rx_thread).to be_nil
+      expect(inst.tx_thread).to be_nil
+      expect(inst.worker_threads).to eq([])
+    end
+  end
 
   describe '#send_message' do
     it 'should push msg on tx_queue' do
