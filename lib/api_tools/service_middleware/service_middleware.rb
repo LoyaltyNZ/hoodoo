@@ -139,7 +139,6 @@ module ApiTools
         {
           :regexp         => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
           :interface      => interface,
-          :actions        => interface.actions || ALLOWED_ACTIONS,
           :implementation => interface.implementation.new
         }
 
@@ -168,24 +167,24 @@ module ApiTools
       #
       begin
 
-        @request  = Rack::Request.new( env )
+        @rack_request = Rack::Request.new( env )
 
         log( :info )
 
-        @response = ApiTools::ServiceResponse.new
-        @session  = ApiTools::ServiceSession.new
+        @service_response = ApiTools::ServiceResponse.new
+        @service_session  = ApiTools::ServiceSession.new
 
         # TODO: Session validation/recovery, probably in preprocess()
 
         preprocess()
-        process()     unless @response.halt_processing?
-        postprocess() unless @response.halt_processing?
+        process()     unless @service_response.halt_processing?
+        postprocess() unless @service_response.halt_processing?
 
-        return respond_with( @response.for_rack() )
+        return respond_with( @service_response.for_rack() )
 
       rescue => exception
         begin
-          return respond_with( record_exception( @response, exception ) )
+          return respond_with( record_exception( @service_response, exception ) )
 
         rescue
 
@@ -243,22 +242,17 @@ module ApiTools
     # Pass the log level and optional extra arguments which will be used as
     # strings that get appended to the log message.
     #
-    # Before calling, +@request+ must be set up with the Rack::Request
+    # Before calling, +@rack_request+ must be set up with the Rack::Request
     # instance for the call environment.
     #
-    # +level+:: Log level. If +:info+ but +@response+ is present and indicates
-    #           an error is being returned, then the level is automatically
-    #           changed to +:warn+. If omitted, default is +:info+ (which may
-    #           be promoted to +:warn+, as per previous sentence!).
-    #
+    # +level+:: Log level. Default is +:info+.
     # *args::   Optional extra arguments used as strings to add to log message.
     #
     def log( level = :info, *args )
 
-      full_uri         = "Full URI: #{ @request.scheme }://#{ @request.host_with_port }/#{ @request.fullpath }"
-      md5              = "Request MD5: #{ Digest::MD5.hexdigest( @request.env.to_s ) }"
+      full_uri         = "Full URI: #{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }"
+      md5              = "Request MD5: #{ Digest::MD5.hexdigest( @rack_request.env.to_s ) }"
       interaction_info = @interaction_id.nil? ? "No interaction ID yet" : "Interaction ID: #{ @interaction_id }"
-      log_level        = :warn if log_level == :info && @response && @response.halt_processing?
 
       ApiTools::Logger.send(
         level,
@@ -273,17 +267,24 @@ module ApiTools
     # Run request preprocessing - common actions that occur prior to any service
     # instance selection or service-specific processing.
     #
-    # On exit, +@request+ or +@response+ may have been updated. Be sure to check
-    # +@request.halt_processing?+ to see if processing should abort and return
-    # immediately.
+    # On exit, +@service_response+ may have been updated. Be sure to check
+    # +@service_response.halt_processing?+ to see if processing should abort
+    # and return immediately.
     #
     def preprocess
+
+
+      # =======================================================================
+      # Additions here may require corresponding additions to the inter-service
+      # local call code.
+      # =======================================================================
+
       check_content_type_header()
 
       @locale         = deal_with_language_header()
       @interaction_id = find_or_generate_interaction_id()
 
-      set_common_response_headers()
+      set_common_response_headers( @service_response )
     end
 
     # Process the client's call. The heart of service routing and application
@@ -292,12 +293,19 @@ module ApiTools
     #
     def process
 
+
+      # =======================================================================
+      # Additions here may require corresponding additions to the inter-service
+      # local call code.
+      # =======================================================================
+
+
       # Select a service based on the escaped URI's path. If we find none,
       # then there's no matching endpoint; badly routed request; 404. If we
       # find many, raise an exception and rely on the exception handler to
       # send back a 500.
 
-      uri_path = CGI.unescape( @request.path() )
+      uri_path = CGI.unescape( @rack_request.path() )
 
       selected_services = @services.select do | service_data |
         path_data = process_uri_path( uri_path, service_data[ :regexp ] )
@@ -311,7 +319,7 @@ module ApiTools
       end
 
       if selected_services.size == 0
-        return @response.add_error(
+        return @service_response.add_error(
           'platform.not_found',
           :reference => { :entity_name => '' }
         )
@@ -323,66 +331,53 @@ module ApiTools
 
       uri_path_components, uri_path_extension = @path_data
       interface                               = selected_service[ :interface      ]
-      actions                                 = selected_service[ :actions        ]
       implementation                          = selected_service[ :implementation ]
 
-      # Check for a supported action. Clumsy code because there is no 1:1 map
-      # from HTTP method to action (e.g. GET can be :show or :list).
+      update_service_response_for( @service_response, interface )
 
-      action = if @request.post?
-        :create
-      elsif @request.patch?
-        :update
-      elsif @request.delete?
-        :delete
-      elsif @request.get?
-        if uri_path_components.size == 0
-          :list
-        else
-          :show
-        end
-      end
+      # Check for a supported action.
 
-      unless actions.include?( action )
-        return @response.add_error(
-          'platform.method_not_allowed',
-          :message => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ @request.env[ 'REQUEST_METHOD' ] }' yielding action '#{ action }'"
-        )
-      end
+      action = determine_action(
+        interface,
+        @rack_request.request_method,
+        uri_path_components.empty?,
+        @service_response
+      )
+
+      return if @service_response.halt_processing?
 
       # Looks good so far, so allocate a request object to pass on to the
       # interface and hold other higher level parsed data assembled below.
 
-      service_request                     = ApiTools::ServiceRequest.new
-      service_request.locale              = @locale
+      service_request                     = new_service_request_for( interface )
       service_request.uri_path_components = uri_path_components
       service_request.uri_path_extension  = uri_path_extension
-
-      # Update the response object's errors collection in light of additional
-      # service interface error descriptions, if any.
-
-      unless interface.errors_for.nil?
-        @response.errors = ApiTools::Errors.new( interface.errors_for )
-      end
 
       # There should only be a query string for GET methods that ask for lists
       # of resources.
 
-      process_query_string( action, @request.query_string, interface, service_request )
-      return if @response.halt_processing?
+      process_query_string(
+        action,
+        @rack_request.query_string,
+        interface,
+        service_request,
+        @service_response
+      )
+
+      return if @service_response.halt_processing?
 
       # There should be no spurious path data for "list" or "create" actions -
       # only "show", "update" and "delete" take extra data via the URL's path.
       # Conversely, other actions require it.
 
       if action == :list || action == :create
-        return @response.add_error( 'platform.malformed',
-                                    :message => 'Unexpected path components for this action',
-                                    :reference => { :action => action } ) unless uri_path_components.empty?
+        return @service_response.add_error( 'platform.malformed',
+                                            :message => 'Unexpected path components for this action',
+                                            :reference => { :action => action } ) unless uri_path_components.empty?
       else
-        return @response.add_error( 'platform.malformed',
-                                    :message => 'Expected path components identifying target resource instance for this action',
-                                    :reference => { :action => action } ) if uri_path_components.empty?
+        return @service_response.add_error( 'platform.malformed',
+                                            :message => 'Expected path components identifying target resource instance for this action',
+                                            :reference => { :action => action } ) if uri_path_components.empty?
       end
 
       # There should be no spurious body data for anything other than "create"
@@ -402,11 +397,11 @@ module ApiTools
       # data to read, it should return nil. If it doesn't, the payload is
       # too big. Reject it.
 
-      body = @request.body.read( MAXIMUM_PAYLOAD_SIZE )
+      body = @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
 
-      unless ( body.nil? || body.is_a?( String ) ) && @request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
-        return @response.add_error( 'platform.malformed',
-                                    :message => 'Body data exceeds configured maximum size for platform' )
+      unless ( body.nil? || body.is_a?( String ) ) && @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+        return @service_response.add_error( 'platform.malformed',
+                                            :message => 'Body data exceeds configured maximum size for platform' )
       end
 
       log(
@@ -416,12 +411,12 @@ module ApiTools
 
       if action == :create || action == :update
         service_request.body = payload_to_hash( body )
-        return @response.for_rack() if @response.halt_processing?
+        return @service_response.for_rack() if @service_response.halt_processing?
 
       elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
-        return @response.add_error( 'platform.malformed',
-                                    :message => 'Unexpected body data for this action',
-                                    :reference => { :action => action } )
+        return @service_response.add_error( 'platform.malformed',
+                                            :message => 'Unexpected body data for this action',
+                                            :reference => { :action => action } )
       end
 
       log(
@@ -432,9 +427,9 @@ module ApiTools
       # Finally - dispatch to service.
 
       context = ApiTools::ServiceContext.new(
-        @session,
+        @service_session,
         service_request,
-        @response,
+        @service_response,
         self
       )
 
@@ -444,9 +439,16 @@ module ApiTools
     # Run request preprocessing - common actions that occur after service
     # instance selection and service-specific processing.
     #
-    # On exit, +@response+ may have been updated.
+    # On exit, +@service_response+ may have been updated.
     #
     def postprocess
+
+
+      # =======================================================================
+      # Additions here may require corresponding additions to the inter-service
+      # local call code.
+      # =======================================================================
+
 
       # TODO: Nothing?
       #
@@ -477,8 +479,8 @@ module ApiTools
     # encoding (e.g. +utf-8+).
     #
     def check_content_type_header
-      content_type      = @request.media_type
-      content_encoding  = @request.content_charset
+      content_type      = @rack_request.media_type
+      content_encoding  = @rack_request.content_charset
 
       @content_type     = content_type.nil?     ? nil : content_type.downcase
       @content_encoding = content_encoding.nil? ? nil : content_encoding.downcase
@@ -486,23 +488,12 @@ module ApiTools
       unless SUPPORTED_MEDIA_TYPES.include?( @content_type ) &&
              SUPPORTED_ENCODINGS.include?( @content_encoding )
 
-        @response.errors.add_error(
+        @service_response.errors.add_error(
           'platform.malformed',
-          :message => "Content-Type '#{ @request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
+          :message => "Content-Type '#{ @rack_request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
         )
 
       end
-    end
-
-    # Preprocessing stage that sets up common headers required in any reseponse.
-    # May vary according to inbound content type requested. If processing was
-    # aborted early (e.g. missing inbound Content-Type) we may fall to defaults.
-    #
-    # (At the time of writing, platform documentations say we're JSON only - but
-    # there's an strong chance of e.g. XML representation being demanded later).
-    #
-    def set_common_response_headers
-      @response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
     end
 
     # Extract the +Content-Language+ header value from the client, or if that
@@ -514,8 +505,8 @@ module ApiTools
     # leaving just the language part, e.g. "en-gb".
     #
     def deal_with_language_header
-      lang = @request.env[ 'HTTP_CONTENT_LANGUAGE' ]
-      lang = @request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
+      lang = @rack_request.env[ 'HTTP_CONTENT_LANGUAGE' ]
+      lang = @rack_request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
 
       unless lang.nil? || lang.empty?
         # E.g. "Accept-Language: da, en-gb;q=0.8, en;q=0.7" => 'da'
@@ -532,41 +523,25 @@ module ApiTools
     # as a new X-Interaction-ID header.
     #
     def find_or_generate_interaction_id
-      iid = @request.env[ 'HTTP_X_INTERACTION_ID' ]
+      iid = @rack_request.env[ 'HTTP_X_INTERACTION_ID' ]
       iid = ApiTools::UUID.generate() if iid.nil? || iid == ''
 
-      @response.add_header( 'X-Interaction-ID', iid )
+      @service_response.add_header( 'X-Interaction-ID', iid )
+
+      iid
     end
 
-    # Safely parse the client payload in the context of the defined content
-    # type (#check_content_type_header must have been run first). Pass the
-    # body payload string.
+    # Preprocessing stage that sets up common headers required in any response.
+    # May vary according to inbound content type requested. If processing was
+    # aborted early (e.g. missing inbound Content-Type) we may fall to defaults.
     #
-    def payload_to_hash( body )
-
-      begin
-        case @content_type
-          when 'application/json'
-
-            # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
-            #
-            # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
-            #
-            @payload_hash = JSON.parse( body, :create_additions => false )
-
-        end
-
-      rescue => e
-        @payload_hash = {}
-        @response.errors.add_error( 'generic.malformed' )
-
-      end
-
-      if @payload_hash.nil?
-        raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
-      end
-
-      return @payload_hash
+    # (At the time of writing, platform documentations say we're JSON only - but
+    # there's an strong chance of e.g. XML representation being demanded later).
+    #
+    # +response+:: ApiTools::ServiceResponse instance to update.
+    #
+    def set_common_response_headers( response )
+      response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
     end
 
     # Match a URI string against a service endpoint regexp and return broken
@@ -632,21 +607,103 @@ module ApiTools
       [ remaining_path_components, extension || '' ]
     end
 
+    # Determine the action to call in a service for the given inbound HTTP
+    # method.
+    #
+    # +interface+::       ApiTools::ServiceInterface for which the call is
+    #                     being made.
+    # +http_method+::     Inbound method as a string, e.g. +'POST'+
+    # +get_is_list+::     If +true+, treat GET methods as +:list+, else as
+    #                     +:show+. This is often determined on the basis
+    #                     of e.g. path components after the endpoint part
+    #                     of the URI path being absent or present.
+    # +response+::        ApiTools::ServiceResponse instance that will be
+    #                     updated with an error if the HTTP method does not
+    #                     map to an allowed action.
+    #
+    # Returns the action as a symbol (e.g. +:list+) unless there is an error.
+    # If the ApiTools::ServiceResponse#halt_processing? result for the given
+    # +response+ parameter is +true+ then the returned value is invalid as
+    # the service does not support the action; +response+ has already been
+    # updated with an appropriate error.
+    #
+    def determine_action( interface, http_method, get_is_list, response )
+
+      http_method     = ( http_method || '' ).upcase
+      allowed_actions = interface.actions || ALLOWED_ACTIONS
+
+      # Clumsy code because there is no 1:1 map from HTTP method to action
+      # (e.g. GET can be :show or :list).
+      #
+      action = case http_method
+        when 'POST'
+          :create
+        when 'PATCH'
+          :update
+        when 'DELETE'
+          :delete
+        when 'GET'
+          get_is_list ? :list : :show
+      end
+
+      unless allowed_actions.include?( action )
+        response.add_error(
+          'platform.method_not_allowed',
+          :message => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
+        )
+      end
+
+      return action
+    end
+
+    # Update a ApiTools::ServiceResponse instance for making a call to
+    # the given ApiTools::ServiceInterface, setting up error description
+    # information. Other initialisation is left to the caller.
+    #
+    # +response+::  ApiTools::ServiceResponse instance to update.
+    # +interface+:: ApiTools::ServiceInterface for which the request is being
+    #               constructed. Custom error descriptions from that
+    #               interface, if any, are included in the response object's
+    #               error collection data.
+    #
+    def update_service_response_for( response, interface )
+      unless interface.errors_for.nil?
+        response.errors = ApiTools::Errors.new( interface.errors_for )
+      end
+    end
+
+    # Returns a new ApiTools::ServiceRequest instance for making a call to
+    # the given ApiTools::ServiceInterface, setting up locale information.
+    # Other initialisation is left to the caller.
+    #
+    # +interface+:: ApiTools::ServiceInterface for which the request is being
+    #               constructed.
+    #
+    def new_service_request_for( interface )
+      request        = ApiTools::ServiceRequest.new
+      request.locale = @locale
+
+      return request
+    end
+
     # Process query string data for list actions. Only call if there's a list
     # action being requested.
     #
-    # +action+::         Intended service action as a symbol, e.g. +:list+,
-    #                    +:create+. Different actions may allow/prohibit
-    #                    different things in the query string.
-    # +query_string+::   The 'raw' query string from Rack.
-    # +interface+::      Interface definition for the service being targeted.
-    # +service_request:: An ApiTools::ServiceRequest instance. This will be
-    #                    updated if successful with list parameter data.
+    # +action+::          Intended service action as a symbol, e.g. +:list+,
+    #                     +:create+. Different actions may allow/prohibit
+    #                     different things in the query string.
+    # +query_string+::    The 'raw' query string from Rack.
+    # +interface+::       Interface definition for the service being targeted.
+    # +service_request::  An ApiTools::ServiceRequest instance. This will be
+    #                     updated if successful with list parameter data.
+    # +service_response:: An ApiTools::ServiceResponse instance. This will be
+    #                     updated if unsuccessful with error data.
     #
-    # On exit, +@response+ will be updated, containing errors or deciphered
-    # query data entered into attributes in the object.
+    # On exit, +service_response+ will be updated with errors or
+    # +service_request+ will have deciphered query data entered into
+    # attributes in the object.
     #
-    def process_query_string( action, query_string, interface, service_request )
+    def process_query_string( action, query_string, interface, service_request, service_response )
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
@@ -670,7 +727,13 @@ module ApiTools
       str                       = query_hash[ '_reference' ]
       query_hash[ '_reference'] = str.split( ',' ) unless str.nil?
 
-      return process_query_hash( action, query_hash, interface, service_request )
+      return process_query_hash(
+               action,
+               query_hash,
+               interface,
+               service_request,
+               service_response
+             )
     end
 
     # Process a hash of URI-decoded form data in the same way as
@@ -679,15 +742,17 @@ module ApiTools
     # _reference lists should be stored as arrays. Keys and values must be
     # Strings.
     #
-    # +action+::          See #process_query_string.
-    # +query_hash+::      Hash of data derived from query string.
-    # +interface+::       See #process_query_string.
-    # +service_request+:: See #process_query_string.
+    # +action+::           See #process_query_string.
+    # +query_hash+::       Hash of data derived from query string.
+    # +interface+::        See #process_query_string.
+    # +service_request+::  See #process_query_string.
+    # +service_response+:: See #process_query_string.
     #
-    # On exit, +@response+ will be updated, containing errors or deciphered
-    # query data entered into attributes in the object.
+    # On exit, +service_response+ will be updated with errors or
+    # +service_request+ will have deciphered query data entered into
+    # attributes in the object.
     #
-    def process_query_hash( action, query_hash, interface, service_request )
+    def process_query_hash( action, query_hash, interface, service_request, service_response )
       allowed    = ALLOWED_QUERIES_ALL
       allowed   += ALLOWED_QUERIES_LIST if action == :list
 
@@ -755,7 +820,7 @@ module ApiTools
       end
 
       if malformed
-        return @response.add_error(
+        return service_response.add_error(
           'platform.malformed',
           :message => "One or more malformed or invalid query string parameters",
           :reference => { :including => malformed }
@@ -772,8 +837,39 @@ module ApiTools
       service_request.references          = references
 
     rescue
-      @response.add_error( 'platform.malformed' )
+      service_response.add_error( 'platform.malformed' )
 
+    end
+
+    # Safely parse the client payload in the context of the defined content
+    # type (#check_content_type_header must have been run first). Pass the
+    # body payload string.
+    #
+    def payload_to_hash( body )
+
+      begin
+        case @content_type
+          when 'application/json'
+
+            # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
+            #
+            # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+            #
+            @payload_hash = JSON.parse( body, :create_additions => false )
+
+        end
+
+      rescue => e
+        @payload_hash = {}
+        @service_response.errors.add_error( 'generic.malformed' )
+
+      end
+
+      if @payload_hash.nil?
+        raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
+      end
+
+      return @payload_hash
     end
 
     # Record an exception in a given response object, overwriting any previous
@@ -815,9 +911,10 @@ module ApiTools
     # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
     #              symbol.
     #
-    # Returns a @services entry (see #initialize) if local, else +nil+.
+    # Returns a @services entry (see implementation of #initialize) if local,
+    # else +nil+.
     #
-    def local_interface_for( resource )
+    def local_service_for( resource )
       resource = resource.to_sym
 
       @services.find do | entry |
@@ -874,9 +971,10 @@ module ApiTools
     #
     # Options are as follows - keys must be Symbols:
     #
-    # +interface+::   ApiTools::SerivceInterface to address or nil for
-    #                 remote (non-local) call.
-    # +http_method+:: HTTP method or equivalent, e.g. +:get+, +:delete+.
+    # +service+::     A +@services+ entry (see implementation of #initialize)
+    #                 describing the service to call if local, else +nil+ or
+    #                 absent.
+    # +http_method+:: HTTP method as a String, e.g. +'GET'+, +'DELETE'+.
     # +ident+::       ID / UUID / similar; first and only path component.
     # +query_hash+::  Converted to query string.
     # +body_hash+::   Converted to body data.
@@ -884,18 +982,50 @@ module ApiTools
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # Returns an ApiTools::ServiceResponse describing the result of the call.
+    # +@service_response+ is updated on exit. If this says "halt processing",
+    # errors were generated. Ignore the function return value. Otherwise,
+    # returns a JSON resource representation in the non-list-action cases,
+    # else an array of zero or more JSON resource representations in the list
+    # action case.
     #
     def inter_service( options )
-      if ( options[ :interface ].nil? )
-        inter_service_remote( options )
+
+      remote = options[ :service ].nil?
+
+      log(
+        :debug,
+        "#{ remote ? 'Remote' : 'Local' } inter-service call requested with options #{ options }"
+      )
+
+      if ( remote )
+        result = inter_service_remote( options )
       else
-        inter_service_local( options )
+        result = inter_service_local( options )
       end
+
+      if @service_response.halt_processing?
+        log(
+          :warn,
+          "#{ remote ? 'Remote' : 'Local' } inter-service call halted processing with errors #{ @service_response.errors.errors }"
+        )
+      else
+        log(
+          :debug,
+          "#{ remote ? 'Remote' : 'Local' } inter-service call succeeded with result '#{ result }'"
+        )
+      end
+
+      return result
     end
 
+    # Make a remote (HTTP) inter-service call. Slow.
+    #
+    # +options+:: See #inter_service.
+    #
+    # Returns:: See #inter_service.
+    #
     def inter_service_remote( options )
-      interface   = options[ :interface   ]
+      service     = options[ :service     ] # !!! TBD will be nil; need resource here
       http_method = options[ :http_method ]
       ident       = options[ :ident       ]
       body_hash   = options[ :body_hash   ]
@@ -904,8 +1034,8 @@ module ApiTools
       host = port = nil
 
       unless self.class.environment.development? || self.class.environment.test?
-        host = @request.host
-        post = @request.port
+        host = @rack_request.host
+        post = @rack_request.port
       end
 
       host ||= '127.0.0.1'
@@ -963,46 +1093,104 @@ module ApiTools
       return our_response
     end
 
-
-
-
+    # Make a local (non-HTTP local Ruby method call) inter-service call. Fast.
+    #
+    # +options+:: See #inter_service.
+    #
+    # Returns:: See #inter_service.
+    #
     def inter_service_local( options )
-      interface   = options[ :interface   ]
-      http_method = options[ :http_method ]
-      ident       = options[ :ident       ]
-      body_hash   = options[ :body_hash   ]
-      query_hash  = options[ :query_hash  ]
+      service        = options[ :service     ]
+      http_method    = options[ :http_method ]
+      ident          = options[ :ident       ]
+      body_hash      = options[ :body_hash   ]
+      query_hash     = options[ :query_hash  ]
 
+      interface      = service[ :interface      ]
+      actions        = service[ :actions        ]
+      implementation = service[ :implementation ]
 
+      # We must construct a call context for the local service. This means
+      # a local request object which we fill in with data just as if we'd
+      # parsed an inbound HTTP request and a response object that contains
+      # the usual default data.
+
+      local_service_response = ApiTools::ServiceResponse.new
+      set_common_response_headers( local_service_response )
+      update_service_response_for( local_service_response, interface )
+
+      upc  = []
+      upc << ident unless ident.nil? || ident.empty?
+
+      action = determine_action(
+        interface,
+        http_method,
+        upc.empty?,
+        local_service_response
+      )
+
+      if local_service_response.halt_processing?
+        @service_response.errors.merge!( local_service_response.errors )
+        return nil
+      end
+
+      local_service_request                     = new_service_request_for( interface )
+      local_service_request.uri_path_components = upc
+      local_service_request.uri_path_extension  = ''
 
       unless query_hash.nil?
         query_hash = ApiTools::Utilities.stringify( query_hash )
-        query_hash[ '_embeds' ].map!( &:to_s ) unless query_hash[ '_embeds' ].nil?
+
+        # This is for inter-service local calls where a service author
+        # specifies ":_embed => 'foo'" accidentally, forgetting that it
+        # should be a single element array. It's such a common mistake
+        # that we tolerate it here. Same for "_reference".
+
+        data = query_hash[ '_embed' ]
+        query_hash[ '_embed' ] = [ data ] if data.is_a?( String ) || data.is_a?( Symbol )
+
+        data = query_hash[ '_reference' ]
+        query_hash[ '_reference' ] = [ data ] if data.is_a?( String ) || data.is_a?( Symbol )
+
+        # Regardless, make sure embed/reference array data contains strings.
+
+        query_hash[ '_embed'     ].map!( &:to_s ) unless query_hash[ '_embed'     ].nil?
         query_hash[ '_reference' ].map!( &:to_s ) unless query_hash[ '_reference' ].nil?
 
-        process_query_hash( action, query_hash, interface[ :interface ], service_request )
-
+        process_query_hash(
+          action,
+          query_hash,
+          interface,
+          local_service_request,
+          local_service_response
+        )
       end
 
+      if local_service_response.halt_processing?
+        @service_response.errors.merge!( local_service_response.errors )
+        return nil
+      end
 
+      local_service_request.body = body_hash
 
-      # query_hash
-      #
-      # so the body hash is already processed.
-      # the query hash needs validating in the context of the interface
-      # the http method needs validating in the context of the interface
-      # so add methods for that
+      # Dispatch the call, merge any errors that might have come back and
+      # return the body of the called service's response.
 
-      # array = context.resource( :Currency ).list(
-      #   :search => { :currency_code => 'X-FBP' }
-      # )
-      # return if context.response.halt_processing?
-      #
-      # hash = context.resource( :Currency ).show( 'X-FBP' )
-      # hash = context.resource( :Currency ).create(...)
-      # hash = context.resource( :Currency ).update(...)
-      # hash = context.resource( :Currency ).delete(...)
-      #
+      log(
+        :debug,
+        "Dispatching local inter-service call with parsed body data: '#{ local_service_request.body }'"
+      )
+
+      context = ApiTools::ServiceContext.new(
+        @service_session,
+        local_service_request,
+        local_service_response,
+        self
+      )
+
+      implementation.send( action, context )
+      @service_response.errors.merge!( local_service_response.errors )
+      return local_service_response.body
     end
 
     # Representation of a callable service endpoint for a specific resource.
@@ -1023,7 +1211,7 @@ module ApiTools
       # network.
       #
       def interface
-        @interface.nil? ? nil : @interface[ :interface ]
+        @service.nil? ? nil : @service[ :interface ]
       end
 
       # Create an endpoint instance on behalf of the given
@@ -1035,52 +1223,136 @@ module ApiTools
       # +resource+:: Resource name the endpoint targets, e.g. +:Purchase+.
       #              String or symbol.
       #
+      # When calls are made through endpoints, the caller's call context data
+      # is updated. The ApiTools::ServerResponse instance in the context will
+      # hold error details, if there were any. Callers must always check their
+      # ApiTools::ServerResponse#halt_processing? value and if +true+ should
+      # exit early.
+      #
+      # Endpoint methods for listing, creating etc. resources have common
+      # parameters some or all of which are used across the method 'family':
+      #
+      # +ident+::      An identifier. This is usually a UUID but some resources
+      #                support e.g. a "show" action based on either a UUID or
+      #                some other unique identifier. Currency, for example,
+      #                can look up on a UUID or a currency code.
+      #
+      # +query_hash+:: A hash of unencoded data that could be encoded to form
+      #                a query string. Search and filter data is represented
+      #                with nested hashes. Embed and reference data uses an
+      #                array. Example:
+      #
+      #                   {
+      #                     offset: 75,
+      #                     limit:  50,
+      #                     search: {
+      #                       member_id: "...some UUDI..."
+      #                     },
+      #                     _embed: [
+      #                       'vouchers',
+      #                       'balances'
+      #                     ]
+      #                   }
+      #
+      # +body_hash+::  The Hash representation of the body data that might be
+      #                sent in an HTTP request (i.e. JSON, as a Hash).
+      #
+      #
+      #
       def initialize( middleware_instance, resource )
         @middleware = middleware_instance
         @resource   = resource.to_s
-        @interface  = @middleware.local_interface_for( @resource )
+        @service    = @middleware.local_service_for( @resource )
       end
 
+      # Obtain a list of resource instance representations.
+      #
+      # +query_hash+:: See #initialize. This is the only way to search/filter
+      #                the list, according to the targer Resource's documented
+      #                supported search/filter parameters and the platform's
+      #                common all-resource behaviour.
+      #
+      # Returns an array of zero or more resource representations as Hashes,
+      # unless there's an error (check the ApiTools::ServiceContext instance's
+      # request object's ApiTools::ServerResponse#halt_processing? value).
+      #
       def list( query_hash )
         @middleware.inter_service(
-          :interface   => @interface,
-          :http_method => get,
+          :service     => @service,
+          :http_method => 'GET',
           :query_hash  => query_hash
         )
       end
 
+      # Obtain a resource instance representation.
+      #
+      # +ident+::      See #intiialize.
+      # +query_hash+:: See #initialize.
+      #
+      # Returns a Hash representation of a resource instance, unless there's an
+      # error (check the ApiTools::ServiceContext instance's request object's
+      # ApiTools::ServerResponse#halt_processing? value).
+      #
       def show( ident, query_hash )
         @middleware.inter_service(
-          :interface   => @interface,
-          :http_method => :get,
+          :service     => @service,
+          :http_method => 'GET',
           :ident       => ident,
           :query_hash  => query_hash
         )
       end
 
+      # Create a resource instance.
+      #
+      # +body_hash+::  See #intiialize.
+      # +query_hash+:: See #initialize.
+      #
+      # Returns a Hash representation of the new resource instance, unless
+      # there's an error (check the ApiTools::ServiceContext instance's request
+      # object's ApiTools::ServerResponse#halt_processing? value).
+      #
       def create( body_hash, query_hash )
         @middleware.inter_service(
-          :interface   => @interface,
-          :http_method => :post,
+          :service     => @service,
+          :http_method => 'POST',
           :body_hash   => body_hash,
           :query_hash  => query_hash
         )
       end
 
+      # Update a resource instance.
+      #
+      # +ident+::      See #intiialize.
+      # +body_hash+::  See #intiialize.
+      # +query_hash+:: See #initialize.
+      #
+      # Returns a Hash representation of the updated resource instance, unless
+      # there's an error (check the ApiTools::ServiceContext instance's request
+      # object's ApiTools::ServerResponse#halt_processing? value).
+      #
       def update( ident, body_hash, query_hash )
         @middleware.inter_service(
-          :interface   => @interface,
-          :http_method => :patch,
+          :service     => @service,
+          :http_method => 'PATCH',
           :ident       => ident,
           :body_hash   => body_hash,
           :query_hash  => query_hash
         )
       end
 
+      # Delete a resource instance.
+      #
+      # +ident+::      See #intiialize.
+      # +query_hash+:: See #initialize.
+      #
+      # Returns a Hash representation of the now-deleted resource instance,
+      # unless there's an error (check the ApiTools::ServiceContext instance's
+      # request object's ApiTools::ServerResponse#halt_processing? value).
+      #
       def delete( ident, query_hash )
         @middleware.inter_service(
-          :interface   => @interface,
-          :http_method => :delete,
+          :service     => @service,
+          :http_method => 'DELETE',
           :ident       => ident,
           :query_hash  => query_hash
         )

@@ -138,6 +138,21 @@ module ApiTools
     # ...as part of processing a Rack invocation of the +call+ method. This is
     # really only useful for the service middleware.
     #
+    # +code+::    Error code (e.g. "platform.generic").
+    # +options+:: Options Hash - see ApiTools::Errors#add_error.
+    #
+    # Example:
+    #
+    #     response.add_error(
+    #       'generic.not_found',
+    #       :message => 'Optional custom message',
+    #       :reference => { :uuid => 'mandatory reference data' }
+    #     )
+    #
+    # In the above example, the mandatory reference data +uuid+ comes
+    # from the description for the 'platform.not_found' message - see the
+    # ApiTools::ErrorDescriptions#initialize _implementation_ and Platform API.
+    #
     def add_error( code, options = nil )
       @errors.add_error( code, options )
       return for_rack()

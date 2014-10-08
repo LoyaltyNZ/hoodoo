@@ -6,6 +6,12 @@
 
 require 'spec_helper'
 
+
+###############################################################################
+# Single endpoint
+###############################################################################
+
+
 class RSpecTestServiceStubImplementation < ApiTools::ServiceImplementation
 end
 
@@ -116,8 +122,6 @@ describe ApiTools::ServiceMiddleware do
     end
 
   end
-
-  #############################################################################
 
   context 'well formed request for' do
 
@@ -821,6 +825,12 @@ describe ApiTools::ServiceMiddleware do
   end
 end
 
+
+###############################################################################
+# Multiple incorrectly configured endpoints
+###############################################################################
+
+
 class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
                RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
@@ -846,6 +856,12 @@ describe ApiTools::ServiceMiddleware do
     end
   end
 end
+
+
+###############################################################################
+# Multiple correctly configured endpoints
+###############################################################################
+
 
 class RSpecTestServiceV1StubImplementation < ApiTools::ServiceImplementation
 end
@@ -942,6 +958,12 @@ describe ApiTools::ServiceMiddleware do
   end
 end
 
+
+###############################################################################
+# Custom service error descriptions
+###############################################################################
+
+
 class RSpecTestServiceWithErrorsStubImplementation < ApiTools::ServiceImplementation
 end
 
@@ -975,5 +997,274 @@ describe ApiTools::ServiceMiddleware do
 
     get '/v42/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
+  end
+end
+
+
+###############################################################################
+# Inter-service local calls
+###############################################################################
+
+
+class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementation
+
+  # This gets inter-service called from ...BImplementation. It expects search
+  # data containing an 'offset' key and string/integer value. If > 0, an error
+  # is triggered quoting the offset value in the reference data; else a hook
+  # method is called that we can check with RSpec.
+
+  def list( context )
+    search_offset = ( ( context.request.list_search_data || {} )[ 'offset' ] || '0' ).to_i
+
+    if search_offset > 0
+      context.response.add_error( 'service_calls_a.triggered', :reference => { :offset => search_offset } )
+    else
+      context.response.body = [1,2,3,4]
+      expectable_hook( context )
+    end
+  end
+
+  def show( context )
+    expectable_hook( context )
+    context.response.body = { 'inner' => 'shown' }
+  end
+
+  def create( context )
+    expectable_hook( context )
+    context.response.body = { 'inner' => 'created' }
+  end
+
+  def update( context )
+    expectable_hook( context )
+    context.response.body = { 'inner' => 'updated' }
+  end
+
+  def delete( context )
+    expectable_hook( context )
+    context.response.body = { 'inner' => 'deleted' }
+  end
+
+  # ...So we can expect any instance of this class to receive this message and
+  # check on the data it was given.
+  #
+  def expectable_hook( context )
+  end
+end
+
+class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
+  interface :RSpecTestInterServiceCallsAResource do
+    endpoint :rspec_test_inter_service_calls_a, RSpecTestInterServiceCallsAImplementation
+    embeds :foo, :bar
+    to_list do
+      search :offset, :limit
+    end
+    errors_for 'service_calls_a' do
+      error 'triggered', :status => 412, :message => 'Error Triggered'
+    end
+  end
+end
+
+class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementation
+  def list( context )
+
+    # Call RSpecTestInterServiceCallsAImplementation#list, with a query string
+    # that 'searches' for offset and limit quantities that we get from the
+    # inbound request.
+
+    qd = {
+      :search => {
+        :offset => context.request.list_offset,
+        :limit  => context.request.list_limit
+      },
+      :_embed => [ 'foo' ]
+    }
+
+    # Set limit to 10 to force an invalid search parameter which should cause
+    # a 422 in A, which B merges and returns.
+
+    if (context.request.list_limit.to_s == '10')
+      qd[:search][:foo] = 'bar'
+    end
+
+    result = context.resource( :RSpecTestInterServiceCallsAResource ).list(qd)
+    expectable_hook( result )
+    context.response.body = { result: result }
+  end
+
+  def show( context )
+    result = context.resource( :RSpecTestInterServiceCallsAResource ).show(
+      'hello' + context.request.uri_path_components[ 0 ],
+      { _embed: :foo }
+    )
+    expectable_hook( result )
+    context.response.body = { result: result }
+  end
+
+  def create( context )
+    result = context.resource( :RSpecTestInterServiceCallsAResource ).create(
+      { number: '42' }.merge( context.request.body ),
+      { _embed: 'foo' }
+    )
+    expectable_hook( result )
+    context.response.body = { result: result }
+  end
+
+  def update( context )
+    result = context.resource( :RSpecTestInterServiceCallsAResource ).update(
+      'hello' + context.request.uri_path_components[ 0 ],
+      { number: '42' }.merge( context.request.body ),
+      { _embed: 'foo' }
+    )
+    expectable_hook( result )
+    context.response.body = { result: result }
+  end
+
+  def delete( context )
+    result = context.resource( :RSpecTestInterServiceCallsAResource ).delete(
+      'hello' + context.request.uri_path_components[ 0 ],
+      { _embed: [ :foo ] }
+    )
+    expectable_hook( result )
+    context.response.body = { result: result }
+  end
+
+  # ...So we can expect any instance of this class to receive this message and
+  # check on the data it was given.
+  #
+  def expectable_hook( result )
+  end
+end
+
+class RSpecTestInterServiceCallsBInterface < ApiTools::ServiceInterface
+  interface :RSpecTestInterServiceCallsBResource do
+    endpoint :rspec_test_inter_service_calls_b, RSpecTestInterServiceCallsBImplementation
+  end
+end
+
+class RSpecTestInterServiceCalls < ApiTools::ServiceApplication
+  comprised_of RSpecTestInterServiceCallsAInterface,
+               RSpecTestInterServiceCallsBInterface
+end
+
+describe ApiTools::ServiceMiddleware::ServiceEndpoint do
+
+  def app
+    Rack::Builder.new do
+      use ApiTools::ServiceMiddleware
+      run RSpecTestInterServiceCalls.new
+    end
+  end
+
+  it 'should call #list correctly' do
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:list).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:list).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq([1,2,3,4])
+    end
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.body).to be_nil
+      expect(context.request.embeds).to eq(['foo'])
+      expect(context.request.uri_path_components).to eq([])
+      expect(context.request.uri_path_extension).to eq('')
+      expect(context.request.list_offset).to eq(0)
+      expect(context.request.list_limit).to eq(50)
+    end
+
+    get '/v1/rspec_test_inter_service_calls_b', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => [1,2,3,4]})
+  end
+
+  it 'should report middleware level errors from the secondary service' do
+    get '/v1/rspec_test_inter_service_calls_b?limit=10', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(422)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
+    expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+    expect(result['errors'][0]['reference']).to eq('search: foo')
+  end
+
+  it 'should custom errors from the secondary service' do
+    get '/v1/rspec_test_inter_service_calls_b?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(412)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('service_calls_a.triggered')
+    expect(result['errors'][0]['reference']).to eq('42')
+  end
+
+  it 'should call #show correctly' do
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq({ 'inner' => 'shown' })
+    end
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.body).to be_nil
+      expect(context.request.embeds).to eq(['foo'])
+      expect(context.request.uri_path_components).to eq(['helloworld'])
+      expect(context.request.uri_path_extension).to eq('')
+      expect(context.request.list_offset).to eq(0)
+      expect(context.request.list_limit).to eq(50)
+    end
+
+    get '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => {'inner' => 'shown'}})
+  end
+
+  it 'should call #create correctly' do
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:create).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq({ 'inner' => 'created' })
+    end
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.body).to eq({number: '42', 'sum' => 7})
+      expect(context.request.embeds).to eq(['foo'])
+      expect(context.request.uri_path_components).to eq([])
+    end
+
+    post '/v1/rspec_test_inter_service_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => {'inner' => 'created'}})
+  end
+
+  it 'should call #update correctly' do
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:update).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:update).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq({ 'inner' => 'updated' })
+    end
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.body).to eq({number: '42', 'sum' => 70})
+      expect(context.request.embeds).to eq(['foo'])
+      expect(context.request.uri_path_components).to eq(['helloworld'])
+    end
+
+    patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => {'inner' => 'updated'}})
+  end
+
+  it 'should call #delete correctly' do
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:delete).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:delete).once.and_call_original
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq({ 'inner' => 'deleted' })
+    end
+    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.body).to be_nil
+      expect(context.request.embeds).to eq(['foo'])
+      expect(context.request.uri_path_components).to eq(['helloworld'])
+    end
+
+    delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => {'inner' => 'deleted'}})
   end
 end

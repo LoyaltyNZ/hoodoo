@@ -259,6 +259,27 @@ describe ApiTools::Errors do
         }
       ])
     end
+
+    it 'should acquire the source status code when it has none itself' do
+      @errors.clear_errors
+      source = ApiTools::Errors.new
+      source.add_error('platform.method_not_allowed')
+      expect(@errors.http_status_code).to eq(500) # Default; collection is empty
+      expect(source.http_status_code).to eq(422)
+      @errors.merge!(source)
+      expect(@errors.http_status_code).to eq(422) # Acquires the 422 from the merged collection
+    end
+
+    it 'should keep its original status code when it has one' do
+      @errors.clear_errors
+      @errors.add_error( 'platform.not_found', :reference => { :entity_name => 'something' } )
+      source = ApiTools::Errors.new
+      source.add_error('platform.method_not_allowed')
+      expect(@errors.http_status_code).to eq(404) # Non-default; collection has an error recorded
+      expect(source.http_status_code).to eq(422)
+      @errors.merge!(source)
+      expect(@errors.http_status_code).to eq(404) # Keeps the 404 from its original collection
+    end
   end
 
   describe 'comma escaping' do

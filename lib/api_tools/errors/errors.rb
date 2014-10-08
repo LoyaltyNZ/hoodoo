@@ -71,12 +71,12 @@ module ApiTools
     #
     # +code+::      Error code in full, e.g. +generic.invalid_state'.
     #
-    # +options+::   An options hash, optional.
+    # +options+::   An options Hash, optional.
     #
     # The options hash contains symbol keys named as follows, with values as
     # described:
     #
-    # +:reference+:: Reference data hash, optionality depending upon the error
+    # +:reference+:: Reference data Hash, optionality depending upon the error
     #                code and the reference data its error description mandates.
     #                Provide key/value pairs where (symbol) keys are names from
     #                the array of description requirements and values are
@@ -96,6 +96,18 @@ module ApiTools
     #                locale. Default messages are provided for all errors, but
     #                if you think you can provide something more informative,
     #                you can do so through this parameter.
+    #
+    # Example:
+    #
+    #     errors.add_error(
+    #       'platform.not_found',
+    #       :message => 'Optional custom message',
+    #       :reference => { :entity_name => 'mandatory reference data' }
+    #     )
+    #
+    # In the above example, the mandatory reference data +entity_name+ comes
+    # from the description for the 'platform.not_found' message - see the
+    # ApiTools::ErrorDescriptions#initialize _implementation_ and Platform API.
     #
     def add_error( code, options = nil )
 
@@ -168,6 +180,8 @@ module ApiTools
     # duplicate may be a valid thing to have).
     #
     def merge!( source )
+      @http_status_code = source.http_status_code if @errors.empty?
+
       source.errors.each do | hash |
         add_precompiled_error(
           hash[ :code      ],
