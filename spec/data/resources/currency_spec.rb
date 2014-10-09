@@ -6,14 +6,18 @@ describe ApiTools::Data::Resources::Currency do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(4)
+    expect(schema.properties.count).to eq(6)
 
     expect(schema.properties[:currency_code]).to be_a(ApiTools::Presenters::String)
     expect(schema.properties[:currency_code].length).to eq(16)
     expect(schema.properties[:symbol]).to be_a(ApiTools::Presenters::String)
     expect(schema.properties[:symbol].length).to eq(8)
-    expect(schema.properties[:multiplier]).to be_a(ApiTools::Presenters::Integer)
     expect(schema.properties[:qualifiers]).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties[:precision]).to be_a(ApiTools::Presenters::Integer)
+    expect(schema.properties[:position]).to be_a(ApiTools::Presenters::Enum)
+    expect(schema.properties[:position].from).to eq(['prefix', 'suffix'])
+    expect(schema.properties[:rounding]).to be_a(ApiTools::Presenters::Enum)
+    expect(schema.properties[:rounding].from.sort).to eq(['up', 'down', 'half_up', 'half_down', 'half_even'].sort)
   end
 
   it 'should be renderable with all data' do
@@ -23,8 +27,9 @@ describe ApiTools::Data::Resources::Currency do
       {
         currency_code: 'X-FBP',
         symbol:        'pts',
-        multiplier:    100,
-        qualifiers:    [ 'standard', 'bonus' ]
+        precision:     2,
+        qualifiers:    [ 'standard', 'bonus' ],
+        rounding:      'down'
       },
       id,
       created_at
@@ -37,8 +42,10 @@ describe ApiTools::Data::Resources::Currency do
         kind: 'Currency',
         currency_code: 'X-FBP',
         symbol: 'pts',
-        multiplier: 100,
-        qualifiers: [ 'standard', 'bonus' ]
+        position: nil,
+        precision: 2,
+        qualifiers: [ 'standard', 'bonus' ],
+        rounding: 'down'
       }
     )
   end
@@ -49,6 +56,7 @@ describe ApiTools::Data::Resources::Currency do
     json       = described_class.render(
       {
         currency_code: 'X-FBP',
+        rounding:      'down'
       },
       id,
       created_at
@@ -61,8 +69,10 @@ describe ApiTools::Data::Resources::Currency do
         kind: 'Currency',
         currency_code: 'X-FBP',
         symbol: nil,
-        multiplier: nil,
-        qualifiers: []
+        position: nil,
+        precision: 2,
+        qualifiers: [],
+        rounding: 'down'
       }
     )
   end
@@ -72,8 +82,8 @@ describe ApiTools::Data::Resources::Currency do
       {
         currency_code: 'X-FBP',
         symbol:        'pts',
-        multiplier:    100,
-        qualifiers:    [ 'standard', 'bonus' ]
+        qualifiers:    [ 'standard', 'bonus' ],
+        rounding:      'down'
       },
       true
     )
@@ -84,7 +94,8 @@ describe ApiTools::Data::Resources::Currency do
   it 'should be valid with minimum data' do
     result = described_class.validate(
       {
-        currency_code: 'X-FBP'
+        currency_code: 'X-FBP',
+        rounding:      'down'
       },
       true
     )
@@ -97,8 +108,8 @@ describe ApiTools::Data::Resources::Currency do
       {
         # Required field 'currency_code' omitted
         symbol:     'pts',
-        multiplier: 100,
-        qualifiers: [ 'standard', 'bonus' ]
+        qualifiers: [ 'standard', 'bonus' ],
+        rounding:      'down'
       },
       true
     )

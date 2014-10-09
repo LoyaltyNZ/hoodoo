@@ -65,7 +65,7 @@ module ApiTools
             subtarget = {}
 
             @properties.each do | name, property |
-              property.render( item[ name ], subtarget )
+              property.render( item[ name ] || property.default, subtarget )
             end
 
             # Must modify existing instance of 'array', so use 'push()'

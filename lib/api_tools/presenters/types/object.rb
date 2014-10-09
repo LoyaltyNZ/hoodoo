@@ -54,7 +54,7 @@ module ApiTools
 
       def render(data, target)
         @properties.each do |name, property|
-          property.render(data[name], target)
+          property.render(data[name] || property.default, target)
         end
       end
     end

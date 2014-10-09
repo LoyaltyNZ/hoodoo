@@ -7,6 +7,8 @@ module ApiTools
       attr_accessor :name
       # +true+ if the field is required
       attr_accessor :required
+      # Default value, if supplied
+      attr_accessor :default
       # Mapping to and from model
       attr_accessor :mapping
 
@@ -16,6 +18,7 @@ module ApiTools
       def initialize(name, options = {})
         @name = name
         @required = options.has_key?(:required) ? options[:required] : false
+        @default = options.has_key?(:default) ? options[:default] : nil
         @mapping = options.has_key?(:mapping) ? options[:mapping] : nil
         @path = options.has_key?(:path) ? options[:path] : []
       end

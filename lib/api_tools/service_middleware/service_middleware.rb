@@ -105,6 +105,7 @@ module ApiTools
     #
     def initialize( app )
       @service_container = app
+      @interaction_id    = nil # Acquired in #find_or_generate_interaction_id
 
       unless @service_container.is_a?( ApiTools::ServiceApplication )
         raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ app.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"

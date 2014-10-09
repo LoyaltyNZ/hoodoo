@@ -8,6 +8,7 @@
 #           by default. Services can declare additional errors.
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
+#           09-Oct-2014 (ADH): Updated for Preview Release 8.
 ########################################################################
 
 module ApiTools
@@ -79,7 +80,7 @@ module ApiTools
 
       @descriptions = {}
 
-      # Up to date at Preview Release 7, 2014-09-24.
+      # Up to date at Preview Release 8, 2014-10-09.
 
       errors_for 'platform' do
         error 'not_found',              status: 404, message: 'Not found',                    reference: [ :entity_name ]
@@ -88,7 +89,7 @@ module ApiTools
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 
-      # Up to date at Preview Release 7, 2014-09-24.
+      # Up to date at Preview Release 8, 2014-10-09.
 
       errors_for 'generic' do
         error 'not_found',              status: 404, message: 'Resource not found',           reference: [ :ident ]
