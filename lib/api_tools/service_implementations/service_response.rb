@@ -146,7 +146,7 @@ module ApiTools
     #     response.add_error(
     #       'generic.not_found',
     #       :message => 'Optional custom message',
-    #       :reference => { :uuid => 'mandatory reference data' }
+    #       :reference => { :ident => 'mandatory reference data' }
     #     )
     #
     # In the above example, the mandatory reference data +uuid+ comes
