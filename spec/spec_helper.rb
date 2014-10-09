@@ -17,6 +17,14 @@ RSpec.configure do | config |
 
   config.include Rack::Test::Methods
 
+  # http://stackoverflow.com/questions/1819614/how-do-i-globally-configure-rspec-to-keep-the-color-and-format-specdoc-o
+  #
+  # Use color in STDOUT,
+  # use color not only in STDOUT but also in pagers and files.
+  #
+  config.color = true
+  config.tty   = true
+
   # The normal logger logs to stdout and stderr - stderr output can be useful
   # in real tests but pollutes visual test output. Redirect it. "#error" calls
   # to the ApiTools logger will end up in the log.
