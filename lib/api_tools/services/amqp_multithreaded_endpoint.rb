@@ -67,7 +67,7 @@ module ApiTools
           @rx_channel.prefetch(@prefetch)
           loop do
             begin
-              queue.subscribe(:ack => true, :block => true) do |delivery_info, metadata, payload|
+              queue.subscribe(:manual_ack => true, :block => true) do |delivery_info, metadata, payload|
                 @rx_queue << request_class.create_from_raw_message(delivery_info, metadata, payload)
                 @rx_channel.ack(delivery_info.delivery_tag)
               end
