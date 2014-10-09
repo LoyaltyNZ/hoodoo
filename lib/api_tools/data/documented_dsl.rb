@@ -27,8 +27,6 @@ module ApiTools
     #
     module DocumentedDSL
 
-      @internationalised = false
-
       # As ApiTools::Presenters::BaseDSL#object but with the extended DSL in
       # ApiTools::Data::DocumentedDSL available to the block.
       #

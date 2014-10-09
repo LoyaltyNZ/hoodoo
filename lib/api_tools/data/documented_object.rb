@@ -32,6 +32,11 @@ module ApiTools
     #
     class DocumentedObject < ApiTools::Presenters::Object
       include ApiTools::Data::DocumentedDSL
+
+      def initialize(name = nil, options = {})
+        super name, options
+        @internationalised = false
+      end
     end
   end
 end
