@@ -159,7 +159,7 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
       expect(channel).to receive(:queue).and_return(queue)
       expect(channel).to receive(:prefetch).with(1)
       expect(queue).to receive(:subscribe) do |options, &block|
-        expect(options).to eq(:ack => true, :block => true)
+        expect(options).to eq(:manual_ack => true, :block => true)
 
         di = OpenStruct.new(:delivery_tag => :di_tag)
 
