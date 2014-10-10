@@ -34,7 +34,7 @@ module ApiTools
         return [] if !@required and data.nil?
 
         if !data.nil? and !data.is_a? ::Hash
-          errors << {:code=> 'generic.invalid_object', :message=>"Field `#{full_path(path)}` is an invalid object", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_object', 'message'=>"Field `#{full_path(path)}` is an invalid object", 'reference' => full_path(path)}
         end
 
         @properties.each do |name, property|
@@ -53,6 +53,8 @@ module ApiTools
       end
 
       def render(data, target)
+        return if data.nil?
+
         @properties.each do |name, property|
           property.render(data[name] || property.default, target)
         end

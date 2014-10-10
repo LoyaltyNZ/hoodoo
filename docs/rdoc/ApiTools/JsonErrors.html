@@ -101,9 +101,9 @@
   <section class="description">
     
 <p>A module intended as a sinatra extension, providing standard error
-functionality for  Platform APIs. Methods are provided to add multiple
-error conditions, halt the API,  and render the standard platform JSON
-error structure.</p>
+functionality for Platform APIs. Methods are provided to add multiple error
+conditions, halt the API, and render the standard platform JSON error
+structure.</p>
 
   </section>
 
@@ -140,8 +140,8 @@ error structure.</p>
         <div class="method-description">
           
           <p>`halt` the API call immediately, returning `403 Forbidden` and rendering
-any  previously added errors plus a ‘platform.forbidden’ error in the
-response body.</p>
+any previously added errors plus a &#39;platform.forbidden&#39; error in
+the response body.</p>
           
           
 
@@ -149,7 +149,7 @@ response body.</p>
           <div class="method-source-code" id="fail_forbidden-source">
             <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fail_forbidden</span>
-  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-value">403</span>, <span class="ruby-string">'platform.forbidden'</span>,<span class="ruby-string">'The user is not allowed to perform this operation on the resource.'</span>
+  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-value">403</span>, <span class="ruby-string">&#39;platform.forbidden&#39;</span>,<span class="ruby-string">&#39;The user is not allowed to perform this operation on the resource.&#39;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -175,7 +175,7 @@ response body.</p>
         <div class="method-description">
           
           <p>`halt` the API call immediately, returning `404 Not Found` and rendering
-any  previously added errors in the response body.</p>
+any previously added errors in the response body.</p>
           
           
 
@@ -209,7 +209,7 @@ any  previously added errors in the response body.</p>
         <div class="method-description">
           
           <p>`halt` the API call immediately, returning `401 Unauthorized` and rendering
-any  previously added errors plus a `platform.unauthorized` error in the
+any previously added errors plus a `platform.unauthorized` error in the
 response body.</p>
           
           
@@ -218,7 +218,7 @@ response body.</p>
           <div class="method-source-code" id="fail_unauthorized-source">
             <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fail_unauthorized</span>
-  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-value">401</span>, <span class="ruby-string">'platform.unauthorized'</span>,<span class="ruby-string">'Authorization is required to perform this operation on the resource.'</span>
+  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-value">401</span>, <span class="ruby-string">&#39;platform.unauthorized&#39;</span>,<span class="ruby-string">&#39;Authorization is required to perform this operation on the resource.&#39;</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -244,7 +244,7 @@ response body.</p>
         <div class="method-description">
           
           <p>`halt` the API call immediately, returning the supplied HTTP `status` code,
-and render any previously added errors plus an error with the supplied 
+and render any previously added errors plus an error with the supplied
 `code`, `message`, and optionally `reference`, in the response body.
 Params:</p>
 <dl class="rdoc-list note-list"><dt><code>status</code>
@@ -293,9 +293,9 @@ Params:</p>
 
         <div class="method-description">
           
-          <p>halt` the API call immediately, returning the supplied HTTP `status` code, 
+          <p>`halt` the API call immediately, returning the supplied HTTP `status` code,
 with any previously added errors plus all supplied `errors` in the response
-body. Please note `errors` should be an array of hashes conforming to the 
+body. Please note `errors` should be an array of hashes conforming to the
 standard error interface. Params:</p>
 <dl class="rdoc-list note-list"><dt><code>status</code>
 <dd>
@@ -312,7 +312,7 @@ to 422)</p>
           <div class="method-source-code" id="fail_with_errors-source">
             <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">fail_with_errors</span>(<span class="ruby-identifier">status</span> = <span class="ruby-value">422</span>, <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
     <span class="ruby-ivar">@errors</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">errors</span>
   <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">halt</span> <span class="ruby-identifier">status</span>, <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">fast_generate</span>({
@@ -337,7 +337,7 @@ to 422)</p>
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="http://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 

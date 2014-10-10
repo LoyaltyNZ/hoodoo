@@ -27,12 +27,12 @@ describe ApiTools::Presenters::Array do
     it 'should return correct error when data is not a array' do
       errors = @inst.validate('asckn')
 
-      err = [  {:code=>"generic.invalid_array", :message=>"Field `one` is an invalid array", :reference=>"one"}]
+      err = [  {'code'=>"generic.invalid_array", 'message'=>"Field `one` is an invalid array", 'reference'=>"one"}]
       expect(errors).to eq(err)
     end
 
     it 'should return correct error with non array types' do
-      err = [  {:code=>"generic.invalid_array", :message=>"Field `one` is an invalid array", :reference=>"one"}]
+      err = [  {'code'=>"generic.invalid_array", 'message'=>"Field `one` is an invalid array", 'reference'=>"one"}]
 
       expect(@inst.validate('asckn')).to eq(err)
       expect(@inst.validate(34534)).to eq(err)
@@ -48,14 +48,14 @@ describe ApiTools::Presenters::Array do
     it 'should return error when required and absent' do
       @inst.required = true
       expect(@inst.validate(nil)).to eq([
-        {:code=>"generic.required_field_missing", :message=>"Field `one` is required", :reference=>"one"}
+        {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
     end
 
     it 'should return correct error with path' do
       errors = @inst.validate('scdacs','ordinary')
       expect(errors).to eq([
-        {:code=>"generic.invalid_array", :message=>"Field `ordinary.one` is an invalid array", :reference=>"ordinary.one"}
+        {'code'=>"generic.invalid_array", 'message'=>"Field `ordinary.one` is an invalid array", 'reference'=>"ordinary.one"}
       ])
     end
 
@@ -65,20 +65,21 @@ describe ApiTools::Presenters::Array do
 
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.required_field_missing", :message=>"Field `an_array` is required", :reference=>"an_array"},
+        {'code'=>"generic.required_field_missing", 'message'=>"Field `an_array` is required", 'reference'=>"an_array"},
       ])
 
     end
 
     it 'should not insist on non-required entry fields in a required array' do
       data = {
-        :an_array => [
+        'an_array' => [
           {},
           { :an_integer => 2 },
           { :a_datetime => Time.now.iso8601 }
         ]
       }
 
+      data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([])
     end
@@ -92,10 +93,11 @@ describe ApiTools::Presenters::Array do
         ]
       }
 
+      data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.invalid_integer", :message=>"Field `an_array[1].an_integer` is an invalid integer", :reference=>"an_array[1].an_integer"},
-        {:code=>"generic.invalid_datetime", :message=>"Field `an_array[2].a_datetime` is an invalid ISO8601 datetime", :reference=>"an_array[2].a_datetime"},
+        {'code'=>"generic.invalid_integer", 'message'=>"Field `an_array[1].an_integer` is an invalid integer", 'reference'=>"an_array[1].an_integer"},
+        {'code'=>"generic.invalid_datetime", 'message'=>"Field `an_array[2].a_datetime` is an invalid ISO8601 datetime", 'reference'=>"an_array[2].a_datetime"},
       ])
     end
   end
@@ -112,23 +114,24 @@ describe ApiTools::Presenters::Array do
         ]
       }
 
+      data = ApiTools::Utilities.stringify(data)
       expect(TestPresenter4.render(data)).to eq({
-        :an_array => [
+        'an_array' => [
           {
-            :an_integer => nil,
-            :a_datetime => nil
+            'an_integer' => nil,
+            'a_datetime' => nil
           },
           {
-            :an_integer => 2,
-            :a_datetime => nil
+            'an_integer' => 2,
+            'a_datetime' => nil
           },
           {
-            :an_integer => nil,
-            :a_datetime => time
+            'an_integer' => nil,
+            'a_datetime' => time
           }
         ],
-        :an_enum => "one",
-        :some_text => nil
+        'an_enum' => "one",
+        'some_text' => nil
       })
     end
   end
@@ -138,25 +141,26 @@ describe ApiTools::Presenters::Array do
       time = Time.now.iso8601
       data = {
         :an_enum => 'one',
-        :an_array => [
+        'an_array' => [
           {},
           { :an_integer => 2 },
-          { :a_datetime => time }
+          { 'a_datetime' => time }
         ]
       }
 
+      data = ApiTools::Utilities.stringify(data)
       expect(TestPresenter4.parse(data)).to eq({
-        :an_array => [
+        'an_array' => [
           {
           },
           {
-            :an_integer => 2
+            'an_integer' => 2
           },
           {
-            :a_datetime => time
+            'a_datetime' => time
           }
         ],
-        :an_enum => "one"
+        'an_enum' => "one"
       })
     end
   end

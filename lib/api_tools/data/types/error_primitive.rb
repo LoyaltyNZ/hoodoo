@@ -22,9 +22,9 @@ module ApiTools
       class ErrorPrimitive < ApiTools::Data::DocumentedPresenter
 
         schema do
-          text :code, :required => true
-          text :message, :required => true
-          text :reference
+          text 'code', :required => true
+          text 'message', :required => true
+          text 'reference'
         end
 
       end

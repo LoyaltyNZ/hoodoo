@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class ApiTools::ServiceInterface - RDoc Documentation</title>
+
+<link href="../fonts.css" rel="stylesheet">
+<link href="../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/search_index.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/searcher.js"></script>
+<script src="../js/darkfish.js"></script>
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-interface">::interface</a>
+    
+    <li ><a href="#method-i-actions">#actions</a>
+    
+    <li ><a href="#method-i-embeds">#embeds</a>
+    
+    <li ><a href="#method-i-endpoint">#endpoint</a>
+    
+    <li ><a href="#method-i-errors_for">#errors_for</a>
+    
+    <li ><a href="#method-i-to_create">#to_create</a>
+    
+    <li ><a href="#method-i-to_list">#to_list</a>
+    
+    <li ><a href="#method-i-to_update">#to_update</a>
+    
+    <li ><a href="#method-i-update_same_as_create">#update_same_as_create</a>
+    
+    <li ><a href="#method-i-version">#version</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-ApiTools::ServiceInterface">
+  <h1 id="class-ApiTools::ServiceInterface" class="class">
+    class ApiTools::ServiceInterface
+  </h1>
+
+  <section class="description">
+    
+<p>Service implementation authors subclass this to describe the interface that
+they implement for a particular Resource, as documented in the Loyalty
+Platform API.</p>
+
+<p>See class method <a
+href="ServiceInterface.html#method-c-interface">::interface</a> for
+details.</p>
+
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-c-actions" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">actions</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Supported action methods as a list of symbols, with one or more of
+<code>:list</code>, <code>:show</code>, <code>:create</code>,
+<code>:update</code> or <code>:delete</code>. If <code>nil</code>, assume
+all actions are supported.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-embeds" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">embeds</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Array of strings listing allowed embeddable things. Each string matches the
+split up comma-separated value for query string “_embed” or “_reference”
+keys. For example:</p>
+
+<pre>...&amp;_embed=foo,bar</pre>
+
+<p>…would be valid provided there was an embedding declaration such as:</p>
+
+<pre>embeds :foo, :bar</pre>
+
+<p>…which would in turn lead this accessor to return:</p>
+
+<pre>[ &#39;foo&#39;, &#39;bar&#39; ]</pre>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-endpoint" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">endpoint</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Endpoint path as declared by service, without preceding “/”, possibly as a
+symbol - e.g. <code>:products</code> for “/<a href="...">products</a>” as
+an implied endpoint.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-errors_for" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">errors_for</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>An <a href="ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>
+instance describing all errors that the interface might return, including
+the default set of platform and generic errors. If nil, there are no
+additional error codes beyond the default set.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-implementation" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">implementation</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Implementation class for the service. An <a
+href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+subclass - the class, not an instance of it.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-resource" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">resource</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Name of the resource the interface addresses as a symbol, e.g.
+<code>:Product</code>.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-to_create" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">to_create</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>An <a
+href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>
+instance describing the schema for client JSON coming in for calls that
+create instances of the resource that the service&#39;s interface is
+addressing. If <code>nil</code>, arbitrary data is acceptable (the
+implementation becomes entirely responsible for data validation).</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-to_update" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">to_update</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>An <a
+href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>
+instance describing the schema for client JSON coming in for calls that
+modify instances of the resource that the service&#39;s interface is
+addressing. If <code>nil</code>, arbitrary data is acceptable (the
+implementation becomes entirely responsible for data validation).</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-c-version" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">version</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Major version of interface as an integer. All service endpoint routes have
+“v{version}/” as a prefix, e.g. “/<a href="...">v1/products</a>”.</p>
+        
+        </div>
+      </div>
+      
+    </section>
+    
+
+    
+     <section id="protected-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-interface" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">interface</span><span
+            class="method-args">( resource, &block )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Define the subclass service&#39;s interface. A DSL is used with methods
+documented in the ApiTools::ServiceInterfaceDSL class.</p>
+
+<p>The absolute bare minimum interface description just states that a
+particular implementation class is used when requests are made to a
+particular URL endpoint, which is implementing an interface for a
+particular given resource. For a hypothetical Magic resource interface:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">MagicServiceImplementation</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceImplementation</span>
+  <span class="ruby-comment"># ...implementation code goes here...</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">MagicServiceInterface</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span>
+  <span class="ruby-identifier">interface</span> :<span class="ruby-constant">Magic</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">endpoint</span> :<span class="ruby-identifier">paul_daniels</span>, <span class="ruby-constant">MagicServiceImplementation</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>This would cause all calls to URLs at &#39;/<a
+href="...">paul_daniels</a>&#39; to be routed to an instance of the
+MagicServiceImplementation class.</p>
+
+<p>Addtional DSL facilities allow the interface to say what HTTP methods it
+supports (in terms of the action methods that it supports inside its
+implementation class), describe any extra sort, search or filter data it
+allows beyond the common fields and describe the expected JSON fields for
+creation and/or modification actions. By specifing these, the service
+middleware code is able to do extra validation and sanitisation of client
+requests, but they&#39;re entirely optional if the implementation class
+wants to take over all of that itself.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Name of the resource that the interface is for, as a symbol; for example,
+&#39;:Purchase&#39;.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block that calls the ApiTools::ServiceInterfaceDSL methods; <a
+href="ServiceInterface.html#method-i-endpoint">endpoint</a> is the only
+mandatory call.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="interface-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 487</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-ivar">@to_list</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-identifier">interface</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">version</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceInterface subclasses must always call the &#39;endpoint&#39; DSL method in their interface descriptions&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-actions" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">actions</span><span
+            class="method-args">( *supported_actions )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>List the actions that the service implementation supports. If you don&#39;t
+call this, the middleware assumes that all actions are available; else it
+only calls for supported actions. If you declared an empty array, your
+implementation would never be called.</p>
+<dl class="rdoc-list note-list"><dt>*supported_actions
+<dd>
+<p>One or more from <code>:list</code>, <code>:show</code>,
+<code>:create</code>, <code>:update</code> and <code>:delete</code>. Always
+use symbols, not strings. An exception is raised if unrecognised actions
+are given.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre>actions :list, :show</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="actions-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 307</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
+  <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">supported_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">invalid</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInterface#actions does not recognise one or more actions: &#39;#{ invalid.join( &#39;, &#39; ) }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:actions=</span>, <span class="ruby-identifier">supported_actions</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-embeds" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">embeds</span><span
+            class="method-args">( *embeds )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>An array of supported embed keys (as per documentation, so singular or
+plural as per resource interface descriptions in the Loyalty Platform API).
+Things which can be embedded can also be referenced, via the +embed=…+ and
++reference=…+ query string entries.</p>
+
+<p>The middleware uses the list to reject requests from clients which ask for
+embedded or referenced entities that were not listed by the interface. If
+you don&#39;t call here, or call here with an empty array, no embedding or
+referencing will be allowed for calls to the service implementation.</p>
+<dl class="rdoc-list note-list"><dt><code>embed</code>
+<dd>
+<p>Array of permitted embeddable entity names, as symbols or strings. The
+order of array entries is arbitrary.</p>
+</dd></dl>
+
+<p>Example: An interface permits lists that request embedding or referencing
+of “vouchers”, “balances” and “member”:</p>
+
+<pre>embed :vouchers, :balances, :member</pre>
+
+<p>As a result, <a href="ServiceInterface.html#method-i-embeds">embeds</a>
+would return:</p>
+
+<pre>[ &#39;vouchers&#39;, &#39;balances&#39;, &#39;member&#39; ]</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="embeds-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 340</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-endpoint" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">endpoint</span><span
+            class="method-args">( uri_path_fragment, implementation_class )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Mandatory part of the interface DSL. Declare the interface&#39;s URL
+endpoint and the <a
+href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+subclass to be invoked when client requests are sent to a URL matching the
+endpoint.</p>
+
+<p>No two interfaces can use the same endpoint within a service application,
+unless the describe a different interface version - see <a
+href="ServiceInterface.html#method-i-version">version</a>.</p>
+
+<p>Example:</p>
+
+<pre>endpoint :estimations, PurchaseServiceImplementation</pre>
+<dl class="rdoc-list note-list"><dt><code>uri_path_fragment</code>
+<dd>
+<p>Path fragment to match at the start of a URL path, as a symbol or string,
+excluding leading “/”. The URL path matches the fragment if the path starts
+with a “/”, then matches the fragment exactly, then is followed by either
+“.”, another “/”, or the end of the path string. For example, a fragment of
+<code>:products</code> matches all paths out of <code>/products</code>,
+<code>/products.json</code> or <code>/products/22</code>, but does not
+match <code>/products_and_things</code>.</p>
+</dd><dt><code>implementation_class</code>
+<dd>
+<p>The <a
+href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+subclass (the class itself, not an instance of it) that should be used when
+a request matching the path fragment is received.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="endpoint-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 267</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
+
+  <span class="ruby-comment"># http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">implementation_class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceImplementation</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but &#39;#{ implementation_class }&#39; was given instead&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:endpoint=</span>,       <span class="ruby-identifier">uri_path_fragment</span>    )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:implementation=</span>, <span class="ruby-identifier">implementation_class</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-errors_for" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">errors_for</span><span
+            class="method-args">( domain, &block )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares custom errors that are part of this defined interface. This calls
+directly through to <a
+href="ErrorDescriptions.html#method-i-errors_for">ApiTools::ErrorDescriptions#errors_for</a>,
+so see that for details.</p>
+
+<p>A service should usually define only a single domain of error using one
+call to <a href="ServiceInterface.html#method-i-errors_for">errors_for</a>,
+but techncially can make as many calls for as many domains as required.
+Definitions are merged.</p>
+<dl class="rdoc-list note-list"><dt><code>domain</code>
+<dd>
+<p>Domain, e.g. &#39;purchase&#39;, &#39;transaction&#39; - see <a
+href="ErrorDescriptions.html#method-i-errors_for">ApiTools::ErrorDescriptions#errors_for</a>
+for details.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Code block making <a
+href="ErrorDescriptions.html">ApiTools::ErrorDescriptions</a> DSL calls.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">errors_for</span> <span class="ruby-string">&#39;transaction&#39;</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;duplicate_transaction&#39;</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">409</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Duplicate transaction&#39;</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">client_uid</span> ]
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="errors_for-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 440</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:errors_for=</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorDescriptions</span>.<span class="ruby-identifier">new</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_create</span><span
+            class="method-args">( &block )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Optional description of the JSON parameters (schema) that the
+interface&#39;s implementation requires for calls creating resource
+instances. The block uses the DSL from <a
+href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>, so
+you can specify basic object things like <code>string</code>, or higher
+level things like <code>type</code>.</p>
+
+<p>If a call comes into the middleware from a client which contains body data
+that doesn&#39;t validate according to your schema, it&#39;ll be rejected
+before even getting as far as your interface implementation.</p>
+
+<p>The <a
+href="Data/DocumentedDSL.html#method-i-internationalised">ApiTools::Data::DocumentedDSL#internationalised</a>
+DSL method can be called within your block harmlessly, but it has no side
+effects. Any resource interface that can take internationalised data for
+creation (or modification) must already have an internationalised
+representation, so the standard resources in the <a
+href="Data/Resources.html">ApiTools::Data::Resources</a> collection will
+already have declared that internationalisation applies.</p>
+
+<p>Example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">to_create</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">string</span> :<span class="ruby-identifier">name</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">description</span>
+<span class="ruby-keyword">end</span>
+</pre>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Block, passed to <a
+href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>,
+describing the fields used for resource creation.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="to_create-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 387</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_create=</span>, <span class="ruby-identifier">obj</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_list" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_list</span><span
+            class="method-args">( &block )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Specify parameters related to common index parameters. The block contains
+calls to the DSL described by <a
+href="ServiceInterface/ToListDSL.html">ApiTools::ServiceInterface::ToListDSL</a>.
+The default values are described in the Loyalty Platform API - at the time
+of writing:</p>
+
+<pre class="ruby"><span class="ruby-identifier">limit</span>    <span class="ruby-value">50</span>
+<span class="ruby-identifier">sort</span>     :<span class="ruby-identifier">created_at</span> =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">desc</span>, :<span class="ruby-identifier">asc</span> ]
+<span class="ruby-identifier">search</span>   <span class="ruby-keyword">nil</span>
+<span class="ruby-identifier">filter</span>   <span class="ruby-keyword">nil</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="to_list-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 354</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
+    <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-to_update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">to_update</span><span
+            class="method-args">( &block )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>As <a href="ServiceInterface.html#method-i-to_create">to_create</a>, but
+applies when modifying existing resource instances. To avoid repeating
+yourself, if your modification and creation parameter requirements are
+identical, call <a
+href="ServiceInterface.html#method-i-update_same_as_create">update_same_as_create</a>.</p>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Block, passed to <a
+href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>,
+describing the fields used for resource modification.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="to_update-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 401</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-identifier">obj</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update_same_as_create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update_same_as_create</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that the expected JSON fields described in a <a
+href="ServiceInterface.html#method-i-to_create">to_create</a> call are the
+same as those required for modifying resources too.</p>
+
+<p>Example:</p>
+
+<pre>update_same_as_create</pre>
+
+<p>…and that&#39;s all. There are no parameters or blocks needed.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="update_same_as_create-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 417</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_same_as_create</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-version" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">version</span><span
+            class="method-args">( major_version )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declare the <em>major</em> version of the interface being implemented. All
+service endpoints appear at “/v{version}/{endpoint}” relative to whatever
+root an edge layer defines. If a service interface does not specifiy its
+version, <code>1</code> is assumed.</p>
+
+<p>Two interfaces can exist on the same endpoint provided their versions are
+different since the resulting route to reach them will be different too.</p>
+<dl class="rdoc-list note-list"><dt><code>version</code>
+<dd>
+<p>Integer major version number, e.g <code>2</code>.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="version-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 289</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">version</span>( <span class="ruby-identifier">major_version</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:version=</span>, <span class="ruby-identifier">major_version</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

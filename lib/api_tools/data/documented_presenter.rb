@@ -83,12 +83,12 @@ module ApiTools
           # Split on "::" and take the last part as the Resource kind.
 
           target.merge!( {
-            :id         => uuid,
-            :kind       => self.name.split( '::' ).last,
-            :created_at => Time.parse( created_at.to_s ).iso8601
+            'id'         => uuid,
+            'kind'       => self.name.split( '::' ).last,
+            'created_at' => Time.parse( created_at.to_s ).iso8601
           } )
 
-          target[ :language ] = language if self.is_internationalised?()
+          target[ 'language' ] = language if self.is_internationalised?()
 
         end
 
@@ -114,16 +114,16 @@ module ApiTools
 
         unless type_data_only
           common_fields = {
-            id:         data[ :id         ],
-            created_at: data[ :created_at ],
-            kind:       data[ :kind       ]
+            'id'         => data[ :id         ],
+            'created_at' => data[ :created_at ],
+            'kind'       => data[ :kind       ]
           }
 
           if self.is_internationalised?
-            common_fields[ :internationalised ] = data[ :internationalised ]
-            CommonFields.get_schema.properties[ :language ].required = true
+            common_fields[ 'internationalised' ] = data[ 'internationalised' ]
+            CommonFields.get_schema.properties[ 'language' ].required = true
           else
-            CommonFields.get_schema.properties[ :language ].required = false
+            CommonFields.get_schema.properties[ 'language' ].required = false
           end
 
           errors += CommonFields.validate( data, true )

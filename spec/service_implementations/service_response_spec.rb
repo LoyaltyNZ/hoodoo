@@ -76,7 +76,7 @@ describe ApiTools::ServiceResponse do
 
     it 'should return error condition Rack data correctly' do
       @r.add_error('platform.malformed') # 422 status
-      @r.add_error('platform.not_found', :reference => {:entity_name => 'hello'}) # 404 status
+      @r.add_error('platform.not_found', 'reference' => {:entity_name => 'hello'}) # 404 status
 
       @r.body = { this: 'should be ignored' }
 

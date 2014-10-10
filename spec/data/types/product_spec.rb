@@ -7,9 +7,9 @@ describe ApiTools::Data::Types::Product do
     expect(schema.is_internationalised?()).to eq(true)
 
     expect(schema.properties.count).to eq(4)
-    expect(schema.properties[:code]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:name]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:description]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:tags]).to be_a(ApiTools::Data::DocumentedTags)
+    expect(schema.properties['code']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['name']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['description']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['tags']).to be_a(ApiTools::Data::DocumentedTags)
   end
 end

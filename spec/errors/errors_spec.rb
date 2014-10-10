@@ -3,9 +3,9 @@ require 'spec_helper'
 describe ApiTools::Errors do
   before do
     @desc = ApiTools::ErrorDescriptions.new( :test_domain ) do
-      error 'http_345_no_references',  status: 345, message: '345 message'
-      error 'http_456_has_reference',  status: 456, message: '456 message', reference: [ :ref1 ]
-      error 'http_567_has_references', status: 567, message: '567 message', reference: [ :ref2, :ref3, :ref4 ]
+      error 'http_345_no_references',  status: 345, 'message' => '345 message'
+      error 'http_456_has_reference',  status: 456, 'message' => '456 message', 'reference' => [ :ref1 ]
+      error 'http_567_has_references', status: 567, 'message' => '567 message', 'reference' => [ :ref2, :ref3, :ref4 ]
     end
 
     @errors = ApiTools::Errors.new(@desc)
@@ -48,13 +48,13 @@ describe ApiTools::Errors do
     it 'should let me add simple custom errors' do
       expect {
         @errors.add_error('test_domain.http_345_no_references')
-        @errors.add_error('test_domain.http_345_no_references', :message => 'foo 1')
-        @errors.add_error('test_domain.http_345_no_references', :message => 'foo 2', :reference => { :bar => 'baz', :baz => 'foo' })
+        @errors.add_error('test_domain.http_345_no_references', 'message' => 'foo 1')
+        @errors.add_error('test_domain.http_345_no_references', 'message' => 'foo 2', 'reference' => { :bar => 'baz', :baz => 'foo' })
       }.to_not raise_error
 
-      expect(@errors.errors[-3]).to eq({:code => 'test_domain.http_345_no_references', :message => '345 message'})
-      expect(@errors.errors[-2]).to eq({:code => 'test_domain.http_345_no_references', :message => 'foo 1'})
-      expect(@errors.errors[-1]).to eq({:code => 'test_domain.http_345_no_references', :message => 'foo 2', :reference => 'baz,foo'})
+      expect(@errors.errors[-3]).to eq({'code' => 'test_domain.http_345_no_references', 'message' => '345 message'})
+      expect(@errors.errors[-2]).to eq({'code' => 'test_domain.http_345_no_references', 'message' => 'foo 1'})
+      expect(@errors.errors[-1]).to eq({'code' => 'test_domain.http_345_no_references', 'message' => 'foo 2', 'reference' => 'baz,foo'})
     end
 
     it 'should complain about missing fields' do
@@ -67,36 +67,36 @@ describe ApiTools::Errors do
       }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref3, ref4'")
 
       expect {
-        @errors.add_error('test_domain.http_567_has_references', :reference => {:ref3 => "hello"})
+        @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref3 => "hello"})
       }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref4'")
     end
 
     it 'should let me specify mandatory reference data' do
       expect {
-        @errors.add_error('test_domain.http_456_has_reference', :reference => {:ref1 => 'ref1-data'})
+        @errors.add_error('test_domain.http_456_has_reference', 'reference' => {:ref1 => 'ref1-data'})
       }.to_not raise_error
 
-      expect(@errors.errors[-1]).to eq({:code => 'test_domain.http_456_has_reference', :message => '456 message', :reference => 'ref1-data'})
+      expect(@errors.errors[-1]).to eq({'code' => 'test_domain.http_456_has_reference', 'message' => '456 message', 'reference' => 'ref1-data'})
 
       expect {
-        @errors.add_error('test_domain.http_456_has_reference', :message => 'ref1-test', :reference => {:ref1 => 'ref1-data'})
+        @errors.add_error('test_domain.http_456_has_reference', 'message' => 'ref1-test', 'reference' => {:ref1 => 'ref1-data'})
       }.to_not raise_error
 
-      expect(@errors.errors[-1]).to eq({:code => 'test_domain.http_456_has_reference', :message => 'ref1-test', :reference => 'ref1-data'})
+      expect(@errors.errors[-1]).to eq({'code' => 'test_domain.http_456_has_reference', 'message' => 'ref1-test', 'reference' => 'ref1-data'})
 
       expect {
-        @errors.add_error('test_domain.http_567_has_references', :reference => {:ref2 => 'ref2-data', :ref3 => 'ref3-data', :ref4 => 'ref4-data'})
+        @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref2 => 'ref2-data', :ref3 => 'ref3-data', :ref4 => 'ref4-data'})
       }.to_not raise_error
 
-      expect(@errors.errors[-1]).to eq({:code => 'test_domain.http_567_has_references', :message => '567 message', :reference => 'ref2-data,ref3-data,ref4-data'})
+      expect(@errors.errors[-1]).to eq({'code' => 'test_domain.http_567_has_references', 'message' => '567 message', 'reference' => 'ref2-data,ref3-data,ref4-data'})
     end
 
     it 'should let me specify additional reference data and list it after mandatory data' do
       expect {
-        @errors.add_error('test_domain.http_567_has_references', :reference => {:add2 => 'add2-data', :ref2 => 'ref2-data', :add1 => 'add1-data', :ref3 => 'ref3-data', :ref4 => 'ref4-data'})
+        @errors.add_error('test_domain.http_567_has_references', 'reference' => {:add2 => 'add2-data', :ref2 => 'ref2-data', :add1 => 'add1-data', :ref3 => 'ref3-data', :ref4 => 'ref4-data'})
       }.to_not raise_error
 
-      expect(@errors.errors[-1]).to eq({:code => 'test_domain.http_567_has_references', :message => '567 message', :reference => 'ref2-data,ref3-data,ref4-data,add2-data,add1-data'})
+      expect(@errors.errors[-1]).to eq({'code' => 'test_domain.http_567_has_references', 'message' => '567 message', 'reference' => 'ref2-data,ref3-data,ref4-data,add2-data,add1-data'})
     end
   end
 
@@ -125,18 +125,18 @@ describe ApiTools::Errors do
       expect(@errors).to receive(:store!).and_call_original
 
       data = @errors.render()
-      expect(data[:errors]).to be_a(Array)
-      expect(data[:errors].count).to eq(1)
-      expect(data[:errors][0][:code]).to eq('platform.malformed')
-      expect(data[:errors][0][:message]).to be_a(String)
-      expect(data[:errors][0][:message].size).to_not eq(0)
-      expect(data[:errors][0][:reference]).to be_nil
-      expect(data[:id]).to be_a(String)
-      expect(data[:id].size).to eq(32)
-      expect(data[:kind]).to eq('Errors')
-      expect(data[:created_at]).to be_a(String)
+      expect(data['errors']).to be_a(Array)
+      expect(data['errors'].count).to eq(1)
+      expect(data['errors'][0]['code']).to eq('platform.malformed')
+      expect(data['errors'][0]['message']).to be_a(String)
+      expect(data['errors'][0]['message'].size).to_not eq(0)
+      expect(data['errors'][0]['reference']).to be_nil
+      expect(data['id']).to be_a(String)
+      expect(data['id'].size).to eq(32)
+      expect(data['kind']).to eq('Errors')
+      expect(data['created_at']).to be_a(String)
       expect {
-        raise "Broken or missing created_at" if Date.parse(data[:created_at]).nil?
+        raise "Broken or missing created_at" if Date.parse(data['created_at']).nil?
       }.to_not raise_error
     end
   end
@@ -147,9 +147,9 @@ describe ApiTools::Errors do
       @errors.add_precompiled_error( 'code', 'message', 'reference' )
       expect(@errors.errors).to eq([
         {
-          code: 'code',
-          message: 'message',
-          reference: 'reference'
+          'code' => 'code',
+          'message' => 'message',
+          'reference' => 'reference'
         }
       ])
     end
@@ -159,8 +159,8 @@ describe ApiTools::Errors do
       @errors.add_precompiled_error( 'code', 'message', '' )
       expect(@errors.errors).to eq([
         {
-          code: 'code',
-          message: 'message'
+          'code' => 'code',
+          'message' => 'message'
         }
       ])
     end
@@ -170,8 +170,8 @@ describe ApiTools::Errors do
       @errors.add_precompiled_error( 'code', 'message', nil )
       expect(@errors.errors).to eq([
         {
-          code: 'code',
-          message: 'message'
+          'code' => 'code',
+          'message' => 'message'
         }
       ])
     end
@@ -188,20 +188,20 @@ describe ApiTools::Errors do
     it 'should merge when only the source has errors' do
       @errors.clear_errors
       source = ApiTools::Errors.new
-      source.add_error('platform.method_not_allowed', message: 'Method not allowed 1', reference: { :data => '1' })
-      source.add_error('platform.malformed', message: 'Malformed request 1', reference: { :data => '1' })
+      source.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 1', 'reference' => { :data => '1' })
+      source.add_error('platform.malformed', 'message' => 'Malformed request 1', 'reference' => { :data => '1' })
       @errors.merge!( source )
 
       expect(@errors.errors).to eq([
         {
-          code: 'platform.method_not_allowed',
-          message: 'Method not allowed 1',
-          reference: '1'
+          'code' => 'platform.method_not_allowed',
+          'message' => 'Method not allowed 1',
+          'reference' => '1'
         },
         {
-          code: 'platform.malformed',
-          message: 'Malformed request 1',
-          reference: '1'
+          'code' => 'platform.malformed',
+          'message' => 'Malformed request 1',
+          'reference' => '1'
         }
       ])
     end
@@ -209,20 +209,20 @@ describe ApiTools::Errors do
     it 'should merge when only the destination has errors' do
       @errors.clear_errors
       source = ApiTools::Errors.new
-      @errors.add_error('platform.method_not_allowed', message: 'Method not allowed 2', reference: { :data => '2' })
-      @errors.add_error('platform.malformed', message: 'Malformed request 2', reference: { :data => '2' })
+      @errors.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 2', 'reference' => { :data => '2' })
+      @errors.add_error('platform.malformed', 'message' => 'Malformed request 2', 'reference' => { :data => '2' })
       @errors.merge!( source )
 
       expect(@errors.errors).to eq([
         {
-          code: 'platform.method_not_allowed',
-          message: 'Method not allowed 2',
-          reference: '2'
+          'code' => 'platform.method_not_allowed',
+          'message' => 'Method not allowed 2',
+          'reference' => '2'
         },
         {
-          code: 'platform.malformed',
-          message: 'Malformed request 2',
-          reference: '2'
+          'code' => 'platform.malformed',
+          'message' => 'Malformed request 2',
+          'reference' => '2'
         }
       ])
     end
@@ -230,32 +230,32 @@ describe ApiTools::Errors do
     it 'should merge when both have errors' do
       @errors.clear_errors
       source = ApiTools::Errors.new
-      source.add_error('platform.method_not_allowed', message: 'Method not allowed 1', reference: { :data => '1' })
-      source.add_error('platform.malformed', message: 'Malformed request 1', reference: { :data => '1' })
-      @errors.add_error('platform.method_not_allowed', message: 'Method not allowed 2', reference: { :data => '2' })
-      @errors.add_error('platform.malformed', message: 'Malformed request 2', reference: { :data => '2' })
+      source.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 1', 'reference' => { :data => '1' })
+      source.add_error('platform.malformed', 'message' => 'Malformed request 1', 'reference' => { :data => '1' })
+      @errors.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 2', 'reference' => { :data => '2' })
+      @errors.add_error('platform.malformed', 'message' => 'Malformed request 2', 'reference' => { :data => '2' })
       @errors.merge!( source )
 
       expect(@errors.errors).to eq([
         {
-          code: 'platform.method_not_allowed',
-          message: 'Method not allowed 2',
-          reference: '2'
+          'code' => 'platform.method_not_allowed',
+          'message' => 'Method not allowed 2',
+          'reference' => '2'
         },
         {
-          code: 'platform.malformed',
-          message: 'Malformed request 2',
-          reference: '2'
+          'code' => 'platform.malformed',
+          'message' => 'Malformed request 2',
+          'reference' => '2'
         },
         {
-          code: 'platform.method_not_allowed',
-          message: 'Method not allowed 1',
-          reference: '1'
+          'code' => 'platform.method_not_allowed',
+          'message' => 'Method not allowed 1',
+          'reference' => '1'
         },
         {
-          code: 'platform.malformed',
-          message: 'Malformed request 1',
-          reference: '1'
+          'code' => 'platform.malformed',
+          'message' => 'Malformed request 1',
+          'reference' => '1'
         }
       ])
     end
@@ -272,7 +272,7 @@ describe ApiTools::Errors do
 
     it 'should keep its original status code when it has one' do
       @errors.clear_errors
-      @errors.add_error( 'platform.not_found', :reference => { :entity_name => 'something' } )
+      @errors.add_error( 'platform.not_found', 'reference' => { :entity_name => 'something' } )
       source = ApiTools::Errors.new
       source.add_error('platform.method_not_allowed')
       expect(@errors.http_status_code).to eq(404) # Non-default; collection has an error recorded
@@ -303,13 +303,13 @@ describe ApiTools::Errors do
 
     it 'should escape reference data, which should be recoverable' do
       @errors.clear_errors
-      @errors.add_error('test_domain.http_567_has_references', :reference => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
+      @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
 
       expect(ApiTools::Logger).to receive(:error)
       expect(@errors).to receive(:store!).and_call_original
 
       rendered = @errors.render
-      ary = @errors.unjoin_and_unescape_commas(rendered[:errors][0][:reference])
+      ary = @errors.unjoin_and_unescape_commas(rendered['errors'][0]['reference'])
       expect(ary).to eq(['ref \\ 2 data', 'ref, 3, data', 'ref4-data'])
     end
   end

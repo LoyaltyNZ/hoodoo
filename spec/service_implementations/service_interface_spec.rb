@@ -68,20 +68,20 @@ describe ApiTools::ServiceInterface do
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.default_sort_direction).to eq("up")
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:foo]).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:bar]).to be_a(ApiTools::Presenters::Enum)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties[:bar].from).to eq(["baz", "boo"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties[:hello]).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties[:world]).to be_a(ApiTools::Data::DocumentedUUID)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties[:world].resource).to eq(:Earth)
-      expect(RSpecTestServiceInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]})
+      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties['foo']).to be_a(ApiTools::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties['bar']).to be_a(ApiTools::Presenters::Enum)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties['bar'].from).to eq(["baz", "boo"])
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['hello']).to be_a(ApiTools::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['world']).to be_a(ApiTools::Data::DocumentedUUID)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['world'].resource).to eq(:Earth)
+      expect(RSpecTestServiceInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
     end
 
     # This is just testing #update_same_as_create
     #
     it 'should be correctly configured (B)' do
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.properties[:one]).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.properties[:two]).to be_a(ApiTools::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceB.to_update.properties['one']).to be_a(ApiTools::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceB.to_update.properties['two']).to be_a(ApiTools::Presenters::Text)
     end
   end
 

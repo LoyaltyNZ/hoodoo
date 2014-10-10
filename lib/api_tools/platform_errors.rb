@@ -14,8 +14,8 @@ module ApiTools
     def add_error(code, message, reference = nil)
       clear_errors if @errors.nil?
 
-      err = {:code=>code, :message=>message}
-      err[:reference] = reference unless reference.nil?
+      err = {'code'=>code, 'message'=>message}
+      err['reference'] = reference unless reference.nil?
       @errors << err
     end
 

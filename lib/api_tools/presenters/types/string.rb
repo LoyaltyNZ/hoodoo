@@ -23,10 +23,10 @@ module ApiTools
 
         if data.is_a? ::String
           if data.size > @length
-            errors << {:code=> 'generic.invalid_string', :message=>"Field `#{full_path(path)}` is larger than max length `#{@length}`", :reference => full_path(path)}
+            errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` is larger than max length `#{@length}`", 'reference' => full_path(path)}
           end
         else
-          errors << {:code=> 'generic.invalid_string', :message=>"Field `#{full_path(path)}` is an invalid string", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` is an invalid string", 'reference' => full_path(path)}
         end
         errors
       end

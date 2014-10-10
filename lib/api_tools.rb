@@ -7,6 +7,7 @@ require root+'json_errors'
 require root+'json_payload'
 require root+'platform_context'
 require root+'thread_safe'
+require root+'utilities.rb'
 
 require root+'services/amqp_message'
 require root+'services/request'
@@ -72,7 +73,5 @@ require root+'service_implementations/service_context.rb'
 require root+'service_implementations/service_application.rb'
 require root+'service_implementations/service_interface.rb'
 require root+'service_implementations/service_implementation.rb'
-
-require root+'utilities.rb'
 
 require root+'version.rb'

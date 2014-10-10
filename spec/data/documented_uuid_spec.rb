@@ -14,14 +14,14 @@ describe ApiTools::Data::DocumentedUUID do
     it 'should return correct error when data is not a UUID-like string' do
       errors = ApiTools::Data::DocumentedUUID.new('one').validate('1234')
 
-      err = [  {:code=>"generic.invalid_string", :message=>"UUID `one` is of incorrect length `4` (should be `32`)", :reference=>"one"}]
+      err = [  {'code'=>"generic.invalid_string", 'message'=>"UUID `one` is of incorrect length `4` (should be `32`)", 'reference'=>"one"}]
       expect(errors).to eq(err)
     end
 
     it 'should return correct error when data is not even a string' do
       errors = ApiTools::Data::DocumentedUUID.new('one').validate(1234)
 
-      err = [  {:code=>"generic.invalid_string", :message=>"UUID `one` is invalid", :reference=>"one"}]
+      err = [  {'code'=>"generic.invalid_string", 'message'=>"UUID `one` is invalid", 'reference'=>"one"}]
       expect(errors).to eq(err)
     end
   end

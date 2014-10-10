@@ -65,7 +65,18 @@
   
 </div>
 
-    
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a>
+  
+  
+  </ul>
+</div>
+
     
     <!-- Method Quickref -->
 <div id="method-list-section" class="nav-section">
@@ -75,25 +86,9 @@
     
     <li class="calls-super" ><a href="#method-c-new">::new</a>
     
-    <li ><a href="#method-i-array">#array</a>
+    <li ><a href="#method-i-parse">#parse</a>
     
-    <li ><a href="#method-i-boolean">#boolean</a>
-    
-    <li ><a href="#method-i-date">#date</a>
-    
-    <li ><a href="#method-i-datetime">#datetime</a>
-    
-    <li ><a href="#method-i-decimal">#decimal</a>
-    
-    <li ><a href="#method-i-float">#float</a>
-    
-    <li ><a href="#method-i-integer">#integer</a>
-    
-    <li ><a href="#method-i-object">#object</a>
-    
-    <li ><a href="#method-i-property">#property</a>
-    
-    <li ><a href="#method-i-string">#string</a>
+    <li ><a href="#method-i-render">#render</a>
     
     <li class="calls-super" ><a href="#method-i-validate">#validate</a>
     
@@ -187,10 +182,10 @@ appropriate name and options</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 12</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-ivar">@properties</span> = []
+  <span class="ruby-ivar">@properties</span> = {}
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -210,11 +205,11 @@ appropriate name and options</p>
        </header>
 
     
-      <div id="method-i-array" class="method-detail ">
+      <div id="method-i-parse" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">array</span><span
-            class="method-args">(name, options = {})</span>
+          <span class="method-name">parse</span><span
+            class="method-args">(data, target)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -223,22 +218,19 @@ appropriate name and options</p>
 
         <div class="method-description">
           
-          <p>Define a JSON array with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
+          
           
           
 
           
-          <div class="method-source-code" id="array-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 58</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">array</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>)
+          <div class="method-source-code" id="parse-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>] = {}
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>])
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>]
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -250,11 +242,11 @@ appropriate name and options</p>
       </div>
 
     
-      <div id="method-i-boolean" class="method-detail ">
+      <div id="method-i-render" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">boolean</span><span
-            class="method-args">(name, options = {})</span>
+          <span class="method-name">render</span><span
+            class="method-args">(data, target)</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -263,348 +255,19 @@ appropriate name and options</p>
 
         <div class="method-description">
           
-          <p>Define a JSON boolean with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
+          
           
           
 
           
-          <div class="method-source-code" id="boolean-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">boolean</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
+          <div class="method-source-code" id="render-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
 
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-date" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">date</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON date with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="date-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 106</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">date</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-datetime" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">datetime</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON datetime with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="datetime-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 114</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">datetime</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-decimal" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">decimal</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON decimal with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="decimal-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 90</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">decimal</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-float" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">float</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON float with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="float-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 82</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">float</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-integer" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">integer</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON integer with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="integer-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 66</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">integer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-object" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">object</span><span
-            class="method-args">(name, options = {}, &block)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON object with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="object-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 49</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">object</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">'ApiTools::Presenters::Object must have block'</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-property" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">property</span><span
-            class="method-args">(name, type, options = {}, &block)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON property with the supplied name, type and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>type</code>
-<dd>
-<p>A <code>Class</code> for validation</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="property-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
-  <span class="ruby-identifier">inst</span> = <span class="ruby-identifier">type</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-identifier">inst</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
-  <span class="ruby-ivar">@properties</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">inst</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-string" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">string</span><span
-            class="method-args">(name, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Define a JSON string with the supplied name and options Params</p>
-<dl class="rdoc-list note-list"><dt><code>name</code>
-<dd>
-<p>The JSON key</p>
-</dd><dt><code>options</code>
-<dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :length =&gt; 20</p>
-</dd></dl>
-          
-          
-
-          
-          <div class="method-source-code" id="string-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 74</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">string</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span>)
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>[<span class="ruby-identifier">name</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -630,7 +293,21 @@ appropriate name and options</p>
         <div class="method-description">
           
           <p>Check if data is a valid <a href="Object.html">Object</a> and return either
-[], or an array with a suitable error</p>
+[], or an array with a suitable error.</p>
+
+<p><code>data</code>: <a href="../Data.html">Data</a> to check (and check
+nested properties therein). Expected</p>
+
+<pre>to be nil (unless field is required) or a Hash.</pre>
+
+<p><code>path</code>: For internal callers only in theory. The nesting
+human-readable</p>
+
+<pre class="ruby"><span class="ruby-identifier">path</span> <span class="ruby-identifier">to</span> <span class="ruby-identifier">this</span> <span class="ruby-string">&quot;level&quot;</span>, <span class="ruby-identifier">as</span> <span class="ruby-identifier">an</span> <span class="ruby-identifier">array</span>. <span class="ruby-constant">Omitted</span> <span class="ruby-identifier">at</span> <span class="ruby-identifier">the</span> <span class="ruby-identifier">top</span> <span class="ruby-identifier">level</span>.
+<span class="ruby-constant">In</span> :<span class="ruby-identifier">errors</span> =<span class="ruby-operator">&gt;</span> { :<span class="ruby-identifier">foo</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-operator">...</span> } }, <span class="ruby-identifier">validation</span> <span class="ruby-identifier">of</span> <span class="ruby-string">&quot;:foo&quot;</span> <span class="ruby-identifier">would</span>
+<span class="ruby-identifier">be</span> <span class="ruby-identifier">at</span> <span class="ruby-identifier">path</span> <span class="ruby-string">&quot;[ :errors ]&quot;</span>. <span class="ruby-constant">Validation</span> <span class="ruby-identifier">of</span> <span class="ruby-identifier">the</span> <span class="ruby-identifier">contents</span> <span class="ruby-identifier">of</span> <span class="ruby-identifier">the</span>
+<span class="ruby-identifier">object</span> <span class="ruby-identifier">at</span> <span class="ruby-string">&quot;:foo&quot;</span> <span class="ruby-identifier">would</span> <span class="ruby-identifier">be</span> <span class="ruby-identifier">under</span> <span class="ruby-string">&quot;[ :errors, :foo ]&quot;</span>.
+</pre>
           
           
             <div class="method-calls-super">
@@ -641,18 +318,18 @@ appropriate name and options</p>
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 29</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">''</span>)
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 31</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
 
   <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-value">:code=</span><span class="ruby-operator">&gt;</span> <span class="ruby-string">'generic.invalid_object'</span>, <span class="ruby-value">:message=</span><span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is an invalid object&quot;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_object&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is an invalid object&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">rdata</span> = (<span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">property</span>.<span class="ruby-identifier">name</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[<span class="ruby-identifier">property</span>.<span class="ruby-identifier">name</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">rdata</span> = (<span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[<span class="ruby-identifier">name</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-identifier">errors</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>))
   <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">errors</span>
@@ -675,7 +352,7 @@ appropriate name and options</p>
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="http://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 

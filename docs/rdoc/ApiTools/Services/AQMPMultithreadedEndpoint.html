@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class ApiTools::Services::AQMPMultithreadedEndpoint - RDoc Documentation</title>
+
+<link href="../../fonts.css" rel="stylesheet">
+<link href="../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+</script>
+
+<script src="../../js/jquery.js"></script>
+<script src="../../js/navigation.js"></script>
+<script src="../../js/search_index.js"></script>
+<script src="../../js/search.js"></script>
+<script src="../../js/searcher.js"></script>
+<script src="../../js/darkfish.js"></script>
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">Object
+  
+</div>
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-i-close">#close</a>
+    
+    <li ><a href="#method-i-connect">#connect</a>
+    
+    <li ><a href="#method-i-create_rx_thread">#create_rx_thread</a>
+    
+    <li ><a href="#method-i-create_tx_thread">#create_tx_thread</a>
+    
+    <li ><a href="#method-i-create_worker_thread">#create_worker_thread</a>
+    
+    <li ><a href="#method-i-join">#join</a>
+    
+    <li ><a href="#method-i-process">#process</a>
+    
+    <li ><a href="#method-i-send_message">#send_message</a>
+    
+    <li ><a href="#method-i-start">#start</a>
+    
+    <li ><a href="#method-i-stop">#stop</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-ApiTools::Services::AQMPMultithreadedEndpoint">
+  <h1 id="class-ApiTools::Services::AQMPMultithreadedEndpoint" class="class">
+    class ApiTools::Services::AQMPMultithreadedEndpoint
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-i-amqp_uri" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">amqp_uri</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-boot_queue" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">boot_queue</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-connection" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">connection</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-endpoint_id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">endpoint_id</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-exchange" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">exchange</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-queue_options" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">queue_options</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-request_class" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">request_class</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-request_endpoint" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">request_endpoint</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-response_endpoint" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">response_endpoint</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-response_thread" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">response_thread</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-rx_channel" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">rx_channel</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-rx_queue" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">rx_queue</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-rx_thread" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">rx_thread</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-thread_count" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">thread_count</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-timeout" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">timeout</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-tx_channel" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">tx_channel</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-tx_queue" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">tx_queue</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-tx_thread" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">tx_thread</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-worker_threads" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">worker_threads</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+    </section>
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(amqp_uri, options = {})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 13</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">amqp_uri</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-ivar">@amqp_uri</span> = <span class="ruby-identifier">amqp_uri</span>
+  <span class="ruby-ivar">@endpoint_id</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:endpoint_id</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>
+  <span class="ruby-ivar">@request_endpoint</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:request_endpoint</span>] <span class="ruby-operator">||</span> <span class="ruby-node">&quot;endpoint.#{@endpoint_id}&quot;</span>
+  <span class="ruby-ivar">@response_endpoint</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:response_endpoint</span>] <span class="ruby-operator">||</span> <span class="ruby-node">&quot;endpoint.#{@endpoint_id}.response&quot;</span>
+
+  <span class="ruby-ivar">@timeout</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:timeout</span>] <span class="ruby-operator">||</span> <span class="ruby-value">5000</span>
+  <span class="ruby-ivar">@queue_options</span> =<span class="ruby-identifier">options</span>[<span class="ruby-value">:queue_options</span>] <span class="ruby-operator">||</span> {<span class="ruby-value">:exclusive</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">:auto_delete</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>}
+  <span class="ruby-ivar">@request_class</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:request_class</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>
+  <span class="ruby-ivar">@thread_count</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:thread_count</span>] <span class="ruby-operator">||</span> (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">number_of_processors</span><span class="ruby-operator">/</span><span class="ruby-value">2</span>).<span class="ruby-identifier">floor</span>
+  <span class="ruby-ivar">@prefetch</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:prefetch</span>] <span class="ruby-operator">||</span> <span class="ruby-value">1</span>
+
+  <span class="ruby-ivar">@worker_threads</span> = []
+  <span class="ruby-ivar">@boot_queue</span> = <span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@rx_queue</span> = <span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@tx_queue</span> = <span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-close" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">close</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="close-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 37</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>
+  <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">close</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-connect" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">connect</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="connect-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">connect</span>
+  <span class="ruby-ivar">@connection</span> = <span class="ruby-constant">Bunny</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@amqp_uri</span>)
+  <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">start</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-create_rx_thread" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_rx_thread</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="create_rx_thread-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 61</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create_rx_thread</span>
+  <span class="ruby-ivar">@rx_thread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-ivar">@rx_channel</span> = <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">create_channel</span>
+    <span class="ruby-identifier">queue</span> = <span class="ruby-ivar">@rx_channel</span>.<span class="ruby-identifier">queue</span>(<span class="ruby-ivar">@request_endpoint</span>, <span class="ruby-ivar">@queue_options</span>)
+
+    <span class="ruby-ivar">@boot_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-ivar">@rx_channel</span>.<span class="ruby-identifier">prefetch</span>(<span class="ruby-ivar">@prefetch</span>)
+    <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-identifier">queue</span>.<span class="ruby-identifier">subscribe</span>(<span class="ruby-value">:manual_ack</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">:block</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">delivery_info</span>, <span class="ruby-identifier">metadata</span>, <span class="ruby-identifier">payload</span><span class="ruby-operator">|</span>
+          <span class="ruby-ivar">@rx_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">request_class</span>.<span class="ruby-identifier">create_from_raw_message</span>(<span class="ruby-identifier">delivery_info</span>, <span class="ruby-identifier">metadata</span>, <span class="ruby-identifier">payload</span>)
+          <span class="ruby-ivar">@rx_channel</span>.<span class="ruby-identifier">ack</span>(<span class="ruby-identifier">delivery_info</span>.<span class="ruby-identifier">delivery_tag</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Interrupt</span>
+        <span class="ruby-keyword">break</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-create_tx_thread" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_tx_thread</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="create_tx_thread-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create_tx_thread</span>
+  <span class="ruby-ivar">@tx_thread</span> = <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-ivar">@tx_channel</span> = <span class="ruby-ivar">@connection</span>.<span class="ruby-identifier">create_channel</span>
+
+    <span class="ruby-ivar">@boot_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-identifier">msg</span> = <span class="ruby-ivar">@tx_queue</span>.<span class="ruby-identifier">pop</span>
+        <span class="ruby-identifier">options</span> = {
+          <span class="ruby-value">:message_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">message_id</span>,
+          <span class="ruby-value">:routing_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">routing_key</span>,
+          <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">type</span>,
+          <span class="ruby-value">:correlation_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">correlation_id</span>,
+          <span class="ruby-value">:content_type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">content_type</span>,
+          <span class="ruby-value">:reply_to</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">reply_to</span>,
+        }
+        <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">serialize</span>
+        <span class="ruby-ivar">@tx_channel</span>.<span class="ruby-identifier">default_exchange</span>.<span class="ruby-identifier">publish</span>(<span class="ruby-identifier">msg</span>.<span class="ruby-identifier">payload</span>, <span class="ruby-identifier">options</span>)
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Interrupt</span>
+        <span class="ruby-keyword">break</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-create_worker_thread" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_worker_thread</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="create_worker_thread-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 45</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create_worker_thread</span>
+  <span class="ruby-constant">Thread</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-identifier">message</span> = <span class="ruby-ivar">@rx_queue</span>.<span class="ruby-identifier">pop</span>
+        <span class="ruby-identifier">response</span> = <span class="ruby-identifier">process</span>(<span class="ruby-identifier">message</span>)
+        <span class="ruby-ivar">@tx_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">response</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Interrupt</span>
+        <span class="ruby-keyword">break</span>
+      <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">error</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-join" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">join</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="join-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 132</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">join</span>
+  <span class="ruby-ivar">@rx_thread</span>.<span class="ruby-identifier">join</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-process" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">process</span><span
+            class="method-args">(message)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="process-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">process</span>(<span class="ruby-identifier">message</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;#process is abstract. Please override it in your implementation.&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-send_message" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">send_message</span><span
+            class="method-args">(msg)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="send_message-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 145</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_message</span>(<span class="ruby-identifier">msg</span>)
+  <span class="ruby-ivar">@tx_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">msg</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-start" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">start</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="start-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">start</span>
+  <span class="ruby-ivar">@boot_queue</span>.<span class="ruby-identifier">clear</span>
+
+  <span class="ruby-identifier">connect</span>
+
+  <span class="ruby-identifier">create_tx_thread</span>
+  <span class="ruby-identifier">create_rx_thread</span>
+
+  (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-ivar">@thread_count</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id</span><span class="ruby-operator">|</span>
+    <span class="ruby-ivar">@worker_threads</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">create_worker_thread</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-identifier">timeout</span>(<span class="ruby-ivar">@timeout</span> <span class="ruby-operator">/</span> <span class="ruby-value">1000.0</span>) <span class="ruby-keyword">do</span>
+      <span class="ruby-ivar">@boot_queue</span>.<span class="ruby-identifier">pop</span>
+      <span class="ruby-ivar">@boot_queue</span>.<span class="ruby-identifier">pop</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">TimeoutError</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;Tx/Rx/Worker Threads did not start in a timely manner&quot;</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-stop" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">stop</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="stop-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/services/amqp_multithreaded_endpoint.rb, line 136</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">stop</span>
+  <span class="ruby-ivar">@rx_thread</span>.<span class="ruby-identifier">kill</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@rx_thread</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@tx_thread</span>.<span class="ruby-identifier">kill</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@tx_thread</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@worker_threads</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">thread</span><span class="ruby-operator">|</span> <span class="ruby-identifier">thread</span>.<span class="ruby-identifier">kill</span> } <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@worker_threads</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-ivar">@rx_thread</span> = <span class="ruby-ivar">@tx_thread</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@worker_threads</span> = []
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

@@ -5,7 +5,7 @@ describe ApiTools::PlatformContext do
 
   before do
     class TestHaltException < Exception
-      attr_reader :code, :message
+      attr_reader 'code', 'message'
 
       def initialize(code, message)
         @code = code
@@ -63,8 +63,8 @@ describe ApiTools::PlatformContext do
       end
 
       expect(@test.errors).to eq([{
-        :code=>"platform.subscriber_id_required",
-        :message=>"Please supply a `X-Subscriber-Id` HTTP header"
+        'code'=>"platform.subscriber_id_required",
+        'message'=>"Please supply a `X-Subscriber-Id` HTTP header"
       }])
 
     end
@@ -83,8 +83,8 @@ describe ApiTools::PlatformContext do
 
       expect(@test.errors).to eq([
         {
-          :code=>"platform.programme_id_required",
-          :message=>"Please supply a `X-Programme-Id` HTTP header"
+          'code'=>"platform.programme_id_required",
+          'message'=>"Please supply a `X-Programme-Id` HTTP header"
         }
       ])
 

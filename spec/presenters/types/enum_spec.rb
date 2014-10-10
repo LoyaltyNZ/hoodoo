@@ -36,9 +36,10 @@ describe ApiTools::Presenters::Enum do
         :an_enum => :one
       }
 
+      data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.invalid_string", :message=>"Field `an_enum` is an invalid string", :reference=>"an_enum"}
+        {'code'=>"generic.invalid_string", 'message'=>"Field `an_enum` is an invalid string", 'reference'=>"an_enum"}
       ])
     end
 
@@ -48,9 +49,10 @@ describe ApiTools::Presenters::Enum do
         :an_enum => 'hello'
       }
 
+      data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([
-        {:code=>"generic.invalid_string", :message=>"Field `an_enum` does not contain an allowed reference value from this list: `[\"one\", \"two\", \"3\"]`", :reference=>"an_enum"}
+        {'code'=>"generic.invalid_string", 'message'=>"Field `an_enum` does not contain an allowed reference value from this list: `[\"one\", \"two\", \"3\"]`", 'reference'=>"an_enum"}
       ])
     end
 
@@ -60,6 +62,7 @@ describe ApiTools::Presenters::Enum do
         :an_enum => '3'
       }
 
+      data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors).to eq([])
     end

@@ -14,7 +14,7 @@ describe ApiTools::Presenters::Object do
     it 'should return correct error when data is not a object' do
       errors = @inst.validate(2347234)
 
-      err = [{:code=>"generic.invalid_object", :message=>"Field `one` is an invalid object", :reference=>"one"}]
+      err = [{'code'=>"generic.invalid_object", 'message'=>"Field `one` is an invalid object", 'reference'=>"one"}]
       expect(errors).to eq(err)
     end
 
@@ -25,12 +25,12 @@ describe ApiTools::Presenters::Object do
     it 'should return error when required and absent' do
       @inst.required = true
       expect(@inst.validate(nil)).to eq([
-        {:code=>"generic.required_field_missing", :message=>"Field `one` is required", :reference=>"one"}
+        {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
     end
 
     it 'should return correct error with non object types' do
-      err = [{:code=>"generic.invalid_object", :message=>"Field `one` is an invalid object", :reference=>"one"}]
+      err = [{'code'=>"generic.invalid_object", 'message'=>"Field `one` is an invalid object", 'reference'=>"one"}]
 
       expect(@inst.validate('asckn')).to eq(err)
       expect(@inst.validate(34534)).to eq(err)
@@ -42,7 +42,7 @@ describe ApiTools::Presenters::Object do
     it 'should return correct error with path' do
       errors = @inst.validate('scdacs','ordinary')
       expect(errors).to eq([
-        {:code=>"generic.invalid_object", :message=>"Field `ordinary.one` is an invalid object", :reference=>"ordinary.one"}
+        {'code'=>"generic.invalid_object", 'message'=>"Field `ordinary.one` is an invalid object", 'reference'=>"ordinary.one"}
       ])
     end
   end

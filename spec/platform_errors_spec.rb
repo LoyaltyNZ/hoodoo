@@ -37,13 +37,13 @@ describe ApiTools::PlatformErrors do
     it 'should add an error with correct structure' do
       @test.add_error(1,2)
 
-      expect(@test.errors).to eq([{ :code =>1, :message =>2}])
+      expect(@test.errors).to eq([{ 'code' =>1, 'message' =>2}])
     end
 
     it 'should add an error with a reference if specified' do
       @test.add_error(1,2,3)
 
-      expect(@test.errors).to eq([{ :code =>1, :message =>2 ,:reference =>3}])
+      expect(@test.errors).to eq([{ 'code' =>1, 'message' =>2 ,'reference' =>3}])
     end
 
     it 'should add multiple errors' do
@@ -51,8 +51,8 @@ describe ApiTools::PlatformErrors do
       @test.add_error(4,5,6)
 
       expect(@test.errors).to eq([
-        { :code =>1, :message =>2 ,:reference =>3},
-        { :code =>4, :message =>5 ,:reference =>6}
+        { 'code' =>1, 'message' =>2 ,'reference' =>3},
+        { 'code' =>4, 'message' =>5 ,'reference' =>6}
       ])
     end
   end

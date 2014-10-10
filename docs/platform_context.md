@@ -34,7 +34,7 @@ The module provides the following methods in the API class, available in the sin
 The current list of errors can be accessed with the instance variable `@errors`, an array of the standard structure:
 
     [
-      { :code => "<error_code>", :message => "<error_message>", :reference => "<error_reference>" },
+      { 'code' => "<error_code>", 'message' => "<error_message>", 'reference' => "<error_reference>" },
       ...
     ]
 

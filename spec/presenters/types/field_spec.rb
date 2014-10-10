@@ -36,7 +36,7 @@ describe ApiTools::Presenters::Field do
       @inst.required = true
       errors = @inst.validate(nil)
       expect(errors).to eq([
-        {:code=>"generic.required_field_missing", :message=>"Field `one` is required", :reference=>"one"}
+        {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
     end
 
@@ -44,7 +44,7 @@ describe ApiTools::Presenters::Field do
       @inst.required = true
       errors = @inst.validate(nil,'ordinary')
       expect(errors).to eq([
-       {:code=>"generic.required_field_missing", :message=>"Field `ordinary.one` is required", :reference=>"ordinary.one"}
+       {'code'=>"generic.required_field_missing", 'message'=>"Field `ordinary.one` is required", 'reference'=>"ordinary.one"}
       ])
     end
   end

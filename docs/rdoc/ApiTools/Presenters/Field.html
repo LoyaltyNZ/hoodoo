@@ -77,6 +77,12 @@
     
     <li ><a href="#method-i-full_path">#full_path</a>
     
+    <li ><a href="#method-i-parse">#parse</a>
+    
+    <li ><a href="#method-i-read_at_path">#read_at_path</a>
+    
+    <li ><a href="#method-i-render">#render</a>
+    
     <li ><a href="#method-i-validate">#validate</a>
     
   </ul>
@@ -112,6 +118,32 @@
         <h3>Attributes</h3>
       </header>
 
+      
+      <div id="attribute-i-default" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">default</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Default value, if supplied</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-mapping" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">mapping</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>Mapping to and from model</p>
+        
+        </div>
+      </div>
       
       <div id="attribute-i-name" class="method-detail">
         <div class="method-heading attribute-method-heading">
@@ -176,10 +208,13 @@ name and options</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 14</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>
+  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-ivar">@required</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:required</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:required</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-ivar">@default</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:default</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:default</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@mapping</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:mapping</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:mapping</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@path</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:path</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:path</span>] <span class="ruby-operator">:</span> []
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -215,18 +250,115 @@ name and options</p>
           <p>Return the full path and name of this field</p>
 <dl class="rdoc-list note-list"><dt><code>path</code>
 <dd>
-<p>The JSON path or nil, e.g. ‘one.two’</p>
+<p>The JSON path or nil, e.g. &#39;one.two&#39;</p>
 </dd></dl>
           
           
 
           
           <div class="method-source-code" id="full_path-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 30</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-identifier">path</span><span class="ruby-operator">+</span><span class="ruby-string">'.'</span><span class="ruby-operator">+</span><span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">path</span><span class="ruby-operator">+</span><span class="ruby-string">&#39;.&#39;</span><span class="ruby-operator">+</span><span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-parse" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse</span><span
+            class="method-args">(data, target)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="parse-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 35</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-identifier">root</span> = <span class="ruby-identifier">data</span>
+  (<span class="ruby-ivar">@mapping</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@path</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@mapping</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">root</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">element</span>)
+    <span class="ruby-identifier">root</span> = <span class="ruby-identifier">root</span>[<span class="ruby-identifier">element</span>]
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>] = <span class="ruby-identifier">root</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-render" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">render</span><span
+            class="method-args">(data, target)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Dive down into a given hash along path arrays +@mapping+ or +@path+,
+building new hash entries if necessary at each path level until the last
+one. At that last level, assign the given object.</p>
+<dl class="rdoc-list note-list"><dt>+data
+<dd>
+<p>The object to build at the final path entry - usually an empty <a
+href="Array.html">Array</a> or Hash.</p>
+</dd><dt><code>target</code>
+<dd>
+<p>The Hash (may be initially empty) in which to build the path of keys from
+internal data +@mapping+ or +@path+.</p>
+</dd></dl>
+
+<p>Returns the full path array that was used (a clone of +@mapping+ or
++@path+).</p>
+          
+          
+
+          
+          <div class="method-source-code" id="render-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-identifier">root</span>  = <span class="ruby-identifier">target</span>
+  <span class="ruby-identifier">path</span>  = ( <span class="ruby-ivar">@mapping</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@path</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@mapping</span> ).<span class="ruby-identifier">clone</span>
+  <span class="ruby-identifier">final</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-identifier">path</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">element</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">root</span>[ <span class="ruby-identifier">element</span> ] = {} <span class="ruby-keyword">unless</span> <span class="ruby-identifier">root</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">element</span> )
+    <span class="ruby-identifier">root</span> = <span class="ruby-identifier">root</span>[ <span class="ruby-identifier">element</span> ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">root</span>[ <span class="ruby-identifier">final</span> ] = <span class="ruby-identifier">data</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">path</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">final</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -258,13 +390,62 @@ error</p>
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 20</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">''</span>)
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 27</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = []
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">and</span> <span class="ruby-ivar">@required</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-value">:code=</span><span class="ruby-operator">&gt;</span> <span class="ruby-string">'generic.required_field_missing'</span>, <span class="ruby-value">:message=</span><span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is required&quot;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is required&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
   <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Protected Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-read_at_path" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">read_at_path</span><span
+            class="method-args">( from_target, with_path )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Dive down into a given target data hash using the given array of path keys,
+returning the result at the final key in the path. E.g. if the Hash is “{
+:foo =&gt; { :bar =&gt; { :baz =&gt; ”hello“ } } }” then a path of “[ :foo,
+:bar ]” would yield “{ :baz =&gt; ”hello“ }”.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="read_at_path-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">from_target</span>, <span class="ruby-identifier">with_path</span> )
+  <span class="ruby-identifier">with_path</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">element</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">from_target</span> = <span class="ruby-identifier">from_target</span>[ <span class="ruby-identifier">element</span> ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">from_target</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -284,7 +465,7 @@ error</p>
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="http://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 

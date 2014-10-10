@@ -76,7 +76,7 @@ module ApiTools
     # The options hash contains symbol keys named as follows, with values as
     # described:
     #
-    # +:reference+:: Reference data Hash, optionality depending upon the error
+    # +'reference'+:: Reference data Hash, optionality depending upon the error
     #                code and the reference data its error description mandates.
     #                Provide key/value pairs where (symbol) keys are names from
     #                the array of description requirements and values are
@@ -92,7 +92,7 @@ module ApiTools
     #
     #                See also ApiTools::ErrorDescriptions::DomainDescriptions#error
     #
-    # +:message+::   Optional human-readable for-developer message, +en-nz+
+    # +'message'+::   Optional human-readable for-developer message, +en-nz+
     #                locale. Default messages are provided for all errors, but
     #                if you think you can provide something more informative,
     #                you can do so through this parameter.
@@ -111,9 +111,9 @@ module ApiTools
     #
     def add_error( code, options = nil )
 
-      options ||= {}
-      reference = ApiTools::Utilities.symbolize( options[ :reference ] || {} )
-      message   = options[ :message ]
+      options   = ApiTools::Utilities.stringify( options || {} )
+      reference = ApiTools::Utilities.stringify( options[ 'reference' ] || {} )
+      message   = options[ 'message' ]
 
       # Make sure nobody uses an undeclared error code.
 
@@ -124,7 +124,7 @@ module ApiTools
 
       description = @descriptions.describe( code )
 
-      required_keys = options[ :ignore_requirements ] ? [] : ( description[ :reference ] || [] )
+      required_keys = description[ 'reference' ] || []
       actual_keys   = reference.keys
       missing_keys  = required_keys - actual_keys
 
@@ -134,11 +134,11 @@ module ApiTools
 
       # All good!
 
-      @http_status_code = description[ :status ] || 500 if @errors.empty? # Use first in collection for overall HTTP status code
+      @http_status_code = description[ 'status' ] || 500 if @errors.empty? # Use first in collection for overall HTTP status code
 
       error = {
-        :code    => code,
-        :message => message || description[ :message ] || code
+        'code'    => code,
+        'message' => message || description[ 'message' ] || code
       }
 
       ordered_keys   = required_keys + ( actual_keys - required_keys )
@@ -146,7 +146,7 @@ module ApiTools
 
       # See #unjoin_and_unescape_commas to undo the join below.
 
-      error[ :reference ] = ordered_values.join( ',' ) unless ordered_values.empty?
+      error[ 'reference' ] = ordered_values.join( ',' ) unless ordered_values.empty?
 
       @errors << error
     end
@@ -165,11 +165,11 @@ module ApiTools
     #
     def add_precompiled_error( code, message, reference )
       error = {
-        code:    code,
-        message: message
+        'code'    => code,
+        'message' => message
       }
 
-      error[ :reference ] = reference unless reference.nil? || reference.empty?
+      error[ 'reference' ] = reference unless reference.nil? || reference.empty?
 
       @errors << error
     end
@@ -184,9 +184,9 @@ module ApiTools
 
       source.errors.each do | hash |
         add_precompiled_error(
-          hash[ :code      ],
-          hash[ :message   ],
-          hash[ :reference ]
+          hash[ 'code'      ],
+          hash[ 'message'   ],
+          hash[ 'reference' ]
         )
       end
     end
@@ -213,7 +213,7 @@ module ApiTools
       store! if @created_at.nil?
 
       ApiTools::Data::Resources::Errors.render(
-        { :errors => @errors },
+        { 'errors' => @errors },
         @uuid,
         @created_at
       )
@@ -250,7 +250,7 @@ module ApiTools
       # 'pat'. To split the string joined on ',' to an array but not splitting
       # any escaped '\,', then, we can use this rather opaque split regexp:
       #
-      #   error[ :reference ].split( /(?<!\\),/ )
+      #   error[ 'reference' ].split( /(?<!\\),/ )
       #
       # I.e. split on ',', provided it is not preceded by a '\' (escaped in the
       # regexp to '\\').

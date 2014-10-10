@@ -972,7 +972,7 @@ class RSpecTestServiceWithErrorsStubInterface < ApiTools::ServiceInterface
     version 42
     endpoint :rspec_test_service_with_errors_stub, RSpecTestServiceWithErrorsStubImplementation
     errors_for :rspec do
-      error 'hello', :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' }
+      error 'hello', :status => 418, 'message' => "I'm a teapot", 'reference' => { :rfc => '2324' }
     end
   end
 end
@@ -992,7 +992,7 @@ describe ApiTools::ServiceMiddleware do
 
   it 'should define custom errors' do
     expect_any_instance_of(RSpecTestServiceWithErrorsStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-      expect(context.response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ :status => 418, :message => "I'm a teapot", :reference => { :rfc => '2324' } })
+      expect(context.response.errors.instance_variable_get('@descriptions').describe('rspec.hello')).to eq({ 'status' => 418, 'message' => "I'm a teapot", 'reference' => { 'rfc' => '2324' } })
     end
 
     get '/v42/rspec_test_service_with_errors_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1017,7 +1017,7 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
     search_offset = ( ( context.request.list_search_data || {} )[ 'offset' ] || '0' ).to_i
 
     if search_offset > 0
-      context.response.add_error( 'service_calls_a.triggered', :reference => { :offset => search_offset } )
+      context.response.add_error( 'service_calls_a.triggered', 'reference' => { :offset => search_offset } )
     else
       context.response.body = [1,2,3,4]
       expectable_hook( context )
@@ -1059,7 +1059,7 @@ class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
       search :offset, :limit
     end
     errors_for 'service_calls_a' do
-      error 'triggered', :status => 412, :message => 'Error Triggered'
+      error 'triggered', :status => 412, 'message' => 'Error Triggered'
     end
   end
 end

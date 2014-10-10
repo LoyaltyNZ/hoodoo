@@ -26,7 +26,7 @@ module ApiTools
             end
           end
         else
-          errors << {:code=> 'generic.invalid_array', :message=>"Field `#{full_path(path)}` is an invalid array", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_array', 'message'=>"Field `#{full_path(path)}` is an invalid array", 'reference' => full_path(path)}
         end
 
         errors
@@ -62,6 +62,8 @@ module ApiTools
 
         else
           data.each do | item |
+            next if item.nil?
+
             subtarget = {}
 
             @properties.each do | name, property |

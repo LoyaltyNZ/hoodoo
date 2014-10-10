@@ -162,10 +162,10 @@ module ApiTools
       #          interface in question, wrap it in a call to the #default
       #          DSL method.
       #
-      # Example - add sort key +:code+ with directions +:asc+ and +:desc+,
+      # Example - add sort key +'code'+ with directions +:asc+ and +:desc+,
       # plus sort key +:member+ which only supports direction +:asc+.
       #
-      #     sort :code   => [ :asc, :desc ],
+      #     sort 'code'   => [ :asc, :desc ],
       #          :member => [ :asc ]
       #
       def sort( sort )
@@ -189,11 +189,11 @@ module ApiTools
       # Used in conjunction with #sort. Specifies that a sort key should be
       # the default sort order for the interface.
       #
-      # Example - add sort key +:code+ with directions +:asc+ and +:desc+,
+      # Example - add sort key +'code'+ with directions +:asc+ and +:desc+,
       # plus sort key +:member+ which only supports direction +:asc+. Say that
-      # +:code+ is to be the default sort order.
+      # +'code'+ is to be the default sort order.
       #
-      #     sort default( :code ) => [ :asc, :desc ],
+      #     sort default( 'code' ) => [ :asc, :desc ],
       #          :member          => [ :asc ]
       #
       def default( sort_key )

@@ -75,6 +75,12 @@
     
     <li ><a href="#method-c-get_schema">::get_schema</a>
     
+    <li ><a href="#method-c-parse">::parse</a>
+    
+    <li ><a href="#method-c-render">::render</a>
+    
+    <li ><a href="#method-c-schema">::schema</a>
+    
     <li ><a href="#method-c-validate">::validate</a>
     
   </ul>
@@ -91,8 +97,8 @@
   <section class="description">
     
 <p>A class intended as base functionality for presenter layers in sinatra
-services.  Although Parsing and rendering of JSON is left to the extender,
-`BasePresenter`  provides a rich DSL for JSON schema definition and
+services. Although Parsing and rendering of JSON is left to the extender,
+`BasePresenter` provides a rich DSL for JSON schema definition and
 validation.</p>
 
   </section>
@@ -107,27 +113,6 @@ validation.</p>
 
     
 
-    
-    <section class="attribute-method-details" class="method-section">
-      <header>
-        <h3>Attributes</h3>
-      </header>
-
-      
-      <div id="attribute-c-schema" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">schema</span><span
-            class="attribute-access-type">[RW]</span>
-        </div>
-
-        <div class="method-description">
-        
-        <p>The schema graph.</p>
-        
-        </div>
-      </div>
-      
-    </section>
     
 
     
@@ -156,9 +141,111 @@ validation.</p>
 
           
           <div class="method-source-code" id="get_schema-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 26</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-parse" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">parse</span><span
+            class="method-args">(data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="parse-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>)
+  <span class="ruby-identifier">target</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, {})
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-render" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">render</span><span
+            class="method-args">(data)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="render-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 24</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>)
+  <span class="ruby-identifier">target</span> = {}
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-identifier">target</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-schema" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">schema</span><span
+            class="method-args">(&block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Define the JSON schema for validation</p>
+          
+          
+
+          
+          <div class="method-source-code" id="schema-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 9</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">schema</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -190,7 +277,7 @@ errors if any.</p>
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 21</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -212,7 +299,7 @@ errors if any.</p>
 
 <footer id="validator-badges" role="contentinfo">
   <p><a href="http://validator.w3.org/check/referer">Validate</a>
-  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.1.
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
   <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
 </footer>
 

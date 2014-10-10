@@ -16,7 +16,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name, options = {})
-        @name = name
+        @name = name.to_s
         @required = options.has_key?(:required) ? options[:required] : false
         @default = options.has_key?(:default) ? options[:default] : nil
         @mapping = options.has_key?(:mapping) ? options[:mapping] : nil
@@ -27,7 +27,7 @@ module ApiTools
       def validate(data, path = '')
         errors = []
         if data.nil? and @required
-          errors << {:code=> 'generic.required_field_missing', :message=>"Field `#{full_path(path)}` is required", :reference => full_path(path)}
+          errors << {'code'=> 'generic.required_field_missing', 'message'=>"Field `#{full_path(path)}` is required", 'reference' => full_path(path)}
         end
         errors
       end
@@ -35,6 +35,7 @@ module ApiTools
       def parse(data, target)
         root = data
         (@mapping.nil? ? @path : @mapping).each do |element|
+          element = element.to_s
           return nil unless root.has_key?(element)
           root = root[element]
         end
@@ -57,9 +58,10 @@ module ApiTools
       def render(data, target)
         root  = target
         path  = ( @mapping.nil? ? @path : @mapping ).clone
-        final = path.pop
+        final = path.pop.to_s
 
         path.each do | element |
+          element = element.to_s
           root[ element ] = {} unless root.has_key?( element )
           root = root[ element ]
         end
@@ -85,6 +87,7 @@ module ApiTools
       #
       def read_at_path( from_target, with_path )
         with_path.each do | element |
+          element = element.to_s
           from_target = from_target[ element ]
         end
 

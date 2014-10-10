@@ -10,7 +10,7 @@ module ApiTools
         return [] if !@required and data.nil?
 
         unless data.is_a? ::String
-          errors << {:code=> 'generic.invalid_string', :message=>"Field `#{full_path(path)}` is an invalid string", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` is an invalid string", 'reference' => full_path(path)}
         end
         errors
       end

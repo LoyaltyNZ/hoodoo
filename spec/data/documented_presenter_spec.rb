@@ -93,31 +93,31 @@ describe '#schema' do
       expect(ApiTools::Data::Types::Hello.is_internationalised?()).to eq(true)
       expect(schema.is_internationalised?()).to eq(true)
       expect(schema.properties.count).to eq(1)
-      expect(schema.properties[:name]).to be_a(ApiTools::Presenters::Text)
-      expect(schema.properties[:name].required).to eq(true)
+      expect(schema.properties['name']).to be_a(ApiTools::Presenters::Text)
+      expect(schema.properties['name'].required).to eq(true)
 
       schema = ApiTools::Data::Resources::World.get_schema
 
       expect(ApiTools::Data::Resources::World.is_internationalised?()).to eq(true)
       expect(schema.is_internationalised?()).to eq(true)
       expect(schema.properties.count).to eq(3)
-      expect(schema.properties[:errors_id]).to be_a(ApiTools::Data::DocumentedUUID)
-      expect(schema.properties[:errors_id].required).to eq(false)
-      expect(schema.properties[:errors_id].resource).to eq(:Errors)
-      expect(schema.properties[:test_tags]).to be_a(ApiTools::Data::DocumentedTags)
-      expect(schema.properties[:test_tags].required).to eq(false)
-      expect(schema.properties[:test_object]).to be_a(ApiTools::Data::DocumentedObject)
-      expect(schema.properties[:test_object].required).to eq(true)
-      expect(schema.properties[:test_object].properties[:nested_object]).to be_a(ApiTools::Data::DocumentedObject)
-      expect(schema.properties[:test_object].properties[:nested_object].required).to eq(false)
-      expect(schema.properties[:test_object].properties[:nested_object].properties[:name]).to be_a(ApiTools::Presenters::Text)
-      expect(schema.properties[:test_object].properties[:nested_object].properties[:obj_suffix]).to be_a(ApiTools::Presenters::String)
-      expect(schema.properties[:test_object].properties[:nested_object].properties[:obj_suffix].length).to eq(1)
-      expect(schema.properties[:test_object].properties[:test_array]).to be_a(ApiTools::Data::DocumentedArray)
-      expect(schema.properties[:test_object].properties[:test_array].required).to eq(false)
-      expect(schema.properties[:test_object].properties[:test_array].properties[:name]).to be_a(ApiTools::Presenters::Text)
-      expect(schema.properties[:test_object].properties[:test_array].properties[:ary_suffix]).to be_a(ApiTools::Presenters::String)
-      expect(schema.properties[:test_object].properties[:test_array].properties[:ary_suffix].length).to eq(2)
+      expect(schema.properties['errors_id']).to be_a(ApiTools::Data::DocumentedUUID)
+      expect(schema.properties['errors_id'].required).to eq(false)
+      expect(schema.properties['errors_id'].resource).to eq(:Errors)
+      expect(schema.properties['test_tags']).to be_a(ApiTools::Data::DocumentedTags)
+      expect(schema.properties['test_tags'].required).to eq(false)
+      expect(schema.properties['test_object']).to be_a(ApiTools::Data::DocumentedObject)
+      expect(schema.properties['test_object'].required).to eq(true)
+      expect(schema.properties['test_object'].properties['nested_object']).to be_a(ApiTools::Data::DocumentedObject)
+      expect(schema.properties['test_object'].properties['nested_object'].required).to eq(false)
+      expect(schema.properties['test_object'].properties['nested_object'].properties['name']).to be_a(ApiTools::Presenters::Text)
+      expect(schema.properties['test_object'].properties['nested_object'].properties['obj_suffix']).to be_a(ApiTools::Presenters::String)
+      expect(schema.properties['test_object'].properties['nested_object'].properties['obj_suffix'].length).to eq(1)
+      expect(schema.properties['test_object'].properties['test_array']).to be_a(ApiTools::Data::DocumentedArray)
+      expect(schema.properties['test_object'].properties['test_array'].required).to eq(false)
+      expect(schema.properties['test_object'].properties['test_array'].properties['name']).to be_a(ApiTools::Presenters::Text)
+      expect(schema.properties['test_object'].properties['test_array'].properties['ary_suffix']).to be_a(ApiTools::Presenters::String)
+      expect(schema.properties['test_object'].properties['test_array'].properties['ary_suffix'].length).to eq(2)
     end
 
     it 'should return no errors with valid data for type only' do
@@ -136,6 +136,7 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([])
     end
 
@@ -155,6 +156,7 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       rendered = ApiTools::Data::Resources::World.render(
         data,
         ApiTools::UUID.generate,
@@ -181,21 +183,22 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([
         {
-          :code => 'generic.invalid_string',
-          :message => 'Field `test_object.nested_object.obj_suffix` is larger than max length `1`',
-          :reference => "test_object.nested_object.obj_suffix"
+          'code' => 'generic.invalid_string',
+          'message' => 'Field `test_object.nested_object.obj_suffix` is larger than max length `1`',
+          'reference' => "test_object.nested_object.obj_suffix"
         },
         {
-          :code => 'generic.required_field_missing',
-          :message => 'Field `test_object.test_array[2].name` is required',
-          :reference => "test_object.test_array[2].name"
+          'code' => 'generic.required_field_missing',
+          'message' => 'Field `test_object.test_array[2].name` is required',
+          'reference' => "test_object.test_array[2].name"
         },
         {
-          :code => 'generic.invalid_string',
-          :message => 'Field `test_object.test_array[2].ary_suffix` is an invalid string',
-          :reference => "test_object.test_array[2].ary_suffix"
+          'code' => 'generic.invalid_string',
+          'message' => 'Field `test_object.test_array[2].ary_suffix` is an invalid string',
+          'reference' => "test_object.test_array[2].ary_suffix"
         }
       ])
     end
@@ -208,9 +211,9 @@ describe '#schema' do
       data = {}
       expect(NastyNesting.validate(data, true)).to eq([
         {
-          :code => 'generic.required_field_missing',
-          :message => 'Field `outer_array` is required',
-          :reference => "outer_array"
+          'code' => 'generic.required_field_missing',
+          'message' => 'Field `outer_array` is required',
+          'reference' => "outer_array"
         }
       ])
 
@@ -220,6 +223,7 @@ describe '#schema' do
       data = {
         :outer_array => []
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([])
 
       # The outer array is present and has two entries that omit required
@@ -228,13 +232,14 @@ describe '#schema' do
       data = {
         :outer_array => [{}, {}]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].one` is required',          :reference => "outer_array[0].one"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].two` is required',          :reference => "outer_array[0].two"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array` is required', :reference => "outer_array[0].middle_array"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[1].one` is required',          :reference => "outer_array[1].one"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[1].two` is required',          :reference => "outer_array[1].two"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[1].middle_array` is required', :reference => "outer_array[1].middle_array"}
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].one` is required',          'reference' => "outer_array[0].one"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].two` is required',          'reference' => "outer_array[0].two"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array` is required', 'reference' => "outer_array[0].middle_array"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[1].one` is required',          'reference' => "outer_array[1].one"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[1].two` is required',          'reference' => "outer_array[1].two"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[1].middle_array` is required', 'reference' => "outer_array[1].middle_array"}
       ])
 
       # ...and follow that pattern for nested items...
@@ -248,6 +253,7 @@ describe '#schema' do
           }
         ]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([])
 
       data = {
@@ -259,13 +265,14 @@ describe '#schema' do
           }
         ]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].three` is required',       :reference => "outer_array[0].middle_array[0].three"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].four` is required',        :reference => "outer_array[0].middle_array[0].four"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array` is required', :reference => "outer_array[0].middle_array[0].inner_array"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[1].three` is required',       :reference => "outer_array[0].middle_array[1].three"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[1].four` is required',        :reference => "outer_array[0].middle_array[1].four"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[1].inner_array` is required', :reference => "outer_array[0].middle_array[1].inner_array"}
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].three` is required',       'reference' => "outer_array[0].middle_array[0].three"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].four` is required',        'reference' => "outer_array[0].middle_array[0].four"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array` is required', 'reference' => "outer_array[0].middle_array[0].inner_array"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[1].three` is required',       'reference' => "outer_array[0].middle_array[1].three"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[1].four` is required',        'reference' => "outer_array[0].middle_array[1].four"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[1].inner_array` is required', 'reference' => "outer_array[0].middle_array[1].inner_array"}
       ])
 
       data = {
@@ -283,6 +290,7 @@ describe '#schema' do
           }
         ]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([])
 
       data = {
@@ -300,15 +308,16 @@ describe '#schema' do
           }
         ]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].five` is required',               :reference => "outer_array[0].middle_array[0].inner_array[0].five"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].six` is required',                :reference => "outer_array[0].middle_array[0].inner_array[0].six"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object` is required',       :reference => "outer_array[0].middle_array[0].inner_array[0].inner_object"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object.seven` is required', :reference => "outer_array[0].middle_array[0].inner_array[0].inner_object.seven"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[1].five` is required',               :reference => "outer_array[0].middle_array[0].inner_array[1].five"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[1].six` is required',                :reference => "outer_array[0].middle_array[0].inner_array[1].six"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[1].inner_object` is required',       :reference => "outer_array[0].middle_array[0].inner_array[1].inner_object"},
-        {:code => 'generic.required_field_missing', :message => 'Field `outer_array[0].middle_array[0].inner_array[1].inner_object.seven` is required', :reference => "outer_array[0].middle_array[0].inner_array[1].inner_object.seven"}
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].five` is required',               'reference' => "outer_array[0].middle_array[0].inner_array[0].five"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].six` is required',                'reference' => "outer_array[0].middle_array[0].inner_array[0].six"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object` is required',       'reference' => "outer_array[0].middle_array[0].inner_array[0].inner_object"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object.seven` is required', 'reference' => "outer_array[0].middle_array[0].inner_array[0].inner_object.seven"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[1].five` is required',               'reference' => "outer_array[0].middle_array[0].inner_array[1].five"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[1].six` is required',                'reference' => "outer_array[0].middle_array[0].inner_array[1].six"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[1].inner_object` is required',       'reference' => "outer_array[0].middle_array[0].inner_array[1].inner_object"},
+        {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[1].inner_object.seven` is required', 'reference' => "outer_array[0].middle_array[0].inner_array[1].inner_object.seven"}
       ])
 
       data = {
@@ -334,6 +343,7 @@ describe '#schema' do
           }
         ]
       }
+      data = ApiTools::Utilities.stringify(data)
       expect(NastyNesting.validate(data, true)).to eq([])
     end
 
@@ -366,17 +376,18 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       expect(ApiTools::Data::Resources::World.render(data)).to eq({
-        :errors_id => data[:errors_id],
-        :test_tags => 'foo,bar,baz',
-        :test_object => {
-          :nested_object => {
-            :name => 'Some name',
-            :obj_suffix => '!'
+        'errors_id' => data['errors_id'],
+        'test_tags' => 'foo,bar,baz',
+        'test_object' => {
+          'nested_object' => {
+            'name' => 'Some name',
+            'obj_suffix' => '!'
           },
-          :test_array => [
-            { :name => 'Some name 0', :ary_suffix => '00' },
-            { :name => 'Some name 1', :ary_suffix => nil }
+          'test_array' => [
+            { 'name' => 'Some name 0', 'ary_suffix' => '00' },
+            { 'name' => 'Some name 1', 'ary_suffix' => nil }
           ]
         }
       })
@@ -398,6 +409,7 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       uuid = ApiTools::UUID.generate
       time = Time.now
 
@@ -407,20 +419,20 @@ describe '#schema' do
         time,
         'en-gb'
       )).to eq({
-        :id => uuid,
-        :kind => 'World',
-        :created_at => time.iso8601,
-        :language => 'en-gb',
-        :errors_id => data[:errors_id],
-        :test_tags => 'foo,bar,baz',
-        :test_object => {
-          :nested_object => {
-            :name => 'Some name',
-            :obj_suffix => '!'
+        'id' => uuid,
+        'kind' => 'World',
+        'created_at' => time.iso8601,
+        'language' => 'en-gb',
+        'errors_id' => data['errors_id'],
+        'test_tags' => 'foo,bar,baz',
+        'test_object' => {
+          'nested_object' => {
+            'name' => 'Some name',
+            'obj_suffix' => '!'
           },
-          :test_array => [
-            { :name => 'Some name 0', :ary_suffix => '00' },
-            { :name => 'Some name 1', :ary_suffix => nil }
+          'test_array' => [
+            { 'name' => 'Some name 0', 'ary_suffix' => '00' },
+            { 'name' => 'Some name 1', 'ary_suffix' => nil }
           ]
         }
       })
@@ -442,6 +454,7 @@ describe '#schema' do
         }
       }
 
+      data = ApiTools::Utilities.stringify(data)
       uuid = ApiTools::UUID.generate
 
       expect {
@@ -458,16 +471,16 @@ describe '#schema' do
   describe '#parse' do
     it 'should parse correctly' do
       data = {
-        :errors_id => ApiTools::UUID.generate,
-        :test_tags => 'foo,bar,baz',
-        :test_object => {
-          :nested_object => {
-            :name => 'Some name',
-            :obj_suffix => '!'
+        'errors_id' => ApiTools::UUID.generate,
+        'test_tags' => 'foo,bar,baz',
+        'test_object' => {
+          'nested_object' => {
+            'name' => 'Some name',
+            'obj_suffix' => '!'
           },
-          :test_array => [
-            { :name => 'Some name 0', :ary_suffix => '00' },
-            { :name => 'Some name 1' }
+          'test_array' => [
+            { 'name' => 'Some name 0', 'ary_suffix' => '00' },
+            { 'name' => 'Some name 1' }
           ]
         }
       }

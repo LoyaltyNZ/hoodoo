@@ -328,7 +328,7 @@ module ApiTools
       if selected_services.size == 0
         return @service_response.add_error(
           'platform.not_found',
-          :reference => { :entity_name => '' }
+          'reference' => { :entity_name => '' }
         )
       elsif selected_services.size > 1
         raise "Multiple service endpoint matches - internal server configuration fault"
@@ -379,12 +379,12 @@ module ApiTools
 
       if action == :list || action == :create
         return @service_response.add_error( 'platform.malformed',
-                                            :message => 'Unexpected path components for this action',
-                                            :reference => { :action => action } ) unless uri_path_components.empty?
+                                            'message' => 'Unexpected path components for this action',
+                                            'reference' => { :action => action } ) unless uri_path_components.empty?
       else
         return @service_response.add_error( 'platform.malformed',
-                                            :message => 'Expected path components identifying target resource instance for this action',
-                                            :reference => { :action => action } ) if uri_path_components.empty?
+                                            'message' => 'Expected path components identifying target resource instance for this action',
+                                            'reference' => { :action => action } ) if uri_path_components.empty?
       end
 
       # There should be no spurious body data for anything other than "create"
@@ -408,7 +408,7 @@ module ApiTools
 
       unless ( body.nil? || body.is_a?( String ) ) && @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
         return @service_response.add_error( 'platform.malformed',
-                                            :message => 'Body data exceeds configured maximum size for platform' )
+                                            'message' => 'Body data exceeds configured maximum size for platform' )
       end
 
       log(
@@ -422,8 +422,8 @@ module ApiTools
 
       elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
         return @service_response.add_error( 'platform.malformed',
-                                            :message => 'Unexpected body data for this action',
-                                            :reference => { :action => action } )
+                                            'message' => 'Unexpected body data for this action',
+                                            'reference' => { :action => action } )
       end
 
       log(
@@ -497,7 +497,7 @@ module ApiTools
 
         @service_response.errors.add_error(
           'platform.malformed',
-          :message => "Content-Type '#{ @rack_request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
+          'message' => "Content-Type '#{ @rack_request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
         )
 
       end
@@ -656,7 +656,7 @@ module ApiTools
       unless allowed_actions.include?( action )
         response.add_error(
           'platform.method_not_allowed',
-          :message => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
+          'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
         )
       end
 
@@ -829,8 +829,8 @@ module ApiTools
       if malformed
         return service_response.add_error(
           'platform.malformed',
-          :message => "One or more malformed or invalid query string parameters",
-          :reference => { :including => malformed }
+          'message' => "One or more malformed or invalid query string parameters",
+          'reference' => { :including => malformed }
         )
       end
 
@@ -905,8 +905,8 @@ module ApiTools
 
       return response.add_error(
         'platform.fault',
-        :message => exception.message,
-        :reference => reference
+        'message' => exception.message,
+        'reference' => reference
       )
     end
 

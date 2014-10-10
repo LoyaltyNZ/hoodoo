@@ -35,10 +35,10 @@ module ApiTools
 
         if data.is_a? ::String
           unless @from.include?(data)
-            errors << {:code=> 'generic.invalid_string', :message=>"Field `#{full_path(path)}` does not contain an allowed reference value from this list: `#{@from}`", :reference => full_path(path)}
+            errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` does not contain an allowed reference value from this list: `#{@from}`", 'reference' => full_path(path)}
           end
         else
-          errors << {:code=> 'generic.invalid_string', :message=>"Field `#{full_path(path)}` is an invalid string", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` is an invalid string", 'reference' => full_path(path)}
         end
         errors
       end

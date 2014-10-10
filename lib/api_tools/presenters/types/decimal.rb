@@ -25,7 +25,7 @@ module ApiTools
         return [] if !@required and data.nil?
 
         unless data.is_a? ::BigDecimal
-          errors << {:code=> 'generic.invalid_decimal', :message=>"Field `#{full_path(path)}` is an invalid decimal", :reference => full_path(path) }
+          errors << {'code'=> 'generic.invalid_decimal', 'message'=>"Field `#{full_path(path)}` is an invalid decimal", 'reference' => full_path(path) }
         end
         errors
       end

@@ -33,8 +33,8 @@ describe ApiTools::JsonErrors do
       @test.fail_with_error(422,2,3,4)
 
       expect(@test.errors).to eq([
-        { :code =>1, :message =>2 ,:reference =>3},
-        { :code =>2, :message =>3 ,:reference =>4}
+        { 'code' =>1, 'message' =>2 ,'reference' =>3},
+        { 'code' =>2, 'message' =>3 ,'reference' =>4}
       ])
     end
   end

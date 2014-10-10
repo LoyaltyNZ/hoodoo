@@ -10,7 +10,7 @@ module ApiTools
         return [] if !@required and data.nil?
 
         unless data.is_a? ::Integer
-          errors << {:code=> 'generic.invalid_integer', :message=>"Field `#{full_path(path)}` is an invalid integer", :reference => full_path(path)}
+          errors << {'code'=> 'generic.invalid_integer', 'message'=>"Field `#{full_path(path)}` is an invalid integer", 'reference' => full_path(path)}
         end
         errors
       end

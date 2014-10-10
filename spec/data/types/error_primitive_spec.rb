@@ -8,8 +8,8 @@ describe ApiTools::Data::Types::ErrorPrimitive do
 
     expect(schema.properties.count).to eq(3)
 
-    expect(schema.properties[:code]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:message]).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties[:reference]).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['code']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['message']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['reference']).to be_a(ApiTools::Presenters::Text)
   end
 end

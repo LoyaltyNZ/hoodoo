@@ -191,10 +191,10 @@ module ApiTools
       # +:status+::    The integer or string HTTP status code to be associated
       #                with this error
       #
-      # +:message+::   The +en-nz+ language human-readable error message used
+      # +'message'+::   The +en-nz+ language human-readable error message used
       #                for developers.
       #
-      # +:reference+:: Optional array of required named references. When errors
+      # +'reference'+:: Optional array of required named references. When errors
       #                are added (via ApiTools::Errors#add_error) to a
       #                collection, required reference(s) from this array must
       #                be provided by the error-adding caller else an exception
@@ -202,7 +202,11 @@ module ApiTools
       #                error data is logged and sent to clients.
       #
       def error( name, options )
-        required_keys = [ :status, :message ]
+        options       = ApiTools::Utilities.stringify( options )
+        required_keys = [ 'status', 'message' ]
+
+        reference              = options[ 'reference' ]
+        options[ 'reference' ] = reference.map( &:to_s ) if reference.is_a?( Array )
 
         required_keys.each do | required_key |
           unless options.has_key?( required_key )

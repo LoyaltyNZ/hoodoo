@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module ApiTools::Data::DocumentedDSL - RDoc Documentation</title>
+
+<link href="../../fonts.css" rel="stylesheet">
+<link href="../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+</script>
+
+<script src="../../js/jquery.js"></script>
+<script src="../../js/navigation.js"></script>
+<script src="../../js/search_index.js"></script>
+<script src="../../js/search.js"></script>
+<script src="../../js/searcher.js"></script>
+<script src="../../js/darkfish.js"></script>
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-array">#array</a>
+    
+    <li ><a href="#method-i-internationalised">#internationalised</a>
+    
+    <li ><a href="#method-i-is_internationalised-3F">#is_internationalised?</a>
+    
+    <li ><a href="#method-i-object">#object</a>
+    
+    <li ><a href="#method-i-tags">#tags</a>
+    
+    <li ><a href="#method-i-type">#type</a>
+    
+    <li ><a href="#method-i-uuid">#uuid</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-ApiTools::Data::DocumentedDSL">
+  <h1 id="module-ApiTools::Data::DocumentedDSL" class="module">
+    module ApiTools::Data::DocumentedDSL
+  </h1>
+
+  <section class="description">
+    
+<p>Analogous to <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>, but
+holds the documented data type and resource DSL extensions only. Same-named
+methods herein override those in <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+
+<p>Excellent worked examples that cover a significant swathe of both the base
+DSL and the extensions defined here can be found in the
+<em>implementations</em> of the following:</p>
+<ul><li>
+<p><a href="Types/Basket.html">ApiTools::Data::Types::Basket</a></p>
+</li><li>
+<p><a href="Resources/Purchase.html">ApiTools::Data::Resources::Purchase</a></p>
+</li></ul>
+
+  </section>
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-array" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">array</span><span
+            class="method-args">(name, options = {}, &block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>As <a
+href="../Presenters/BaseDSL.html#method-i-array">ApiTools::Presenters::BaseDSL#array</a>
+but with the extended DSL in <a
+href="DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a> available to
+the block.</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Optional block declaring the fields of each array item</p>
+</dd></dl>
+
+<p>Example - mandatory JSON field “currencies” would lead to an array where
+each array entry contains the fields defined by <a
+href="Types/Currency.html">ApiTools::Data::Types::Currency</a> along with
+an up-to-32 character string with field name “notes”, that field also being
+required. Whether or not the fields of the referenced Currency type are
+needed is up to the definition of that type. See <a
+href="DocumentedDSL.html#method-i-type">type</a> for more information.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">VeryWealthyMember</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">array</span> :<span class="ruby-identifier">currencies</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">type</span> :<span class="ruby-constant">Currency</span>
+    <span class="ruby-identifier">string</span> :<span class="ruby-identifier">notes</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="array-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">array</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">ary</span> = <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedArray</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_internationalised?</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-internationalised" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">internationalised</span><span
+            class="method-args">( options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that this Type or Resource contains fields which will may carry
+human-readable data subject to platform interntionalisation rules. A
+Resource which is internationalised automatically gains a
+<code>language</code> field (part of the Platform API&#39;s Common Fields)
+used in resource representations. A Type which is internationalised gains
+nothing until it is cross-referenced by a Resource definion, at which point
+the cross-referencing resource becomes itself implicitly internationalised
+(so it “taints” the resource). For cross-referencing, see <a
+href="DocumentedDSL.html#method-i-type">type</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>Optional options hash. No option keys/values defined yet.</p>
+</dd></dl>
+
+<p>Example - a Member resource with internationalised fields such as the
+member&#39;s name:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Member</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+
+  <span class="ruby-comment"># Say that Member will contain at least one field that holds</span>
+  <span class="ruby-comment"># human readable data, causing the Member to be subject to</span>
+  <span class="ruby-comment"># internationalisation rules.</span>
+
+  <span class="ruby-identifier">internationalised</span>
+
+  <span class="ruby-comment"># Declare fields as normal, for example...</span>
+
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">name</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="internationalised-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 113</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-is_internationalised-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">is_internationalised?</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>An enquiry method related to, but not part of the DSL; returns
+<code>true</code> if the schema instance is internationalised, else
+<code>false</code>.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="is_internationalised-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 121</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">is_internationalised?</span>
+  <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@internationalised</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-object" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">object</span><span
+            class="method-args">(name, options = {}, &block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>As <a
+href="../Presenters/BaseDSL.html#method-i-object">ApiTools::Presenters::BaseDSL#object</a>
+but with the extended DSL in <a
+href="DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a> available to
+the block.</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block declaring the fields making up the nested object</p>
+</dd></dl>
+
+<p>Example - mandatory JSON field “currencies” would lead to an object which
+had the same fields as <a
+href="Types/Currency.html">ApiTools::Data::Types::Currency</a> along with
+an up-to-32 character string with field name “notes”, that field also being
+required. Whether or not the fields of the referenced Currency type are
+needed is up to the definition of that type. See <a
+href="DocumentedDSL.html#method-i-type">type</a> for more information.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">WealthyMember</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">object</span> :<span class="ruby-identifier">currencies</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">type</span> :<span class="ruby-constant">Currency</span>
+    <span class="ruby-identifier">string</span> :<span class="ruby-identifier">notes</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="object-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 51</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">object</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;ApiTools::Data::DocumentedDSL#object must have block&#39;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
+
+  <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_internationalised?</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-tags" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">tags</span><span
+            class="method-args">( field_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that this Type or Resource has a string field of unlimited length
+that contains comma-separated tag strings.</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the tags.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd></dl>
+
+<p>Example - a Product resource which supports product tagging:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Product</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+
+  <span class="ruby-identifier">internationalised</span>
+
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">name</span>
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">description</span>
+  <span class="ruby-identifier">string</span> :<span class="ruby-identifier">sku</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">64</span>
+  <span class="ruby-identifier">tags</span> :<span class="ruby-identifier">tags</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="tags-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 144</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedTags</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-type" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">type</span><span
+            class="method-args">( type_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declare that a nested type of a given name is included at this point. This
+is only normally done within an <code>array</code> or <code>object</code>
+declaration. The fields of the given named type are considered to be
+defined inline at the point of declaration - essentially, it&#39;s macro
+expansion.</p>
+<dl class="rdoc-list note-list"><dt><code>type_name</code>
+<dd>
+<p>Name of the type to nest as a symbol, e.g. <code>:BasketItem</code>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd></dl>
+
+<p>It doesn&#39;t make sense to mark a <code>type</code> &#39;field&#39; as
+<code>:required</code> in the options since the declaration just expands to
+the contents of the referenced type and it is the definition of that type
+that determines whether or not its various field(s) are optional or
+required.</p>
+
+<p>Example 1 - a basket includes an array of the type
+<code>BasketItems</code>.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Basket</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">array</span> :<span class="ruby-identifier">items</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">type</span> :<span class="ruby-constant">BasketItem</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>A fragment of JSON for a basket might look like this:</p>
+
+<pre>{
+  &quot;items&quot;: [
+    {
+       // (First BasketItem&#39;s fields)
+    },
+    {
+       // (First BasketItem&#39;s fields)
+    },
+    // etc.
+  ]
+}</pre>
+
+<p>Example 2 - a basket item refers to a product description by having its
+fields inline. So suppose we have this:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Product</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">internationalised</span>
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">name</span>
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">description</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">BasketItem</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">object</span> :<span class="ruby-identifier">product_data</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">type</span> :<span class="ruby-constant">Product</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>…then this would be a valid BasketItem fragment of JSON:</p>
+
+<pre>{
+  &quot;product_data&quot;: {
+    &quot;name&quot;: &quot;Washing powder&quot;,
+    &quot;description&quot;: &quot;Washes whiter than white!&quot;
+  }
+}</pre>
+
+<p>It is also possible to use this mechanism for inline expansions when you
+have, say, a Resource defined entirely in terms of something reused
+elsewhere as a Type. This is the case for a Currency - for example:</p>
+
+<pre class="ruby"><span class="ruby-identifier">type</span> :<span class="ruby-constant">Currency</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">string</span> :<span class="ruby-identifier">curency_code</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">8</span>
+  <span class="ruby-identifier">string</span> :<span class="ruby-identifier">symbol</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">16</span>
+  <span class="ruby-identifier">integer</span> :<span class="ruby-identifier">multiplier</span>, :<span class="ruby-identifier">default</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">100</span>
+  <span class="ruby-identifier">array</span> :<span class="ruby-identifier">qualifiers</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">string</span> :<span class="ruby-identifier">qualifier</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">resource</span> :<span class="ruby-constant">Currency</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">type</span> :<span class="ruby-constant">Currency</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>This means that the <strong>Resource</strong> of <code>Currency</code> has
+exactly the same fields as the <strong>Type</strong> of Currency. The
+Resource could define other fields too, though this would be risky as the
+Type might gain same-named fields in future, leading to undefined
+behaviour. At such a time, a degree of cut-and-paste and removing the
+<code>type</code> call from the Resource definition would be necessary.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="type-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 265</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">type</span>( <span class="ruby-identifier">type_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">klass</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Types</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">type_name</span> )
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#type: Unrecognised type name &#39;#{type_name}&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">schema_definition</span>() )
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-uuid" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">uuid</span><span
+            class="method-args">( field_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that this Type or Resource _refers to_ another Resource instance
+via its <a href="../UUID.html">UUID</a>. There&#39;s no need to declare the
+presence of the <a href="../UUID.html">UUID</a> field _for the instance
+itself_ on all resource definitions as that&#39;s implicit; this <a
+href="DocumentedDSL.html#method-i-uuid">uuid</a> method is just for
+relational information (AKA associations).</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the <a href="../UUID.html">UUID</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash. See below.</p>
+</dd></dl>
+
+<p>In addition to standard options from <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>, extra
+option keys and values are:</p>
+<dl class="rdoc-list note-list"><dt><code>:resource</code>
+<dd>
+<p>The name of a resource (as a symbol, e.g. <code>:Product</code>) that the
+<a href="../UUID.html">UUID</a> should refer to. Implementations
+<em>may</em> use this to validate that the resource, where a <a
+href="../UUID.html">UUID</a> is provided, really is for a Product instance
+and not something else. Optional.</p>
+</dd></dl>
+
+<p>Example - a basket item that refers to an integer quantity of some specific
+Product resource instance:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">BasketItem</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+
+  <span class="ruby-identifier">integer</span> :<span class="ruby-identifier">quantity</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">uuid</span> :<span class="ruby-identifier">product_id</span>, :<span class="ruby-identifier">resource</span> =<span class="ruby-operator">&gt;</span> :<span class="ruby-constant">Product</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="uuid-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 177</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedUUID</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://rdoc.rubyforge.org">RDoc</a> 4.1.2.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
