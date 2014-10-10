@@ -168,6 +168,12 @@ module ApiTools
       #
       begin
 
+        ApiTools::Logger.send(
+          :debug,
+          'ApiTools::ServiceMiddleware#call with Rack "env":',
+          env.inspect
+        )
+
         @rack_request = Rack::Request.new( env )
 
         log( :info )
