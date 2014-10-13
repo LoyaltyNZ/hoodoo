@@ -16,15 +16,16 @@ module ApiTools
       class Purchase < ApiTools::Data::DocumentedPresenter
 
         schema do
-          text :token_identifier
+          text   :token_identifier
 
           object :basket, :required => true do
             type :Basket
           end
 
-          text :pos_reference
-          uuid :estimation_id, :resource => :Estimation
-          uuid :promotion_id, :resource => :Promotion, :required => true
+          text   :pos_reference
+          uuid   :estimation_id, :resource => :Estimation
+          uuid   :calculator_id, :resource => :Calculator, :required => true
+          text   :configuration
         end
 
       end
