@@ -205,7 +205,120 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#create_tx_thread'
+  describe '#create_tx_thread' do
+    it 'should call Thread.new and set tx_thread with result' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      expect(Thread).to receive(:new).and_return("FIVE")
+
+      inst.create_tx_thread
+
+      test_tx_thread = nil
+      inst.instance_eval do
+        test_tx_thread = @tx_thread
+      end
+      expect(test_tx_thread).to eq("FIVE")
+    end
+
+    it 'should call create_channel on connection' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      test_connection = double('connection')
+      test_tx_queue = double('tx_queue')
+
+      inst.instance_eval do
+        @connection = test_connection
+        @tx_queue = test_tx_queue
+      end
+
+      expect(test_connection).to receive(:create_channel).and_return("SIX")
+
+      expect(Thread).to receive(:new) do |&block|
+
+        expect(test_tx_queue).to receive(:pop) { raise Interrupt }
+        inst.instance_eval(&block)
+      end
+
+      inst.create_tx_thread
+
+      test_tx_channel = nil
+      inst.instance_eval do
+        test_tx_channel = @tx_channel
+      end
+      expect(test_tx_channel).to eq("SIX")
+    end
+
+    it 'should continue on exception with error logging' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      test_connection = double('connection')
+      test_tx_queue = double('tx_queue')
+
+      inst.instance_eval do
+        @connection = test_connection
+        @tx_queue = test_tx_queue
+      end
+
+      expect(test_connection).to receive(:create_channel)
+
+      expect(Thread).to receive(:new) do |&block|
+
+        expect(test_tx_queue).to receive(:pop) { raise Error }
+        expect(ApiTools::Logger).to receive(:error)
+        expect(test_tx_queue).to receive(:pop) { raise Interrupt }
+        inst.instance_eval(&block)
+      end
+
+      inst.create_tx_thread
+    end
+
+    it 'should get a message from queue, serialize and publish it' do
+      inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
+
+      test_connection = double('connection')
+      test_tx_channel = double('tx_channel')
+      test_tx_queue = double('tx_queue')
+      test_exchange = double('exchange')
+      test_message = OpenStruct.new({
+        :message_id => 'one',
+        :routing_key => 'two',
+        :type => 'three',
+        :correlation_id => 'four',
+        :content_type => 'five',
+        :reply_to => 'six',
+        :payload => 'PAYLOAD'
+      })
+
+      inst.instance_eval do
+        @connection = test_connection
+        @tx_queue = test_tx_queue
+      end
+
+      expect(test_connection).to receive(:create_channel).and_return(test_tx_channel)
+
+      expect(Thread).to receive(:new) do |&block|
+
+        expect(test_tx_queue).to receive(:pop).and_return(test_message)
+        expect(test_message).to receive(:serialize)
+
+        expect(test_tx_channel).to receive(:default_exchange).and_return(test_exchange)
+        expect(test_exchange).to receive(:publish).with('PAYLOAD',{
+          :message_id => 'one',
+          :routing_key => 'two',
+          :type => 'three',
+          :correlation_id => 'four',
+          :content_type => 'five',
+          :reply_to => 'six',
+        })
+
+        # This stops the spec at the end.
+        expect(test_tx_queue).to receive(:pop) { raise Interrupt }
+        inst.instance_eval(&block)
+      end
+
+      inst.create_tx_thread
+    end
+  end
 
   describe '#start' do
     it 'should clear the boot queue, connect and create rx and tx threads' do
@@ -344,5 +457,4 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
   end
 
-  describe '#self.number_of_processors'
 end
