@@ -13,59 +13,67 @@ require 'dalli'
 
 module ApiTools
 
-  # A description of the authorised context in which a service is called.
+  # +ServiceSession+ contains all functionality related to a context session.
   #
   class ServiceSession
-    attr_reader :id, :participant_id, :outlet_id
+    attr_reader :id, :participant_id, :outlet_id, :roles
 
     @@test_mode = false
 
     @@test_session = {
-        :id => '0123456789ABCDEF',
-        :participant_id => 'PARTICIPANTZERO',
-        :outlet_id => 'OUTLETZERO',
-        :roles => [],
-      }
+      :id => '0123456789ABCDEF',
+      :participant_id => 'PARTICIPANTZERO',
+      :outlet_id => 'OUTLETZERO',
+      :roles => [],
+    }
 
 
-    # Set testing mode. 
+    # Set testing mode.
     #
-    # The optional +mock_session+ parameter will 
+    # +test_mode+ should be set to true/false. The optional +mock_session+ parameter
+    # defines the test session supplied.
     def self.testing(test_mode, mock_session = nil)
       @@test_mode = test_mode
       @@test_session = mock_session unless mock_session.nil?
     end
 
+    # Create a ServiceSession instance by loading the session from memcache.
+    #
+    # The +memcache_url+ parameter should be set to the session memcache server, thr
+    # +session_id+ parameter is the ID of the session to load. The method will return
+    # either a valid ServiceSession instance, or nil if the session does not exist or is
+    # invalid.
     def self.load_session(memcache_url, session_id)
-      
+
       return ApiTools::ServiceSession.new(@@test_session) if @@test_mode
 
-      # Connect to the Memcache Session Server
-      raise "ApiTools::ServiceMiddleware not supplied MEMCACHE_URL in ENV." if memcache_url.nil? || memcache_url.empty?
-      
-      @memcache = Dalli::Client.new(memcache_url, {:compress=>true})
-      stats = nil
-      begin
-        stats = @memcache.stats
-      rescue Exception => e
-        stats = nil
-      end
-      raise "ApiTools::ServiceMiddleware cannot connect to memcache server." if stats.nil?
+      # Check that ENV[MEMCACHE_URL] exists.
+      raise "ApiTools::ServiceMiddleware memcache server URL is nil or empty" if memcache_url.nil? || memcache_url.empty?
 
+      # Return nil if the session_id is nil, empty or less than 32 chars long.
       if session_id.nil? or session_id.empty? or session_id.length<32
-        return @service_response.add_error('platform.invalid_session')
+        return nil
       end
 
-      session_hash = @memcache.get("session_"+session_id)
-      return @service_response.add_error('platform.invalid_session') if session_hash.nil?
+      # Connect to memcache, raise an error if we cant
+      memcache = connect_memcache(memcache_url)
+      raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}" if memcache.nil?
 
+      # Get The session from the server
+      session_hash = memcache.get("session_"+session_id)
+      # Return nil if the session can't be found
+      return nil if session_hash.nil?
+
+      # Parse the session
       begin
         session_hash = JSON.parse(session_hash)
       rescue Exception => exception
-        log(:warning, "Session loaded but failed JSON parsing", exception)
-        return @service_response.add_error('platform.invalid_session')
+        # Log error and Return nil if the session can't be parsed
+        ApiTools::Logger.warn("Session loaded but failed JSON parsing", exception)
+        return nil
       end
 
+      # Create and return the new session.
       return ApiTools::ServiceSession.new({
         :id => session_id,
         :participant_id => session_hash['participant_id'],
@@ -74,6 +82,8 @@ module ApiTools
       })
     end
 
+    # Instantiate a new ServiceSession instance with the optional supplied parameters
+    #
     def initialize(options = {})
       @id = options[:id]
       @participant_id = options[:participant_id]
@@ -81,8 +91,33 @@ module ApiTools
       @roles = options[:roles]
     end
 
+    # Returns true if this session has the specified role
     def has_role?(role)
       @roles.include? role.to_s
+    end
+
+    # Returns true if this session has all specified roles
+    def has_all_roles?(roles)
+      (@roles & roles).length == roles.length
+    end
+
+    # Returns true if this session has any of the specified roles
+    def has_any_roles?(roles)
+      (@roles & roles).length > 0
+    end
+
+    private
+
+    # Connect to the Memcache Session Server
+    def self.connect_memcache(url)
+      stats = nil
+      begin
+        memcache = Dalli::Client.new(url, {:compress=>true})
+        stats = memcache.stats
+      rescue Exception => e
+        stats = nil
+      end
+      stats.nil? ? nil : memcache
     end
   end
 end
