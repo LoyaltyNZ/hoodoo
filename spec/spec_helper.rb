@@ -60,13 +60,14 @@ RSpec.configure do | config |
     $stderr << "*"*80 << "\n\n"
 
     ApiTools::Logger.logger = StdErrTestLogger
+    ApiTools::ServiceSession.testing true
   end
 
   # Session test mode - test mode disabled explicitly for session tests
 
-  ApiTools::ServiceSession.testing
 
   config.after( :all ) do
     ApiTools::Logger.logger = ApiTools::Logger
+    ApiTools::ServiceSession.testing false
   end
 end

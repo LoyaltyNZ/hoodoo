@@ -27,10 +27,13 @@ module ApiTools
         :roles => [],
       }
 
-    def self.testing(mock_session = nil)
-      @@test_mode = true
+
+    # Set testing mode. 
+    #
+    # The optional +mock_session+ parameter will 
+    def self.testing(test_mode, mock_session = nil)
+      @@test_mode = test_mode
       @@test_session = mock_session unless mock_session.nil?
-      puts "ApiTools::ServiceSession is running in TESTING MODE."
     end
 
     def self.load_session(memcache_url, session_id)
