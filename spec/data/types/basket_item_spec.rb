@@ -8,7 +8,18 @@ describe ApiTools::Data::Types::BasketItem do
 
     expect(schema.properties.count).to eq(6)
     expect(schema.properties['quantity']).to be_a(ApiTools::Presenters::Integer)
-    expect(schema.properties['currency_amount']).to be_a(ApiTools::Data::DocumentedObject)
+
+    # CurrencyAmount array
+
+    expect(schema.properties['currency_amounts']).to be_a(ApiTools::Data::DocumentedArray)
+
+    expect(schema.properties['currency_amounts'].properties.count).to eq(3)
+
+    expect(schema.properties['currency_amounts'].properties['currency_code']).to be_a(ApiTools::Presenters::String)
+    expect(schema.properties['currency_amounts'].properties['currency_code'].length).to eq(16)
+    expect(schema.properties['currency_amounts'].properties['qualifier']).to be_a(ApiTools::Presenters::String)
+    expect(schema.properties['currency_amounts'].properties['qualifier'].length).to eq(32)
+    expect(schema.properties['currency_amounts'].properties['amount']).to be_a(ApiTools::Presenters::Text)
 
     expect(schema.properties['product_id']).to be_a(ApiTools::Data::DocumentedUUID)
     expect(schema.properties['product_id'].resource).to eq(:Product)
