@@ -9,6 +9,7 @@
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
 #           09-Oct-2014 (ADH): Updated for Preview Release 8.
+#           16-Oct-2014 (TC):  Added session error
 ########################################################################
 
 module ApiTools
@@ -86,6 +87,7 @@ module ApiTools
         error 'not_found',              status: 404, message: 'Not found',                    reference: [ :entity_name ]
         error 'method_not_allowed',     status: 422, message: 'Method not allowed'
         error 'malformed',              status: 422, message: 'Malformed request'
+        error 'invalid_session',        status: 401, message: 'Invalid session'
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 

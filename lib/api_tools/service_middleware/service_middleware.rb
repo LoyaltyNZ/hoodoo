@@ -6,6 +6,7 @@
 #           way - "use( ApiTools::ServiceMiddleware )".
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
+#           16-Oct-2014 (TC): Added Session Code.
 ########################################################################
 
 module ApiTools
@@ -153,7 +154,6 @@ module ApiTools
       # TODO: If we can find out what port this thing is being served on (or
       #       determine we're under Alchemy), then we can dynamically note
       #       the endpoint and not have to hard-code development ports.
-
     end
 
     # Run a Rack request, returning the [status, headers, body-array] data as
@@ -179,11 +179,9 @@ module ApiTools
         log( :info )
 
         @service_response = ApiTools::ServiceResponse.new
-        @service_session  = ApiTools::ServiceSession.new
 
-        # TODO: Session validation/recovery, probably in preprocess()
-
-        preprocess()
+        load_session
+        preprocess()  unless @service_response.halt_processing?
         process()     unless @service_response.halt_processing?
         postprocess() unless @service_response.halt_processing?
 
@@ -269,6 +267,22 @@ module ApiTools
         interaction_info,
         *args
       )
+    end
+
+    # Load Session from memcache and decode it.
+    #
+    # On exit, +@service_session+ will have been updated. Be sure to check
+    # +@service_response.halt_processing?+ to see if processing should abort
+    # and return immediately.
+    def load_session
+      @service_session = ApiTools::ServiceSession.load_session(
+        ENV['MEMCACHE_URL'],
+        @rack_request.env['HTTP_X_SESSION_ID'],
+      )
+
+      if @service_session.nil?
+        return @service_response.add_error('platform.invalid_session')
+      end
     end
 
     # Run request preprocessing - common actions that occur prior to any service
