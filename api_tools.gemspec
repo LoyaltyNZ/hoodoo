@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.executables = ['api_tools']
   s.test_files  = Dir.glob('spec/**/*.rb')
   s.homepage    = 'http://github.com/LoyaltyNZ/api_tools'
-  s.required_ruby_version = '>= 1.9.2'
+  s.required_ruby_version = '>= 2.1.2'
   s.add_development_dependency "rake"
   s.add_development_dependency "simplecov-rcov"
   s.add_development_dependency "rdoc"
