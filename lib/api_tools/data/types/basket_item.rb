@@ -18,7 +18,7 @@ module ApiTools
         schema do
           integer :quantity, :required => true
 
-          object :currency_amount, :required => true do
+          array :currency_amounts, :required => true do
             type :CurrencyAmount
           end
 

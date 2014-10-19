@@ -14,7 +14,7 @@ describe ApiTools::Data::Types::Basket do
 
     expect(schema.properties['items'].properties.count).to eq(6)
     expect(schema.properties['items'].properties['quantity']).to be_a(ApiTools::Presenters::Integer)
-    expect(schema.properties['items'].properties['currency_amount']).to be_a(ApiTools::Data::DocumentedObject)
+    expect(schema.properties['items'].properties['currency_amounts']).to be_a(ApiTools::Data::DocumentedArray)
 
     expect(schema.properties['items'].properties['product_id']).to be_a(ApiTools::Data::DocumentedUUID)
     expect(schema.properties['items'].properties['product_id'].resource).to eq(:Product)
