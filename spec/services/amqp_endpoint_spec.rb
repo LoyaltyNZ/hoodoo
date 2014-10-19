@@ -219,7 +219,7 @@ describe ApiTools::Services::AQMPEndpoint do
       end
 
       expect(Timeout).to receive(:timeout) do |timeout, &block|
-        expect(timeout).to be(61.235)
+        expect(timeout).to eq(61.235)
         block.call
       end
 
