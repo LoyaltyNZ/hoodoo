@@ -24,7 +24,7 @@ module ApiTools
       :id => '0123456789ABCDEF',
       :participant_id => 'PARTICIPANTZERO',
       :outlet_id => 'OUTLETZERO',
-      :roles => [],
+      :roles => '',
     }
 
 
@@ -88,7 +88,7 @@ module ApiTools
       @id = options[:id]
       @participant_id = options[:participant_id]
       @outlet_id = options[:outlet_id]
-      @roles = options[:roles]
+      @roles = options[:roles].to_s.split ','
     end
 
     # Returns true if this session has the specified role
