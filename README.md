@@ -32,6 +32,10 @@ Please see:
 
 ## Development
 
+Create a Service template folder
+
+    api_tools SERVICE_NAME
+
 ### Roadmap
 
 | Change                     | Description                                                 |
