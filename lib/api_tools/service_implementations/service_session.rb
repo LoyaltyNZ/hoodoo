@@ -39,7 +39,7 @@ module ApiTools
 
     # Create a ServiceSession instance by loading the session from memcache.
     #
-    # The +memcache_url+ parameter should be set to the session memcache server, thr
+    # The +memcache_url+ parameter should be set to the session memcache server, the
     # +session_id+ parameter is the ID of the session to load. The method will return
     # either a valid ServiceSession instance, or nil if the session does not exist or is
     # invalid.
