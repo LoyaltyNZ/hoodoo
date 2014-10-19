@@ -57,7 +57,7 @@ module ApiTools
 
       # Connect to memcache, raise an error if we cant
       memcache = connect_memcache(memcache_url)
-      raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}" if memcache.nil?
+      raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'" if memcache.nil?
 
       # Get The session from the server
       session_hash = memcache.get("session_"+session_id)

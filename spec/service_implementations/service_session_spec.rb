@@ -15,13 +15,13 @@ describe ApiTools::ServiceSession do
     it 'should raise an error if memcache_url is nil' do
       expect {
         ApiTools::ServiceSession.load_session(nil, '0123456789ABCDEF')
-      }.to raise_error
+      }.to raise_error "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
     end
 
     it 'should raise an error if memcache_url is empty' do
       expect {
         ApiTools::ServiceSession.load_session('', '0123456789ABCDEF')
-      }.to raise_error
+      }.to raise_error "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
     end
 
     it 'should return nil if session_id is nil' do
@@ -43,7 +43,7 @@ describe ApiTools::ServiceSession do
       expect(ApiTools::ServiceSession).to receive(:connect_memcache).with('url').and_return(nil)
       expect {
         ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
-      }.to raise_error
+      }.to raise_error "ApiTools::ServiceMiddleware cannot connect to memcache server 'url'"
     end
 
     it 'should call get on memcache with correct key and return nil if not found' do
