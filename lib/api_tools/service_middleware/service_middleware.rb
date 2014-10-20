@@ -454,7 +454,9 @@ module ApiTools
         self
       )
 
-      implementation.send( action, context )
+      implementation.before(context) if implementation.respond_to? :before
+      implementation.send( action, context ) unless @service_response.halt_processing?
+      implementation.after(context) if !@service_response.halt_processing? and implementation.respond_to?(:after) 
     end
 
     # Run request preprocessing - common actions that occur after service

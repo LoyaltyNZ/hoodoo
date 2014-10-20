@@ -15,6 +15,14 @@ require 'spec_helper'
 class RSpecTestServiceStubImplementation < ApiTools::ServiceImplementation
 end
 
+class RSpecTestServiceStubBeforeAfterImplementation < ApiTools::ServiceImplementation
+  def before(context)
+  end
+
+  def after(context)
+  end
+end
+
 class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
   interface :RSpecTestResource do
     version 2
@@ -28,8 +36,21 @@ class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
   end
 end
 
+class RSpecTestServiceStubBeforeInterface < ApiTools::ServiceInterface
+  interface :RSpecTestResource do
+    version 2
+    endpoint :rspec_test_service_before_after_stub, RSpecTestServiceStubBeforeAfterImplementation
+    embeds :emb, :embs
+    to_list do
+      sort :extra => [:up, :down]
+      search :foo, :bar
+      filter :baz, :boo
+    end
+  end
+end
+
 class RSpecTestServiceStub < ApiTools::ServiceApplication
-  comprised_of RSpecTestServiceStubInterface
+  comprised_of RSpecTestServiceStubInterface, RSpecTestServiceStubBeforeInterface
 end
 
 describe ApiTools::ServiceMiddleware do
@@ -156,6 +177,34 @@ describe ApiTools::ServiceMiddleware do
     end
 
     # -------------------------------------------------------------------------
+
+    describe 'service implementation #before and #after' do
+      it 'should get called if defined in correct order' do
+        expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:before).once do | ignored_rspec_mock_instance, context |
+          expect(context).to be_a(ApiTools::ServiceContext)
+        end
+
+        expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context).to be_a(ApiTools::ServiceContext)
+        end
+
+        expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:after).once do | ignored_rspec_mock_instance, context |
+          expect(context).to be_a(ApiTools::ServiceContext)
+        end
+
+        get '/v2/rspec_test_service_before_after_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'should not call action if before generates errors' do
+        expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:before).once do | ignored_rspec_mock_instance, context |
+          response.add_error( 'service_calls_a.triggered')
+        end
+
+        expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).not_to receive(:list)
+
+        get '/v2/rspec_test_service_before_after_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+    end
 
     describe 'service implementation #list' do
       it 'should get called with default values' do
