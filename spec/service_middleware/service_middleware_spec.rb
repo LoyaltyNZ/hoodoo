@@ -243,7 +243,7 @@ describe ApiTools::ServiceMiddleware do
         end
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-        'HTTP_CONTENT_LANGUAGE' => 'EN-GB' }
+                                                  'HTTP_CONTENT_LANGUAGE' => 'EN-GB' }
         expect(last_response.status).to eq(200)
       end
 
@@ -253,7 +253,7 @@ describe ApiTools::ServiceMiddleware do
         end
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-        'HTTP_ACCEPT_LANGUAGE' => 'en-GB;q=0.8, en;q=0.7' }
+                                                  'HTTP_ACCEPT_LANGUAGE' => 'en-GB;q=0.8, en;q=0.7' }
         expect(last_response.status).to eq(200)
       end
 
@@ -882,7 +882,7 @@ end
 
 class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
-  RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
+               RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
 end
 
 describe ApiTools::ServiceMiddleware do
@@ -934,8 +934,8 @@ end
 
 class RSpecTestMultipleEndpointServiceStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
-  RSpecTestServiceV1StubInterface,
-  RSpecTestServiceAltStubInterface
+               RSpecTestServiceV1StubInterface,
+               RSpecTestServiceAltStubInterface
 end
 
 describe ApiTools::ServiceMiddleware do
@@ -1142,8 +1142,8 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def show( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).show(
-    'hello' + context.request.uri_path_components[ 0 ],
-    { _embed: :foo }
+      'hello' + context.request.uri_path_components[ 0 ],
+      { _embed: :foo }
     )
     expectable_hook( result )
     context.response.body = { result: result }
@@ -1151,8 +1151,8 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def create( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).create(
-    { number: '42' }.merge( context.request.body ),
-    { _embed: 'foo' }
+      { number: '42' }.merge( context.request.body ),
+      { _embed: 'foo' }
     )
     expectable_hook( result )
     context.response.body = { result: result }
@@ -1160,9 +1160,9 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def update( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).update(
-    'hello' + context.request.uri_path_components[ 0 ],
-    { number: '42' }.merge( context.request.body ),
-    { _embed: 'foo' }
+      'hello' + context.request.uri_path_components[ 0 ],
+      { number: '42' }.merge( context.request.body ),
+      { _embed: 'foo' }
     )
     expectable_hook( result )
     context.response.body = { result: result }
@@ -1170,8 +1170,8 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def delete( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).delete(
-    'hello' + context.request.uri_path_components[ 0 ],
-    { _embed: [ :foo ] }
+      'hello' + context.request.uri_path_components[ 0 ],
+      { _embed: [ :foo ] }
     )
     expectable_hook( result )
     context.response.body = { result: result }
@@ -1192,7 +1192,7 @@ end
 
 class RSpecTestInterServiceCalls < ApiTools::ServiceApplication
   comprised_of RSpecTestInterServiceCallsAInterface,
-  RSpecTestInterServiceCallsBInterface
+               RSpecTestInterServiceCallsBInterface
 end
 
 describe ApiTools::ServiceMiddleware::ServiceEndpoint do
