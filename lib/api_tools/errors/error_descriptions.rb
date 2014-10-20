@@ -88,6 +88,7 @@ module ApiTools
         error 'method_not_allowed',     status: 422, message: 'Method not allowed'
         error 'malformed',              status: 422, message: 'Malformed request'
         error 'invalid_session',        status: 401, message: 'Invalid session'
+        error 'forbidden',              status: 403, message: 'Action not authorized'
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 
