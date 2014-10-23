@@ -58,4 +58,45 @@ describe ApiTools::Logger do
       expect(ApiTools::Logger::error(1,2,3)).to eq('three')
     end
   end
+
+  describe 'logging levels' do
+    before do
+      ApiTools::Logger::logger = nil
+    end
+
+    it 'should log correctly when level = :debug' do
+      ApiTools::Logger::level = :debug
+
+      expect($stdout).to receive(:puts)
+      ApiTools::Logger::debug(1)
+      expect($stdout).to receive(:puts)
+      ApiTools::Logger::info(1)
+      expect($stdout).to receive(:puts)
+      ApiTools::Logger::warn(1)
+      expect($stderr).to receive(:puts)
+      ApiTools::Logger::error(1)
+    end
+
+    it 'should log correctly when level = :info' do
+      ApiTools::Logger::level = :info
+
+      expect($stdout).not_to receive(:puts)
+      ApiTools::Logger::debug(1)
+    end
+
+    it 'should log correctly when level = :warn' do
+      ApiTools::Logger::level = :warn
+
+      expect($stdout).not_to receive(:puts)
+      ApiTools::Logger::debug(1)
+      ApiTools::Logger::info(1)
+    end
+
+    it 'should always log errors' do
+      ApiTools::Logger::level = :invalidValue
+
+      expect($stderr).to receive(:puts)
+      ApiTools::Logger::error(1)
+    end
+  end
 end

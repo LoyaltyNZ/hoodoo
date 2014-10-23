@@ -5,6 +5,7 @@ module ApiTools
   class Logger
 
     @@logger  = nil
+    @@level  = :debug
 
     # Return the current logger, or `nil` if undefined.
     def self.logger
@@ -18,18 +19,29 @@ module ApiTools
       @@logger = logger
     end
 
+    def self.level
+      @@level
+    end
+
+    def self.level=(level)
+      @@level = level
+    end
+
     # Write to the DEBUG log. 
     def self.debug *args
+      return unless @@level == :debug 
       logger ? logger.debug(args) : $stdout.puts('DEBUG',args)
     end
 
     # Write to the INFO log.   
     def self.info *args
+      return unless @@level == :debug || @@level == :info
       logger ? logger.info(args) : $stdout.puts('INFO',args)
     end
 
     # Write to the WARN log.  
     def self.warn *args
+      return unless @@level == :debug || @@level == :info || @@level == :warn
       logger ? logger.warn(args) : $stdout.puts('WARN',args)
     end
 
