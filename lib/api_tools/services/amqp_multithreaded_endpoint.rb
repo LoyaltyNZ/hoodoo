@@ -19,7 +19,7 @@ module ApiTools
         @timeout = options[:timeout] || 5000
         @queue_options =options[:queue_options] || {:exclusive => true, :auto_delete => true}
         @request_class = options[:request_class] || ApiTools::Services::Request
-        @thread_count = options[:thread_count] || (self.class.number_of_processors/2).floor
+        @thread_count = options[:thread_count] || 2
         @prefetch = options[:prefetch] || 1
 
         @worker_threads = []
@@ -144,29 +144,6 @@ module ApiTools
 
       def send_message(msg)
         @tx_queue << msg
-      end
-
-      private
-
-      def self.number_of_processors
-        if RUBY_PLATFORM =~ /linux/
-          return `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-        elsif RUBY_PLATFORM =~ /darwin/
-          return `sysctl -n hw.logicalcpu`.to_i
-        elsif RUBY_PLATFORM =~ /win32/
-          # this works for windows 2000 or greater
-          require 'win32ole'
-          wmi = WIN32OLE.connect("winmgmts://")
-          wmi.ExecQuery("select * from Win32_ComputerSystem").each do |system|
-            begin
-              processors = system.NumberOfLogicalProcessors
-            rescue
-              processors = 0
-            end
-            return [system.NumberOfProcessors, processors].max
-          end
-        end
-        raise "can't determine 'number_of_processors' for '#{RUBY_PLATFORM}'"
       end
     end
   end

@@ -30,8 +30,6 @@ describe ApiTools::Services::AQMPMultithreadedEndpoint do
     end
 
     it 'should initialize with default options if not supplied' do
-
-      expect(ApiTools::Services::AQMPMultithreadedEndpoint).to receive(:number_of_processors).and_return(5)
       inst = ApiTools::Services::AQMPMultithreadedEndpoint.new('TEST_URI')
 
       expect(inst.amqp_uri).to eq('TEST_URI')
