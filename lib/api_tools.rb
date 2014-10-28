@@ -56,7 +56,9 @@ require root+'data/types/basket.rb'
 
 require root+'data/resources/errors.rb'
 require root+'data/resources/currency.rb'
+require root+'data/resources/participant.rb'
 require root+'data/resources/product.rb'
+require root+'data/resources/programme.rb'
 require root+'data/resources/purchase.rb'
 require root+'data/resources/version.rb'
 
