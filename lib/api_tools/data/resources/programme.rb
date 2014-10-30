@@ -18,7 +18,7 @@ module ApiTools
         schema do
           internationalised
 
-          text 'code'
+          text :code
           text :name
         end
 

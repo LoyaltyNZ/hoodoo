@@ -37,12 +37,12 @@ require root+'presenters/types/integer'
 require root+'presenters/types/decimal'
 require root+'presenters/types/date'
 require root+'presenters/types/date_time'
+require root+'presenters/types/tags'
+require root+'presenters/types/uuid'
 
 require root+'data/documented_dsl.rb'
 require root+'data/documented_object.rb'
 require root+'data/documented_array.rb'
-require root+'data/documented_tags.rb'
-require root+'data/documented_uuid.rb'
 require root+'data/documented_presenter.rb'
 
 # Ordering matters, due to dependencies where one type references another

@@ -72,7 +72,7 @@ describe ApiTools::ServiceInterface do
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties['bar']).to be_a(ApiTools::Presenters::Enum)
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.properties['bar'].from).to eq(["baz", "boo"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['hello']).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['world']).to be_a(ApiTools::Data::DocumentedUUID)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['world']).to be_a(ApiTools::Presenters::UUID)
       expect(RSpecTestServiceInterfaceInterfaceA.to_update.properties['world'].resource).to eq(:Earth)
       expect(RSpecTestServiceInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
     end

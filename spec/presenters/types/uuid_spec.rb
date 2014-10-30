@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe ApiTools::Presenters::UUID do
-
-  before do
-    @inst = ApiTools::Presenters::Tags.new('one',:required => false)
-  end
-
   describe '#validate' do
     it 'should return no errors when valid UUID' do
       expect(ApiTools::Presenters::UUID.new('one').validate(ApiTools::UUID.generate())).to eq([])

@@ -122,63 +122,6 @@ module ApiTools
         !! @internationalised
       end
 
-      # Declares that this Type or Resource has a string field of unlimited
-      # length that contains comma-separated tag strings.
-      #
-      # +field_name+:: Name of the field that will hold the tags.
-      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
-      #
-      # Example - a Product resource which supports product tagging:
-      #
-      #     class Product < ApiTools::Data::DocumentedObject
-      #
-      #       internationalised
-      #
-      #       text :name
-      #       text :description
-      #       string :sku, :length => 64
-      #       tags :tags
-      #
-      #     end
-      #
-      def tags( field_name, options = nil )
-        options ||= {}
-        property(field_name, ApiTools::Data::DocumentedTags, options)
-      end
-
-      # Declares that this Type or Resource _refers to_ another Resource
-      # instance via its UUID. There's no need to declare the presence of the
-      # UUID field _for the instance itself_ on all resource definitions as
-      # that's implicit; this #uuid method is just for relational information
-      # (AKA associations).
-      #
-      # +field_name+:: Name of the field that will hold the UUID.
-      # +options+:: Options hash. See below.
-      #
-      # In addition to standard options from ApiTools::Presenters::BaseDSL,
-      # extra option keys and values are:
-      #
-      # +:resource+:: The name of a resource (as a symbol, e.g. +:Product+) that
-      #               the UUID should refer to. Implementations _may_ use this
-      #               to validate that the resource, where a UUID is provided,
-      #               really is for a Product instance and not something else.
-      #               Optional.
-      #
-      # Example - a basket item that refers to an integer quantity of some
-      # specific Product resource instance:
-      #
-      #     class BasketItem < ApiTools::Data::DocumentedObject
-      #
-      #       integer :quantity, :required => true
-      #       uuid :product_id, :resource => :Product
-      #
-      #     end
-      #
-      def uuid( field_name, options = nil )
-        options ||= {}
-        property(field_name, ApiTools::Data::DocumentedUUID, options)
-      end
-
       # Declare that a nested type of a given name is included at this point.
       # This is only normally done within an +array+ or +object+ declaration.
       # The fields of the given named type are considered to be defined inline

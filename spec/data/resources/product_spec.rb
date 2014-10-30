@@ -11,6 +11,6 @@ describe ApiTools::Data::Resources::Product do
     expect(schema.properties['code']).to be_a(ApiTools::Presenters::Text)
     expect(schema.properties['name']).to be_a(ApiTools::Presenters::Text)
     expect(schema.properties['description']).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties['tags']).to be_a(ApiTools::Data::DocumentedTags)
+    expect(schema.properties['tags']).to be_a(ApiTools::Presenters::Tags)
   end
 end
