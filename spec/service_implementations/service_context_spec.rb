@@ -27,7 +27,7 @@ describe ApiTools::ServiceContext do
     expect(con.response).to eq(res)
   end
 
-  it 'should initialise report endpoints' do
+  it 'should report endpoints' do
     ses = ApiTools::ServiceSession.new
     req = ApiTools::ServiceRequest.new
     res = ApiTools::ServiceResponse.new

@@ -163,7 +163,12 @@ module ApiTools
     # which means counter-to-documentation results could be returned to API
     # clients. That is Very Bad.
     #
-    def add_precompiled_error( code, message, reference )
+    # Pass optionally the HTTP status code to use if this happens to be the
+    # first stored error. If this is omitted, 500 is kept as the default.
+    #
+    def add_precompiled_error( code, message, reference, http_status = 500 )
+      @http_status_code = http_status if @errors.empty?
+
       error = {
         'code'    => code,
         'message' => message
@@ -180,13 +185,12 @@ module ApiTools
     # duplicate may be a valid thing to have).
     #
     def merge!( source )
-      @http_status_code = source.http_status_code if @errors.empty?
-
       source.errors.each do | hash |
         add_precompiled_error(
           hash[ 'code'      ],
           hash[ 'message'   ],
-          hash[ 'reference' ]
+          hash[ 'reference' ],
+          source.http_status_code
         )
       end
     end

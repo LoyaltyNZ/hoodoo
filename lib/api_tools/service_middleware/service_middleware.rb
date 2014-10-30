@@ -9,6 +9,10 @@
 #           16-Oct-2014 (TC): Added Session Code.
 ########################################################################
 
+require 'drb/drb'
+require "net/http"
+require "uri"
+
 module ApiTools
 
   # Rack middleware, declared in (e.g.) a +config.ru+ file in the
@@ -105,8 +109,8 @@ module ApiTools
     # +app+ Rack app instance to which calls should be passed.
     #
     def initialize( app )
+
       @service_container = app
-      @interaction_id    = nil # Acquired in #find_or_generate_interaction_id
 
       unless @service_container.is_a?( ApiTools::ServiceApplication )
         raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ app.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
@@ -140,20 +144,14 @@ module ApiTools
 
         {
           :regexp         => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :path           => "/v#{ interface.version }/#{ interface.endpoint }",
           :interface      => interface,
           :implementation => interface.implementation.new
         }
 
       end
 
-      # TODO: By now the resource, version and endpoint information is all
-      #       known. This is where we'd tell a router, edge splitter or some
-      #       other component about this instance as part of a wider
-      #       configuration set that allowed inter-service communication.
-
-      # TODO: If we can find out what port this thing is being served on (or
-      #       determine we're under Alchemy), then we can dynamically note
-      #       the endpoint and not have to hard-code development ports.
+      announce_presence_of( @services )
     end
 
     # Run a Rack request, returning the [status, headers, body-array] data as
@@ -168,6 +166,8 @@ module ApiTools
       #
       begin
 
+        @interaction_id = @session_id = nil
+
         ApiTools::Logger.send(
           :debug,
           'ApiTools::ServiceMiddleware#call with Rack "env":',
@@ -180,7 +180,7 @@ module ApiTools
 
         @service_response = ApiTools::ServiceResponse.new
 
-        load_session
+        load_session()
         preprocess()  unless @service_response.halt_processing?
         process()     unless @service_response.halt_processing?
         postprocess() unless @service_response.halt_processing?
@@ -267,21 +267,80 @@ module ApiTools
         interaction_info,
         *args
       )
+
+    end
+
+    # Announce the presence of the service endpoints to known interested
+    # parties.
+    #
+    # +services+:: Array of Hashes describing service information.
+    #
+    # Hash keys/values are as follows:
+    #
+    # +regexp+::         A regular expression for a URI path which, if matched,
+    #                    means that this service endpoint is being called.
+    # +path+::           The endpoint path that the regexp would match, with
+    #                    leading "/" (e.g. "/v1/products")
+    # +interface+::      The ServiceInterface subclass for this endpoint.
+    # +implementation+:: The ServiceImplementation subclass instance for this
+    #                    endpoint.
+    #
+    def announce_presence_of( services )
+
+      # Rack provides no formal way to find out our host or port before a
+      # request arrives, because in part it might change due to clustering.
+      # For local development on an assumed single instance server, we can 
+      # ask Ruby itself for all Rack::Server instances, expecting just one.
+
+      servers = ObjectSpace.each_object( Rack::Server )
+      return unless servers.count == 1
+
+      server  = servers.first
+      host    = server.options[ :Host ]
+      port    = server.options[ :Port ]
+
+      # Start the DRb server, or connect to it if already running.
+      #
+      begin
+        DRb.start_service( DRB_URI, FRONT_OBJECT )
+        @drb_server = DRbObject.new_with_uri( DRB_URI )
+      rescue Errno::EADDRINUSE => e
+        DRb.start_service
+        @drb_server = DRbObject.new_with_uri( DRB_URI )
+      end
+
+      # Announce our local services.
+      #
+      services.each do | service |
+        interface = service[ :interface ]
+
+        @drb_server.add(
+          interface.resource,
+          interface.version,
+          "http://#{ host }:#{ port }#{ service[ :path ] }"
+        )
+      end
     end
 
     # Load Session from memcache and decode it.
     #
-    # On exit, +@service_session+ will have been updated. Be sure to check
-    # +@service_response.halt_processing?+ to see if processing should abort
-    # and return immediately.
+    # On exit, +@service_session+ and +@session_id+ will have been updated. Be
+    # sure to check +@service_response.halt_processing?+ to see if processing
+    # should abort and return immediately.
+    #
     def load_session
+      @session_id = @rack_request.env[ 'HTTP_X_SESSION_ID' ]
+
+      environment = self.class.environment()
+      ApiTools::ServiceSession.testing( environment.development? || environment.test? )
+
       @service_session = ApiTools::ServiceSession.load_session(
-        ENV['MEMCACHE_URL'],
-        @rack_request.env['HTTP_X_SESSION_ID'],
+        ENV[ 'MEMCACHE_URL' ],
+        @session_id,
       )
 
       if @service_session.nil?
-        return @service_response.add_error('platform.invalid_session')
+        return @service_response.add_error( 'platform.invalid_session' )
       end
     end
 
@@ -299,6 +358,7 @@ module ApiTools
       # Additions here may require corresponding additions to the inter-service
       # local call code.
       # =======================================================================
+
 
       check_content_type_header()
 
@@ -934,54 +994,38 @@ module ApiTools
     # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
     #              symbol.
     #
+    # +version+::  Version of interface required as an Integer. Optional -
+    #              default is 1.
+    #
     # Returns a @services entry (see implementation of #initialize) if local,
     # else +nil+.
     #
-    def local_service_for( resource )
+    def local_service_for( resource, version = 1 )
       resource = resource.to_sym
+      version  = version.to_i
 
       @services.find do | entry |
-        entry[ :interface ].resource == resource
+        interface = entry[ :interface ]
+        interface.resource == resource && interface.version == version
       end
     end
 
-    # PROVISIONAL!
-    #
-    # Local development no-queue port allocations on an assumed physical
-    # service grouping.
+    # Is the given resource available as a remote endpoint we can target via
+    # HTTP?
     #
     # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
     #              symbol.
     #
-    def development_port_for( resource )
-      case resource.to_sym
-
-        # Errors Service
-        when :Errors
-          3500
-
-        # Financial Service
-        when :Currency, :Balance, :Voucher, :Transaction
-          3510
-
-        # Programme API
-        when :Participant, :Outlet, :Involvement, :Programme
-          3520
-
-        # Member API
-        when :Account, :Member, :Membership, :MemberToken
-          3530
-
-        # Purchase API
-        when :Purchase, :Refund, :Estimation, :Forecast, :Calculator
-          3540
-
-        # Utility API
-        when :Version
-          3550
-
-        else
-          9393
+    # +version+::  Version of interface required as an Integer. Optional -
+    #              default is 1.
+    #
+    # Returns a URI as a string if an endpoint is found, else +nil+.
+    #
+    def remote_service_for( resource, version = 1 )
+      begin
+        @drb_server.find( resource, version )
+      rescue
+        nil
       end
     end
 
@@ -994,9 +1038,13 @@ module ApiTools
     #
     # Options are as follows - keys must be Symbols:
     #
-    # +service+::     A +@services+ entry (see implementation of #initialize)
+    # +local+::       A +@services+ entry (see implementation of #initialize)
     #                 describing the service to call if local, else +nil+ or
     #                 absent.
+    # +remote+::      A URI as a String for a remote service endpoint, else
+    #                 +nil+ or absent.
+    # +resource+::    The String or Symbol resource name, e.g. "Product".
+    # +version+::     The Integer endpoint API version, e.g. 2.
     # +http_method+:: HTTP method as a String, e.g. +'GET'+, +'DELETE'+.
     # +ident+::       ID / UUID / similar; first and only path component.
     # +query_hash+::  Converted to query string.
@@ -1013,7 +1061,7 @@ module ApiTools
     #
     def inter_service( options )
 
-      remote = options[ :service ].nil?
+      remote = options[ :local ].nil?
 
       log(
         :debug,
@@ -1048,72 +1096,128 @@ module ApiTools
     # Returns:: See #inter_service.
     #
     def inter_service_remote( options )
-      service     = options[ :service     ] # !!! TBD will be nil; need resource here
+      remote_uri  = options[ :remote      ]
       http_method = options[ :http_method ]
       ident       = options[ :ident       ]
       body_hash   = options[ :body_hash   ]
       query_hash  = options[ :query_hash  ]
 
-      host = port = nil
+      # Add a 404 error to the response (via a Proc for internal reuse).
 
-      unless self.class.environment.development? || self.class.environment.test?
-        host = @rack_request.host
-        post = @rack_request.port
-      end
+      add_404 = Proc.new {
+        @service_response.add_error(
+          'platform.not_found',
+          'reference' => { :entity_name => "v#{ options[ :version ] } of #{ options[ :resource ] } interface endpoint" }
+        )
+      }
 
-      host ||= '127.0.0.1'
-      port ||= development_port_for( interface.resource )
-      path   = "/v#{ interface.version }/#{ interface.endpoint }"
-      path  << "/#{ ident }" unless ident.nil?
+      # No endpoint found? Yikes!
 
-      unless query_hash.nil?
-        query_hash = query_hash.dup
-        query_hash[ :search ] = URI.encode_www_form( query_hash[ :search ] ) if ( query_hash[ :search ] ).is_a?( Hash )
-        query_hash[ :filter ] = URI.encode_www_form( query_hash[ :filter ] ) if ( query_hash[ :filter ] ).is_a?( Hash )
+      if ( remote_uri.nil? )
+        return add_404.call()
+
+      else
+        remote_uri << "/#{ ident }" unless ident.nil?
+
       end
 
       # Grey area over whether this encodes spaces as "%20" or "+", but so
       # long as the middleware consistently uses the URI encode/decode calls,
       # it should work out in the end anyway.
 
-      our_response = ApiTools::ServiceResponse.new
+      unless query_hash.nil?
+        query_hash = query_hash.dup
+        query_hash[ :search ] = URI.encode_www_form( query_hash[ :search ] ) if ( query_hash[ :search ].is_a?( Hash ) )
+        query_hash[ :filter ] = URI.encode_www_form( query_hash[ :filter ] ) if ( query_hash[ :filter ].is_a?( Hash ) )
 
-      begin
-        uri = URI::HTTP.build( {
-          :host  => host,
-          :port  => port.to_i,
-          :path  => path,
-          :query => URI.encode_www_form( query_hash )
-        } )
-
-        remote_response = RestClient.send(
-          http_method,
-          uri.to_s,
-          body_hash.nil? ? '' : body_hash.to_json
-        )
-
-        our_response.http_status_code = remote_response.code
-        our_response.body             = JSON.parse( remote_response.to_str )
-
-        remote_response.headers.each do | name, value |
-          our_response.add_header( name, value, true )
-        end
-
-        # Since "our response" now has the decoded Hash payload, we use it
-        # to see if there is error data there. If so, add it verbatim into
-        # the errors collection.
-        #
-        if ( our_response.body[ 'kind' ] == 'Errors' )
-          our_response.body[ 'errors' ].each do | error |
-            our_response.add_precompiled_error( error )
-          end
-        end
-
-      rescue => exception
-        record_exception( our_response, exception )
+        query_hash[ :_embed     ] = query_hash[ :_embed     ].join( ',' ) if ( query_hash[ :_embed     ].is_a?( Array ) )
+        query_hash[ :_reference ] = query_hash[ :_reference ].join( ',' ) if ( query_hash[ :_reference ].is_a?( Array ) )
       end
 
-      return our_response
+      unless query_hash.nil? || query_hash.empty?
+        remote_uri << '?' << URI.encode_www_form( query_hash )
+      end
+
+      body_data = body_hash.nil? ? '' : body_hash.to_json
+      headers   = {
+        'Content-Type'     => 'application/json; charset=utf-8',
+        'X-Interaction-ID' => @interaction_id || '+',
+        'X-Session-ID'     => @session_id     || '+'
+      }
+
+      # Drive the HTTP library using the data assembled above
+
+      remote_uri = URI.parse( remote_uri )
+      http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
+
+      request_class = {
+        'POST'   => Net::HTTP::Post,
+        'PATCH'  => Net::HTTP::Patch,
+        'DELETE' => Net::HTTP::Delete
+      }[ http_method ] || Net::HTTP::Get
+
+      request      = request_class.new( remote_uri.request_uri() )
+      request.body = body_data unless body_data.empty?
+
+      request.initialize_http_header( headers )
+
+      begin
+        response = http.request( request )
+      rescue Errno::ECONNREFUSED => e
+        return add_404.call()
+      end
+
+      # Parse the response
+
+      parsed = begin
+        JSON.parse( response.body )
+      rescue
+        {}
+      end
+
+      # Deal with headers sent in the call.
+
+      ignores = Set.new( [
+
+        # These are standard and automatic anyway
+
+        'content-type',
+        'x-interaction-id',
+        'x-session-id',
+
+        # These can be set by HTTP operations and we're not interested in them
+
+        'content-length',
+        'server',
+        'date',
+        'connection'
+
+      ] )
+
+      response.each_header do | name, value |
+        @service_response.add_header( name, value, true ) unless ignores.include?( name )
+      end
+
+      # Since "parsed" now has the decoded Hash payload, we use it to see if
+      # there is error data there. If so, add it verbatim into the local errors
+      # collection. Attempt to carry over the remote call's HTTP status code.
+
+      if response.code.to_i > 299
+        @service_response.http_status_code = response.code
+      end
+
+      if ( parsed[ 'kind' ] == 'Errors' )
+        parsed[ 'errors' ].each do | error |
+          @service_response.add_precompiled_error(
+            error[ 'code'      ],
+            error[ 'message'   ],
+            error[ 'reference' ],
+            response.code
+          )
+        end
+      end
+
+      return parsed
     end
 
     # Make a local (non-HTTP local Ruby method call) inter-service call. Fast.
@@ -1123,7 +1227,7 @@ module ApiTools
     # Returns:: See #inter_service.
     #
     def inter_service_local( options )
-      service        = options[ :service     ]
+      service        = options[ :local       ]
       http_method    = options[ :http_method ]
       ident          = options[ :ident       ]
       body_hash      = options[ :body_hash   ]
@@ -1132,6 +1236,7 @@ module ApiTools
       interface      = service[ :interface      ]
       actions        = service[ :actions        ]
       implementation = service[ :implementation ]
+
 
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
@@ -1234,7 +1339,7 @@ module ApiTools
       # network.
       #
       def interface
-        @service.nil? ? nil : @service[ :interface ]
+        @local_service.nil? ? nil : @local_service[ :interface ]
       end
 
       # Create an endpoint instance on behalf of the given
@@ -1245,6 +1350,9 @@ module ApiTools
       #
       # +resource+:: Resource name the endpoint targets, e.g. +:Purchase+.
       #              String or symbol.
+      #
+      # +version+::  Optional required interface (API) version for that
+      #              endpoint. Integer. Default is 1.
       #
       # When calls are made through endpoints, the caller's call context data
       # is updated. The ApiTools::ServerResponse instance in the context will
@@ -1277,15 +1385,18 @@ module ApiTools
       #                     ]
       #                   }
       #
+      #                This parameter is always optional.
+      #
       # +body_hash+::  The Hash representation of the body data that might be
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
-      #
-      #
-      def initialize( middleware_instance, resource )
-        @middleware = middleware_instance
-        @resource   = resource.to_s
-        @service    = @middleware.local_service_for( @resource )
+      def initialize( middleware_instance, resource, version = 1 )
+        @middleware    = middleware_instance
+        @resource      = resource.to_s
+        @version       = version.to_i
+
+        @local_service = @middleware.local_service_for( @resource, @version )
+        @remote_uri    = @middleware.remote_service_for( @resource, @version )
       end
 
       # Obtain a list of resource instance representations.
@@ -1299,9 +1410,13 @@ module ApiTools
       # unless there's an error (check the ApiTools::ServiceContext instance's
       # request object's ApiTools::ServerResponse#halt_processing? value).
       #
-      def list( query_hash )
+      def list( query_hash = nil )
         @middleware.inter_service(
-          :service     => @service,
+          :local       => @local_service,
+          :remote      => @remote_uri,
+          :resource    => @resource,
+          :version     => @version,
+
           :http_method => 'GET',
           :query_hash  => query_hash
         )
@@ -1316,9 +1431,13 @@ module ApiTools
       # error (check the ApiTools::ServiceContext instance's request object's
       # ApiTools::ServerResponse#halt_processing? value).
       #
-      def show( ident, query_hash )
+      def show( ident, query_hash = nil )
         @middleware.inter_service(
-          :service     => @service,
+          :local       => @local_service,
+          :remote      => @remote_uri,
+          :resource    => @resource,
+          :version     => @version,
+
           :http_method => 'GET',
           :ident       => ident,
           :query_hash  => query_hash
@@ -1334,9 +1453,13 @@ module ApiTools
       # there's an error (check the ApiTools::ServiceContext instance's request
       # object's ApiTools::ServerResponse#halt_processing? value).
       #
-      def create( body_hash, query_hash )
+      def create( body_hash, query_hash = nil )
         @middleware.inter_service(
-          :service     => @service,
+          :local       => @local_service,
+          :remote      => @remote_uri,
+          :resource    => @resource,
+          :version     => @version,
+
           :http_method => 'POST',
           :body_hash   => body_hash,
           :query_hash  => query_hash
@@ -1353,9 +1476,13 @@ module ApiTools
       # there's an error (check the ApiTools::ServiceContext instance's request
       # object's ApiTools::ServerResponse#halt_processing? value).
       #
-      def update( ident, body_hash, query_hash )
+      def update( ident, body_hash, query_hash = nil )
         @middleware.inter_service(
-          :service     => @service,
+          :local       => @local_service,
+          :remote      => @remote_uri,
+          :resource    => @resource,
+          :version     => @version,
+
           :http_method => 'PATCH',
           :ident       => ident,
           :body_hash   => body_hash,
@@ -1372,9 +1499,13 @@ module ApiTools
       # unless there's an error (check the ApiTools::ServiceContext instance's
       # request object's ApiTools::ServerResponse#halt_processing? value).
       #
-      def delete( ident, query_hash )
+      def delete( ident, query_hash = nil )
         @middleware.inter_service(
-          :service     => @service,
+          :local       => @local_service,
+          :remote      => @remote_uri,
+          :resource    => @resource,
+          :version     => @version,
+
           :http_method => 'DELETE',
           :ident       => ident,
           :query_hash  => query_hash
@@ -1382,5 +1513,59 @@ module ApiTools
       end
 
     end # 'class ServiceEndpoint'
+
+    # A registry of service endpoints, implenented as a DRB server class.
+    #
+    class ServiceRegistryDRbServer
+
+      def initialize
+        @repository = {}
+      end
+
+      # Add an endpoint to the list.
+      #
+      # +resource+:: Resource as a String or Symbol, e.g. "Product"
+      # +version+::  Endpoint's implemented API version as an Integer, e.g. 1
+      # +uri+::      URI at which this service may be accessed, including the
+      #              endpoint path (e.g. "http://localhost:3002/v1/products"),
+      #              as a String.
+      #
+      def add( resource, version, uri )
+        @repository[ "#{ resource }/#{ version }" ] = uri
+      end
+
+      # Find an endpoint in the list. Returns URI at which the service may be
+      # accessed as a String, or 'nil' if not found.
+      #
+      # +resource+:: Resource as a String or Symbol, e.g. "Product"
+      # +version+::  Endpoint's implemented API version as an Integer, e.g. 1
+      #
+      def find( resource, version )
+        @repository[ "#{ resource }/#{ version }" ]
+      end
+
+    end # 'class ServiceRegistryDRbServer'
+
+    # URI for DRb server used during local machine development as a registry
+    # of service endpoints. Whichever service starts first runs the server
+    # which others connect to if subsequently started.
+    #
+    # Use IP address, rather than 'localhost' here, to ensure that "address
+    # in use" errors are raised immediately if a second server startup attempt
+    # is made:
+    #
+    #   https://bugs.ruby-lang.org/issues/3052
+    #
+    DRB_URI = 'druby://127.0.0.1:8787'
+
+    # "disable eval() and friends":
+    # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
+    #
+    $SAFE = 1 
+
+    # Instance to use for the DRb server.
+    #
+    FRONT_OBJECT = ServiceRegistryDRbServer.new
+
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'

@@ -170,10 +170,13 @@ module ApiTools
     # which means counter-to-documentation results could be returned to API
     # clients. That is Very Bad.
     #
+    # Pass optionally the HTTP status code to use if this happens to be the
+    # first stored error. If this is omitted, 500 is kept as the default.
+    #
     # As with #add_error, returns a Rack representation of the response.
     #
-    def add_precompiled_error( code, message, reference )
-      @errors.add_precompiled_error( code, message, reference )
+    def add_precompiled_error( code, message, reference, http_status = 500 )
+      @errors.add_precompiled_error( code, message, reference, http_status )
       return for_rack()
     end
 

@@ -157,7 +157,14 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
-      # We break the "::environment" class method so that it raises an error.
+
+      # First we allo "::environment" to be called normally, as this is done
+      # when retrieving session data to see if we should run in test mode or
+      # try to talk to Memcache.
+
+      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_call_original()
+
+      # Now break the next "::environment" call so that it raises an error.
       # This is used during normal exception handling to determine whether or
       # not a backtrace should be encoded in the JSON response. By raising an
       # exception here, we test the fallback exception handler.
