@@ -9,19 +9,6 @@ require root+'platform_context'
 require root+'thread_safe'
 require root+'utilities.rb'
 
-require root+'services/amqp_message'
-require root+'services/request'
-require root+'services/response'
-
-require root+'services/http_request'
-require root+'services/http_response'
-
-require root+'services/amqp_endpoint'
-require root+'services/amqp_multithreaded_endpoint'
-
-require root+'services/base_multithreaded_service'
-require root+'services/base_client'
-
 require root+'presenters/base_dsl.rb'
 require root+'presenters/base_presenter.rb'
 
