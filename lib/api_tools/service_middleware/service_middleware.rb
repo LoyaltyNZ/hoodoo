@@ -104,6 +104,22 @@ module ApiTools
       @_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
+    # Do we have Memcache available? If not, assume local development with
+    # higher level queue services not available. Most service authors should
+    # not ever need to check this.
+    #
+    def self.has_memcache?
+      m = ENV[ 'MEMCACHE_URL' ]
+      m.nil? == false && m.empty? == false
+    end
+
+    # Are we running on the queue, else (implied) a local HTTP server?
+    #
+    def self.on_queue?
+      q = ENV[ 'AMQ_ENDPOINT' ]
+      q.nil? == false && q.empty? == false
+    end
+
     # Initialize the middleware instance.
     #
     # +app+ Rack app instance to which calls should be passed.
@@ -286,39 +302,45 @@ module ApiTools
     #                    endpoint.
     #
     def announce_presence_of( services )
+      if self.class.on_queue?
 
-      # Rack provides no formal way to find out our host or port before a
-      # request arrives, because in part it might change due to clustering.
-      # For local development on an assumed single instance server, we can 
-      # ask Ruby itself for all Rack::Server instances, expecting just one.
+        # Queue-based announcement goes here
 
-      servers = ObjectSpace.each_object( Rack::Server )
-      return unless servers.count == 1
+      else
 
-      server  = servers.first
-      host    = server.options[ :Host ]
-      port    = server.options[ :Port ]
+        # Rack provides no formal way to find out our host or port before a
+        # request arrives, because in part it might change due to clustering.
+        # For local development on an assumed single instance server, we can
+        # ask Ruby itself for all Rack::Server instances, expecting just one.
 
-      # Start the DRb server, or connect to it if already running.
-      #
-      begin
-        DRb.start_service( DRB_URI, FRONT_OBJECT )
-        @drb_server = DRbObject.new_with_uri( DRB_URI )
-      rescue Errno::EADDRINUSE => e
-        DRb.start_service
-        @drb_server = DRbObject.new_with_uri( DRB_URI )
-      end
+        servers = ObjectSpace.each_object( Rack::Server )
+        return unless servers.count == 1
 
-      # Announce our local services.
-      #
-      services.each do | service |
-        interface = service[ :interface ]
+        server  = servers.first
+        host    = server.options[ :Host ]
+        port    = server.options[ :Port ]
 
-        @drb_server.add(
-          interface.resource,
-          interface.version,
-          "http://#{ host }:#{ port }#{ service[ :path ] }"
-        )
+        # Start the DRb server, or connect to it if already running.
+        #
+        begin
+          DRb.start_service( DRB_URI, FRONT_OBJECT )
+          @drb_server = DRbObject.new_with_uri( DRB_URI )
+        rescue Errno::EADDRINUSE => e
+          DRb.start_service
+          @drb_server = DRbObject.new_with_uri( DRB_URI )
+        end
+
+        # Announce our local services.
+        #
+        services.each do | service |
+          interface = service[ :interface ]
+
+          @drb_server.add(
+            interface.resource,
+            interface.version,
+            "http://#{ host }:#{ port }#{ service[ :path ] }"
+          )
+        end
       end
     end
 
@@ -331,8 +353,11 @@ module ApiTools
     def load_session
       @session_id = @rack_request.env[ 'HTTP_X_SESSION_ID' ]
 
+      # Use test mode for sessions if in a test environment or if there is
+      # no configured MemCache available (assume local development).
+
       environment = self.class.environment()
-      ApiTools::ServiceSession.testing( environment.development? || environment.test? )
+      ApiTools::ServiceSession.testing( environment.test? || ! self.class.has_memcache? )
 
       @service_session = ApiTools::ServiceSession.load_session(
         ENV[ 'MEMCACHE_URL' ],
@@ -516,7 +541,7 @@ module ApiTools
 
       implementation.before(context) if implementation.respond_to? :before
       implementation.send( action, context ) unless @service_response.halt_processing?
-      implementation.after(context) if !@service_response.halt_processing? and implementation.respond_to?(:after) 
+      implementation.after(context) if !@service_response.halt_processing? and implementation.respond_to?(:after)
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -1561,7 +1586,7 @@ module ApiTools
     # "disable eval() and friends":
     # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
     #
-    $SAFE = 1 
+    $SAFE = 1
 
     # Instance to use for the DRb server.
     #
