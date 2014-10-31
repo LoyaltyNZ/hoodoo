@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'api_tools'
-  s.version     = '0.0.1'
+  s.version     = '0.1.0'
   s.date        = '2014-02-10'
   s.summary     = "A gem for simplifying the implementation of Loyalty Platform services."
   s.description = "A gem for simplifying the implementation of Loyalty Platform services."
@@ -21,6 +21,4 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json_builder'
   s.add_runtime_dependency 'uuidtools'
   s.add_runtime_dependency 'dalli'
-  s.add_runtime_dependency 'bunny'
-  s.add_runtime_dependency 'msgpack'
 end
