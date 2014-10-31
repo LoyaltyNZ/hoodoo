@@ -119,16 +119,53 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
     )
     context.response.body = { 'list' => result }
   end
+
   def show( context )
+    resource = context.resource( :TestEcho, 2 )
+    result   = resource.show(
+      context.request.uri_path_components.join( ',' ),
+      {
+        '_embed'     => context.request.embeds,
+        '_reference' => context.request.references
+      }
+    )
     context.response.body = { 'show' => result }
   end
+
   def create( context )
+    resource = context.resource( :TestEcho, 2 )
+    result   = resource.create(
+      context.request.body,
+      {
+        '_embed'     => context.request.embeds,
+        '_reference' => context.request.references
+      }
+    )
     context.response.body = { 'create' => result }
   end
+
   def update( context )
+    resource = context.resource( :TestEcho, 2 )
+    result   = resource.update(
+      context.request.uri_path_components.join( ',' ),
+      context.request.body,
+      {
+        '_embed'     => context.request.embeds,
+        '_reference' => context.request.references
+      }
+    )
     context.response.body = { 'update' => result }
   end
+
   def delete( context )
+    resource = context.resource( :TestEcho, 2 )
+    result   = resource.delete(
+      context.request.uri_path_components.join( ',' ),
+      {
+        '_embed'     => context.request.embeds,
+        '_reference' => context.request.references
+      }
+    )
     context.response.body = { 'delete' => result }
   end
 end
@@ -421,20 +458,139 @@ describe ApiTools::ServiceMiddleware do
       get(
         '/v1/test_call.tar.gz?limit=25&offset=75',
         nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+          'HTTP_CONTENT_LANGUAGE' => 'de' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'list' ]).to_not be_nil
+      expect( parsed[ 'list' ][ 'list' ] ).to eq(
+        {
+          'locale'              => 'de',
+          'body'                => nil,
+          'uri_path_components' => [],
+          'uri_path_extension'  => '',
+          'list_offset'         => 75,
+          'list_limit'          => 25,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
+          'references'          => nil
+        }
+      )
+    end
+
+    it 'should be able to show things in the remote service' do
+      get(
+        '/v1/test_call/one/two.tar.gz',
+        nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
 
       expect( last_response.status ).to eq( 200 )
       parsed = JSON.parse( last_response.body )
 
-      expect( parsed[ 'list' ][ 'list' ] ).to eq(
+      expect( parsed[ 'show' ]).to_not be_nil
+      expect( parsed[ 'show' ][ 'show' ] ).to eq(
         {
           'locale'              => 'en-nz',
           'body'                => nil,
+          'uri_path_components' => [ 'one,two' ],
+          'uri_path_extension'  => '',
+          'list_offset'         => 0,
+          'list_limit'          => 50,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
+          'references'          => nil
+        }
+      )
+    end
+
+    it 'should be able to create things in the remote service' do
+      post(
+        '/v1/test_call.tar.gz',
+        { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'create' ]).to_not be_nil
+      expect( parsed[ 'create' ][ 'create' ] ).to eq(
+        {
+          'locale'              => 'en-nz',
+          'body'                => { 'foo' => 'bar', 'baz' => 'boo' },
           'uri_path_components' => [],
           'uri_path_extension'  => '',
-          'list_offset'         => 75,
-          'list_limit'          => 25,
+          'list_offset'         => 0,
+          'list_limit'          => 50,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
+          'references'          => nil
+        }
+      )
+    end
+
+    it 'should be able to update things in the remote service' do
+      patch(
+        '/v1/test_call/aa/bb.tar.gz',
+        { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'update' ]).to_not be_nil
+      expect( parsed[ 'update' ][ 'update' ] ).to eq(
+        {
+          'locale'              => 'en-nz',
+          'body'                => { 'foo' => 'boo', 'baz' => 'bar' },
+          'uri_path_components' => [ 'aa,bb' ],
+          'uri_path_extension'  => '',
+          'list_offset'         => 0,
+          'list_limit'          => 50,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
+          'references'          => nil
+        }
+      )
+    end
+
+    it 'should be able to delete things in the remote service' do
+      delete(
+        '/v1/test_call/aone/btwo.tar.gz',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+          'HTTP_CONTENT_LANGUAGE' => 'fr' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'delete' ]).to_not be_nil
+      expect( parsed[ 'delete' ][ 'delete' ] ).to eq(
+        {
+          'locale'              => 'fr',
+          'body'                => nil,
+          'uri_path_components' => [ 'aone,btwo' ],
+          'uri_path_extension'  => '',
+          'list_offset'         => 0,
+          'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
           'list_search_data'    => nil,
