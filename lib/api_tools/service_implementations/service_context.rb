@@ -60,8 +60,15 @@ module ApiTools
     # +resource+:: Resource name for the endpoint, e.g. +:Purchase+. String
     #              or symbol.
     #
-    def resource( resource_name )
-      @endpoints[ resource_name.to_sym ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new( @middleware, resource_name )
+    # +version+::  Optional required implemented version for the endpoint, as
+    #              an Integer - defaults to 1.
+    #
+    def resource( resource_name, version = 1 )
+      @endpoints[ "#{ resource_name }/#{ version }" ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new(
+        @middleware,
+        resource_name,
+        version
+      )
     end
   end
 end

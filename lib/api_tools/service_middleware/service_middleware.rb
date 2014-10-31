@@ -74,7 +74,7 @@ module ApiTools
     #
     ALLOWED_QUERIES_ALL = [
       '_embed',
-      '_reference',
+      '_reference'
     ]
 
     # Allowed media types in Content-Type headers.
@@ -118,6 +118,17 @@ module ApiTools
     def self.on_queue?
       q = ENV[ 'AMQ_ENDPOINT' ]
       q.nil? == false && q.empty? == false
+    end
+
+    # Record internally the HTTP host and port during local development via
+    # e.g "rackup" or testing with rspec. This is usually not called directly
+    # except via the Rack startup monkey patch code in +service_middleware.rb+.
+    #
+    # Options hash +:Host+ and +:Port+ entries are recorded.
+    #
+    def self.record_host_and_port( options = {} )
+      @recorded_host = options[ :Host ]
+      @recorded_port = options[ :Port ]
     end
 
     # Initialize the middleware instance.
@@ -317,8 +328,8 @@ module ApiTools
         return unless servers.count == 1
 
         server  = servers.first
-        host    = server.options[ :Host ]
-        port    = server.options[ :Port ]
+        host    = server.options[ :Host ] || @recorded_host || '127.0.0.1'
+        port    = server.options[ :Port ] || @reporded_port || 9292
 
         # Start the DRb server, or connect to it if already running.
         #
@@ -898,7 +909,7 @@ module ApiTools
       unless malformed
         search = query_hash[ 'search' ]
         unless search.nil?
-          unrecognised_search_keys = search.keys - interface.to_list.search
+          unrecognised_search_keys = search.keys - ( interface.to_list.search || [] )
           malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
         end
       end
@@ -906,7 +917,7 @@ module ApiTools
       unless malformed
         filter = query_hash[ 'filter' ]
         unless filter.nil?
-          unrecognised_filter_keys = filter.keys - interface.to_list.filter
+          unrecognised_filter_keys = filter.keys - ( interface.to_list.filter || [] )
           malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
         end
       end
@@ -914,7 +925,7 @@ module ApiTools
       unless malformed
         embeds = query_hash[ '_embed' ]
         unless embeds.nil?
-          unrecognised_embeds = embeds - interface.embeds
+          unrecognised_embeds = embeds - ( interface.embeds || [] )
           malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
         end
       end
@@ -922,7 +933,7 @@ module ApiTools
       unless malformed
         references = query_hash[ '_reference' ]
         unless references.nil?
-          unrecognised_references = references - interface.embeds # (sic.)
+          unrecognised_references = references - ( interface.embeds || [] )# (sic.)
           malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
         end
       end
@@ -943,10 +954,6 @@ module ApiTools
       service_request.list_filter_data    = filter
       service_request.embeds              = embeds
       service_request.references          = references
-
-    rescue
-      service_response.add_error( 'platform.malformed' )
-
     end
 
     # Safely parse the client payload in the context of the defined content
@@ -1152,11 +1159,16 @@ module ApiTools
 
       unless query_hash.nil?
         query_hash = query_hash.dup
-        query_hash[ :search ] = URI.encode_www_form( query_hash[ :search ] ) if ( query_hash[ :search ].is_a?( Hash ) )
-        query_hash[ :filter ] = URI.encode_www_form( query_hash[ :filter ] ) if ( query_hash[ :filter ].is_a?( Hash ) )
+        query_hash[ 'search' ] = URI.encode_www_form( query_hash[ 'search' ] ) if ( query_hash[ 'search' ].is_a?( Hash ) )
+        query_hash[ 'filter' ] = URI.encode_www_form( query_hash[ 'filter' ] ) if ( query_hash[ 'filter' ].is_a?( Hash ) )
 
-        query_hash[ :_embed     ] = query_hash[ :_embed     ].join( ',' ) if ( query_hash[ :_embed     ].is_a?( Array ) )
-        query_hash[ :_reference ] = query_hash[ :_reference ].join( ',' ) if ( query_hash[ :_reference ].is_a?( Array ) )
+        query_hash[ '_embed'     ] = query_hash[ '_embed'     ].join( ',' ) if ( query_hash[ '_embed'     ].is_a?( Array ) )
+        query_hash[ '_reference' ] = query_hash[ '_reference' ].join( ',' ) if ( query_hash[ '_reference' ].is_a?( Array ) )
+
+        query_hash.delete( 'search'     ) if query_hash[ 'search'     ].nil? || query_hash[ 'search'     ].empty?
+        query_hash.delete( 'filter'     ) if query_hash[ 'filter'     ].nil? || query_hash[ 'filter'     ].empty?
+        query_hash.delete( '_embed'     ) if query_hash[ '_embed'     ].nil? || query_hash[ '_embed'     ].empty?
+        query_hash.delete( '_reference' ) if query_hash[ '_reference' ].nil? || query_hash[ '_reference' ].empty?
       end
 
       unless query_hash.nil? || query_hash.empty?
@@ -1594,3 +1606,26 @@ module ApiTools
 
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'
+
+# For local development, we need to know the HTTP Host and Port. We could
+# do that nicely, looking up the Rack server in ObjectSpace and asking it
+# for its options - except some of the web server adapters do really dumb
+# things like "options.delete(:Host)" to read items out, thus destroying
+# the info we need.
+#
+# Instead, monkey patch :-(
+
+module Rack
+  class Server
+
+    class << self
+      def start_and_record_host_and_port( options = nil )
+        ApiTools::ServiceMiddleware.record_host_and_port( options )
+        racks_original_start( options )
+      end
+
+      alias racks_original_start start
+      alias start start_and_record_host_and_port
+    end
+  end
+end

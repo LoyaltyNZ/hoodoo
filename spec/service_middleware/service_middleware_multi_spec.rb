@@ -62,8 +62,31 @@ class TestEchoServiceInterface < ApiTools::ServiceInterface
 end
 
 class TestEchoQuietServiceImplementation < ApiTools::ServiceImplementation
-  def show( context )
-  end
+
+  public
+
+    def show( context )
+      context.response.body = { 'show' => to_h( context ) }
+    end
+
+  private
+
+    def to_h( context )
+      {
+        'locale'              => context.request.locale,
+        'body'                => context.request.body,
+        'uri_path_components' => context.request.uri_path_components,
+        'uri_path_extension'  => context.request.uri_path_extension,
+        'list_offset'         => context.request.list_offset,
+        'list_limit'          => context.request.list_limit,
+        'list_sort_key'       => context.request.list_sort_key,
+        'list_sort_direction' => context.request.list_sort_direction,
+        'list_search_data'    => context.request.list_search_data,
+        'list_filter_data'    => context.request.list_filter_data,
+        'embeds'              => context.request.embeds,
+        'references'          => context.request.references
+      }
+    end
 end
 
 class TestEchoQuietServiceInterface < ApiTools::ServiceInterface
@@ -81,14 +104,32 @@ end
 
 class TestCallServiceImplementation < ApiTools::ServiceImplementation
   def list( context )
+    resource = context.resource( :TestEcho, 2 )
+    result   = resource.list(
+      {
+        'offset'     => context.request.list_offset,
+        'limit'      => context.request.list_limit,
+        'sort'       => context.request.list_sort_key,
+        'direction'  => context.request.list_sort_direction,
+        'search'     => context.request.list_search_data,
+        'filter'     => context.request.list_filter_data,
+        '_embed'     => context.request.embeds,
+        '_reference' => context.request.references
+      }
+    )
+    context.response.body = { 'list' => result }
   end
   def show( context )
+    context.response.body = { 'show' => result }
   end
   def create( context )
+    context.response.body = { 'create' => result }
   end
   def update( context )
+    context.response.body = { 'update' => result }
   end
   def delete( context )
+    context.response.body = { 'delete' => result }
   end
 end
 
@@ -144,11 +185,18 @@ describe ApiTools::ServiceMiddleware do
       app = Rack::Builder.new do
         use ApiTools::ServiceMiddleware
         run TestEchoServiceApplication.new
-      end.to_app
+      end
 
-      # This command never returns.
+      # This command never returns. Since this server brings up the echo
+      # service application before anything else happens, this is the
+      # application which will also run the DRb server.
 
-      Rack::Server.start( :app => app, :Host => '127.0.0.1', :Port => @port )
+      Rack::Server.start(
+        :app  => app,
+        :Host => '127.0.0.1',
+        :Port => @port,
+        :server => :webrick
+      )
     end
 
     # Wait for the server to come up. I tried many approaches. In the end,
@@ -225,6 +273,33 @@ describe ApiTools::ServiceMiddleware do
           'list_filter_data'    => nil,
           'embeds'              => nil,
           'references'          => [ 'embed_one', 'embed_two' ]
+        }
+      )
+    end
+
+    it 'should be able to show quiet things too' do
+      response = run_request(
+        Net::HTTP::Get,
+        'v1/test_echo_quiet/some_uuid'
+      )
+
+      expect( response.code ).to eq( '200' )
+      parsed = JSON.parse( response.body )
+
+      expect( parsed[ 'show' ] ).to eq(
+        {
+          'locale'              => 'en-nz',
+          'body'                => nil,
+          'uri_path_components' => [ 'some_uuid' ],
+          'uri_path_extension'  => '',
+          'list_offset'         => 0,
+          'list_limit'          => 50,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
+          'references'          => nil
         }
       )
     end
@@ -308,6 +383,63 @@ describe ApiTools::ServiceMiddleware do
           'list_search_data'    => nil,
           'list_filter_data'    => nil,
           'embeds'              => [ 'embed_two' ],
+          'references'          => nil
+        }
+      )
+    end
+
+    it 'should get 422 for bad requests' do
+      response = run_request(
+        Net::HTTP::Get,
+        'v1/test_echo_quiet' # I.e. "list" action, but service only does "show"
+      )
+
+      expect( response.code ).to eq( '422' )
+    end
+
+    it 'should be detect 404 OK' do
+      response = run_request(
+        Net::HTTP::Get,
+        'v1/not_present'
+      )
+
+      expect( response.code ).to eq( '404' )
+    end
+  end
+
+  #############################################################################
+
+  context 'remote inter-service calls' do
+    def app
+      Rack::Builder.new do
+        use ApiTools::ServiceMiddleware
+        run TestCallServiceApplication.new
+      end
+    end
+
+    it 'should be able to list things in the remote service' do
+      get(
+        '/v1/test_call.tar.gz?limit=25&offset=75',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'list' ][ 'list' ] ).to eq(
+        {
+          'locale'              => 'en-nz',
+          'body'                => nil,
+          'uri_path_components' => [],
+          'uri_path_extension'  => '',
+          'list_offset'         => 75,
+          'list_limit'          => 25,
+          'list_sort_key'       => 'created_at',
+          'list_sort_direction' => 'desc',
+          'list_search_data'    => nil,
+          'list_filter_data'    => nil,
+          'embeds'              => nil,
           'references'          => nil
         }
       )
