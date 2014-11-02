@@ -1087,9 +1087,9 @@ module ApiTools
     #
     # +@service_response+ is updated on exit. If this says "halt processing",
     # errors were generated. Ignore the function return value. Otherwise,
-    # returns a JSON resource representation in the non-list-action cases,
-    # else an array of zero or more JSON resource representations in the list
-    # action case.
+    # returns a Has equivalent of the JSON resource representation in the
+    # non-list-action cases, else an array of zero or more JSON resource
+    # representations in the list action case.
     #
     def inter_service( options )
 
@@ -1256,6 +1256,12 @@ module ApiTools
         end
       end
 
+      # If the parsed data wrapped an array, extract just the array part.
+
+      if ( parsed[ '_data' ].is_a?( Array ) )
+        parsed = parsed[ '_data' ]
+      end
+
       return parsed
     end
 
@@ -1357,6 +1363,7 @@ module ApiTools
 
       implementation.send( action, context )
       @service_response.errors.merge!( local_service_response.errors )
+
       return local_service_response.body
     end
 

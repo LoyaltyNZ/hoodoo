@@ -12,7 +12,11 @@ class TestEchoServiceImplementation < ApiTools::ServiceImplementation
   public
 
     def list( context )
-      context.response.body = { 'list' => to_h( context ) }
+      context.response.body = [
+         { 'list0' => to_h( context ) },
+         { 'list1' => to_h( context ) },
+         { 'list2' => to_h( context ) }
+      ]
     end
     def show( context )
       context.response.body = { 'show' => to_h( context ) }
@@ -117,7 +121,11 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
         '_reference' => context.request.references
       }
     )
-    context.response.body = { 'list' => result }
+    context.response.body = [
+      { 'listA' => result },
+      { 'listB' => result },
+      { 'listC' => result }
+    ]
   end
 
   def show( context )
@@ -267,7 +275,9 @@ describe ApiTools::ServiceMiddleware do
       expect( response.code ).to eq( '200' )
       parsed = JSON.parse( response.body )
 
-      expect( parsed[ 'list' ] ).to eq(
+      expect( parsed[ '_data' ]).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ]).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ][ 'list0' ] ).to eq(
         {
           'locale'              => 'en-nz',
           'body'                => nil,
@@ -465,8 +475,17 @@ describe ApiTools::ServiceMiddleware do
       expect( last_response.status ).to eq( 200 )
       parsed = JSON.parse( last_response.body )
 
-      expect( parsed[ 'list' ]).to_not be_nil
-      expect( parsed[ 'list' ][ 'list' ] ).to eq(
+      # Outer calls wrap arrays in object with "_data" key for JSON (since we
+      # don't do JSON5 and only JSON5 allows outermost / top-level arrays), but
+      # the inter-service calls unpack that for us, so we should see the outer
+      # service's "_data" array nesting directly the inner service's array if
+      # the middleware dereferenced it correctly for us.
+
+      expect( parsed[ '_data' ]).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ]).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ][ 'listA' ] ).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ][ 'listA' ][ 0 ] ).to_not be_nil
+      expect( parsed[ '_data' ][ 0 ][ 'listA' ][ 0 ][ 'list0'] ).to eq(
         {
           'locale'              => 'de',
           'body'                => nil,
