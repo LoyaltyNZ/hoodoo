@@ -75,6 +75,8 @@ describe ApiTools::Logger do
       ApiTools::Logger::warn(1)
       expect($stderr).to receive(:puts)
       ApiTools::Logger::error(1)
+
+      expect(ApiTools::Logger.level).to eq(:debug)
     end
 
     it 'should log correctly when level = :info' do
