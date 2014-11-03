@@ -19,7 +19,17 @@ class TestEchoServiceImplementation < ApiTools::ServiceImplementation
       ]
     end
     def show( context )
-      context.response.body = { 'show' => to_h( context ) }
+      if context.request.uri_path_components[ 0 ] == 'return_error'
+        context.response.add_error(
+          'generic.invalid_string',
+          :message => 'Returning error as requested',
+          :reference => { :another => 'no other ident', :field_name => 'no ident' }
+        )
+      elsif context.request.uri_path_components[ 0 ] == 'return_invalid_json'
+        context.response.body = 'Hello, world'
+      else
+        context.response.body = { 'show' => to_h( context ) }
+      end
     end
     def create( context )
       context.response.body = { 'create' => to_h( context ) }
@@ -129,14 +139,20 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
   end
 
   def show( context )
-    resource = context.resource( :TestEcho, 2 )
-    result   = resource.show(
+    resource = if ( context.request.uri_path_components[ 0 ] == 'generate_404' )
+      context.resource( :NotFound, 42 )
+    else
+      context.resource( :TestEcho, 2 )
+    end
+
+    result = resource.show(
       context.request.uri_path_components.join( ',' ),
       {
         '_embed'     => context.request.embeds,
         '_reference' => context.request.references
       }
     )
+
     context.response.body = { 'show' => result }
   end
 
@@ -519,7 +535,7 @@ describe ApiTools::ServiceMiddleware do
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [ 'one,two' ],
-          'uri_path_extension'  => '',
+          'uri_path_extension'  => '', # This is the *inner* inter-service call's state and no filename extensions are used internally
           'list_offset'         => 0,
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
@@ -618,6 +634,54 @@ describe ApiTools::ServiceMiddleware do
           'references'          => nil
         }
       )
+    end
+
+    it 'should receive errors from remote service as if from the local call' do
+      get(
+        '/v1/test_call/return_error',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 422 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'errors' ] ).to_not be_nil
+      expect( parsed[ 'errors' ].count ).to eq(1)
+      expect( parsed[ 'errors' ][ 0 ] ).to eq({
+        'code'      => 'generic.invalid_string',
+        'message'   => 'Returning error as requested',
+        'reference' => 'no ident,no other ident'
+      })
+    end
+
+    it 'should get a 404 for missing endpoints' do
+      get(
+        '/v1/test_call/generate_404',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 404 )
+    end
+
+    # Ruby can't kill off an "unresponsive" thread - there seems to be no
+    # equivalent of "kill -9" and the likes of "#exit!" are long gone - so
+    # the server running in "@thread", which never returns to the Ruby
+    # interpreter after the Rack::Server.start() call, can't die. Instead
+    # we are forced to write a weak test that simulates a connection
+    # failure to the endpoint.
+    #
+    it 'should get a 404 for no-longer-running endpoints' do
+      expect_any_instance_of(Net::HTTP).to receive(:request).once.and_raise(Errno::ECONNREFUSED)
+
+      get(
+        '/v1/test_call/show_something',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 404 )
     end
   end
 end

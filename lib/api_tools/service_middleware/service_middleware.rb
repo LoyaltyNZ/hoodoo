@@ -550,9 +550,9 @@ module ApiTools
         self
       )
 
-      implementation.before(context) if implementation.respond_to? :before
+      implementation.before( context ) if implementation.respond_to?( :before )
       implementation.send( action, context ) unless @service_response.halt_processing?
-      implementation.after(context) if !@service_response.halt_processing? and implementation.respond_to?(:after)
+      implementation.after( context ) if ! @service_response.halt_processing? and implementation.respond_to?( :after )
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -1205,13 +1205,10 @@ module ApiTools
         return add_404.call()
       end
 
-      # Parse the response
+      # Parse the response (assumed valid JSON else #for_rack would have failed
+      # when the originating response object was turned into the Rack response).
 
-      parsed = begin
-        JSON.parse( response.body )
-      rescue
-        {}
-      end
+      parsed = JSON.parse( response.body )
 
       # Deal with headers sent in the call.
 
