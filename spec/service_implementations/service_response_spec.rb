@@ -26,7 +26,21 @@ describe ApiTools::ServiceResponse do
     end
   end
 
-  context '#add_header and #get_header' do
+  context '#add_precompiled_error' do
+    it 'should let me add precompiled errors' do
+      expect {
+        @r.add_precompiled_error('test_domain.http_345_no_references 1', 'message 1', 'baz, foo 1')
+        @r.add_precompiled_error('test_domain.http_345_no_references 2', 'message 2', 'baz, foo 2')
+        @r.add_precompiled_error('test_domain.http_345_no_references 3', 'message 3', 'baz, foo 3')
+      }.to_not raise_error
+
+      expect(@r.errors.errors[0]).to eq({'code' => 'test_domain.http_345_no_references 1', 'message' => 'message 1', 'reference' => 'baz, foo 1'})
+      expect(@r.errors.errors[1]).to eq({'code' => 'test_domain.http_345_no_references 2', 'message' => 'message 2', 'reference' => 'baz, foo 2'})
+      expect(@r.errors.errors[2]).to eq({'code' => 'test_domain.http_345_no_references 3', 'message' => 'message 3', 'reference' => 'baz, foo 3'})
+    end
+  end
+
+  context '#add_header, #get_header and #headers' do
     it 'should let me add headers' do
       @r.add_header( 'X-Foo', 'baz' )
       @r.add_header( 'X-Bar', 'boo' )
@@ -36,6 +50,14 @@ describe ApiTools::ServiceResponse do
       expect(@r.get_header('x-foo')).to eq('baz')
       expect(@r.get_header('x-baR')).to eq('boo')
       expect(@r.get_header('random')).to eq(nil)
+    end
+
+    it 'should list headers' do
+      @r.add_header( 'X-Foo', 'baz' )
+      @r.add_header( 'x-bar', 'boo' )
+      @r.add_header( 'X-BAZ', 'bin' )
+
+      expect(@r.headers).to eq({'X-Foo' => 'baz', 'x-bar' => 'boo', 'X-BAZ' => 'bin'})
     end
 
     it 'should complain if I try to set the same header twice without the overwrite flag set' do

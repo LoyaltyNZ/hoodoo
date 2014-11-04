@@ -116,6 +116,20 @@ describe ApiTools::Errors do
     end
   end
 
+  describe '#add_precompiled_error' do
+    it 'should let me add precompiled errors' do
+      expect {
+        @errors.add_precompiled_error('test_domain.http_345_no_references 1', 'message 1', 'baz, foo 1')
+        @errors.add_precompiled_error('test_domain.http_345_no_references 2', 'message 2', 'baz, foo 2')
+        @errors.add_precompiled_error('test_domain.http_345_no_references 3', 'message 3', 'baz, foo 3')
+      }.to_not raise_error
+
+      expect(@errors.errors[0]).to eq({'code' => 'test_domain.http_345_no_references 1', 'message' => 'message 1', 'reference' => 'baz, foo 1'})
+      expect(@errors.errors[1]).to eq({'code' => 'test_domain.http_345_no_references 2', 'message' => 'message 2', 'reference' => 'baz, foo 2'})
+      expect(@errors.errors[2]).to eq({'code' => 'test_domain.http_345_no_references 3', 'message' => 'message 3', 'reference' => 'baz, foo 3'})
+    end
+  end
+
   describe '#render' do
     it 'should store before rendering' do
       @errors.clear_errors
