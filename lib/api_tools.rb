@@ -43,6 +43,7 @@ require root+'data/types/basket.rb'
 
 require root+'data/resources/currency.rb'
 require root+'data/resources/errors.rb'
+require root+'data/resources/involvement.rb'
 require root+'data/resources/outlet.rb'
 require root+'data/resources/participant.rb'
 require root+'data/resources/product.rb'
