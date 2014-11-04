@@ -34,6 +34,7 @@ require root+'data/documented_presenter.rb'
 
 # Ordering matters, due to dependencies where one type references another
 
+require root+'data/types/constraints.rb'
 require root+'data/types/error_primitive.rb'
 require root+'data/types/currency.rb'
 require root+'data/types/currency_amount.rb'

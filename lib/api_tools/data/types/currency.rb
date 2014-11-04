@@ -17,9 +17,9 @@ module ApiTools
       class Currency < ApiTools::Data::DocumentedPresenter
 
         schema do
-          string :currency_code, :required => true, :length => 16
+          string :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
           array :qualifiers
-          string :symbol, :length => 8
+          string :symbol, :length => ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
           enum :position, :from => [ :prefix, :suffix ]
 
           integer :precision, :default => 2
