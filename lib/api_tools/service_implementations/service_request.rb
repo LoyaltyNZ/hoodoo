@@ -44,7 +44,33 @@ module ApiTools
     #
     #     [ '1234', 'foo' ]
     #
-    attr_accessor :uri_path_components
+    # The first element of the path components array is exposed in the
+    # read-only #ident accessor.
+    #
+    attr_reader :uri_path_components
+
+    # Set the array returned by #uri_path_components and record the first
+    # element in the value returned by #ident.
+    #
+    # +ary+:: Path component array to record. If +nil+ or not an array,
+    #         +nil+ is stored for uri_path_components and #ident.
+    #
+    def uri_path_components=( ary )
+      if ary.is_a?( Array )
+        @uri_path_components = ary
+        @ident               = ary.first
+      else
+        @uri_path_components = nil
+        @ident               = nil
+      end
+    end
+
+    # The first entry in the #uri_path_components array, or +nil+ if the
+    # array is empty. This supports a common case for inter-service calls
+    # where a UUID or other unique identifier is provided through the first
+    # path element ("+.../v1/resource/uuid+").
+    #
+    attr_reader :ident
 
     # A filename extension on the URI path component, if any, else an empty
     # string. The _first_ dot in the _last_ path component is looked for (see

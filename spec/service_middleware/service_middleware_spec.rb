@@ -250,6 +250,7 @@ describe ApiTools::ServiceMiddleware do
 
           expect(request.locale).to eq('en-nz')
           expect(request.uri_path_components).to be_empty
+          expect(request.ident).to be_nil
           expect(request.uri_path_extension).to eq('')
           expect(request.list_offset).to eq(0)
           expect(request.list_limit).to eq(50)
@@ -506,6 +507,7 @@ describe ApiTools::ServiceMiddleware do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
           expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.ident).to eq('12345')
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
@@ -517,6 +519,7 @@ describe ApiTools::ServiceMiddleware do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
           expect(context.request.uri_path_components).to eq(['12345', '67890'])
+          expect(context.request.ident).to eq('12345')
           expect(context.request.uri_path_extension).to eq('json')
         end
 
@@ -528,6 +531,7 @@ describe ApiTools::ServiceMiddleware do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once do | ignored_rspec_mock_instance, context |
           expect(context.request.uri_path_components).to eq(['12345abc'])
+          expect(context.request.ident).to eq('12345abc')
           expect(context.request.uri_path_extension).to eq('')
         end
 
@@ -745,6 +749,7 @@ describe ApiTools::ServiceMiddleware do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update).once do | ignored_rspec_mock_instance, context |
           expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.ident).to eq('12345')
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
@@ -822,6 +827,7 @@ describe ApiTools::ServiceMiddleware do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:delete).once do | ignored_rspec_mock_instance, context |
           expect(context.request.uri_path_components).to eq(['12345'])
+          expect(context.request.ident).to eq('12345')
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
@@ -1104,7 +1110,7 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
   def show( context )
     expectable_hook( context )
 
-    if context.request.uri_path_components[ 0 ] == 'hello_return_error'
+    if context.request.ident == 'hello_return_error'
       context.response.add_error(
         'generic.invalid_string',
         :message => 'Returning error as requested',
@@ -1178,14 +1184,14 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
   end
 
   def show( context )
-    if context.request.uri_path_components[ 0 ] == 'call_c'
+    if context.request.ident == 'call_c'
       result = context.resource( :RSpecTestInterServiceCallsCResource ).show(
-        context.request.uri_path_components[ 0 ],
+        context.request.ident,
         {}
       )
     else
       result = context.resource( :RSpecTestInterServiceCallsAResource ).show(
-        'hello' + context.request.uri_path_components[ 0 ],
+        'hello' + context.request.ident,
         { _embed: :foo }
       )
     end
@@ -1205,7 +1211,7 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def update( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).update(
-      'hello' + context.request.uri_path_components[ 0 ],
+      'hello' + context.request.ident,
       { number: '42' }.merge( context.request.body ),
       { _embed: 'foo' }
     )
@@ -1215,7 +1221,7 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
   def delete( context )
     result = context.resource( :RSpecTestInterServiceCallsAResource ).delete(
-      'hello' + context.request.uri_path_components[ 0 ],
+      'hello' + context.request.ident,
       { _embed: [ :foo ] }
     )
     expectable_hook( result )
@@ -1315,6 +1321,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
       expect(context.request.body).to be_nil
       expect(context.request.embeds).to eq(['foo'])
       expect(context.request.uri_path_components).to eq(['helloworld'])
+      expect(context.request.ident).to eq('helloworld')
       expect(context.request.uri_path_extension).to eq('')
       expect(context.request.list_offset).to eq(0)
       expect(context.request.list_limit).to eq(50)
@@ -1336,6 +1343,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
       expect(context.request.body).to eq({number: '42', 'sum' => 7})
       expect(context.request.embeds).to eq(['foo'])
       expect(context.request.uri_path_components).to eq([])
+      expect(context.request.ident).to be_nil
     end
 
     post '/v1/rspec_test_inter_service_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1354,6 +1362,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
       expect(context.request.body).to eq({number: '42', 'sum' => 70})
       expect(context.request.embeds).to eq(['foo'])
       expect(context.request.uri_path_components).to eq(['helloworld'])
+      expect(context.request.ident).to eq('helloworld')
     end
 
     patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1372,6 +1381,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
       expect(context.request.body).to be_nil
       expect(context.request.embeds).to eq(['foo'])
       expect(context.request.uri_path_components).to eq(['helloworld'])
+      expect(context.request.ident).to eq('helloworld')
     end
 
     delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1388,6 +1398,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
       expect(context.request.body).to be_nil
       expect(context.request.embeds).to eq(['foo'])
       expect(context.request.uri_path_components).to eq(['hello_return_error'])
+      expect(context.request.ident).to eq('hello_return_error')
       expect(context.request.uri_path_extension).to eq('')
       expect(context.request.list_offset).to eq(0)
       expect(context.request.list_limit).to eq(50)
