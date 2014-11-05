@@ -36,13 +36,13 @@ module ApiTools
 
         if data.is_a? ::String
           if data.size != ApiTools::UUID::UUID_LENGTH
-            errors << {'code'=> 'generic.invalid_string', 'message'=>"UUID `#{full_path(path)}` is of incorrect length `#{data.size}` (should be `#{ApiTools::UUID::UUID_LENGTH}`)", 'reference' => full_path(path)}
+            errors << {'code'=> 'generic.invalid_uuid', 'message'=>"Field `#{full_path(path)}` has incorrect length #{data.size} for a UUID (should be #{ApiTools::UUID::UUID_LENGTH})", 'reference' => full_path(path)}
           else
             # TODO: Maybe one day validate that the associated item is indeed
             #       of the kind in '@resource'.
           end
         else
-          errors << {'code'=> 'generic.invalid_string', 'message'=>"UUID `#{full_path(path)}` is invalid", 'reference' => full_path(path)}
+          errors << {'code'=> 'generic.invalid_uuid', 'message'=>"Field `#{full_path(path)}` is an invalid UUID", 'reference' => full_path(path)}
         end
         errors
       end
