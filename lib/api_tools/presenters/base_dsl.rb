@@ -19,6 +19,17 @@ module ApiTools
         property(name, ApiTools::Presenters::Object, options, &block)
       end
 
+      # Define a JSON object with the supplied name and optional constraints
+      # on properties (like hash keys) and property values (like hash values)
+      # that the object may contain, in abstract terms.
+      # Params
+      # +name+:: The JSON key
+      # +options+:: A +Hash+ of options, e.g. :required => true
+      # &block:: Block declaring the fields making up the nested hash (optional)
+      def hash(name, options = {}, &block)
+        property(name, ApiTools::Presenters::Hash, options, &block)
+      end
+
       # Define a JSON array with the supplied name and options. If there is
       # a block provided, then more DSL calls inside the block define how each
       # array entry must look; otherwise array entries are not validated /

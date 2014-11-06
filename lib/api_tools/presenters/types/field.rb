@@ -101,14 +101,35 @@ module ApiTools
       end
 
       # Rename a property to the given name. The internal name is changed and
-      # the last path entry set to the same name on the assumption that a
-      # non-empty path array is present. This is a specialist interface which
-      # is intended for internal use under unusual circumstances.
+      # the last path entry set to the same name (if a path is present). Paths
+      # of sub-properties (if any) are updated with the parent's new name.
+      #
+      # This is a specialist interface which is intended for internal use
+      # under unusual circumstances.
       #
       # +name+:: New property name. Must be a String.
       #
       def rename( name )
-        @name = @path[ -1 ] = name
+        depth = @path.count - 1
+        @name = name
+
+        rewrite_path( depth, name )
+      end
+
+      # Change the +@path+ array by writing a given value in at a given index.
+      # If this property has any sub-properties, then those are recursively
+      # updated to change the same depth item to the new name in all of them.
+      #
+      # +depth+:: Index into +@path+ to make modifications.
+      # +name+::  Value to write at that index.
+      #
+      def rewrite_path( depth, name )
+        @path[ depth ] = name if depth >= 0
+        return if @properties.nil?
+
+        @properties.each do | property_name, property |
+          property.rewrite_path( depth, name )
+        end
       end
     end
   end

@@ -49,7 +49,7 @@ module ApiTools
     #
     attr_accessor :http_status_code
 
-    # A service implementation can set (and reads back, should it wish) the
+    # A service implementation can set (and read back, should it wish) the
     # API call response body data using this #body / #body= accessor. This is
     # converted to a client-facing representation automatically (e.g. to JSON).
     #
