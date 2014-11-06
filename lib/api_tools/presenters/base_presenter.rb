@@ -23,6 +23,7 @@ module ApiTools
 
       def self.render(data)
         target = {}
+        data   = data || {}
         @schema.render(data, target)
         target
       end

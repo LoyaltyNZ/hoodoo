@@ -95,6 +95,7 @@ module ApiTools
         with_path.each do | element |
           element = element.to_s
           from_target = from_target[ element ]
+          break if from_target.nil?
         end
 
         return from_target

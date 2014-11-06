@@ -183,29 +183,40 @@ module ApiTools
               keys_property   = @properties[ 'keys'   ]
               values_property = @properties[ 'values' ]
 
-              # Need to adjust the above property names for each of the unknown-named
-              # keys coming into this generic key hash. That way, errors are reported
-              # at the correct "path", including the 'dynamic' incoming hash key name.
+              if keys_property.required && data.empty?
 
-              data.each do |key, value|
-                local_path = full_path(path)
+                errors.add_error(
+                  'generic.required_field_missing',
+                  :message   => "Field `#{ full_path( path ) }` is required (Hash, if present, must contain at least one key)",
+                  :reference => { :field_name => full_path( path ) }
+                )
 
-                # So use the "keys property" as a validator for the format (i.e. just
-                # length, in practice) of the current key we're examining in the data
-                # from the caller. Use the "values property" to validate the value in
-                # the data hash. Both are temporarily renamed to match the key in the
-                # client data so that field paths shown in errors will be correct.
+              else
 
-                keys_property.rename( key )
-                values_property.rename( key )
+                # Need to adjust the above property names for each of the unknown-named
+                # keys coming into this generic key hash. That way, errors are reported
+                # at the correct "path", including the 'dynamic' incoming hash key name.
 
-                errors.merge!( keys_property.validate( key, local_path ) )
-                errors.merge!( values_property.validate( value, local_path ) )
+                data.each do |key, value|
+                  local_path = full_path(path)
+
+                  # So use the "keys property" as a validator for the format (i.e. just
+                  # length, in practice) of the current key we're examining in the data
+                  # from the caller. Use the "values property" to validate the value in
+                  # the data hash. Both are temporarily renamed to match the key in the
+                  # client data so that field paths shown in errors will be correct.
+
+                  keys_property.rename( key )
+                  values_property.rename( key )
+
+                  errors.merge!( keys_property.validate( key, local_path ) )
+                  errors.merge!( values_property.validate( value, local_path ) )
+                end
+
+                keys_property.rename( 'keys' )
+                values_property.rename( 'values' )
+
               end
-
-              keys_property.rename( 'keys' )
-              values_property.rename( 'values' )
-
             end
 
           end
@@ -238,17 +249,16 @@ module ApiTools
 
         # No defined schema for the hash contents? Just use the data as-is;
         # we can do no validation. Have to hope the caller has given us data
-        # that would be valid as JSON. No data at all? Do nothing. Else
-        # run through the schema properties for each entry and validate them.
+        # that would be valid as JSON. No data at all? Treat as an empty
+        # hash so default values work. Else run through the schema properties
+        # for each entry and validate them.
 
-        if data.nil?
-          return
+        data = data || @default || {}
 
-        elsif @properties.nil?
+        if @properties.nil?
           hash.merge!( data )
 
         else
-
           subtarget = {}
 
           if @specific == true
@@ -260,7 +270,13 @@ module ApiTools
 
           else
 
+            # The "keys :default => ..." part of the DSL gives default values
+            # for arbitrary no-value keys in the hash in this generic key case,
+            # so while we use the values property for rendering non-empty values,
+            # we use the keys property for the defaults.
+
             values_property = @properties[ 'values' ]
+            default_value   = @properties[ 'keys' ].default || {}
 
             # As with validation, have to temporarily rename the above property
             # (and update its path) so that we render under the correct key name,
@@ -268,16 +284,19 @@ module ApiTools
             # at any time other than right now.
 
             data.each do |key, value|
-              value = value || values_property.default
+              value = value || default_value
+              continue if value.nil?
+
               values_property.rename( key )
-              values_property.render( value, subtarget ) unless value.nil?
+              values_property.render( value, subtarget )
             end
 
             values_property.rename( 'values' )
 
           end
 
-          hash.merge!( read_at_path( subtarget, path ) )
+          rendered = read_at_path( subtarget, path )
+          hash.merge!( rendered ) unless rendered.nil?
         end
       end
     end
