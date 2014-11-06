@@ -56,7 +56,7 @@ module ApiTools
     #         +nil+ is stored for uri_path_components and #ident.
     #
     def uri_path_components=( ary )
-      if ary.is_a?( Array )
+      if ary.is_a?( ::Array )
         @uri_path_components = ary
         @ident               = ary.first
       else

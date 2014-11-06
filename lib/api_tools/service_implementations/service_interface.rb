@@ -143,7 +143,7 @@ module ApiTools
       #     limit 100
       #
       def limit( limit )
-        unless limit.is_a?( Integer )
+        unless limit.is_a?( ::Integer )
           raise "ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
         end
 
@@ -169,7 +169,7 @@ module ApiTools
       #          :member => [ :asc ]
       #
       def sort( sort )
-        unless sort.is_a?( Hash )
+        unless sort.is_a?( ::Hash )
           raise "ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
@@ -197,7 +197,7 @@ module ApiTools
       #          :member          => [ :asc ]
       #
       def default( sort_key )
-        unless sort_key.is_a?( String ) || sort_key.is_a?( Symbol )
+        unless sort_key.is_a?( ::String ) || sort_key.is_a?( ::Symbol )
           raise "ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 

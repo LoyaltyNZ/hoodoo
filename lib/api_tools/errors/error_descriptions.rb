@@ -212,7 +212,7 @@ module ApiTools
         required_keys = [ 'status', 'message' ]
 
         reference              = options[ 'reference' ]
-        options[ 'reference' ] = reference.map( &:to_s ) if reference.is_a?( Array )
+        options[ 'reference' ] = reference.map( &:to_s ) if reference.is_a?( ::Array )
 
         required_keys.each do | required_key |
           unless options.has_key?( required_key )

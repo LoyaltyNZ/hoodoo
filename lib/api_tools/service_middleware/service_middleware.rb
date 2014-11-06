@@ -516,7 +516,7 @@ module ApiTools
 
       body = @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
 
-      unless ( body.nil? || body.is_a?( String ) ) && @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+      unless ( body.nil? || body.is_a?( ::String ) ) && @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
         return @service_response.add_error( 'platform.malformed',
                                             'message' => 'Body data exceeds configured maximum size for platform' )
       end
@@ -530,7 +530,7 @@ module ApiTools
         service_request.body = payload_to_hash( body )
         return @service_response.for_rack() if @service_response.halt_processing?
 
-      elsif body.nil? == false && body.is_a?( String ) && body.strip.length > 0
+      elsif body.nil? == false && body.is_a?( ::String ) && body.strip.length > 0
         return @service_response.add_error( 'platform.malformed',
                                             'message' => 'Unexpected body data for this action',
                                             'reference' => { :action => action } )
@@ -1159,11 +1159,11 @@ module ApiTools
 
       unless query_hash.nil?
         query_hash = query_hash.dup
-        query_hash[ 'search' ] = URI.encode_www_form( query_hash[ 'search' ] ) if ( query_hash[ 'search' ].is_a?( Hash ) )
-        query_hash[ 'filter' ] = URI.encode_www_form( query_hash[ 'filter' ] ) if ( query_hash[ 'filter' ].is_a?( Hash ) )
+        query_hash[ 'search' ] = URI.encode_www_form( query_hash[ 'search' ] ) if ( query_hash[ 'search' ].is_a?( ::Hash ) )
+        query_hash[ 'filter' ] = URI.encode_www_form( query_hash[ 'filter' ] ) if ( query_hash[ 'filter' ].is_a?( ::Hash ) )
 
-        query_hash[ '_embed'     ] = query_hash[ '_embed'     ].join( ',' ) if ( query_hash[ '_embed'     ].is_a?( Array ) )
-        query_hash[ '_reference' ] = query_hash[ '_reference' ].join( ',' ) if ( query_hash[ '_reference' ].is_a?( Array ) )
+        query_hash[ '_embed'     ] = query_hash[ '_embed'     ].join( ',' ) if ( query_hash[ '_embed'     ].is_a?( ::Array ) )
+        query_hash[ '_reference' ] = query_hash[ '_reference' ].join( ',' ) if ( query_hash[ '_reference' ].is_a?( ::Array ) )
 
         query_hash.delete( 'search'     ) if query_hash[ 'search'     ].nil? || query_hash[ 'search'     ].empty?
         query_hash.delete( 'filter'     ) if query_hash[ 'filter'     ].nil? || query_hash[ 'filter'     ].empty?
@@ -1255,7 +1255,7 @@ module ApiTools
 
       # If the parsed data wrapped an array, extract just the array part.
 
-      if ( parsed[ '_data' ].is_a?( Array ) )
+      if ( parsed[ '_data' ].is_a?( ::Array ) )
         parsed = parsed[ '_data' ]
       end
 
@@ -1317,10 +1317,10 @@ module ApiTools
         # that we tolerate it here. Same for "_reference".
 
         data = query_hash[ '_embed' ]
-        query_hash[ '_embed' ] = [ data ] if data.is_a?( String ) || data.is_a?( Symbol )
+        query_hash[ '_embed' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
 
         data = query_hash[ '_reference' ]
-        query_hash[ '_reference' ] = [ data ] if data.is_a?( String ) || data.is_a?( Symbol )
+        query_hash[ '_reference' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
 
         # Regardless, make sure embed/reference array data contains strings.
 
