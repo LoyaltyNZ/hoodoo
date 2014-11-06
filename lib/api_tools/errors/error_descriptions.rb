@@ -103,6 +103,7 @@ module ApiTools
         error 'invalid_float',          status: 422, message: 'Invalid float format',         reference: [ :field_name ]
         error 'invalid_decimal',        status: 422, message: 'Invalid decimal format',       reference: [ :field_name ]
         error 'invalid_boolean',        status: 422, message: 'Invalid boolean format',       reference: [ :field_name ]
+        error 'invalid_enum',           status: 422, message: 'Invalid enumeration',          reference: [ :field_name ]
         error 'invalid_date',           status: 422, message: 'Invalid date specifier',       reference: [ :field_name ]
         error 'invalid_time',           status: 422, message: 'Invalid time specifier',       reference: [ :field_name ]
         error 'invalid_datetime',       status: 422, message: 'Invalid date-time specifier',  reference: [ :field_name ]

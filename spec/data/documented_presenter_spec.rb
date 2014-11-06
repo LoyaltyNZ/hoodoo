@@ -187,7 +187,7 @@ describe '#schema' do
       expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([
         {
           'code' => 'generic.invalid_string',
-          'message' => 'Field `test_object.nested_object.obj_suffix` is larger than max length `1`',
+          'message' => 'Field `test_object.nested_object.obj_suffix` is longer than maximum length `1`',
           'reference' => "test_object.nested_object.obj_suffix"
         },
         {

@@ -126,7 +126,7 @@ module ApiTools
             CommonFields.get_schema.properties[ 'language' ].required = false
           end
 
-          errors += CommonFields.validate( data, true )
+          errors.merge!( CommonFields.validate( data, true ) )
         end
 
         return errors
