@@ -26,6 +26,48 @@ describe ApiTools::ServiceResponse do
     end
   end
 
+  context '#add_errors' do
+    it 'should merge errors (1)' do
+      e = ApiTools::Errors.new
+      e.add_error( 'platform.malformed' )
+      e.add_error( 'generic.malformed' )
+
+      @r.add_error( 'platform.invalid_session' )
+      @r.add_errors( e )
+
+      expect(@r.errors.errors).to eq([
+        { 'code' => 'platform.invalid_session', 'message' => 'Invalid session'   },
+        { 'code' => 'platform.malformed',       'message' => 'Malformed request' },
+        { 'code' => 'generic.malformed',        'message' => 'Malformed payload' }
+      ])
+
+      # Should keep the HTTP status code from the first error added,
+      # which was the "invalid session" we added.
+
+      expect(@r.errors.http_status_code).to eq(401)
+    end
+
+    it 'should merge errors (2)' do
+      e = ApiTools::Errors.new
+      e.add_error( 'platform.malformed' )
+      e.add_error( 'generic.malformed' )
+
+      @r.add_errors( e )
+      @r.add_error( 'platform.invalid_session' )
+
+      expect(@r.errors.errors).to eq([
+        { 'code' => 'platform.malformed',       'message' => 'Malformed request' },
+        { 'code' => 'generic.malformed',        'message' => 'Malformed payload' },
+        { 'code' => 'platform.invalid_session', 'message' => 'Invalid session'   }
+      ])
+
+      # Should keep the HTTP status code from the first error added,
+      # which was the "platform.malformed" from the merged set.
+
+      expect(@r.errors.http_status_code).to eq(422)
+    end
+  end
+
   context '#add_precompiled_error' do
     it 'should let me add precompiled errors' do
       expect {

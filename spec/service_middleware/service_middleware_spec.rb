@@ -1102,7 +1102,7 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
     if search_offset > 0
       context.response.add_error( 'service_calls_a.triggered', 'reference' => { :offset => search_offset } )
     else
-      context.response.body = [1,2,3,4]
+      context.response.set_resources( [1,2,3,4] )
       expectable_hook( context )
     end
   end
@@ -1117,7 +1117,7 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
         :reference => { :another => 'no other ident', :field_name => 'no ident' }
       )
     else
-      context.response.body = { 'inner' => 'shown' }
+      context.response.set_resource( { 'inner' => 'shown' } )
     end
   end
 
