@@ -4,21 +4,21 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class ApiTools::Services::Response - RDoc Documentation</title>
+<title>class Rack::Server - RDoc Documentation</title>
 
-<link href="../../fonts.css" rel="stylesheet">
-<link href="../../rdoc.css" rel="stylesheet">
+<link href="../fonts.css" rel="stylesheet">
+<link href="../rdoc.css" rel="stylesheet">
 
 <script type="text/javascript">
-  var rdoc_rel_prefix = "../../";
+  var rdoc_rel_prefix = "../";
 </script>
 
-<script src="../../js/jquery.js"></script>
-<script src="../../js/navigation.js"></script>
-<script src="../../js/search_index.js"></script>
-<script src="../../js/search.js"></script>
-<script src="../../js/searcher.js"></script>
-<script src="../../js/darkfish.js"></script>
+<script src="../js/jquery.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/search_index.js"></script>
+<script src="../js/search.js"></script>
+<script src="../js/searcher.js"></script>
+<script src="../js/darkfish.js"></script>
 
 
 <body id="top" role="document" class="class">
@@ -26,13 +26,13 @@
   <div id="project-navigation">
     <div id="home-section" role="region" title="Quick navigation" class="nav-section">
   <h2>
-    <a href="../../index.html" rel="home">Home</a>
+    <a href="../index.html" rel="home">Home</a>
   </h2>
 
   <div id="table-of-contents-navigation">
-    <a href="../../table_of_contents.html#pages">Pages</a>
-    <a href="../../table_of_contents.html#classes">Classes</a>
-    <a href="../../table_of_contents.html#methods">Methods</a>
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
   </div>
 </div>
 
@@ -61,7 +61,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link"><a href="AMQPMessage.html">ApiTools::Services::AMQPMessage</a>
+  <p class="link">Object
   
 </div>
 
@@ -73,7 +73,7 @@
 
   <ul class="link-list" role="directory">
     
-    <li class="calls-super" ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-i-start_and_record_host_and_port">#start_and_record_host_and_port</a>
     
   </ul>
 </div>
@@ -81,9 +81,9 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-ApiTools::Services::Response">
-  <h1 id="class-ApiTools::Services::Response" class="class">
-    class ApiTools::Services::Response
+<main role="main" aria-labelledby="class-Rack::Server">
+  <h1 id="class-Rack::Server" class="class">
+    class Rack::Server
   </h1>
 
   <section class="description">
@@ -103,17 +103,17 @@
     
 
     
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
        <header>
-         <h3>Public Class Methods</h3>
+         <h3>Public Instance Methods</h3>
        </header>
 
     
-      <div id="method-c-new" class="method-detail ">
+      <div id="method-i-start_and_record_host_and_port" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">new</span><span
-            class="method-args">(options = {})</span>
+          <span class="method-name">start_and_record_host_and_port</span><span
+            class="method-args">( options = nil )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -125,18 +125,13 @@
           
           
           
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="AMQPMessage.html#method-c-new">ApiTools::Services::AMQPMessage.new</a>
-            </div>
-          
 
           
-          <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/services/response.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">options</span> = {})
-  <span class="ruby-keyword">super</span> <span class="ruby-identifier">options</span>
-  <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:type</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;response&#39;</span>
+          <div class="method-source-code" id="start_and_record_host_and_port-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1628</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-identifier">racks_original_start</span>( <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
           </div>
           

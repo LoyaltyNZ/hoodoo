@@ -218,7 +218,7 @@ the default sort order.</p>
           <div class="method-source-code" id="default-source">
             <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 199</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">default</span>( <span class="ruby-identifier">sort_key</span> )
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Symbol</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
@@ -302,7 +302,7 @@ entries is arbitrary.</p>
           <div class="method-source-code" id="limit-source">
             <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">limit</span>( <span class="ruby-identifier">limit</span> )
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Integer</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
@@ -409,7 +409,7 @@ supports direction <code>:asc</code>.</p>
           <div class="method-source-code" id="sort-source">
             <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 171</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">sort</span>( <span class="ruby-identifier">sort</span> )
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 

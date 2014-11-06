@@ -77,6 +77,8 @@
     
     <li ><a href="#method-i-add_error">#add_error</a>
     
+    <li ><a href="#method-i-add_errors">#add_errors</a>
+    
     <li ><a href="#method-i-add_header">#add_header</a>
     
     <li ><a href="#method-i-add_precompiled_error">#add_precompiled_error</a>
@@ -147,12 +149,24 @@ ignored.</p>
 
         <div class="method-description">
         
-        <p>A service implementation sets (and reads back, should it wish) the API call
-response body data using this accessor. This is converted to a
-client-facing representation automatically (e.g. to JSON).</p>
+        <p>A service implementation can set (and read back, should it wish) the API
+call response body data using this <a
+href="ServiceResponse.html#attribute-i-body">body</a> / <a
+href="ServiceResponse.html#attribute-i-body">body=</a> accessor. This is
+converted to a client-facing representation automatically (e.g. to JSON).</p>
 
 <p>The response body <strong>MUST</strong> be either a *Ruby Array* or a *Ruby
 Hash*.</p>
+
+<p>This method is aliased as <a
+href="ServiceResponse.html#attribute-i-set_resource">set_resource</a>, for
+semantic use when you want to set the response body to a representation (as
+a Hash) of a resource.</p>
+
+<p>This method is also aliased as <a
+href="ServiceResponse.html#attribute-i-set_resources">set_resources</a>,
+for semantic use when you want to set the response body to an array of
+representations (as Hashes) of resources.</p>
         
         </div>
       </div>
@@ -199,6 +213,66 @@ href="ServiceResponse.html#attribute-i-errors">errors</a>.</p>
         </div>
       </div>
       
+      <div id="attribute-i-set_resource" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">set_resource</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>A service implementation can set (and read back, should it wish) the API
+call response body data using this <a
+href="ServiceResponse.html#attribute-i-body">body</a> / <a
+href="ServiceResponse.html#attribute-i-body">body=</a> accessor. This is
+converted to a client-facing representation automatically (e.g. to JSON).</p>
+
+<p>The response body <strong>MUST</strong> be either a *Ruby Array* or a *Ruby
+Hash*.</p>
+
+<p>This method is aliased as <a
+href="ServiceResponse.html#attribute-i-set_resource">set_resource</a>, for
+semantic use when you want to set the response body to a representation (as
+a Hash) of a resource.</p>
+
+<p>This method is also aliased as <a
+href="ServiceResponse.html#attribute-i-set_resources">set_resources</a>,
+for semantic use when you want to set the response body to an array of
+representations (as Hashes) of resources.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-set_resources" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">set_resources</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>A service implementation can set (and read back, should it wish) the API
+call response body data using this <a
+href="ServiceResponse.html#attribute-i-body">body</a> / <a
+href="ServiceResponse.html#attribute-i-body">body=</a> accessor. This is
+converted to a client-facing representation automatically (e.g. to JSON).</p>
+
+<p>The response body <strong>MUST</strong> be either a *Ruby Array* or a *Ruby
+Hash*.</p>
+
+<p>This method is aliased as <a
+href="ServiceResponse.html#attribute-i-set_resource">set_resource</a>, for
+semantic use when you want to set the response body to a representation (as
+a Hash) of a resource.</p>
+
+<p>This method is also aliased as <a
+href="ServiceResponse.html#attribute-i-set_resources">set_resources</a>,
+for semantic use when you want to set the response body to an array of
+representations (as Hashes) of resources.</p>
+        
+        </div>
+      </div>
+      
     </section>
     
 
@@ -229,7 +303,7 @@ responsible for doing this.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 63</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@errors</span>           = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>()
   <span class="ruby-ivar">@headers</span>          = {}
@@ -275,8 +349,9 @@ abort request processing immediately can just do:</p>
 
 <pre>return response_object.add_error( ... )</pre>
 
-<p>…as part of processing a Rack invocation of the <code>call</code> method.
-This is really only useful for the service middleware.</p>
+<p>…as part of processing a <a href="../Rack.html">Rack</a> invocation of the
+<code>call</code> method. This is really only useful for the service
+middleware.</p>
 <dl class="rdoc-list note-list"><dt><code>code</code>
 <dd>
 <p>Error code (e.g. “platform.generic”).</p>
@@ -304,10 +379,49 @@ API.</p>
 
           
           <div class="method-source-code" id="add_error-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 156</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-add_errors" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_errors</span><span
+            class="method-args">( errors_object )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Add errors from an <a href="Errors.html">ApiTools::Errors</a> instance to
+this response&#39;s error collection.</p>
+<dl class="rdoc-list note-list"><dt><code>errors_object</code>
+<dd>
+<p><a href="Errors.html">ApiTools::Errors</a> instance to merge into the error
+collection of &#39;this&#39; response object.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="add_errors-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 198</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_errors</span>( <span class="ruby-identifier">errors_object</span> )
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -355,7 +469,7 @@ overwrites.</p>
 
           
           <div class="method-source-code" id="add_header-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 95</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">overwrite</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">dname</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span>
@@ -384,7 +498,7 @@ overwrites.</p>
         
         <div class="method-heading">
           <span class="method-name">add_precompiled_error</span><span
-            class="method-args">( code, message, reference )</span>
+            class="method-args">( code, message, reference, http_status = 500 )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -407,16 +521,19 @@ possible to store invalid error data using this call, which means
 counter-to-documentation results could be returned to API clients. That is
 Very Bad.</p>
 
+<p>Pass optionally the HTTP status code to use if this happens to be the first
+stored error. If this is omitted, 500 is kept as the default.</p>
+
 <p>As with <a href="ServiceResponse.html#method-i-add_error">add_error</a>,
-returns a Rack representation of the response.</p>
+returns a <a href="../Rack.html">Rack</a> representation of the response.</p>
           
           
 
           
           <div class="method-source-code" id="add_precompiled_error-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 175</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span> )
-  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span> )
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 187</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-value">500</span> )
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
 <span class="ruby-keyword">end</span></pre>
           </div>
@@ -442,15 +559,16 @@ returns a Rack representation of the response.</p>
 
         <div class="method-description">
           
-          <p>Convert the internal response data into something that Rack expects. The
-return value of this method can be passed back to Rack from Rack middleware
-or applications.</p>
+          <p>Convert the internal response data into something that <a
+href="../Rack.html">Rack</a> expects. The return value of this method can
+be passed back to <a href="../Rack.html">Rack</a> from <a
+href="../Rack.html">Rack</a> middleware or applications.</p>
           
           
 
           
           <div class="method-source-code" id="for_rack-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 184</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">for_rack</span>
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
 
@@ -469,7 +587,7 @@ or applications.</p>
   <span class="ruby-comment"># We&#39;re not using JSON5, so the Platform API says that outmost arrays</span>
   <span class="ruby-comment"># are wrapped with a top-level object key &quot;_data&quot;.</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-identifier">response_hash</span> = { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_data</span> }
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">response_hash</span> = <span class="ruby-identifier">body_data</span>
@@ -524,7 +642,7 @@ href="ServiceResponse.html#method-i-add_header">add_header</a> call, or
 
           
           <div class="method-source-code" id="get_header-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 116</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">get_header</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-identifier">value_hash</span> = <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value_hash</span>.<span class="ruby-identifier">nil?</span>
@@ -562,7 +680,7 @@ will just continue to accumulate).</p>
 
           
           <div class="method-source-code" id="halt_processing-3F-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 75</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 84</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">halt_processing?</span>
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -595,7 +713,7 @@ will just continue to accumulate).</p>
 
           
           <div class="method-source-code" id="headers-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 124</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">headers</span>
   <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">result</span>, <span class="ruby-identifier">kv_array</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">result</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">kv_array</span>[ <span class="ruby-value">1</span> ] )

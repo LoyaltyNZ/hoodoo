@@ -61,7 +61,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link"><a href="../Presenters/Field.html">ApiTools::Presenters::Field</a>
+  <p class="link"><a href="Field.html">ApiTools::Presenters::Field</a>
   
 </div>
 
@@ -90,7 +90,7 @@
 
   <section class="description">
     
-<p>A JSON <a href="../UUID.html">UUID</a> schema member</p>
+<p>A JSON <a href="UUID.html">UUID</a> schema member</p>
 
   </section>
 
@@ -148,7 +148,7 @@
 
         <div class="method-description">
           
-          <p>Initialize a <a href="../UUID.html">UUID</a> instance with the appropriate
+          <p>Initialize a <a href="UUID.html">UUID</a> instance with the appropriate
 name and options</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
@@ -162,13 +162,13 @@ name and options</p>
           
             <div class="method-calls-super">
               Calls superclass method
-              <a href="../Presenters/Field.html#method-c-new">ApiTools::Presenters::Field.new</a>
+              <a href="Field.html#method-c-new">ApiTools::Presenters::Field.new</a>
             </div>
           
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_uuid.rb, line 25</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/uuid.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-ivar">@resource</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:resource</span> )
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
@@ -204,34 +204,42 @@ name and options</p>
 
         <div class="method-description">
           
-          <p>Check if data is a valid <a href="../UUID.html">UUID</a> and return either
-[], or an array with a suitable error</p>
+          <p>Check if data is a valid <a href="UUID.html">UUID</a> and return either [],
+or an array with a suitable error</p>
           
           
             <div class="method-calls-super">
               Calls superclass method
-              <a href="../Presenters/Field.html#method-i-validate">ApiTools::Presenters::Field#validate</a>
+              <a href="Field.html#method-i-validate">ApiTools::Presenters::Field#validate</a>
             </div>
           
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_uuid.rb, line 31</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/uuid.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
-  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">String</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">!=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID_LENGTH</span>
-      <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;UUID `#{full_path(path)}` is of incorrect length `#{data.size}` (should be `#{ApiTools::UUID::UUID_LENGTH}`)&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+        <span class="ruby-string">&#39;generic.invalid_uuid&#39;</span>,
+        <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` has incorrect length #{ data.size } for a UUID (should be #{ ApiTools::UUID::UUID_LENGTH })&quot;</span>,
+        <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+      )
     <span class="ruby-keyword">else</span>
       <span class="ruby-comment"># TODO: Maybe one day validate that the associated item is indeed</span>
       <span class="ruby-comment">#       of the kind in &#39;@resource&#39;.</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;UUID `#{full_path(path)}` is invalid&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_uuid&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid UUID&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

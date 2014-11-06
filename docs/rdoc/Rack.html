@@ -4,21 +4,21 @@
 <head>
 <meta charset="UTF-8">
 
-<title>module ApiTools::Data::Types - RDoc Documentation</title>
+<title>module Rack - RDoc Documentation</title>
 
-<link href="../../fonts.css" rel="stylesheet">
-<link href="../../rdoc.css" rel="stylesheet">
+<link href="./fonts.css" rel="stylesheet">
+<link href="./rdoc.css" rel="stylesheet">
 
 <script type="text/javascript">
-  var rdoc_rel_prefix = "../../";
+  var rdoc_rel_prefix = "./";
 </script>
 
-<script src="../../js/jquery.js"></script>
-<script src="../../js/navigation.js"></script>
-<script src="../../js/search_index.js"></script>
-<script src="../../js/search.js"></script>
-<script src="../../js/searcher.js"></script>
-<script src="../../js/darkfish.js"></script>
+<script src="./js/jquery.js"></script>
+<script src="./js/navigation.js"></script>
+<script src="./js/search_index.js"></script>
+<script src="./js/search.js"></script>
+<script src="./js/searcher.js"></script>
+<script src="./js/darkfish.js"></script>
 
 
 <body id="top" role="document" class="module">
@@ -26,13 +26,13 @@
   <div id="project-navigation">
     <div id="home-section" role="region" title="Quick navigation" class="nav-section">
   <h2>
-    <a href="../../index.html" rel="home">Home</a>
+    <a href="./index.html" rel="home">Home</a>
   </h2>
 
   <div id="table-of-contents-navigation">
-    <a href="../../table_of_contents.html#pages">Pages</a>
-    <a href="../../table_of_contents.html#classes">Classes</a>
-    <a href="../../table_of_contents.html#methods">Methods</a>
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
   </div>
 </div>
 
@@ -64,18 +64,20 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="module-ApiTools::Data::Types">
-  <h1 id="module-ApiTools::Data::Types" class="module">
-    module ApiTools::Data::Types
+<main role="main" aria-labelledby="module-Rack">
+  <h1 id="module-Rack" class="module">
+    module Rack
   </h1>
 
   <section class="description">
     
-<p>Module used as a namespace to collect classes that represent <a
-href="Types.html">Types</a> documented by the Loyalty Platform API. Each is
-an <a
-href="DocumentedPresenter.html">ApiTools::Data::DocumentedPresenter</a>
-subclass, so can be used to parse, render and validate JSON data.</p>
+<p>For local development, we need to know the HTTP Host and Port. We could do
+that nicely, looking up the <a href="Rack.html">Rack</a> server in
+ObjectSpace and asking it for its options - except some of the web server
+adapters do really dumb things like “options.delete(:Host)” to read items
+out, thus destroying the info we need.</p>
+
+<p>Instead, monkey patch :-(</p>
 
   </section>
 
@@ -87,30 +89,6 @@ subclass, so can be used to parse, render and validate JSON data.</p>
 
     
 
-    
-    <section class="constants-list">
-      <header>
-        <h3>Constants</h3>
-      </header>
-      <dl>
-      
-        <dt id="CURRENCY_CODE_MAX_LENGTH">CURRENCY_CODE_MAX_LENGTH
-        
-        <dd>
-        
-      
-        <dt id="CURRENCY_QUALIFIER_MAX_LENGTH">CURRENCY_QUALIFIER_MAX_LENGTH
-        
-        <dd>
-        
-      
-        <dt id="CURRENCY_SYMBOL_MAX_LENGTH">CURRENCY_SYMBOL_MAX_LENGTH
-        
-        <dd>
-        
-      
-      </dl>
-    </section>
     
 
     

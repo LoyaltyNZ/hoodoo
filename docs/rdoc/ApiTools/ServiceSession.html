@@ -67,7 +67,27 @@
 
     
     
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
     
+    <li ><a href="#method-c-load_session">::load_session</a>
+    
+    <li ><a href="#method-c-new">::new</a>
+    
+    <li ><a href="#method-c-testing">::testing</a>
+    
+    <li ><a href="#method-i-has_all_roles-3F">#has_all_roles?</a>
+    
+    <li ><a href="#method-i-has_any_roles-3F">#has_any_roles?</a>
+    
+    <li ><a href="#method-i-has_role-3F">#has_role?</a>
+    
+  </ul>
+</div>
+
   </div>
 </nav>
 
@@ -78,7 +98,8 @@
 
   <section class="description">
     
-<p>A description of the authorised context in which a service is called.</p>
+<p><code>ServiceSession</code> contains all functionality related to a context
+session.</p>
 
   </section>
 
@@ -93,8 +114,332 @@
     
 
     
+    <section class="attribute-method-details" class="method-section">
+      <header>
+        <h3>Attributes</h3>
+      </header>
+
+      
+      <div id="attribute-i-id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">id</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-outlet_id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">outlet_id</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-participant_id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">participant_id</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-roles" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">roles</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        
+        
+        </div>
+      </div>
+      
+    </section>
+    
 
     
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-load_session" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">load_session</span><span
+            class="method-args">(memcache_url, session_id)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Create a <a href="ServiceSession.html">ServiceSession</a> instance by
+loading the session from memcache.</p>
+
+<p>The <code>memcache_url</code> parameter should be set to the session
+memcache server, the <code>session_id</code> parameter is the ID of the
+session to load. The method will return either a valid <a
+href="ServiceSession.html">ServiceSession</a> instance, or nil if the
+session does not exist or is invalid.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="load_session-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">load_session</span>(<span class="ruby-identifier">memcache_url</span>, <span class="ruby-identifier">session_id</span>)
+
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">@@test_session</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@test_mode</span>
+
+  <span class="ruby-comment"># Check that ENV[MEMCACHE_URL] exists.</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware memcache server URL is nil or empty&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-comment"># Return nil if the session_id is nil, empty or less than 32 chars long.</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">length</span><span class="ruby-operator">&lt;</span><span class="ruby-value">32</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Connect to memcache, raise an error if we cant</span>
+  <span class="ruby-identifier">memcache</span> = <span class="ruby-identifier">connect_memcache</span>(<span class="ruby-identifier">memcache_url</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware cannot connect to memcache server &#39;#{memcache_url}&#39;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># Get The session from the server</span>
+  <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-string">&quot;session_&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">session_id</span>)
+  <span class="ruby-comment"># Return nil if the session can&#39;t be found</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># Parse the session</span>
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">session_hash</span>)
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+    <span class="ruby-comment"># Log error and Return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-string">&quot;Session loaded but failed JSON parsing&quot;</span>, <span class="ruby-identifier">exception</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Create and return the new session.</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>({
+    <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_id</span>,
+    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;participant_id&#39;</span>],
+    <span class="ruby-value">:outlet_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;outlet_id&#39;</span>],
+    <span class="ruby-value">:roles</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;roles&#39;</span>],
+  })
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">(options = {})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Instantiate a new <a href="ServiceSession.html">ServiceSession</a> instance
+with the optional supplied parameters</p>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 87</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">options</span> = {})
+  <span class="ruby-ivar">@id</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-ivar">@participant_id</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:participant_id</span>]
+  <span class="ruby-ivar">@outlet_id</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:outlet_id</span>]
+  <span class="ruby-ivar">@roles</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:roles</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span> <span class="ruby-string">&#39;,&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-testing" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">testing</span><span
+            class="method-args">(test_mode, mock_session = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Set testing mode.</p>
+
+<p><code>test_mode</code> should be set to true/false. The optional
+<code>mock_session</code> parameter defines the test session supplied.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="testing-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 35</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">testing</span>(<span class="ruby-identifier">test_mode</span>, <span class="ruby-identifier">mock_session</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">@@test_mode</span> = <span class="ruby-identifier">test_mode</span>
+  <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">mock_session</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mock_session</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-has_all_roles-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_all_roles?</span><span
+            class="method-args">(roles)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns true if this session has all specified roles</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_all_roles-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 100</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_all_roles?</span>(<span class="ruby-identifier">roles</span>)
+  (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">length</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-has_any_roles-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_any_roles?</span><span
+            class="method-args">(roles)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns true if this session has any of the specified roles</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_any_roles-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 105</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_any_roles?</span>(<span class="ruby-identifier">roles</span>)
+  (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-has_role-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">has_role?</span><span
+            class="method-args">(role)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns true if this session has the specified role</p>
+          
+          
+
+          
+          <div class="method-source-code" id="has_role-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_role?</span>(<span class="ruby-identifier">role</span>)
+  <span class="ruby-ivar">@roles</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
   </section>
 </main>
 

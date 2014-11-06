@@ -100,7 +100,7 @@ the entrypoint for platform services.</p>
 
 <p>It&#39;s really just a container of one or more interface classes, which
 are all <a href="ServiceInterface.html">ApiTools::ServiceInterface</a>
-subclasses. The Rack middleware in <a
+subclasses. The <a href="../Rack.html">Rack</a> middleware in <a
 href="ServiceMiddleware.html">ApiTools::ServiceMiddleware</a> uses the <a
 href="ServiceApplication.html">ApiTools::ServiceApplication</a> to find out
 what interfaces it implements. Those interface classes nominate a Ruby
@@ -301,13 +301,14 @@ documentation for more details.</p>
 
         <div class="method-description">
           
-          <p>Since service implementations are not pure Rack apps but really service
-middleware clients, they shouldn&#39;t ever have “call” invoked directly.
-This method is not intended to be overridden and just complains if Rack
-ends up calling here directly by accident.</p>
+          <p>Since service implementations are not pure <a href="../Rack.html">Rack</a>
+apps but really service middleware clients, they shouldn&#39;t ever have
+“call” invoked directly. This method is not intended to be overridden and
+just complains if <a href="../Rack.html">Rack</a> ends up calling here
+directly by accident.</p>
 <dl class="rdoc-list note-list"><dt><code>env</code>
 <dd>
-<p>Rack environment (ignored).</p>
+<p><a href="../Rack.html">Rack</a> environment (ignored).</p>
 </dd></dl>
           
           

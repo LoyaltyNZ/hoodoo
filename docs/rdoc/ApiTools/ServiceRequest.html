@@ -67,7 +67,17 @@
 
     
     
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
     
+    <li ><a href="#method-i-uri_path_components-3D">#uri_path_components=</a>
+    
+  </ul>
+</div>
+
   </div>
 </nav>
 
@@ -80,8 +90,8 @@
     
 <p>Instances of the <a href="ServiceRequest.html">ApiTools::ServiceRequest</a>
 class are passed to service interface implementations when requests come in
-via Rack, after basic checks have been passed and a particular interface
-implementation has been identified by endpoint.</p>
+via <a href="../Rack.html">Rack</a>, after basic checks have been passed
+and a particular interface implementation has been identified by endpoint.</p>
 
 <p>Descriptions of default values expected out of accessors herein refer to
 the use case when driven through <a
@@ -132,6 +142,24 @@ accessors would report <code>nil</code>).</p>
         
         <p>Array of strings giving requested embedded items; [] if there are none
 requested.</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-ident" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">ident</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>The first entry in the <a
+href="ServiceRequest.html#attribute-i-uri_path_components">uri_path_components</a>
+array, or <code>nil</code> if the array is empty. This supports a common
+case for inter-service calls where a <a href="UUID.html">UUID</a> or other
+unique identifier is provided through the first path element
+(“<code>.../v1/resource/uuid</code>”).</p>
         
         </div>
       </div>
@@ -246,7 +274,7 @@ requested.</p>
       <div id="attribute-i-uri_path_components" class="method-detail">
         <div class="method-heading attribute-method-heading">
           <span class="method-name">uri_path_components</span><span
-            class="attribute-access-type">[RW]</span>
+            class="attribute-access-type">[R]</span>
         </div>
 
         <div class="method-description">
@@ -260,6 +288,9 @@ example, with a service endpoint of “products”, this URI:</p>
 <p>…would lead to this path component array:</p>
 
 <pre>[ &#39;1234&#39;, &#39;foo&#39; ]</pre>
+
+<p>The first element of the path components array is exposed in the read-only
+<a href="ServiceRequest.html#attribute-i-ident">ident</a> accessor.</p>
         
         </div>
       </div>
@@ -291,6 +322,63 @@ so for example this URI:</p>
     
 
     
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-uri_path_components-3D" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">uri_path_components=</span><span
+            class="method-args">( ary )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Set the array returned by <a
+href="ServiceRequest.html#attribute-i-uri_path_components">uri_path_components</a>
+and record the first element in the value returned by <a
+href="ServiceRequest.html#attribute-i-ident">ident</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>ary</code>
+<dd>
+<p>Path component array to record. If <code>nil</code> or not an array,
+<code>nil</code> is stored for <a
+href="ServiceRequest.html#attribute-i-uri_path_components">#uri_path_components</a>
+and <a href="ServiceRequest.html#attribute-i-ident">ident</a>.</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="uri_path_components-3D-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">uri_path_components=</span>( <span class="ruby-identifier">ary</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+    <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-identifier">ary</span>
+    <span class="ruby-ivar">@ident</span>               = <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-ivar">@ident</span>               = <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
   </section>
 </main>
 

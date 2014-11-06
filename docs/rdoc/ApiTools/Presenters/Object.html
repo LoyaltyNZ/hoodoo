@@ -224,7 +224,7 @@ appropriate name and options</p>
 
           
           <div class="method-source-code" id="parse-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 47</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
   <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>] = {}
   <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
@@ -261,7 +261,7 @@ appropriate name and options</p>
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 55</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
 
@@ -321,17 +321,21 @@ human-readable</p>
             <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-
-  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># If there are existing errors, we carry on and validate internally too</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">and</span> <span class="ruby-operator">!</span><span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_object&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is an invalid object&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_object&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid object&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">rdata</span> = (<span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[<span class="ruby-identifier">name</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>))
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) ) )
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

@@ -229,7 +229,7 @@ creating this item.</p>
         
         <div class="method-heading">
           <span class="method-name">resource</span><span
-            class="method-args">( resource_name )</span>
+            class="method-args">( resource_name, version = 1 )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -252,15 +252,23 @@ to see if you got a 404.</p>
 <dd>
 <p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
 symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required implemented version for the endpoint, as an Integer -
+defaults to 1.</p>
 </dd></dl>
           
           
 
           
           <div class="method-source-code" id="resource-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 63</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource_name</span> )
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_sym</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceEndpoint</span>.<span class="ruby-identifier">new</span>( <span class="ruby-ivar">@middleware</span>, <span class="ruby-identifier">resource_name</span> )
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
+  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-node">&quot;#{ resource_name }/#{ version }&quot;</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceEndpoint</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-ivar">@middleware</span>,
+    <span class="ruby-identifier">resource_name</span>,
+    <span class="ruby-identifier">version</span>
+  )
 <span class="ruby-keyword">end</span></pre>
           </div>
           

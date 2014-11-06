@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class ApiTools::Services::BaseMultithreadedService - RDoc Documentation</title>
+<title>class ApiTools::ServiceMiddleware::ServiceRegistryDRbServer - RDoc Documentation</title>
 
 <link href="../../fonts.css" rel="stylesheet">
 <link href="../../rdoc.css" rel="stylesheet">
@@ -61,7 +61,7 @@
   <h3>Parent</h3>
 
   
-  <p class="link"><a href="AQMPMultithreadedEndpoint.html">ApiTools::Services::AQMPMultithreadedEndpoint</a>
+  <p class="link">Object
   
 </div>
 
@@ -73,9 +73,11 @@
 
   <ul class="link-list" role="directory">
     
-    <li class="calls-super" ><a href="#method-c-new">::new</a>
+    <li ><a href="#method-c-new">::new</a>
     
-    <li ><a href="#method-i-send_message">#send_message</a>
+    <li ><a href="#method-i-add">#add</a>
+    
+    <li ><a href="#method-i-find">#find</a>
     
   </ul>
 </div>
@@ -83,13 +85,15 @@
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-ApiTools::Services::BaseMultithreadedService">
-  <h1 id="class-ApiTools::Services::BaseMultithreadedService" class="class">
-    class ApiTools::Services::BaseMultithreadedService
+<main role="main" aria-labelledby="class-ApiTools::ServiceMiddleware::ServiceRegistryDRbServer">
+  <h1 id="class-ApiTools::ServiceMiddleware::ServiceRegistryDRbServer" class="class">
+    class ApiTools::ServiceMiddleware::ServiceRegistryDRbServer
   </h1>
 
   <section class="description">
     
+<p>A registry of service endpoints, implenented as a DRB server class.</p>
+
   </section>
 
   
@@ -115,7 +119,7 @@
         
         <div class="method-heading">
           <span class="method-name">new</span><span
-            class="method-args">(amqp_uri, name, options = {})</span>
+            class="method-args">()</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -127,20 +131,12 @@
           
           
           
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="AQMPMultithreadedEndpoint.html#method-c-new">ApiTools::Services::AQMPMultithreadedEndpoint.new</a>
-            </div>
-          
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/services/base_multithreaded_service.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">amqp_uri</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-keyword">super</span> <span class="ruby-identifier">amqp_uri</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-ivar">@request_endpoint</span> = <span class="ruby-node">&quot;#{name}&quot;</span>
-  <span class="ruby-ivar">@response_endpoint</span> = <span class="ruby-node">&quot;#{name}.#{@endpoint_id}&quot;</span>
-  <span class="ruby-ivar">@queue_options</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:queue_options</span>] <span class="ruby-operator">||</span> {<span class="ruby-value">:exclusive</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">:auto_delete</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>}
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1564</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
+  <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -160,11 +156,11 @@
        </header>
 
     
-      <div id="method-i-send_message" class="method-detail ">
+      <div id="method-i-add" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">send_message</span><span
-            class="method-args">(msg)</span>
+          <span class="method-name">add</span><span
+            class="method-args">( resource, version, uri )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -173,16 +169,69 @@
 
         <div class="method-description">
           
-          
+          <p>Add an endpoint to the list.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource as a String or Symbol, e.g. “Product”</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint&#39;s implemented API version as an Integer, e.g. 1</p>
+</dd><dt><code>uri</code>
+<dd>
+<p>URI at which this service may be accessed, including the endpoint path
+(e.g. “<a
+href="http://localhost:3002/v1/products">localhost:3002/v1/products</a>”),
+as a String.</p>
+</dd></dl>
           
           
 
           
-          <div class="method-source-code" id="send_message-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/services/base_multithreaded_service.rb, line 11</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">send_message</span>(<span class="ruby-identifier">msg</span>)
-  <span class="ruby-identifier">msg</span>.<span class="ruby-identifier">reply_to</span> = <span class="ruby-ivar">@response_endpoint</span>
-  <span class="ruby-ivar">@tx_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">msg</span>
+          <div class="method-source-code" id="add-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1576</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
+  <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-find" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">find</span><span
+            class="method-args">( resource, version )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Find an endpoint in the list. Returns URI at which the service may be
+accessed as a String, or &#39;nil&#39; if not found.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource as a String or Symbol, e.g. “Product”</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint&#39;s implemented API version as an Integer, e.g. 1</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="find-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1586</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>
           </div>
           

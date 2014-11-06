@@ -139,12 +139,16 @@ either [], or an array with a suitable error</p>
             <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/boolean.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
-  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
 
   <span class="ruby-keyword">unless</span> <span class="ruby-operator">!</span><span class="ruby-operator">!</span><span class="ruby-identifier">data</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">data</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_boolean&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is an invalid boolean&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_boolean&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid boolean&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
           </div>

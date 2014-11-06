@@ -80,13 +80,19 @@
     
     <li ><a href="#method-i-float">#float</a>
     
+    <li ><a href="#method-i-hash">#hash</a>
+    
     <li ><a href="#method-i-integer">#integer</a>
     
     <li ><a href="#method-i-object">#object</a>
     
     <li ><a href="#method-i-string">#string</a>
     
+    <li ><a href="#method-i-tags">#tags</a>
+    
     <li ><a href="#method-i-text">#text</a>
+    
+    <li ><a href="#method-i-uuid">#uuid</a>
     
   </ul>
 </div>
@@ -167,7 +173,7 @@ those entries).</p>
 
           
           <div class="method-source-code" id="array-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 37</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">array</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -207,7 +213,7 @@ those entries).</p>
 
           
           <div class="method-source-code" id="boolean-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 77</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">boolean</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -247,7 +253,7 @@ those entries).</p>
 
           
           <div class="method-source-code" id="date-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 85</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">date</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -287,7 +293,7 @@ those entries).</p>
 
           
           <div class="method-source-code" id="datetime-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 93</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">datetime</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -328,7 +334,7 @@ those entries).</p>
 
           
           <div class="method-source-code" id="decimal-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 69</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">decimal</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -370,7 +376,7 @@ matched values, with the supplied name and options Params</p>
 
           
           <div class="method-source-code" id="enum-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 112</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">enum</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -410,9 +416,54 @@ matched values, with the supplied name and options Params</p>
 
           
           <div class="method-source-code" id="float-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 61</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">float</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-hash" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">hash</span><span
+            class="method-args">(name, options = {}, &block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Define a JSON object with the supplied name and optional constraints on
+properties (like hash keys) and property values (like hash values) that the
+object may contain, in abstract terms. Params</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block declaring the fields making up the nested hash (optional)</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="hash-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">hash</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -450,7 +501,7 @@ matched values, with the supplied name and options Params</p>
 
           
           <div class="method-source-code" id="integer-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 45</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">integer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -534,9 +585,66 @@ matched values, with the supplied name and options Params</p>
 
           
           <div class="method-source-code" id="string-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 53</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">string</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-tags" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">tags</span><span
+            class="method-args">( field_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that this Type or Resource has a string field of unlimited length
+that contains comma-separated tag strings.</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the tags.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd></dl>
+
+<p>Example - a Product resource which supports product tagging:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Product</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+
+  <span class="ruby-identifier">internationalised</span>
+
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">name</span>
+  <span class="ruby-identifier">text</span> :<span class="ruby-identifier">description</span>
+  <span class="ruby-identifier">string</span> :<span class="ruby-identifier">sku</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">64</span>
+  <span class="ruby-identifier">tags</span> :<span class="ruby-identifier">tags</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="tags-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 146</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -575,9 +683,78 @@ Params</p>
 
           
           <div class="method-source-code" id="text-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 102</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">text</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-uuid" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">uuid</span><span
+            class="method-args">( field_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declares that this Type or Resource _refers to_ another Resource instance
+via its <a href="UUID.html">UUID</a>. There&#39;s no need to declare the
+presence of the <a href="UUID.html">UUID</a> field _for the instance
+itself_ on all resource definitions as that&#39;s implicit; this <a
+href="BaseDSL.html#method-i-uuid">uuid</a> method is just for relational
+information (AKA associations).</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the <a href="UUID.html">UUID</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash. See below.</p>
+</dd></dl>
+
+<p>In addition to standard options from <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a>, extra option keys
+and values are:</p>
+<dl class="rdoc-list note-list"><dt><code>:resource</code>
+<dd>
+<p>The name of a resource (as a symbol, e.g. <code>:Product</code>) that the
+<a href="UUID.html">UUID</a> should refer to. Implementations <em>may</em>
+use this to validate that the resource, where a <a
+href="UUID.html">UUID</a> is provided, really is for a Product instance and
+not something else. Optional.</p>
+</dd></dl>
+
+<p>Example - a basket item that refers to an integer quantity of some specific
+Product resource instance:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">BasketItem</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+
+  <span class="ruby-identifier">integer</span> :<span class="ruby-identifier">quantity</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">uuid</span> :<span class="ruby-identifier">product_id</span>, :<span class="ruby-identifier">resource</span> =<span class="ruby-operator">&gt;</span> :<span class="ruby-constant">Product</span>
+
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="uuid-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 179</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           

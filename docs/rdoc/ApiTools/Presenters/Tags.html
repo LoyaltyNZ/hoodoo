@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class ApiTools::Services::BaseClient - RDoc Documentation</title>
+<title>class ApiTools::Presenters::Tags - RDoc Documentation</title>
 
 <link href="../../fonts.css" rel="stylesheet">
 <link href="../../rdoc.css" rel="stylesheet">
@@ -61,33 +61,25 @@
   <h3>Parent</h3>
 
   
-  <p class="link"><a href="AQMPEndpoint.html">ApiTools::Services::AQMPEndpoint</a>
+  <p class="link"><a href="Text.html">ApiTools::Presenters::Text</a>
   
 </div>
 
     
     
-    <!-- Method Quickref -->
-<div id="method-list-section" class="nav-section">
-  <h3>Methods</h3>
-
-  <ul class="link-list" role="directory">
     
-    <li class="calls-super" ><a href="#method-c-new">::new</a>
-    
-  </ul>
-</div>
-
   </div>
 </nav>
 
-<main role="main" aria-labelledby="class-ApiTools::Services::BaseClient">
-  <h1 id="class-ApiTools::Services::BaseClient" class="class">
-    class ApiTools::Services::BaseClient
+<main role="main" aria-labelledby="class-ApiTools::Presenters::Tags">
+  <h1 id="class-ApiTools::Presenters::Tags" class="class">
+    class ApiTools::Presenters::Tags
   </h1>
 
   <section class="description">
     
+<p>A JSON <a href="UUID.html">UUID</a> schema member</p>
+
   </section>
 
   
@@ -103,53 +95,6 @@
     
 
     
-     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
-       <header>
-         <h3>Public Class Methods</h3>
-       </header>
-
-    
-      <div id="method-c-new" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">new</span><span
-            class="method-args">(amqp_uri, options = {})</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-            <div class="method-calls-super">
-              Calls superclass method
-              <a href="AQMPEndpoint.html#method-c-new">ApiTools::Services::AQMPEndpoint.new</a>
-            </div>
-          
-
-          
-          <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/services/base_client.rb, line 5</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">amqp_uri</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-keyword">super</span> <span class="ruby-identifier">amqp_uri</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-ivar">@response_endpoint</span> = <span class="ruby-node">&quot;client.#{@endpoint_id}&quot;</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-    </section>
-  
   </section>
 </main>
 

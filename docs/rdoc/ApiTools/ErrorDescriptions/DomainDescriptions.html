@@ -177,7 +177,7 @@ name like <code>members</code> or <code>transactions</code>.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 176</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 182</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">domain</span> )
   <span class="ruby-ivar">@domain</span>       = <span class="ruby-identifier">domain</span>
   <span class="ruby-ivar">@descriptions</span> = {}
@@ -249,13 +249,13 @@ error data is logged and sent to clients.</pre>
 
           
           <div class="method-source-code" id="error-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 204</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 210</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">options</span>       = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">required_keys</span> = [ <span class="ruby-string">&#39;status&#39;</span>, <span class="ruby-string">&#39;message&#39;</span> ]
 
   <span class="ruby-identifier">reference</span>              = <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;reference&#39;</span> ]
-  <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;reference&#39;</span> ] = <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span><span class="ruby-value">:to_s</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+  <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;reference&#39;</span> ] = <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span><span class="ruby-value">:to_s</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">reference</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
 
   <span class="ruby-identifier">required_keys</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">required_key</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">required_key</span> )

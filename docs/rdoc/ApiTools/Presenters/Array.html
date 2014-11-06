@@ -167,8 +167,9 @@ nested schema entities).</p>
 <p>The <a href="Array.html">Array</a> to render.</p>
 </dd><dt><code>target</code>
 <dd>
-<p>The Hash that we render into. A “path” of keys leading to nested Hashes is
-built via +super()+, with the final key entry yielding the rendered array.</p>
+<p>The <a href="Hash.html">Hash</a> that we render into. A “path” of keys
+leading to nested Hashes is built via +super()+, with the final key entry
+yielding the rendered array.</p>
 </dd></dl>
           
           
@@ -180,7 +181,7 @@ built via +super()+, with the final key entry yielding the rendered array.</p>
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/array.rb, line 44</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/array.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
 
   <span class="ruby-comment"># This relies on pass-by-reference; we&#39;ll update &#39;array&#39; later.</span>
@@ -253,8 +254,7 @@ built via +super()+, with the final key entry yielding the rendered array.</p>
             <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/array.rb, line 12</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
-  <span class="ruby-keyword">return</span> [] <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">Array</span>
     <span class="ruby-comment"># No array entry schema? No array entry validation, then.</span>
@@ -263,12 +263,16 @@ built via +super()+, with the final key entry yielding the rendered array.</p>
         <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
           <span class="ruby-identifier">rdata</span> = (<span class="ruby-identifier">item</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>) <span class="ruby-keyword">and</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">name</span>)) <span class="ruby-operator">?</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">name</span>] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
           <span class="ruby-identifier">indexed_path</span> = <span class="ruby-node">&quot;#{full_path(path)}[#{index}]&quot;</span>
-          <span class="ruby-identifier">errors</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">indexed_path</span> )
+          <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">indexed_path</span> ) )
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> {<span class="ruby-string">&#39;code&#39;</span>=<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;generic.invalid_array&#39;</span>, <span class="ruby-string">&#39;message&#39;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-node">&quot;Field `#{full_path(path)}` is an invalid array&quot;</span>, <span class="ruby-string">&#39;reference&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)}
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_array&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid array&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">errors</span>

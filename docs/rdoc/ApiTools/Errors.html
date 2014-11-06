@@ -379,7 +379,7 @@ Platform API.</p>
         
         <div class="method-heading">
           <span class="method-name">add_precompiled_error</span><span
-            class="method-args">( code, message, reference )</span>
+            class="method-args">( code, message, reference, http_status = 500 )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -401,13 +401,18 @@ another service called remotely with errors in the JSON response). It&#39;s
 possible to store invalid error data using this call, which means
 counter-to-documentation results could be returned to API clients. That is
 Very Bad.</p>
+
+<p>Pass optionally the HTTP status code to use if this happens to be the first
+stored error. If this is omitted, 500 is kept as the default.</p>
           
           
 
           
           <div class="method-source-code" id="add_precompiled_error-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 166</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span> )
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 169</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-value">500</span> )
+  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-identifier">http_status</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
+
   <span class="ruby-identifier">error</span> = {
     <span class="ruby-string">&#39;code&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
     <span class="ruby-string">&#39;message&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>
@@ -448,7 +453,7 @@ return <code>false</code>.</p>
 
           
           <div class="method-source-code" id="clear_errors-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 204</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">clear_errors</span>
   <span class="ruby-ivar">@errors</span>           = []
   <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-value">500</span>
@@ -483,7 +488,7 @@ else <code>false</code>.</p>
 
           
           <div class="method-source-code" id="has_errors-3F-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 197</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">has_errors?</span>
   <span class="ruby-operator">!</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -519,15 +524,14 @@ may be a valid thing to have).</p>
 
           
           <div class="method-source-code" id="merge-21-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 182</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">source</span> )
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-identifier">source</span>.<span class="ruby-identifier">http_status_code</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
-
   <span class="ruby-identifier">source</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">add_precompiled_error</span>(
       <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;code&#39;</span>      ],
       <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;message&#39;</span>   ],
-      <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;reference&#39;</span> ]
+      <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;reference&#39;</span> ],
+      <span class="ruby-identifier">source</span>.<span class="ruby-identifier">http_status_code</span>
     )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -562,7 +566,7 @@ collection representing the formalised resource.</p>
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 212</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>
   <span class="ruby-identifier">store!</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@created_at</span>.<span class="ruby-identifier">nil?</span>
 
@@ -601,7 +605,7 @@ collection representing the formalised resource.</p>
 
           
           <div class="method-source-code" id="store-21-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 224</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">store!</span>
   <span class="ruby-comment"># unless persisted...</span>
   <span class="ruby-comment">#   created_at = ...</span>
@@ -653,7 +657,7 @@ Unescaped</p>
 
           
           <div class="method-source-code" id="unjoin_and_unescape_commas-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 246</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>
