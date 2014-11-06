@@ -49,13 +49,22 @@ module ApiTools
     #
     attr_accessor :http_status_code
 
-    # A service implementation sets (and reads back, should it wish) the
-    # API call response body data using this accessor. This is converted to a
-    # client-facing representation automatically (e.g. to JSON).
+    # A service implementation can set (and reads back, should it wish) the
+    # API call response body data using this #body / #body= accessor. This is
+    # converted to a client-facing representation automatically (e.g. to JSON).
     #
     # The response body *MUST* be either a *Ruby Array* or a *Ruby Hash*.
     #
+    # This method is aliased as #set_resource, for semantic use when you want
+    # to set the response body to a representation (as a Hash) of a resource.
+    #
+    # This method is also aliased as #set_resources, for semantic use when
+    # you want to set the response body to an array of representations (as
+    # Hashes) of resources.
+    #
     attr_accessor :body
+    alias_method  :set_resource,  :body=
+    alias_method  :set_resources, :body=
 
     # Create a new instance, ready to take on a response. The service
     # middleware responsible for doing this.
@@ -180,6 +189,16 @@ module ApiTools
       return for_rack()
     end
 
+    # Add errors from an ApiTools::Errors instance to this response's error
+    # collection.
+    #
+    # +errors_object+:: ApiTools::Errors instance to merge into the error
+    #                   collection of 'this' response object.
+    #
+    def add_errors( errors_object )
+      @errors.merge!( errors_object )
+    end
+
     # Convert the internal response data into something that Rack expects.
     # The return value of this method can be passed back to Rack from Rack
     # middleware or applications.
@@ -202,7 +221,7 @@ module ApiTools
       # We're not using JSON5, so the Platform API says that outmost arrays
       # are wrapped with a top-level object key "_data".
 
-      if body_data.is_a?( Array )
+      if body_data.is_a?( ::Array )
         response_hash = { '_data' => body_data }
       else
         response_hash = body_data
