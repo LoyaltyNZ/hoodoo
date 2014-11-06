@@ -11,8 +11,7 @@ module ApiTools
       # Check if data is a valid Array and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
-        return errors if errors.count > 0
-        return [] if !@required and data.nil?
+        return errors if errors.has_errors? || (!@required and data.nil?)
 
         if data.is_a? ::Array
           # No array entry schema? No array entry validation, then.
@@ -21,12 +20,16 @@ module ApiTools
               @properties.each do |name, property|
                 rdata = (item.is_a?(::Hash) and item.has_key?(name)) ? item[name] : nil
                 indexed_path = "#{full_path(path)}[#{index}]"
-                errors += property.validate(rdata, indexed_path )
+                errors.merge!( property.validate(rdata, indexed_path ) )
               end
             end
           end
         else
-          errors << {'code'=> 'generic.invalid_array', 'message'=>"Field `#{full_path(path)}` is an invalid array", 'reference' => full_path(path)}
+          errors.add_error(
+            'generic.invalid_array',
+            :message   => "Field `#{ full_path( path ) }` is an invalid array",
+            :reference => { :field_name => full_path( path ) }
+          )
         end
 
         errors

@@ -24,18 +24,18 @@ describe ApiTools::Presenters::Field do
   describe '#validate' do
     it 'should return [] when not required when data nil' do
       errors = @inst.validate(nil)
-      expect(errors).to eq([])
+      expect(errors.errors).to eq([])
     end
 
     it 'should return [] when not required when data not nil' do
       errors = @inst.validate(1)
-      expect(errors).to eq([])
+      expect(errors.errors).to eq([])
     end
 
     it 'should return correct error when required and data is nil' do
       @inst.required = true
       errors = @inst.validate(nil)
-      expect(errors).to eq([
+      expect(errors.errors).to eq([
         {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
     end
@@ -43,7 +43,7 @@ describe ApiTools::Presenters::Field do
     it 'should return correct error with path' do
       @inst.required = true
       errors = @inst.validate(nil,'ordinary')
-      expect(errors).to eq([
+      expect(errors.errors).to eq([
        {'code'=>"generic.required_field_missing", 'message'=>"Field `ordinary.one` is required", 'reference'=>"ordinary.one"}
       ])
     end

@@ -21,40 +21,40 @@ describe ApiTools::Presenters::Array do
 
   describe '#validate' do
     it 'should return [] when valid array' do
-      expect(@inst.validate([])).to eq([])
+      expect(@inst.validate([]).errors).to eq([])
     end
 
     it 'should return correct error when data is not a array' do
       errors = @inst.validate('asckn')
 
       err = [  {'code'=>"generic.invalid_array", 'message'=>"Field `one` is an invalid array", 'reference'=>"one"}]
-      expect(errors).to eq(err)
+      expect(errors.errors).to eq(err)
     end
 
     it 'should return correct error with non array types' do
       err = [  {'code'=>"generic.invalid_array", 'message'=>"Field `one` is an invalid array", 'reference'=>"one"}]
 
-      expect(@inst.validate('asckn')).to eq(err)
-      expect(@inst.validate(34534)).to eq(err)
-      expect(@inst.validate(2123.23)).to eq(err)
-      expect(@inst.validate(true)).to eq(err)
-      expect(@inst.validate({})).to eq(err)
+      expect(@inst.validate('asckn').errors).to eq(err)
+      expect(@inst.validate(34534).errors).to eq(err)
+      expect(@inst.validate(2123.23).errors).to eq(err)
+      expect(@inst.validate(true).errors).to eq(err)
+      expect(@inst.validate({}).errors).to eq(err)
     end
 
     it 'should not return error when not required and absent' do
-      expect(@inst.validate(nil)).to eq([])
+      expect(@inst.validate(nil).errors).to eq([])
     end
 
     it 'should return error when required and absent' do
       @inst.required = true
-      expect(@inst.validate(nil)).to eq([
+      expect(@inst.validate(nil).errors).to eq([
         {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
     end
 
     it 'should return correct error with path' do
       errors = @inst.validate('scdacs','ordinary')
-      expect(errors).to eq([
+      expect(errors.errors).to eq([
         {'code'=>"generic.invalid_array", 'message'=>"Field `ordinary.one` is an invalid array", 'reference'=>"ordinary.one"}
       ])
     end
@@ -64,7 +64,7 @@ describe ApiTools::Presenters::Array do
       }
 
       errors = TestPresenter4.validate(data)
-      expect(errors).to eq([
+      expect(errors.errors).to eq([
         {'code'=>"generic.required_field_missing", 'message'=>"Field `an_array` is required", 'reference'=>"an_array"},
       ])
 
@@ -81,7 +81,7 @@ describe ApiTools::Presenters::Array do
 
       data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
-      expect(errors).to eq([])
+      expect(errors.errors).to eq([])
     end
 
     it 'should validate all entry fields' do
@@ -95,7 +95,7 @@ describe ApiTools::Presenters::Array do
 
       data = ApiTools::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
-      expect(errors).to eq([
+      expect(errors.errors).to eq([
         {'code'=>"generic.invalid_integer", 'message'=>"Field `an_array[1].an_integer` is an invalid integer", 'reference'=>"an_array[1].an_integer"},
         {'code'=>"generic.invalid_datetime", 'message'=>"Field `an_array[2].a_datetime` is an invalid ISO8601 datetime", 'reference'=>"an_array[2].a_datetime"},
       ])

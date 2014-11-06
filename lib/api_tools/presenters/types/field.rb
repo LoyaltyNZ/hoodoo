@@ -16,19 +16,25 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name, options = {})
-        @name = name.to_s
-        @required = options.has_key?(:required) ? options[:required] : false
-        @default = options.has_key?(:default) ? options[:default] : nil
-        @mapping = options.has_key?(:mapping) ? options[:mapping] : nil
-        @path = options.has_key?(:path) ? options[:path] : []
+        @name     = name.to_s
+        @required = options.has_key?( :required ) ? options[ :required ] : false
+        @default  = options.has_key?( :default  ) ? options[ :default  ] : nil
+        @mapping  = options.has_key?( :mapping  ) ? options[ :mapping  ] : nil
+        @path     = options.has_key?( :path     ) ? options[ :path     ] : []
       end
 
       # Check if data is required and return either [], or an array with a suitable error
       def validate(data, path = '')
-        errors = []
+        errors = ApiTools::Errors.new
+
         if data.nil? and @required
-          errors << {'code'=> 'generic.required_field_missing', 'message'=>"Field `#{full_path(path)}` is required", 'reference' => full_path(path)}
+          errors.add_error(
+            'generic.required_field_missing',
+            :message   => "Field `#{ full_path( path ) }` is required",
+            :reference => { :field_name => full_path( path ) }
+          )
         end
+
         errors
       end
 
@@ -94,6 +100,16 @@ module ApiTools
         return from_target
       end
 
+      # Rename a property to the given name. The internal name is changed and
+      # the last path entry set to the same name on the assumption that a
+      # non-empty path array is present. This is a specialist interface which
+      # is intended for internal use under unusual circumstances.
+      #
+      # +name+:: New property name. Must be a String.
+      #
+      def rename( name )
+        @name = @path[ -1 ] = name
+      end
     end
   end
 end

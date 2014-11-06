@@ -30,17 +30,21 @@ module ApiTools
       #
       def validate(data, path = '')
         errors = super data, path
-
-        return [] if !@required and data.nil?
+        return errors if !@required and data.nil? # If there are existing errors, we carry on and validate internally too
 
         if !data.nil? and !data.is_a? ::Hash
-          errors << {'code'=> 'generic.invalid_object', 'message'=>"Field `#{full_path(path)}` is an invalid object", 'reference' => full_path(path)}
+          errors.add_error(
+            'generic.invalid_object',
+            :message   => "Field `#{ full_path( path ) }` is an invalid object",
+            :reference => { :field_name => full_path( path ) }
+          )
         end
 
         @properties.each do |name, property|
           rdata = (data.is_a?(::Hash) and data.has_key?(name)) ? data[name] : nil
-          errors += property.validate(rdata, full_path(path))
+          errors.merge!( property.validate(rdata, full_path( path ) ) )
         end
+
         errors
       end
 

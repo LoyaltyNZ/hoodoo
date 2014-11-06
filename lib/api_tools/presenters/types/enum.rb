@@ -30,16 +30,16 @@ module ApiTools
       # Check if data is a valid String and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
-        return errors if errors.count > 0
-        return [] if !@required and data.nil?
+        return errors if errors.has_errors? || (!@required and data.nil?)
 
-        if data.is_a? ::String
-          unless @from.include?(data)
-            errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` does not contain an allowed reference value from this list: `#{@from}`", 'reference' => full_path(path)}
-          end
-        else
-          errors << {'code'=> 'generic.invalid_string', 'message'=>"Field `#{full_path(path)}` is an invalid string", 'reference' => full_path(path)}
+        unless @from.include?(data)
+          errors.add_error(
+            'generic.invalid_enum',
+            :message   => "Field `#{ full_path( path ) }` does not contain an allowed reference value from this list: `#{@from}`",
+            :reference => { :field_name => full_path( path ) }
+          )
         end
+
         errors
       end
     end

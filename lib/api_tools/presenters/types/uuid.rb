@@ -31,19 +31,27 @@ module ApiTools
       # Check if data is a valid UUID and return either [], or an array with a suitable error
       def validate(data, path = '')
         errors = super data, path
-        return errors if errors.count > 0
-        return [] if !@required and data.nil?
+        return errors if errors.has_errors? || (!@required and data.nil?)
 
         if data.is_a? ::String
           if data.size != ApiTools::UUID::UUID_LENGTH
-            errors << {'code'=> 'generic.invalid_uuid', 'message'=>"Field `#{full_path(path)}` has incorrect length #{data.size} for a UUID (should be #{ApiTools::UUID::UUID_LENGTH})", 'reference' => full_path(path)}
+            errors.add_error(
+              'generic.invalid_uuid',
+              :message   => "Field `#{ full_path( path ) }` has incorrect length #{ data.size } for a UUID (should be #{ ApiTools::UUID::UUID_LENGTH })",
+              :reference => { :field_name => full_path( path ) }
+            )
           else
             # TODO: Maybe one day validate that the associated item is indeed
             #       of the kind in '@resource'.
           end
         else
-          errors << {'code'=> 'generic.invalid_uuid', 'message'=>"Field `#{full_path(path)}` is an invalid UUID", 'reference' => full_path(path)}
+          errors.add_error(
+            'generic.invalid_uuid',
+            :message   => "Field `#{ full_path( path ) }` is an invalid UUID",
+            :reference => { :field_name => full_path( path ) }
+          )
         end
+
         errors
       end
     end
