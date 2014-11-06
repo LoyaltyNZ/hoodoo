@@ -137,7 +137,7 @@ describe '#schema' do
       }
 
       data = ApiTools::Utilities.stringify(data)
-      expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([])
+      expect(ApiTools::Data::Resources::World.validate(data, true).errors).to eq([])
     end
 
     it 'should return no errors with valid data for resource' do
@@ -163,7 +163,7 @@ describe '#schema' do
         Time.now
       )
 
-      expect(ApiTools::Data::Resources::World.validate(rendered)).to eq([])
+      expect(ApiTools::Data::Resources::World.validate(rendered).errors).to eq([])
     end
 
     it 'should return correct errors invalid data' do
@@ -184,7 +184,7 @@ describe '#schema' do
       }
 
       data = ApiTools::Utilities.stringify(data)
-      expect(ApiTools::Data::Resources::World.validate(data, true)).to eq([
+      expect(ApiTools::Data::Resources::World.validate(data, true).errors).to eq([
         {
           'code' => 'generic.invalid_string',
           'message' => 'Field `test_object.nested_object.obj_suffix` is longer than maximum length `1`',
@@ -209,7 +209,7 @@ describe '#schema' do
       # the contents yet so we only have one error.
 
       data = {}
-      expect(NastyNesting.validate(data, true)).to eq([
+      expect(NastyNesting.validate(data, true).errors).to eq([
         {
           'code' => 'generic.required_field_missing',
           'message' => 'Field `outer_array` is required',
@@ -224,7 +224,7 @@ describe '#schema' do
         :outer_array => []
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([])
+      expect(NastyNesting.validate(data, true).errors).to eq([])
 
       # The outer array is present and has two entries that omit required
       # fields, so we expect errors for all of them.
@@ -233,7 +233,7 @@ describe '#schema' do
         :outer_array => [{}, {}]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([
+      expect(NastyNesting.validate(data, true).errors).to eq([
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].one` is required',          'reference' => "outer_array[0].one"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].two` is required',          'reference' => "outer_array[0].two"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array` is required', 'reference' => "outer_array[0].middle_array"},
@@ -254,7 +254,7 @@ describe '#schema' do
         ]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([])
+      expect(NastyNesting.validate(data, true).errors).to eq([])
 
       data = {
         :outer_array => [
@@ -266,7 +266,7 @@ describe '#schema' do
         ]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([
+      expect(NastyNesting.validate(data, true).errors).to eq([
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].three` is required',       'reference' => "outer_array[0].middle_array[0].three"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].four` is required',        'reference' => "outer_array[0].middle_array[0].four"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array` is required', 'reference' => "outer_array[0].middle_array[0].inner_array"},
@@ -291,7 +291,7 @@ describe '#schema' do
         ]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([])
+      expect(NastyNesting.validate(data, true).errors).to eq([])
 
       data = {
         :outer_array => [
@@ -309,7 +309,7 @@ describe '#schema' do
         ]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([
+      expect(NastyNesting.validate(data, true).errors).to eq([
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].five` is required',               'reference' => "outer_array[0].middle_array[0].inner_array[0].five"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].six` is required',                'reference' => "outer_array[0].middle_array[0].inner_array[0].six"},
         {'code' => 'generic.required_field_missing', 'message' => 'Field `outer_array[0].middle_array[0].inner_array[0].inner_object` is required',       'reference' => "outer_array[0].middle_array[0].inner_array[0].inner_object"},
@@ -344,18 +344,18 @@ describe '#schema' do
         ]
       }
       data = ApiTools::Utilities.stringify(data)
-      expect(NastyNesting.validate(data, true)).to eq([])
+      expect(NastyNesting.validate(data, true).errors).to eq([])
     end
 
     it 'should validate resource fields for language correctly' do
-      expect(Internationalised.validate({}).count).to eq(4)
-      expect(NotInternationalised.validate({}).count).to eq(3)
+      expect(Internationalised.validate({}).errors.count).to eq(4)
+      expect(NotInternationalised.validate({}).errors.count).to eq(3)
 
       # Check schema redefinition for the required language field is working
       # OK by repeating the above two expectations.
       #
-      expect(Internationalised.validate({}).count).to eq(4)
-      expect(NotInternationalised.validate({}).count).to eq(3)
+      expect(Internationalised.validate({}).errors.count).to eq(4)
+      expect(NotInternationalised.validate({}).errors.count).to eq(3)
     end
   end
 

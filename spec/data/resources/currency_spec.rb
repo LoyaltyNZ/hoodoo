@@ -88,7 +88,7 @@ describe ApiTools::Data::Resources::Currency do
       true
     )
 
-    expect(result).to eq([])
+    expect(result.errors).to eq([])
   end
 
   it 'should be valid with minimum data' do
@@ -100,7 +100,7 @@ describe ApiTools::Data::Resources::Currency do
       true
     )
 
-    expect(result).to eq([])
+    expect(result.errors).to eq([])
   end
 
   it 'should be invalid without mandatory= data' do
@@ -114,7 +114,7 @@ describe ApiTools::Data::Resources::Currency do
       true
     )
 
-    expect(result).to eq(
+    expect(result.errors).to eq(
       [
         {
           'code' => 'generic.required_field_missing',

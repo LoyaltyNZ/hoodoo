@@ -30,7 +30,7 @@ module ApiTools
       #
       def validate(data, path = '')
         errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+        return errors if !@required and data.nil? # If there are existing errors, we carry on and validate internally too
 
         if !data.nil? and !data.is_a? ::Hash
           errors.add_error(
