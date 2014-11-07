@@ -11,6 +11,4 @@ describe ApiTools::Data::Resources::Balance do
     expect(schema.properties['token_identifier']).to be_a(ApiTools::Presenters::Text)
     expect(schema.properties['currency_amount']).to be_a(ApiTools::Data::DocumentedObject)
   end
-
-
 end

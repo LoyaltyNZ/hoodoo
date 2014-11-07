@@ -16,9 +16,9 @@ module ApiTools
       class Token < ApiTools::Data::DocumentedPresenter
 
         schema do
-          enum :state, from: [:waiting, :active, :closed]
-          text :identifier, required: true
-          uuid :member_id, resource: Member, required: true
+          enum :state,      :from     => [:waiting, :active, :closed]
+          text :identifier, :required => true
+          uuid :member_id,  :resource => Member, required: true
         end
 
       end

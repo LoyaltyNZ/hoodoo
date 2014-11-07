@@ -11,8 +11,6 @@ module ApiTools
   module Data
     module Resources
 
-      ########################################################################
-      # Woooooo, whats going on here............
       #  Since Member references Account and Account references Member, we have
       #  to define a dummy Member class here and ensure that the below
       #  ordering in api_tools.rb is maintained (account before member)
@@ -20,7 +18,6 @@ module ApiTools
       # require root+'data/resources/account.rb'
       # require root+'data/resources/member.rb'
       #
-      ########################################################################
       class Member < ApiTools::Data::DocumentedPresenter
       end
 
@@ -28,7 +25,7 @@ module ApiTools
       #
       class Account < ApiTools::Data::DocumentedPresenter
         schema do
-          uuid :owner_id, resource: Member
+          uuid :owner_id, :resource => Member
         end
 
       end

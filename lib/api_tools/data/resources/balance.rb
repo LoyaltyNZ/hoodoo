@@ -16,7 +16,8 @@ module ApiTools
       class Balance < ApiTools::Data::DocumentedPresenter
 
         schema do
-          text  :token_identifier,  :required => true
+          text :token_identifier, :required => true
+
           object :currency_amount, :required => true do
             type :CurrencyAmount
           end

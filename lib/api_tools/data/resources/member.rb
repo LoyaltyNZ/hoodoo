@@ -18,10 +18,10 @@ module ApiTools
         schema do
           internationalised
 
-          uuid :account_id, resource: Account, required: true
-          text :formal_name, required: true
+          uuid :account_id,    :resource => Account, :required => true
+          text :formal_name,   :required => true
           text :informal_name
-          date :date_of_birth, required: true
+          date :date_of_birth, :required => true
         end
 
       end
