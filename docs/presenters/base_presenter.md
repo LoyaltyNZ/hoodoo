@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A class intended as base functionality for presenter layers in sinatra services. Although Parsing and rendering of JSON is left to the extender, `BasePresenter` provides a rich DSL for JSON schema definition and validation.
+A class intended as base functionality for presenter layers. It is concerned with validating and mapping inbound JSON data to an internal data structure, or rendering internal data structures for "presentation" as sent (transmitted) JSON. `BasePresenter` provides a rich DSL for JSON schema definition and validation.
 
 ## Usage
 
@@ -14,8 +14,9 @@ Then extend the base class:
 
     module YourService
       class SomePresenter < ApiTools::Presenters::BasePresenter
-
-      ...
+        schema do
+          ...
+        end
 
 The class provides the following methods, plus a DSL for JSON schema definition.
 
@@ -23,9 +24,25 @@ The class provides the following methods, plus a DSL for JSON schema definition.
 |:---------|:--------------|
 | `self.schema(&block)` | Define the JSON schema for validation, please see below. |
 | `self.validate(data)` | Validate the given parsed JSON data (e.g. from [`ApiTools::JsonPayload`](json_payload.md)) and return validation/schema structure errors if any. |
-| `self.parse(data)` | Parse the supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
-| `self.render(data)` | Render supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
+| `self.parse(data)`    | Parse the supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
+| `self.render(data)`   | Render supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
 | `self.get_schema`     | Return the schema graph. |
+
+The intent is to decouple incoming JSON strings from internal hashes representing the equivalent data; and this in turn is decoupled from any persistence layer you might implement (e.g. ActiveRecord models). The conceptual code flow when you _receive_ data is:
+
+* `JSON.parse` an incoming JSON string, keeping keys as strings (don't symbolize keys).
+* Use `validate` to see if that incoming JSON is valid, according to a `BasePresenter` subclass you write which defines the expected/permitted schema of that inbound data.
+* Use `parse` if the data is valid, to produce a parsed Hash. This step is technically only significantly useful if you use the `:mapping` option (see below) to break the otherwise 1:1 relationship between inbound JSON fields and your internal expected Hash. Performance permitting, though, you should always take this step as it allows you to introduce schema-level mappings in future (e.g. because of data migrations, API variations etc.) without then having to remember to update all of your code to add in the parsing step.
+* After parsing, you'll have a validated, mapped ruby Hash representation of the JSON string you originally received, with string keys throughout.
+
+The conceptual code flow when you _generate_ data is:
+
+* Create a Hash with strings as keys containing the data you want to return.
+* There's no equivalent mapped-data-validation step for outbound data; we assume you generate valid results (through e.g. automated test coverage).
+* Use `render` to, in essence, do the opposite of `parse` - map backwards from your internal mapped data to the client-facing result. Automated tests can (perhaps) compare pre-and-post-render Hash data (taking into account mappings) to test validity of your generated data.
+* `JSON.generate` the string to send out from the rendered Hash.
+
+It may often be the case that inbound data and outbound data represents the same data structures and can share the same schema definition. If however you have differing requirements in context, especially with different requirement constraints, then define different schema classes for the inbound vs outbound data. For example - you might define a schema for some resource instance that a client can create. To create it, the client provides a few fields. The resource itself gains lots of emergent properties when created - e.g. a "created at" date - and you may wish to specify that in a schema as a present and required property for rendering; thus, you'd need the simpler, fewer-fields schema to validate the incoming client data used for creating the resource, plus the more complex, more-fields schema to use to render the full created resource representation.
 
 ## Validation Errors
 
@@ -88,7 +105,7 @@ This is to support partial updates, e.g. Using `parse` with the schema above:
   parsed = PresenterClass.parse(data)
 
   # parsed = {
-  #   :region_state => 'Idaho' 
+  #   :region_state => 'Idaho'
   # }
 
 Here, neither the `one` field nor the rest of schema fields have been included, as either the schema does not define the field, or the parsed data does not contain schema defined fields.
@@ -98,7 +115,7 @@ Here, neither the `one` field nor the rest of schema fields have been included, 
 The `render` method essentially performs the inverse of the `parse` method, using either default or defined mappings to render a ruby `Hash` from an input `Hash` using the schema.
 
   parsed = {
-    :region_state => 'Idaho' 
+    :region_state => 'Idaho'
   }
 
   rendered = PresenterClass.render(data)
@@ -149,20 +166,20 @@ The `render` method essentially performs the inverse of the `parse` method, usin
           attr_accessor :errors
 
           schema do
-            integer :quantity, :required => true 
-            string :client_id, :required => true, :length => 32 
-            string :status_callback_uri, :required => false, :length => 256 
+            integer :quantity, :required => true
+            string :client_id, :required => true, :length => 32
+            string :status_callback_uri, :required => false, :length => 256
             object :reward, :required => true do
               string :provider_code, :required => true, :length => 32, :mapping => [:reward_provider_code]
               string :supplier_code, :required => true, :length => 32, :mapping => [:reward_supplier_code]
               string :reward_code, :required => true, :length => 32, :mapping => [:reward_reward_code]
             end
             object :member, :required => true do
-              string :id, :required => true, :length => 32 
-              string :first_name, :required => true, :length => 128 
-              string :family_name, :required => true, :length => 128 
+              string :id, :required => true, :length => 32
+              string :first_name, :required => true, :length => 128
+              string :family_name, :required => true, :length => 128
               date :dob, :required => true
-              string :email, :required => true, :length => 128 
+              string :email, :required => true, :length => 128
             end
             object :delivery_target, :required => true do
               string :delivery_type, :required => true, :length => 32
