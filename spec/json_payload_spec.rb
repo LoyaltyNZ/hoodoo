@@ -6,7 +6,7 @@ describe ApiTools::JsonPayload do
   before do
     class TestClass
       attr_accessor :request, :payload
-      
+
       include ApiTools::JsonPayload
     end
     @test = TestClass.new
@@ -21,7 +21,7 @@ describe ApiTools::JsonPayload do
           })
       })
       expect(@test.request.body).to receive(:rewind)
-      
+
       @test.process_json_payload
     end
 
@@ -31,10 +31,22 @@ describe ApiTools::JsonPayload do
       })
       expect(@test.request.body).to receive(:rewind)
       expect(@test.request.body).to receive(:read).and_return('')
-      
+
       @test.process_json_payload
 
       expect(@test.payload).to be_nil
+    end
+
+    it 'should parse the body json into @payload, not symbolizing names' do
+      @test.request = OpenStruct.new({
+        :body => OpenStruct.new
+      })
+      expect(@test.request.body).to receive(:rewind)
+      expect(@test.request.body).to receive(:read).and_return('{"one":1,"two":2}')
+
+      @test.process_json_payload
+
+      expect(@test.payload).to eq({ 'one'=>1, 'two' =>2})
     end
 
     it 'should parse the body json into @payload, symbolizing names' do
@@ -43,8 +55,8 @@ describe ApiTools::JsonPayload do
       })
       expect(@test.request.body).to receive(:rewind)
       expect(@test.request.body).to receive(:read).and_return('{"one":1,"two":2}')
-      
-      @test.process_json_payload
+
+      @test.process_json_payload( true )
 
       expect(@test.payload).to eq({ :one=>1, :two =>2})
     end
@@ -55,9 +67,9 @@ describe ApiTools::JsonPayload do
       })
       expect(@test.request.body).to receive(:rewind)
       expect(@test.request.body).to receive(:read).and_return('fw4oihwafosaf8')
-      
+
       expect(@test).to receive(:fail_with_error).with(400, 'generic.bad_json',  'The JSON payload cannot be parsed')
-      
+
       @test.process_json_payload
 
       expect(@test.payload).to be_nil
