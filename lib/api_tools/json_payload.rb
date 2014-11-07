@@ -11,11 +11,7 @@ module ApiTools
     # `400 Bad Request` and rendering any previously added errors plus a 'generic.bad_json'
     # error in the response body.
     #
-    # +keys_as_symbols+:: If +true+ the JSON parsed `Hash` uses Symbols for keys instead
-    #                     of strings. This is _NOT RECOMMENDED_ because of:
-    #                     https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
-    #
-    def process_json_payload( keys_as_symbols = false )
+    def process_json_payload
       request.body.rewind
       body = request.body.read
       unless body.length > 2
@@ -24,7 +20,7 @@ module ApiTools
       end
 
       begin
-        @payload = JSON.parse body, :symbolize_names => keys_as_symbols
+        @payload = JSON.parse body, :symbolize_names => false
       rescue JSON::ParserError
         @payload = nil
         fail_with_error 400, 'generic.bad_json',  'The JSON payload cannot be parsed'

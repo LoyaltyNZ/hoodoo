@@ -49,18 +49,6 @@ describe ApiTools::JsonPayload do
       expect(@test.payload).to eq({ 'one'=>1, 'two' =>2})
     end
 
-    it 'should parse the body json into @payload, symbolizing names' do
-      @test.request = OpenStruct.new({
-        :body => OpenStruct.new
-      })
-      expect(@test.request.body).to receive(:rewind)
-      expect(@test.request.body).to receive(:read).and_return('{"one":1,"two":2}')
-
-      @test.process_json_payload( true )
-
-      expect(@test.payload).to eq({ :one=>1, :two =>2})
-    end
-
     it 'should set @payload nil and call fail_with_error is JSON parse fails' do
       @test.request = OpenStruct.new({
         :body => OpenStruct.new
