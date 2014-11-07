@@ -54,12 +54,21 @@ module ApiTools
       #
       def key(name, options = {}, &block)
         if @specific == false
-          raise "Can't use \#key and \#keys in the same hash definition - use one or the other"
+          raise "Can't use \#keys and then \#key in the same hash definition - use one or the other"
         end
 
         @specific = true
 
-        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
+        klass = if block_given?
+          if self.is_a? ApiTools::Data::DocumentedHash
+            ApiTools::Data::DocumentedObject
+          else
+            ApiTools::Presenters::Object
+          end
+        else
+          ApiTools::Presenters::Field
+        end
+
         property(name, klass, options, &block)
       end
 
@@ -123,22 +132,31 @@ module ApiTools
       #
       def keys(options = {}, &block)
         unless @specific.nil?
-          raise "Can't use \#key and \#keys in the same hash definition, or use \#keys more than once"
+          raise "Can't use \#key and then \#keys in the same hash definition, or use \#keys more than once"
         end
 
         @specific = false
 
         klass = options.has_key?( :length ) ? ApiTools::Presenters::String : ApiTools::Presenters::Text
-        property(:keys, klass, options)
+        property('keys', klass, options)
 
-        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
-        property(:values, klass, {}, &block)
+        klass = if block_given?
+          if self.is_a? ApiTools::Data::DocumentedHash
+            ApiTools::Data::DocumentedObject
+          else
+            ApiTools::Presenters::Object
+          end
+        else
+          ApiTools::Presenters::Field
+        end
+
+        property('values', klass, {}, &block)
       end
 
       # The properties of this object, a +hash+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Hash and return either [], or an array with a suitable error
+      # Check if data is a valid Hash and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

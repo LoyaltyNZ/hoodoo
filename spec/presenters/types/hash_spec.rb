@@ -5,7 +5,7 @@ require 'spec_helper'
 
 
 puts "*"*80
-puts "Still to test - Documented variants; parse (also for array/object)"
+puts "Still to test - \#parse (also for array/object)"
 puts "*"*80
 
 
@@ -13,6 +13,47 @@ puts "*"*80
 
 
 describe ApiTools::Presenters::Hash do
+
+  context 'exceptions' do
+    it 'should complain about #key then #keys' do
+      expect {
+        class TestHashKeyKeysException < ApiTools::Presenters::BasePresenter
+          schema do
+            hash :foo do
+              key :one
+              keys :length => 4
+            end
+          end
+        end
+      }.to raise_error( RuntimeError )
+    end
+
+    it 'should complain about #keys then #key' do
+      expect {
+        class TestHashKeysKeyException < ApiTools::Presenters::BasePresenter
+          schema do
+            hash :foo do
+              keys :length => 4
+              key :one
+            end
+          end
+        end
+      }.to raise_error( RuntimeError )
+    end
+
+    it 'should complain about #keys twice' do
+      expect {
+        class TestHashKeysKeysException < ApiTools::Presenters::BasePresenter
+          schema do
+            hash :foo do
+              keys :length => 4
+              keys :length => 4
+            end
+          end
+        end
+      }.to raise_error( RuntimeError )
+    end
+  end
 
   ############################################################################
 

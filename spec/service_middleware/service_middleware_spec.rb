@@ -91,6 +91,26 @@ describe ApiTools::ServiceMiddleware do
     end
   end
 
+  context 'utility methods' do
+    it 'should know about MemCache' do
+      old = ENV[ 'MEMCACHE_URL' ]
+      ENV[ 'MEMCACHE_URL' ] = nil
+      expect(ApiTools::ServiceMiddleware.has_memcache?).to eq(false)
+      ENV[ 'MEMCACHE_URL' ] = 'foo'
+      expect(ApiTools::ServiceMiddleware.has_memcache?).to eq(true)
+      ENV[ 'MEMCACHE_URL' ] = old
+    end
+
+    it 'should know about a queue' do
+      old = ENV[ 'AMQ_ENDPOINT' ]
+      ENV[ 'AMQ_ENDPOINT' ] = nil
+      expect(ApiTools::ServiceMiddleware.on_queue?).to eq(false)
+      ENV[ 'AMQ_ENDPOINT' ] = 'foo'
+      expect(ApiTools::ServiceMiddleware.on_queue?).to eq(true)
+      ENV[ 'AMQ_ENDPOINT' ] = old
+    end
+  end
+
   context 'malformed basics in requests' do
 
     it 'should complain about entirely missing content type' do

@@ -81,6 +81,29 @@ module ApiTools
         internationalised() if ary.is_internationalised?()
       end
 
+      # As ApiTools::Presenters::BaseDSL#hash but with the extended DSL in
+      # ApiTools::Data::DocumentedDSL available to the block.
+      #
+      # +name+:: The JSON key
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      # &block:: Optional block declaring the characteristics of the Hash.
+      #
+      # Example - a Hash where keys must be <= 16 characters long and values
+      #           must match the ApiTools::Data::Types::Currency type.
+      #
+      #     class CurrencyHash < ApiTools::Data::DocumentedObject
+      #       hash :currencies do
+      #         keys :length => 16 do
+      #           type :Currency
+      #         end
+      #       end
+      #     end
+      #
+      def hash(name, options = {}, &block)
+        hash = property(name, ApiTools::Data::DocumentedHash, options, &block)
+        internationalised() if hash.is_internationalised?()
+      end
+
       # Declares that this Type or Resource contains fields which will may
       # carry human-readable data subject to platform interntionalisation
       # rules. A Resource which is internationalised automatically gains a

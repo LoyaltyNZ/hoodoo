@@ -18,7 +18,7 @@ module ApiTools
         @precision = options[:precision]
       end
 
-      # Check if data is a valid Decimal and return either [], or an array with a suitable error
+      # Check if data is a valid Decimal and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

@@ -23,7 +23,7 @@ module ApiTools
         @path     = options.has_key?( :path     ) ? options[ :path     ] : []
       end
 
-      # Check if data is required and return either [], or an array with a suitable error
+      # Check if data is required and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = ApiTools::Errors.new
 

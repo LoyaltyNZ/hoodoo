@@ -27,7 +27,7 @@ module ApiTools
         end
       end
 
-      # Check if data is a valid String and return either [], or an array with a suitable error
+      # Check if data is a valid String and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

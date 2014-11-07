@@ -3,7 +3,7 @@ module ApiTools
     # A JSON datetime schema member
     class DateTime < ApiTools::Presenters::Field
 
-      # Check if data is a valid Datetime and return either [], or an array with a suitable error
+      # Check if data is a valid Datetime and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

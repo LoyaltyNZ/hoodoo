@@ -8,7 +8,7 @@ module ApiTools
       # The properties of this object, an +array+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Array and return either [], or an array with a suitable error
+      # Check if data is a valid Array and return an ApiTools::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

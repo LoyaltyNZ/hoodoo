@@ -2,85 +2,114 @@ require "spec_helper"
 
 describe '#schema' do
 
-  before do
-
-    # Just in case someone's deliberately excluding other source files to
-    # check on code coverage...
-    #
-    module ApiTools
-      module Data
-        module Types
-        end
-        module Resources
-        end
+  # Just in case someone's deliberately excluding other source files to
+  # check on code coverage...
+  #
+  module ApiTools
+    module Data
+      module Types
+      end
+      module Resources
       end
     end
+  end
 
-    # This exercises basic type definition using the Presenters DSL's #text
-    # and #internationalised methods.
-    #
-    class ApiTools::Data::Types::Hello < ApiTools::Data::DocumentedPresenter
-      schema do
-        internationalised
-        text :name, :required => true
-      end
+  # This exercises basic type definition using the Presenters DSL's #text
+  # and #internationalised methods.
+  #
+  class ApiTools::Data::Types::Hello < ApiTools::Data::DocumentedPresenter
+    schema do
+      internationalised
+      text :name, :required => true
     end
+  end
 
-    # This exercises basic resource definition with extended DSL methods #tags,
-    # #uuid and #type, with the #object and #array parts checking methods from
-    # both the extended and Presenters base DSL. The type reference is deeply
-    # nested to make sure that internationalisation in the Hello type "taints"
-    # the referencing type all the way up to the top level schema.
+  # This exercises basic resource definition with extended DSL methods #tags,
+  # #uuid and #type, with the #object and #array parts checking methods from
+  # both the extended and Presenters base DSL. The type reference is deeply
+  # nested to make sure that internationalisation in the Hello type "taints"
+  # the referencing type all the way up to the top level schema.
 
-    class ApiTools::Data::Resources::World < ApiTools::Data::DocumentedPresenter
-      schema do
-        uuid :errors_id, :resource => :Errors
-        tags :test_tags
+  class ApiTools::Data::Resources::World < ApiTools::Data::DocumentedPresenter
+    schema do
+      uuid :errors_id, :resource => :Errors
+      tags :test_tags
 
-        object :test_object, :required => true do
-          object :nested_object do
-            type :Hello
-            string :obj_suffix, :length => 1
-          end
+      object :test_object, :required => true do
+        object :nested_object do
+          type :Hello
+          string :obj_suffix, :length => 1
+        end
 
-          array :test_array do
-            type :Hello
-            string :ary_suffix, :length => 2
-          end
+        array :test_array do
+          type :Hello
+          string :ary_suffix, :length => 2
         end
       end
     end
+  end
 
-    class NastyNesting < ApiTools::Data::DocumentedPresenter
-      schema do
-        array :outer_array, :required => true do
-          text :one, :required => true
-          text :two, :required => true
-          array :middle_array, :required => true do
-            text :three, :required => true
-            text :four, :required => true
-            array :inner_array, :required => true do
-              text :five, :required => true
-              text :six, :required => true
-              object :inner_object, :required => true do
-                text :seven, :required => true
-              end
+  class NastyNesting < ApiTools::Data::DocumentedPresenter
+    schema do
+      array :outer_array, :required => true do
+        text :one, :required => true
+        text :two, :required => true
+        array :middle_array, :required => true do
+          text :three, :required => true
+          text :four, :required => true
+          array :inner_array, :required => true do
+            text :five, :required => true
+            text :six, :required => true
+            object :inner_object, :required => true do
+              text :seven, :required => true
             end
           end
         end
       end
     end
+  end
 
-    # For testing resource validation for internationalised (or not) resources.
+  # For testing resource validation for internationalised (or not) resources.
 
-    class Internationalised < ApiTools::Data::DocumentedPresenter
-      schema do
-        internationalised
+  class Internationalised < ApiTools::Data::DocumentedPresenter
+    schema do
+      internationalised
+    end
+  end
+
+  class NotInternationalised < ApiTools::Data::DocumentedPresenter
+    schema do
+    end
+  end
+
+  # For testing hashes with type references
+
+  class Internationalised2 < ApiTools::Data::DocumentedPresenter
+    schema do
+      internationalised
+      text :hello
+    end
+  end
+
+  class HashGainsInternationalisation < ApiTools::Data::DocumentedPresenter
+    schema do
+      hash :inter do
+        keys do
+          type :Internationalised2
+        end
       end
     end
+  end
 
-    class NotInternationalised < ApiTools::Data::DocumentedPresenter
-      schema do
+  class HashGainsInternationalisation2 < ApiTools::Data::DocumentedPresenter
+    schema do
+      hash :inter do
+        key :one do
+          text :foo
+        end
+        key :two do
+          type :Internationalised2
+        end
       end
     end
   end
@@ -357,6 +386,28 @@ describe '#schema' do
       expect(Internationalised.validate({}).errors.count).to eq(4)
       expect(NotInternationalised.validate({}).errors.count).to eq(3)
     end
+
+    it 'should validate an internationalised hash (1)' do
+      result = HashGainsInternationalisation.validate({})
+      expect(result.errors.count).to eq(4) # I.e. missing ID, created_at, kind *and language*.
+    end
+
+    it 'should validate an internationalised hash (2)' do
+      result = HashGainsInternationalisation2.validate({})
+      expect(result.errors.count).to eq(4) # I.e. missing ID, created_at, kind *and language*.
+    end
+
+    it 'should validate contents correctly (1)' do
+      data   = { 'inter' => { 'a' => { 'hello' => 'hellotext' }, 'b' => { 'hello' => 'morehellotext' } } }
+      result = HashGainsInternationalisation.validate( data, true ) # true => Type fields only, ignore common fields
+      expect(result.errors.count).to eq(0)
+    end
+
+    it 'should validate contents correctly (2)' do
+      data   = { 'inter' => { 'one' => { 'foo' => 'bar' }, 'two' => { 'hello' => 'twohellotext' } } }
+      result = HashGainsInternationalisation2.validate( data, true ) # true => Type fields only, ignore common fields
+      expect(result.errors.count).to eq(0)
+    end
   end
 
   describe '#render' do
@@ -465,6 +516,24 @@ describe '#schema' do
           'en-gb'
         )
       }.to raise_error(RuntimeError, "Can't render a Resource with a nil 'created_at'")
+    end
+
+    it 'should render hash contents correctly (1)' do
+      data   = { 'inter' => { 'a' => { 'hello' => 'hellotext' }, 'b' => { 'hello' => 'morehellotext' } } }
+      result = HashGainsInternationalisation.render( data )
+      expect(result).to eq(data)
+    end
+
+    it 'should render hash contents correctly (2)' do
+      data   = { 'inter' => { 'one' => { 'foo' => 'bar' }, 'two' => { 'hello' => 'twohellotext' } } }
+      result = HashGainsInternationalisation2.render( data )
+      expect(result).to eq(data)
+    end
+
+    it 'should render hash contents correctly (3)' do
+      data   = { 'inter' => { 'one' => { 'foo' => 'bar' }, 'two' => { 'hello' => 'twohellotext' } } }
+      result = HashGainsInternationalisation.render( data ) # Note not the '2' variant of the class
+      expect(result).to eq({ 'inter' => { 'one' => { 'hello' => nil }, 'two' => { 'hello' => 'twohellotext' } } })
     end
   end
 
