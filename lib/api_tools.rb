@@ -43,6 +43,7 @@ require root+'data/types/product.rb'
 require root+'data/types/basket_item.rb'
 require root+'data/types/basket.rb'
 
+# the order of the below (account and member) is important, see notes in account.rb
 require root+'data/resources/account.rb'
 require root+'data/resources/member.rb'
 
