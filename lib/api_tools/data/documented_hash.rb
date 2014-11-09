@@ -39,7 +39,7 @@ module ApiTools
         super options, &block
 
         prop = @properties[ 'values' ]
-        puts prop.inspect
+
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
           internationalised()
         end
