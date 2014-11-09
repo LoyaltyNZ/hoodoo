@@ -1621,17 +1621,19 @@ end     # 'module ApiTools'
 #
 # Instead, monkey patch :-(
 
-module Rack
-  class Server
+unless defined?( Rack ).nil? || defined?( Rack::Server ).nil?
+  module Rack
+    class Server
 
-    class << self
-      def start_and_record_host_and_port( options = nil )
-        ApiTools::ServiceMiddleware.record_host_and_port( options )
-        racks_original_start( options )
+      class << self
+        def start_and_record_host_and_port( options = nil )
+          ApiTools::ServiceMiddleware.record_host_and_port( options )
+          racks_original_start( options )
+        end
+
+        alias racks_original_start start
+        alias start start_and_record_host_and_port
       end
-
-      alias racks_original_start start
-      alias start start_and_record_host_and_port
     end
   end
 end
