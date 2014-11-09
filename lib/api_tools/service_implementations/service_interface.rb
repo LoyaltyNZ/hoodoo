@@ -361,7 +361,8 @@ module ApiTools
     # Optional description of the JSON parameters (schema) that the interface's
     # implementation requires for calls creating resource instances. The block
     # uses the DSL from ApiTools::Data::DocumentedObject, so you can specify
-    # basic object things like +string+, or higher level things like +type+.
+    # basic object things like +string+, or higher level things like +type+ or
+    # +resource+.
     #
     # If a call comes into the middleware from a client which contains body
     # data that doesn't validate according to your schema, it'll be rejected
@@ -374,11 +375,17 @@ module ApiTools
     # the standard resources in the ApiTools::Data::Resources collection will
     # already have declared that internationalisation applies.
     #
-    # Example:
+    # Example 1:
     #
     #     to_create do
     #       string :name, :length => 32, :required => true
     #       text :description
+    #     end
+    #
+    # Example 2 with a resource
+    #
+    #     to_create do
+    #       resource :purchase
     #     end
     #
     # &block:: Block, passed to ApiTools::Data::DocumentedObject, describing
