@@ -9,9 +9,9 @@ describe ApiTools::Data::Types::CurrencyAmount do
     expect(schema.properties.count).to eq(3)
 
     expect(schema.properties['currency_code']).to be_a(ApiTools::Presenters::String)
-    expect(schema.properties['currency_code'].length).to eq(16)
+    expect(schema.properties['currency_code'].length).to eq(ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH)
     expect(schema.properties['qualifier']).to be_a(ApiTools::Presenters::String)
-    expect(schema.properties['qualifier'].length).to eq(32)
+    expect(schema.properties['qualifier'].length).to eq(ApiTools::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH)
     expect(schema.properties['amount']).to be_a(ApiTools::Presenters::Text)
   end
 end
