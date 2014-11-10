@@ -382,7 +382,7 @@ module ApiTools
     #       text :description
     #     end
     #
-    # Example 2 with a resource
+    # Example 2: With a resource
     #
     #     to_create do
     #       resource :purchase
