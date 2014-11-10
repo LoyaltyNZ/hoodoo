@@ -65,6 +65,8 @@ require root+'data/resources/version.rb'
 require root+'errors/error_descriptions.rb'
 require root+'errors/errors.rb'
 
+# Ordering matters, due to dependencies in module/class hierarchy namespace
+
 require root+'service_middleware/string_inquirer.rb'
 require root+'service_middleware/rack_monkey_patch.rb'
 require root+'service_middleware/service_middleware.rb'
