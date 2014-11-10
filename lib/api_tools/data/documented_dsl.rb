@@ -240,6 +240,50 @@ module ApiTools
         self.instance_exec( &klass.schema_definition() )
       end
 
+      # Declare that a resource of a given name is included at this point. This
+      # is only normally done within the description of the schema  for an 
+      # interface. The fields of the given named resource are considered to be 
+      # defined inline at the point of declaration - essentially, it's macro 
+      # expansion.
+      #
+      # +resource_name+:: Name of the resource as a symbol, e.g. +:Purchase+.
+      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      #
+      # It doesn't make sense to mark a +resource+ 'field' as +:required+ in the
+      # options since the declaration just expands to the contents of the
+      # referenced resource and it is the definition of that resource that
+      # determines whether or not its various field(s) are optional or required.
+      #
+      # Example - an iterface takes an +Outlet+ resource in its create action.
+      #     class Outlet < ApiTools::Data::DocumentedPresenter
+      #       schema do
+      #         internationalised
+      #
+      #         text :name
+      #         uuid :participant_id, :resource => :Participant, :required => true
+      #         uuid :calculator_id,  :resource => :Calculator
+      #       end
+      #     end
+      #
+      #     class OutletInterface < ApiTools::ServiceInterface
+      #       to_create do
+      #         resource :Outlet
+      #       end
+      #     end
+      #
+      #
+      def resource( resource_name, options = nil )
+        options ||= {}
+
+        begin
+          klass = ApiTools::Data::Resources.const_get( resource_name )
+        rescue
+          raise "DocumentedObject#resource: Unrecognised resource name '#{resource_name}'"
+        end
+
+        self.instance_exec( &klass.schema_definition() )
+      end
+
     end
   end
 end
