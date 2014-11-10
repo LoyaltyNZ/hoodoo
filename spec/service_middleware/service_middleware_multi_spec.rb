@@ -451,13 +451,13 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should get 422 for bad requests' do
+    it 'should get 405 for bad requests' do
       response = run_request(
         Net::HTTP::Get,
         'v1/test_echo_quiet' # I.e. "list" action, but service only does "show"
       )
 
-      expect( response.code ).to eq( '422' )
+      expect( response.code ).to eq( '405' )
     end
 
     it 'should be detect 404 OK' do

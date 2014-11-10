@@ -85,10 +85,10 @@ module ApiTools
 
       errors_for 'platform' do
         error 'not_found',              status: 404, message: 'Not found',                    reference: [ :entity_name ]
-        error 'method_not_allowed',     status: 422, message: 'Method not allowed'
         error 'malformed',              status: 422, message: 'Malformed request'
         error 'invalid_session',        status: 401, message: 'Invalid session'
         error 'forbidden',              status: 403, message: 'Action not authorized'
+        error 'method_not_allowed',     status: 405, message: 'Method not allowed'
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 

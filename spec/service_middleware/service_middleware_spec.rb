@@ -1047,13 +1047,13 @@ describe ApiTools::ServiceMiddleware do
       expect_any_instance_of(RSpecTestServiceV1StubImplementation).to_not receive(:delete)
 
       get '/v1/rspec_test_service_stub/1234', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(422)
+      expect(last_response.status).to eq(405)
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.method_not_allowed')
       expect(result['errors'][0]['message']).to eq("Service endpoint '/v1/rspec_test_service_stub' does not support HTTP method 'GET' yielding action 'show'")
 
       delete '/v1/rspec_test_service_stub/1234', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(422)
+      expect(last_response.status).to eq(405)
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.method_not_allowed')
       expect(result['errors'][0]['message']).to eq("Service endpoint '/v1/rspec_test_service_stub' does not support HTTP method 'DELETE' yielding action 'delete'")
@@ -1440,7 +1440,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect_any_instance_of(RSpecTestInterServiceCallsCImplementation).to_not receive(:expectable_hook)
 
     get '/v1/rspec_test_inter_service_calls_b/call_c', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-    expect(last_response.status).to eq(422)
+    expect(last_response.status).to eq(405)
     result = JSON.parse(last_response.body)
     expect( result[ 'errors' ] ).to_not be_nil
     expect( result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.method_not_allowed' )

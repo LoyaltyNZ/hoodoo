@@ -279,9 +279,9 @@ describe ApiTools::Errors do
       source = ApiTools::Errors.new
       source.add_error('platform.method_not_allowed')
       expect(@errors.http_status_code).to eq(500) # Default; collection is empty
-      expect(source.http_status_code).to eq(422)
+      expect(source.http_status_code).to eq(405)
       @errors.merge!(source)
-      expect(@errors.http_status_code).to eq(422) # Acquires the 422 from the merged collection
+      expect(@errors.http_status_code).to eq(405) # Acquires the 405 from the merged collection
     end
 
     it 'should keep its original status code when it has one' do
@@ -290,7 +290,7 @@ describe ApiTools::Errors do
       source = ApiTools::Errors.new
       source.add_error('platform.method_not_allowed')
       expect(@errors.http_status_code).to eq(404) # Non-default; collection has an error recorded
-      expect(source.http_status_code).to eq(422)
+      expect(source.http_status_code).to eq(405)
       @errors.merge!(source)
       expect(@errors.http_status_code).to eq(404) # Keeps the 404 from its original collection
     end
