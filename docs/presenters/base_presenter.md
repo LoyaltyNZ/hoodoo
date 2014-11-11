@@ -95,18 +95,18 @@ In the above example, `first_name` in the model maps directly to the `first_name
 
 This is to support partial updates, e.g. Using `parse` with the schema above:
 
-  data = {
-    "one" => "hello",
-    "address" => {
-      "state" => "Idaho"
+    data = {
+      "one" => "hello",
+      "address" => {
+        "state" => "Idaho"
+      }
     }
-  }
 
-  parsed = PresenterClass.parse(data)
+    parsed = PresenterClass.parse(data)
 
-  parsed = {
-    "region_state" => "Idaho"
-  }
+    parsed = {
+      "region_state" => "Idaho"
+    }
 
 Here, neither the `one` field nor the rest of schema fields have been included, as either the schema does not define the field, or the parsed data does not contain schema defined fields.
 
@@ -114,26 +114,26 @@ Here, neither the `one` field nor the rest of schema fields have been included, 
 
 The `render` method essentially performs the inverse of the `parse` method, using either default or defined mappings to render a ruby `Hash` from an input `Hash` using the schema.
 
-  parsed = {
-    "region_state" => "Idaho"
-  }
-
-  rendered = PresenterClass.render(data)
-
-  rendered = {
-    "first_name" => nil,
-    "family_name" => nil,
-    "address" {
-      "address_1" => nil,
-      "address_2" => nil,
-      "address_3" => nil,
-      "suburb" => nil,
-      "city" => nil,
-      "state" => "Idaho",
-      "zip_code" => nil,
-      "iso_country" => nil
+    parsed = {
+      "region_state" => "Idaho"
     }
-  }
+
+    rendered = PresenterClass.render(data)
+
+    rendered = {
+      "first_name" => nil,
+      "family_name" => nil,
+      "address" {
+        "address_1" => nil,
+        "address_2" => nil,
+        "address_3" => nil,
+        "suburb" => nil,
+        "city" => nil,
+        "state" => "Idaho",
+        "zip_code" => nil,
+        "iso_country" => nil
+      }
+    }
 
 **Note**: In the case of `render`, *all fields* will be rendered regardless of whether the appear in the input `Hash` or not.
 
