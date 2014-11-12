@@ -191,7 +191,7 @@ describe ApiTools::Presenters::Hash do
           },
           {
             'code'      => 'generic.invalid_uuid',
-            'message'   => 'Field `specific.three.id` has incorrect length 9 for a UUID (should be 32)',
+            'message'   => 'Field `specific.three.id` is an invalid UUID',
             'reference' => 'specific.three.id'
           },
           {
