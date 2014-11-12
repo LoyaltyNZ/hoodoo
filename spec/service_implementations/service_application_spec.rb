@@ -61,7 +61,6 @@ describe ApiTools::ServiceApplication do
     RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceA )
     RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceB )
 
-
     expect(RSpecTestServiceApplication2.component_interfaces).to eq([
       RSpecTestServiceApplicationInterfaceB,
       RSpecTestServiceApplicationInterfaceA
