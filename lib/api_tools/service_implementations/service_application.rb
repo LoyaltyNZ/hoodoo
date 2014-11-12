@@ -130,7 +130,11 @@ module ApiTools
         end
       end
 
-      @component_interfaces = classes
+      # Add the classes from this call to any given in a previous call.
+
+      @component_interfaces ||= []
+      @component_interfaces += classes
+      @component_interfaces.uniq!
     end
   end
 end

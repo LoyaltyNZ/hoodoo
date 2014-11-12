@@ -36,6 +36,13 @@ class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
   end
 end
 
+class RSpecTestMatchingServiceStubInterface < ApiTools::ServiceInterface
+  interface :RSpecTestResource do
+    version 2
+    endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
+  end
+end
+
 class RSpecTestServiceStubBeforeInterface < ApiTools::ServiceInterface
   interface :RSpecTestResource do
     version 2
@@ -936,7 +943,7 @@ end
 
 class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
-               RSpecTestServiceStubInterface # I.e. same endpoint twice, whether via the same interface class as here, or via a different class that routed the same way - doesn't matter
+               RSpecTestMatchingServiceStubInterface # I.e. same endpoint twice
 end
 
 describe ApiTools::ServiceMiddleware do
