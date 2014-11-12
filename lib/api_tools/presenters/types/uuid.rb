@@ -33,18 +33,7 @@ module ApiTools
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)
 
-        if data.is_a? ::String
-          if data.size != ApiTools::UUID::UUID_LENGTH
-            errors.add_error(
-              'generic.invalid_uuid',
-              :message   => "Field `#{ full_path( path ) }` has incorrect length #{ data.size } for a UUID (should be #{ ApiTools::UUID::UUID_LENGTH })",
-              :reference => { :field_name => full_path( path ) }
-            )
-          else
-            # TODO: Maybe one day validate that the associated item is indeed
-            #       of the kind in '@resource'.
-          end
-        else
+        unless ApiTools::UUID.valid?( data )
           errors.add_error(
             'generic.invalid_uuid',
             :message   => "Field `#{ full_path( path ) }` is an invalid UUID",
