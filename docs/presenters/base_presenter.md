@@ -139,12 +139,40 @@ The rules are:
               string :country_code, :length => 3
             end
 
+            # Field "array_with_any_values" must have an Array value, with
+            # any array contents permitted. If the input data has a nil
+            # value for this field, then nil would be rendered and it would
+            # validate. Add ':required => true' to prohibit this.
+            #
+            # Example valid input:
+            # { 'array_with_values' => [ 'hello', 4, :world ] }
+
             array :array_with_any_values, :default => [ 1, 2, 3 ]
+
+            # Field "objects_with_two_text_fields" must have an Array value,
+            # where values are either nil or an object with two text fields
+            # "field_one" and "field_two".
+            #
+            # Example valid input:
+            # { 'array_with_values' => [ { 'field_one' => 'one' },
+            #                            { 'field_two' => 'two' } ] }
 
             array :objects_with_two_text_fields do
               text :field_one
               text :field_two
             end
+
+            # A field "any_allowed_hash" must have a Hash value, with any
+            # hash contents permitted. 'default' could be used to provide
+            # an entire default Hash value for rendering data with the
+            # "any_allowed_hash" field omitted. 'nil' values as for 'array'.
+
+            hash :any_allowed_hash
+
+            # A field "specific_allowed_keys" must have a Hash value, which
+            # allows only (none or any of) the two listed key names to be
+            # valid. ':default' could be used in the 'key' calls to provide
+            # a whole-key default value for an omitted key.
 
             hash :specific_allowed_keys do
               key :allowed_key_one    # Key has any allowed value
@@ -153,6 +181,10 @@ The rules are:
                 integer :field_two, :default => 42
               end
             end
+
+            # As above but any keys can be present in the input data. The
+            # ':default' option makes no sense for the 'keys' call and its
+            # use is prohibited.
 
             hash :generic_key_description do
               keys :length => 32 do # Keys must be <=32 chars, values must
