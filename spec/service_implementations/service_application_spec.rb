@@ -21,6 +21,9 @@ end
 class RSpecTestServiceApplication < ApiTools::ServiceApplication
 end
 
+class RSpecTestServiceApplication2 < ApiTools::ServiceApplication
+end
+
 describe ApiTools::ServiceApplication do
   it 'should complain about incorrect interface classes' do
     expect {
@@ -50,6 +53,23 @@ describe ApiTools::ServiceApplication do
     expect(RSpecTestServiceApplication.new.component_interfaces).to eq([
       RSpecTestServiceApplicationInterfaceA,
       RSpecTestServiceApplicationInterfaceB
+    ])
+  end
+
+  it 'allows multiple calls to declare component classes and removes duplicates' do
+    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceB )
+    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceA )
+    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceB )
+
+
+    expect(RSpecTestServiceApplication2.component_interfaces).to eq([
+      RSpecTestServiceApplicationInterfaceB,
+      RSpecTestServiceApplicationInterfaceA
+    ])
+
+    expect(RSpecTestServiceApplication2.new.component_interfaces).to eq([
+      RSpecTestServiceApplicationInterfaceB,
+      RSpecTestServiceApplicationInterfaceA
     ])
   end
 end
