@@ -5,11 +5,20 @@ describe ApiTools::Presenters::Array do
   before do
     @inst = ApiTools::Presenters::Array.new('one',:required => false)
 
-    class TestPresenter4 < ApiTools::Presenters::BasePresenter
+    class TestPresenterArray < ApiTools::Presenters::BasePresenter
 
       schema do
         array :an_array, :required => true do
           integer :an_integer
+          datetime :a_datetime
+        end
+        # Intentional mix of strings and symbols in default array
+        array :a_default_array, :default => [ { :an_integer => 42 }, { 'some_array_text' => 'hello' } ] do
+          integer :an_integer
+          text :some_array_text
+        end
+        array :an_array_with_entry_defaults do
+          integer :an_integer, :default => 42
           datetime :a_datetime
         end
         enum :an_enum, :from => [ :one, 'two', 3 ]
@@ -63,7 +72,7 @@ describe ApiTools::Presenters::Array do
       data = {
       }
 
-      errors = TestPresenter4.validate(data)
+      errors = TestPresenterArray.validate(data)
       expect(errors.errors).to eq([
         {'code'=>"generic.required_field_missing", 'message'=>"Field `an_array` is required", 'reference'=>"an_array"},
       ])
@@ -74,27 +83,25 @@ describe ApiTools::Presenters::Array do
       data = {
         'an_array' => [
           {},
-          { :an_integer => 2 },
-          { :a_datetime => Time.now.iso8601 }
+          { 'an_integer' => 2 },
+          { 'a_datetime' => Time.now.iso8601 }
         ]
       }
 
-      data = ApiTools::Utilities.stringify(data)
-      errors = TestPresenter4.validate(data)
+      errors = TestPresenterArray.validate(data)
       expect(errors.errors).to eq([])
     end
 
     it 'should validate all entry fields' do
       data = {
-        :an_array => [
+        'an_array' => [
           {},
-          { :an_integer => 'invalid' },
-          { :a_datetime => 'invalid' }
+          { 'an_integer' => 'invalid' },
+          { 'a_datetime' => 'invalid' }
         ]
       }
 
-      data = ApiTools::Utilities.stringify(data)
-      errors = TestPresenter4.validate(data)
+      errors = TestPresenterArray.validate(data)
       expect(errors.errors).to eq([
         {'code'=>"generic.invalid_integer", 'message'=>"Field `an_array[1].an_integer` is an invalid integer", 'reference'=>"an_array[1].an_integer"},
         {'code'=>"generic.invalid_datetime", 'message'=>"Field `an_array[2].a_datetime` is an invalid ISO8601 datetime", 'reference'=>"an_array[2].a_datetime"},
@@ -103,62 +110,97 @@ describe ApiTools::Presenters::Array do
   end
 
   describe '#render' do
-    it 'should render correctly' do
-      time = Time.now.iso8601
-      data = {
-        :an_enum => 'one',
-        :an_array => [
-          {},
-          { :an_integer => 2 },
-          { :a_datetime => time }
-        ]
-      }
-
-      data = ApiTools::Utilities.stringify(data)
-      expect(TestPresenter4.render(data)).to eq({
-        'an_array' => [
-          {
-            'an_integer' => nil,
-            'a_datetime' => nil
-          },
-          {
-            'an_integer' => 2,
-            'a_datetime' => nil
-          },
-          {
-            'an_integer' => nil,
-            'a_datetime' => time
-          }
-        ],
-        'an_enum' => "one",
-        'some_text' => nil
+    it 'renders correctly with whole-array default (1)' do
+      data = nil
+      expect(TestPresenterArray.render(data)).to eq({
+        'a_default_array' => [ { 'an_integer' => 42 }, { 'some_array_text' => 'hello' } ]
       })
     end
-  end
 
-  describe '#parse' do
-    it 'should parse correctly' do
+    it 'renders correctly with whole-array default (2)' do
+      data = {}
+      expect(TestPresenterArray.render(data)).to eq({
+        'a_default_array' => [ { 'an_integer' => 42 }, { 'some_array_text' => 'hello' } ]
+      })
+    end
+
+    it 'does not overwrite explicit nil for array with default' do
+      data = {
+        'a_default_array' => nil
+      }
+      expect(TestPresenterArray.render(data)).to eq(data)
+    end
+
+    it 'does not overwrite explicit empty array for array with default' do
+      data = {
+        'a_default_array' => []
+      }
+      expect(TestPresenterArray.render(data)).to eq(data)
+    end
+
+    it 'treats invalid types as nil' do
+      data = {
+        'a_default_array' => 'not an array'
+      }
+      expect(TestPresenterArray.render(data)).to eq({
+        'a_default_array' => nil
+      })
+    end
+
+    it 'should render correctly with whole-array default' do
       time = Time.now.iso8601
       data = {
-        :an_enum => 'one',
+        'an_enum' => 'one',
         'an_array' => [
           {},
-          { :an_integer => 2 },
+          { 'an_integer' => 2 },
           { 'a_datetime' => time }
         ]
       }
 
-      data = ApiTools::Utilities.stringify(data)
-      expect(TestPresenter4.parse(data)).to eq({
+      expect(TestPresenterArray.render(data)).to eq({
         'an_array' => [
           {
           },
           {
-            'an_integer' => 2
+            'an_integer' => 2,
           },
           {
             'a_datetime' => time
           }
+        ],
+        'a_default_array' => [ { 'an_integer' => 42 }, { 'some_array_text' => 'hello' } ],
+        'an_enum' => "one"
+      })
+    end
+
+    it 'should render correctly with per-entry defaults' do
+      time = Time.now.iso8601
+      data = {
+        'an_enum' => 'one',
+        'an_array' => [
+          { 'an_integer' => 2 }
+        ],
+        'an_array_with_entry_defaults' => [
+          nil,
+          {},
+          { 'an_integer' => 0 },
+          { 'an_integer' => 23 },
+          { 'a_datetime' => time }
+        ]
+      }
+
+      expect(TestPresenterArray.render(data)).to eq({
+        'an_array' => [
+          { 'an_integer' => 2 }
+        ],
+        'a_default_array' => [ { 'an_integer' => 42 }, { 'some_array_text' => 'hello' } ],
+        'an_array_with_entry_defaults' => [
+          nil, # Because explict-input-nil-means-nil-outputm always
+          { 'an_integer' => 42 }, # Because empty objects always get field defaults, just as at the root level
+          { 'an_integer' => 0 },
+          { 'an_integer' => 23 },
+          { 'an_integer' => 42, 'a_datetime' => time },
         ],
         'an_enum' => "one"
       })

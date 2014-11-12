@@ -7,10 +7,10 @@ describe '#schema' do
     class TestPresenter < ApiTools::Presenters::BasePresenter
 
       schema do
-        integer :one, :required => true, :mapping => [ :map_one ]
-        boolean :two, :required => true, :mapping => [ :map_two ]
-        string :three, :length => 15, :required => false, :mapping => [ :map_three ]
-        datetime :four, :mapping => [ :map_four, :time ]
+        integer :one, :required => true
+        boolean :two, :required => true
+        string :three, :length => 15, :required => false, :default => 'default_three'
+        datetime :four
       end
 
     end
@@ -18,11 +18,11 @@ describe '#schema' do
     class TestPresenter2 < ApiTools::Presenters::BasePresenter
 
       schema do
-        object :four, :required => true,  :mapping => [ :map_ten ] do
-          decimal :five, :precision => 20,  :mapping => [ :map_ten, :map_five ]
-          float :six,  :mapping => [ :map_ten, :map_six ]
-          date :seven, :required => true,  :mapping => [ :map_root_one ]
-          array :eight, :mapping => [ :map_ten, :map_eight ]
+        object :four, :required => true do
+          decimal :five, :precision => 20
+          float :six
+          date :seven, :required => true
+          array :eight
         end
       end
 
@@ -126,121 +126,58 @@ describe '#schema' do
         {'code'=>"generic.invalid_string", 'message'=>"Field `three` is an invalid string", 'reference'=>"three"},
       ])
     end
-
-    it 'should return correct errors if root object is required but not supplied and subobjects required' do
-
-      data = {
-      }
-
-      errors = TestPresenter2.validate(data)
-      expect(errors.errors).to eq([
-        {'code'=>"generic.required_field_missing", 'message'=>"Field `four` is required", 'reference'=>"four"},
-        {'code'=>"generic.required_field_missing", 'message'=>"Field `four.seven` is required", 'reference'=>"four.seven"},
-      ])
-    end
   end
 
   describe '#render' do
-    it 'should render with correct mapping with a forward submap' do
-
-      # 'four' maps into a subobject 'map_four.time'.
-      data = {
-        'one' => 1,
-        'two' => true,
-        'three' => 'hello',
-        'four' => 'ten'
-      }
-
-      expect(TestPresenter.render(data)).to eq({
-        'map_one'=>1,
-        'map_two'=>true,
-        'map_three'=>"hello",
-        'map_four'=>{
-          'time'=>"ten"
-        }
-      })
-    end
-
-    it 'should render with correct mapping with a reverse submap' do
-      # 'four.seven' maps to 'map_root_one'
-      data = {
-        'four' => {
-          'five' => 5,
-          'seven' => 'ten'
-        }
-      }
-
-      expect(TestPresenter2.render(data)).to eq({
-        'map_ten'=>{
-          'map_five'=>5,
-          'map_six'=>nil,
-          'map_eight'=>[]
-        },
-        'map_root_one'=>"ten"
-      })
-    end
-
-    it 'should include all fields even when not supplied' do
+    it 'should ignore non-schema fields' do
       data = {
         'one' => 1,
         'three' => 'hello',
+        'ignore' => 'me'
       }
 
       expect(TestPresenter.render(data)).to eq({
-        'map_one'=>1,
-        'map_two'=>nil,
-        'map_three'=>"hello",
-        'map_four'=>{
-          'time'=>nil
-        }
-      })
-    end
-  end
-
-  describe '#parse' do
-    it 'should parse with correct mapping' do
-      data = {
-        'map_ten'=>{
-          'map_five'=>5
-        },
-        'map_root_one'=>"ten"
-      }
-      expect(TestPresenter2.parse(data)).to eq({
-        'four'=>{
-          'five'=>5,
-          'seven'=>"ten"
-        }
-      })
-    end
-
-    it 'should not include fields that do not exist in the input' do
-      data = {
-        'map_ten'=>{
-        },
-        'map_root_one'=>"ten"
-      }
-      expect(TestPresenter2.parse(data)).to eq({
-        'four'=>{
-          'seven'=>"ten"
-        }
-      })
-    end
-
-    it 'should use default mapping if not supplied' do
-      data = {
-        'one' => 1,
-        'four' => {
-          'five' => 5,
-          'seven' => 'ten'
-        }
-      }
-
-      expect(TestPresenter3.parse(data)).to eq({
         'one'=>1,
-        'four'=>{
-          'five'=>5,
-          'seven'=>"ten"
-        }
+        'three'=>'hello'
+      })
+    end
+
+    it 'should omit fields when not supplied, without defaults' do
+      data = {
+        'one' => 1,
+        'three' => 'hello'
+      }
+
+      expect(TestPresenter.render(data)).to eq({
+        'one'=>1,
+        'three'=>'hello'
+      })
+    end
+
+    it 'should include default values where available for fields when not supplied' do
+      data = {
+        'one' => 1,
+        'two' => 'hello',
+      }
+
+      expect(TestPresenter.render(data)).to eq({
+        'one'=>1,
+        'two'=>'hello',
+        'three'=>'default_three',
+      })
+    end
+
+    it 'should include fields with explicit nil values and not override with defaults' do
+      data = {
+        'one' => 1,
+        'two' => nil,
+        'three' => nil
+      }
+
+      expect(TestPresenter.render(data)).to eq({
+        'one'=>1,
+        'two'=>nil,
+        'three'=>nil
       })
     end
   end

@@ -1,17 +1,5 @@
 require 'spec_helper'
 
-
-
-
-
-puts "*"*80
-puts "Still to test - \#parse (also for array/object)"
-puts "*"*80
-
-
-
-
-
 describe ApiTools::Presenters::Hash do
 
   context 'exceptions' do
@@ -118,7 +106,7 @@ describe ApiTools::Presenters::Hash do
         data   = { 'foo' => 'bar' }
         result = TestHashNoKeysPresenter.render( data )
 
-        expect( result ).to eq( 'specific' => {} )
+        expect( result ).to eq({})
       end
     end
   end
@@ -353,8 +341,8 @@ describe ApiTools::Presenters::Hash do
 
     context '#render' do
       it 'should render complex entity correctly' do
-        valid  = { 'obj' => { 'obj_text' => 'hello',                   'specific' => { 'two' => { 'two_key_string' => nil, 'two_key_hash' => { 'inner' => 42, 'inner_2' => { 'inner_2_string' => 'ok' } } } } } }
-        data   = { 'obj' => { 'obj_text' => 'hello', 'random' => true, 'specific' => { 'two' => {                          'two_key_hash' => { 'inner' => 42, 'inner_2' => { 'inner_2_string' => 'ok' } } } } } }
+        valid  = { 'obj' => { 'obj_text' => 'hello',                   'specific' => { 'two' => { 'two_key_hash' => { 'inner' => 42, 'inner_2' => { 'inner_2_string' => 'ok' } } } } } }
+        data   = { 'obj' => { 'obj_text' => 'hello', 'random' => true, 'specific' => { 'two' => { 'two_key_hash' => { 'inner' => 42, 'inner_2' => { 'inner_2_string' => 'ok' } } } } } }
 
         result = TestNestedHashSpecificKeyPresenter.render( data )
         expect( result ).to eq( valid )
@@ -466,7 +454,7 @@ describe ApiTools::Presenters::Hash do
           'specific_defaults' => {
             'one' => 'anything',
             'two' => { 'foo' => 'valid', 'bar' => 'this is the text field for "bar"', 'baz' => 42 },
-            'three' => { 'foo' => nil, 'bar' => 'for_key_three', 'baz' => 42 }
+            'three' => { 'bar' => 'for_key_three', 'baz' => 42 }
           }
         })
       end
@@ -480,42 +468,34 @@ describe ApiTools::Presenters::Hash do
           'specific_defaults' => {
             'one' => 'anything',
             'two' => { 'foo' => 'valid', 'bar' => 'this is the text field for "bar"', 'baz' => 42 },
-            'three' => { 'foo' => nil, 'bar' => 'for_key_three', 'baz' => 42 }
+            'three' => { 'bar' => 'for_key_three', 'baz' => 42 }
           }
         })
       end
 
-      # One of the hash's specific keys has a full-key default value, so if
-      # an empty hash is provided, that default key should end up rendered.
-      # The other specific key doesn't have a full-key default, just some
-      # default fields, so it shouldn't appear in the output...
+      # Empty objects gain default fields, just like at the root level;
+      # and key-level defaults (one is specified for key 'three') also end
+      # up with field-level defaults merged (almost by accident, but it
+      # makes sense to do so) - integer 'baz' has a default value of 42 as
+      # a field-level default.
       #
-      it 'should render with correct defaults for hash keys (1)' do
+      it 'renders an explicit empty hash with default fields' do
         data   = { 'specific_defaults' => {} }
         result = TestHashSpecificKeyPresenterWithDefaults.render( data )
-
         expect( result ).to eq({
           'specific_defaults' => {
             'one' => { 'foo' => { 'bar' => 'baz' } },
-            'three' => { 'foo' => nil, 'bar' => 'for_key_three', 'baz' => 42 }
+            'three' => { 'bar' => 'for_key_three', 'baz' => 42 }
           }
         })
       end
 
-      # ...However it should give us the entire default hash if we give
-      # explicit 'nil' rather than an empty hash.
+      # ...but explicit nil means nil.
       #
-      it 'should render with correct defaults for hash keys (2)' do
+      it 'renders an explicit nil' do
         data   = { 'specific_defaults' => nil }
         result = TestHashSpecificKeyPresenterWithDefaults.render( data )
-
-        expect( result ).to eq({
-          'specific_defaults' => {
-            'one' => 'anything',
-            'two' => { 'foo' => 'valid', 'bar' => 'this is the text field for "bar"', 'baz' => 42 },
-            'three' => { 'foo' => nil, 'bar' => 'for_key_three', 'baz' => 42 }
-          }
-        })
+        expect( result ).to eq(data)
       end
 
       # One of the hash's specific keys has a defined block with some default
@@ -530,11 +510,10 @@ describe ApiTools::Presenters::Hash do
           'specific_defaults' => {
             'one' => { 'foo' => { 'bar' => 'baz' } },
             'two' => {
-              'foo' => nil,
               'bar' => 'this is the text field for "bar"',
               'baz' => 42
             },
-            'three' => { 'foo' => nil, 'bar' => 'for_key_three', 'baz' => 42 }
+            'three' => { 'bar' => 'for_key_three', 'baz' => 42 }
           }
         })
       end
@@ -578,17 +557,13 @@ describe ApiTools::Presenters::Hash do
         })
       end
 
-      # Once more, expect the same behaviour with an explicit 'nil'.
+      # Once more, explicit nil means nil.
       #
       it 'should render with correct defaults for hash keys (4)' do
         data   = { 'specific_defaults' => nil }
         result = TestHashSpecificKeyPresenterWithDefaultsExceptHash.render( data )
 
-        expect( result ).to eq({
-          'specific_defaults' => {
-            'one' => { 'foo' => { 'bar' => 'baz' } }
-          }
-        })
+        expect( result ).to eq(data)
       end
     end
   end
@@ -744,8 +719,8 @@ describe ApiTools::Presenters::Hash do
     context '#render' do
       it 'should only render expected fields' do
 
-        valid  = { 'generic' => { 'one' => {                       'foo' => '<= 10 long', 'bar' => nil }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv'                     }, 'two' => { 'foo' => nil, 'bar' => 'barv 2' } } }
-        data   = { 'generic' => { 'one' => { 'random' => 'ignore', 'foo' => '<= 10 long'               }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'hello' => 'there' }, 'two' => {               'bar' => 'barv 2' } } }
+        valid  = { 'generic' => { 'one' => {                       'foo' => '<= 10 long' }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv'                     }, 'two' => { 'bar' => 'barv 2' } } }
+        data   = { 'generic' => { 'one' => { 'random' => 'ignore', 'foo' => '<= 10 long' }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'hello' => 'there' }, 'two' => { 'bar' => 'barv 2' } } }
 
         result = TestHashGenericKeyPresenterWithValues.render( data )
         expect( result ).to eq( valid )
@@ -860,8 +835,8 @@ describe ApiTools::Presenters::Hash do
     context '#render' do
       it 'should only render expected fields' do
 
-        valid  = {                 'obj' => { 'generic' => { 'one' => {                       'foo' => '<= 10 long', 'bar' => nil, 'baz' => {} }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'baz' => { 'any' => {                  'inner_string' => 'hi' } }                     }, 'two' => { 'foo' => nil, 'bar' => 'barv 2', 'baz' => {} } } } }
-        data   = { 'number' => 42, 'obj' => { 'generic' => { 'one' => { 'random' => 'ignore', 'foo' => '<= 10 long'                            }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'baz' => { 'any' => { 'hi' => 'there', 'inner_string' => 'hi' } }, 'hello' => 'there' }, 'two' => {               'bar' => 'barv 2'              } } } }
+        valid  = {                 'obj' => { 'generic' => { 'one' => {                       'foo' => '<= 10 long' }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'baz' => { 'any' => {                  'inner_string' => 'hi' } }                     }, 'two' => { 'bar' => 'barv 2' } } } }
+        data   = { 'number' => 42, 'obj' => { 'generic' => { 'one' => { 'random' => 'ignore', 'foo' => '<= 10 long' }, 'values' => { 'foo' => '<= 10 2', 'bar' => 'barv', 'baz' => { 'any' => { 'hi' => 'there', 'inner_string' => 'hi' } }, 'hello' => 'there' }, 'two' => { 'bar' => 'barv 2' } } } }
 
         result = TestNestedHashGenericKeyPresenterWithValues.render( data )
         expect( result ).to eq( valid )
@@ -932,10 +907,24 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
+  it 'complains about generic default keys as they are meaningless' do
+    expect {
+      class TestHashGenericKeyPresenterWithMeaninglessDefaults < ApiTools::Presenters::BasePresenter
+        schema do
+          hash :generic_defaults do
+            keys :length => 4, :default => { 'meaningless' => 'complain' } do
+              text :baz
+            end
+          end
+        end
+      end
+    }.to raise_error(RuntimeError)
+  end
+
   class TestHashGenericKeyPresenterWithDefaults < ApiTools::Presenters::BasePresenter
     schema do
       hash :generic_defaults, :default => { 'a_default_key' => { 'baz' => 'merge' }, 'a_nil_key' => nil } do
-        keys :length => 4, :default => { 'meaningless' => 'ignoreme', 'foo' => 'allowed' } do
+        keys :length => 4 do
           string :foo, :length => 10
           text :bar, :default => 'default for text field'
           text :baz
@@ -947,7 +936,7 @@ describe ApiTools::Presenters::Hash do
   class TestHashGenericKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::BasePresenter
     schema do
       hash :generic_defaults do
-        keys :length => 4, :default => { 'meaningless' => 'ignoreme', 'foo' => 'allowed' } do
+        keys :length => 4 do
           string :foo, :length => 10
           text :bar, :default => 'default for text field'
           text :baz
@@ -972,21 +961,22 @@ describe ApiTools::Presenters::Hash do
 
         expect( result ).to eq({
           'generic_defaults' => {
-            'a_default_key' => { 'foo' => nil,       'bar' => 'default for text field', 'baz' => 'merge' },
-            'a_nil_key'     => { 'foo' => 'allowed', 'bar' => 'default for text field', 'baz' => nil     }
+            'a_default_key' => { 'bar' => 'default for text field', 'baz' => 'merge' },
+            'a_nil_key'     => nil
           }
         })
       end
 
-      # Should behave the same with 'nil'.
+      # Explicit nil means nil, but at the top level we have to treat it as an
+      # empty hash so it'll give the same result.
       #
       it 'should render with correct default for whole hash (2)' do
         result = TestHashGenericKeyPresenterWithDefaults.render( nil )
 
         expect( result ).to eq({
           'generic_defaults' => {
-            'a_default_key' => { 'foo' => nil,       'bar' => 'default for text field', 'baz' => 'merge' },
-            'a_nil_key'     => { 'foo' => 'allowed', 'bar' => 'default for text field', 'baz' => nil     }
+            'a_default_key' => { 'bar' => 'default for text field', 'baz' => 'merge' },
+            'a_nil_key'     => nil
           }
         })
       end
@@ -1003,26 +993,15 @@ describe ApiTools::Presenters::Hash do
         })
       end
 
-      # ...However it should give us the entire default hash if we give
-      # explicit 'nil' rather than an empty hash...
+      # ...However explicit nil means nil...
       #
       it 'should render with correct defaults for hash keys (2)' do
         data   = { 'generic_defaults' => nil }
         result = TestHashGenericKeyPresenterWithDefaults.render( data )
-
-        expect( result ).to eq({
-          'generic_defaults' => {
-            'a_default_key' => { 'foo' => nil,       'bar' => 'default for text field', 'baz' => 'merge' },
-            'a_nil_key'     => { 'foo' => 'allowed', 'bar' => 'default for text field', 'baz' => nil     }
-          }
-        })
+        expect( result ).to eq(data)
       end
 
-      # ...and explicitly defined keys with nil values should acquire
-      # default whole-key values (then merged with in-block defaults).
-      # Defined keys with an empty hash get no key-wide default value,
-      # but in-block defaults apply. Fully specified keys merge with
-      # in-block defaults.
+      # ...and explicitly defined keys with nil values should be nil too.
       #
       it 'should render with correct defaults for hash keys (3)' do
         data   = { 'generic_defaults' => { 'hello' => nil, 'goodbye' => {}, 'another' => { 'foo' => 'present', 'bar' => 'also present' } } }
@@ -1030,31 +1009,31 @@ describe ApiTools::Presenters::Hash do
 
         expect( result ).to eq({
           'generic_defaults' => {
-            'hello'   => { 'foo' => 'allowed', 'bar' => 'default for text field', 'baz' => nil },
-            'goodbye' => { 'foo' => nil,       'bar' => 'default for text field', 'baz' => nil },
-            'another' => { 'foo' => 'present', 'bar' => 'also present',           'baz' => nil }
+            'hello'   => nil,
+            'goodbye' => {                     'bar' => 'default for text field' },
+            'another' => { 'foo' => 'present', 'bar' => 'also present'           }
           }
         })
       end
 
-      # No hash default now. An empty hash can only be rendered as an empty hash,
-      # because we don't have any default key names. The empty hash rendered under
-      # 'generic_defaults' is hash equivalent to rendering 'nil' for generalised
-      # defined-in-schema, non-required keys with no values in the input data.
+      # No hash default now. An empty hash can only be rendered as an empty
+      # hash, because we don't have any default key names or hash-wide default
+      # to use as a template.
       #
       it 'should render with correct default for whole hash (1)' do
         result = TestHashGenericKeyPresenterWithDefaultsExceptHash.render( {} )
-        expect( result ).to eq({ 'generic_defaults' => {} })
+        expect( result ).to eq({})
       end
 
       # Should behave the same with 'nil'.
       #
       it 'should render with correct default for whole hash (2)' do
         result = TestHashGenericKeyPresenterWithDefaultsExceptHash.render( nil )
-        expect( result ).to eq({ 'generic_defaults' => {} })
+        expect( result ).to eq({})
       end
 
-      # If we explicitly give a value for the hash, same result...
+      # If we explicitly give a value for the hash, should get the empty hash
+      # recorded...
       #
       it 'should render with correct defaults for hash keys (1)' do
         data   = { 'generic_defaults' => {} }
@@ -1062,12 +1041,12 @@ describe ApiTools::Presenters::Hash do
         expect( result ).to eq({ 'generic_defaults' => {} })
       end
 
-      # ...get an empty hash back if we give it nil...
+      # ...explicit nil means nil...
       #
       it 'should render with correct defaults for hash keys (2)' do
         data   = { 'generic_defaults' => nil }
         result = TestHashGenericKeyPresenterWithDefaultsExceptHash.render( data )
-        expect( result ).to eq({ 'generic_defaults' => {} })
+        expect( result ).to eq({ 'generic_defaults' => nil })
       end
 
       # ...and when we have keys supplied, the usual default rules should apply.
@@ -1078,9 +1057,9 @@ describe ApiTools::Presenters::Hash do
 
         expect( result ).to eq({
           'generic_defaults' => {
-            'hello'   => { 'foo' => 'allowed', 'bar' => 'default for text field', 'baz' => nil },
-            'goodbye' => { 'foo' => nil,       'bar' => 'default for text field', 'baz' => nil },
-            'another' => { 'foo' => 'present', 'bar' => 'also present',           'baz' => nil }
+            'hello'   => nil,
+            'goodbye' => {                     'bar' => 'default for text field' },
+            'another' => { 'foo' => 'present', 'bar' => 'also present'           }
           }
         })
       end

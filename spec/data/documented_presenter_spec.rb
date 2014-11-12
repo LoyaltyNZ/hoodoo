@@ -412,7 +412,7 @@ describe '#schema' do
 
   describe '#render' do
     it 'should render correctly as a type without a UUID' do
-      data = {
+      data = ApiTools::Utilities.stringify({
         :errors_id => ApiTools::UUID.generate,
         :test_tags => 'foo,bar,baz',
         :test_object => {
@@ -425,9 +425,8 @@ describe '#schema' do
             { :name => 'Some name 1' }
           ]
         }
-      }
+      })
 
-      data = ApiTools::Utilities.stringify(data)
       expect(ApiTools::Data::Resources::World.render(data)).to eq({
         'errors_id' => data['errors_id'],
         'test_tags' => 'foo,bar,baz',
@@ -438,14 +437,14 @@ describe '#schema' do
           },
           'test_array' => [
             { 'name' => 'Some name 0', 'ary_suffix' => '00' },
-            { 'name' => 'Some name 1', 'ary_suffix' => nil }
+            { 'name' => 'Some name 1' }
           ]
         }
       })
     end
 
     it 'should render correctly as a resource with a UUID' do
-      data = {
+      data = ApiTools::Utilities.stringify({
         :errors_id => ApiTools::UUID.generate,
         :test_tags => 'foo,bar,baz',
         :test_object => {
@@ -458,9 +457,8 @@ describe '#schema' do
             { :name => 'Some name 1' }
           ]
         }
-      }
+      })
 
-      data = ApiTools::Utilities.stringify(data)
       uuid = ApiTools::UUID.generate
       time = Time.now
 
@@ -483,7 +481,7 @@ describe '#schema' do
           },
           'test_array' => [
             { 'name' => 'Some name 0', 'ary_suffix' => '00' },
-            { 'name' => 'Some name 1', 'ary_suffix' => nil }
+            { 'name' => 'Some name 1' }
           ]
         }
       })
@@ -533,31 +531,7 @@ describe '#schema' do
     it 'should render hash contents correctly (3)' do
       data   = { 'inter' => { 'one' => { 'foo' => 'bar' }, 'two' => { 'hello' => 'twohellotext' } } }
       result = HashGainsInternationalisation.render( data ) # Note not the '2' variant of the class
-      expect(result).to eq({ 'inter' => { 'one' => { 'hello' => nil }, 'two' => { 'hello' => 'twohellotext' } } })
-    end
-  end
-
-  describe '#parse' do
-    it 'should parse correctly' do
-      data = {
-        'errors_id' => ApiTools::UUID.generate,
-        'test_tags' => 'foo,bar,baz',
-        'test_object' => {
-          'nested_object' => {
-            'name' => 'Some name',
-            'obj_suffix' => '!'
-          },
-          'test_array' => [
-            { 'name' => 'Some name 0', 'ary_suffix' => '00' },
-            { 'name' => 'Some name 1' }
-          ]
-        }
-      }
-
-      # We've defined no mappings here - they're tested elsewhere - so parsing
-      # is just "take fields and put them back where they came from".
-
-      expect(ApiTools::Data::Resources::World.parse(data)).to eq(data)
+      expect(result).to eq({ 'inter' => { 'one' => {}, 'two' => { 'hello' => 'twohellotext' } } })
     end
   end
 end

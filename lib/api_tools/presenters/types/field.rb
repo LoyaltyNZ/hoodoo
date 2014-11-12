@@ -9,8 +9,6 @@ module ApiTools
       attr_accessor :required
       # Default value, if supplied
       attr_accessor :default
-      # Mapping to and from model
-      attr_accessor :mapping
 
       # Initialize a Field instance with the appropriate name and options
       # +name+:: The JSON key
@@ -18,9 +16,23 @@ module ApiTools
       def initialize(name, options = {})
         @name     = name.to_s
         @required = options.has_key?( :required ) ? options[ :required ] : false
-        @default  = options.has_key?( :default  ) ? options[ :default  ] : nil
-        @mapping  = options.has_key?( :mapping  ) ? options[ :mapping  ] : nil
         @path     = options.has_key?( :path     ) ? options[ :path     ] : []
+
+        if options.has_key?( :default )
+          @has_default = true
+          @default     = ApiTools::Utilities.stringify( options[ :default ] )
+        else
+          @has_default = false
+          @default     = nil
+        end
+      end
+
+      # Does this property have a defined default (which may be defined as
+      # +nil+) rather than having no defined value (+nil+ or otherwise)?
+      # Returns +true+ if it has a default, +false+ if it has no default.
+      #
+      def has_default?
+        !! @has_default
       end
 
       # Check if data is required and return an ApiTools::Errors instance
@@ -38,32 +50,24 @@ module ApiTools
         errors
       end
 
-      def parse(data, target)
-        root = data
-        (@mapping.nil? ? @path : @mapping).each do |element|
-          element = element.to_s
-          return nil unless root.has_key?(element)
-          root = root[element]
-        end
-        target[@name] = root
-      end
-
-      # Dive down into a given hash along path arrays +@mapping+ or +@path+,
-      # building new hash entries if necessary at each path level until the
-      # last one. At that last level, assign the given object.
+      # Dive down into a given hash along path array +@path+, building new hash
+      # entries if necessary at each path level until the last one. At that
+      # last level, assign the given object.
       #
       # +data::     The object to build at the final path entry - usually an
       #             empty Array or Hash.
       #
       # +target+::  The Hash (may be initially empty) in which to build the
-      #             path of keys from internal data +@mapping+ or +@path+.
+      #             path of keys from internal data +@path+.
       #
-      # Returns the full path array that was used (a clone of +@mapping+ or
-      # +@path+).
+      # Returns the full path array that was used (a clone of +@path+).
       #
       def render(data, target)
+
+        return if @name.empty?
+
         root  = target
-        path  = ( @mapping.nil? ? @path : @mapping ).clone
+        path  = @path.clone
         final = path.pop.to_s
 
         path.each do | element |

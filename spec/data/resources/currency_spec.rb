@@ -42,7 +42,6 @@ describe ApiTools::Data::Resources::Currency do
         'kind' => 'Currency',
         'currency_code' => 'X-FBP',
         'symbol' => 'pts',
-        'position' => nil,
         'precision' => 2,
         'qualifiers' => [ 'standard', 'bonus' ],
         'rounding' => 'down'
@@ -68,10 +67,7 @@ describe ApiTools::Data::Resources::Currency do
         'created_at' => created_at.iso8601,
         'kind' => 'Currency',
         'currency_code' => 'X-FBP',
-        'symbol' => nil,
-        'position' => nil,
         'precision' => 2,
-        'qualifiers' => [],
         'rounding' => 'down'
       }
     )

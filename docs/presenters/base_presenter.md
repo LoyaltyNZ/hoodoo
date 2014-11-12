@@ -2,64 +2,53 @@
 
 ## Purpose
 
-A class intended as base functionality for presenter layers. It is concerned with validating and mapping inbound JSON data to an internal data structure, or rendering internal data structures for "presentation" as sent (transmitted) JSON. `BasePresenter` provides a rich DSL for JSON schema definition and validation.
+A class intended as base functionality for presenter layers. It is concerned with validating inbound data against a schema, or rendering internal data structures for "presentation" with schema-defined defaults. `BasePresenter` provides a rich DSL for schema definition and validation.
 
 ## Usage
 
 In the your presenter classes:
 
-    require 'api_tools'
+        require 'api_tools'
 
 Then extend the base class:
 
-    module YourService
-      class SomePresenter < ApiTools::Presenters::BasePresenter
-        schema do
-          ...
+        module YourService
+          class SomePresenter < ApiTools::Presenters::BasePresenter
+            schema do
+              ...
+            end
+          end
         end
 
-The class provides the following methods, plus a DSL for JSON schema definition.
+The class provides the following methods, plus a DSL for schema definition.
 
 | Method   | Description   |
 |:---------|:--------------|
-| `self.schema(&block)` | Define the JSON schema for validation, please see below. |
-| `self.validate(data)` | Validate the given parsed JSON data (e.g. from [`ApiTools::JsonPayload`](json_payload.md)) and return validation/schema structure errors if any. |
-| `self.parse(data)`    | Parse the supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
-| `self.render(data)`   | Render supplied data Hash using the schema defined (or default) mappings and return a ruby Hash of the result. |
+| `self.schema(&block)` | Define the schema for validation - please see below. |
+| `self.validate(data)` | Validate the given Hash of data against the schema and return validation/schema structure errors if any. |
+| `self.render(data)`   | Render supplied data Hash including the schema defaults (if any) and return a ruby Hash of the result. |
 | `self.get_schema`     | Return the schema graph. |
 
-The intent is to decouple incoming JSON strings from internal hashes representing the equivalent data; and this in turn is decoupled from any persistence layer you might implement (e.g. ActiveRecord models). The conceptual code flow when you _receive_ data is:
+The intent is to decouple incoming (e.g.) JSON strings / other format inbound data from internal hashes representing the equivalent data; and this in turn is decoupled from any persistence layer you might implement (e.g. ActiveRecord models). The conceptual code flow when you _receive_ data is:
 
 * `JSON.parse` an incoming JSON string, keeping keys as strings (don't symbolize keys).
 * Use `validate` to see if that incoming JSON is valid, according to a `BasePresenter` subclass you write which defines the expected/permitted schema of that inbound data.
-* Use `parse` if the data is valid, to produce a parsed Hash. This step is technically only significantly useful if you use the `:mapping` option (see below) to break the otherwise 1:1 relationship between inbound JSON fields and your internal expected Hash. Performance permitting, though, you should always take this step as it allows you to introduce schema-level mappings in future (e.g. because of data migrations, API variations etc.) without then having to remember to update all of your code to add in the parsing step.
-* After parsing, you'll have a validated, mapped ruby Hash representation of the JSON string you originally received, with string keys throughout.
+* That's all. You'll have a validated ruby Hash representation of the JSON string you originally received, with string keys throughout. If you want to merge in any default values on top of the data you got, run the input data through #render and examine the result.
 
 The conceptual code flow when you _generate_ data is:
 
 * Create a Hash with strings as keys containing the data you want to return.
-* There's no equivalent mapped-data-validation step for outbound data; we assume you generate valid results (through e.g. automated test coverage).
-* Use `render` to, in essence, do the opposite of `parse` - map backwards from your internal mapped data to the client-facing result. Automated tests can (perhaps) compare pre-and-post-render Hash data (taking into account mappings) to test validity of your generated data.
+* Use `validate` if you want to be sure that your outbound data is valid, according to a `BasePresenter` subclass you write which defines the expected/permitted schema of that outbound data.
+* Use `render` to merge in any default values with the data you generated.
 * `JSON.generate` the string to send out from the rendered Hash.
 
 It may often be the case that inbound data and outbound data represents the same data structures and can share the same schema definition. If however you have differing requirements in context, especially with different requirement constraints, then define different schema classes for the inbound vs outbound data. For example - you might define a schema for some resource instance that a client can create. To create it, the client provides a few fields. The resource itself gains lots of emergent properties when created - e.g. a "created at" date - and you may wish to specify that in a schema as a present and required property for rendering; thus, you'd need the simpler, fewer-fields schema to validate the incoming client data used for creating the resource, plus the more complex, more-fields schema to use to render the full created resource representation.
 
 ## Validation Errors
 
-An array of validation errors will be returned from `validate`, with the following rules:
+An array of validation errors will be returned from `validate`. This includes platform-defined errors such as `generic.required_field_missing` if option `:required => true` is set on a field but a value is not provided for it, along with the various `generic.invalid_...` errors for fields where the value is not of the expected type.
 
-* If a field has the options `:required => true` and is absent in the data: `generic.required_field_missing` with a suitable message and the field path as the reference.
-* If a field is not of the correct type:
-  * **array**: `generic.invalid_array`
-  * **date**: `generic.invalid_date`
-  * **datetime**: `generic.invalid_datetime`
-  * **decimal**: `generic.invalid_decimal`
-  * **float**: `generic.invalid_float`
-  * **integer**: `generic.invalid_integer`
-  * **object**: `generic.invalid_object`
-  * **string**: `generic.invalid_string`
-
-`string` requires a `:length => <integer>` option, and validation will return `generic.max_length_exceeded` if the data exceeds the allowed length.
+Field type `string` requires a `:length => <integer>` option, and validation will return `generic.max_length_exceeded` if the data exceeds the allowed length. Within hashes, the `key` part of the DSL defines specific named keys expected in the hash, while the `keys` part describes just the generic "shape"/schema of keys (if required) and, like `string`, lets you specify a `:length => <integer>` option if you require that keys in the hash do not exceed a certain length.
 
 `date` and `datetime` are valid if they are [ISO8601](http://en.wikipedia.org/wiki/ISO_8601) dates or datetimes respectively, e.g.
 
@@ -68,91 +57,48 @@ An array of validation errors will be returned from `validate`, with the followi
 
 Validation will check for impossible dates (allowing Feb 29 in leap years), and will accept all timezones including `Z` (Zulu, +00:00 / UTC) for datetimes.
 
-## Parsing
-
-The `parse` method maps input data into the defined schema structure. By default, mappings are direct and one-to-one, i.e. the parser will expect the same field names and structure as defined. You can override this behaviour with the `:mapping` option on the field, e.g:
-
-    schema do
-      string :first_name, :required => true, :length => 128
-      string :family_name, :required => true, :length => 128, :mapping => [:surname]
-
-      string :address_1, :length => 128, :mapping => [ :address, :address_1 ]
-      string :address_2, :length => 128, :mapping => [ :address, :address_2 ]
-      string :address_3, :length => 128, :mapping => [ :address, :address_3 ]
-      string :suburb, :length => 128, :mapping => [ :address, :suburb ]
-      string :city_town, :length => 128, :mapping => [ :address, :city ]
-      string :region_state, :length => 128, :mapping => [ :address, :state ]
-      string :postcode_zip, :length => 128, :mapping => [ :address, :zip_code ]
-      string :country_code, :length => 3, :mapping => [ :address, :iso_country ]
-    end
-
-In the above example, `first_name` in the model maps directly to the `first_name` field in the input data. However, `family_name` maps to `surname` at the same level. The address fields exist at the root level in the model, but are mapped to a subobject `address` in the input data - in addition, `city_town` maps to `address.city`, `region_state` maps to `address.state`, `postcode_zip` maps to `address.zip_code`, and `country_code` maps to `address.iso_country`.
-
-**Note**: The parse method will return a Hash with *only* fields that are:
-
-* Defined in the schema
-* Present in the data to be parsed
-
-This is to support partial updates, e.g. Using `parse` with the schema above:
-
-    data = {
-      "one" => "hello",
-      "address" => {
-        "state" => "Idaho"
-      }
-    }
-
-    parsed = PresenterClass.parse(data)
-
-    parsed = {
-      "region_state" => "Idaho"
-    }
-
-Here, neither the `one` field nor the rest of schema fields have been included, as either the schema does not define the field, or the parsed data does not contain schema defined fields.
-
 ## Rendering
 
-The `render` method essentially performs the inverse of the `parse` method, using either default or defined mappings to render a ruby `Hash` from an input `Hash` using the schema.
+The `render` method applies schema defaults to an inbound data set, which in the case of things like the `hash` field type may be quite complex. The result is a ruby `Hash` from an input `Hash` using the schema.
 
-    parsed = {
-      "region_state" => "Idaho"
-    }
+The rules are:
 
-    rendered = PresenterClass.render(data)
+* If a field is omitted on input, then it only appears in the output if the schema defines a default for it.
+* If a field leading to an `object` or `hash` value type is provided as an empty object (`{}`) then default fields/keys from the schema, if any, will be added into that empty object.
+* Explicit `nil` means `nil`. If you provide a nil value on input for any field, then it'll be a nil value in the outbound representation. No defaults can override it or appear here. The only exception is attempting to render `nil` overall - this is basically meaningless, so treated as if you'd tried to render an empty Hash.
+* Fields in the input data which are not described in the schema will be stripped out. This includes unrecognised hash keys for hashes which use the `key` DSL method to list one or more specific expected named keys.
 
-    rendered = {
-      "first_name" => nil,
-      "family_name" => nil,
-      "address" {
-        "address_1" => nil,
-        "address_2" => nil,
-        "address_3" => nil,
-        "suburb" => nil,
-        "city" => nil,
-        "state" => "Idaho",
-        "zip_code" => nil,
-        "iso_country" => nil
-      }
-    }
+        class PresenterClass < ApiTools::Presenters::BasePresenter
+          schema do
+            object :address do
+              text :town
+              text :state
+              text :country, :default => 'NZ'
+              text :example, :default => 'nil overrides this default'
+            end
+          end
+        end
 
-**Note**: In the case of `render`, *all fields* will be rendered regardless of whether the appear in the input `Hash` or not.
+        data = {
+          :address => {
+            :state => 'Idaho',
+            :example => nil
+          }
+        }
+
+        rendered = PresenterClass.render(data)
+
+        rendered = {
+          :address => {
+            :state => 'Idaho',
+            :country => 'NZ',
+            :example => nil
+          }
+        }
 
 ## Dependencies
 
-`ApiTools::Presenters::BasePresenter` requires the contents of the **types** directory, loading the following:
-
-| Name              | Description                                  |
-|:------------------|:---------------------------------------------|
-| types/field.rb    | The base class for field schema definitions. |
-| types/array.rb    | The `array` DSL command.                     |
-| types/boolean.rb  | The `boolean` DSL command.                   |
-| types/date.rb     | The `date` DSL command.                      |
-| types/datetime.rb | The `datetime` DSL command.                  |
-| types/decimal.rb  | The `decimal` DSL command.                   |
-| types/float.rb    | The `float` DSL command.                     |
-| types/integer.rb  | The `integer` DSL command.                   |
-| types/object.rb   | The `object` DSL command.                    |
-| types/string.rb   | The `string` DSL command.                    |
+`ApiTools::Presenters::BasePresenter` requires the contents of the **presenters/types** directory.
 
 ## Example & Schema DSL
 
@@ -170,9 +116,9 @@ The `render` method essentially performs the inverse of the `parse` method, usin
             string :client_id, :required => true, :length => 32
             string :status_callback_uri, :required => false, :length => 256
             object :reward, :required => true do
-              string :provider_code, :required => true, :length => 32, :mapping => [:reward_provider_code]
-              string :supplier_code, :required => true, :length => 32, :mapping => [:reward_supplier_code]
-              string :reward_code, :required => true, :length => 32, :mapping => [:reward_reward_code]
+              string :provider_code, :required => true, :length => 32
+              string :supplier_code, :required => true, :length => 32
+              string :reward_code, :required => true, :length => 32
             end
             object :member, :required => true do
               string :id, :required => true, :length => 32
@@ -192,6 +138,63 @@ The `render` method essentially performs the inverse of the `parse` method, usin
               string :postcode_zip, :length => 128
               string :country_code, :length => 3
             end
+
+            # Field "array_with_any_values" must have an Array value, with
+            # any array contents permitted. If the input data has a nil
+            # value for this field, then nil would be rendered and it would
+            # validate. Add ':required => true' to prohibit this.
+            #
+            # Example valid input:
+            # { 'array_with_values' => [ 'hello', 4, :world ] }
+
+            array :array_with_any_values, :default => [ 1, 2, 3 ]
+
+            # Field "objects_with_two_text_fields" must have an Array value,
+            # where values are either nil or an object with two text fields
+            # "field_one" and "field_two".
+            #
+            # Example valid input:
+            # { 'array_with_values' => [ { 'field_one' => 'one' },
+            #                            { 'field_two' => 'two' } ] }
+
+            array :objects_with_two_text_fields do
+              text :field_one
+              text :field_two
+            end
+
+            # A field "any_allowed_hash" must have a Hash value, with any
+            # hash contents permitted. 'default' could be used to provide
+            # an entire default Hash value for rendering data with the
+            # "any_allowed_hash" field omitted. 'nil' values as for 'array'.
+
+            hash :any_allowed_hash
+
+            # A field "specific_allowed_keys" must have a Hash value, which
+            # allows only (none or any of) the two listed key names to be
+            # valid. ':default' could be used in the 'key' calls to provide
+            # a whole-key default value for an omitted key.
+
+            hash :specific_allowed_keys do
+              key :allowed_key_one    # Key has any allowed value
+              key :allowed_key_two do # Value must match schema in block
+                text :field_one
+                integer :field_two, :default => 42
+              end
+            end
+
+            # As above but any keys can be present in the input data. The
+            # ':default' option makes no sense for the 'keys' call and its
+            # use is prohibited.
+
+            hash :generic_key_description do
+              keys :length => 32 do # Keys must be <=32 chars, values must
+                                    # match block schema. Block is optional
+                                    # - if omitted, any values are allowed.
+                text :field_one
+                integer :field_two
+              end
+            end
+
           end
 
         end

@@ -4,6 +4,22 @@ describe ApiTools::Presenters::Object do
 
   before do
     @inst = ApiTools::Presenters::Object.new('one',:required => false)
+
+    class TestPresenterObject < ApiTools::Presenters::BasePresenter
+
+      schema do
+        # Intentional mix of strings and symbols in default object
+        object :a_default_object, :default => { :an_integer => 42, 'some_text' => 'hello' } do
+          integer :an_integer
+          text :some_text
+        end
+        object :an_object_with_entry_defaults do
+          integer :an_integer, :default => 42
+          text :some_text
+        end
+      end
+
+    end
   end
 
   describe '#validate' do
@@ -44,6 +60,117 @@ describe ApiTools::Presenters::Object do
       expect(errors.errors).to eq([
         {'code'=>"generic.invalid_object", 'message'=>"Field `ordinary.one` is an invalid object", 'reference'=>"ordinary.one"}
       ])
+    end
+  end
+
+
+  describe '#render' do
+    it 'renders correctly with whole-object default (1)' do
+      data = nil
+
+      expect(TestPresenterObject.render(data)).to eq({
+        'a_default_object' => {
+          'an_integer' => 42,
+          'some_text' => 'hello'
+        }
+      })
+    end
+
+    it 'renders correctly with whole-object default (2)' do
+      data = {}
+
+      expect(TestPresenterObject.render(data)).to eq({
+        'a_default_object' => {
+          'an_integer' => 42,
+          'some_text' => 'hello'
+        }
+      })
+    end
+
+    it 'must not override a provided object, even if nil' do
+      data = { 'a_default_object' => nil }
+      expect(TestPresenterObject.render(data)).to eq(data)
+    end
+
+    it 'must not override a provided object, even if "empty"' do
+      data = { 'a_default_object' => {} }
+      expect(TestPresenterObject.render(data)).to eq(data)
+    end
+
+    it 'provides default values for fields, where provided (1)' do
+      data = {
+        'a_default_object' => {
+          'an_integer' => 20
+        },
+        'an_object_with_entry_defaults' => {
+          'some_text' => 'hello'
+        }
+      }
+
+      expect(TestPresenterObject.render(data)).to eq({
+        'a_default_object' => {
+          'an_integer' => 20
+        },
+        'an_object_with_entry_defaults' => {
+          'an_integer' => 42,
+          'some_text' => 'hello'
+        }
+      })
+    end
+
+    it 'must not overwrite explicit object nil with object-with-field-defaults' do
+      data = {
+        'a_default_object' => {
+          'an_integer' => 20
+        },
+        'an_object_with_entry_defaults' => nil
+      }
+
+      expect(TestPresenterObject.render(data)).to eq(data)
+    end
+
+    it 'adds fields with defaults to empty objects' do
+      data = {
+        'a_default_object' => {
+          'an_integer' => 59
+        },
+        'an_object_with_entry_defaults' => {}
+      }
+
+      expect(TestPresenterObject.render(data)).to eq({
+        'a_default_object' => {
+          'an_integer' => 59
+        },
+        'an_object_with_entry_defaults' => {
+          'an_integer' => 42
+        }
+      })
+    end
+
+    it 'must not overwrite explicit field nil with field defaults' do
+      data = {
+        'a_default_object' => {
+          'an_integer' => 20
+        },
+        'an_object_with_entry_defaults' => {
+          'an_integer' => nil
+        }
+      }
+
+      expect(TestPresenterObject.render(data)).to eq(data)
+    end
+
+    it 'must not overwrite explicit field value with field defaults' do
+      data = {
+        'a_default_object' => {
+          'an_integer' => 20
+        },
+        'an_object_with_entry_defaults' => {
+          'an_integer' => 21
+        }
+      }
+
+      expect(TestPresenterObject.render(data)).to eq(data)
     end
   end
 end

@@ -46,35 +46,54 @@ module ApiTools
       #
       def render(data, target)
 
-        # This relies on pass-by-reference; we'll update 'array' later.
+        # Data provided is explicitly nil or not an array? Don't need to render
+        # anything beyond 'nil' at the field (the not-array case covers nil and
+        # covers invalid input, which is treated as nil).
+
+        return super( nil, target ) if ! data.is_a?( ::Array )
+
+        # Otherwise, start looking at rendering array contents (even if the
+        # input array is empty). This relies on pass-by-reference; we'll update
+        # this specific instance of 'array' later. Call 'super' to render the
+        # 'array' instance in place in 'target' straight away...
 
         array = []
         path  = super( array, target )
 
-        # No defined schema for the array contents? Just use the data as-is;
-        # we can do no validation. Have to hope the caller has given us data
-        # that would be valid as JSON. No data at all? Do nothing. Else
-        # run through the schema properties for each entry and validate them.
+        # ...then look at rendering the input entries of 'data' into 'array'.
 
-        if data.nil?
-          return
-
-        elsif @properties.nil?
+        if @properties.nil?
           # Must modify existing instance of 'array', so use 'push()'
           array.push( *data )
 
         else
           data.each do | item |
-            next if item.nil?
+
+            # We have properties defined so array values (in "item") must be
+            # Hashes. If non-Hash, treat as if nil; explicit-nil-means-nil.
+
+            unless item.is_a?( ::Hash )
+              # Must modify existing instance of 'array', so use 'push()'
+              array.push( nil )
+              next
+            end
 
             subtarget = {}
 
             @properties.each do | name, property |
-              property.render( item[ name ] || property.default, subtarget )
+              name        = name.to_s
+              has_key     = item.has_key?( name )
+              has_default = property.has_default?()
+
+              next unless has_key || has_default
+
+              property.render( has_key ? item[ name ] : property.default, subtarget )
             end
 
+            rendered = subtarget.empty? ? {} : read_at_path( subtarget, path )
+
             # Must modify existing instance of 'array', so use 'push()'
-            array.push( read_at_path( subtarget, path ) )
+            array.push( rendered )
           end
         end
       end
