@@ -303,9 +303,9 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 25,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
           'references'          => [ 'embed_one', 'embed_two' ]
         }
       )
@@ -332,9 +332,9 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
           'references'          => [ 'embed_one', 'embed_two' ]
         }
       )
@@ -359,10 +359,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end
@@ -387,10 +387,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
           'embeds'              => [ 'embed_one', 'embed_two' ],
-          'references'          => nil
+          'references'          => []
         }
       )
     end
@@ -416,10 +416,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
           'embeds'              => [ 'embed_one' ],
-          'references'          => nil
+          'references'          => []
         }
       )
     end
@@ -443,10 +443,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
           'embeds'              => [ 'embed_two' ],
-          'references'          => nil
+          'references'          => []
         }
       )
     end
@@ -511,10 +511,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 25,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end
@@ -540,10 +540,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end
@@ -569,10 +569,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end
@@ -598,10 +598,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end
@@ -628,10 +628,10 @@ describe ApiTools::ServiceMiddleware do
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
           'list_sort_direction' => 'desc',
-          'list_search_data'    => nil,
-          'list_filter_data'    => nil,
-          'embeds'              => nil,
-          'references'          => nil
+          'list_search_data'    => {},
+          'list_filter_data'    => {},
+          'embeds'              => [],
+          'references'          => []
         }
       )
     end

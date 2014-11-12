@@ -283,10 +283,10 @@ describe ApiTools::ServiceMiddleware do
           expect(request.list_limit).to eq(50)
           expect(request.list_sort_key).to eq('created_at')
           expect(request.list_sort_direction).to eq('desc')
-          expect(request.list_search_data).to be_nil
-          expect(request.list_filter_data).to be_nil
-          expect(request.embeds).to be_nil
-          expect(request.references).to be_nil
+          expect(request.list_search_data).to eq({})
+          expect(request.list_filter_data).to eq({})
+          expect(request.embeds).to eq([])
+          expect(request.references).to eq([])
         end
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }

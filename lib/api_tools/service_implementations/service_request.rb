@@ -120,5 +120,20 @@ module ApiTools
     #
     attr_accessor :references
 
+    # Set up defaults in this instance.
+    #
+    def initialize
+      self.locale              = 'en-nz'
+      self.uri_path_components = []
+      self.uri_path_extension  = ''
+      self.list_offset         = 0
+      self.list_limit          = 50
+      self.list_sort_key       = 'created_at'
+      self.list_sort_direction = 'desc'
+      self.list_search_data    = {}
+      self.list_filter_data    = {}
+      self.embeds              = []
+      self.references          = []
+    end
   end
 end

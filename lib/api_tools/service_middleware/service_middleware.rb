@@ -909,44 +909,38 @@ module ApiTools
       end
 
       unless malformed
-        search = query_hash[ 'search' ]
-        unless search.nil?
-          unrecognised_search_keys = search.keys - ( interface.to_list.search || [] )
-          malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
-        end
+        search = query_hash[ 'search' ] || {}
+
+        unrecognised_search_keys = search.keys - ( interface.to_list.search || [] )
+        malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
       end
 
       unless malformed
-        filter = query_hash[ 'filter' ]
-        unless filter.nil?
-          unrecognised_filter_keys = filter.keys - ( interface.to_list.filter || [] )
-          malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
-        end
+        filter = query_hash[ 'filter' ] || {}
+
+        unrecognised_filter_keys = filter.keys - ( interface.to_list.filter || [] )
+        malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
       end
 
       unless malformed
-        embeds = query_hash[ '_embed' ]
-        unless embeds.nil?
-          unrecognised_embeds = embeds - ( interface.embeds || [] )
-          malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
-        end
+        embeds = query_hash[ '_embed' ] || []
+
+        unrecognised_embeds = embeds - ( interface.embeds || [] )
+        malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
       end
 
       unless malformed
-        references = query_hash[ '_reference' ]
-        unless references.nil?
-          unrecognised_references = references - ( interface.embeds || [] )# (sic.)
-          malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
-        end
+        references = query_hash[ '_reference' ] || []
+
+        unrecognised_references = references - ( interface.embeds || [] )# (sic.)
+        malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
       end
 
-      if malformed
-        return service_response.add_error(
-          'platform.malformed',
-          'message' => "One or more malformed or invalid query string parameters",
-          'reference' => { :including => malformed }
-        )
-      end
+      return service_response.add_error(
+        'platform.malformed',
+        'message' => "One or more malformed or invalid query string parameters",
+        'reference' => { :including => malformed }
+      ) if malformed
 
       service_request.list_offset         = offset
       service_request.list_limit          = limit
