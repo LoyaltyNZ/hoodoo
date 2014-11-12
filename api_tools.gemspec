@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'api_tools'
-  s.version     = '0.1.1'
-  s.date        = '2014-11-07'
+  s.version     = '0.2.0'
+  s.date        = '2014-11-12'
   s.summary     = "A gem for simplifying the implementation of Loyalty Platform services."
   s.description = "A gem for simplifying the implementation of Loyalty Platform services."
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]
