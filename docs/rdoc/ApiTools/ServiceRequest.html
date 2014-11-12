@@ -73,6 +73,8 @@
 
   <ul class="link-list" role="directory">
     
+    <li ><a href="#method-c-new">::new</a>
+    
     <li ><a href="#method-i-uri_path_components-3D">#uri_path_components=</a>
     
   </ul>
@@ -90,8 +92,8 @@
     
 <p>Instances of the <a href="ServiceRequest.html">ApiTools::ServiceRequest</a>
 class are passed to service interface implementations when requests come in
-via <a href="../Rack.html">Rack</a>, after basic checks have been passed
-and a particular interface implementation has been identified by endpoint.</p>
+via Rack, after basic checks have been passed and a particular interface
+implementation has been identified by endpoint.</p>
 
 <p>Descriptions of default values expected out of accessors herein refer to
 the use case when driven through <a
@@ -322,6 +324,57 @@ so for example this URI:</p>
     
 
     
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Set up defaults in this instance.</p>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 125</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>              = <span class="ruby-string">&#39;en-nz&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_components</span> = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_extension</span>  = <span class="ruby-string">&#39;&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_offset</span>         = <span class="ruby-value">0</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_limit</span>          = <span class="ruby-value">50</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_sort_key</span>       = <span class="ruby-string">&#39;created_at&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_sort_direction</span> = <span class="ruby-string">&#39;desc&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_search_data</span>    = {}
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_filter_data</span>    = {}
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">embeds</span>              = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">references</span>          = []
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
      <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
        <header>
          <h3>Public Instance Methods</h3>

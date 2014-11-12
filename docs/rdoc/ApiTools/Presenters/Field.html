@@ -77,7 +77,7 @@
     
     <li ><a href="#method-i-full_path">#full_path</a>
     
-    <li ><a href="#method-i-parse">#parse</a>
+    <li ><a href="#method-i-has_default-3F">#has_default?</a>
     
     <li ><a href="#method-i-read_at_path">#read_at_path</a>
     
@@ -132,19 +132,6 @@
         <div class="method-description">
         
         <p>Default value, if supplied</p>
-        
-        </div>
-      </div>
-      
-      <div id="attribute-i-mapping" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">mapping</span><span
-            class="attribute-access-type">[RW]</span>
-        </div>
-
-        <div class="method-description">
-        
-        <p>Mapping to and from model</p>
         
         </div>
       </div>
@@ -212,13 +199,19 @@ name and options</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 18</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-ivar">@name</span>     = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-ivar">@required</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:required</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:required</span> ] <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>
-  <span class="ruby-ivar">@default</span>  = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:default</span>  ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:default</span>  ] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
-  <span class="ruby-ivar">@mapping</span>  = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:mapping</span>  ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:mapping</span>  ] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-ivar">@path</span>     = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:path</span>     ) <span class="ruby-operator">?</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:path</span>     ] <span class="ruby-operator">:</span> []
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:default</span> )
+    <span class="ruby-ivar">@has_default</span> = <span class="ruby-keyword">true</span>
+    <span class="ruby-ivar">@default</span>     = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:default</span> ] )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@has_default</span> = <span class="ruby-keyword">false</span>
+    <span class="ruby-ivar">@default</span>     = <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -261,7 +254,7 @@ name and options</p>
 
           
           <div class="method-source-code" id="full_path-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 81</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 85</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">empty?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
@@ -277,11 +270,11 @@ name and options</p>
       </div>
 
     
-      <div id="method-i-parse" class="method-detail ">
+      <div id="method-i-has_default-3F" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">parse</span><span
-            class="method-args">(data, target)</span>
+          <span class="method-name">has_default?</span><span
+            class="method-args">()</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -290,21 +283,18 @@ name and options</p>
 
         <div class="method-description">
           
-          
+          <p>Does this property have a defined default (which may be defined as
+<code>nil</code>) rather than having no defined value (<code>nil</code> or
+otherwise)? Returns <code>true</code> if it has a default,
+<code>false</code> if it has no default.</p>
           
           
 
           
-          <div class="method-source-code" id="parse-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 41</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
-  <span class="ruby-identifier">root</span> = <span class="ruby-identifier">data</span>
-  (<span class="ruby-ivar">@mapping</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@path</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@mapping</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">element</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">root</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">element</span>)
-    <span class="ruby-identifier">root</span> = <span class="ruby-identifier">root</span>[<span class="ruby-identifier">element</span>]
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>] = <span class="ruby-identifier">root</span>
+          <div class="method-source-code" id="has_default-3F-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 34</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">has_default?</span>
+  <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@has_default</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -329,9 +319,9 @@ name and options</p>
 
         <div class="method-description">
           
-          <p>Dive down into a given hash along path arrays +@mapping+ or +@path+,
-building new hash entries if necessary at each path level until the last
-one. At that last level, assign the given object.</p>
+          <p>Dive down into a given hash along path array +@path+, building new hash
+entries if necessary at each path level until the last one. At that last
+level, assign the given object.</p>
 <dl class="rdoc-list note-list"><dt>+data
 <dd>
 <p>The object to build at the final path entry - usually an empty <a
@@ -339,20 +329,22 @@ href="Array.html">Array</a> or <a href="Hash.html">Hash</a>.</p>
 </dd><dt><code>target</code>
 <dd>
 <p>The <a href="Hash.html">Hash</a> (may be initially empty) in which to build
-the path of keys from internal data +@mapping+ or +@path+.</p>
+the path of keys from internal data +@path+.</p>
 </dd></dl>
 
-<p>Returns the full path array that was used (a clone of +@mapping+ or
-+@path+).</p>
+<p>Returns the full path array that was used (a clone of +@path+).</p>
           
           
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 64</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
+
   <span class="ruby-identifier">root</span>  = <span class="ruby-identifier">target</span>
-  <span class="ruby-identifier">path</span>  = ( <span class="ruby-ivar">@mapping</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-ivar">@path</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@mapping</span> ).<span class="ruby-identifier">clone</span>
+  <span class="ruby-identifier">path</span>  = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">clone</span>
   <span class="ruby-identifier">final</span> = <span class="ruby-identifier">path</span>.<span class="ruby-identifier">pop</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-identifier">path</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">element</span> <span class="ruby-operator">|</span>
@@ -387,14 +379,14 @@ the path of keys from internal data +@mapping+ or +@path+.</p>
 
         <div class="method-description">
           
-          <p>Check if data is required and return either [], or an array with a suitable
-error</p>
+          <p>Check if data is required and return an <a
+href="../Errors.html">ApiTools::Errors</a> instance</p>
           
           
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 27</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
 
@@ -449,11 +441,12 @@ href="Hash.html">Hash</a> is “{ :foo =&gt; { :bar =&gt; { :baz =&gt;
 
           
           <div class="method-source-code" id="read_at_path-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 94</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">from_target</span>, <span class="ruby-identifier">with_path</span> )
   <span class="ruby-identifier">with_path</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">element</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">element</span> = <span class="ruby-identifier">element</span>.<span class="ruby-identifier">to_s</span>
     <span class="ruby-identifier">from_target</span> = <span class="ruby-identifier">from_target</span>[ <span class="ruby-identifier">element</span> ]
+    <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">from_target</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">from_target</span>
@@ -496,7 +489,7 @@ unusual circumstances.</p>
 
           
           <div class="method-source-code" id="rename-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 112</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">rename</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-identifier">depth</span> = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
   <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">name</span>
@@ -541,7 +534,7 @@ change the same depth item to the new name in all of them.</p>
 
           
           <div class="method-source-code" id="rewrite_path-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 126</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/field.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">rewrite_path</span>( <span class="ruby-identifier">depth</span>, <span class="ruby-identifier">name</span> )
   <span class="ruby-ivar">@path</span>[ <span class="ruby-identifier">depth</span> ] = <span class="ruby-identifier">name</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">depth</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>

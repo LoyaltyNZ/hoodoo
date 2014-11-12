@@ -71,14 +71,6 @@
 
   <section class="description">
     
-<p>For local development, we need to know the HTTP Host and Port. We could do
-that nicely, looking up the <a href="Rack.html">Rack</a> server in
-ObjectSpace and asking it for its options - except some of the web server
-adapters do really dumb things like “options.delete(:Host)” to read items
-out, thus destroying the info we need.</p>
-
-<p>Instead, monkey patch :-(</p>
-
   </section>
 
   

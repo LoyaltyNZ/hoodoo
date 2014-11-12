@@ -102,10 +102,11 @@
     
 <p>Representation of a callable service endpoint for a specific resource.
 Services that wish to call other services should obtain an endpoint
-instance via ApiTools::ServiceContext#endpoint then use the instance
-methods described for this class to call other services. The calls they use
-look very similar to the calls they implement for their own instances. The
-response they get is in the form of an <a
+instance via <a
+href="../ServiceContext.html#method-i-resource">ApiTools::ServiceContext#resource</a>
+then use the instance methods described for this class to call other
+services. The calls they use look very similar to the calls they implement
+for their own instances. The response they get is in the form of an <a
 href="../ServiceResponse.html">ApiTools::ServiceResponse</a> instance
 describing the inter-service call&#39;s results.</p>
 
@@ -205,7 +206,7 @@ request (i.e. JSON, as a Hash).</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1436</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">middleware_instance</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
   <span class="ruby-ivar">@middleware</span>    = <span class="ruby-identifier">middleware_instance</span>
   <span class="ruby-ivar">@resource</span>      = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
@@ -263,7 +264,7 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1499</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 153</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
@@ -317,7 +318,7 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 
           
           <div class="method-source-code" id="delete-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1545</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 199</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
@@ -363,7 +364,7 @@ network.</p>
 
           
           <div class="method-source-code" id="interface-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1384</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">interface</span>
   <span class="ruby-ivar">@local_service</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@local_service</span>[ <span class="ruby-value">:interface</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -407,7 +408,7 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 
           
           <div class="method-source-code" id="list-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1456</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
@@ -460,7 +461,7 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 
           
           <div class="method-source-code" id="show-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1477</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
@@ -517,7 +518,7 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 
           
           <div class="method-source-code" id="update-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1522</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,

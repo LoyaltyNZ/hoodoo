@@ -92,7 +92,10 @@
 
   <section class="description">
     
-<p>A registry of service endpoints, implenented as a DRB server class.</p>
+<p>A registry of service endpoints, implenented as a DRB server class. An
+internal implementation detail of <a
+href="../ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>, in most
+respects.</p>
 
   </section>
 
@@ -134,7 +137,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1564</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -188,7 +191,7 @@ as a String.</p>
 
           
           <div class="method-source-code" id="add-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1576</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
 <span class="ruby-keyword">end</span></pre>
@@ -229,7 +232,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
 
           
           <div class="method-source-code" id="find-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1586</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>

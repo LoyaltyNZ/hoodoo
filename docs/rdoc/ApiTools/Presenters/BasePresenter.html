@@ -75,8 +75,6 @@
     
     <li ><a href="#method-c-get_schema">::get_schema</a>
     
-    <li ><a href="#method-c-parse">::parse</a>
-    
     <li ><a href="#method-c-render">::render</a>
     
     <li ><a href="#method-c-schema">::schema</a>
@@ -96,10 +94,11 @@
 
   <section class="description">
     
-<p>A class intended as base functionality for presenter layers in sinatra
-services. Although Parsing and rendering of JSON is left to the extender,
-`BasePresenter` provides a rich DSL for JSON schema definition and
-validation.</p>
+<p>Base functionality for JSON validation and presenter (rendering) layers.
+Subclass this to define a schema against which validation of inbound data
+or rendering of outbound data can be performed. Call <a
+href="BasePresenter.html#method-c-schema">::schema</a> in the subclass to
+declare, via the DSL, the shape of the schema.</p>
 
   </section>
 
@@ -141,42 +140,9 @@ validation.</p>
 
           
           <div class="method-source-code" id="get_schema-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 31</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 64</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-c-parse" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">parse</span><span
-            class="method-args">(data)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="parse-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 20</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>)
-  <span class="ruby-identifier">target</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, {})
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -201,15 +167,38 @@ validation.</p>
 
         <div class="method-description">
           
-          
+          <p>Given some data that should conform to the subclass presenter&#39;s schema,
+render it to go from the input Ruby <a href="Hash.html">Hash</a>, to an
+output Ruby <a href="Hash.html">Hash</a> which will include default values
+- if any - present in the schema and will drop input fields not present in
+that schema. In essence, this takes data which may have been
+programatically generated and sanitises it to produce valid, with-defaults
+guaranteed valid output.</p>
+
+<p>Any field with a schema giving a default value will only appear should a
+value for that field be <em>omitted</em> in the input data. If the data
+provides, for example, an explicit <code>nil</code> value then a
+corresponding explicit <code>nil</code> will be rendered, regardless of
+defaults.</p>
+
+<p>For belt-and-braces, unless subsequent profiling shows performance issues,
+callers should call validate first to self-check their internal data
+against the schema prior to rendering. That way, coding errors will be
+discovered immediately, rather than hidden / obscured by the rendered
+sanitisation.</p>
+
+<p>Since rendering top-level <code>nil</code> is not valid JSON, should
+<code>nil</code> be provided as input, it&#39;ll be treated as an empty
+hash (“+{}+”) instead.</p>
           
           
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 24</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>)
   <span class="ruby-identifier">target</span> = {}
+  <span class="ruby-identifier">data</span>   = <span class="ruby-identifier">data</span> <span class="ruby-operator">||</span> {}
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
   <span class="ruby-identifier">target</span>
 <span class="ruby-keyword">end</span></pre>
@@ -236,13 +225,19 @@ validation.</p>
 
         <div class="method-description">
           
-          <p>Define the JSON schema for validation</p>
+          <p>Define the JSON schema for validation.</p>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Block that makes calls to the DSL defined in <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a> in order to define
+the schema.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="schema-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 9</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">schema</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
@@ -270,14 +265,24 @@ validation.</p>
 
         <div class="method-description">
           
-          <p>Validate the given parsed JSON data and return validation/schema structure
-errors if any.</p>
+          <p>Given JSON data that&#39;s been parsed from a <a
+href="String.html">String</a> into an equivalent Ruby <a
+href="Hash.html">Hash</a>, with <a href="String.html">String</a> keys,
+validate that data against the schema and return an <a
+href="../Errors.html">ApiTools::Errors</a> instance. This will contain
+*zero or more* errors; if zero, there is no problem, else validation
+failures are described.</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>Ruby <a href="Hash.html">Hash</a> representation of JSON data that is to be
+validated against &#39;this&#39; schema. Keys must be Strings, not Symbols.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="validate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 16</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_presenter.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>(<span class="ruby-identifier">data</span>)
 <span class="ruby-keyword">end</span></pre>

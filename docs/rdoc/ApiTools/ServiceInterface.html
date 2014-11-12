@@ -353,7 +353,7 @@ mandatory call.</p>
 
           
           <div class="method-source-code" id="interface-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 487</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 494</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
 
@@ -611,7 +611,7 @@ href="ErrorDescriptions.html">ApiTools::ErrorDescriptions</a> DSL calls.</p>
 
           
           <div class="method-source-code" id="errors_for-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 440</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 447</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
@@ -649,7 +649,7 @@ interface&#39;s implementation requires for calls creating resource
 instances. The block uses the DSL from <a
 href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>, so
 you can specify basic object things like <code>string</code>, or higher
-level things like <code>type</code>.</p>
+level things like <code>type</code> or <code>resource</code>.</p>
 
 <p>If a call comes into the middleware from a client which contains body data
 that doesn&#39;t validate according to your schema, it&#39;ll be rejected
@@ -664,13 +664,19 @@ representation, so the standard resources in the <a
 href="Data/Resources.html">ApiTools::Data::Resources</a> collection will
 already have declared that internationalisation applies.</p>
 
-<p>Example:</p>
+<p>Example 1:</p>
 
 <pre class="ruby"><span class="ruby-identifier">to_create</span> <span class="ruby-keyword">do</span>
   <span class="ruby-identifier">string</span> :<span class="ruby-identifier">name</span>, :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">32</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
   <span class="ruby-identifier">text</span> :<span class="ruby-identifier">description</span>
 <span class="ruby-keyword">end</span>
 </pre>
+
+<p>Example 2: With a resource</p>
+
+<pre>to_create do
+  resource :purchase
+end</pre>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block, passed to <a
@@ -682,7 +688,7 @@ describing the fields used for resource creation.</p>
 
           
           <div class="method-source-code" id="to_create-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 387</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 394</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -774,7 +780,7 @@ describing the fields used for resource modification.</p>
 
           
           <div class="method-source-code" id="to_update-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 401</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 408</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -818,7 +824,7 @@ same as those required for modifying resources too.</p>
 
           
           <div class="method-source-code" id="update_same_as_create-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 417</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 424</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span> )
 <span class="ruby-keyword">end</span></pre>

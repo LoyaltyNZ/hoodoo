@@ -68,11 +68,15 @@
     
     <li ><a href="#method-i-array">#array</a>
     
+    <li ><a href="#method-i-hash">#hash</a>
+    
     <li ><a href="#method-i-internationalised">#internationalised</a>
     
     <li ><a href="#method-i-is_internationalised-3F">#is_internationalised?</a>
     
     <li ><a href="#method-i-object">#object</a>
+    
+    <li ><a href="#method-i-resource">#resource</a>
     
     <li ><a href="#method-i-type">#type</a>
     
@@ -190,6 +194,68 @@ href="DocumentedDSL.html#method-i-type">type</a> for more information.</p>
       </div>
 
     
+      <div id="method-i-hash" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">hash</span><span
+            class="method-args">(name, options = {}, &block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>As <a
+href="../Presenters/BaseDSL.html#method-i-hash">ApiTools::Presenters::BaseDSL#hash</a>
+but with the extended DSL in <a
+href="DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a> available to
+the block.</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Optional block declaring the characteristics of the Hash.</p>
+</dd></dl>
+
+<p>Example - a Hash where keys must be &lt;= 16 characters long and values</p>
+
+<pre class="ruby">      <span class="ruby-identifier">must</span> <span class="ruby-identifier">match</span> <span class="ruby-identifier">the</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Types</span><span class="ruby-operator">::</span><span class="ruby-constant">Currency</span> <span class="ruby-identifier">type</span>.
+
+<span class="ruby-identifier">class</span> <span class="ruby-constant">CurrencyHash</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+  <span class="ruby-identifier">hash</span> :<span class="ruby-identifier">currencies</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">keys</span> :<span class="ruby-identifier">length</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">16</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">type</span> :<span class="ruby-constant">Currency</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="hash-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 102</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">hash</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedHash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">is_internationalised?</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-i-internationalised" class="method-detail ">
         
         <div class="method-heading">
@@ -239,7 +305,7 @@ member&#39;s name:</p>
 
           
           <div class="method-source-code" id="internationalised-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 113</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">true</span>
@@ -275,7 +341,7 @@ member&#39;s name:</p>
 
           
           <div class="method-source-code" id="is_internationalised-3F-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 121</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@internationalised</span>
 <span class="ruby-keyword">end</span></pre>
@@ -345,6 +411,84 @@ href="DocumentedDSL.html#method-i-type">type</a> for more information.</p>
 
   <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_internationalised?</span>()
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-resource" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">resource</span><span
+            class="method-args">( resource_name, options = nil )</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Declare that a resource of a given name is included at this point. This is
+only normally done within the description of the schema  for an  interface.
+The fields of the given named resource are considered to be  defined inline
+at the point of declaration - essentially, it&#39;s macro  expansion.</p>
+<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dd>
+<p>Name of the resource as a symbol, e.g. <code>:Purchase</code>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="../Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd></dl>
+
+<p>It doesn&#39;t make sense to mark a <code>resource</code> &#39;field&#39;
+as <code>:required</code> in the options since the declaration just expands
+to the contents of the referenced resource and it is the definition of that
+resource that determines whether or not its various field(s) are optional
+or required.</p>
+
+<p>Example - an iterface takes an <code>Outlet</code> resource in its create
+action.</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Outlet</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedPresenter</span>
+  <span class="ruby-identifier">schema</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">internationalised</span>
+
+    <span class="ruby-identifier">text</span> :<span class="ruby-identifier">name</span>
+    <span class="ruby-identifier">uuid</span> :<span class="ruby-identifier">participant_id</span>, :<span class="ruby-identifier">resource</span> =<span class="ruby-operator">&gt;</span> :<span class="ruby-constant">Participant</span>, :<span class="ruby-identifier">required</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-identifier">uuid</span> :<span class="ruby-identifier">calculator_id</span>,  :<span class="ruby-identifier">resource</span> =<span class="ruby-operator">&gt;</span> :<span class="ruby-constant">Calculator</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">OutletInterface</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span>
+  <span class="ruby-identifier">to_create</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">resource</span> :<span class="ruby-constant">Outlet</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="resource-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 275</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">klass</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Resources</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">resource_name</span> )
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#resource: Unrecognised resource name &#39;#{resource_name}&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -467,7 +611,7 @@ behaviour. At such a time, a degree of cut-and-paste and removing the
 
           
           <div class="method-source-code" id="type-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 208</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/data/documented_dsl.rb, line 231</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">type</span>( <span class="ruby-identifier">type_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 

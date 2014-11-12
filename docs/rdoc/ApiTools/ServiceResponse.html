@@ -349,9 +349,8 @@ abort request processing immediately can just do:</p>
 
 <pre>return response_object.add_error( ... )</pre>
 
-<p>…as part of processing a <a href="../Rack.html">Rack</a> invocation of the
-<code>call</code> method. This is really only useful for the service
-middleware.</p>
+<p>…as part of processing a Rack invocation of the <code>call</code> method.
+This is really only useful for the service middleware.</p>
 <dl class="rdoc-list note-list"><dt><code>code</code>
 <dd>
 <p>Error code (e.g. “platform.generic”).</p>
@@ -525,7 +524,7 @@ Very Bad.</p>
 stored error. If this is omitted, 500 is kept as the default.</p>
 
 <p>As with <a href="ServiceResponse.html#method-i-add_error">add_error</a>,
-returns a <a href="../Rack.html">Rack</a> representation of the response.</p>
+returns a Rack representation of the response.</p>
           
           
 
@@ -559,10 +558,9 @@ returns a <a href="../Rack.html">Rack</a> representation of the response.</p>
 
         <div class="method-description">
           
-          <p>Convert the internal response data into something that <a
-href="../Rack.html">Rack</a> expects. The return value of this method can
-be passed back to <a href="../Rack.html">Rack</a> from <a
-href="../Rack.html">Rack</a> middleware or applications.</p>
+          <p>Convert the internal response data into something that Rack expects. The
+return value of this method can be passed back to Rack from Rack middleware
+or applications.</p>
           
           
 

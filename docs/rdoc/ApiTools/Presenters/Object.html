@@ -86,9 +86,7 @@
     
     <li class="calls-super" ><a href="#method-c-new">::new</a>
     
-    <li ><a href="#method-i-parse">#parse</a>
-    
-    <li ><a href="#method-i-render">#render</a>
+    <li class="calls-super" ><a href="#method-i-render">#render</a>
     
     <li class="calls-super" ><a href="#method-i-validate">#validate</a>
     
@@ -205,48 +203,11 @@ appropriate name and options</p>
        </header>
 
     
-      <div id="method-i-parse" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">parse</span><span
-            class="method-args">(data, target)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="parse-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 51</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
-  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>] = {}
-  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>])
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">target</span>[<span class="ruby-ivar">@name</span>]
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
       <div id="method-i-render" class="method-detail ">
         
         <div class="method-heading">
           <span class="method-name">render</span><span
-            class="method-args">(data, target)</span>
+            class="method-args">( data, target )</span>
           
           <span class="method-click-advice">click to toggle source</span>
           
@@ -255,19 +216,61 @@ appropriate name and options</p>
 
         <div class="method-description">
           
+          <p>Render inbound data into a target hash according to the schema, applying
+defaults where defined for fields with no value supplied in the inbound
+data.</p>
+
+<p><code>data</code>:   Inbound data to render.</p>
+
+<p><code>target</code>: For internal callers only in theory. The target hash
+into</p>
+
+<pre>which rendering should occur. This may then be merged into
+outer level hashes as part of nested items defined in the
+schema.</pre>
           
           
+            <div class="method-calls-super">
+              Calls superclass method
+              <a href="Field.html#method-i-render">ApiTools::Presenters::Field#render</a>
+            </div>
           
 
           
           <div class="method-source-code" id="render-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 59</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 62</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
-  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">data</span>[<span class="ruby-identifier">name</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">target</span>)
+  <span class="ruby-comment"># In an simple field, e.g. a text field, then whether or not it has</span>
+  <span class="ruby-comment"># a default, should someone give a value of &quot;nil&quot; we expect that field</span>
+  <span class="ruby-comment"># to be rendered in output with the explicitly provided &quot;nil&quot; value.</span>
+  <span class="ruby-comment"># We thus apply the same to objects. A field with an associated object,</span>
+  <span class="ruby-comment"># if rendered with an explicit &quot;nil&quot;, renders as just that.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>( <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) <span class="ruby-comment"># nil or invalid</span>
+
+  <span class="ruby-identifier">have_rendered_something</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">name</span>        = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">has_key</span>     = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> )
+    <span class="ruby-identifier">has_default</span> = <span class="ruby-identifier">property</span>.<span class="ruby-identifier">has_default?</span>()
+
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_key</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">has_default</span>
+
+    <span class="ruby-identifier">have_rendered_something</span> = <span class="ruby-keyword">true</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">has_key</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">target</span> )
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If someone passes an empty object for a field and the object schema</span>
+  <span class="ruby-comment"># includes no default values, then the above code would render nothing</span>
+  <span class="ruby-comment"># as no properties have associated keys in the input data, and none of</span>
+  <span class="ruby-comment"># them have default values either. Make sure we render the field for</span>
+  <span class="ruby-comment"># this object with the associated empty object given by the input data</span>
+  <span class="ruby-comment"># in such cases.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">super</span>( {}, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">have_rendered_something</span>
+
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -292,8 +295,9 @@ appropriate name and options</p>
 
         <div class="method-description">
           
-          <p>Check if data is a valid <a href="Object.html">Object</a> and return either
-[], or an array with a suitable error.</p>
+          <p>Check if data is a valid <a href="Object.html">Object</a> and return an <a
+href="../Errors.html">ApiTools::Errors</a> instance with zero (valid) or
+more (has validation problems) errors inside.</p>
 
 <p><code>data</code>: <a href="../Data.html">Data</a> to check (and check
 nested properties therein). Expected</p>
