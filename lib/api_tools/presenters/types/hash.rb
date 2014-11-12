@@ -57,6 +57,18 @@ module ApiTools
           raise "Can't use \#keys and then \#key in the same hash definition - use one or the other"
         end
 
+        # If we're defining specific keys and some of those keys have fields
+        # with defaults, we need to merge those up to provide a whole-key
+        # equivalent default. If someone renders an empty hash they expect a
+        # specific key with some internal defaults to be rendered; doing this
+        # amalgamation up to key level is the easiest way to handle that.
+
+        if options.has_key?( :default )
+          @has_default  = true
+          @default    ||= {}
+          @default.merge!( ApiTools::Utilities.stringify( options[ :default ] ) )
+        end
+
         @specific = true
 
         klass = if block_given?
@@ -135,6 +147,10 @@ module ApiTools
           raise "Can't use \#key and then \#keys in the same hash definition, or use \#keys more than once"
         end
 
+        if options.has_key?( :default )
+          raise "It doesn't make sense to specify a default for unknown source data keys, since every key that's present in the source data has an associated value by definition, even if that value is nil"
+        end
+
         @specific = false
 
         klass = options.has_key?( :length ) ? ApiTools::Presenters::String : ApiTools::Presenters::Text
@@ -165,7 +181,6 @@ module ApiTools
 
           # No hash entry schema? No hash entry validation, then.
           unless @properties.nil?
-
             if @specific == true
 
               allowed_keys      = @properties.keys
@@ -211,18 +226,20 @@ module ApiTools
 
               else
 
-                # Need to adjust the above property names for each of the unknown-named
-                # keys coming into this generic key hash. That way, errors are reported
-                # at the correct "path", including the 'dynamic' incoming hash key name.
+                # Need to adjust the above property names for each of the
+                # unknown-named keys coming into this generic key hash. That
+                # way, errors are reported at the correct "path", including the
+                # 'dynamic' incoming hash key name.
 
                 data.each do |key, value|
                   local_path = full_path(path)
 
-                  # So use the "keys property" as a validator for the format (i.e. just
-                  # length, in practice) of the current key we're examining in the data
-                  # from the caller. Use the "values property" to validate the value in
-                  # the data hash. Both are temporarily renamed to match the key in the
-                  # client data so that field paths shown in errors will be correct.
+                  # So use the "keys property" as a validator for the format
+                  # (i.e. just length, in practice) of the current key we're
+                  # examining in the data from the caller. Use the "values
+                  # property" to validate the value in the data hash. Both are
+                  # temporarily renamed to match the key in the client data so
+                  # that field paths shown in errors will be correct.
 
                   keys_property.rename( key )
                   values_property.rename( key )
@@ -236,9 +253,9 @@ module ApiTools
 
               end
             end
+          end # 'unless @properties.nil?'
 
-          end
-        else
+        else  # 'if data.is_a? ::Hash'
           errors.add_error(
             'generic.invalid_hash',
             :message   => "Field `#{ full_path( path ) }` is an invalid hash",
@@ -260,6 +277,12 @@ module ApiTools
       #
       def render(data, target)
 
+        # Data provided is explicitly nil or not a hash? Don't need to render
+        # anything beyond 'nil' at the field (the not-hash case covers nil and
+        # covers invalid input, which is treated as nil).
+        #
+        return super( nil, target ) if ! data.is_a?( ::Hash )
+
         # This relies on pass-by-reference; we'll update 'hash' later.
 
         hash = {}
@@ -267,11 +290,7 @@ module ApiTools
 
         # No defined schema for the hash contents? Just use the data as-is;
         # we can do no validation. Have to hope the caller has given us data
-        # that would be valid as JSON. No data at all? Treat as an empty
-        # hash so default values work. Else run through the schema properties
-        # for each entry and validate them.
-
-        data = data || @default || {}
+        # that would be valid as JSON. Otherwise, use the key definitions.
 
         if @properties.nil?
           hash.merge!( data )
@@ -282,35 +301,37 @@ module ApiTools
           if @specific == true
 
             @properties.each do |name, property|
-              value = data[ name ] || property.default
-              property.render( value, subtarget ) unless value.nil?
+              name        = name.to_s
+              has_key     = data.has_key?( name )
+              has_default = property.has_default?()
+
+              next unless has_key || has_default
+
+              property.render( has_key ? data[ name ] : property.default, subtarget )
             end
 
           else
 
-            # The "keys :default => ..." part of the DSL gives default values
-            # for arbitrary no-value keys in the hash in this generic key case,
-            # so while we use the values property for rendering non-empty values,
-            # we use the keys property for the defaults.
+            # The "keys :default => ..." part of the DSL is theoretically
+            # possible but meaningless. The principle everywhere else is that
+            # if the input data has an explicit "nil" then the output data has
+            # the same. In that case, the input data hash either has non-nil
+            # or nil *explicit* values, so there are no conditions under which
+            # we would apply a default.
 
             values_property = @properties[ 'values' ]
-            default_value   = @properties[ 'keys' ].default || {}
 
             # As with validation, have to temporarily rename the above property
-            # (and update its path) so that we render under the correct key name,
-            # those names coming from the caller-supplied hash and thus not known
-            # at any time other than right now.
+            # (and update its path) so that we render under the correct key
+            # name, those names coming from the caller-supplied hash and thus
+            # not known at any time other than right now.
 
-            data.each do |key, value|
-              value = value || default_value
-              continue if value.nil?
-
+            data.each do | key, value |
               values_property.rename( key )
               values_property.render( value, subtarget )
             end
 
             values_property.rename( 'values' )
-
           end
 
           rendered = read_at_path( subtarget, path )

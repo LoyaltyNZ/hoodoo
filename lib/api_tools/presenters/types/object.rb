@@ -16,8 +16,8 @@ module ApiTools
         @properties = {}
       end
 
-      # Check if data is a valid Object and return either [], or an array with
-      # a suitable error.
+      # Check if data is a valid Object and return an ApiTools::Errors instance
+      # with zero (valid) or more (has validation problems) errors inside.
       #
       # +data+: Data to check (and check nested properties therein). Expected
       #         to be nil (unless field is required) or a Hash.
@@ -48,20 +48,49 @@ module ApiTools
         errors
       end
 
-      def parse(data, target)
-        target[@name] = {}
-        @properties.each do |name, property|
-          property.parse(data, target[@name])
-        end
-        target[@name]
-      end
+      # Render inbound data into a target hash according to the schema,
+      # applying defaults where defined for fields with no value supplied
+      # in the inbound data.
+      #
+      # +data+:   Inbound data to render.
+      #
+      # +target+: For internal callers only in theory. The target hash into
+      #           which rendering should occur. This may then be merged into
+      #           outer level hashes as part of nested items defined in the
+      #           schema.
+      #
+      def render( data, target )
 
-      def render(data, target)
-        return if data.nil?
+        # In an simple field, e.g. a text field, then whether or not it has
+        # a default, should someone give a value of "nil" we expect that field
+        # to be rendered in output with the explicitly provided "nil" value.
+        # We thus apply the same to objects. A field with an associated object,
+        # if rendered with an explicit "nil", renders as just that.
+        #
+        return super( nil, target ) unless data.is_a?( ::Hash ) # nil or invalid
 
-        @properties.each do |name, property|
-          property.render(data[name] || property.default, target)
+        have_rendered_something = false
+
+        @properties.each do | name, property |
+          name        = name.to_s
+          has_key     = data.has_key?( name )
+          has_default = property.has_default?()
+
+          next unless has_key || has_default
+
+          have_rendered_something = true
+          property.render( has_key ? data[ name ] : property.default, target )
         end
+
+        # If someone passes an empty object for a field and the object schema
+        # includes no default values, then the above code would render nothing
+        # as no properties have associated keys in the input data, and none of
+        # them have default values either. Make sure we render the field for
+        # this object with the associated empty object given by the input data
+        # in such cases.
+        #
+        super( {}, target ) unless have_rendered_something
+
       end
     end
   end
