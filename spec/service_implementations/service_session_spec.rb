@@ -92,7 +92,7 @@ describe ApiTools::ServiceSession do
     it 'should call Dalli and return a new client' do
       mock_memcache = double('memcache')
       expect(mock_memcache).to receive(:stats).and_return true
-      expect(Dalli::Client).to receive(:new).with('one',{:compress=>true}).and_return(mock_memcache)
+      expect(Dalli::Client).to receive(:new).with('one',{ :compress=>false, :serializer => JSON }).and_return(mock_memcache)
       expect(ApiTools::ServiceSession.send(:connect_memcache, 'one')).to eq(mock_memcache)
     end
 
@@ -108,7 +108,7 @@ describe ApiTools::ServiceSession do
       expect(mock_memcache).to receive(:stats) do
         raise "Error!"
       end
-      expect(Dalli::Client).to receive(:new).with('one',{:compress=>true}).and_return(mock_memcache)
+      expect(Dalli::Client).to receive(:new).with('one',{ :compress=>false, :serializer => JSON }).and_return(mock_memcache)
       expect(ApiTools::ServiceSession.send(:connect_memcache, 'one')).to be_nil
     end
   end

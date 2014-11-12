@@ -61,6 +61,7 @@ require root+'data/resources/product.rb'
 require root+'data/resources/programme.rb'
 require root+'data/resources/purchase.rb'
 require root+'data/resources/version.rb'
+require root+'data/resources/voucher.rb'
 
 require root+'errors/error_descriptions.rb'
 require root+'errors/errors.rb'

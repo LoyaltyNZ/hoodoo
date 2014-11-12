@@ -112,7 +112,7 @@ module ApiTools
     def self.connect_memcache(url)
       stats = nil
       begin
-        memcache = Dalli::Client.new(url, {:compress=>true})
+        memcache = Dalli::Client.new(url, { :compress=>false, :serializer => JSON })
         stats = memcache.stats
       rescue Exception => e
         stats = nil
