@@ -1,4 +1,4 @@
-Thu, 13 Nov 2014 13:40:11 +1300
+Thu, 13 Nov 2014 14:07:01 +1300
 README.md	Thu, 13 Nov 2014 13:40:09 +1300
 lib/api_tools.rb	Thu, 13 Nov 2014 13:08:48 +1300
 lib/api_tools/auth/platform_auth.rb	Tue, 09 Sep 2014 10:33:33 +1200
@@ -38,7 +38,7 @@ lib/api_tools/events/platform_event.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/generator.rb	Tue, 28 Oct 2014 10:17:07 +1300
 lib/api_tools/json_errors.rb	Tue, 23 Sep 2014 12:39:09 +1200
 lib/api_tools/json_payload.rb	Fri, 07 Nov 2014 14:14:26 +1300
-lib/api_tools/logger.rb	Tue, 28 Oct 2014 10:17:07 +1300
+lib/api_tools/logger.rb	Thu, 13 Nov 2014 14:06:58 +1300
 lib/api_tools/platform_context.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/platform_errors.rb	Fri, 10 Oct 2014 15:39:04 +1300
 lib/api_tools/presenters/base_dsl.rb	Thu, 06 Nov 2014 11:35:40 +1300
