@@ -7,6 +7,8 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
+require 'socket'
+
 module ApiTools
 
   # Useful tools, especially for those working without Rails components.
@@ -63,6 +65,21 @@ module ApiTools
     #
     def self.to_integer?( value )
       value.to_s.to_i if value.to_s.to_i.to_s == value.to_s
+    end
+
+    # Return a spare TCP port on localhost. This is free at the instant of
+    # calling, though of course if you have anything in other local machine
+    # processes/threads running which might start using ports at any moment,
+    # there's a chance of the free port getting claimed in between you asking
+    # for it and it being returned. This utility method is usually therefore
+    # used for test environments only.
+    #
+    def self.spare_port
+      server = TCPServer.new( '127.0.0.1', 0 )
+      port   = server.addr[ 1 ]
+
+      server.close
+      return port
     end
   end
 end
