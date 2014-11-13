@@ -26,7 +26,7 @@ module ApiTools
     # in a "list" call for a service implementation. The middleware uses this
     # validate incoming query strings for lists and reject requests that ask
     # for unsupported things. When instantiated the class sets itself up with
-    # defaults that match those described by the Loyalty Platform API. When
+    # defaults that match those described by the your platform's API. When
     # passed to an ApiTools::ServiceInterface::ToListDSL instance, the DSL
     # methods, if called, update the values stored herein.
     #
@@ -343,8 +343,8 @@ module ApiTools
 
     # Specify parameters related to common index parameters. The block contains
     # calls to the DSL described by ApiTools::ServiceInterface::ToListDSL. The
-    # default values are described in the Loyalty Platform API - at the time of
-    # writing:
+    # default values should be described by your platform's API - hard-coded at
+    # the time of writing as:
     #
     #     limit    50
     #     sort     :created_at => [ :desc, :asc ]

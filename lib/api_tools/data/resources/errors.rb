@@ -9,12 +9,6 @@
 
 module ApiTools
   module Data
-
-    # Module used as a namespace to collect classes that represent Resources
-    # documented by the Loyalty Platform API. Each is an
-    # ApiTools::Data::DocumentedPresenter subclass, so can be used to render
-    # and validate JSON data.
-    #
     module Resources
 
       # Documented Platform API Resource 'Errors'.

@@ -1,4 +1,7 @@
 module ApiTools
-  ## The api_tools gem version
-  VERSION = '0.0.1'
+
+  # The ApiTools gem version.
+  #
+  VERSION = '0.2.1'
+
 end

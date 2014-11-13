@@ -76,26 +76,26 @@ module ApiTools
     # The options hash contains symbol keys named as follows, with values as
     # described:
     #
-    # +'reference'+:: Reference data Hash, optionality depending upon the error
-    #                code and the reference data its error description mandates.
-    #                Provide key/value pairs where (symbol) keys are names from
-    #                the array of description requirements and values are
-    #                strings. All values are concatenated into a single string,
-    #                comma-separated. Commas within values are escaped with a
-    #                backslash; backslash is itself escaped with a backslash.
+    # +reference+:: Reference data Hash, optionality depending upon the error
+    #               code and the reference data its error description mandates.
+    #               Provide key/value pairs where (symbol) keys are names from
+    #               the array of description requirements and values are
+    #               strings. All values are concatenated into a single string,
+    #               comma-separated. Commas within values are escaped with a
+    #               backslash; backslash is itself escaped with a backslash.
     #
-    #                You must provide that data at a minimum, but can provide
-    #                additional keys too if you so wish. Required keys are
-    #                always included first, in order of appearance in the
-    #                requirements array of the error declaration, followed by
-    #                any extra values in undefined order.
+    #               You must provide that data at a minimum, but can provide
+    #               additional keys too if you so wish. Required keys are
+    #               always included first, in order of appearance in the
+    #               requirements array of the error declaration, followed by
+    #               any extra values in undefined order.
     #
-    #                See also ApiTools::ErrorDescriptions::DomainDescriptions#error
+    #               See also ApiTools::ErrorDescriptions::DomainDescriptions#error
     #
-    # +'message'+::   Optional human-readable for-developer message, +en-nz+
-    #                locale. Default messages are provided for all errors, but
-    #                if you think you can provide something more informative,
-    #                you can do so through this parameter.
+    # +message+::   Optional human-readable for-developer message, +en-nz+
+    #               locale. Default messages are provided for all errors, but
+    #               if you think you can provide something more informative,
+    #               you can do so through this parameter.
     #
     # Example:
     #
@@ -237,15 +237,21 @@ module ApiTools
       )
     end
 
+
+    # DEVELOPER: In the function comment below, RDoc escaping has to be done
+    # for RDocs to make sense. Read every "\\" as a single "\" (or read the
+    # generated docs instead of reading the source code comment below).
+
+
     # When reference data is specified for errors, the reference values are
     # concatenated together into a comma-separated string. Since reference
-    # values can themselves contain commas, comma is escaped with "\," and
-    # "\" escaped with "\\".
+    # values can themselves contain commas, comma is escaped with "\\," and
+    # "\\" escaped with "\\\\".
     #
     # Call here with such a string; return an array of 'unescaped' values.
     #
-    # +str+: Value-escaped ("\\" / "\,") comma-separated string. Unescaped
-    #        commas separate individual values.
+    # +str+:: Value-escaped ("\\\\" / "\\,") comma-separated string. Unescaped
+    #         commas separate individual values.
     #
     def unjoin_and_unescape_commas( str )
 
@@ -265,7 +271,13 @@ module ApiTools
 
   private
 
-    # Given a string, escape "," to "\," and "\" to "\\", returning the result.
+
+    # DEVELOPER: In the function comment below, RDoc escaping has to be done
+    # for RDocs to make sense. Read every "\\" as a single "\" (or read the
+    # generated docs instead of reading the source code comment below).
+
+
+    # Given a string, escape "," to "\\," and "\\" to "\\\\", returning the result.
     #
     # +str+:: String to escape.
     #

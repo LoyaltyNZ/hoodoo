@@ -3,9 +3,9 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Error descriptions - provide a DSL and a container for a
-#           list of known error codes and associated data. Includes the
-#           Loyalty Platform API +platform+ and +generic+ domain codes
-#           by default. Services can declare additional errors.
+#           list of known error codes and associated data. Defines a
+#           platform API's +platform+ and +generic+ domain codes by
+#           default. Services can declare additional errors.
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
 #           09-Oct-2014 (ADH): Updated for Preview Release 8.
