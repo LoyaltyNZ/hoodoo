@@ -3,6 +3,8 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Define documented Platform API Resource 'Transaction'.
+#            Please note that the name 'Transaction' is kind of a place 
+#            holder until (if ever) we decide on something better
 # ----------------------------------------------------------------------
 #           13-Nov-2014 (DAM): Created.
 ########################################################################
