@@ -47,3 +47,5 @@ If working on an installed copy of the gem through normal channels, you should b
 ...and browse to port 8808 on `localhost` to get an index of all gem documentation, including that for ApiTools. Out of the box from GitHub, RDoc precompiled documentation is available but there is a risk it might be out of date. If working on development of the gem in a GitHub repository clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:
 
     rake rerdoc
+
+Some additional higher level hand written documentation may also be present as Markdown data inside the `docs` folder.
