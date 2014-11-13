@@ -204,9 +204,15 @@ describe ApiTools::ServiceMiddleware do
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
 
-      # First we allo "::environment" to be called normally, as this is done
+      # First we allow "::environment" to be called normally, as this is done
       # when retrieving session data to see if we should run in test mode or
       # try to talk to Memcache.
+
+      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_call_original()
+
+      # Same again - this call is made when announcing services for the local
+      # DRb server, checking if we should ignore on-queue settings because we
+      # are in a test environment.
 
       expect(ApiTools::ServiceMiddleware).to receive(:environment).and_call_original()
 

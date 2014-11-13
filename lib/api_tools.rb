@@ -71,10 +71,9 @@ require root+'errors/errors.rb'
 
 require root+'service_middleware/string_inquirer.rb'
 require root+'service_middleware/rack_monkey_patch.rb'
+require root+'service_middleware/service_registry_drb_server.rb'
 require root+'service_middleware/service_middleware.rb'
 require root+'service_middleware/service_endpoint.rb'
-require root+'service_middleware/service_registry_drb_server.rb'
-require root+'service_middleware/service_registry_drb_configuration.rb'
 
 require root+'service_implementations/service_session.rb'
 require root+'service_implementations/service_request.rb'

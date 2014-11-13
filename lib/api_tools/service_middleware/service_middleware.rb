@@ -129,8 +129,8 @@ module ApiTools
     # Options hash +:Host+ and +:Port+ entries are recorded.
     #
     def self.record_host_and_port( options = {} )
-      @recorded_host = options[ :Host ]
-      @recorded_port = options[ :Port ]
+      @@recorded_host = options[ :Host ]
+      @@recorded_port = options[ :Port ]
     end
 
     # Initialize the middleware instance.
@@ -315,7 +315,8 @@ module ApiTools
     #                    endpoint.
     #
     def announce_presence_of( services )
-      if self.class.on_queue?
+
+      if ! self.class.environment.test? && self.class.on_queue?
 
         # Queue-based announcement goes here
 
@@ -325,22 +326,45 @@ module ApiTools
         # request arrives, because in part it might change due to clustering.
         # For local development on an assumed single instance server, we can
         # ask Ruby itself for all Rack::Server instances, expecting just one.
+        # If there isn't just one, we rely on the Rack monkey patch or a
+        # hard coded default.
 
+        host    = nil
+        port    = nil
         servers = ObjectSpace.each_object( Rack::Server )
-        return unless servers.count == 1
 
-        server  = servers.first
-        host    = server.options[ :Host ] || @recorded_host || '127.0.0.1'
-        port    = server.options[ :Port ] || @reporded_port || 9292
+        if servers.count == 1
+          server = servers.first
+          host   = server.options[ :Host ]
+          port   = server.options[ :Port ]
+        end
+
+        host = @@recorded_host if host.nil? && defined?( @@recorded_host )
+        port = @@recorded_port if port.nil? && defined?( @@recorded_port )
+
+        host ||= '127.0.0.1'
+        port ||= 9292
+
+        # URI for DRb server used during local machine development as a registry
+        # of service endpoints. Whichever service starts first runs the server
+        # which others connect to if subsequently started.
+        #
+        # Use IP address, rather than 'localhost' here, to ensure that "address
+        # in use" errors are raised immediately if a second server startup attempt
+        # is made:
+        #
+        #   https://bugs.ruby-lang.org/issues/3052
+        #
+        drb_uri = "druby://127.0.0.1:#{ ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
 
         # Start the DRb server, or connect to it if already running.
         #
         begin
-          DRb.start_service( DRB_URI, FRONT_OBJECT )
-          @drb_server = DRbObject.new_with_uri( DRB_URI )
+          DRb.start_service( drb_uri, FRONT_OBJECT )
+          @drb_service = DRbObject.new_with_uri( drb_uri )
         rescue Errno::EADDRINUSE => e
           DRb.start_service
-          @drb_server = DRbObject.new_with_uri( DRB_URI )
+          @drb_service = DRbObject.new_with_uri( drb_uri )
         end
 
         # Announce our local services.
@@ -348,7 +372,7 @@ module ApiTools
         services.each do | service |
           interface = service[ :interface ]
 
-          @drb_server.add(
+          @drb_service.add(
             interface.resource,
             interface.version,
             "http://#{ host }:#{ port }#{ service[ :path ] }"
@@ -1051,7 +1075,7 @@ module ApiTools
     #
     def remote_service_for( resource, version = 1 )
       begin
-        @drb_server.find( resource, version )
+        @drb_service.find( resource, version )
       rescue
         nil
       end
@@ -1366,6 +1390,19 @@ module ApiTools
     #   service_endpoint.rb
     #   service_registry_drb_server.rb
     #   service_registry_drb_configuration.rb
+
+    # The following must appear at the end of this class definition.
+
+    # For local development, a DRb service is used. We thus must
+    # "disable eval() and friends":
+    #
+    # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
+    #
+    $SAFE = 1
+
+    # Singleton "Front object" for the DRB service used in local development.
+    #
+    FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
 
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'

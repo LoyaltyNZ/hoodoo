@@ -83,4 +83,132 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
       DRb.stop_service
     end
   end
+
+  # A lot of this is copied from service_middleware_multi_spec.rb and
+  # it'd be cleaner if all these tests were in that one file, but it
+  # is nice to keep the tests specifically aimed at DRb here (even if
+  # a whole bunch of other stuff gets caught in the integration test).
+
+  @time_now = Time.now.to_s
+
+  class RSpecTestTimeImplementation < ApiTools::ServiceImplementation
+    def list( context )
+      context.response.set_resources( [ { 'time' => @time_now } ] )
+    end
+  end
+
+  class RSpecTestTimeInterface < ApiTools::ServiceInterface
+    interface( :Time ) { endpoint :time, RSpecTestTimeImplementation }
+  end
+
+  class RSpecTestTime < ApiTools::ServiceApplication
+    comprised_of RSpecTestTimeInterface
+  end
+
+  class RSpecTestClockImplementation < ApiTools::ServiceImplementation
+    def list( context )
+      context.response.set_resources( context.resource( :Time ).list() + [ { 'clock' => 'responded' } ] )
+    end
+  end
+
+  class RSpecTestClockInterface < ApiTools::ServiceInterface
+    interface( :Clock ) { endpoint :clock, RSpecTestClockImplementation }
+  end
+
+  class RSpecTestClock < ApiTools::ServiceApplication
+    comprised_of RSpecTestClockInterface
+  end
+
+  context 'via middleware' do
+
+    # Make an HTTP GET request using the given class to the given path and port.
+
+    def run_request( path, port )
+      headers    = { 'Content-Type' => 'application/json; charset=utf-8' }
+      remote_uri = URI.parse( "http://127.0.0.1:#{ port }/#{ path }" )
+      http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
+      request    = Net::HTTP::Get.new( remote_uri.request_uri() )
+
+      request.initialize_http_header( headers )
+      return http.request( request )
+    end
+
+    before :all do
+
+      ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = ApiTools::Utilities.spare_port().to_s
+
+      # Bring up the 'Time' resource endpoint server.
+
+      @port1   = ApiTools::Utilities.spare_port()
+      @thread1 = Thread.start do
+        app1 = Rack::Builder.new do
+          use ApiTools::ServiceMiddleware
+          run RSpecTestClock.new
+        end
+
+        # This command never returns. The Ruby thread is not really
+        # killable or manageable at all; we just let it die when the
+        # whole test suite exits.
+
+        Rack::Server.start(
+          :app  => app1,
+          :Host => '127.0.0.1',
+          :Port => @port1,
+          :server => :webrick
+        )
+      end
+
+      # Wait for the server to come up. I tried many approaches. In the end,
+      # only this hacky polling-talk-to-server code worked reliably.
+
+      repeat = true
+      while repeat
+        begin
+          run_request('', @port1)
+          repeat = false
+        rescue Errno::ECONNREFUSED
+          sleep 0.1
+        end
+      end
+
+      # Same for the 'Clock' resource endpoint server.
+
+      @port2   = ApiTools::Utilities.spare_port()
+      @thread2 = Thread.start do
+        app2 = Rack::Builder.new do
+          use ApiTools::ServiceMiddleware
+          run RSpecTestTime.new
+        end
+        Rack::Server.start(
+          :app  => app2,
+          :Host => '127.0.0.1',
+          :Port => @port2,
+          :server => :webrick
+        )
+      end
+
+      repeat = true
+      while repeat
+        begin
+          run_request('', @port2)
+          repeat = false
+        rescue Errno::ECONNREFUSED
+          sleep 0.1
+        end
+      end
+    end
+
+    it 'properly supports service discovery' do
+      response = run_request( '/v1/clock', @port1 )
+      expect( response.code ).to eq( '200' )
+
+      parsed = JSON.parse( response.body )
+      expect( parsed ).to eq( {
+        '_data' => [
+          { 'time'  => @time_now   },
+          { 'clock' => 'responded' }
+        ]
+      } )
+    end
+  end
 end

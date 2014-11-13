@@ -74,11 +74,14 @@ module ApiTools
     # for it and it being returned. This utility method is usually therefore
     # used for test environments only.
     #
+    # http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
+    #
     def self.spare_port
-      server = TCPServer.new( '127.0.0.1', 0 )
-      port   = server.addr[ 1 ]
+      socket = Socket.new( :INET, :STREAM, 0 )
+      socket.bind( Addrinfo.tcp( '127.0.0.1', 0 ) )
+      port = socket.local_address.ip_port
+      socket.close
 
-      server.close
       return port
     end
   end

@@ -204,19 +204,6 @@ class TestCallServiceApplication < ApiTools::ServiceApplication
   comprised_of TestCallServiceInterface
 end
 
-# Find a spare (unused / closed) port on 127.0.0.1
-# http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
-
-require 'socket'
-
-def find_unused_port
-  socket = Socket.new( :INET, :STREAM, 0 )
-  socket.bind( Addrinfo.tcp( '127.0.0.1', 0 ) )
-  port = socket.local_address.ip_port
-  socket.close
-  return port
-end
-
 # Make an HTTP request using the given class to the given path (string, with
 # query string if you want one) with optional extra headers (as a name/value
 # Hash) and body data (as a String containing JSON data).
@@ -241,7 +228,7 @@ describe ApiTools::ServiceMiddleware do
 
     # Bring up the web server running the echo service inside @thread.
 
-    @port   = find_unused_port()
+    @port   = ApiTools::Utilities.spare_port()
     @thread = Thread.start do
       app = Rack::Builder.new do
         use ApiTools::ServiceMiddleware
