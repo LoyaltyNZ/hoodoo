@@ -1,14 +1,16 @@
-Thu, 13 Nov 2014 11:21:53 +1300
+Thu, 13 Nov 2014 13:40:11 +1300
+README.md	Thu, 13 Nov 2014 13:40:09 +1300
+lib/api_tools.rb	Thu, 13 Nov 2014 13:08:48 +1300
 lib/api_tools/auth/platform_auth.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/data/documented_array.rb	Fri, 03 Oct 2014 13:46:40 +1300
 lib/api_tools/data/documented_dsl.rb	Mon, 10 Nov 2014 15:13:42 +1300
 lib/api_tools/data/documented_hash.rb	Mon, 10 Nov 2014 12:47:19 +1300
 lib/api_tools/data/documented_object.rb	Fri, 07 Nov 2014 14:51:58 +1300
 lib/api_tools/data/documented_presenter.rb	Thu, 06 Nov 2014 15:50:25 +1300
-lib/api_tools/data/resources/account.rb	Mon, 10 Nov 2014 12:48:39 +1300
+lib/api_tools/data/resources/account.rb	Thu, 13 Nov 2014 13:11:49 +1300
 lib/api_tools/data/resources/balance.rb	Mon, 10 Nov 2014 12:48:39 +1300
 lib/api_tools/data/resources/currency.rb	Fri, 03 Oct 2014 13:46:40 +1300
-lib/api_tools/data/resources/errors.rb	Wed, 12 Nov 2014 17:14:50 +1300
+lib/api_tools/data/resources/errors.rb	Thu, 13 Nov 2014 13:11:43 +1300
 lib/api_tools/data/resources/involvement.rb	Wed, 05 Nov 2014 10:35:11 +1300
 lib/api_tools/data/resources/member.rb	Mon, 10 Nov 2014 12:48:39 +1300
 lib/api_tools/data/resources/outlet.rb	Wed, 05 Nov 2014 10:59:40 +1300
@@ -17,7 +19,7 @@ lib/api_tools/data/resources/product.rb	Fri, 03 Oct 2014 13:46:40 +1300
 lib/api_tools/data/resources/programme.rb	Fri, 31 Oct 2014 10:06:47 +1300
 lib/api_tools/data/resources/purchase.rb	Tue, 28 Oct 2014 10:17:06 +1300
 lib/api_tools/data/resources/token.rb	Mon, 10 Nov 2014 12:48:39 +1300
-lib/api_tools/data/resources/version.rb	Wed, 12 Nov 2014 17:14:50 +1300
+lib/api_tools/data/resources/version.rb	Thu, 13 Nov 2014 13:11:32 +1300
 lib/api_tools/data/resources/voucher.rb	Wed, 12 Nov 2014 17:13:46 +1300
 lib/api_tools/data/types/basket.rb	Wed, 05 Nov 2014 10:51:56 +1300
 lib/api_tools/data/types/basket_item.rb	Tue, 28 Oct 2014 10:17:07 +1300
@@ -27,11 +29,11 @@ lib/api_tools/data/types/constraints.rb	Wed, 05 Nov 2014 11:22:14 +1300
 lib/api_tools/data/types/currency.rb	Wed, 12 Nov 2014 15:28:02 +1300
 lib/api_tools/data/types/currency_amount.rb	Wed, 05 Nov 2014 11:19:12 +1300
 lib/api_tools/data/types/currency_earner.rb	Tue, 11 Nov 2014 10:51:06 +1300
-lib/api_tools/data/types/error_primitive.rb	Wed, 12 Nov 2014 17:14:50 +1300
+lib/api_tools/data/types/error_primitive.rb	Thu, 13 Nov 2014 13:12:36 +1300
 lib/api_tools/data/types/product.rb	Wed, 05 Nov 2014 11:19:51 +1300
 lib/api_tools/data/types/voucher_earner.rb	Tue, 11 Nov 2014 10:51:06 +1300
-lib/api_tools/errors/error_descriptions.rb	Mon, 10 Nov 2014 13:15:16 +1300
-lib/api_tools/errors/errors.rb	Thu, 06 Nov 2014 14:33:23 +1300
+lib/api_tools/errors/error_descriptions.rb	Thu, 13 Nov 2014 13:13:32 +1300
+lib/api_tools/errors/errors.rb	Thu, 13 Nov 2014 13:21:54 +1300
 lib/api_tools/events/platform_event.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/generator.rb	Tue, 28 Oct 2014 10:17:07 +1300
 lib/api_tools/json_errors.rb	Tue, 23 Sep 2014 12:39:09 +1200
@@ -59,7 +61,7 @@ lib/api_tools/presenters/types/uuid.rb	Thu, 13 Nov 2014 11:21:12 +1300
 lib/api_tools/service_implementations/service_application.rb	Wed, 12 Nov 2014 17:13:46 +1300
 lib/api_tools/service_implementations/service_context.rb	Fri, 31 Oct 2014 13:59:09 +1300
 lib/api_tools/service_implementations/service_implementation.rb	Fri, 03 Oct 2014 13:46:40 +1300
-lib/api_tools/service_implementations/service_interface.rb	Mon, 10 Nov 2014 15:13:42 +1300
+lib/api_tools/service_implementations/service_interface.rb	Thu, 13 Nov 2014 13:14:36 +1300
 lib/api_tools/service_implementations/service_request.rb	Thu, 13 Nov 2014 11:21:12 +1300
 lib/api_tools/service_implementations/service_response.rb	Thu, 06 Nov 2014 16:21:29 +1300
 lib/api_tools/service_implementations/service_session.rb	Wed, 12 Nov 2014 17:13:46 +1300
@@ -72,5 +74,4 @@ lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 14:46:00 +1
 lib/api_tools/thread_safe.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/utilities.rb	Tue, 07 Oct 2014 16:36:26 +1300
 lib/api_tools/uuid.rb	Thu, 13 Nov 2014 11:21:12 +1300
-lib/api_tools/version.rb	Fri, 03 Oct 2014 13:46:40 +1300
-lib/api_tools.rb	Wed, 12 Nov 2014 17:13:46 +1300
+lib/api_tools/version.rb	Thu, 13 Nov 2014 13:09:13 +1300

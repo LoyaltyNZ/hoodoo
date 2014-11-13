@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>RDoc Documentation</title>
+<title>ApiTools</title>
 
 <link href="./fonts.css" rel="stylesheet">
 <link href="./rdoc.css" rel="stylesheet">
@@ -55,7 +55,16 @@
   </div>
 
   <div id="project-metadata">
-    
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./README_md.html">README</a>
+  
+  </ul>
+</div>
+
     <div id="classindex-section" class="nav-section">
   <h3>Class and Module Index</h3>
 
@@ -232,7 +241,107 @@
 </nav>
 
 <main role="main">
-<p>This is the API documentation for RDoc Documentation.
+
+
+<h1 id="label-ApiTools"><a href="ApiTools.html">ApiTools</a><span><a href="#label-ApiTools">&para;</a> <a href="#documentation">&uarr;</a></span></h1>
+
+<p><a href="https://magnum.travis-ci.com/LoyaltyNZ/api_tools"><img
+src="https://magnum.travis-ci.com/LoyaltyNZ/api_tools.svg?token=qenLSjTyBsExZFCraVut&branch=master"></a></p>
+
+<p>Simplify the implementation of services within an API-based software
+platform.</p>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>Add the gem to your <code>Gemfile</code>:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;api_tools&#39;</span>, :<span class="ruby-identifier">git</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;git@github.com:LoyaltyNZ/api_tools.git&#39;</span>
+</pre>
+
+<p>Require api_tools when needed:</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;api_tools&#39;</span>
+</pre>
+
+<p>Functionality includes:</p>
+<ul><li>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to
+any API/class – <a
+href="ApiTools/ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>, <a
+href="ApiTools/Errors.html">ApiTools::Errors</a></p>
+</li><li>
+<p><em>Unified Logger:</em> A single logger for use with platform or local
+logs – <a href="ApiTools/Logger.html">ApiTools::Logger</a></p>
+</li><li>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering
+– <a
+href="ApiTools/Presenters/BasePresenter.html">ApiTools::Presenters::BasePresenter</a>,
+<a
+href="ApiTools/Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a></p>
+</li><li>
+<p><em>Type and Resource Presenter Layer:</em> As above, but for formally
+defined platform API level Types and Resources that would be documented (by
+the person defining the API) for API callers – <a
+href="ApiTools/Data/DocumentedPresenter.html">ApiTools::Data::DocumentedPresenter</a>,
+<a
+href="ApiTools/Data/DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a></p>
+</li><li>
+<p><em>Middleware:</em> The heart of services; Rake-based service applications
+(think Sinatra, Grape, Rails…) – <a
+href="ApiTools/ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>; but
+start at <a
+href="ApiTools/ServiceApplication.html">ApiTools::ServiceApplication</a>
+and see also <a
+href="ApiTools/ServiceInterface.html">ApiTools::ServiceInterface</a>, <a
+href="ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+and related classes <a
+href="ApiTools/ServiceRequest.html">ApiTools::ServiceRequest</a>, <a
+href="ApiTools/ServiceResponse.html">ApiTools::ServiceResponse</a>, <a
+href="ApiTools/ServiceSession.html">ApiTools::ServiceSession</a>, <a
+href="ApiTools/ServiceContext.html">ApiTools::ServiceContext</a></p>
+</li><li>
+<p><em>Platform Sessions:</em> Authentication of sessions, session context –
+<a href="ApiTools/ServiceSession.html">ApiTools::ServiceSession</a></p>
+</li><li>
+<p><em>Platform Events:</em> Publishes Platform Events when running on a
+queue-based infrastructure – <a
+href="ApiTools/Events/PlatformEvent.html">ApiTools::Events::PlatformEvent</a></p>
+</li></ul>
+
+<p>Master documentation is through RDoc (see below).</p>
+
+<h2 id="label-Tests">Tests<span><a href="#label-Tests">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>Run the tests:</p>
+
+<pre>rake</pre>
+
+<p>…or…</p>
+
+<pre>rspec</pre>
+
+<h2 id="label-Documentation+%28RDoc%29">Documentation (RDoc)<span><a href="#label-Documentation+%28RDoc%29">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+
+<p>The <a href="ApiTools.html">ApiTools</a> public API is documented through
+source code comments that are designed to produce non-trivially useful
+output, with examples and workflow indications, when RDoc turns them into
+HTML. See earlier for some pointers to classes of interest that will be
+linked to the relevant class documentation if you read all of this through
+the RDoc output.</p>
+
+<p>If working on an installed copy of the gem through normal channels, you
+should be able to issue this command:</p>
+
+<pre>gem server</pre>
+
+<p>…and browse to port 8808 on <code>localhost</code> to get an index of all
+gem documentation, including that for <a href="ApiTools.html">ApiTools</a>.
+Out of the box from GitHub, RDoc precompiled documentation is available but
+there is a risk it might be out of date. If working on development of the
+gem in a GitHub repository clone, you can generate or entirely regenerate
+RDoc files (re-RDoc) with:</p>
+
+<pre>rake rerdoc</pre>
 </main>
 
 

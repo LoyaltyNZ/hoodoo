@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>class ApiTools::Errors - RDoc Documentation</title>
+<title>class ApiTools::Errors - ApiTools</title>
 
 <link href="../fonts.css" rel="stylesheet">
 <link href="../rdoc.css" rel="stylesheet">
@@ -277,33 +277,28 @@ a default instance describing <code>platform</code> and
 
 <p>The options hash contains symbol keys named as follows, with values as
 described:</p>
-<dl class="rdoc-list note-list"><dt>+&#39;reference&#39;+
+<dl class="rdoc-list note-list"><dt><code>reference</code>
 <dd>
-<p>Reference data Hash, optionality depending upon the error</p>
-</dd></dl>
+<p>Reference data Hash, optionality depending upon the error code and the
+reference data its error description mandates. Provide key/value pairs
+where (symbol) keys are names from the array of description requirements
+and values are strings. All values are concatenated into a single string,
+comma-separated. Commas within values are escaped with a backslash;
+backslash is itself escaped with a backslash.</p>
 
-<pre>code and the reference data its error description mandates.
-Provide key/value pairs where (symbol) keys are names from
-the array of description requirements and values are
-strings. All values are concatenated into a single string,
-comma-separated. Commas within values are escaped with a
-backslash; backslash is itself escaped with a backslash.
+<p>You must provide that data at a minimum, but can provide additional keys
+too if you so wish. Required keys are always included first, in order of
+appearance in the requirements array of the error declaration, followed by
+any extra values in undefined order.</p>
 
-You must provide that data at a minimum, but can provide
-additional keys too if you so wish. Required keys are
-always included first, in order of appearance in the
-requirements array of the error declaration, followed by
-any extra values in undefined order.
-
-See also ApiTools::ErrorDescriptions::DomainDescriptions#error</pre>
-<dl class="rdoc-list note-list"><dt>+&#39;message&#39;+
+<p>See also <a
+href="ErrorDescriptions/DomainDescriptions.html#method-i-error">ApiTools::ErrorDescriptions::DomainDescriptions#error</a></p>
+</dd><dt><code>message</code>
 <dd>
-<p>Optional human-readable for-developer message, <code>en-nz</code></p>
+<p>Optional human-readable for-developer message, <code>en-nz</code> locale.
+Default messages are provided for all errors, but if you think you can
+provide something more informative, you can do so through this parameter.</p>
 </dd></dl>
-
-<pre>locale. Default messages are provided for all errors, but
-if you think you can provide something more informative,
-you can do so through this parameter.</pre>
 
 <p>Example:</p>
 
@@ -642,22 +637,22 @@ collection representing the formalised resource.</p>
           
           <p>When reference data is specified for errors, the reference values are
 concatenated together into a comma-separated string. Since reference values
-can themselves contain commas, comma is escaped with “,” and “&quot;
-escaped with ”\“.</p>
+can themselves contain commas, comma is escaped with “\,” and “\” escaped
+with “\\”.</p>
 
 <p>Call here with such a string; return an array of &#39;unescaped&#39;
 values.</p>
-
-<p><code>str</code>: Value-escaped (“\” / “,”) comma-separated string.
-Unescaped</p>
-
-<pre>commas separate individual values.</pre>
+<dl class="rdoc-list note-list"><dt><code>str</code>
+<dd>
+<p>Value-escaped (“\\” / “\,”) comma-separated string. Unescaped commas
+separate individual values.</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="unjoin_and_unescape_commas-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 250</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>
