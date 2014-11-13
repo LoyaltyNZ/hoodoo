@@ -1,8 +1,8 @@
-# api_tools
+# ApiTools
 
 [![Build Status](https://magnum.travis-ci.com/LoyaltyNZ/api_tools.svg?token=qenLSjTyBsExZFCraVut&branch=master)](https://magnum.travis-ci.com/LoyaltyNZ/api_tools)
 
-A gem for simplifying the implementation of Loyalty Platform services.
+Simplify the implementation of services within an API-based software platform.
 
 ## Usage
 
@@ -16,40 +16,30 @@ Require api_tools when needed:
 
 Functionality includes:
 
-| Component             | Description                                                 |
-|:----------------------|:------------------------------------------------------------|
-| Sinatra Helpers       | A set of sinatra extensions/modules to simplify API generation  |
-| Unified Error Helpers | Adds standard Platform error capability to any API/class    |
-| Unified Logger        | A single logger for eventual use with Platform logs         |
-| Presenter Layer       | A presenter framework including input validation            |
-| Platform Session Auth | Authenticates Sessions and gets session context |
-| Platform Events       | Publishes Platform Events |
+* _Unified Error Helpers:_ Adds standard platform error capability to any API/class - ApiTools::ErrorDescriptions, ApiTools::Errors
+* _Unified Logger:_ A single logger for use with platform or local logs - ApiTools::Logger
+* _Generic Presenter Layer:_ Input and output validation and rendering - ApiTools::Presenters::BasePresenter, ApiTools::Presenters::BaseDSL
+* _Type and Resource Presenter Layer:_ As above, but for formally defined platform API level Types and Resources that would be documented (by the person defining the API) for API callers - ApiTools::Data::DocumentedPresenter, ApiTools::Data::DocumentedDSL
+* _Middleware:_ The heart of services; Rake-based service applications (think Sinatra, Grape, Rails...) - ApiTools::ServiceMiddleware; but start at ApiTools::ServiceApplication and see also ApiTools::ServiceInterface, ApiTools::ServiceImplementation and related classes ApiTools::ServiceRequest, ApiTools::ServiceResponse, ApiTools::ServiceSession, ApiTools::ServiceContext
+* _Platform Sessions:_ Authentication of sessions, session context - ApiTools::ServiceSession
+* _Platform Events:_ Publishes Platform Events when running on a queue-based infrastructure - ApiTools::Events::PlatformEvent
 
-Please see:
+Master documentation is through RDoc.
 
-* [Descriptive documentation](docs/usage.md)
-* [rdoc documentation here](docs/rdoc/index.html).
+* [RDoc documentation here](docs/rdoc/index.html).
 
-## Development
+## Tests
 
-Create a Service template folder
+Run the tests:
 
-    api_tools SERVICE_NAME
+    rake
 
-### Roadmap
-
-| Change                     | Description                                                 |
-|:---------------------------|:------------------------------------------------------------|
-| ApiTools::PlatformContext  | Change to use full `X-Session-ID` with Platform Session Auth.  |
-
-### Specs
-
-Run the specs:
+...or...
 
     rspec
 
-### rdoc
+## Documentation (rdoc)
 
-Regenerate rdoc:
+Regenerate RDoc files (re-RDoc):
 
-    bundle exec rdoc --op docs/rdoc lib/
+    rake rerdoc
