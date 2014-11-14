@@ -1169,7 +1169,7 @@ module ApiTools
         return add_404.call()
 
       else
-        remote_uri << "/#{ ident }" unless ident.nil?
+        remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
 
