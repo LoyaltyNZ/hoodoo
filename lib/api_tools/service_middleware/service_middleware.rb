@@ -1049,7 +1049,7 @@ module ApiTools
     # +version+::  Version of interface required as an Integer. Optional -
     #              default is 1.
     #
-    # Returns a @services entry (see implementation of #initialize) if local,
+    # Returns an @services entry (see implementation of #initialize) if local,
     # else +nil+.
     #
     def local_service_for( resource, version = 1 )
@@ -1097,7 +1097,7 @@ module ApiTools
     #                 +nil+ or absent.
     # +resource+::    The String or Symbol resource name, e.g. "Product".
     # +version+::     The Integer endpoint API version, e.g. 2.
-    # +http_method+:: HTTP method as a String, e.g. +'GET'+, +'DELETE'+.
+    # +http_method+:: HTTP method as a String, e.g. "+GET+", "+DELETE+".
     # +ident+::       ID / UUID / similar; first and only path component.
     # +query_hash+::  Converted to query string.
     # +body_hash+::   Converted to body data.
@@ -1105,7 +1105,7 @@ module ApiTools
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # +@service_response+ is updated on exit. If this says "halt processing",
+    # @service_response is updated on exit. If this says "halt processing",
     # errors were generated. Ignore the function return value. Otherwise,
     # returns a Has equivalent of the JSON resource representation in the
     # non-list-action cases, else an array of zero or more JSON resource

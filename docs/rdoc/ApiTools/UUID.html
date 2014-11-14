@@ -115,7 +115,10 @@ enough, without having to worry about ID synchronisation across instances.</p>
       
         <dt id="MATCH_16_PAIRS_OF_HEX_DIGITS">MATCH_16_PAIRS_OF_HEX_DIGITS
         
-        <dd><p><a
+        <dd><p>A regexp which, as its name suggests, only matches a string that contains
+16 pairs of hex digits (with upper or lower case A-F).</p>
+
+<p><a
 href="http://stackoverflow.com/questions/287684/regular-expression-to-validate-hex-string">stackoverflow.com/questions/287684/regular-expression-to-validate-hex-string</a></p>
         
       
@@ -151,7 +154,7 @@ href="http://stackoverflow.com/questions/287684/regular-expression-to-validate-h
 
           
           <div class="method-source-code" id="generate-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/uuid.rb, line 20</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/uuid.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">generate</span>
   <span class="ruby-constant">UUIDTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">random_create</span>().<span class="ruby-identifier">hexdigest</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -198,7 +201,7 @@ row in a database.</p>
 
           
           <div class="method-source-code" id="valid-3F-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/uuid.rb, line 35</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/uuid.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">uuid</span> )
   <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> )                           <span class="ruby-operator">&amp;&amp;</span>
   ( <span class="ruby-identifier">uuid</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">MATCH_16_PAIRS_OF_HEX_DIGITS</span> ) <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>  <span class="ruby-operator">&amp;&amp;</span>

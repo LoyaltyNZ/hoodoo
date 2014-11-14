@@ -162,10 +162,12 @@ Default is 1.</p>
 </dd></dl>
 
 <p>When calls are made through endpoints, the caller&#39;s call context data
-is updated. The ApiTools::ServerResponse instance in the context will hold
-error details, if there were any. Callers must always check their
-ApiTools::ServerResponse#halt_processing? value and if <code>true</code>
-should exit early.</p>
+is updated. The <a
+href="../ServiceResponse.html">ApiTools::ServiceResponse</a> instance in
+the context will hold error details, if there were any. Callers must always
+check their <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value and if <code>true</code> should exit early.</p>
 
 <p>Endpoint methods for listing, creating etc. resources have common
 parameters some or all of which are used across the method
@@ -258,7 +260,9 @@ request (i.e. JSON, as a Hash).</p>
 <p>Returns a Hash representation of the new resource instance, unless
 there&#39;s an error (check the <a
 href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
+request object&#39;s <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value).</p>
           
           
 
@@ -312,7 +316,9 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 <p>Returns a Hash representation of the now-deleted resource instance, unless
 there&#39;s an error (check the <a
 href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
+request object&#39;s <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value).</p>
           
           
 
@@ -402,7 +408,9 @@ and the platform&#39;s common all-resource behaviour.</p>
 <p>Returns an array of zero or more resource representations as Hashes, unless
 there&#39;s an error (check the <a
 href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
+request object&#39;s <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value).</p>
           
           
 
@@ -455,7 +463,9 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 <p>Returns a Hash representation of a resource instance, unless there&#39;s an
 error (check the <a
 href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
+request object&#39;s <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value).</p>
           
           
 
@@ -512,7 +522,9 @@ request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
 <p>Returns a Hash representation of the updated resource instance, unless
 there&#39;s an error (check the <a
 href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s ApiTools::ServerResponse#halt_processing? value).</p>
+request object&#39;s <a
+href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
+value).</p>
           
           
 

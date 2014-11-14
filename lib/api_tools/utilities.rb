@@ -17,17 +17,18 @@ module ApiTools
 
     # Given a hash, returns the same hash with keys converted to symbols.
     # Works with nested hashes. Taken from:
-    #   http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
+    #
+    # http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
     #
     # *WARNING!* In Ruby, Symbols are not garbage collected and will stay in
-    # RAM forever. *DO NOT* symbolize hashes containing data provided by an
+    # RAM forever. *DO* *NOT* symbolize hashes containing data provided by an
     # API caller (or any generalised external data) unless you've already
     # made sure that the things you are turning into Symbols are white
     # listed. Otherwise, a malicious (or accidentally misbehaving) caller
     # could cause your code to symbolize a Hash with lots of different strings,
     # filling up memory. Related to:
     #
-    #   https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+    # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
     #
     # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
     #         to symbols. Hashes with values that are Arrays of Hashes will be
@@ -42,7 +43,7 @@ module ApiTools
       return obj
     end
 
-    # The keys-to-strings equivalnet of ::symbolize.
+    # The keys-to-strings equivalent of ::symbolize.
     #
     # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
     #         to strings. Hashes with values that are Arrays of Hashes will be

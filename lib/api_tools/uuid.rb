@@ -11,6 +11,9 @@ module ApiTools
   #
   class UUID
 
+    # A regexp which, as its name suggests, only matches a string that
+    # contains 16 pairs of hex digits (with upper or lower case A-F).
+    #
     # http://stackoverflow.com/questions/287684/regular-expression-to-validate-hex-string
     #
     MATCH_16_PAIRS_OF_HEX_DIGITS = /^([[:xdigit:]]{2}){16}$/

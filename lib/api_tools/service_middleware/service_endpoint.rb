@@ -52,9 +52,9 @@ module ApiTools
       #              endpoint. Integer. Default is 1.
       #
       # When calls are made through endpoints, the caller's call context data
-      # is updated. The ApiTools::ServerResponse instance in the context will
+      # is updated. The ApiTools::ServiceResponse instance in the context will
       # hold error details, if there were any. Callers must always check their
-      # ApiTools::ServerResponse#halt_processing? value and if +true+ should
+      # ApiTools::ServiceResponse#halt_processing? value and if +true+ should
       # exit early.
       #
       # Endpoint methods for listing, creating etc. resources have common
@@ -105,7 +105,7 @@ module ApiTools
       #
       # Returns an array of zero or more resource representations as Hashes,
       # unless there's an error (check the ApiTools::ServiceContext instance's
-      # request object's ApiTools::ServerResponse#halt_processing? value).
+      # request object's ApiTools::ServiceResponse#halt_processing? value).
       #
       def list( query_hash = nil )
         @middleware.inter_service(
@@ -126,7 +126,7 @@ module ApiTools
       #
       # Returns a Hash representation of a resource instance, unless there's an
       # error (check the ApiTools::ServiceContext instance's request object's
-      # ApiTools::ServerResponse#halt_processing? value).
+      # ApiTools::ServiceResponse#halt_processing? value).
       #
       def show( ident, query_hash = nil )
         @middleware.inter_service(
@@ -148,7 +148,7 @@ module ApiTools
       #
       # Returns a Hash representation of the new resource instance, unless
       # there's an error (check the ApiTools::ServiceContext instance's request
-      # object's ApiTools::ServerResponse#halt_processing? value).
+      # object's ApiTools::ServiceResponse#halt_processing? value).
       #
       def create( body_hash, query_hash = nil )
         @middleware.inter_service(
@@ -171,7 +171,7 @@ module ApiTools
       #
       # Returns a Hash representation of the updated resource instance, unless
       # there's an error (check the ApiTools::ServiceContext instance's request
-      # object's ApiTools::ServerResponse#halt_processing? value).
+      # object's ApiTools::ServiceResponse#halt_processing? value).
       #
       def update( ident, body_hash, query_hash = nil )
         @middleware.inter_service(
@@ -194,7 +194,7 @@ module ApiTools
       #
       # Returns a Hash representation of the now-deleted resource instance,
       # unless there's an error (check the ApiTools::ServiceContext instance's
-      # request object's ApiTools::ServerResponse#halt_processing? value).
+      # request object's ApiTools::ServiceResponse#halt_processing? value).
       #
       def delete( ident, query_hash = nil )
         @middleware.inter_service(

@@ -66,6 +66,8 @@
 
   <ul class="link-list" role="directory">
     
+    <li ><a href="#method-c-spare_port">::spare_port</a>
+    
     <li ><a href="#method-c-stringify">::stringify</a>
     
     <li ><a href="#method-c-symbolize">::symbolize</a>
@@ -108,6 +110,52 @@
        </header>
 
     
+      <div id="method-c-spare_port" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">spare_port</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Return a spare TCP port on localhost. This is free at the instant of
+calling, though of course if you have anything in other local machine
+processes/threads running which might start using ports at any moment,
+there&#39;s a chance of the free port getting claimed in between you asking
+for it and it being returned. This utility method is usually therefore used
+for test environments only.</p>
+
+<p><a
+href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby">stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</a></p>
+          
+          
+
+          
+          <div class="method-source-code" id="spare_port-source">
+            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">spare_port</span>
+  <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-value">0</span> )
+  <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-value">0</span> ) )
+  <span class="ruby-identifier">port</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">local_address</span>.<span class="ruby-identifier">ip_port</span>
+  <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">close</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">port</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-c-stringify" class="method-detail ">
         
         <div class="method-heading">
@@ -121,7 +169,7 @@
 
         <div class="method-description">
           
-          <p>The keys-to-strings equivalnet of <a
+          <p>The keys-to-strings equivalent of <a
 href="Utilities.html#method-c-symbolize">::symbolize</a>.</p>
 <dl class="rdoc-list note-list"><dt><code>obj</code>
 <dd>
@@ -137,7 +185,7 @@ an Array of Symbols).</p>
 
           
           <div class="method-source-code" id="stringify-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 52</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">obj</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>         <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
@@ -169,17 +217,20 @@ an Array of Symbols).</p>
           <p>Given a hash, returns the same hash with keys converted to symbols. Works
 with nested hashes. Taken from:</p>
 
-<pre>http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</pre>
+<p><a
+href="http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash">stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</a></p>
 
 <p><strong>WARNING!</strong> In Ruby, Symbols are not garbage collected and
-will stay in RAM forever. *DO NOT* symbolize hashes containing data
-provided by an API caller (or any generalised external data) unless
-you&#39;ve already made sure that the things you are turning into Symbols
-are white listed. Otherwise, a malicious (or accidentally misbehaving)
-caller could cause your code to symbolize a Hash with lots of different
-strings, filling up memory. Related to:</p>
+will stay in RAM forever. <strong>DO</strong> <strong>NOT</strong>
+symbolize hashes containing data provided by an API caller (or any
+generalised external data) unless you&#39;ve already made sure that the
+things you are turning into Symbols are white listed. Otherwise, a
+malicious (or accidentally misbehaving) caller could cause your code to
+symbolize a Hash with lots of different strings, filling up memory. Related
+to:</p>
 
-<pre>https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/</pre>
+<p><a
+href="https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269">www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269</a>/</p>
 <dl class="rdoc-list note-list"><dt><code>obj</code>
 <dd>
 <p>Hash or Array of Hashes. Will recursively convert keys in Hashes to
@@ -194,7 +245,7 @@ an Array of Strings).</p>
 
           
           <div class="method-source-code" id="symbolize-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 37</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">obj</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_sym</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>                <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
@@ -235,7 +286,7 @@ Time.now (yields nil, nil).</p>
 
           
           <div class="method-source-code" id="to_integer-3F-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 64</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/utilities.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>

@@ -16,7 +16,27 @@ module ApiTools
   # +ServiceSession+ contains all functionality related to a context session.
   #
   class ServiceSession
-    attr_reader :id, :participant_id, :outlet_id, :roles
+
+    # Session ID, matching a value that would appear in an X-Session-ID
+    # header.
+    #
+    attr_reader :id
+
+    # TODO: Loyalty NZ specific. The UUID of the Participant instance
+    # associated with the authorised caller.
+    #
+    attr_reader :participant_id
+
+    # TODO: Loyalty NZ specific. The UUID of the Outlet instance associated
+    # with the authorised caller, related to #participant_id.
+    #
+    attr_reader :outlet_id
+
+    # TODO: Loyalty NZ derived, needs better specification. Array of strings
+    # describing roles. Role meanings are defined by role usage within
+    # services.
+    #
+    attr_reader :roles
 
     @@test_mode = false
 
@@ -26,7 +46,6 @@ module ApiTools
       :outlet_id => 'OUTLETZERO',
       :roles => '',
     }
-
 
     # Set testing mode.
     #
@@ -82,7 +101,21 @@ module ApiTools
       })
     end
 
-    # Instantiate a new ServiceSession instance with the optional supplied parameters
+    # Instantiate a new ServiceSession instance with the optional supplied
+    # parameters.
+    #
+    # +options+:: Optional hash of parameters.
+    #
+    # Key/value meanings for options are:
+    #
+    # +id+::             Session ID, e.g. from an X-Session-ID header.
+    # +participant_id+:: TODO: LoyaltyNZ specific. Participant UUID associated
+    #                    with this session.
+    # +outlet_id+::      TODO: LoyaltyNZ specific. Outlet UUID associated with
+    #                    the participant.
+    # +roles+::          TODO: Role string, containing comma-separated roles
+    #                    that get split into an Array. Role meanings are
+    #                    defined by role usage within services.
     #
     def initialize(options = {})
       @id = options[:id]

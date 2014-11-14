@@ -171,22 +171,9 @@ removing any entries from the list below could cause their requests to be
 rejected with a &#39;platform.malformed&#39; error.</p>
         
       
-        <dt id="DRB_URI">DRB_URI
-        
-        <dd><p>URI for DRb server used during local machine development as a registry of
-service endpoints. Whichever service starts first runs the server which
-others connect to if subsequently started.</p>
-
-<p>Use IP address, rather than &#39;localhost&#39; here, to ensure that
-“address in use” errors are raised immediately if a second server startup
-attempt is made:</p>
-
-<pre>https://bugs.ruby-lang.org/issues/3052</pre>
-        
-      
         <dt id="FRONT_OBJECT">FRONT_OBJECT
         
-        <dd><p>Instance to use for the DRb server.</p>
+        <dd><p>Singleton “Front object” for the DRB service used in local development.</p>
         
       
         <dt id="MAXIMUM_PAYLOAD_SIZE">MAXIMUM_PAYLOAD_SIZE
@@ -434,8 +421,8 @@ recorded.</p>
           <div class="method-source-code" id="record_host_and_port-source">
             <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
-  <span class="ruby-ivar">@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
-  <span class="ruby-ivar">@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
+  <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
+  <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -591,7 +578,7 @@ absent.</p>
 <p>The Integer endpoint API version, e.g. 2.</p>
 </dd><dt><code>http_method</code>
 <dd>
-<p>HTTP method as a String, e.g. +&#39;GET&#39;+, +&#39;DELETE&#39;+.</p>
+<p>HTTP method as a String, e.g. “<code>GET</code>”, “<code>DELETE</code>”.</p>
 </dd><dt><code>ident</code>
 <dd>
 <p>ID / <a href="UUID.html">UUID</a> / similar; first and only path component.</p>
@@ -606,7 +593,7 @@ absent.</p>
 <p>Parameters should be nil where the value would not be allowed given the
 HTTP method. HTTP methods must map to understood actions.</p>
 
-<p>+@service_response+ is updated on exit. If this says “halt processing”,
+<p>@service_response is updated on exit. If this says “halt processing”,
 errors were generated. Ignore the function return value. Otherwise, returns
 a Has equivalent of the JSON resource representation in the non-list-action
 cases, else an array of zero or more JSON resource representations in the
@@ -616,7 +603,7 @@ list action case.</p>
 
           
           <div class="method-source-code" id="inter_service-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1090</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_service</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -684,7 +671,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
 
           
           <div class="method-source-code" id="inter_service_local-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1267</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1291</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_service_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -818,7 +805,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
 
           
           <div class="method-source-code" id="inter_service_remote-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1126</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -841,7 +828,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_404</span>.<span class="ruby-identifier">call</span>()
 
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">remote_uri</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ ident }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">remote_uri</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ URI::escape( ident ) }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-keyword">end</span>
 
@@ -986,14 +973,14 @@ application?</p>
 <p>Version of interface required as an Integer. Optional - default is 1.</p>
 </dd></dl>
 
-<p>Returns a @services entry (see implementation of initialize) if local, else
-<code>nil</code>.</p>
+<p>Returns an @services entry (see implementation of initialize) if local,
+else <code>nil</code>.</p>
           
           
 
           
           <div class="method-source-code" id="local_service_for-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1031</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1055</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1042,10 +1029,10 @@ HTTP?</p>
 
           
           <div class="method-source-code" id="remote_service_for-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1052</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1076</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span> )
   <span class="ruby-keyword">begin</span>
-    <span class="ruby-ivar">@drb_server</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+    <span class="ruby-ivar">@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-keyword">rescue</span>
     <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
