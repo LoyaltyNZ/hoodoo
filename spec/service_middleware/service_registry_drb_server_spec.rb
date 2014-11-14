@@ -198,6 +198,11 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
       end
     end
 
+    # Above: That's a lot of support code for one little test :-) but this
+    # is a significant integration test; it runs two real Webrick instances
+    # each with its own service on a free HTTP port; one talks to the other
+    # over local machine HTTP via the DRb service for discovery.
+    #
     it 'properly supports service discovery' do
       response = run_request( '/v1/clock', @port1 )
       expect( response.code ).to eq( '200' )
