@@ -123,8 +123,9 @@ module ApiTools
     end
 
     # Record internally the HTTP host and port during local development via
-    # e.g "rackup" or testing with rspec. This is usually not called directly
-    # except via the Rack startup monkey patch code in +service_middleware.rb+.
+    # e.g +rackup+ or testing with rspec. This is usually not called directly
+    # except via the Rack startup monkey patch code in
+    # +rack_monkey_patch.rb+.
     #
     # Options hash +:Host+ and +:Port+ entries are recorded.
     #

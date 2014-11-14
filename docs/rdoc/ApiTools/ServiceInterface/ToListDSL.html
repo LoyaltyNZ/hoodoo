@@ -141,12 +141,9 @@ data in which is updated as the DSL methods run.</p>
           <p>Initialize an instance and run the DSL methods.</p>
 <dl class="rdoc-list note-list"><dt><code>api_tools_service_interface_to_list_instance</code>
 <dd>
-<p>Instance of</p>
-</dd></dl>
-
-<pre>ApiTools::ServiceInterface::ToList to update with data from
-DSL method calls.</pre>
-<dl class="rdoc-list note-list"><dt>&amp;block
+<p>Instance of <a href="ToList.html">ApiTools::ServiceInterface::ToList</a> to
+update with data from DSL method calls.</p>
+</dd><dt>&amp;block
 <dd>
 <p>Block of code that makes calls to the DSL herein.</p>
 </dd></dl>
@@ -158,7 +155,7 @@ href="ToList.html">ApiTools::ServiceInterface::ToList</a> has been updated.</p>
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 127</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@tl</span> = <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span> <span class="ruby-comment"># Shorthand!</span>
 
@@ -203,12 +200,12 @@ href="ToList.html">ApiTools::ServiceInterface::ToList</a> has been updated.</p>
 Specifies that a sort key should be the default sort order for the
 interface.</p>
 
-<p>Example - add sort key +&#39;code&#39;+ with directions <code>:asc</code>
-and <code>:desc</code>, plus sort key <code>:member</code> which only
-supports direction <code>:asc</code>. Say that +&#39;code&#39;+ is to be
-the default sort order.</p>
+<p>Example - add sort key &#39;<code>code</code>&#39; with directions
+<code>:asc</code> and <code>:desc</code>, plus sort key
+<code>:member</code> which only supports direction <code>:asc</code>. Say
+that &#39;<code>code</code>&#39; is to be the default sort order.</p>
 
-<pre class="ruby"><span class="ruby-identifier">sort</span> <span class="ruby-identifier">default</span>( <span class="ruby-string">&#39;code&#39;</span> ) =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span>, :<span class="ruby-identifier">desc</span> ],
+<pre class="ruby"><span class="ruby-identifier">sort</span> <span class="ruby-identifier">default</span>( :<span class="ruby-identifier">code</span> ) =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span>, :<span class="ruby-identifier">desc</span> ],
      :<span class="ruby-identifier">member</span>          =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span> ]
 </pre>
           
@@ -216,7 +213,7 @@ the default sort order.</p>
 
           
           <div class="method-source-code" id="default-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 199</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">default</span>( <span class="ruby-identifier">sort_key</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
@@ -259,7 +256,7 @@ entries is arbitrary.</p>
 
           
           <div class="method-source-code" id="filter-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 234</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">filter</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">filter</span> )
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:filter=</span>, <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -300,7 +297,7 @@ entries is arbitrary.</p>
 
           
           <div class="method-source-code" id="limit-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 145</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">limit</span>( <span class="ruby-identifier">limit</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
@@ -354,7 +351,7 @@ entries is arbitrary.</p>
 
           
           <div class="method-source-code" id="search-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 225</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 226</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">search</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">search</span> )
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:search=</span>, <span class="ruby-identifier">search</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -395,11 +392,11 @@ question, wrap it in a call to the <a
 href="ToListDSL.html#method-i-default">default</a> DSL method.</p>
 </dd></dl>
 
-<p>Example - add sort key +&#39;code&#39;+ with directions <code>:asc</code>
-and <code>:desc</code>, plus sort key <code>:member</code> which only
-supports direction <code>:asc</code>.</p>
+<p>Example - add sort key &#39;<code>code</code>&#39; with directions
+<code>:asc</code> and <code>:desc</code>, plus sort key
+<code>:member</code> which only supports direction <code>:asc</code>.</p>
 
-<pre class="ruby"><span class="ruby-identifier">sort</span> <span class="ruby-string">&#39;code&#39;</span>   =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span>, :<span class="ruby-identifier">desc</span> ],
+<pre class="ruby"><span class="ruby-identifier">sort</span> :<span class="ruby-identifier">code</span>   =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span>, :<span class="ruby-identifier">desc</span> ],
      :<span class="ruby-identifier">member</span> =<span class="ruby-operator">&gt;</span> [ :<span class="ruby-identifier">asc</span> ]
 </pre>
           
@@ -407,7 +404,7 @@ supports direction <code>:asc</code>.</p>
 
           
           <div class="method-source-code" id="sort-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 171</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 172</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">sort</span>( <span class="ruby-identifier">sort</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>

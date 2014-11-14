@@ -24,6 +24,8 @@ module ApiTools
     #
     class ServiceRegistryDRbServer
 
+      # Create an instance ready for use as a DRb "front object".
+      #
       def initialize
         @repository = {}
       end

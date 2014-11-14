@@ -1,4 +1,4 @@
-Fri, 14 Nov 2014 15:21:02 +1300
+Fri, 14 Nov 2014 15:41:54 +1300
 README.md	Thu, 13 Nov 2014 14:09:30 +1300
 lib/api_tools.rb	Fri, 14 Nov 2014 11:39:54 +1300
 lib/api_tools/active_record/error_mapping.rb	Fri, 14 Nov 2014 13:03:33 +1300
@@ -63,14 +63,14 @@ lib/api_tools/presenters/types/uuid.rb	Thu, 13 Nov 2014 11:21:12 +1300
 lib/api_tools/service_implementations/service_application.rb	Wed, 12 Nov 2014 17:13:46 +1300
 lib/api_tools/service_implementations/service_context.rb	Fri, 31 Oct 2014 13:59:09 +1300
 lib/api_tools/service_implementations/service_implementation.rb	Fri, 03 Oct 2014 13:46:40 +1300
-lib/api_tools/service_implementations/service_interface.rb	Thu, 13 Nov 2014 13:14:36 +1300
+lib/api_tools/service_implementations/service_interface.rb	Fri, 14 Nov 2014 15:30:02 +1300
 lib/api_tools/service_implementations/service_request.rb	Thu, 13 Nov 2014 11:21:12 +1300
 lib/api_tools/service_implementations/service_response.rb	Thu, 06 Nov 2014 16:21:29 +1300
 lib/api_tools/service_implementations/service_session.rb	Fri, 14 Nov 2014 15:20:55 +1300
 lib/api_tools/service_middleware/rack_monkey_patch.rb	Tue, 11 Nov 2014 10:46:48 +1300
 lib/api_tools/service_middleware/service_endpoint.rb	Fri, 14 Nov 2014 15:05:24 +1300
-lib/api_tools/service_middleware/service_middleware.rb	Fri, 14 Nov 2014 15:04:41 +1300
-lib/api_tools/service_middleware/service_registry_drb_server.rb	Fri, 14 Nov 2014 12:52:45 +1300
+lib/api_tools/service_middleware/service_middleware.rb	Fri, 14 Nov 2014 15:26:22 +1300
+lib/api_tools/service_middleware/service_registry_drb_server.rb	Fri, 14 Nov 2014 15:25:14 +1300
 lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 14:46:00 +1300
 lib/api_tools/thread_safe.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/utilities.rb	Fri, 14 Nov 2014 15:13:02 +1300

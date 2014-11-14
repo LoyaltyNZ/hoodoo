@@ -131,13 +131,13 @@ respects.</p>
 
         <div class="method-description">
           
-          
+          <p>Create an instance ready for use as a DRb “front object”.</p>
           
           
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 27</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -191,7 +191,7 @@ as a String.</p>
 
           
           <div class="method-source-code" id="add-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 39</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
 <span class="ruby-keyword">end</span></pre>
@@ -232,7 +232,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
 
           
           <div class="method-source-code" id="find-source">
-            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 49</span>
+            <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_registry_drb_server.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>
