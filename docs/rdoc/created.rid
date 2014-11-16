@@ -1,4 +1,4 @@
-Mon, 17 Nov 2014 12:47:06 +1300
+Mon, 17 Nov 2014 12:51:56 +1300
 README.md	Thu, 13 Nov 2014 14:09:30 +1300
 lib/api_tools.rb	Mon, 17 Nov 2014 12:46:24 +1300
 lib/api_tools/active_record/error_mapping.rb	Fri, 14 Nov 2014 13:03:33 +1300
@@ -34,8 +34,8 @@ lib/api_tools/data/types/currency_earner.rb	Tue, 11 Nov 2014 10:51:06 +1300
 lib/api_tools/data/types/error_primitive.rb	Thu, 13 Nov 2014 13:12:36 +1300
 lib/api_tools/data/types/product.rb	Wed, 05 Nov 2014 11:19:51 +1300
 lib/api_tools/data/types/voucher_earner.rb	Tue, 11 Nov 2014 10:51:06 +1300
-lib/api_tools/errors/error_descriptions.rb	Thu, 13 Nov 2014 13:13:32 +1300
-lib/api_tools/errors/errors.rb	Thu, 13 Nov 2014 13:21:54 +1300
+lib/api_tools/errors/error_descriptions.rb	Mon, 17 Nov 2014 12:49:42 +1300
+lib/api_tools/errors/errors.rb	Mon, 17 Nov 2014 12:51:47 +1300
 lib/api_tools/events/platform_event.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/generator.rb	Tue, 28 Oct 2014 10:17:07 +1300
 lib/api_tools/json_errors.rb	Tue, 23 Sep 2014 12:39:09 +1200
@@ -65,7 +65,7 @@ lib/api_tools/service_implementations/service_context.rb	Fri, 31 Oct 2014 13:59:
 lib/api_tools/service_implementations/service_implementation.rb	Fri, 03 Oct 2014 13:46:40 +1300
 lib/api_tools/service_implementations/service_interface.rb	Fri, 14 Nov 2014 15:30:02 +1300
 lib/api_tools/service_implementations/service_request.rb	Thu, 13 Nov 2014 11:21:12 +1300
-lib/api_tools/service_implementations/service_response.rb	Thu, 06 Nov 2014 16:21:29 +1300
+lib/api_tools/service_implementations/service_response.rb	Mon, 17 Nov 2014 12:51:54 +1300
 lib/api_tools/service_implementations/service_session.rb	Fri, 14 Nov 2014 15:20:55 +1300
 lib/api_tools/service_middleware/rack_monkey_patch.rb	Tue, 11 Nov 2014 10:46:48 +1300
 lib/api_tools/service_middleware/service_endpoint.rb	Fri, 14 Nov 2014 15:05:24 +1300

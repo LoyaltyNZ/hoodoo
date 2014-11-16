@@ -194,18 +194,18 @@ module ApiTools
       # The options hash contains symbol keys named as follows, with values as
       # described:
       #
-      # +:status+::    The integer or string HTTP status code to be associated
-      #                with this error
+      # +:status+::   The integer or string HTTP status code to be associated
+      #               with this error
       #
-      # +'message'+::   The +en-nz+ language human-readable error message used
-      #                for developers.
+      # +message+::   The +en-nz+ language human-readable error message used
+      #               for developers.
       #
-      # +'reference'+:: Optional array of required named references. When errors
-      #                are added (via ApiTools::Errors#add_error) to a
-      #                collection, required reference(s) from this array must
-      #                be provided by the error-adding caller else an exception
-      #                will be raised. This ensures correct, fully qualified
-      #                error data is logged and sent to clients.
+      # +reference+:: Optional array of required named references. When errors
+      #               are added (via ApiTools::Errors#add_error) to a
+      #               collection, required reference(s) from this array must
+      #               be provided by the error-adding caller else an exception
+      #               will be raised. This ensures correct, fully qualified
+      #               error data is logged and sent to clients.
       #
       def error( name, options )
         options       = ApiTools::Utilities.stringify( options )

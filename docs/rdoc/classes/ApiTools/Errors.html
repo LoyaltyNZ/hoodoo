@@ -450,12 +450,12 @@ message and reference data directly.</p>
 href="Errors.html#method-i-add_error">add_error</a> instead,
 <strong>NOT</strong> here.</p>
 
-<p>**No validation is performed**. You should only really call here if storing
-an error / errors from another, trusted source with assumed validity (e.g.
-another service called remotely with errors in the JSON response). It&#39;s
-possible to store invalid error data using this call, which means
-counter-to-documentation results could be returned to API clients. That is
-Very Bad.</p>
+<p><strong>No</strong> <strong>validation</strong> is performed. You should
+only really call here if storing an error / errors from another, trusted
+source with assumed validity (e.g. another service called remotely with
+errors in the JSON response). It&#39;s possible to store invalid error data
+using this call, which means counter-to-documentation results could be
+returned to API clients. That is Very Bad.</p>
 
 <p>Pass optionally the HTTP status code to use if this happens to be the first
 stored error. If this is omitted, 500 is kept as the default.</p>

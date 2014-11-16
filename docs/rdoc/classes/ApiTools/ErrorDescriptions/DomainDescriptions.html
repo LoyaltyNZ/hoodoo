@@ -206,22 +206,18 @@ described:</p>
 <dl class="rdoc-list note-list"><dt><code>:status</code>
 <dd>
 <p>The integer or string HTTP status code to be associated with this error</p>
-</dd><dt>+&#39;message&#39;+
+</dd><dt><code>message</code>
 <dd>
-<p>The <code>en-nz</code> language human-readable error message used</p>
-</dd></dl>
-
-<pre><code>for developers.</code></pre>
-<dl class="rdoc-list note-list"><dt>+&#39;reference&#39;+
+<p>The <code>en-nz</code> language human-readable error message used for
+developers.</p>
+</dd><dt><code>reference</code>
 <dd>
-<p>Optional array of required named references. When errors</p>
+<p>Optional array of required named references. When errors are added (via <a
+href="../Errors.html#method-i-add_error">ApiTools::Errors#add_error</a>) to
+a collection, required reference(s) from this array must be provided by the
+error-adding caller else an exception will be raised. This ensures correct,
+fully qualified error data is logged and sent to clients.</p>
 </dd></dl>
-
-<pre><code>are added (via ApiTools::Errors#add_error) to a
-collection, required reference(s) from this array must
-be provided by the error-adding caller else an exception
-will be raised. This ensures correct, fully qualified
-error data is logged and sent to clients.</code></pre>
             </div>
           
           

@@ -172,7 +172,7 @@ module ApiTools
     #
     # In most cases you should be calling #add_error instead, *NOT* here.
     #
-    # **No validation is performed**. You should only really call here if
+    # *No* *validation* is performed. You should only really call here if
     # storing an error / errors from another, trusted source with assumed
     # validity (e.g. another service called remotely with errors in the JSON
     # response). It's possible to store invalid error data using this call,
