@@ -43,6 +43,9 @@ GEM
     rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
+    sdoc (0.4.1)
+      json (~> 1.7, >= 1.7.7)
+      rdoc (~> 4.0)
     simplecov (0.9.1)
       docile (~> 1.1.0)
       multi_json (~> 1.0)
@@ -65,4 +68,5 @@ DEPENDENCIES
   rdoc
   rspec
   rspec-mocks
+  sdoc
   simplecov-rcov
