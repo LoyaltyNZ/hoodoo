@@ -76,7 +76,44 @@ describe ApiTools::ServiceMiddleware do
       }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
     end
 
-    it 'should complain about bad applications' do
+    it 'should complain about bad instantiation due to bad NewRelic' do
+      expect {
+        module NewRelic
+          module Agent
+            module Instrumentation
+              class MiddlewareProxy
+              end
+            end
+          end
+        end
+
+        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version.")
+
+      Object.send( :remove_const, :NewRelic )
+    end
+
+    it 'should complain about bad instantiation via NewRelic' do
+      expect {
+        module NewRelic
+          module Agent
+            module Instrumentation
+              class MiddlewareProxy
+                def target
+                  {}
+                end
+              end
+            end
+          end
+        end
+
+        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
+
+      Object.send( :remove_const, :NewRelic )
+    end
+
+    it 'should complain about bad applications directly or via NewRelic' do
       class RSpecTestServiceStubBadInterface < ApiTools::ServiceInterface
       end
       class RSpecTestServiceStubBad < ApiTools::ServiceApplication
@@ -86,6 +123,24 @@ describe ApiTools::ServiceMiddleware do
       expect {
         ApiTools::ServiceMiddleware.new( RSpecTestServiceStubBad.new )
       }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
+
+      expect {
+        module NewRelic
+          module Agent
+            module Instrumentation
+              class MiddlewareProxy
+                def target
+                  RSpecTestServiceStubBad.new
+                end
+              end
+            end
+          end
+        end
+
+        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
+
+      Object.send( :remove_const, :NewRelic )
     end
 
     it 'should self-check content type' do

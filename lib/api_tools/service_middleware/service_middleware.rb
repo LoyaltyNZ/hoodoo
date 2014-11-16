@@ -142,8 +142,22 @@ module ApiTools
 
       @service_container = app
 
+      if defined?( NewRelic ) &&
+         defined?( NewRelic::Agent ) &&
+         defined?( NewRelic::Agent::Instrumentation ) &&
+         defined?( NewRelic::Agent::Instrumentation::MiddlewareProxy ) &&
+         @service_container.is_a?( NewRelic::Agent::Instrumentation::MiddlewareProxy )
+
+        if @service_container.respond_to?( :target )
+          @newrelic_wrapper  = @service_container
+          @service_container = @service_container.target()
+        else
+          raise "ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version."
+        end
+      end
+
       unless @service_container.is_a?( ApiTools::ServiceApplication )
-        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ app.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ @service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
       end
 
       # Collect together the implementation instances and the matching regexps
@@ -161,7 +175,7 @@ module ApiTools
       @services = @service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
-          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ app.class }"
+          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ @service_container.class }"
         end
 
         # Regexp explanation:
