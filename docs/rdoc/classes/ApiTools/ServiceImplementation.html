@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceImplementation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceImplementation 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/api_tools/service_implementations/service_implementation_rb.html">lib/api_tools/service_implementations/service_implementation.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Service authors subclass this to produce the body of their service
+interface implementation. It defines a series of methods that must be
+implemented in order to service requests.</p>
+
+<p>An <a href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+subclass is selected by the platform middleware because an <a
+href="ServiceInterface.html">ApiTools::ServiceInterface</a> subclass tells
+it about the implementation class through the <a
+href="ServiceInterface.html#method-c-interface">ApiTools::ServiceInterface.interface</a>
+DSL; the interface class is referenced from an <a
+href="ServiceApplication.html">ApiTools::ServiceApplication</a> subclass
+through the <a
+href="ServiceApplication.html#method-c-comprised_of">ApiTools::ServiceApplication.comprised_of</a>
+DSL; and the application class is run by Rack by being passed to a call to
+<code>run</code> in <code>config.ru</code>.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-create">create</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-delete">delete</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>L</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-list">list</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-show">show</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update">update</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-create">
+            
+              <b>create</b>( context )
+            
+            <a href="../../classes/ApiTools/ServiceImplementation.html#method-i-create" name="method-i-create" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement a “create” action (store one new resource instance).</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="ServiceContext.html">ApiTools::ServiceContext</a> instance
+describing authorised session information, inbound request information and
+holding the response object that the service updates with the results of
+its processing of this action.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
+                
+              </p>
+              <div id="method-i-create_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_implementation.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses must implement &#39;create&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-delete">
+            
+              <b>delete</b>( context )
+            
+            <a href="../../classes/ApiTools/ServiceImplementation.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement a “delete” action (delete one existing resource instance).</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="ServiceContext.html">ApiTools::ServiceContext</a> instance
+describing authorised session information, inbound request information and
+holding the response object that the service updates with the results of
+its processing of this action.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
+                
+              </p>
+              <div id="method-i-delete_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_implementation.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses must implement &#39;delete&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-list">
+            
+              <b>list</b>( context )
+            
+            <a href="../../classes/ApiTools/ServiceImplementation.html#method-i-list" name="method-i-list" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement a “list” action (paginated, sorted list of resources).</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="ServiceContext.html">ApiTools::ServiceContext</a> instance
+describing authorised session information, inbound request information and
+holding the response object that the service updates with the results of
+its processing of this action.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
+                
+              </p>
+              <div id="method-i-list_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_implementation.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses must implement &#39;list&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-show">
+            
+              <b>show</b>( context )
+            
+            <a href="../../classes/ApiTools/ServiceImplementation.html#method-i-show" name="method-i-show" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement a “show” action (represent one existing resource instance).</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="ServiceContext.html">ApiTools::ServiceContext</a> instance
+describing authorised session information, inbound request information and
+holding the response object that the service updates with the results of
+its processing of this action.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
+                
+              </p>
+              <div id="method-i-show_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_implementation.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses must implement &#39;show&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update">
+            
+              <b>update</b>( context )
+            
+            <a href="../../classes/ApiTools/ServiceImplementation.html#method-i-update" name="method-i-update" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement a “update” action (modify one existing resource instance).</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="ServiceContext.html">ApiTools::ServiceContext</a> instance
+describing authorised session information, inbound request information and
+holding the response object that the service updates with the results of
+its processing of this action.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
+                
+              </p>
+              <div id="method-i-update_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_implementation.rb, line 75</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses must implement &#39;update&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

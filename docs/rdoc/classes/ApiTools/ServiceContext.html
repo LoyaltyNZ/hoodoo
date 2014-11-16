@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceContext</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceContext 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/api_tools/service_implementations/service_context_rb.html">lib/api_tools/service_implementations/service_context.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>A collection of objects which describe the context in which a service is
+being called. The service reads session and request information and returns
+results of its processing via the associated response object.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-resource">resource</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>request</td>
+            <td class='attr-desc'><p>The <a href="ServiceRequest.html">ApiTools::ServiceRequest</a> instance
+giving details about the inbound request. Relevant information will depend
+upon the endpoint service implementation action being addressed.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>response</td>
+            <td class='attr-desc'><p>The <a href="ServiceResponse.html">ApiTools::ServiceResponse</a> instance
+that a service implementation updates with results of its processing.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>session</td>
+            <td class='attr-desc'><p>The <a href="ServiceSession.html">ApiTools::ServiceSession</a> instance
+describing the authorised call context.</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( session, request, response, middleware )
+            
+            <a href="../../classes/ApiTools/ServiceContext.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create a new instance.</p>
+<dl class="rdoc-list note-list"><dt>session
+<dd>
+<p>See <a href="ServiceContext.html#attribute-i-session">session</a>.</p>
+</dd><dt>request
+<dd>
+<p>See <a href="ServiceContext.html#attribute-i-request">request</a>.</p>
+</dd><dt><code>response</code>
+<dd>
+<p>See <a href="ServiceContext.html#attribute-i-response">response</a>.</p>
+</dd><dt><code>middleware</code>
+<dd>
+<p><a href="ServiceMiddleware.html">ApiTools::ServiceMiddleware</a> instance
+creating this item.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 42</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">middleware</span> )
+  <span class="ruby-ivar">@session</span>    = <span class="ruby-identifier">session</span>
+  <span class="ruby-ivar">@request</span>    = <span class="ruby-identifier">request</span>
+  <span class="ruby-ivar">@response</span>   = <span class="ruby-identifier">response</span>
+  <span class="ruby-ivar">@middleware</span> = <span class="ruby-identifier">middleware</span>
+  <span class="ruby-ivar">@endpoints</span>  = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-resource">
+            
+              <b>resource</b>( resource_name, version = 1 )
+            
+            <a href="../../classes/ApiTools/ServiceContext.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Request (and lazy-initialize) a new resource endpoint instance for talking
+to a resource&#39;s interface. See <a
+href="ServiceMiddleware/ServiceEndpoint.html">ApiTools::ServiceMiddleware::ServiceEndpoint</a>.</p>
+
+<p>You can request an endpoint for any resource name, whether or not an
+implementation actually exists for it. Until you try and talk to the
+interface through the endpoint instance, you won&#39;t know if it is there.
+Examine the returned value&#39;s <a
+href="ServiceResponse.html#attribute-i-http_status_code">ApiTools::ServiceResponse#http_status_code</a>
+to see if you got a 404.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
+symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required implemented version for the endpoint, as an Integer -
+defaults to 1.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
+                
+              </p>
+              <div id="method-i-resource_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-node">&quot;#{ resource_name }/#{ version }&quot;</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceEndpoint</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-ivar">@middleware</span>,
+    <span class="ruby-identifier">resource_name</span>,
+    <span class="ruby-identifier">version</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

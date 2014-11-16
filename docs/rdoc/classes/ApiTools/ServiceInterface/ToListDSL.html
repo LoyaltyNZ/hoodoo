@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceInterface::ToListDSL</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceInterface::ToListDSL 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/api_tools/service_implementations/service_interface_rb.html">lib/api_tools/service_implementations/service_interface.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Implementation of the DSL that&#39;s written inside a block passed to <a
+href="../ServiceInterface.html#method-i-to_list">ApiTools::ServiceInterface#to_list</a>.
+This is an internal implementation class. Instantiate with an <a
+href="ToList.html">ApiTools::ServiceInterface::ToList</a> instance, the
+data in which is updated as the DSL methods run.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-default">default</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>F</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-filter">filter</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>L</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-limit">limit</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-search">search</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-sort">sort</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( api_tools_service_interface_to_list_instance, &amp;block )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Initialize an instance and run the DSL methods.</p>
+<dl class="rdoc-list note-list"><dt>api_tools_service_interface_to_list_instance
+<dd>
+<p>Instance of <a href="ToList.html">ApiTools::ServiceInterface::ToList</a> to
+update with data from DSL method calls.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block of code that makes calls to the DSL herein.</p>
+</dd></dl>
+
+<p>On exit, the DSL is run and the <a
+href="ToList.html">ApiTools::ServiceInterface::ToList</a> has been updated.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@tl</span> = <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span> <span class="ruby-comment"># Shorthand!</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">instance_of?</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#initialize requires an ApiTools::ServiceInstance::ToList instance - got &#39;#{ @tl.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-default">
+            
+              <b>default</b>( sort_key )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-i-default" name="method-i-default" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Used in conjunction with <a href="ToListDSL.html#method-i-sort">sort</a>.
+Specifies that a sort key should be the default sort order for the
+interface.</p>
+
+<p>Example - add sort key &#39;<code>code</code>&#39; with directions
+<code>:asc</code> and <code>:desc</code>, plus sort key
+<code>:member</code> which only supports direction <code>:asc</code>. Say
+that &#39;<code>code</code>&#39; is to be the default sort order.</p>
+
+<pre><code>sort default( :code ) =&gt; [ :asc, :desc ],
+     :member          =&gt; [ :asc ]
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-default_source')" id="l_method-i-default_source">show</a>
+                
+              </p>
+              <div id="method-i-default_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 200</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">default</span>( <span class="ruby-identifier">sort_key</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:default_sort_key=</span>, <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">to_s</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">sort_key</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-filter">
+            
+              <b>filter</b>( *filter )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-i-filter" name="method-i-filter" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>As <a href="ToListDSL.html#method-i-search">search</a>, but for filtering.</p>
+<dl class="rdoc-list note-list"><dt>filter
+<dd>
+<p>Array of permitted filter keys, as symbols or strings. The order of array
+entries is arbitrary.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-filter_source')" id="l_method-i-filter_source">show</a>
+                
+              </p>
+              <div id="method-i-filter_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 235</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">filter</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">filter</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:filter=</span>, <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-limit">
+            
+              <b>limit</b>( limit )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-i-limit" name="method-i-limit" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Specify the page size (limit) for lists.</p>
+<dl class="rdoc-list note-list"><dt>limit
+<dd>
+<p>Page size (integer).</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre><code>limit 100</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-limit_source')" id="l_method-i-limit_source">show</a>
+                
+              </p>
+              <div id="method-i-limit_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 146</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">limit</span>( <span class="ruby-identifier">limit</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:limit=</span>, <span class="ruby-identifier">limit</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-search">
+            
+              <b>search</b>( *search )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-i-search" name="method-i-search" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Specify supported search keys in an array. The middleware will make sure
+the interface implementation is only called with search keys in that list.
+If a client attempts a search on an unsupported key, their request will be
+rejected by the middleware.</p>
+
+<p>If a service wants to do its own search validation, it should not list call
+here. Note also that only the keys are specified and validated; value
+escaping and validation, if necessary, is up to the service implementation.</p>
+<dl class="rdoc-list note-list"><dt><code>search</code>
+<dd>
+<p>Array of permitted search keys, as symbols or strings. The order of array
+entries is arbitrary.</p>
+</dd></dl>
+
+<p>Example - allow searches specifying <code>first_name</code> and
+<code>last_name</code> keys:</p>
+
+<pre><code>search :first_name, :last_name</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-search_source')" id="l_method-i-search_source">show</a>
+                
+              </p>
+              <div id="method-i-search_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 226</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">search</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">search</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:search=</span>, <span class="ruby-identifier">search</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-sort">
+            
+              <b>sort</b>( sort )
+            
+            <a href="../../../classes/ApiTools/ServiceInterface/ToListDSL.html#method-i-sort" name="method-i-sort" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Specify extra sort keys and orders that add with whatever platform common
+defaults are already in place.</p>
+<dl class="rdoc-list note-list"><dt><code>sort</code>
+<dd>
+<p>Hash of sort keys, with values that are an array of supported sort
+directions. The first array entry is used as the default direction if no
+direction is specified in the client caller&#39;s query string. Use strings
+or symbols.</p>
+
+<p>To specify that a sort key should be the new default for the interface in
+question, wrap it in a call to the <a
+href="ToListDSL.html#method-i-default">default</a> DSL method.</p>
+</dd></dl>
+
+<p>Example - add sort key &#39;<code>code</code>&#39; with directions
+<code>:asc</code> and <code>:desc</code>, plus sort key
+<code>:member</code> which only supports direction <code>:asc</code>.</p>
+
+<pre><code>sort :code   =&gt; [ :asc, :desc ],
+     :member =&gt; [ :asc ]
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-sort_source')" id="l_method-i-sort_source">show</a>
+                
+              </p>
+              <div id="method-i-sort_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 172</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">sort</span>( <span class="ruby-identifier">sort</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Convert hash keys to strings and values in arrays to strings too.</span>
+
+  <span class="ruby-identifier">sort</span> = <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, (<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> ) <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-identifier">v</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">merged</span> = <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">sort</span>().<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">sort</span> )
+  <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:sort=</span>, <span class="ruby-identifier">merged</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::JsonErrors</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Module</span> 
+            ApiTools::JsonErrors 
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/api_tools/json_errors_rb.html">lib/api_tools/json_errors.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>A module intended as a sinatra extension, providing standard error
+functionality for Platform APIs. Methods are provided to add multiple error
+conditions, halt the API, and render the standard platform JSON error
+structure.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>F</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-fail_forbidden">fail_forbidden</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-fail_not_found">fail_not_found</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-fail_unauthorized">fail_unauthorized</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-fail_with_error">fail_with_error</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-fail_with_errors">fail_with_errors</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+      
+        <li>
+          
+            <a href="PlatformErrors.html">
+              ApiTools::PlatformErrors
+            </a>
+          
+        </li>
+      
+    </ul>
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-fail_forbidden">
+            
+              <b>fail_forbidden</b>()
+            
+            <a href="../../classes/ApiTools/JsonErrors.html#method-i-fail_forbidden" name="method-i-fail_forbidden" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>`halt` the API call immediately, returning `403 Forbidden` and rendering
+any previously added errors plus a &#39;platform.forbidden&#39; error in
+the response body.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-fail_forbidden_source')" id="l_method-i-fail_forbidden_source">show</a>
+                
+              </p>
+              <div id="method-i-fail_forbidden_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">fail_forbidden</span>
+  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-number">403</span>, <span class="ruby-string">&#39;platform.forbidden&#39;</span>,<span class="ruby-string">&#39;The user is not allowed to perform this operation on the resource.&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-fail_not_found">
+            
+              <b>fail_not_found</b>()
+            
+            <a href="../../classes/ApiTools/JsonErrors.html#method-i-fail_not_found" name="method-i-fail_not_found" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>`halt` the API call immediately, returning `404 Not Found` and rendering
+any previously added errors in the response body.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-fail_not_found_source')" id="l_method-i-fail_not_found_source">show</a>
+                
+              </p>
+              <div id="method-i-fail_not_found_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">fail_not_found</span>
+  <span class="ruby-identifier">fail_with_errors</span> <span class="ruby-number">404</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-fail_unauthorized">
+            
+              <b>fail_unauthorized</b>()
+            
+            <a href="../../classes/ApiTools/JsonErrors.html#method-i-fail_unauthorized" name="method-i-fail_unauthorized" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>`halt` the API call immediately, returning `401 Unauthorized` and rendering
+any previously added errors plus a `platform.unauthorized` error in the
+response body.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-fail_unauthorized_source')" id="l_method-i-fail_unauthorized_source">show</a>
+                
+              </p>
+              <div id="method-i-fail_unauthorized_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">fail_unauthorized</span>
+  <span class="ruby-identifier">fail_with_error</span> <span class="ruby-number">401</span>, <span class="ruby-string">&#39;platform.unauthorized&#39;</span>,<span class="ruby-string">&#39;Authorization is required to perform this operation on the resource.&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-fail_with_error">
+            
+              <b>fail_with_error</b>(status, code, message, reference = nil)
+            
+            <a href="../../classes/ApiTools/JsonErrors.html#method-i-fail_with_error" name="method-i-fail_with_error" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>`halt` the API call immediately, returning the supplied HTTP `status` code,
+and render any previously added errors plus an error with the supplied
+`code`, `message`, and optionally `reference`, in the response body.
+Params:</p>
+<dl class="rdoc-list note-list"><dt><code>status</code>
+<dd>
+<p><code>Integer</code> The HTTP status code to halt with</p>
+</dd><dt><code>code</code>
+<dd>
+<p><code>String</code> The error code to return</p>
+</dd><dt><code>message</code>
+<dd>
+<p><code>String</code> The error message to return</p>
+</dd><dt><code>reference</code>
+<dd>
+<p><code>String</code> The error reference (optional)</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-fail_with_error_source')" id="l_method-i-fail_with_error_source">show</a>
+                
+              </p>
+              <div id="method-i-fail_with_error_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">fail_with_error</span>(<span class="ruby-identifier">status</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">add_error</span> <span class="ruby-identifier">code</span>,<span class="ruby-identifier">message</span>,<span class="ruby-identifier">reference</span>
+  <span class="ruby-identifier">fail_with_errors</span> <span class="ruby-identifier">status</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-fail_with_errors">
+            
+              <b>fail_with_errors</b>(status = 422, errors = nil)
+            
+            <a href="../../classes/ApiTools/JsonErrors.html#method-i-fail_with_errors" name="method-i-fail_with_errors" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>`halt` the API call immediately, returning the supplied HTTP `status` code,
+with any previously added errors plus all supplied `errors` in the response
+body. Please note `errors` should be an array of hashes conforming to the
+standard error interface. Params:</p>
+<dl class="rdoc-list note-list"><dt><code>status</code>
+<dd>
+<p><code>Integer</code> The HTTP status code to halt with (optional, defaults
+to 422)</p>
+</dd><dt><code>errors</code>
+<dd>
+<p><code>Array</code> Any new errors to add. (optional)</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-fail_with_errors_source')" id="l_method-i-fail_with_errors_source">show</a>
+                
+              </p>
+              <div id="method-i-fail_with_errors_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/json_errors.rb, line 30</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">fail_with_errors</span>(<span class="ruby-identifier">status</span> = <span class="ruby-number">422</span>, <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
+    <span class="ruby-ivar">@errors</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">errors</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">halt</span> <span class="ruby-identifier">status</span>, <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">fast_generate</span>({
+    <span class="ruby-value">:errors</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@errors</span>
+  })
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

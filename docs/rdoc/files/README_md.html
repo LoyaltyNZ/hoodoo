@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>README.md</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../css/github.css" type="text/css" media="screen" />
+<script src="../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            README.md
+        </h1>
+        <ul class="files">
+            <li>README.md</li>
+            <li>Last modified: 2014-11-13 14:09:30 +1300</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<h1 id="label-ApiTools"><a href="../classes/ApiTools.html">ApiTools</a></h1>
+
+<p><a href="https://magnum.travis-ci.com/LoyaltyNZ/api_tools"><img
+src="https://magnum.travis-ci.com/LoyaltyNZ/api_tools.svg?token=qenLSjTyBsExZFCraVut&branch=master"></a></p>
+
+<p>Simplify the implementation of services within an API-based software
+platform.</p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<p>Add the gem to your <code>Gemfile</code>:</p>
+
+<pre><code>gem &#39;api_tools&#39;, :git =&gt; &#39;git@github.com:LoyaltyNZ/api_tools.git&#39;
+</code></pre>
+
+<p>Require api_tools when needed:</p>
+
+<pre><code>require &#39;api_tools&#39;
+</code></pre>
+
+<p>Functionality includes:</p>
+<ul><li>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to
+any API/class – <a
+href="../classes/ApiTools/ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>,
+<a href="../classes/ApiTools/Errors.html">ApiTools::Errors</a></p>
+</li><li>
+<p><em>Unified Logger:</em> A single logger for use with platform or local
+logs – <a href="../classes/ApiTools/Logger.html">ApiTools::Logger</a></p>
+</li><li>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering
+– <a
+href="../classes/ApiTools/Presenters/BasePresenter.html">ApiTools::Presenters::BasePresenter</a>,
+<a
+href="../classes/ApiTools/Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a></p>
+</li><li>
+<p><em>Type and Resource Presenter Layer:</em> As above, but for formally
+defined platform API level Types and Resources that would be documented (by
+the person defining the API) for API callers – <a
+href="../classes/ApiTools/Data/DocumentedPresenter.html">ApiTools::Data::DocumentedPresenter</a>,
+<a
+href="../classes/ApiTools/Data/DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a></p>
+</li><li>
+<p><em>Middleware:</em> The heart of services; Rake-based service applications
+(think Sinatra, Grape, Rails…) – <a
+href="../classes/ApiTools/ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>;
+but start at <a
+href="../classes/ApiTools/ServiceApplication.html">ApiTools::ServiceApplication</a>
+and see also <a
+href="../classes/ApiTools/ServiceInterface.html">ApiTools::ServiceInterface</a>,
+<a
+href="../classes/ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+and related classes <a
+href="../classes/ApiTools/ServiceRequest.html">ApiTools::ServiceRequest</a>,
+<a
+href="../classes/ApiTools/ServiceResponse.html">ApiTools::ServiceResponse</a>,
+<a
+href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a>,
+<a
+href="../classes/ApiTools/ServiceContext.html">ApiTools::ServiceContext</a></p>
+</li><li>
+<p><em>Platform Sessions:</em> Authentication of sessions, session context –
+<a
+href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a></p>
+</li><li>
+<p><em>Platform Events:</em> Publishes Platform Events when running on a
+queue-based infrastructure – <a
+href="../classes/ApiTools/Events/PlatformEvent.html">ApiTools::Events::PlatformEvent</a></p>
+</li></ul>
+
+<p>Master documentation is through RDoc (see below).</p>
+
+<h2 id="label-Tests">Tests</h2>
+
+<p>Run the tests:</p>
+
+<pre><code>rake</code></pre>
+
+<p>…or…</p>
+
+<pre><code>rspec</code></pre>
+
+<h2 id="label-Documentation+%28RDoc%29">Documentation (RDoc)</h2>
+
+<p>The <a href="../classes/ApiTools.html">ApiTools</a> public API is
+documented through source code comments that are designed to produce
+non-trivially useful output, with examples and workflow indications, when
+RDoc turns them into HTML. See earlier for some pointers to classes of
+interest that will be linked to the relevant class documentation if you
+read all of this through the RDoc output.</p>
+
+<p>If working on an installed copy of the gem through normal channels, you
+should be able to issue this command:</p>
+
+<pre><code>gem server</code></pre>
+
+<p>…and browse to port 8808 on <code>localhost</code> to get an index of all
+gem documentation, including that for <a
+href="../classes/ApiTools.html">ApiTools</a>. Out of the box from GitHub,
+RDoc precompiled documentation is available but there is a risk it might be
+out of date. If working on development of the gem in a GitHub repository
+clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
+
+<pre><code>rake rerdoc</code></pre>
+
+<p>Some additional higher level hand written documentation may also be present
+as Markdown data inside the <code>docs</code> folder.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+              </div>
+
+    </div>
+  </body>
+</html>

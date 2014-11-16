@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::Presenters::Hash</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::Presenters::Hash 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="Field.html">ApiTools::Presenters::Field</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/api_tools/presenters/types/hash_rb.html">lib/api_tools/presenters/types/hash.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>A JSON hash schema member</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>K</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-key">key</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-keys">keys</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-render">render</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>V</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-validate">validate</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+      
+        <li>
+          
+            <a href="BaseDSL.html">
+              ApiTools::Presenters::BaseDSL
+            </a>
+          
+        </li>
+      
+    </ul>
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>properties</td>
+            <td class='attr-desc'><p>The properties of this object, a <code>hash</code> of <code>Field</code>
+instances.</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-key">
+            
+              <b>key</b>(name, options = {}, &amp;block)
+            
+            <a href="../../../classes/ApiTools/Presenters/Hash.html#method-i-key" name="method-i-key" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p><a href="Hash.html">Hash</a> DSL: Define a specific named key that is
+allowed (or even required) in the hash. The optional block uses <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a> to describe the
+required form of the key&#39;s value. If the block is omitted, any value is
+permitted.</p>
+
+<p>The singular <a href="Hash.html#method-i-key">key</a> method is useful when
+you want to describe an object which has known permitted keys yielding to
+required value types. For example, you may have a <a
+href="Hash.html">Hash</a> which defines configuration data for a variety of
+fixed, known types, with the <a href="Hash.html">Hash</a> keys being the
+type name. See <a
+href="../Data/Types/CalculatorConfiguration.html">ApiTools::Data::Types::CalculatorConfiguration</a>
+for an example.</p>
+
+<p>Example:</p>
+
+<pre><code>hash :nested_object do
+  key :this_key_is_optional do
+    text :text_value
+    string :string_value, :length =&gt; 16
+  end
+
+  # ...multiple calls would be made to #key usually, to define
+  # each allowed key.
+
+end
+</code></pre>
+
+<p>…defines something that this JSON would validate against:</p>
+
+<pre><code>{
+  &quot;nested_object&quot;: {
+    &quot;this_key_is_optional&quot;: {
+      &quot;text_value&quot;: &quot;some arbitrary length string&quot;,
+      &quot;string_value&quot;: &quot;I&#39;m &lt;= 16 chars&quot;
+    }
+  }
+}</code></pre>
+
+<p>This JSON would not validate as it includes an unrecognised key:</p>
+
+<pre><code>{
+  &quot;nested_object&quot;: {
+    &quot;this_key_is_unknown&quot;: &#39;&#39;, // (...any value at all...)
+    &quot;this_key_is_optional&quot;: {
+      &quot;text_value&quot;: &quot;Some arbitrary length string&quot;,
+      &quot;string_value&quot;: &quot;I&#39;m &lt;= 16 chars&quot;
+    }
+  }
+}</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-key_source')" id="l_method-i-key_source">show</a>
+                
+              </p>
+              <div id="method-i-key_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">key</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@specific</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#keys and then \#key in the same hash definition - use one or the other&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If we&#39;re defining specific keys and some of those keys have fields</span>
+  <span class="ruby-comment"># with defaults, we need to merge those up to provide a whole-key</span>
+  <span class="ruby-comment"># equivalent default. If someone renders an empty hash they expect a</span>
+  <span class="ruby-comment"># specific key with some internal defaults to be rendered; doing this</span>
+  <span class="ruby-comment"># amalgamation up to key level is the easiest way to handle that.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:default</span> )
+    <span class="ruby-ivar">@has_default</span>  = <span class="ruby-keyword">true</span>
+    <span class="ruby-ivar">@default</span>    <span class="ruby-operator">||=</span> {}
+    <span class="ruby-ivar">@default</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:default</span> ] ) )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@specific</span> = <span class="ruby-keyword">true</span>
+
+  <span class="ruby-identifier">klass</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedHash</span>
+      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-keys">
+            
+              <b>keys</b>(options = {}, &amp;block)
+            
+            <a href="../../../classes/ApiTools/Presenters/Hash.html#method-i-keys" name="method-i-keys" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p><a href="Hash.html">Hash</a> DSL: Define general parameters allowed for
+keys in a <a href="Hash.html">Hash</a> and, if a block is given, use <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a> to describe how any
+of the values in the <a href="Hash.html">Hash</a> must look.</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options - currently only +:length =&gt; [n]+ is
+supported, which describes the maximum permitted length of the key. If this
+option is omitted, keys can be any length.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre><code>hash :nested_object do
+  keys :length =&gt; 4 do
+    text :text_value
+  end
+
+  # ...only one call is made to #keys, because it defines the
+  # permitted form of all keys and values for the whole Hash.
+
+end
+</code></pre>
+
+<p>…defines a <a href="Hash.html">Hash</a> with keys that have a maximum
+string length of 4 characters (inclusive) and simple object values with
+just a single text field. This JSON would validate against the definition:</p>
+
+<pre><code>{
+  &quot;nested_object&quot;: {
+    &quot;one&quot;: {
+      &quot;text_value&quot;: &quot;Some arbitrary length string&quot;
+    },
+    &quot;two&quot;: {
+      &quot;text_value&quot;: &quot;Another arbitrary length string&quot;
+    }
+  }
+}</code></pre>
+
+<p>This JSON would not validate as one of the keys is too long:</p>
+
+<pre><code>{
+  &quot;nested_object&quot;: {
+    &quot;one&quot;: {
+      &quot;text_value&quot;: &quot;Some arbitrary length string&quot;
+    },
+    &quot;a_very_long_key&quot;: {
+      &quot;text_value&quot;: &quot;Another arbitrary length string&quot;
+    }
+  }
+}</code></pre>
+
+<p>This JSON would not validate as the value&#39;s object format is wrong:</p>
+
+<pre><code>{
+  &quot;nested_object&quot;: {
+    &quot;one&quot;: {
+      &quot;text_value&quot;: 11
+    }
+  }
+}</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-keys_source')" id="l_method-i-keys_source">show</a>
+                
+              </p>
+              <div id="method-i-keys_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 145</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">keys</span>(<span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@specific</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#key and then \#keys in the same hash definition, or use \#keys more than once&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:default</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;It doesn&#39;t make sense to specify a default for unknown source data keys, since every key that&#39;s present in the source data has an associated value by definition, even if that value is nil&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@specific</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:length</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span> <span class="ruby-operator">:</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>
+  <span class="ruby-identifier">property</span>(<span class="ruby-string">&#39;keys&#39;</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">options</span>)
+
+  <span class="ruby-identifier">klass</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedHash</span>
+      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">property</span>(<span class="ruby-string">&#39;values&#39;</span>, <span class="ruby-identifier">klass</span>, {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-render">
+            
+              <b>render</b>(data, target)
+            
+            <a href="../../../classes/ApiTools/Presenters/Hash.html#method-i-render" name="method-i-render" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Render a hash into the target hash based on the internal state that
+describes this instance&#39;s current path (position in the heirarchy of
+nested schema entities).</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>The <a href="Hash.html">Hash</a> to render.</p>
+</dd><dt><code>target</code>
+<dd>
+<p>The <a href="Hash.html">Hash</a> that we render into. A “path” of keys
+leading to nested Hashes is built via +super()+, with the final key entry
+yielding the rendered hash.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-render_source')" id="l_method-i-render_source">show</a>
+                
+              </p>
+              <div id="method-i-render_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 278</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
+
+  <span class="ruby-comment"># Data provided is explicitly nil or not a hash? Don&#39;t need to render</span>
+  <span class="ruby-comment"># anything beyond &#39;nil&#39; at the field (the not-hash case covers nil and</span>
+  <span class="ruby-comment"># covers invalid input, which is treated as nil).</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>( <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+
+  <span class="ruby-comment"># This relies on pass-by-reference; we&#39;ll update &#39;hash&#39; later.</span>
+
+  <span class="ruby-identifier">hash</span> = {}
+  <span class="ruby-identifier">path</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">hash</span>, <span class="ruby-identifier">target</span> )
+
+  <span class="ruby-comment"># No defined schema for the hash contents? Just use the data as-is;</span>
+  <span class="ruby-comment"># we can do no validation. Have to hope the caller has given us data</span>
+  <span class="ruby-comment"># that would be valid as JSON. Otherwise, use the key definitions.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">data</span> )
+
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">subtarget</span> = {}
+
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@specific</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+
+      <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">name</span>        = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+        <span class="ruby-identifier">has_key</span>     = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> )
+        <span class="ruby-identifier">has_default</span> = <span class="ruby-identifier">property</span>.<span class="ruby-identifier">has_default?</span>()
+
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_key</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">has_default</span>
+
+        <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">has_key</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">subtarget</span> )
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">else</span>
+
+      <span class="ruby-comment"># The &quot;keys :default =&gt; ...&quot; part of the DSL is theoretically</span>
+      <span class="ruby-comment"># possible but meaningless. The principle everywhere else is that</span>
+      <span class="ruby-comment"># if the input data has an explicit &quot;nil&quot; then the output data has</span>
+      <span class="ruby-comment"># the same. In that case, the input data hash either has non-nil</span>
+      <span class="ruby-comment"># or nil *explicit* values, so there are no conditions under which</span>
+      <span class="ruby-comment"># we would apply a default.</span>
+
+      <span class="ruby-identifier">values_property</span> = <span class="ruby-ivar">@properties</span>[ <span class="ruby-string">&#39;values&#39;</span> ]
+
+      <span class="ruby-comment"># As with validation, have to temporarily rename the above property</span>
+      <span class="ruby-comment"># (and update its path) so that we render under the correct key</span>
+      <span class="ruby-comment"># name, those names coming from the caller-supplied hash and thus</span>
+      <span class="ruby-comment"># not known at any time other than right now.</span>
+
+      <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-identifier">key</span> )
+        <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">value</span>, <span class="ruby-identifier">subtarget</span> )
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-string">&#39;values&#39;</span> )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">rendered</span> = <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">subtarget</span>, <span class="ruby-identifier">path</span> )
+    <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">rendered</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">rendered</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-validate">
+            
+              <b>validate</b>(data, path = &#39;&#39;)
+            
+            <a href="../../../classes/ApiTools/Presenters/Hash.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Check if data is a valid <a href="Hash.html">Hash</a> and return an <a
+href="../Errors.html">ApiTools::Errors</a> instance</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
+                
+              </p>
+              <div id="method-i-validate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 176</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
+  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
+
+    <span class="ruby-comment"># No hash entry schema? No hash entry validation, then.</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-ivar">@specific</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+
+        <span class="ruby-identifier">allowed_keys</span>      = <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">keys</span>
+        <span class="ruby-identifier">unrecognised_keys</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">allowed_keys</span>
+
+        <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unrecognised_keys</span>.<span class="ruby-identifier">empty?</span>
+          <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+            <span class="ruby-string">&#39;generic.invalid_hash&#39;</span>,
+            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash due to unrecognised keys `#{ unrecognised_keys.join( &#39;, &#39; ) }`&quot;</span>,
+            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+          )
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">property</span> = <span class="ruby-ivar">@properties</span>[ <span class="ruby-identifier">key</span> ]
+          <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">value</span>, <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) ) ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span><span class="ruby-operator">|</span>
+          <span class="ruby-keyword">if</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> )
+            <span class="ruby-identifier">local_path</span> = <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&#39;.&#39;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">name</span>
+
+            <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+              <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>,
+              <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{local_path}` is required&quot;</span>,
+              <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">local_path</span> }
+            )
+          <span class="ruby-keyword">end</span>
+        <span class="ruby-keyword">end</span>
+
+      <span class="ruby-keyword">else</span>
+
+        <span class="ruby-identifier">keys_property</span>   = <span class="ruby-ivar">@properties</span>[ <span class="ruby-string">&#39;keys&#39;</span>   ]
+        <span class="ruby-identifier">values_property</span> = <span class="ruby-ivar">@properties</span>[ <span class="ruby-string">&#39;values&#39;</span> ]
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">keys_property</span>.<span class="ruby-identifier">required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">empty?</span>
+
+          <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+            <span class="ruby-string">&#39;generic.required_field_missing&#39;</span>,
+            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is required (Hash, if present, must contain at least one key)&quot;</span>,
+            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+          )
+
+        <span class="ruby-keyword">else</span>
+
+          <span class="ruby-comment"># Need to adjust the above property names for each of the</span>
+          <span class="ruby-comment"># unknown-named keys coming into this generic key hash. That</span>
+          <span class="ruby-comment"># way, errors are reported at the correct &quot;path&quot;, including the</span>
+          <span class="ruby-comment"># &#39;dynamic&#39; incoming hash key name.</span>
+
+          <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+            <span class="ruby-identifier">local_path</span> = <span class="ruby-identifier">full_path</span>(<span class="ruby-identifier">path</span>)
+
+            <span class="ruby-comment"># So use the &quot;keys property&quot; as a validator for the format</span>
+            <span class="ruby-comment"># (i.e. just length, in practice) of the current key we&#39;re</span>
+            <span class="ruby-comment"># examining in the data from the caller. Use the &quot;values</span>
+            <span class="ruby-comment"># property&quot; to validate the value in the data hash. Both are</span>
+            <span class="ruby-comment"># temporarily renamed to match the key in the client data so</span>
+            <span class="ruby-comment"># that field paths shown in errors will be correct.</span>
+
+            <span class="ruby-identifier">keys_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-identifier">key</span> )
+            <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-identifier">key</span> )
+
+            <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">keys_property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">local_path</span> ) )
+            <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">value</span>, <span class="ruby-identifier">local_path</span> ) )
+          <span class="ruby-keyword">end</span>
+
+          <span class="ruby-identifier">keys_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-string">&#39;keys&#39;</span> )
+          <span class="ruby-identifier">values_property</span>.<span class="ruby-identifier">rename</span>( <span class="ruby-string">&#39;values&#39;</span> )
+
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span> <span class="ruby-comment"># &#39;unless @properties.nil?&#39;</span>
+
+  <span class="ruby-keyword">else</span>  <span class="ruby-comment"># &#39;if data.is_a? ::Hash&#39;</span>
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_hash&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid hash&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

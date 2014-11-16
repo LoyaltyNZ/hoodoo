@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ErrorDescriptions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ErrorDescriptions 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/api_tools/errors/error_descriptions_rb.html">lib/api_tools/errors/error_descriptions.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>A collection of error descriptions. API service implementations create one
+of these, which self-declares platform and generic error domain codes. A
+simple DSL is available to declare service-specific errors. Since the
+middleware is responsible for instantiating an error collection inside a
+response object which service implementations use to signal error
+conditions, the service&#39;s <em>interface</em> class uses the interface
+description DSL to call through to here behind the scenes; for example:</p>
+
+<pre><code>class TransactionImplementation &lt; ApiTools::ServiceImplementation
+  # ...
+end
+
+class TransactionInterface &lt; ApiTools::ServiceInterface
+  interface :Transaction do
+    endpoint :transactions, TransactionImplementation
+    errors_for &#39;transaction&#39; do
+      error &#39;duplicate_transaction&#39;, status: 409, message: &#39;Duplicate transaction&#39;, :required =&gt; [ :client_uid ]
+    end
+  end
+end
+</code></pre>
+
+<p>The <a href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>
+method takes the domain of the error as a string - the part that comes
+before the “<code>.</code>” in error codes. Then a series of
+<code>error</code> calls describe the individual error codes. See <a
+href="ErrorDescriptions/DomainDescriptions.html#method-i-error">ApiTools::ErrorDescriptions::DomainDescriptions#error</a>
+for details.</p>
+
+<p>An instance of the <a
+href="ErrorDescriptions.html">ApiTools::ErrorDescriptions</a> class gets
+built behind the scenes as part of the service interface description. This
+is found by the middleware and passed to an <a
+href="Errors.html">ApiTools::Errors</a> constructor. The result is stored
+in an <a href="ServiceResponse.html">ApiTools::ServiceResponse</a> instance
+and passed to handler methods in the service&#39;s <a
+href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+subclass for each request. Service implementations access the errors
+collection through <a
+href="ServiceResponse.html#attribute-i-errors">ApiTools::ServiceResponse#errors</a>
+and can then add errors using the generic or platform domains, or whatever
+additional custom domain(s) they defined in the service interface subclass.</p>
+
+<p>For direct callers (e.g. the middleware), there is a shorthand form to
+invoke the DSL where the constructor is used in the same way as <a
+href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>:</p>
+
+<pre><code>ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new( &#39;transaction&#39; ) do
+  error &#39;duplicate_transaction&#39;, status: 409, message: &#39;Duplicate transaction&#39;, :required =&gt; [ :client_uid ]
+end
+</code></pre>
+
+<p>Either way,</p>
+
+<p>As per the example above, services can share an instance across requests
+(and threads) via a class&#39;s variable if the descriptions don&#39;t
+change. You would use the descriptions to inform an <a
+href="Errors.html">ApiTools::Errors</a> instance of the available codes and
+their requirements:</p>
+
+<pre><code>@errors = ApiTools::Errors.new( ERROR_DESCRIPTIONS )</code></pre>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ErrorDescriptions/DomainDescriptions.html">ApiTools::ErrorDescriptions::DomainDescriptions</a>
+        </li>
+      
+    </ul>
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-describe">describe</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>E</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-errors_for">errors_for</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-recognised-3F">recognised?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( domain = nil, &amp;block )
+            
+            <a href="../../classes/ApiTools/ErrorDescriptions.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create an instance, self-declaring <code>platform</code> and
+<code>generic</code> domain errors. You can optionally call the constructor
+with an error domain and code block, to declare errors all in one go rather
+than making a separate call to <a
+href="ErrorDescriptions.html#method-i-errors_for">errors_for</a> (but both
+approaches are valid).</p>
+<dl class="rdoc-list note-list"><dt><code>domain</code>
+<dd>
+<p>Optional domain, just as used in <a
+href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
+</dd><dt>&amp;block
+<dd>
+<p>Optional block, just as used in <a
+href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">domain</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-ivar">@descriptions</span> = {}
+
+  <span class="ruby-comment"># Up to date at Preview Release 9, 2014-11-10.</span>
+
+  <span class="ruby-identifier">errors_for</span> <span class="ruby-string">&#39;platform&#39;</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;not_found&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">404</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Not found&#39;</span>,                    <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:entity_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;malformed&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Malformed request&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_session&#39;</span>,        <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">401</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid session&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;forbidden&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">403</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Action not authorized&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;method_not_allowed&#39;</span>,     <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">405</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Method not allowed&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;fault&#39;</span>,                  <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">500</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Internal error&#39;</span>,               <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:exception</span> ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Up to date at Preview Release 9, 2014-11-10.</span>
+
+  <span class="ruby-identifier">errors_for</span> <span class="ruby-string">&#39;generic&#39;</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;not_found&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">404</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Resource not found&#39;</span>,           <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:ident</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;malformed&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Malformed payload&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;required_field_missing&#39;</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Required field missing&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_string&#39;</span>,         <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid string format&#39;</span>,        <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_integer&#39;</span>,        <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid integer format&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_float&#39;</span>,          <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid float format&#39;</span>,         <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_decimal&#39;</span>,        <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid decimal format&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_boolean&#39;</span>,        <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid boolean format&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_enum&#39;</span>,           <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid enumeration&#39;</span>,          <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_date&#39;</span>,           <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid date specifier&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_time&#39;</span>,           <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid time specifier&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_datetime&#39;</span>,       <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid date-time specifier&#39;</span>,  <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_uuid&#39;</span>,           <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid UUID&#39;</span>,                 <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_array&#39;</span>,          <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid array&#39;</span>,                <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_object&#39;</span>,         <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid object&#39;</span>,               <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_hash&#39;</span>,           <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid hash&#39;</span>,                 <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_duplication&#39;</span>,    <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Duplicates not allowed&#39;</span>,       <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:field_name</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_state&#39;</span>,          <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;State transition not allowed&#39;</span>, <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:destination_state</span> ]
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_parameters&#39;</span>,     <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">422</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid parameters&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Add caller&#39;s custom errors for the shorthand form, if provided.</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">domain</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">domain</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">block_given?</span>() )
+    <span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-describe">
+            
+              <b>describe</b>( code )
+            
+            <a href="../../classes/ApiTools/ErrorDescriptions.html#method-i-describe" name="method-i-describe" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Return the options description hash, as passed to <code>error</code> calls
+in the block given to <a
+href="ErrorDescriptions.html#method-i-errors_for">errors_for</a>, for the
+given code.</p>
+<dl class="rdoc-list note-list"><dt><code>code</code>
+<dd>
+<p>Error code in full, e.g. +generic.invalid_state&#39;.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-describe_source')" id="l_method-i-describe_source">show</a>
+                
+              </p>
+              <div id="method-i-describe_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">describe</span>( <span class="ruby-identifier">code</span> )
+  <span class="ruby-ivar">@descriptions</span>[ <span class="ruby-identifier">code</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-errors_for">
+            
+              <b>errors_for</b>( domain, &amp;block )
+            
+            <a href="../../classes/ApiTools/ErrorDescriptions.html#method-i-errors_for" name="method-i-errors_for" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Implement the collection&#39;s part of the small DSL used for error
+declaration. Call here, passing the error domain (usually the singular
+service name or resource name, e.g. “<code>transaction</code>” and defined
+by the part of the Platform API the service is implementing) and a block.
+The block makes one or more “<code>error</code>” calls, which actually end
+up calling <a
+href="ErrorDescriptions/DomainDescriptions.html#method-i-error">ApiTools::ErrorDescriptions::DomainDescriptions#error</a>
+behind the scenes.</p>
+
+<p>See the implementation of initialize for a worked example.</p>
+<dl class="rdoc-list note-list"><dt><code>domain</code>
+<dd>
+<p>Error domain, e.g. <code>platform</code>, <code>transaction</code></p>
+</dd><dt>&amp;block
+<dd>
+<p>Block which makes one or more calls to “<code>error</code>”</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-errors_for_source')" id="l_method-i-errors_for_source">show</a>
+                
+              </p>
+              <div id="method-i-errors_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 138</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">domain_descriptions</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorDescriptions</span><span class="ruby-operator">::</span><span class="ruby-constant">DomainDescriptions</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">domain</span> )
+  <span class="ruby-identifier">domain_descriptions</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-ivar">@descriptions</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">domain_descriptions</span>.<span class="ruby-identifier">descriptions</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-recognised-3F">
+            
+              <b>recognised?</b>( code )
+            
+            <a href="../../classes/ApiTools/ErrorDescriptions.html#method-i-recognised-3F" name="method-i-recognised-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Is the given error code recognised? Returns <code>true</code> if so, else
+<code>false</code>.</p>
+<dl class="rdoc-list note-list"><dt>code
+<dd>
+<p>Error code in full, e.g. +generic.invalid_state&#39;.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-recognised-3F_source')" id="l_method-i-recognised-3F_source">show</a>
+                
+              </p>
+              <div id="method-i-recognised-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 149</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">recognised?</span>( <span class="ruby-identifier">code</span> )
+  <span class="ruby-ivar">@descriptions</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">code</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

@@ -1,0 +1,923 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::Presenters::BaseDSL</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Module</span> 
+            ApiTools::Presenters::BaseDSL 
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/api_tools/presenters/base_dsl_rb.html">lib/api_tools/presenters/base_dsl.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>A mixin to be used by any presenter that wants to support the
+ApiTools::Presenters family of schema DSL methods. See e.g. <a
+href="BasePresenter.html">ApiTools::Presenters::BasePresenter</a>. Mixed in
+by e.g. <a href="Object.html">ApiTools::Presenters::Object</a> so that an
+instance can nest definitions of fields inside itself using this DSL.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-array">array</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>B</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-boolean">boolean</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-date">date</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-datetime">datetime</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-decimal">decimal</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>E</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-enum">enum</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>F</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-float">float</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>H</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-hash">hash</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>I</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-integer">integer</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>O</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-object">object</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-string">string</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>T</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-tags">tags</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-text">text</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-uuid">uuid</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-array">
+            
+              <b>array</b>(name, options = {}, &amp;block)
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-array" name="method-i-array" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON array with the supplied name and options. If there is a block
+provided, then more DSL calls inside the block define how each array entry
+must look; otherwise array entries are not validated / are undefined.</p>
+
+<p>When an array field uses +:required =&gt; true+, this only says that at
+least an empty array must be present, nothing more. If the array uses a
+block with fields that themselves are required, then this is only checked
+for if the array contains one or more entries (and is checked for each of
+those entries).</p>
+
+<p>Params</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd><dt>&amp;block
+<dd>
+<p>Optional block declaring the fields of each array item</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-array_source')" id="l_method-i-array_source">show</a>
+                
+              </p>
+              <div id="method-i-array_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 48</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">array</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-boolean">
+            
+              <b>boolean</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-boolean" name="method-i-boolean" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON boolean with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-boolean_source')" id="l_method-i-boolean_source">show</a>
+                
+              </p>
+              <div id="method-i-boolean_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">boolean</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-date">
+            
+              <b>date</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-date" name="method-i-date" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON date with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-date_source')" id="l_method-i-date_source">show</a>
+                
+              </p>
+              <div id="method-i-date_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">date</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-datetime">
+            
+              <b>datetime</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-datetime" name="method-i-datetime" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON datetime with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-datetime_source')" id="l_method-i-datetime_source">show</a>
+                
+              </p>
+              <div id="method-i-datetime_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">datetime</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-decimal">
+            
+              <b>decimal</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-decimal" name="method-i-decimal" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON decimal with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :precision =&gt;
+10</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-decimal_source')" id="l_method-i-decimal_source">show</a>
+                
+              </p>
+              <div id="method-i-decimal_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">decimal</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-enum">
+            
+              <b>enum</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-enum" name="method-i-enum" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON string which can only have a restricted set of exactly
+matched values, with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true and mandatory
+:from =&gt; [array-of-allowed-strings-or-symbols]</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-enum_source')" id="l_method-i-enum_source">show</a>
+                
+              </p>
+              <div id="method-i-enum_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enum</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-float">
+            
+              <b>float</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-float" name="method-i-float" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON float with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-float_source')" id="l_method-i-float_source">show</a>
+                
+              </p>
+              <div id="method-i-float_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 72</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">float</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-hash">
+            
+              <b>hash</b>(name, options = {}, &amp;block)
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-hash" name="method-i-hash" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON object with the supplied name and optional constraints on
+properties (like hash keys) and property values (like hash values) that the
+object may contain, in abstract terms. Params</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>The JSON key</p>
+</dd><dt><code>options</code>
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block declaring the fields making up the nested hash (optional)</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-hash_source')" id="l_method-i-hash_source">show</a>
+                
+              </p>
+              <div id="method-i-hash_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">hash</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-integer">
+            
+              <b>integer</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-integer" name="method-i-integer" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON integer with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-integer_source')" id="l_method-i-integer_source">show</a>
+                
+              </p>
+              <div id="method-i-integer_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 56</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">integer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-object">
+            
+              <b>object</b>(name, options = {}, &amp;block)
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-object" name="method-i-object" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON object with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block declaring the fields making up the nested object</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-object_source')" id="l_method-i-object_source">show</a>
+                
+              </p>
+              <div id="method-i-object_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">object</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;ApiTools::Presenters::Object must have block&#39;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-string">
+            
+              <b>string</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-string" name="method-i-string" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON string with the supplied name and options Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :length =&gt; 10</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-string_source')" id="l_method-i-string_source">show</a>
+                
+              </p>
+              <div id="method-i-string_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">string</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-tags">
+            
+              <b>tags</b>( field_name, options = nil )
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-tags" name="method-i-tags" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Declares that this Type or Resource has a string field of unlimited length
+that contains comma-separated tag strings.</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the tags.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options hash. See <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a>.</p>
+</dd></dl>
+
+<p>Example - a Product resource which supports product tagging:</p>
+
+<pre><code>class Product &lt; ApiTools::Data::DocumentedObject
+
+  internationalised
+
+  text :name
+  text :description
+  string :sku, :length =&gt; 64
+  tags :tags
+
+end
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-tags_source')" id="l_method-i-tags_source">show</a>
+                
+              </p>
+              <div id="method-i-tags_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 146</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-text">
+            
+              <b>text</b>(name, options = {})
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-text" name="method-i-text" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Define a JSON string of unlimited length with the supplied name and options
+Params</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-text_source')" id="l_method-i-text_source">show</a>
+                
+              </p>
+              <div id="method-i-text_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 113</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">text</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-uuid">
+            
+              <b>uuid</b>( field_name, options = nil )
+            
+            <a href="../../../classes/ApiTools/Presenters/BaseDSL.html#method-i-uuid" name="method-i-uuid" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Declares that this Type or Resource _refers to_ another Resource instance
+via its <a href="UUID.html">UUID</a>. There&#39;s no need to declare the
+presence of the <a href="UUID.html">UUID</a> field _for the instance
+itself_ on all resource definitions as that&#39;s implicit; this <a
+href="BaseDSL.html#method-i-uuid">uuid</a> method is just for relational
+information (AKA associations).</p>
+<dl class="rdoc-list note-list"><dt><code>field_name</code>
+<dd>
+<p>Name of the field that will hold the <a href="UUID.html">UUID</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash. See below.</p>
+</dd></dl>
+
+<p>In addition to standard options from <a
+href="BaseDSL.html">ApiTools::Presenters::BaseDSL</a>, extra option keys
+and values are:</p>
+<dl class="rdoc-list note-list"><dt><code>:resource</code>
+<dd>
+<p>The name of a resource (as a symbol, e.g. <code>:Product</code>) that the
+<a href="UUID.html">UUID</a> should refer to. Implementations <em>may</em>
+use this to validate that the resource, where a <a
+href="UUID.html">UUID</a> is provided, really is for a Product instance and
+not something else. Optional.</p>
+</dd></dl>
+
+<p>Example - a basket item that refers to an integer quantity of some specific
+Product resource instance:</p>
+
+<pre><code>class BasketItem &lt; ApiTools::Data::DocumentedObject
+
+  integer :quantity, :required =&gt; true
+  uuid :product_id, :resource =&gt; :Product
+
+end
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-uuid_source')" id="l_method-i-uuid_source">show</a>
+                
+              </p>
+              <div id="method-i-uuid_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/base_dsl.rb, line 179</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>, <span class="ruby-identifier">options</span>)
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    
