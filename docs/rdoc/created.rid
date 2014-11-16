@@ -1,6 +1,6 @@
-Mon, 17 Nov 2014 11:58:49 +1300
+Mon, 17 Nov 2014 12:45:33 +1300
 README.md	Thu, 13 Nov 2014 14:09:30 +1300
-lib/api_tools.rb	Fri, 14 Nov 2014 11:39:54 +1300
+lib/api_tools.rb	Mon, 17 Nov 2014 12:45:25 +1300
 lib/api_tools/active_record/error_mapping.rb	Fri, 14 Nov 2014 13:03:33 +1300
 lib/api_tools/auth/platform_auth.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/data/documented_array.rb	Fri, 03 Oct 2014 13:46:40 +1300
@@ -72,7 +72,6 @@ lib/api_tools/service_middleware/service_endpoint.rb	Fri, 14 Nov 2014 15:05:24 +
 lib/api_tools/service_middleware/service_middleware.rb	Mon, 17 Nov 2014 11:45:21 +1300
 lib/api_tools/service_middleware/service_registry_drb_server.rb	Fri, 14 Nov 2014 15:25:14 +1300
 lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 14:46:00 +1300
-lib/api_tools/thread_safe.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/utilities.rb	Fri, 14 Nov 2014 15:13:02 +1300
 lib/api_tools/uuid.rb	Fri, 14 Nov 2014 15:14:05 +1300
 lib/api_tools/version.rb	Mon, 17 Nov 2014 11:46:35 +1300

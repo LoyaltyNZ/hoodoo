@@ -1,12 +1,10 @@
 root = File.dirname(__FILE__)+'/api_tools/'
 require root+'uuid'
-require root+'thread_safe'
 require root+'logger'
 require root+'platform_errors'
 require root+'json_errors'
 require root+'json_payload'
 require root+'platform_context'
-require root+'thread_safe'
 require root+'utilities.rb'
 
 require root+'presenters/base_dsl.rb'
