@@ -472,8 +472,22 @@ need to check this.</p>
 
   <span class="ruby-ivar">@service_container</span> = <span class="ruby-identifier">app</span>
 
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">NewRelic</span> ) <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span> ) <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Instrumentation</span> ) <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Instrumentation</span><span class="ruby-operator">::</span><span class="ruby-constant">MiddlewareProxy</span> ) <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-ivar">@service_container</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Instrumentation</span><span class="ruby-operator">::</span><span class="ruby-constant">MiddlewareProxy</span> )
+
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@service_container</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:target</span> )
+      <span class="ruby-ivar">@newrelic_wrapper</span>  = <span class="ruby-ivar">@service_container</span>
+      <span class="ruby-ivar">@service_container</span> = <span class="ruby-ivar">@service_container</span>.<span class="ruby-identifier">target</span>()
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version.&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@service_container</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceApplication</span> )
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class &#39;#{ app.class }&#39; - is this the last middleware in the chain via &#39;use()&#39; and is Rack &#39;run()&#39;-ing the correct thing?&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class &#39;#{ @service_container.class }&#39; - is this the last middleware in the chain via &#39;use()&#39; and is Rack &#39;run()&#39;-ing the correct thing?&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Collect together the implementation instances and the matching regexps</span>
@@ -491,7 +505,7 @@ need to check this.</p>
   <span class="ruby-ivar">@services</span> = <span class="ruby-ivar">@service_container</span>.<span class="ruby-identifier">component_interfaces</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">interface</span> <span class="ruby-operator">|</span>
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">implementation</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ app.class }&quot;</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ @service_container.class }&quot;</span>
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-comment"># Regexp explanation:</span>
@@ -633,7 +647,7 @@ the Rack protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 192</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -770,7 +784,7 @@ list action case.</p>
                 
               </p>
               <div id="method-i-inter_service_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1115</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -842,7 +856,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1292</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1306</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -980,7 +994,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1151</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1159,7 +1173,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1056</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1070</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1212,7 +1226,7 @@ HTTP?</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1077</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1091</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-ivar">@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
