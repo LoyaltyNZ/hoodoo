@@ -1,6 +1,6 @@
-Mon, 17 Nov 2014 12:45:33 +1300
+Mon, 17 Nov 2014 12:47:06 +1300
 README.md	Thu, 13 Nov 2014 14:09:30 +1300
-lib/api_tools.rb	Mon, 17 Nov 2014 12:45:25 +1300
+lib/api_tools.rb	Mon, 17 Nov 2014 12:46:24 +1300
 lib/api_tools/active_record/error_mapping.rb	Fri, 14 Nov 2014 13:03:33 +1300
 lib/api_tools/auth/platform_auth.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/data/documented_array.rb	Fri, 03 Oct 2014 13:46:40 +1300
