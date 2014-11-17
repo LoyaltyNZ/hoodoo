@@ -16,6 +16,7 @@ module ApiTools
       class Calculation < ApiTools::Data::DocumentedPresenter
 
         schema do
+          uuid :calculator_id,     :required => true,   :resource => :Calculator
           object :configuration,   :required => true do
             type :CalculatorConfiguration
           end
