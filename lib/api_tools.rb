@@ -7,6 +7,9 @@ require root+'json_payload'
 require root+'platform_context'
 require root+'utilities'
 
+require root+'active_record/error_mapping'
+require root+'active_record/uuid'
+
 require root+'presenters/base_dsl'
 require root+'presenters/base_presenter'
 

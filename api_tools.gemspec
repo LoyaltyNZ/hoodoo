@@ -24,6 +24,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rack-test"
   s.add_development_dependency "rspec"
   s.add_development_dependency "rspec-mocks"
+  s.add_development_dependency "activerecord"
+  s.add_development_dependency "database_cleaner"
+  s.add_development_dependency "sqlite3"
 
   s.add_runtime_dependency 'json_builder'
   s.add_runtime_dependency 'uuidtools'

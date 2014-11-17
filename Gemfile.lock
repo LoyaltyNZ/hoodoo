@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    api_tools (0.2.1)
+    api_tools (0.3.0)
       dalli
       json_builder
       uuidtools
@@ -9,13 +9,23 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (4.1.7)
+      activesupport (= 4.1.7)
+      builder (~> 3.1)
+    activerecord (4.1.7)
+      activemodel (= 4.1.7)
+      activesupport (= 4.1.7)
+      arel (~> 5.0.0)
     activesupport (4.1.7)
       i18n (~> 0.6, >= 0.6.9)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    arel (5.0.1.20140414130214)
+    builder (3.2.2)
     dalli (2.7.2)
+    database_cleaner (1.3.0)
     diff-lcs (1.2.5)
     docile (1.1.5)
     i18n (0.6.11)
@@ -53,6 +63,7 @@ GEM
     simplecov-html (0.8.0)
     simplecov-rcov (0.2.3)
       simplecov (>= 0.4.1)
+    sqlite3 (1.3.10)
     thread_safe (0.3.4)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -62,7 +73,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord
   api_tools!
+  database_cleaner
   rack-test
   rake
   rdoc
@@ -70,3 +83,4 @@ DEPENDENCIES
   rspec-mocks
   sdoc
   simplecov-rcov
+  sqlite3
