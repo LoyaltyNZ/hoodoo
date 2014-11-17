@@ -1,5 +1,5 @@
 ########################################################################
-# File::    balance.rb
+# File::    calculation.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Define documented Platform API Resource 'Calculation'.
