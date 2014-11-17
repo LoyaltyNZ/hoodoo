@@ -6,7 +6,7 @@ describe ApiTools::ActiveRecord::UUID do
     begin
 
       # Annoyingly have to silence STDOUT chatter from ActiveRecord::Migration
-      # and use an 'ensure' block (see later) to make sure we restore it after.
+      # and use an 'ensure' block (see later) to make sure it gets restored.
       #
       $old_stdout = $stdout
       $stdout     = File.open( File::NULL, 'w' )
