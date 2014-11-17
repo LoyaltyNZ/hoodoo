@@ -155,7 +155,7 @@ describe ApiTools::Errors do
     end
   end
 
-  describe '#store' do
+  describe '#store!' do
     pending 'stores errors' do
       expect( true ).to eq( false )
     end
