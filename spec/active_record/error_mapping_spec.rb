@@ -127,7 +127,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       # It means SQLite's adapter has caught up and this expected error
       # message below should be fixed (by detecting the presence of the feature
       # in ActiveRecord::ConnectionAdapters::SQLite3Column or by ensuring that
-      # a new enough adapter is definitely present)
+      # a new enough adapter is definitely present).
 
       {
         "code" => "generic.invalid_string",
