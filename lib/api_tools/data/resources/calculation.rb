@@ -16,12 +16,10 @@ module ApiTools
       class Calculation < ApiTools::Data::DocumentedPresenter
 
         schema do
-          uuid :calculator_id,     :required => true,   :resource => :Calculator
-          text :token_identifier,  :required => true
-          object :calculator_data, :required => false do
-            type :CalculatorConfiguration
-          end
-          array :currency_amounts, :required => true do
+          uuid  :calculator_id,           :required => true,   :resource => :Calculator
+          text  :token_identifier,        :required => true
+          type  :CalculatorConfiguration, :required => false
+          array :currency_amounts,        :required => true do
             type :CurrencyAmount
           end
         end

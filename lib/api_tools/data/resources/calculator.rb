@@ -18,13 +18,10 @@ module ApiTools
         schema do
           internationalised
 
-          text   :name,                   :required => true
-          text   :description,            :required => true
-          enum   :type,                   :required => true,    :from => [ :earn_currency, :earn_vouchers ]
-          object :calculator_data,        :required => false do
-            type :CalculatorConfiguration
-          end
-
+          text   :name,                    :required => true
+          text   :description,             :required => true
+          enum   :type,                    :required => true,    :from => [ :earn_currency, :earn_vouchers ]
+          type   :CalculatorConfiguration, :required => false
         end
       end
     end
