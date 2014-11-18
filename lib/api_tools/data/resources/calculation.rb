@@ -18,7 +18,7 @@ module ApiTools
         schema do
           uuid :calculator_id,     :required => true,   :resource => :Calculator
           text :token_identifier,  :required => true
-          object :configuration,   :required => true do
+          object :calculator_data, :required => false do
             type :CalculatorConfiguration
           end
           array :currency_amounts, :required => true do
