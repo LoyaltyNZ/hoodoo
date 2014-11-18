@@ -591,6 +591,31 @@ module ApiTools
         self
       )
 
+      dispatch_to( implementation, action, context )
+    end
+
+    # Dispatch a call to the given implementation, with before/after actions.
+    #
+    # +implementation+:: ApiTools::ServiceImplementation subclass instance to
+    #                    call.
+    #
+    # +action+::         Name of method to call in that instance as a Symbol,
+    #                    e.g. :list, :show.
+    #
+    # +context+::        ApiTools::ServiceContext instance to pass to the
+    #                    named method as the sole input parameter.
+    #
+    def dispatch_to( implementation, action, context )
+
+      # TODO:
+      # https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
+      #
+      if ( defined?( ActiveRecord ) &&
+           defined?( ActiveRecord::Base ) &&
+           ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
+        ActiveRecord::Base.verify_active_connections!
+      end
+
       implementation.before( context ) if implementation.respond_to?( :before )
       implementation.send( action, context ) unless @service_response.halt_processing?
       implementation.after( context ) if ! @service_response.halt_processing? and implementation.respond_to?( :after )
@@ -1393,7 +1418,8 @@ module ApiTools
         self
       )
 
-      implementation.send( action, context )
+      dispatch_to( implementation, action, context )
+
       @service_response.errors.merge!( local_service_response.errors )
 
       return local_service_response.body

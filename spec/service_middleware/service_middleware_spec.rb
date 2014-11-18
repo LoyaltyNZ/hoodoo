@@ -368,6 +368,19 @@ describe ApiTools::ServiceMiddleware do
         expect(last_response.status).to eq(200)
       end
 
+      it 'prods ActiveRecord beforehand' do
+        module ActiveRecord
+          module Base
+          end
+        end
+
+        expect( ActiveRecord::Base ).to receive( :verify_active_connections! ).once
+
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+        Object.send( :remove_const, :ActiveRecord )
+      end
+
       it 'should pass on locale correctly (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
           expect(context.request.locale).to eq('en-gb')
@@ -1190,7 +1203,6 @@ end
 # Inter-service local calls
 ###############################################################################
 
-
 class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementation
 
   # This gets inter-service called from ...BImplementation. It expects search
@@ -1375,7 +1387,14 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     end
   end
 
-  it 'should call #list correctly' do
+  before :example, :check_callbacks => true do
+    expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :before ).once
+      expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
+      expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
+    expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :after ).once
+  end
+
+  def list_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:list).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:list).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1396,6 +1415,14 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result).to eq({'result' => [1,2,3,4]})
   end
 
+  it 'lists things with callbacks', :check_callbacks => true do
+    list_things()
+  end
+
+  it 'lists things without callbacks' do
+    list_things()
+  end
+
   it 'should report middleware level errors from the secondary service' do
     get '/v1/rspec_test_inter_service_calls_b?limit=10', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)
@@ -1413,7 +1440,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result['errors'][0]['reference']).to eq('42')
   end
 
-  it 'should call #show correctly' do
+  def show_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1435,7 +1462,15 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result).to eq({'result' => {'inner' => 'shown'}})
   end
 
-  it 'should call #create correctly' do
+  it 'shows things with callbacks', :check_callbacks => true do
+    show_things()
+  end
+
+  it 'shows things without callbacks' do
+    show_things()
+  end
+
+  def create_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:create).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1454,7 +1489,15 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result).to eq({'result' => {'inner' => 'created'}})
   end
 
-  it 'should call #update correctly' do
+  it 'creates things with callbacks', :check_callbacks => true do
+    create_things()
+  end
+
+  it 'creates things without callbacks' do
+    create_things()
+  end
+
+  def update_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:update).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:update).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1473,7 +1516,15 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result).to eq({'result' => {'inner' => 'updated'}})
   end
 
-  it 'should call #delete correctly' do
+  it 'updates things with callbacks', :check_callbacks => true do
+    update_things()
+  end
+
+  it 'updates things without callbacks' do
+    update_things()
+  end
+
+  def delete_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:delete).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:delete).once.and_call_original
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1490,6 +1541,14 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'deleted'}})
+  end
+
+  it 'deletes things with callbacks', :check_callbacks => true do
+    delete_things()
+  end
+
+  it 'deletes things without callbacks' do
+    delete_things()
   end
 
   it 'should see errors from the inner call correctly' do
