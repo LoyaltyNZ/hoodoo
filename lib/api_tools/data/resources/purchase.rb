@@ -5,6 +5,8 @@
 # Purpose:: Define documented Platform API Resource 'Purchase'.
 # ----------------------------------------------------------------------
 #           23-Sep-2014 (ADH): Created.
+#           19-Nov-2014 (ADH): Updated in light of Preview Release 11
+#                              specification changes.
 ########################################################################
 
 module ApiTools
@@ -24,8 +26,8 @@ module ApiTools
 
           text   :pos_reference
           uuid   :estimation_id, :resource => :Estimation
-          uuid   :calculator_id, :resource => :Calculator, :required => true
-          text   :configuration
+
+          array  :calculations
         end
 
       end
