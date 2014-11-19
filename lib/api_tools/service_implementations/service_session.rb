@@ -38,13 +38,12 @@ module ApiTools
     #
     attr_reader :roles
 
-    @@test_mode = false
-
+    @@test_mode    = false
     @@test_session = {
-      :id => '0123456789ABCDEF',
-      :participant_id => 'PARTICIPANTZERO',
-      :outlet_id => 'OUTLETZERO',
-      :roles => '',
+      :id             => '0123456789ABCDEF',
+      :participant_id => ApiTools::UUID.generate(),
+      :outlet_id      => ApiTools::UUID.generate(),
+      :roles          => '',
     }
 
     # Set testing mode.
