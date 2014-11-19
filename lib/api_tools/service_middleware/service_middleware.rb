@@ -619,8 +619,7 @@ module ApiTools
       #
       if ( defined?( ActiveRecord ) &&
            defined?( ActiveRecord::Base ) &&
-           ActiveRecord::Base.respond_to?( :clear_active_connections! ) &&
-           self.class.environment.test? == false )
+           ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
         ActiveRecord::Base.clear_active_connections!
       end
 
