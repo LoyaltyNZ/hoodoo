@@ -374,7 +374,7 @@ describe ApiTools::ServiceMiddleware do
           end
         end
 
-        expect( ActiveRecord::Base ).to receive( :verify_active_connections! ).once
+        expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).once
 
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 

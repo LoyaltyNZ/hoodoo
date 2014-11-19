@@ -608,12 +608,20 @@ module ApiTools
     def dispatch_to( implementation, action, context )
 
       # TODO:
-      # https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
+      #   https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
+      #
+      # then:
+      #
+      #   https://github.com/socialcast/resque-ensure-connected/issues/3
+      #
+      # and class ConnectionManagement in:
+      #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
       #
       if ( defined?( ActiveRecord ) &&
            defined?( ActiveRecord::Base ) &&
-           ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
-        ActiveRecord::Base.verify_active_connections!
+           ActiveRecord::Base.respond_to?( :clear_active_connections! ) &&
+           self.class.environment.test? == false )
+        ActiveRecord::Base.clear_active_connections!
       end
 
       implementation.before( context ) if implementation.respond_to?( :before )
