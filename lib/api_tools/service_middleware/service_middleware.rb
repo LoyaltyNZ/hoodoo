@@ -310,7 +310,8 @@ module ApiTools
         }
       }
 
-      data[ :id ] = id unless id.nil?
+      data[ :id      ] = id unless id.nil?
+      data[ :session ] = @service_session.to_h unless @service_session.nil?
 
       ApiTools::Logger.report(
         level,
