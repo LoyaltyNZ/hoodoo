@@ -160,18 +160,6 @@ new instances for each request.</p>
           </ul>
         </dd>
       
-        <dt>S</dt>
-        <dd>
-          <ul>
-            
-              
-              <li>
-                <a href="#method-i-store-21">store!</a>
-              </li>
-            
-          </ul>
-        </dd>
-      
         <dt>U</dt>
         <dd>
           <ul>
@@ -651,57 +639,12 @@ collection representing the formalised resource.</p>
               <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>
-  <span class="ruby-identifier">store!</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@created_at</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@created_at</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
 
   <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Resources</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">render</span>(
     { <span class="ruby-string">&#39;errors&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@errors</span> },
     <span class="ruby-ivar">@uuid</span>,
     <span class="ruby-ivar">@created_at</span>
-  )
-<span class="ruby-keyword">end</span></pre>
-              </div>
-            </div>
-            
-          </div>
-        
-        <div class="method">
-          <div class="title method-title" id="method-i-store-21">
-            
-              <b>store!</b>()
-            
-            <a href="../../classes/ApiTools/Errors.html#method-i-store-21" name="method-i-store-21" class="permalink">Link</a>
-          </div>
-          
-          
-            <div class="description">
-              <p>TODO: Persistence - e.g. database locally, or queue if available.</p>
-            </div>
-          
-          
-          
-
-          
-          
-          
-            
-            <div class="sourcecode">
-              
-              <p class="source-link">
-                Source: 
-                <a href="javascript:toggleSource('method-i-store-21_source')" id="l_method-i-store-21_source">show</a>
-                
-              </p>
-              <div id="method-i-store-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 228</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">store!</span>
-  <span class="ruby-comment"># unless persisted...</span>
-  <span class="ruby-comment">#   created_at = ...</span>
-
-  <span class="ruby-ivar">@created_at</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-comment"># TODO</span>
-
-  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">error</span>(
-    <span class="ruby-string">&quot;Storing ApiTools::Errors instance&quot;</span>,
-    <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">pretty_generate</span>( <span class="ruby-identifier">render</span>() )
   )
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -748,7 +691,7 @@ separate individual values.</p>
                 
               </p>
               <div id="method-i-unjoin_and_unescape_commas_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 256</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/errors.rb, line 242</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>

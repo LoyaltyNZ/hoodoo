@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceMiddleware::AMQPLogMessage</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceMiddleware::AMQPLogMessage 
+            
+                <span class="parent">&lt; 
+                    
+                    AMQEndpoint::Message
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/amqp_log_message_rb.html">lib/api_tools/service_middleware/amqp_log_message.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>For AMQEndpoint gem users, the <a
+href="AMQPLogMessage.html">AMQPLogMessage</a> class provides an
+AMQEndpoint::Message subclass used for sending structured log data to the
+queue. <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>
+uses this.</p>
+
+<p>See the AMQEndpoint gem for more details.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-deserialize">deserialize</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-serialize">serialize</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update">update</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>code</td>
+            <td class='attr-desc'><p>Component log code. See <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>component</td>
+            <td class='attr-desc'><p>Logging component. See <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>data</td>
+            <td class='attr-desc'><p>Log payload. See <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>id</td>
+            <td class='attr-desc'><p>A <a href="../UUID.html">UUID</a> to assign to this log message. See <a
+href="../UUID.html#method-c-generate">ApiTools::UUID.generate</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>level</td>
+            <td class='attr-desc'><p>Logging level. For a level of <code>:error</code>, the queue packet type
+will be &#39;error&#39;. For anything else, the packet type will be
+determined by options but default to &#39;log&#39;.</p>
+
+<p>See also <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>(options = {})
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/AMQPLogMessage.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create an instance with options keyed on the attributes defined for the
+class. In addition, option <code>:type</code> can be used to override the
+internally set queue packet type of &#39;log&#39; or &#39;error&#39;. The
+value must be a String.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 58</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
+  <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
+
+  <span class="ruby-ivar">@type</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span> ] <span class="ruby-operator">==</span> <span class="ruby-value">:error</span>
+    <span class="ruby-string">&#39;error&#39;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">options</span>[ <span class="ruby-value">:type</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;log&#39;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-deserialize">
+            
+              <b>deserialize</b>()
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/AMQPLogMessage.html#method-i-deserialize" name="method-i-deserialize" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Unpack a serialized representation into this instance. See the AMQEndpoint
+gem and AMQEndpoint::Message#deserialize.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-deserialize_source')" id="l_method-i-deserialize_source">show</a>
+                
+              </p>
+              <div id="method-i-deserialize_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 87</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
+  <span class="ruby-keyword">super</span>
+  <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-serialize">
+            
+              <b>serialize</b>()
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/AMQPLogMessage.html#method-i-serialize" name="method-i-serialize" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Seralize this instance. See the AMQEndpoint gem and
+AMQEndpoint::Message#serialize.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-serialize_source')" id="l_method-i-serialize_source">show</a>
+                
+              </p>
+              <div id="method-i-serialize_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 72</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
+  <span class="ruby-ivar">@content</span> = {
+    <span class="ruby-value">:id</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
+    <span class="ruby-value">:level</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@level</span>,
+    <span class="ruby-value">:component</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@component</span>,
+    <span class="ruby-value">:code</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@code</span>,
+    <span class="ruby-value">:data</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
+  }
+
+  <span class="ruby-keyword">super</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update">
+            
+              <b>update</b>( options )
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/AMQPLogMessage.html#method-i-update" name="method-i-update" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Set public attribute values according to an options hash keyed on the
+attributes defined for the class.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
+                
+              </p>
+              <div id="method-i-update_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-ivar">@id</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>        ]
+  <span class="ruby-ivar">@level</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>     ]
+  <span class="ruby-ivar">@component</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:component</span> ]
+  <span class="ruby-ivar">@code</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:code</span>      ]
+  <span class="ruby-ivar">@data</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>      ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

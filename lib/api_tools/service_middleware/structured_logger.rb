@@ -10,7 +10,7 @@
 module ApiTools
   class ServiceMiddleware
 
-    # Å custom logger assigned via ApiTools::Logger::logger= which sends log
+    # A custom logger assigned via ApiTools::Logger::logger= which sends log
     # data to an AMQP-based queue via the AMQEndpoint gem if available, else
     # gives up and dumps to flat file. See class
     # ApiTools::ServiceMiddleware::AMQPLogMessage for more information.

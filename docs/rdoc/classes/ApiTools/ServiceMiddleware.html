@@ -31,11 +31,15 @@
         </h1>
         <ul class="files">
             
+            <li><a href="../../files/lib/api_tools/service_middleware/amqp_log_message_rb.html">lib/api_tools/service_middleware/amqp_log_message.rb</a></li>
+            
             <li><a href="../../files/lib/api_tools/service_middleware/service_endpoint_rb.html">lib/api_tools/service_middleware/service_endpoint.rb</a></li>
             
             <li><a href="../../files/lib/api_tools/service_middleware/service_middleware_rb.html">lib/api_tools/service_middleware/service_middleware.rb</a></li>
             
             <li><a href="../../files/lib/api_tools/service_middleware/service_registry_drb_server_rb.html">lib/api_tools/service_middleware/service_registry_drb_server.rb</a></li>
+            
+            <li><a href="../../files/lib/api_tools/service_middleware/structured_logger_rb.html">lib/api_tools/service_middleware/structured_logger.rb</a></li>
             
         </ul>
     </div>
@@ -63,6 +67,14 @@ implementations and a response object built so that services have a
 consistent way to return results, which can be post-processed further by
 the middleware before returning the data to Rack.</p>
 
+<p>The middleware supports structured logging - see <a
+href="Logger.html#method-c-report">ApiTools::Logger.report</a>. Its own log
+data uses component <code>Middleware</code>. It will also log essential
+data for successful and failed interactions with resource endpoints using
+the resource name as the component. In such cases, the codes it uses are
+always prefixed by <code>middleware_</code> and service applications should
+consider codes with this prefix reserved - do not use such codes yourself.</p>
+
     </div>
   
 
@@ -81,12 +93,22 @@ the middleware before returning the data to Rack.</p>
       
         <li>
           <span class="type">CLASS</span>
+          <a href="ServiceMiddleware/AMQPLogMessage.html">ApiTools::ServiceMiddleware::AMQPLogMessage</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
           <a href="ServiceMiddleware/ServiceEndpoint.html">ApiTools::ServiceMiddleware::ServiceEndpoint</a>
         </li>
       
         <li>
           <span class="type">CLASS</span>
           <a href="ServiceMiddleware/ServiceRegistryDRbServer.html">ApiTools::ServiceMiddleware::ServiceRegistryDRbServer</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ServiceMiddleware/StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>
         </li>
       
     </ul>
@@ -388,7 +410,7 @@ end</code></pre>
                 
               </p>
               <div id="method-c-environment_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 105</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 111</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">environment</span>
   <span class="ruby-ivar">@_env</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">StringInquirer</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;RACK_ENV&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;development&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -427,7 +449,7 @@ need to check this.</p>
                 
               </p>
               <div id="method-c-has_memcache-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 113</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 119</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcache?</span>
   <span class="ruby-identifier">m</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -467,7 +489,7 @@ need to check this.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 141</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-ivar">@service_container</span> = <span class="ruby-identifier">app</span>
@@ -560,7 +582,7 @@ need to check this.</p>
                 
               </p>
               <div id="method-c-on_queue-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 120</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 126</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ENDPOINT&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -604,7 +626,7 @@ recorded.</p>
                 
               </p>
               <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 132</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 138</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
@@ -647,7 +669,7 @@ the Rack protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 206</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -656,21 +678,20 @@ the Rack protocol requirements.</p>
   <span class="ruby-keyword">begin</span>
 
     <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-ivar">@session_id</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
 
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">send</span>(
-      <span class="ruby-value">:debug</span>,
-      <span class="ruby-string">&#39;ApiTools::ServiceMiddleware#call with Rack &quot;env&quot;:&#39;</span>,
-      <span class="ruby-identifier">env</span>.<span class="ruby-identifier">inspect</span>
-    )
+    <span class="ruby-comment"># If running on Alchemy / an AMQP based architecture, it&#39;ll have</span>
+    <span class="ruby-comment"># forwarded details of the AMQEndpoint gem&#39;s queue service via the</span>
+    <span class="ruby-comment"># Rack environment. Send this to the structured logger so it can do</span>
+    <span class="ruby-comment"># queue-based structured logging via the provided service.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredLogger</span>.<span class="ruby-identifier">queue_endpoint</span> = <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;rack.alchemy&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;alchemy&#39;</span> ]
 
-    <span class="ruby-ivar">@rack_request</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
-
-    <span class="ruby-identifier">log</span>( <span class="ruby-value">:info</span> )
+    <span class="ruby-identifier">debug_log</span>()
 
     <span class="ruby-ivar">@service_response</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceResponse</span>.<span class="ruby-identifier">new</span>
 
-    <span class="ruby-identifier">load_session</span>()
-    <span class="ruby-identifier">preprocess</span>()  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">halt_processing?</span>
+    <span class="ruby-identifier">preprocess</span>()
     <span class="ruby-identifier">process</span>()     <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">halt_processing?</span>
     <span class="ruby-identifier">postprocess</span>() <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">halt_processing?</span>
 
@@ -784,15 +805,12 @@ list action case.</p>
                 
               </p>
               <div id="method-i-inter_service_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1129</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
 
-  <span class="ruby-identifier">log</span>(
-    <span class="ruby-value">:debug</span>,
-    <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call requested with options #{ options }&quot;</span>
-  )
+  <span class="ruby-identifier">debug_log</span>( <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call requested with options #{ options }&quot;</span> )
 
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">remote</span> )
     <span class="ruby-identifier">result</span> = <span class="ruby-identifier">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
@@ -801,15 +819,9 @@ list action case.</p>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">halt_processing?</span>
-    <span class="ruby-identifier">log</span>(
-      <span class="ruby-value">:warn</span>,
-      <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call halted processing with errors #{ @service_response.errors.errors }&quot;</span>
-    )
+    <span class="ruby-identifier">debug_log</span>( <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call halted processing with errors #{ @service_response.errors.errors }&quot;</span> )
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">log</span>(
-      <span class="ruby-value">:debug</span>,
-      <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call succeeded with result &#39;#{ result }&#39;&quot;</span>
-    )
+    <span class="ruby-identifier">debug_log</span>( <span class="ruby-node">&quot;#{ remote ? &#39;Remote&#39; : &#39;Local&#39; } inter-service call succeeded with result &#39;#{ result }&#39;&quot;</span> )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
@@ -856,7 +868,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1306</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1434</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -867,7 +879,6 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
   <span class="ruby-identifier">interface</span>      = <span class="ruby-identifier">service</span>[ <span class="ruby-value">:interface</span>      ]
   <span class="ruby-identifier">actions</span>        = <span class="ruby-identifier">service</span>[ <span class="ruby-value">:actions</span>        ]
   <span class="ruby-identifier">implementation</span> = <span class="ruby-identifier">service</span>[ <span class="ruby-value">:implementation</span> ]
-
 
   <span class="ruby-comment"># We must construct a call context for the local service. This means</span>
   <span class="ruby-comment"># a local request object which we fill in with data just as if we&#39;d</span>
@@ -935,10 +946,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
   <span class="ruby-comment"># Dispatch the call, merge any errors that might have come back and</span>
   <span class="ruby-comment"># return the body of the called service&#39;s response.</span>
 
-  <span class="ruby-identifier">log</span>(
-    <span class="ruby-value">:debug</span>,
-    <span class="ruby-node">&quot;Dispatching local inter-service call with parsed body data: &#39;#{ local_service_request.body }&#39;&quot;</span>
-  )
+  <span class="ruby-identifier">debug_log</span>( <span class="ruby-node">&quot;Dispatching local inter-service call with parsed body data: &#39;#{ local_service_request.body }&#39;&quot;</span> )
 
   <span class="ruby-identifier">context</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceContext</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-ivar">@service_session</span>,
@@ -947,7 +955,8 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
     <span class="ruby-keyword">self</span>
   )
 
-  <span class="ruby-identifier">implementation</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">action</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">dispatch_to</span>( <span class="ruby-identifier">interface</span>, <span class="ruby-identifier">implementation</span>, <span class="ruby-identifier">action</span>, <span class="ruby-identifier">context</span> )
+
   <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">local_service_response</span>.<span class="ruby-identifier">errors</span> )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">local_service_response</span>.<span class="ruby-identifier">body</span>
@@ -994,7 +1003,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1165</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1293</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1173,7 +1182,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1070</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1226,7 +1235,7 @@ HTTP?</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1091</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-ivar">@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
