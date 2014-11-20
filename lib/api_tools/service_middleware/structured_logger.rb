@@ -61,6 +61,7 @@ module ApiTools
             :code      => code,
             :data      => data
           )
+          @@queue_endpoint.send_message( message )
         else
           $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
         end
