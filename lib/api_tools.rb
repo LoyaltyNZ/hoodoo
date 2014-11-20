@@ -72,6 +72,8 @@ require root+'errors/errors'
 require root+'service_middleware/string_inquirer'
 require root+'service_middleware/rack_monkey_patch'
 require root+'service_middleware/service_registry_drb_server'
+require root+'service_middleware/amqp_log_message'
+require root+'service_middleware/structured_logger'
 require root+'service_middleware/service_middleware'
 require root+'service_middleware/service_endpoint'
 

@@ -117,10 +117,19 @@ module ApiTools
     #                    defined by role usage within services.
     #
     def initialize(options = {})
-      @id = options[:id]
-      @participant_id = options[:participant_id]
-      @outlet_id = options[:outlet_id]
-      @roles = options[:roles].to_s.split ','
+
+      @id             = options[ :id             ]
+      @participant_id = options[ :participant_id ]
+      @outlet_id      = options[ :outlet_id      ]
+      @roles          = options[ :roles          ].to_s.split( ',' )
+
+      @to_h = {
+        :id             => @id,
+        :participant_id => @participant_id,
+        :outlet_id      => @outlet_id,
+        :roles          => @roles
+      }
+
     end
 
     # Returns true if this session has the specified role
@@ -136,6 +145,15 @@ module ApiTools
     # Returns true if this session has any of the specified roles
     def has_any_roles?(roles)
       (@roles & roles).length > 0
+    end
+
+    # Returns a representation of the Session data as a Hash.
+    #
+    # TODO: LoyaltyNZ specific - hash matches input options in #initialize,
+    #       but with role string split into an Array.
+    #
+    def to_h
+      @to_h
     end
 
     private

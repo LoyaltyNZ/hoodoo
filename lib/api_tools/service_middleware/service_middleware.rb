@@ -17,27 +17,33 @@ require "uri"
 
 module ApiTools
 
-  # Rack middleware, declared in (e.g.) a +config.ru+ file in the
-  # usual way:
+  # Rack middleware, declared in (e.g.) a +config.ru+ file in the usual way:
   #
-  #     use( ApiTools::ServiceMiddleware )
+  #      use( ApiTools::ServiceMiddleware )
   #
-  # This is the core of the common service implementation on the
-  # Rack client-request-handling side. It is run in the context
-  # of an ApiTools::ServiceApplication subclass that's been
-  # given to Rack as the Rack endpoint application; it looks at
-  # the component interfaces supported by the service and routes
-  # requests to the correct one (or raises a 404).
+  # This is the core of the common service implementation on the Rack
+  # client-request-handling side. It is run in the context of an
+  # ApiTools::ServiceApplication subclass that's been given to Rack as the Rack
+  # endpoint application; it looks at the component interfaces supported by the
+  # service and routes requests to the correct one (or raises a 404).
   #
-  # Lots of preprocessing and postprocessing gets done to set up
-  # things like locale information, enforce content types and
-  # so-forth. Request data is assembled in a parsed, structured
-  # format for passing to service implementations and a response
-  # object built so that services have a consistent way to
-  # return results, which can be post-processed further by the
-  # middleware before returning the data to Rack.
+  # Lots of preprocessing and postprocessing gets done to set up things like
+  # locale information, enforce content types and so-forth. Request data is
+  # assembled in a parsed, structured format for passing to service
+  # implementations and a response object built so that services have a
+  # consistent way to return results, which can be post-processed further by
+  # the middleware before returning the data to Rack.
+  #
+  # The middleware supports structured logging - see ApiTools::Logger::report.
+  # Its own log data uses component +Middleware+. It will also log essential
+  # data for successful and failed interactions with resource endpoints using
+  # the resource name as the component. In such cases, the codes it uses are
+  # always prefixed by +middleware_+ and service applications should consider
+  # codes with this prefix reserved - do not use such codes yourself.
   #
   class ServiceMiddleware
+
+    ApiTools::Logger.logger = ApiTools::ServiceMiddleware::StructuredLogger
 
     # All allowed action names in implementations, used for internal checks.
     # This is also the default supported set of actions. Symbols.
@@ -211,21 +217,13 @@ module ApiTools
       begin
 
         @interaction_id = @session_id = nil
+        @rack_request   = Rack::Request.new( env )
 
-        ApiTools::Logger.send(
-          :debug,
-          'ApiTools::ServiceMiddleware#call with Rack "env":',
-          env.inspect
-        )
-
-        @rack_request = Rack::Request.new( env )
-
-        log( :info )
+        debug_log()
 
         @service_response = ApiTools::ServiceResponse.new
 
-        load_session()
-        preprocess()  unless @service_response.halt_processing?
+        preprocess()
         process()     unless @service_response.halt_processing?
         postprocess() unless @service_response.halt_processing?
 
@@ -273,45 +271,133 @@ module ApiTools
     # Returns the +rack_data+ input parameter value without modifications.
     #
     def respond_with( rack_data )
+
+      id   = nil
       body = ''
+
       rack_data[ 2 ].each { | thing | body << thing.to_s }
 
-      log(
-        :info,
-        'Responding with',
-        rack_data[ 0 ],
-        rack_data[ 1 ],
-        body
+      if @service_response.halt_processing?
+        begin
+          # Error cases should be infrequent, so we can "be nice" and re-parse
+          # the returned body for structured logging only. We don't do this for
+          # successful responses as we assume those will be much more frequent
+          # and the extra parsing step would be heavy overkill for a log.
+          #
+          # This also means we can (in theory) extract the intended resource
+          # UUID and include that in structured log data to make sure any
+          # persistence layers store the item as an error with the correct ID.
+
+          body = JSON.parse( body )
+          id   = body[ 'id' ]
+        rescue
+        end
+
+        level = :error
+
+      else
+        body  = body[ 0 .. 1023 ] << '...' if ( body.size > 1024 )
+        level = :info
+
+      end
+
+      data = {
+        :interaction_id => @interaction_id,
+        :payload        => {
+          :http_status_code => rack_data[ 0 ],
+          :http_headers     => rack_data[ 1 ],
+          :response_body    => body
+        }
+      }
+
+      data[ :id ] = id unless id.nil?
+
+      ApiTools::Logger.report(
+        level,
+        :Middleware,
+        :outbound,
+        data
       )
 
       return rack_data
     end
 
-    # Log a message in a consistent way for middleware request processing.
-    # Pass the log level and optional extra arguments which will be used as
+    # This is part of the formalised structured logging interface upon which
+    # external entites might depend. Change with care.
+    #
+    # For a given service interface, an implementation of which is receiving
+    # a given action under the given request context, log the response *after
+    # the fact* of calling the implementation, using the target interface's
+    # resource name for the structured log entry's "component" field.
+    #
+    # +interface+::      The ApiTools::ServiceInterface subclass referring to
+    #                    the service implementation that was called.
+    #
+    # +action+::         Name of method that was called in the service instance
+    #                    as a Symbol, e.g. :list, :show.
+    #
+    # +context+::        ApiTools::ServiceContext instance containing request
+    #                    and response details.
+    #
+    def auto_log( interface, action, context )
+
+      # Data as per ApiTools::ServiceMiddleware::StructuredLogger.
+
+      data = {
+        :interaction_id => @interaction_id,
+        :session        => @service_session.to_h
+      }
+
+      if ( context.response.halt_processing? )
+        log_level   = :error
+        code        = "middleware_error_#{ action }"
+        data[ :id ] = context.response.errors.uuid
+      else
+        log_level   = :info
+        code        = "middleware_#{ action }"
+      end
+
+      # Don't bother logging list responses - they could be huge - instead log
+      # all list-related parameters from the inbound request.
+
+      if context.response.body.is_a?( ::Array )
+        attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
+        data[ :payload ] = {}
+
+        attributes.each do | attribute |
+          data[ attribute ] = context.request.send( attribute )
+        end
+      else
+        data[ :payload ] = context.response.body
+      end
+
+      ApiTools::Logger.report(
+        log_level,
+        interface.resource,
+        code,
+        data
+      )
+    end
+
+    # Log a debug message. Pass optional extra arguments which will be used as
     # strings that get appended to the log message.
     #
     # Before calling, +@rack_request+ must be set up with the Rack::Request
     # instance for the call environment.
     #
-    # +level+:: Log level. Default is +:info+.
-    # *args::   Optional extra arguments used as strings to add to log message.
+    # *args:: Optional extra arguments used as strings to add to log message.
     #
-    def log( level = :info, *args )
-
-      full_uri         = "Full URI: #{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }"
-      md5              = "Request MD5: #{ Digest::MD5.hexdigest( @rack_request.env.to_s ) }"
-      interaction_info = @interaction_id.nil? ? "No interaction ID yet" : "Interaction ID: #{ @interaction_id }"
-
-      ApiTools::Logger.send(
-        level,
-        'ApiTools::ServiceMiddleware#call',
-        full_uri,
-        md5,
-        interaction_info,
-        *args
+    def debug_log( *args )
+      ApiTools::Logger.report(
+        :debug,
+        :Middleware,
+        :log,
+        {
+          :full_uri       => "#{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }",
+          :interaction_id => @interaction_id,
+          :payload        => { 'args' => args }
+        }
       )
-
     end
 
     # Announce the presence of the service endpoints to known interested
@@ -365,8 +451,8 @@ module ApiTools
         # which others connect to if subsequently started.
         #
         # Use IP address, rather than 'localhost' here, to ensure that "address
-        # in use" errors are raised immediately if a second server startup attempt
-        # is made:
+        # in use" errors are raised immediately if a second server startup
+        # attempt is made:
         #
         #   https://bugs.ruby-lang.org/issues/3052
         #
@@ -442,7 +528,18 @@ module ApiTools
       @locale         = deal_with_language_header()
       @interaction_id = find_or_generate_interaction_id()
 
+      ApiTools::Logger.report(
+        :info,
+        :Middleware,
+        :inbound,
+        {
+          :interaction_id => @interaction_id,
+          :payload        => @rack_request.env
+        }
+      )
+
       set_common_response_headers( @service_response )
+      load_session()
     end
 
     # Process the client's call. The heart of service routing and application
@@ -562,10 +659,7 @@ module ApiTools
                                             'message' => 'Body data exceeds configured maximum size for platform' )
       end
 
-      log(
-        :info,
-        "Raw body data read successfully: '#{ body }'"
-      )
+      debug_log( "Raw body data read successfully: '#{ body }'" )
 
       if action == :create || action == :update
         service_request.body = payload_to_hash( body )
@@ -577,10 +671,7 @@ module ApiTools
                                             'reference' => { :action => action } )
       end
 
-      log(
-        :info,
-        "Dispatching with parsed body data: '#{ service_request.body }'"
-      )
+      debug_log( "Dispatching with parsed body data: '#{ service_request.body }'" )
 
       # Finally - dispatch to service.
 
@@ -591,10 +682,14 @@ module ApiTools
         self
       )
 
-      dispatch_to( implementation, action, context )
+      dispatch_to( interface, implementation, action, context )
     end
 
     # Dispatch a call to the given implementation, with before/after actions.
+    #
+    # +interface+::      The ApiTools::ServiceInterface subclass referring
+    #                    to the implementation class of which an instance is
+    #                    given in the +implementation+ parameter.
     #
     # +implementation+:: ApiTools::ServiceImplementation subclass instance to
     #                    call.
@@ -603,9 +698,9 @@ module ApiTools
     #                    e.g. :list, :show.
     #
     # +context+::        ApiTools::ServiceContext instance to pass to the
-    #                    named method as the sole input parameter.
+    #                    named action method as the sole input parameter.
     #
-    def dispatch_to( implementation, action, context )
+    def dispatch_to( interface, implementation, action, context )
 
       # TODO:
       #   https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
@@ -624,8 +719,10 @@ module ApiTools
       end
 
       implementation.before( context ) if implementation.respond_to?( :before )
-      implementation.send( action, context ) unless @service_response.halt_processing?
-      implementation.after( context ) if ! @service_response.halt_processing? and implementation.respond_to?( :after )
+      implementation.send( action, context ) unless context.response.halt_processing?
+      implementation.after( context ) if ! context.response.halt_processing? and implementation.respond_to?( :after )
+
+      auto_log( interface, action, context )
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -1162,10 +1259,7 @@ module ApiTools
 
       remote = options[ :local ].nil?
 
-      log(
-        :debug,
-        "#{ remote ? 'Remote' : 'Local' } inter-service call requested with options #{ options }"
-      )
+      debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call requested with options #{ options }" )
 
       if ( remote )
         result = inter_service_remote( options )
@@ -1174,15 +1268,9 @@ module ApiTools
       end
 
       if @service_response.halt_processing?
-        log(
-          :warn,
-          "#{ remote ? 'Remote' : 'Local' } inter-service call halted processing with errors #{ @service_response.errors.errors }"
-        )
+        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call halted processing with errors #{ @service_response.errors.errors }" )
       else
-        log(
-          :debug,
-          "#{ remote ? 'Remote' : 'Local' } inter-service call succeeded with result '#{ result }'"
-        )
+        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call succeeded with result '#{ result }'" )
       end
 
       return result
@@ -1346,7 +1434,6 @@ module ApiTools
       actions        = service[ :actions        ]
       implementation = service[ :implementation ]
 
-
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
       # parsed an inbound HTTP request and a response object that contains
@@ -1413,10 +1500,7 @@ module ApiTools
       # Dispatch the call, merge any errors that might have come back and
       # return the body of the called service's response.
 
-      log(
-        :debug,
-        "Dispatching local inter-service call with parsed body data: '#{ local_service_request.body }'"
-      )
+      debug_log( "Dispatching local inter-service call with parsed body data: '#{ local_service_request.body }'" )
 
       context = ApiTools::ServiceContext.new(
         @service_session,
@@ -1425,7 +1509,7 @@ module ApiTools
         self
       )
 
-      dispatch_to( implementation, action, context )
+      dispatch_to( interface, implementation, action, context )
 
       @service_response.errors.merge!( local_service_response.errors )
 

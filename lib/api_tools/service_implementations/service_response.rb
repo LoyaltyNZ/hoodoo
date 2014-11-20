@@ -201,7 +201,8 @@ module ApiTools
 
     # Convert the internal response data into something that Rack expects.
     # The return value of this method can be passed back to Rack from Rack
-    # middleware or applications.
+    # middleware or applications. Usually, this is only called directly by
+    # ApiTools::ServiceMiddleware.
     #
     def for_rack
       rack_response = Rack::Response.new

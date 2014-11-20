@@ -155,12 +155,6 @@ describe ApiTools::Errors do
     end
   end
 
-  describe '#store!' do
-    pending 'stores errors' do
-      expect( true ).to eq( false )
-    end
-  end
-
   describe '#add_precompiled_error' do
     it 'should not complain about random data' do
       @errors.clear_errors
