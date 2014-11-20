@@ -131,12 +131,9 @@ describe ApiTools::Errors do
   end
 
   describe '#render' do
-    it 'should store before rendering' do
+    it 'renders' do
       @errors.clear_errors
       @errors.add_error('platform.malformed')
-
-      expect(ApiTools::Logger).to receive(:error)
-      expect(@errors).to receive(:store!).and_call_original
 
       data = @errors.render()
       expect(data['errors']).to be_a(Array)
@@ -318,9 +315,6 @@ describe ApiTools::Errors do
     it 'should escape reference data, which should be recoverable' do
       @errors.clear_errors
       @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
-
-      expect(ApiTools::Logger).to receive(:error)
-      expect(@errors).to receive(:store!).and_call_original
 
       rendered = @errors.render
       ary = @errors.unjoin_and_unescape_commas(rendered['errors'][0]['reference'])

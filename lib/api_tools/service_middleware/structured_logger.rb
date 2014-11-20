@@ -35,9 +35,11 @@ module ApiTools
         @@queue_endpoint = endpoint
       end
 
-      # Custom implementation of the ApiTools::Logger::report interface. The
-      # middleware custom logger has expectations about the data payload - it
-      # expects these optional keys/values:
+      # Custom implementation of the ApiTools::Logger::report interface. See
+      # that method for parameter details.
+      #
+      # The middleware custom logger has expectations about the data payload.
+      # It expects these optional keys/values:
       #
       # +:id+::      A UUID (via ApiTools::UUID::generate) to use for this log
       #              message - if absent, one is generated automatically.

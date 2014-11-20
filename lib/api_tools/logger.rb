@@ -9,7 +9,7 @@ module ApiTools
   # methods ::debug, ::info, ::warn and ::error described herein. Loggers just
   # take the list of arguments and log them. There is no need to check log
   # level as ApiTools only calls a custom logger if the appropriate level is
-  # set.
+  # set. Do *NOT* subclass ApiTools::Logger!
   #
   # Alternatively, a custom logger may support structured logging through
   # providing an implementation of the ::report method signature which
@@ -34,10 +34,16 @@ module ApiTools
     #
     # +logger+:: The logger class to use (any class that implements
     #            the same interface as ::debug, ::info, ::warn and ::error,
-    #            and optionally ::report).
+    #            or optionally ::report). *NOT* a subclass of ApiTools::Logger!
     #
     def self.logger=( logger )
-      @@logger = logger
+      if logger.nil? || logger == ApiTools::Logger
+        @@logger = nil
+      elsif logger <= ApiTools::Logger
+        raise "Custom logger classes must not subclass ApiTools::Logger"
+      else
+        @@logger = logger
+      end
     end
 
     # Return the current log level. This is +:debug+ by default. See
@@ -73,7 +79,7 @@ module ApiTools
     # message is only logged if the logging threshold level (see ::level=) is
     # set to an equal or lower level.
     #
-    # +level+::     Log level as a symbol - one of, from most trivial to most
+    # +log_level+:: Log level as a symbol - one of, from most trivial to most
     #               severe, +:debug+, +:info+, +:warn+ or +:error+.
     #
     # +component+:: Component. This is the resource name for a specific
@@ -91,18 +97,18 @@ module ApiTools
     #               payload data to be logged. Converted to a string with
     #               +inspect+ for flat output use in an unstructured context.
     #
-    def self.report( level, component, code, data )
+    def self.report( log_level, component, code, data )
 
-      return if level == :debug && @@level != :debug
-      return if level == :info  && @@level != :debug && @@level != :info
-      return if level == :warn  && @@level != :debug && @@level != :info && @@level != :warn
+      return if log_level == :debug && @@level != :debug
+      return if log_level == :info  && @@level != :debug && @@level != :info
+      return if log_level == :warn  && @@level != :debug && @@level != :info && @@level != :warn
 
-      if logger && logger.respond_to?( :report )
-        logger.report( level, component, code, data )
-      elsif logger && logger.respond_to?( level )
-        logger.send( level, component, code, data.inspect )
+      if @@logger && @@logger.respond_to?( :report )
+        @@logger.report( log_level, component, code, data )
+      elsif @@logger && @@logger.respond_to?( log_level )
+        @@logger.send( log_level, component, code, data.inspect )
       else
-        $stdout.puts( level.to_s.upcase, component, code, data.inspect )
+        $stdout.puts( log_level.to_s.upcase, component, code, data.inspect )
       end
     end
 
