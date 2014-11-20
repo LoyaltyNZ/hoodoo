@@ -219,6 +219,13 @@ module ApiTools
         @interaction_id = @session_id = nil
         @rack_request   = Rack::Request.new( env )
 
+        # If running on Alchemy / an AMQP based architecture, it'll have
+        # forwarded details of the AMQEndpoint gem's queue service via the
+        # Rack environment. Send this to the structured logger so it can do
+        # queue-based structured logging via the provided service.
+        #
+        ApiTools::ServiceMiddleware::StructuredLogger.queue_endpoint = env[ 'rack.alchemy' ] || env[ 'alchemy' ]
+
         debug_log()
 
         @service_response = ApiTools::ServiceResponse.new

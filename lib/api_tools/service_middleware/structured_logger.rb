@@ -17,8 +17,20 @@ module ApiTools
     #
     class StructuredLogger
 
+      # See ::queue_endpoint= for details.
+      #
       @@queue_endpoint = nil
 
+      # Set the AMQEndpoint::Service instance used to send messages via
+      # instances of the ApiTools::ServiceMiddleware::AMQPLogMessage class. See
+      # the AMQEndpoint gem for details.
+      #
+      # If you're running with Rack on top of Alchemy, then the +call+ method's
+      # +env+ parameter containing the Rack environment should have a key of
+      # +rack.alchemy+ or +alchemy+ with a value that can be assigned here. The
+      # logger will then use the active Alchemy service to send messages to its
+      # configured queue.
+      #
       def self.queue_endpoint=( endpoint )
         @@queue_endpoint = endpoint
       end
