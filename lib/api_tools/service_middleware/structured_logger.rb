@@ -53,7 +53,7 @@ module ApiTools
       #
       def self.report( level, component, code, data )
         if @@queue_endpoint.nil? == false && defined?( ApiTools::ServiceMiddleware::AMQPLogMessage )
-          data[ :id ] ||= piTools::UUID.generate()
+          data[ :id ] ||= ApiTools::UUID.generate()
           message = ApiTools::ServiceMiddleware::AMQPLogMessage.new(
             :id        => data[ :id ],
             :level     => level,
