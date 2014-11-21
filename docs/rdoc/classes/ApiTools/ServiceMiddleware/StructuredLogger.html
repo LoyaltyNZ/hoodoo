@@ -66,13 +66,13 @@ for more information.</p>
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
-        <dt>Q</dt>
+        <dt>A</dt>
         <dd>
           <ul>
             
               
               <li>
-                <a href="#method-c-queue_endpoint-3D">queue_endpoint=</a>
+                <a href="#method-c-alchemy-3D">alchemy=</a>
               </li>
             
           </ul>
@@ -114,11 +114,11 @@ for more information.</p>
       <div class="sectiontitle">Class Public methods</div>
       
         <div class="method">
-          <div class="title method-title" id="method-c-queue_endpoint-3D">
+          <div class="title method-title" id="method-c-alchemy-3D">
             
-              <b>queue_endpoint=</b>( endpoint )
+              <b>alchemy=</b>( endpoint )
             
-            <a href="../../../classes/ApiTools/ServiceMiddleware/StructuredLogger.html#method-c-queue_endpoint-3D" name="method-c-queue_endpoint-3D" class="permalink">Link</a>
+            <a href="../../../classes/ApiTools/ServiceMiddleware/StructuredLogger.html#method-c-alchemy-3D" name="method-c-alchemy-3D" class="permalink">Link</a>
           </div>
           
           
@@ -147,13 +147,13 @@ queue.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-c-queue_endpoint-3D_source')" id="l_method-c-queue_endpoint-3D_source">show</a>
+                <a href="javascript:toggleSource('method-c-alchemy-3D_source')" id="l_method-c-alchemy-3D_source">show</a>
                 
               </p>
-              <div id="method-c-queue_endpoint-3D_source" class="dyn-source">
+              <div id="method-c-alchemy-3D_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">queue_endpoint=</span>( <span class="ruby-identifier">endpoint</span> )
-  <span class="ruby-identifier">@@queue_endpoint</span> = <span class="ruby-identifier">endpoint</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">alchemy=</span>( <span class="ruby-identifier">endpoint</span> )
+  <span class="ruby-identifier">@@alchemy</span> = <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -214,18 +214,19 @@ href="../ServiceSession.html">ApiTools::ServiceSession</a> instance.</p>
               <div id="method-c-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@queue_endpoint</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@alchemy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span> ).<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-node">&quot;#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }&quot;</span> )
+  <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
     <span class="ruby-identifier">message</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">:id</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
-      <span class="ruby-value">:level</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
-      <span class="ruby-value">:component</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
-      <span class="ruby-value">:code</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
-      <span class="ruby-value">:data</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>
+      <span class="ruby-value">:id</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
+      <span class="ruby-value">:level</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
+      <span class="ruby-value">:component</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
+      <span class="ruby-value">:code</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
+      <span class="ruby-value">:data</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
+      <span class="ruby-value">:routing_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
     )
-    <span class="ruby-identifier">@@queue_endpoint</span>.<span class="ruby-identifier">send_message</span>( <span class="ruby-identifier">message</span> )
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-node">&quot;#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }&quot;</span> )
+    <span class="ruby-identifier">@@alchemy</span>.<span class="ruby-identifier">send_message</span>( <span class="ruby-identifier">message</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>

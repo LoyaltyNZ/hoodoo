@@ -224,7 +224,7 @@ module ApiTools
         # Rack environment. Send this to the structured logger so it can do
         # queue-based structured logging via the provided service.
         #
-        ApiTools::ServiceMiddleware::StructuredLogger.queue_endpoint = env[ 'rack.alchemy' ] || env[ 'alchemy' ]
+        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = env[ 'rack.alchemy' ] || env[ 'alchemy' ]
 
         debug_log()
 

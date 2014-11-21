@@ -1,4 +1,4 @@
-Fri, 21 Nov 2014 12:57:31 +1300
+Fri, 21 Nov 2014 13:09:25 +1300
 README.md	Thu, 13 Nov 2014 14:09:30 +1300
 lib/api_tools.rb	Thu, 20 Nov 2014 13:37:35 +1300
 lib/api_tools/active_record/error_mapping.rb	Thu, 20 Nov 2014 10:14:25 +1300
@@ -42,7 +42,7 @@ lib/api_tools/events/platform_event.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/generator.rb	Tue, 28 Oct 2014 10:17:07 +1300
 lib/api_tools/json_errors.rb	Tue, 23 Sep 2014 12:39:09 +1200
 lib/api_tools/json_payload.rb	Fri, 07 Nov 2014 14:14:26 +1300
-lib/api_tools/logger.rb	Fri, 21 Nov 2014 12:30:54 +1300
+lib/api_tools/logger.rb	Fri, 21 Nov 2014 13:04:17 +1300
 lib/api_tools/platform_context.rb	Tue, 09 Sep 2014 10:33:33 +1200
 lib/api_tools/platform_errors.rb	Fri, 10 Oct 2014 15:39:04 +1300
 lib/api_tools/presenters/base_dsl.rb	Thu, 06 Nov 2014 11:35:40 +1300
@@ -69,13 +69,13 @@ lib/api_tools/service_implementations/service_interface.rb	Fri, 14 Nov 2014 15:3
 lib/api_tools/service_implementations/service_request.rb	Thu, 13 Nov 2014 11:21:12 +1300
 lib/api_tools/service_implementations/service_response.rb	Thu, 20 Nov 2014 14:53:52 +1300
 lib/api_tools/service_implementations/service_session.rb	Thu, 20 Nov 2014 15:33:40 +1300
-lib/api_tools/service_middleware/amqp_log_message.rb	Fri, 21 Nov 2014 12:57:29 +1300
+lib/api_tools/service_middleware/amqp_log_message.rb	Fri, 21 Nov 2014 13:07:53 +1300
 lib/api_tools/service_middleware/rack_monkey_patch.rb	Tue, 11 Nov 2014 10:46:48 +1300
 lib/api_tools/service_middleware/service_endpoint.rb	Fri, 14 Nov 2014 15:05:24 +1300
-lib/api_tools/service_middleware/service_middleware.rb	Fri, 21 Nov 2014 12:31:12 +1300
+lib/api_tools/service_middleware/service_middleware.rb	Fri, 21 Nov 2014 13:03:55 +1300
 lib/api_tools/service_middleware/service_registry_drb_server.rb	Fri, 14 Nov 2014 15:25:14 +1300
 lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 14:46:00 +1300
-lib/api_tools/service_middleware/structured_logger.rb	Fri, 21 Nov 2014 12:57:10 +1300
+lib/api_tools/service_middleware/structured_logger.rb	Fri, 21 Nov 2014 13:09:19 +1300
 lib/api_tools/utilities.rb	Fri, 14 Nov 2014 15:13:02 +1300
 lib/api_tools/uuid.rb	Fri, 14 Nov 2014 15:14:05 +1300
 lib/api_tools/version.rb	Mon, 17 Nov 2014 11:46:35 +1300

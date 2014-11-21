@@ -30,11 +30,7 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
         #
         attr_accessor :id
 
-        # Logging level. For a level of +:error+, the queue packet type will be
-        # 'error'. For anything else, the packet type will be determined by
-        # options but default to 'log'.
-        #
-        # See also ApiTools::ServiceMiddleware::StructuredLogger.
+        # Logging level. See ApiTools::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :level
 
@@ -52,18 +48,13 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
 
         # Create an instance with options keyed on the attributes defined for
         # the class. In addition, option +:type+ can be used to override the
-        # internally set queue packet type of 'log' or 'error'. The value must
-        # be a String.
+        # default queue packet type of 'log'.
         #
         def initialize(options = {})
           update( options )
           super( options )
 
-          @type = if options[ :level ] == :error
-            'error'
-          else
-            options[ :type ] || 'log'
-          end
+          @type = options[ :type ] || 'log'
         end
 
         # Seralize this instance. See the AMQEndpoint gem and

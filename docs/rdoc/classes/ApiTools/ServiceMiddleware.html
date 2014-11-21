@@ -685,7 +685,7 @@ the Rack protocol requirements.</p>
     <span class="ruby-comment"># Rack environment. Send this to the structured logger so it can do</span>
     <span class="ruby-comment"># queue-based structured logging via the provided service.</span>
     <span class="ruby-comment">#</span>
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredLogger</span>.<span class="ruby-identifier">queue_endpoint</span> = <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;rack.alchemy&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;alchemy&#39;</span> ]
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">StructuredLogger</span>.<span class="ruby-identifier">alchemy</span> = <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;rack.alchemy&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;alchemy&#39;</span> ]
 
     <span class="ruby-identifier">debug_log</span>()
 

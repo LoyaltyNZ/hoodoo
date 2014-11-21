@@ -178,11 +178,7 @@ href="../UUID.html#method-c-generate">ApiTools::UUID.generate</a>.</p></td>
               [RW]
             </td>
             <td class='attr-name'>level</td>
-            <td class='attr-desc'><p>Logging level. For a level of <code>:error</code>, the queue packet type
-will be &#39;error&#39;. For anything else, the packet type will be
-determined by options but default to &#39;log&#39;.</p>
-
-<p>See also <a
+            <td class='attr-desc'><p>Logging level. See <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
           </tr>
         
@@ -206,8 +202,7 @@ href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.<
             <div class="description">
               <p>Create an instance with options keyed on the attributes defined for the
 class. In addition, option <code>:type</code> can be used to override the
-internally set queue packet type of &#39;log&#39; or &#39;error&#39;. The
-value must be a String.</p>
+default queue packet type of &#39;log&#39;.</p>
             </div>
           
           
@@ -225,16 +220,12 @@ value must be a String.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 58</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
 
-  <span class="ruby-ivar">@type</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span> ] <span class="ruby-operator">==</span> <span class="ruby-value">:error</span>
-    <span class="ruby-string">&#39;error&#39;</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">options</span>[ <span class="ruby-value">:type</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;log&#39;</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:type</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;log&#39;</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -272,7 +263,7 @@ gem and AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 87</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 78</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
@@ -311,7 +302,7 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 72</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 63</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
@@ -357,7 +348,7 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 95</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@id</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>        ]
   <span class="ruby-ivar">@level</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>     ]

@@ -17,9 +17,9 @@ module ApiTools
     #
     class StructuredLogger
 
-      # See ::queue_endpoint= for details.
+      # See ::alchemy= for details.
       #
-      @@queue_endpoint = nil
+      @@alchemy = nil
 
       # Set the AMQEndpoint::Service instance used to send messages via
       # instances of the ApiTools::ServiceMiddleware::AMQPLogMessage class. See
@@ -31,8 +31,8 @@ module ApiTools
       # logger will then use the active Alchemy service to send messages to its
       # configured queue.
       #
-      def self.queue_endpoint=( endpoint )
-        @@queue_endpoint = endpoint
+      def self.alchemy=( endpoint )
+        @@alchemy = endpoint
       end
 
       # Custom implementation of the ApiTools::Logger::report interface. See
@@ -54,18 +54,19 @@ module ApiTools
       # +payload+::  A Hash of other arbitrary data to log.
       #
       def self.report( level, component, code, data )
-        if @@queue_endpoint.nil? == false && defined?( ApiTools::ServiceMiddleware::AMQPLogMessage )
+        if @@alchemy.nil? || defined?( ApiTools::ServiceMiddleware::AMQPLogMessage ).nil?
+          $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
+        else
           data[ :id ] ||= ApiTools::UUID.generate()
           message = ApiTools::ServiceMiddleware::AMQPLogMessage.new(
-            :id        => data[ :id ],
-            :level     => level,
-            :component => component,
-            :code      => code,
-            :data      => data
+            :id          => data[ :id ],
+            :level       => level,
+            :component   => component,
+            :code        => code,
+            :data        => data,
+            :routing_key => 'platform.logging'
           )
-          @@queue_endpoint.send_message( message )
-        else
-          $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
+          @@alchemy.send_message( message )
         end
       end
     end
