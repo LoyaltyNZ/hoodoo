@@ -317,8 +317,9 @@ module ApiTools
         }
       }
 
-      data[ :id      ] = id unless id.nil?
-      data[ :session ] = @service_session.to_h unless @service_session.nil?
+      data[ :id       ] = id unless id.nil?
+      data[ :session  ] = @service_session.to_h unless @service_session.nil?
+      data[ :resource ] = @target_resource_for_error_reports.to_s unless @target_resource_for_error_reports.nil?
 
       ApiTools::Logger.report(
         level,
@@ -357,26 +358,31 @@ module ApiTools
       }
 
       if ( context.response.halt_processing? )
-        log_level   = :error
-        code        = "middleware_error_#{ action }"
-        data[ :id ] = context.response.errors.uuid
+
+        log_level        = :error
+        code             = "middleware_error_#{ action }"
+        data[ :id      ] = context.response.errors.uuid
+        data[ :payload ] = context.response.errors.render
+
       else
+
         log_level   = :info
         code        = "middleware_#{ action }"
-      end
 
-      # Don't bother logging list responses - they could be huge - instead log
-      # all list-related parameters from the inbound request.
+        # Don't bother logging list responses - they could be huge - instead
+        # log all list-related parameters from the inbound request.
 
-      if context.response.body.is_a?( ::Array )
-        attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
-        data[ :payload ] = {}
+        if context.response.body.is_a?( ::Array )
+          attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
+          data[ :payload ] = {}
 
-        attributes.each do | attribute |
-          data[ attribute ] = context.request.send( attribute )
+          attributes.each do | attribute |
+            data[ attribute ] = context.request.send( attribute )
+          end
+        else
+          data[ :payload ] = context.response.body
         end
-      else
-        data[ :payload ] = context.response.body
+
       end
 
       ApiTools::Logger.report(
@@ -596,6 +602,8 @@ module ApiTools
       interface                               = selected_service[ :interface      ]
       implementation                          = selected_service[ :implementation ]
 
+      @target_resource_for_error_reports = interface.resource
+
       update_service_response_for( @service_response, interface )
 
       # Check for a supported action.
@@ -729,6 +737,8 @@ module ApiTools
       implementation.before( context ) if implementation.respond_to?( :before )
       implementation.send( action, context ) unless context.response.halt_processing?
       implementation.after( context ) if ! context.response.halt_processing? and implementation.respond_to?( :after )
+
+      @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
 
       auto_log( interface, action, context )
     end
