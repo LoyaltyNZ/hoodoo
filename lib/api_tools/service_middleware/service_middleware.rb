@@ -350,6 +350,13 @@ module ApiTools
     #
     def auto_log( interface, action, context )
 
+      # In #respond_with, error logging is handled. Since we generate a UUID
+      # up front for errors (since a UUID is returned), we must not log under
+      # that UUID twice. So in auto-log, only log success cases. Leave the
+      # last-bastion-of-response that is #respond_with to deal with the rest.
+      #
+      return if ( context.response.halt_processing? )
+
       # Data as per ApiTools::ServiceMiddleware::StructuredLogger.
 
       data = {
@@ -357,38 +364,24 @@ module ApiTools
         :session        => @service_session.to_h
       }
 
-      if ( context.response.halt_processing? )
+      # Don't bother logging list responses - they could be huge - instead
+      # log all list-related parameters from the inbound request.
 
-        log_level        = :error
-        code             = "middleware_error_#{ action }"
-        data[ :id      ] = context.response.errors.uuid
-        data[ :payload ] = context.response.errors.render
+      if context.response.body.is_a?( ::Array )
+        attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
+        data[ :payload ] = {}
 
-      else
-
-        log_level   = :info
-        code        = "middleware_#{ action }"
-
-        # Don't bother logging list responses - they could be huge - instead
-        # log all list-related parameters from the inbound request.
-
-        if context.response.body.is_a?( ::Array )
-          attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
-          data[ :payload ] = {}
-
-          attributes.each do | attribute |
-            data[ attribute ] = context.request.send( attribute )
-          end
-        else
-          data[ :payload ] = context.response.body
+        attributes.each do | attribute |
+          data[ attribute ] = context.request.send( attribute )
         end
-
+      else
+        data[ :payload ] = context.response.body
       end
 
       ApiTools::Logger.report(
-        log_level,
+        :info,
         interface.resource,
-        code,
+        "middleware_#{ action }",
         data
       )
     end
