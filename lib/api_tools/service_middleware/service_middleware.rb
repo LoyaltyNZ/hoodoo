@@ -226,6 +226,11 @@ module ApiTools
         #
         ApiTools::ServiceMiddleware::StructuredLogger.alchemy = env[ 'rack.alchemy' ]
 
+        # Don't spew debug logs in non-test-like environments.
+        #
+        env = ApiTools::ServiceMiddleware.environment()
+        ApiTools::Logger.level = :info unless env.test? || env.development?
+
         debug_log()
 
         @service_response = ApiTools::ServiceResponse.new

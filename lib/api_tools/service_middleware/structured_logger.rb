@@ -60,6 +60,7 @@ module ApiTools
       def self.report( level, component, code, data )
         if @@alchemy.nil? || defined?( ApiTools::ServiceMiddleware::AMQPLogMessage ).nil?
           $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
+
         else
           data[ :id ] ||= ApiTools::UUID.generate()
           message = ApiTools::ServiceMiddleware::AMQPLogMessage.new(
@@ -70,7 +71,14 @@ module ApiTools
             :data        => data,
             :routing_key => @@queue
           )
+
           @@alchemy.send_message( message )
+
+          env = ApiTools::ServiceMiddleware.environment()
+          if env.test? || env.development?
+            $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
+          end
+
         end
       end
     end

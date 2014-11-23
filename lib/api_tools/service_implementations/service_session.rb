@@ -41,8 +41,8 @@ module ApiTools
     @@test_mode    = false
     @@test_session = {
       :id             => '0123456789ABCDEF',
-      :participant_id => ApiTools::UUID.generate(),
-      :outlet_id      => ApiTools::UUID.generate(),
+      :participant_id => 'e9421091be4d45419ed67326392ee641',
+      :outlet_id      => '30c13f64e1044026b350b77c9b4aa6aa',
       :roles          => '',
     }
 
