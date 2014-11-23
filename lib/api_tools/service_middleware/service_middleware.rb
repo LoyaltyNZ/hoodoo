@@ -224,7 +224,7 @@ module ApiTools
         # Rack environment. Send this to the structured logger so it can do
         # queue-based structured logging via the provided service.
         #
-        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = env[ 'rack.alchemy' ] || env[ 'alchemy' ]
+        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = env[ 'rack.alchemy' ]
 
         debug_log()
 
@@ -541,7 +541,7 @@ module ApiTools
         :inbound,
         {
           :interaction_id => @interaction_id,
-          :payload        => @rack_request.env
+          :payload        => { 'omitted' => 'because it breaks everything '} #@rack_request.env
         }
       )
 

@@ -21,6 +21,10 @@ module ApiTools
       #
       @@alchemy = nil
 
+      # Record the logging queue, or use a default.
+      #
+      @@queue = ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
+
       # Set the AMQEndpoint::Service instance used to send messages via
       # instances of the ApiTools::ServiceMiddleware::AMQPLogMessage class. See
       # the AMQEndpoint gem for details.
@@ -64,7 +68,7 @@ module ApiTools
             :component   => component,
             :code        => code,
             :data        => data,
-            :routing_key => 'platform.logging'
+            :routing_key => @@queue
           )
           @@alchemy.send_message( message )
         end
