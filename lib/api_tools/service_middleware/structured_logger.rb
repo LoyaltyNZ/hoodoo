@@ -76,7 +76,7 @@ module ApiTools
 
           env = ApiTools::ServiceMiddleware.environment()
           if env.test? || env.development?
-            $stdout.puts( "#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }" )
+            $stdout.puts( "ECHO #{ level.to_s.upcase }  #{ component }.#{ code }" )
           end
 
         end
