@@ -28,7 +28,12 @@ describe ApiTools::Logger do
     before do
       @logger = double()
       allow(@logger).to receive(:<=).and_return(false)
-      ApiTools::Logger::logger = @logger
+      @old_logger = ApiTools::Logger.logger
+      ApiTools::Logger.logger = @logger
+    end
+
+    after do
+      ApiTools::Logger.logger = @old_logger
     end
 
     it 'should get debug logger' do
@@ -51,7 +56,12 @@ describe ApiTools::Logger do
 
   describe 'when a logger is not defined' do
     before do
-      ApiTools::Logger::logger = nil
+      @old_logger = ApiTools::Logger.logger
+      ApiTools::Logger.logger = nil
+    end
+
+    after do
+      ApiTools::Logger.logger = @old_logger
     end
 
     it 'should get debug logger' do
@@ -74,7 +84,15 @@ describe ApiTools::Logger do
 
   describe 'logging levels' do
     before do
-      ApiTools::Logger::logger = nil
+      @old_logger = ApiTools::Logger.logger
+      @old_level  = ApiTools::Logger.level
+
+      ApiTools::Logger.logger = nil
+    end
+
+    after do
+      ApiTools::Logger.logger = @old_logger
+      ApiTools::Logger.level  = @old_level
     end
 
     it 'should log correctly when level = :debug' do

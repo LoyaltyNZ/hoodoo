@@ -11,6 +11,20 @@ SimpleCov.start do
   add_filter '_spec'
 end
 
+# Since AMQEndpoint is optional, we have to run without it; since files are
+# parsed in the context of whether or not it is defined, we have to define a
+# fake AMQEndpoint message class here for later test use.
+
+module AMQEndpoint
+  class Message
+    def initialize( options ); end
+    def serialize; @content; end
+    def deserialize; end
+  end
+end
+
+# Now it's safe to require Rack test code and APITools itself.
+
 require 'rack/test'
 require 'api_tools'
 
@@ -63,6 +77,8 @@ RSpec.configure do | config |
     $stderr << "*"*80 << "\n\n"
 
     ApiTools::Logger.logger = StdErrTestLogger
+    ApiTools::Logger.level  = :debug
+
     ApiTools::ServiceSession.testing true
   end
 
@@ -70,6 +86,8 @@ RSpec.configure do | config |
 
   config.after( :all ) do
     ApiTools::Logger.logger = ApiTools::Logger
+    ApiTools::Logger.level  = :debug
+
     ApiTools::ServiceSession.testing false
   end
 end
