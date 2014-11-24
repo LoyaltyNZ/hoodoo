@@ -264,9 +264,10 @@ module ApiTools
 
           # An exception in the exception handler! Oh dear.
           #
-          return [
-            500, {}, Rack::BodyProxy.new( [ 'Middleware exception in exception handler' ] ) {}
-          ]
+          rack_response = Rack::Response.new
+          rack_response.status = 500
+          rack_response.write( 'Middleware exception in exception handler' )
+          return rack_response.finish
 
         end
       end
