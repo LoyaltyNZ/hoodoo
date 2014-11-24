@@ -46,6 +46,21 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
         #
         attr_accessor :data
 
+        # Optional interaction ID, via session data inside the payload - see
+        # ApiTools::ServiceMiddleware::StructuredLogger.
+        #
+        attr_accessor :interaction_id
+
+        # Optional participant ID, via session data inside the payload - see
+        # ApiTools::ServiceMiddleware::StructuredLogger.
+        #
+        attr_accessor :participant_id
+
+        # Optional outlet ID, via session data inside the payload - see
+        # ApiTools::ServiceMiddleware::StructuredLogger.
+        #
+        attr_accessor :outlet_id
+
         # Create an instance with options keyed on the attributes defined for
         # the class. In addition, option +:type+ can be used to override the
         # default queue packet type of 'log'.
@@ -62,11 +77,16 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
         #
         def serialize
           @content = {
-            :id        => @id,
-            :level     => @level,
-            :component => @component,
-            :code      => @code,
-            :data      => @data,
+            :id             => @id,
+            :level          => @level,
+            :component      => @component,
+            :code           => @code,
+
+            :data           => @data,
+
+            :interaction_id => @interaction_id,
+            :participant_id => @participant_id,
+            :outlet_id      => @outlet_id,
           }
 
           super
@@ -84,11 +104,16 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
         # the attributes defined for the class.
         #
         def update( options )
-          @id        = options[ :id        ]
-          @level     = options[ :level     ]
-          @component = options[ :component ]
-          @code      = options[ :code      ]
-          @data      = options[ :data      ]
+          @id             = options[ :id             ]
+          @level          = options[ :level          ]
+          @component      = options[ :component      ]
+          @code           = options[ :code           ]
+
+          @data           = options[ :data           ]
+
+          @interaction_id = options[ :interaction_id ]
+          @participant_id = options[ :participant_id ]
+          @outlet_id      = options[ :outlet_id      ]
         end
       end
     end

@@ -271,26 +271,18 @@ describe ApiTools::ServiceMiddleware do
       expect(last_response.status).to eq(404)
     end
 
+    it 'a matching endpoint should use fallback exception handler if early failures occur' do
+      expect(ApiTools::ServiceMiddleware::StructuredLogger).to receive(:alchemy=).and_raise("boo!")
+
+      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(500)
+      expect(last_response.body).to eq('Middleware exception in exception handler')
+    end
+
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
 
-      # First we allow "::environment" to be called normally, as this is done
-      # when retrieving session data to see if we should run in test mode or
-      # try to talk to Memcache.
-
-      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_call_original()
-
-      # Same again - this call is made when announcing services for the local
-      # DRb server, checking if we should ignore on-queue settings because we
-      # are in a test environment.
-
-      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_call_original()
-
-      # Now break the next "::environment" call so that it raises an error.
-      # This is used during normal exception handling to determine whether or
-      # not a backtrace should be encoded in the JSON response. By raising an
-      # exception here, we test the fallback exception handler.
-
-      expect(ApiTools::ServiceMiddleware).to receive(:environment).and_raise("boo!")
+      expect_any_instance_of(ApiTools::ServiceMiddleware).to receive(:record_exception).and_raise("boo!")
 
       # Route through to the unimplemented "list" call, so the subclass raises
       # an exception. This is tested independently elsewhere too. This causes

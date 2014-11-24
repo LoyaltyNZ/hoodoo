@@ -49,7 +49,9 @@ module ApiTools
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an ApiTools::ServiceSession instance.
+      #              an ApiTools::ServiceSession instance. This is extracted
+      #              and stored as discrete, searchable message fields for
+      #              interaction ID, participant ID and outlet ID.
       #
       # +interaction_id+:: The interaction ID for this client call.
       #
@@ -63,13 +65,25 @@ module ApiTools
 
         else
           data[ :id ] ||= ApiTools::UUID.generate()
+
+          session        = data[ :session ] || {}
+          interaction_id = session[ :interaction_id ]
+          participant_id = session[ :participant_id ]
+          outlet_id      = session[ :outlet_id      ]
+
           message = ApiTools::ServiceMiddleware::AMQPLogMessage.new(
-            :id          => data[ :id ],
-            :level       => level,
-            :component   => component,
-            :code        => code,
-            :data        => data,
-            :routing_key => @@queue
+            :id             => data[ :id ],
+            :level          => level,
+            :component      => component,
+            :code           => code,
+
+            :data           => data,
+
+            :interaction_id => interaction_id,
+            :participant_id => participant_id,
+            :outlet_id      => outlet_id,
+
+            :routing_key    => @@queue,
           )
 
           @@alchemy.send_message( message )
