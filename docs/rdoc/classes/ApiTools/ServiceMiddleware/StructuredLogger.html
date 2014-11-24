@@ -151,7 +151,7 @@ queue.</p>
                 
               </p>
               <div id="method-c-alchemy-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 34</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">alchemy=</span>( <span class="ruby-identifier">endpoint</span> )
   <span class="ruby-identifier">@@alchemy</span> = <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>
@@ -175,7 +175,8 @@ href="../Logger.html#method-c-report">ApiTools::Logger.report</a>
 interface. See that method for parameter details.</p>
 
 <p>The middleware custom logger has expectations about the data payload. It
-expects these optional keys/values:</p>
+expects these optional but recommended (where the information is available
+/ has been generated) keys/values:</p>
 <dl class="rdoc-list note-list"><dt><code>:id</code>
 <dd>
 <p>A <a href="../UUID.html">UUID</a> (via <a
@@ -184,16 +185,13 @@ for this log message - if absent, one is generated automatically.</p>
 </dd><dt><code>:session</code>
 <dd>
 <p>Description of the current request session when available; an <a
-href="../ServiceSession.html">ApiTools::ServiceSession</a> instance.</p>
+href="../ServiceSession.html">ApiTools::ServiceSession</a> instance. The
+participant and outlet IDs are sent as independent, searchable fields in
+the log payload.</p>
 </dd><dt><code>interaction_id</code>
 <dd>
-<p>The interaction ID for this client call.</p>
-</dd></dl>
-
-<p>If expects these mandatory keys/values:</p>
-<dl class="rdoc-list note-list"><dt><code>payload</code>
-<dd>
-<p>A Hash of other arbitrary data to log.</p>
+<p>The interaction ID for this client call. This is also sent as an
+independent, searchable field in the log payload.</p>
 </dd></dl>
             </div>
           
@@ -212,21 +210,41 @@ href="../ServiceSession.html">ApiTools::ServiceSession</a> instance.</p>
                 
               </p>
               <div id="method-c-report_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 56</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/structured_logger.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@alchemy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span> ).<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-node">&quot;#{ level.to_s.upcase }  #{ component }.#{ code }: #{ data.inspect }&quot;</span> )
+
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+
+    <span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ]
+    <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
+    <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:participant_id</span> ]
+    <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:outlet_id</span>      ]
+
     <span class="ruby-identifier">message</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">:id</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
-      <span class="ruby-value">:level</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
-      <span class="ruby-value">:component</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
-      <span class="ruby-value">:code</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
-      <span class="ruby-value">:data</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
-      <span class="ruby-value">:routing_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
+      <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
+      <span class="ruby-value">:level</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
+      <span class="ruby-value">:component</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
+      <span class="ruby-value">:code</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
+
+      <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
+
+      <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction_id</span>,
+      <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">participant_id</span>,
+      <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">outlet_id</span>,
+
+      <span class="ruby-value">:routing_key</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">@@queue</span>,
     )
+
     <span class="ruby-identifier">@@alchemy</span>.<span class="ruby-identifier">send_message</span>( <span class="ruby-identifier">message</span> )
+
+    <span class="ruby-identifier">env</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span>.<span class="ruby-identifier">environment</span>()
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">test?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">development?</span>
+      <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-node">&quot;ECHO #{ level.to_s.upcase }  #{ component }.#{ code }&quot;</span> )
+    <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
