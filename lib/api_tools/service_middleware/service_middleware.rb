@@ -98,6 +98,10 @@ module ApiTools
     #
     MAXIMUM_PAYLOAD_SIZE = 1048576 # 1MB Should Be Enough For Anyone
 
+    # Maximum *logged* payload size.
+    #
+    MAXIMUM_LOGGED_PAYLOAD_SIZE = 1024
+
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
     # or +false+ according to the +RACK_ENV+ environment variable setting.
@@ -540,13 +544,41 @@ module ApiTools
       @locale         = deal_with_language_header()
       @interaction_id = find_or_generate_interaction_id()
 
+      # This is far too much work just to log the full details of the inbound
+      # request, but Rack makes it ridiculously hard to extract the original
+      # URI, request headers and body. We can't just log all of "env" as it
+      # contains complex objects which break for-queue serialization.
+
+      env  = @rack_request.env
+      body = @rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
+             @rack_request.body.rewind()
+
+      headers = env.select do | key, value |
+        key.to_s.match( /^HTTP_/ )
+      end
+
+      # (SMH, Rack...)
+
+      headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
+      headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
+
       ApiTools::Logger.report(
         :info,
         :Middleware,
         :inbound,
         {
           :interaction_id => @interaction_id,
-          :payload        => { 'omitted' => 'because it breaks everything '} #@rack_request.env
+          :payload        => {
+            :method  => env[ 'REQUEST_METHOD', ],
+            :scheme  => env[ 'rack.url_scheme' ],
+            :host    => env[ 'SERVER_NAME'     ],
+            :post    => env[ 'SERVER_PORT'     ],
+            :script  => env[ 'SCRIPT_NAME'     ],
+            :path    => env[ 'PATH_INFO'       ],
+            :query   => env[ 'QUERY_STRING'    ],
+            :headers => headers,
+            :body    => body
+          }
         }
       )
 
