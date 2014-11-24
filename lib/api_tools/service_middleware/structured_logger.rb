@@ -43,21 +43,20 @@ module ApiTools
       # that method for parameter details.
       #
       # The middleware custom logger has expectations about the data payload.
-      # It expects these optional keys/values:
+      # It expects these optional but recommended (where the information is
+      # available / has been generated) keys/values:
       #
       # +:id+::      A UUID (via ApiTools::UUID::generate) to use for this log
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an ApiTools::ServiceSession instance. This is extracted
-      #              and stored as discrete, searchable message fields for
-      #              interaction ID, participant ID and outlet ID.
+      #              an ApiTools::ServiceSession instance. The participant and
+      #              outlet IDs are sent as independent, searchable fields in
+      #              the log payload.
       #
-      # +interaction_id+:: The interaction ID for this client call.
-      #
-      # If expects these mandatory keys/values:
-      #
-      # +payload+::  A Hash of other arbitrary data to log.
+      # +interaction_id+:: The interaction ID for this client call. This is
+      #                    also sent as an independent, searchable field in
+      #                    the log payload.
       #
       def self.report( level, component, code, data )
         if @@alchemy.nil? || defined?( ApiTools::ServiceMiddleware::AMQPLogMessage ).nil?
@@ -66,8 +65,8 @@ module ApiTools
         else
           data[ :id ] ||= ApiTools::UUID.generate()
 
+          interaction_id = data[ :interaction_id ]
           session        = data[ :session ] || {}
-          interaction_id = session[ :interaction_id ]
           participant_id = session[ :participant_id ]
           outlet_id      = session[ :outlet_id      ]
 
