@@ -177,18 +177,21 @@ module ApiTools
 
           search_map = class_variable_get( '@@nz_co_loyalty_list_search_map' )
 
+          dry_proc = Proc.new do | data, attr, proc |
+            value = data[ attr.to_s ]
+            next if value.nil?
+
+            if ( proc.nil? )
+              [ { attr.to_sym => value } ]
+            else
+              proc.call( attr, value )
+            end
+          end
+
           unless search_map.nil?
             search_map.each do | attr, proc |
-              value = context.request.list_search_data[ attr ]
-              next if value.nil?
-
-              if ( proc.nil? )
-                args_for_where = [ { attr => value } ]
-              else
-                args_for_where = proc.call( attr, value )
-              end
-
-              finder = finder.where( *args_for_where )
+              args   = dry_proc.call( context.request.list_search_data, attr, proc )
+              finder = finder.where( *args ) unless args.nil?
             end
           end
 
@@ -196,18 +199,12 @@ module ApiTools
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
-              value = context.request.list_filter_data[ attr ]
-              next if value.nil?
-
-              if ( proc.nil? )
-                args_for_where_not = [ { attr => value } ]
-              else
-                args_for_where_not = proc.call( attr, value )
-              end
-
-              finder = finder.where.not( *args_for_where_not )
+              args   = dry_proc.call( context.request.list_filter_data, attr, proc )
+              finder = finder.where.not( *args ) unless args.nil?
             end
           end
+
+          return finder
         end
 
         # Specify a search mapping for use by #list_finder to automatically
