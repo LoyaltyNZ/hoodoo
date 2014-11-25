@@ -3,7 +3,8 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Support mixin for models subclassed from ActiveRecord::Base
-#           providing
+#           providing enhanced find mechanisms for +show+ and +list+
+#           action handling.
 # ----------------------------------------------------------------------
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
