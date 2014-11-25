@@ -405,15 +405,20 @@ module ApiTools
     # *args:: Optional extra arguments used as strings to add to log message.
     #
     def debug_log( *args )
+
+      data = {
+        :full_uri       => "#{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }",
+        :interaction_id => @interaction_id,
+        :payload        => { 'args' => args }
+      }
+
+      data[ :session  ] = @service_session.to_h unless @service_session.nil?
+
       ApiTools::Logger.report(
         :debug,
         :Middleware,
         :log,
-        {
-          :full_uri       => "#{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }",
-          :interaction_id => @interaction_id,
-          :payload        => { 'args' => args }
-        }
+        data
       )
     end
 
