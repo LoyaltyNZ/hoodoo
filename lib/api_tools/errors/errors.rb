@@ -52,6 +52,14 @@ module ApiTools
     #
     attr_reader( :http_status_code )
 
+    # The ApiTools::ErrorDescriptions instance associated with this error
+    # collection. Only error codes that the instance's
+    # ApiTools::ErrorDescriptions#recognised? method says are recognised
+    # can be added to the error collection, else
+    # ApiTools::Errors::UnknownCode will be raised.
+    #
+    attr_reader( :descriptions )
+
     # Create an instance.
     #
     # +descriptions+:: (Optional) ApiTools::ErrorDescriptions instance with

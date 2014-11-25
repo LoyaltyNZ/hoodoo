@@ -68,6 +68,28 @@ RSpec.configure do | config |
 
  # raise "Unexpected logging configuration" unless ApiTools::Logger.logger.nil?
 
+  # The ActiveRecord extensions need testing in the context of a database. I
+  # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
+  # far from 'the real thing' for my liking. Instead, we use SQLite in memory
+  # and DatabaseCleaner to reset state between tests.
+  #
+  # http://stackoverflow.com/questions/7586813/fake-an-active-record-model-without-db
+
+  require 'database_cleaner'
+  require 'active_record'
+  require 'logger'
+
+  DatabaseCleaner.strategy = :transaction # MUST NOT be changed
+
+  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+  ActiveRecord::Base.establish_connection(
+    :adapter  => 'sqlite3',
+    :database => ':memory:'
+  )
+
+  # As per previous comments, redirect STDERR before each test plus various
+  # other before/after stuff related to sessions, databases and so-on.
+
   config.before( :all ) do
     log = File.new( 'test.log', 'a+')
     $stderr.reopen(log)

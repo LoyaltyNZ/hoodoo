@@ -67,7 +67,7 @@ module ApiTools
     alias_method  :set_resources, :body=
 
     # Create a new instance, ready to take on a response. The service
-    # middleware responsible for doing this.
+    # middleware is responsible for doing this.
     #
     def initialize
       @errors           = ApiTools::Errors.new()
