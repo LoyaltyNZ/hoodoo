@@ -823,7 +823,7 @@ list action case.</p>
                 
               </p>
               <div id="method-i-inter_service_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1307</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1358</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -886,7 +886,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1475</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1526</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -954,12 +954,19 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
     )
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-identifier">local_service_request</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">body_hash</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">action</span> <span class="ruby-operator">==</span> <span class="ruby-value">:create</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">action</span> <span class="ruby-operator">==</span> <span class="ruby-value">:update</span> )
+    <span class="ruby-identifier">validate_body_data_for</span>( <span class="ruby-identifier">action</span>,
+                            <span class="ruby-identifier">interface</span>,
+                            <span class="ruby-identifier">body_hash</span>,
+                            <span class="ruby-identifier">local_service_response</span> )
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_service_response</span>.<span class="ruby-identifier">halt_processing?</span>
     <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">local_service_response</span>.<span class="ruby-identifier">errors</span> )
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">local_service_request</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">body_hash</span>
 
   <span class="ruby-comment"># Dispatch the call, merge any errors that might have come back and</span>
   <span class="ruby-comment"># return the body of the called service&#39;s response.</span>
@@ -1021,7 +1028,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1334</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1126,7 +1133,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
   ] )
 
   <span class="ruby-identifier">response</span>.<span class="ruby-identifier">each_header</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ignores</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">name</span> )
+    <span class="ruby-ivar">@service_response</span>.<span class="ruby-identifier">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ignores</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Since &quot;parsed&quot; now has the decoded Hash payload, we use it to see if</span>
@@ -1200,7 +1207,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1248</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1299</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1253,7 +1260,7 @@ HTTP?</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1269</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1320</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-ivar">@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )

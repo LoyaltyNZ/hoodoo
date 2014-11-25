@@ -729,8 +729,8 @@ describing the fields used for resource creation.</p>
               <div id="method-i-to_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 395</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
-  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
-  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedPresenter</span> )
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_create=</span>, <span class="ruby-identifier">obj</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -829,8 +829,8 @@ describing the fields used for resource modification.</p>
               <div id="method-i-to_update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 409</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
-  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedObject</span>.<span class="ruby-identifier">new</span>
-  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedPresenter</span> )
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-identifier">obj</span> )
 <span class="ruby-keyword">end</span></pre>
