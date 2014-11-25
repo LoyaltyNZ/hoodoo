@@ -32,18 +32,52 @@
     <div id="bodyContent">
         <div id="content">
   
+    <div class="description">
+      
+<p>Support mixin for models subclassed from <a
+href="Base.html">ActiveRecord::Base</a> providing a mapping between <a
+href="../ActiveRecord.html">ActiveRecord</a> validation errors and platform
+errors via <a
+href="../ErrorDescriptions.html">ApiTools::ErrorDescriptions</a> and <a
+href="../Errors.html">ApiTools::Errors</a>. See individual module methods
+for examples, along with:</p>
+<ul><li>
+<p><a
+href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+</li></ul>
 
-
+    </div>
   
 
 
   
+
+
+  
   
 
 
   
 
 
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-add_errors_to">add_errors_to</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
   
 
   
@@ -63,7 +97,128 @@
 
 
     <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-add_errors_to">
+            
+              <b>add_errors_to</b>( context, validate = true )
+            
+            <a href="../../../classes/ApiTools/ActiveRecord/ErrorMapping.html#method-i-add_errors_to" name="method-i-add_errors_to" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Validate the model instance and add mapped-to-platform errors to a given
+context&#39;s response object, if any validation errors occur. See:</p>
+<ul><li>
+<p><a
+href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+</li></ul>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p>The <a href="../ServiceContext.html">ApiTools::ServiceContext</a> instance
+of interest. The <code>context.response</code>
+(ApiTools::ServiceContext#response / <a
+href="../ServiceResponse.html#method-i-add_error">ApiTools::ServiceResponse#add_error</a>)
+is updated if there are any errors recorded in the model.</p>
+</dd><dt><code>validate</code>
+<dd>
+<p>Optional, defaults to <code>true</code>; the model&#39;s
+<code>#valid?</code> method will be called for you and its errors examined.
+If you don&#39;t want to call <code>#valid?</code> for any reason, pass
+<code>false</code> here.</p>
+</dd></dl>
+
+<p>For example, given this model:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include ApiTools::ActiveRecord::ErrorMapping
+  # ...
+end
+</code></pre>
+
+<p>…then a service&#39;s create method could do something like:</p>
+
+<pre><code>def create( context )
+
+  # Validate inbound creation data by e.g. schema through the
+  # presenter layer - ApiTools::Presenters::BasePresenter and
+  # ApiTools::Data::DocumentedPresenter - then...
+
+  model             = SomeModel.new
+  model.parameter_1 = &#39;something based on inbound creation data&#39;
+
+  # ...etc., setting other parameters, then have the model run
+  # its own ActiveRecord-level validations, adding any errors
+  # it detects to the &#39;context.response&#39; errors collection.
+
+  model.add_errors_to( context )
+  return if context.response.halt_processing?
+
+  # At this point &#39;model.valid?&#39; should be &#39;true&#39;, so we can use
+  # the throw-exception &#39;#save!&#39; and rely on the middleware&#39;s
+  # exception handler to catch what will be an unexpected failure.
+
+  model.save!
+
+  # ...then set &#39;context.response&#39; data appropriately.
+
+end
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-add_errors_to_source')" id="l_method-i-add_errors_to_source">show</a>
+                
+              </p>
+              <div id="method-i-add_errors_to_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors_to</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">validate</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">message_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">column</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">columns_hash</span>[ <span class="ruby-identifier">attribute_name</span>.<span class="ruby-identifier">to_s</span> ]
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">column</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:array</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">array</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;array&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">type</span>
+
+    <span class="ruby-identifier">message_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">error_code</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">message</span>
+        <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;has already been taken&#39;</span>
+          <span class="ruby-string">&#39;generic.invalid_duplication&#39;</span>
+        <span class="ruby-keyword">else</span>
+          <span class="ruby-identifier">attribute_type</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;text&#39;</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;generic.invalid_#{ attribute_type }&quot;</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">recognised?</span>( <span class="ruby-identifier">error_code</span> )
+        <span class="ruby-identifier">error_code</span> = <span class="ruby-string">&#39;generic.invalid_parameters&#39;</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">add_error</span>(
+        <span class="ruby-identifier">error_code</span>,
+        <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>,
+        <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">attribute_name</span> }
+      )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
               </div>
+            </div>
+            
+          </div>
+                    </div>
 
     </div>
   </body>

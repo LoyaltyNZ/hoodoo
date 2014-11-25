@@ -11,7 +11,7 @@ module ApiTools
   module ActiveRecord
 
     # While individual ActiveRecord mixins can be included as and when needed,
-    # if you want everything, just define a model # which subclasses from this
+    # if you want everything, just define a model which subclasses from this
     # ApiTools::ActiveRecord::Base class instead of ActiveRecord::Base.
     #
     class Base << ActiveRecord::Base
