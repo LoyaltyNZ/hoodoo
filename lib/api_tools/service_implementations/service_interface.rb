@@ -393,8 +393,8 @@ module ApiTools
     #          the fields used for resource creation.
     #
     def to_create( &block )
-      obj = ApiTools::Data::DocumentedObject.new
-      obj.instance_eval( &block )
+      obj = Class.new( ApiTools::Data::DocumentedPresenter )
+      obj.schema( &block )
 
       self.class.send( :to_create=, obj )
     end
@@ -407,8 +407,8 @@ module ApiTools
     #          the fields used for resource modification.
     #
     def to_update( &block )
-      obj = ApiTools::Data::DocumentedObject.new
-      obj.instance_eval( &block )
+      obj = Class.new( ApiTools::Data::DocumentedPresenter )
+      obj.schema( &block )
 
       self.class.send( :to_update=, obj )
     end

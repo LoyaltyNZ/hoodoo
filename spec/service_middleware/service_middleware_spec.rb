@@ -33,6 +33,14 @@ class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
       search :foo, :bar
       filter :baz, :boo
     end
+    to_create do
+      text :foo, :required => true
+      integer :bar
+    end
+    to_update do
+      text :baz
+      integer :foo, :required => true
+    end
   end
 end
 
@@ -736,18 +744,37 @@ describe ApiTools::ServiceMiddleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
       end
 
+      it 'should complain about incorrect to-create data' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
+        post '/v2/rspec_test_service_stub', '{ "bar": "not-an-int" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'].size).to eq(2)
+        expect(result['errors'][0]['message']).to eq('Field `foo` is required')
+        expect(result['errors'][1]['message']).to eq('Field `bar` is an invalid integer')
+      end
+
       it 'should be happy with valid JSON' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create)
-        post '/v2/rspec_test_service_stub', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
+      end
+
+      it 'should be happy with no JSON and no to-create verification' do
+        old = RSpecTestServiceStubInterface.to_create
+        RSpecTestServiceStubInterface.send(:to_create=, nil)
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create)
+        post '/v2/rspec_test_service_stub', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+        RSpecTestServiceStubInterface.send(:to_create=, old)
       end
 
       it 'should pass the JSON through' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.body).to eq({'one' => 'two'})
+          expect(context.request.body).to eq({'foo' => 'present', 'bar' => 42})
         end
 
-        post '/v2/rspec_test_service_stub', '{"one": "two"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
@@ -758,7 +785,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain if the subclass omits the implementation' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create).once.and_call_original
-        post '/v2/rspec_test_service_stub/', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub/', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'create'")
@@ -766,7 +793,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain about prohibited query entries (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
-        post '/v2/rspec_test_service_stub?limit=25', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?limit=25', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -774,7 +801,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain about prohibited query entries (2)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
-        post '/v2/rspec_test_service_stub?imaginary=25', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?imaginary=25', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -785,13 +812,13 @@ describe ApiTools::ServiceMiddleware do
           expect(context.request.embeds).to eq(['embs', 'emb'])
         end
 
-        post '/v2/rspec_test_service_stub?_embed=embs,emb', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?_embed=embs,emb', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
       it 'should complain about bad embed query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
-        post '/v2/rspec_test_service_stub?_embed=one,emb,two', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?_embed=one,emb,two', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -804,13 +831,13 @@ describe ApiTools::ServiceMiddleware do
           expect(context.request.references).to eq(['embs', 'emb'])
         end
 
-        post '/v2/rspec_test_service_stub?_reference=embs,emb', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?_reference=embs,emb', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
       it 'should complain about bad reference query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
-        post '/v2/rspec_test_service_stub?_reference=one,emb,two', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub?_reference=one,emb,two', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -838,10 +865,37 @@ describe ApiTools::ServiceMiddleware do
         expect(result['errors'][0]['code']).to eq('generic.malformed')
       end
 
+      it 'should complain about incorrect to-update data' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
+        patch '/v2/rspec_test_service_stub/1234', '{ "baz": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'].size).to eq(2)
+        expect(result['errors'][0]['message']).to eq('Field `baz` is an invalid string')
+        expect(result['errors'][1]['message']).to eq('Field `foo` is required')
+      end
+
       it 'should be happy with valid JSON' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update)
-        patch '/v2/rspec_test_service_stub/1234', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/1234', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
+      end
+
+      it 'should be happy with no JSON and no to-update verification' do
+        old = RSpecTestServiceStubInterface.to_update
+        RSpecTestServiceStubInterface.send(:to_update=, nil)
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update)
+        patch '/v2/rspec_test_service_stub/1234', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+        RSpecTestServiceStubInterface.send(:to_update=, old)
+      end
+
+      it 'should complain about missing path components' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
+        patch '/v2/rspec_test_service_stub/', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['message']).to eq('Expected path components identifying target resource instance for this action')
       end
 
       it 'should get called with correct path data' do
@@ -852,13 +906,13 @@ describe ApiTools::ServiceMiddleware do
           expect(context.request.uri_path_extension).to eq('tar.gz')
         end
 
-        patch '/v2/rspec_test_service_stub/12345.tar.gz', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345.tar.gz', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
       it 'should complain if the subclass omits the implementation' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:update).and_call_original
-        patch '/v2/rspec_test_service_stub/12345.tar.gz', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345.tar.gz', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'update'")
@@ -866,7 +920,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain about prohibited query entries (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
-        patch '/v2/rspec_test_service_stub/12345?limit=25', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?limit=25', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -874,7 +928,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain about prohibited query entries (2)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
-        patch '/v2/rspec_test_service_stub/12345?imaginary=25', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?imaginary=25', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -885,13 +939,13 @@ describe ApiTools::ServiceMiddleware do
           expect(context.request.embeds).to eq(['embs', 'emb'])
         end
 
-        patch '/v2/rspec_test_service_stub/12345?_embed=embs,emb', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?_embed=embs,emb', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
       it 'should complain about bad embed query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
-        patch '/v2/rspec_test_service_stub/12345?_embed=one,emb,two', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?_embed=one,emb,two', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -904,13 +958,13 @@ describe ApiTools::ServiceMiddleware do
           expect(context.request.references).to eq(['embs', 'emb'])
         end
 
-        patch '/v2/rspec_test_service_stub/12345?_reference=embs,emb', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?_reference=embs,emb', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
       it 'should complain about bad reference query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:update)
-        patch '/v2/rspec_test_service_stub/12345?_reference=one,emb,two', "{}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        patch '/v2/rspec_test_service_stub/12345?_reference=one,emb,two', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -1248,6 +1302,15 @@ class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
     to_list do
       search :offset, :limit
     end
+
+    # Most of the to-create/to-update options are tested already; just use this
+    # small bit of interface definition to make sure that inter-service local
+    # calls get the validation performed correctly on the "inner" service.
+
+    to_create do
+      text :foo, :required => true
+    end
+
     errors_for 'service_calls_a' do
       error 'triggered', :status => 412, 'message' => 'Error Triggered'
     end
@@ -1303,8 +1366,11 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
       { number: '42' }.merge( context.request.body ),
       { _embed: 'foo' }
     )
-    expectable_hook( result )
-    context.response.body = { result: result }
+
+    unless context.response.halt_processing?
+      expectable_hook( result )
+      context.response.body = { result: result }
+    end
   end
 
   def update( context )
@@ -1372,25 +1438,29 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   before :example, :check_callbacks => true do
-    expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :before ).once
-      expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
-      expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
-    expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :after ).once
+    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
+    # -> A
+      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :before ).once
+      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :after ).once
+    # <- B
+    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
   end
 
   def list_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:list).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:list).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:list).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to be_nil
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq([])
+        expect(context.request.uri_path_extension).to eq('')
+        expect(context.request.list_offset).to eq(0)
+        expect(context.request.list_limit).to eq(50)
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq([1,2,3,4])
-    end
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to be_nil
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq([])
-      expect(context.request.uri_path_extension).to eq('')
-      expect(context.request.list_offset).to eq(0)
-      expect(context.request.list_limit).to eq(50)
     end
 
     get '/v1/rspec_test_inter_service_calls_b', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1426,18 +1496,20 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
 
   def show_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to be_nil
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq(['helloworld'])
+        expect(context.request.ident).to eq('helloworld')
+        expect(context.request.uri_path_extension).to eq('')
+        expect(context.request.list_offset).to eq(0)
+        expect(context.request.list_limit).to eq(50)
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'shown' })
-    end
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to be_nil
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq(['helloworld'])
-      expect(context.request.ident).to eq('helloworld')
-      expect(context.request.uri_path_extension).to eq('')
-      expect(context.request.list_offset).to eq(0)
-      expect(context.request.list_limit).to eq(50)
     end
 
     get '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1456,21 +1528,38 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
 
   def create_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:create).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:create).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to eq({number: '42', 'foo' => 'required'})
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq([])
+        expect(context.request.ident).to be_nil
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'created' })
     end
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to eq({number: '42', 'sum' => 7})
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq([])
-      expect(context.request.ident).to be_nil
-    end
 
-    post '/v1/rspec_test_inter_service_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    post '/v1/rspec_test_inter_service_calls_b/', '{"foo": "required"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'created'}})
+  end
+
+  def fail_to_create_things
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to_not receive(:create)
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to_not receive(:expectable_hook)
+    # <- B
+    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to_not receive(:expectable_hook)
+
+    post '/v1/rspec_test_inter_service_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    expect(last_response.status).to eq(422)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'].size).to eq(1)
+    expect(result['errors'][0]['message']).to eq('Field `foo` is required')
   end
 
   it 'creates things with callbacks', :check_callbacks => true do
@@ -1481,17 +1570,34 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     create_things()
   end
 
+  it 'refuses to create things when the inner service gets invalid data, with callbacks' do
+    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
+    # -> A
+      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to_not receive( :before )
+      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to_not receive( :after )
+    # <- B
+    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
+
+    fail_to_create_things()
+  end
+
+  it 'refuses to create things when the inner service gets invalid data, without callbacks' do
+    fail_to_create_things()
+  end
+
   def update_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:update).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:update).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:update).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to eq({number: '42', 'sum' => 70})
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq(['helloworld'])
+        expect(context.request.ident).to eq('helloworld')
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'updated' })
-    end
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to eq({number: '42', 'sum' => 70})
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq(['helloworld'])
-      expect(context.request.ident).to eq('helloworld')
     end
 
     patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1510,15 +1616,17 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
 
   def delete_things
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:delete).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:delete).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:delete).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to be_nil
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq(['helloworld'])
+        expect(context.request.ident).to eq('helloworld')
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'deleted' })
-    end
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to be_nil
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq(['helloworld'])
-      expect(context.request.ident).to eq('helloworld')
     end
 
     delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1537,17 +1645,19 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
 
   it 'should see errors from the inner call correctly' do
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
+    # -> A
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
+      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.body).to be_nil
+        expect(context.request.embeds).to eq(['foo'])
+        expect(context.request.uri_path_components).to eq(['hello_return_error'])
+        expect(context.request.ident).to eq('hello_return_error')
+        expect(context.request.uri_path_extension).to eq('')
+        expect(context.request.list_offset).to eq(0)
+        expect(context.request.list_limit).to eq(50)
+      end
+    # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once.and_call_original
-    expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.body).to be_nil
-      expect(context.request.embeds).to eq(['foo'])
-      expect(context.request.uri_path_components).to eq(['hello_return_error'])
-      expect(context.request.ident).to eq('hello_return_error')
-      expect(context.request.uri_path_extension).to eq('')
-      expect(context.request.list_offset).to eq(0)
-      expect(context.request.list_limit).to eq(50)
-    end
 
     get '/v1/rspec_test_inter_service_calls_b/_return_error', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)

@@ -715,12 +715,22 @@ module ApiTools
 
       if action == :create || action == :update
         service_request.body = payload_to_hash( body )
+
+        unless @service_response.halt_processing?
+          validate_body_data_for( action,
+                                  interface,
+                                  service_request.body,
+                                  @service_response )
+        end
+
         return @service_response.for_rack() if @service_response.halt_processing?
 
-      elsif body.nil? == false && body.is_a?( ::String ) && body.strip.length > 0
+      elsif body.nil? == false && body.to_s.strip.length > 0
+
         return @service_response.add_error( 'platform.malformed',
                                             'message' => 'Unexpected body data for this action',
                                             'reference' => { :action => action } )
+
       end
 
       debug_log( "Dispatching with parsed body data: '#{ service_request.body }'" )
@@ -770,9 +780,13 @@ module ApiTools
         ::ActiveRecord::Base.clear_active_connections!
       end
 
+      # Before/after callbacks are invoked always, even if errors are added to
+      # the response object during processing. If this matters to 'after' code,
+      # it must check "context.response.halt_processing?" itself.
+
       implementation.before( context ) if implementation.respond_to?( :before )
       implementation.send( action, context ) unless context.response.halt_processing?
-      implementation.after( context ) if ! context.response.halt_processing? and implementation.respond_to?( :after )
+      implementation.after( context ) if implementation.respond_to?( :after )
 
       @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
 
@@ -1205,6 +1219,38 @@ module ApiTools
       return @payload_hash
     end
 
+    # For the given action and service interface, verify the given body data
+    # via to-update / to-create DSL data where available. On exit, the given
+    # response data may have errors added.
+    #
+    # +action+::    Must be +:create+ or +:update+.
+    #
+    # +interface+:: ApiTools::ServiceInterface to use for verification schema.
+    #
+    # +body+::      Hash of body data to verify under verification schema.
+    #
+    # +response+::  ApiTools::ServiceResponse instance to update if errors are
+    #               found in the body data.
+    #
+    def validate_body_data_for( action, interface, body, response )
+      verification_object = if ( action == :create )
+        interface.to_create()
+      else
+        interface.to_update()
+      end
+
+      unless ( verification_object.nil? )
+
+        # 'true' => validate as type-only, not a resource (no ID, kind etc.)
+        #
+        result = verification_object.validate( body, true )
+
+        if result.has_errors?
+          response.errors.merge!( result )
+        end
+      end
+    end
+
     # Record an exception in a given response object, overwriting any previous
     # error data if present.
     #
@@ -1440,7 +1486,7 @@ module ApiTools
       ] )
 
       response.each_header do | name, value |
-        @service_response.add_header( name, value, true ) unless ignores.include?( name )
+        @service_response.add_header( name, value, true ) unless ignores.include?( name.downcase )
       end
 
       # Since "parsed" now has the decoded Hash payload, we use it to see if
@@ -1544,12 +1590,19 @@ module ApiTools
         )
       end
 
+      local_service_request.body = body_hash
+
+      if ( action == :create || action == :update )
+        validate_body_data_for( action,
+                                interface,
+                                body_hash,
+                                local_service_response )
+      end
+
       if local_service_response.halt_processing?
         @service_response.errors.merge!( local_service_response.errors )
         return nil
       end
-
-      local_service_request.body = body_hash
 
       # Dispatch the call, merge any errors that might have come back and
       # return the body of the called service's response.
