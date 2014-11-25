@@ -1,3 +1,14 @@
+########################################################################
+# File::    error_mapping.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Support mixin for models subclassed from ActiveRecord::Base
+#           providing a mapping between API level errors and model
+#           validation errors.
+# ----------------------------------------------------------------------
+#           17-Nov-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
 
   # Support mixins for models subclassed from ActiveRecord::Base. See:
@@ -6,10 +17,10 @@ module ApiTools
   #
   module ActiveRecord
 
-    # Support mixin for models subclassed from ActiveRecord::Base which
-    # provides mappings between ActiveRecord validation errors and platform
-    # errors via ApiTools::ErrorDescriptions and ApiTools::Errors. See
-    # individual module methods for examples, along with:
+    # Support mixin for models subclassed from ActiveRecord::Base providing
+    # a mapping between ActiveRecord validation errors and platform errors
+    # via ApiTools::ErrorDescriptions and ApiTools::Errors. See individual
+    # module methods for examples, along with:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #

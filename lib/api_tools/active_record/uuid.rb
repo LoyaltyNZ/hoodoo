@@ -1,8 +1,18 @@
+########################################################################
+# File::    uuid.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Support mixin for models subclassed from ActiveRecord::Base
+#           providing UUID management.
+# ----------------------------------------------------------------------
+#           17-Nov-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   module ActiveRecord
 
-    # Support mixin for models subclassed from ActiveRecord::Base which
-    # provides UUID management. See:
+    # Support mixin for models subclassed from ActiveRecord::Base providing
+    # automatic UUID management. See:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
