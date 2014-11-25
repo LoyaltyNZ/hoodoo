@@ -11,6 +11,17 @@ SimpleCov.start do
   add_filter '_spec'
 end
 
+# The ActiveRecord extensions need testing in the context of a database. I
+# did consider NullDB - https://github.com/nulldb/nulldb - but this was too
+# far from 'the real thing' for my liking. Instead, we use SQLite in memory
+# and DatabaseCleaner to reset state between tests.
+#
+# http://stackoverflow.com/questions/7586813/fake-an-active-record-model-without-db
+
+require 'database_cleaner'
+require 'active_record'
+require 'logger'
+
 # Since AMQEndpoint is optional, we have to run without it; since files are
 # parsed in the context of whether or not it is defined, we have to define a
 # fake AMQEndpoint message class here for later test use.
@@ -42,6 +53,16 @@ RSpec.configure do | config |
   config.color = true
   config.tty   = true
 
+  # Wake up ActiveRecord and DatabaseCleaner.
+
+  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+  ActiveRecord::Base.establish_connection(
+    :adapter  => 'sqlite3',
+    :database => ':memory:'
+  )
+
+  DatabaseCleaner.strategy = :transaction # MUST NOT be changed
+
   # The normal logger logs to stdout and stderr - stderr output can be useful
   # in real tests but pollutes visual test output. Redirect it. "#error" calls
   # to the ApiTools logger will end up in the log.
@@ -63,29 +84,10 @@ RSpec.configure do | config |
 
   # There used to be a logger_spec.rb test to make sure that the initial logger
   # value is nil, but we can't do that when we're using a stderr test logger.
-  # So, instead, throw an exception here if that fails and use an updated test
-  # in logger_spec.rb that expects to find the test logger we assign instead.
+  # Moreover, the middleware assigns its structured logger... So check for that
+  # now as a prerequisite.
 
- # raise "Unexpected logging configuration" unless ApiTools::Logger.logger.nil?
-
-  # The ActiveRecord extensions need testing in the context of a database. I
-  # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
-  # far from 'the real thing' for my liking. Instead, we use SQLite in memory
-  # and DatabaseCleaner to reset state between tests.
-  #
-  # http://stackoverflow.com/questions/7586813/fake-an-active-record-model-without-db
-
-  require 'database_cleaner'
-  require 'active_record'
-  require 'logger'
-
-  DatabaseCleaner.strategy = :transaction # MUST NOT be changed
-
-  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
-  ActiveRecord::Base.establish_connection(
-    :adapter  => 'sqlite3',
-    :database => ':memory:'
-  )
+  raise "Unexpected logging configuration" unless ApiTools::Logger.logger == ApiTools::ServiceMiddleware::StructuredLogger
 
   # As per previous comments, redirect STDERR before each test plus various
   # other before/after stuff related to sessions, databases and so-on.
@@ -104,12 +106,22 @@ RSpec.configure do | config |
     ApiTools::ServiceSession.testing true
   end
 
-  # Session test mode - test mode disabled explicitly for session tests
+  # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :all ) do
     ApiTools::Logger.logger = ApiTools::Logger
     ApiTools::Logger.level  = :debug
 
     ApiTools::ServiceSession.testing false
+  end
+
+  # Make sure DatabaseCleaner runs between each test.
+
+  config.before( :each ) do
+    DatabaseCleaner.start
+  end
+
+  config.after( :each ) do
+    DatabaseCleaner.clean
   end
 end

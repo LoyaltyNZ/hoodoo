@@ -759,10 +759,10 @@ module ApiTools
       # and class ConnectionManagement in:
       #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
       #
-      if ( defined?( ActiveRecord ) &&
-           defined?( ActiveRecord::Base ) &&
-           ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
-        ActiveRecord::Base.clear_active_connections!
+      if ( defined?( ::ActiveRecord ) &&
+           defined?( ::ActiveRecord::Base ) &&
+           ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
+        ::ActiveRecord::Base.clear_active_connections!
       end
 
       implementation.before( context ) if implementation.respond_to?( :before )

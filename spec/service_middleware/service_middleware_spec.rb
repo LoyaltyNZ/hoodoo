@@ -361,16 +361,8 @@ describe ApiTools::ServiceMiddleware do
       end
 
       it 'prods ActiveRecord beforehand' do
-        module ActiveRecord
-          module Base
-          end
-        end
-
-        expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).once
-
+        expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).once.and_call_original
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-
-        Object.send( :remove_const, :ActiveRecord )
       end
 
       it 'should pass on locale correctly (1)' do
