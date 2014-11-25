@@ -38,13 +38,12 @@ module ApiTools
     #
     attr_reader :roles
 
-    @@test_mode = false
-
+    @@test_mode    = false
     @@test_session = {
-      :id => '0123456789ABCDEF',
-      :participant_id => 'PARTICIPANTZERO',
-      :outlet_id => 'OUTLETZERO',
-      :roles => '',
+      :id             => '0123456789ABCDEF',
+      :participant_id => 'e9421091be4d45419ed67326392ee641',
+      :outlet_id      => '30c13f64e1044026b350b77c9b4aa6aa',
+      :roles          => '',
     }
 
     # Set testing mode.
@@ -118,10 +117,19 @@ module ApiTools
     #                    defined by role usage within services.
     #
     def initialize(options = {})
-      @id = options[:id]
-      @participant_id = options[:participant_id]
-      @outlet_id = options[:outlet_id]
-      @roles = options[:roles].to_s.split ','
+
+      @id             = options[ :id             ]
+      @participant_id = options[ :participant_id ]
+      @outlet_id      = options[ :outlet_id      ]
+      @roles          = options[ :roles          ].to_s.split( ',' )
+
+      @to_h = {
+        :id             => @id,
+        :participant_id => @participant_id,
+        :outlet_id      => @outlet_id,
+        :roles          => @roles
+      }
+
     end
 
     # Returns true if this session has the specified role
@@ -137,6 +145,15 @@ module ApiTools
     # Returns true if this session has any of the specified roles
     def has_any_roles?(roles)
       (@roles & roles).length > 0
+    end
+
+    # Returns a representation of the Session data as a Hash.
+    #
+    # TODO: LoyaltyNZ specific - hash matches input options in #initialize,
+    #       but with role string split into an Array.
+    #
+    def to_h
+      @to_h
     end
 
     private

@@ -258,6 +258,7 @@ href="ErrorDescriptions.html#method-i-errors_for">errors_for</a></p>
     <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;invalid_session&#39;</span>,        <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">401</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Invalid session&#39;</span>
     <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;forbidden&#39;</span>,              <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">403</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Action not authorized&#39;</span>
     <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;method_not_allowed&#39;</span>,     <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">405</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Method not allowed&#39;</span>
+    <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;timeout&#39;</span>,                <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">408</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Request timeout&#39;</span>
     <span class="ruby-identifier">error</span> <span class="ruby-string">&#39;fault&#39;</span>,                  <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-number">500</span>, <span class="ruby-identifier">message</span><span class="ruby-operator">:</span> <span class="ruby-string">&#39;Internal error&#39;</span>,               <span class="ruby-identifier">reference</span><span class="ruby-operator">:</span> [ <span class="ruby-value">:exception</span> ]
   <span class="ruby-keyword">end</span>
 
@@ -333,7 +334,7 @@ given code.</p>
                 
               </p>
               <div id="method-i-describe_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 158</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 159</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">describe</span>( <span class="ruby-identifier">code</span> )
   <span class="ruby-ivar">@descriptions</span>[ <span class="ruby-identifier">code</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -386,7 +387,7 @@ behind the scenes.</p>
                 
               </p>
               <div id="method-i-errors_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 138</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">domain_descriptions</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorDescriptions</span><span class="ruby-operator">::</span><span class="ruby-constant">DomainDescriptions</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">domain</span> )
   <span class="ruby-identifier">domain_descriptions</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -431,7 +432,7 @@ behind the scenes.</p>
                 
               </p>
               <div id="method-i-recognised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 149</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">recognised?</span>( <span class="ruby-identifier">code</span> )
   <span class="ruby-ivar">@descriptions</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">code</span> )
 <span class="ruby-keyword">end</span></pre>

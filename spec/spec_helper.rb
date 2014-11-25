@@ -11,6 +11,20 @@ SimpleCov.start do
   add_filter '_spec'
 end
 
+# Since AMQEndpoint is optional, we have to run without it; since files are
+# parsed in the context of whether or not it is defined, we have to define a
+# fake AMQEndpoint message class here for later test use.
+
+module AMQEndpoint
+  class Message
+    def initialize( options ); end
+    def serialize; @content; end
+    def deserialize; end
+  end
+end
+
+# Now it's safe to require Rack test code and APITools itself.
+
 require 'rack/test'
 require 'api_tools'
 
@@ -32,7 +46,7 @@ RSpec.configure do | config |
   # in real tests but pollutes visual test output. Redirect it. "#error" calls
   # to the ApiTools logger will end up in the log.
 
-  class StdErrTestLogger < ApiTools::Logger
+  class StdErrTestLogger
     def self.debug *args
       $stderr.puts('DEBUG',args)
     end
@@ -52,7 +66,7 @@ RSpec.configure do | config |
   # So, instead, throw an exception here if that fails and use an updated test
   # in logger_spec.rb that expects to find the test logger we assign instead.
 
-  raise "Unexpected logging configuration" unless ApiTools::Logger.logger.nil?
+ # raise "Unexpected logging configuration" unless ApiTools::Logger.logger.nil?
 
   # The ActiveRecord extensions need testing in the context of a database. I
   # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
@@ -85,19 +99,17 @@ RSpec.configure do | config |
     $stderr << "*"*80 << "\n\n"
 
     ApiTools::Logger.logger = StdErrTestLogger
-    ApiTools::ServiceSession.testing( true )
+    ApiTools::Logger.level  = :debug
+
+    ApiTools::ServiceSession.testing true
   end
+
+  # Session test mode - test mode disabled explicitly for session tests
 
   config.after( :all ) do
     ApiTools::Logger.logger = ApiTools::Logger
-    ApiTools::ServiceSession.testing( false )
-  end
+    ApiTools::Logger.level  = :debug
 
-  config.before( :each ) do
-    DatabaseCleaner.start
-  end
-
-  config.after( :each ) do
-    DatabaseCleaner.clean
+    ApiTools::ServiceSession.testing false
   end
 end

@@ -89,6 +89,7 @@ module ApiTools
         error 'invalid_session',        status: 401, message: 'Invalid session'
         error 'forbidden',              status: 403, message: 'Action not authorized'
         error 'method_not_allowed',     status: 405, message: 'Method not allowed'
+        error 'timeout',                status: 408, message: 'Request timeout'
         error 'fault',                  status: 500, message: 'Internal error',               reference: [ :exception ]
       end
 

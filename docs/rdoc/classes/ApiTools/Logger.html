@@ -46,14 +46,26 @@ href="Logger.html#method-c-logger-3D">::logger=</a>. If a logger is not
 set, the class will log to STDOUT with an appropriate &#39;DEBUG&#39;,
 &#39;INFO&#39;, &#39;WARN&#39; or &#39;ERROR&#39; prefix.</p>
 
-<p>Custom loggers are written by implementing the same interface as the four
+<p>Custom loggers may be written by implementing the same interface as the
 methods <a href="Logger.html#method-c-debug">::debug</a>, <a
 href="Logger.html#method-c-info">::info</a>, <a
 href="Logger.html#method-c-warn">::warn</a> and <a
 href="Logger.html#method-c-error">::error</a> described herein. Loggers
 just take the list of arguments and log them. There is no need to check log
 level as <a href="../ApiTools.html">ApiTools</a> only calls a custom logger
-if the appropriate level is set.</p>
+if the appropriate level is set. Do <strong>NOT</strong> subclass <a
+href="Logger.html">ApiTools::Logger</a>!</p>
+
+<p>Alternatively, a custom logger may support structured logging through
+providing an implementation of the <a
+href="Logger.html#method-c-report">::report</a> method signature which
+preserves data structures (e.g. via a database engine). See <a
+href="Logger.html#method-c-report">::report</a> for details. If you do
+this, you need to <em>ONLY</em> implement this method - flat logging
+methods won&#39;t be called, as they&#39;re promoted to structured entries
+for custom loggers that support such. As with the flat logging methods,
+there&#39;s no need to check log level as <a
+href="../ApiTools.html">ApiTools</a> does this for you.</p>
 
     </div>
   
@@ -137,6 +149,18 @@ if the appropriate level is set.</p>
           </ul>
         </dd>
       
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-report">report</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>W</dt>
         <dd>
           <ul>
@@ -175,7 +199,7 @@ if the appropriate level is set.</p>
         <div class="method">
           <div class="title method-title" id="method-c-debug">
             
-              <b>debug</b>(*args)
+              <b>debug</b>( *args )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-debug" name="method-c-debug" class="permalink">Link</a>
           </div>
@@ -184,6 +208,12 @@ if the appropriate level is set.</p>
             <div class="description">
               <p>Write to the DEBUG log, provided the log level is <code>:debug</code>. See
 also <a href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-c-report">::report</a> for structured logging
+under component &#39;Middleware&#39; and code &#39;log&#39;. Calling <a
+href="Logger.html#method-c-report">::report</a> is recommended over
+unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
 <p>One or more arguments that will be treated as strings and written in the
@@ -207,10 +237,9 @@ terminated).</p>
                 
               </p>
               <div id="method-c-debug_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 61</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">debug</span> <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span>
-  <span class="ruby-identifier">logger</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span>(<span class="ruby-identifier">args</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-string">&#39;DEBUG&#39;</span>, <span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">debug</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:debug</span>, <span class="ruby-value">:Middleware</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -220,7 +249,7 @@ terminated).</p>
         <div class="method">
           <div class="title method-title" id="method-c-error">
             
-              <b>error</b>(*args)
+              <b>error</b>( *args )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-error" name="method-c-error" class="permalink">Link</a>
           </div>
@@ -229,6 +258,12 @@ terminated).</p>
             <div class="description">
               <p>Write to the ERROR log, regardless of logging level. See also <a
 href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-c-report">::report</a> for structured logging
+under component &#39;Middleware&#39; and code &#39;log&#39;. Calling <a
+href="Logger.html#method-c-report">::report</a> is recommended over
+unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
 <p>One or more arguments that will be treated as strings and written in the
@@ -252,9 +287,9 @@ terminated).</p>
                 
               </p>
               <div id="method-c-error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 96</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">error</span> <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>
-  <span class="ruby-identifier">logger</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">error</span>(<span class="ruby-identifier">args</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-string">&#39;ERROR&#39;</span>, <span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 170</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">error</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:error</span>, <span class="ruby-value">:Middleware</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -264,7 +299,7 @@ terminated).</p>
         <div class="method">
           <div class="title method-title" id="method-c-info">
             
-              <b>info</b>(*args)
+              <b>info</b>( *args )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-info" name="method-c-info" class="permalink">Link</a>
           </div>
@@ -274,6 +309,12 @@ terminated).</p>
               <p>Write to the INFO log, provided the log level is <code>:debug</code> or
 <code>:info</code>. See also <a
 href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-c-report">::report</a> for structured logging
+under component &#39;Middleware&#39; and code &#39;log&#39;. Calling <a
+href="Logger.html#method-c-report">::report</a> is recommended over
+unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
 <p>One or more arguments that will be treated as strings and written in the
@@ -297,10 +338,9 @@ terminated).</p>
                 
               </p>
               <div id="method-c-info_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 73</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">info</span> <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:info</span>
-  <span class="ruby-identifier">logger</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span>(<span class="ruby-identifier">args</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-string">&#39;INFO&#39;</span>, <span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 141</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">info</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:info</span>, <span class="ruby-value">:Middleware</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -336,7 +376,7 @@ also <a href="Logger.html#method-c-level-3D">::level=</a>.</p>
                 
               </p>
               <div id="method-c-level_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 37</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 52</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">level</span>
   <span class="ruby-identifier">@@level</span>
 <span class="ruby-keyword">end</span></pre>
@@ -348,7 +388,7 @@ also <a href="Logger.html#method-c-level-3D">::level=</a>.</p>
         <div class="method">
           <div class="title method-title" id="method-c-level-3D">
             
-              <b>level=</b>(level)
+              <b>level=</b>( level )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-level-3D" name="method-c-level-3D" class="permalink">Link</a>
           </div>
@@ -382,8 +422,8 @@ when <code>:error</code>, only errors will be written.</p>
                 
               </p>
               <div id="method-c-level-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 50</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">level=</span>(<span class="ruby-identifier">level</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 65</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">level=</span>( <span class="ruby-identifier">level</span> )
   <span class="ruby-identifier">@@level</span> = <span class="ruby-identifier">level</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -420,7 +460,7 @@ href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
                 
               </p>
               <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 21</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span>
 <span class="ruby-keyword">end</span></pre>
@@ -432,7 +472,7 @@ href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
         <div class="method">
           <div class="title method-title" id="method-c-logger-3D">
             
-              <b>logger=</b>(logger)
+              <b>logger=</b>( logger )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-logger-3D" name="method-c-logger-3D" class="permalink">Link</a>
           </div>
@@ -446,7 +486,9 @@ href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
 href="Logger.html#method-c-debug">::debug</a>, <a
 href="Logger.html#method-c-info">::info</a>, <a
 href="Logger.html#method-c-warn">::warn</a> and <a
-href="Logger.html#method-c-error">::error</a>).</p>
+href="Logger.html#method-c-error">::error</a>, or optionally <a
+href="Logger.html#method-c-report">::report</a>). <strong>NOT</strong> a
+subclass of <a href="Logger.html">ApiTools::Logger</a>!</p>
 </dd></dl>
             </div>
           
@@ -465,9 +507,103 @@ href="Logger.html#method-c-error">::error</a>).</p>
                 
               </p>
               <div id="method-c-logger-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 30</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger=</span>(<span class="ruby-identifier">logger</span>)
-  <span class="ruby-identifier">@@logger</span> = <span class="ruby-identifier">logger</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger=</span>( <span class="ruby-identifier">logger</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">logger</span> <span class="ruby-operator">==</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>
+    <span class="ruby-identifier">@@logger</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">logger</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Custom logger classes must not subclass ApiTools::Logger&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">@@logger</span> = <span class="ruby-identifier">logger</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-report">
+            
+              <b>report</b>( log_level, component, code, data )
+            
+            <a href="../../classes/ApiTools/Logger.html#method-c-report" name="method-c-report" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Logs a message using the structured logger. If no logger is available, then
+log data is just dumped to $stdout. If a logger is available but does not
+support the structured logging <a
+href="Logger.html#method-c-report">::report</a> method, then flat logging
+is used instead by calling a method named according go the
+<code>level</code> parameter instead.</p>
+
+<p>Structured logging preserves data structures like hashes or arrays rather
+than dumping things out as strings into flat output streams.</p>
+
+<p>As with flat logging methods <a
+href="Logger.html#method-c-debug">::debug</a>, <a
+href="Logger.html#method-c-info">::info</a>, <a
+href="Logger.html#method-c-warn">::warn</a> and <a
+href="Logger.html#method-c-error">::error</a>, a message is only logged if
+the logging threshold level (see <a
+href="Logger.html#method-c-level-3D">::level=</a>) is set to an equal or
+lower level.</p>
+<dl class="rdoc-list note-list"><dt><code>log_level</code>
+<dd>
+<p>Log level as a symbol - one of, from most trivial to most severe,
+<code>:debug</code>, <code>:info</code>, <code>:warn</code> or
+<code>:error</code>.</p>
+</dd><dt><code>component</code>
+<dd>
+<p>Component. This is the resource name for a specific service implementation,
+&#39;Middleware&#39; for <a href="../ApiTools.html">ApiTools</a> itself, or
+some other name you think is useful. String or Symbol.</p>
+</dd><dt><code>code</code>
+<dd>
+<p>Component-defined code. Think of this in a manner similar to platform error
+codes, appearing after the “.”; messages related to the same thing should
+share the same code. The intent is to produce log data that someone can
+filter on code to get useful information about that specific aspect of a
+service implementation&#39;s behaviour.</p>
+</dd><dt>data
+<dd>
+<p>A Hash containing the level, component and code-dependent payload data to
+be logged. Converted to a string with <code>inspect</code> for flat output
+use in an unstructured context.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-report_source')" id="l_method-c-report_source">show</a>
+                
+              </p>
+              <div id="method-c-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 100</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:info</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:warn</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:warn</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@logger</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@logger</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:report</span> )
+    <span class="ruby-identifier">@@logger</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">@@logger</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">@@logger</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-identifier">log_level</span> )
+    <span class="ruby-identifier">@@logger</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">inspect</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-identifier">log_level</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span>.<span class="ruby-identifier">inspect</span> )
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -477,7 +613,7 @@ href="Logger.html#method-c-error">::error</a>).</p>
         <div class="method">
           <div class="title method-title" id="method-c-warn">
             
-              <b>warn</b>(*args)
+              <b>warn</b>( *args )
             
             <a href="../../classes/ApiTools/Logger.html#method-c-warn" name="method-c-warn" class="permalink">Link</a>
           </div>
@@ -487,6 +623,12 @@ href="Logger.html#method-c-error">::error</a>).</p>
               <p>Write to the INFO log, provided the log level is <code>:debug</code>,
 <code>:info</code> or <code>:warn</code>. See also <a
 href="Logger.html#method-c-logger-3D">::logger=</a>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-c-report">::report</a> for structured logging
+under component &#39;Middleware&#39; and code &#39;log&#39;. Calling <a
+href="Logger.html#method-c-report">::report</a> is recommended over
+unstructured direct logging.</p>
 <dl class="rdoc-list note-list"><dt>*args
 <dd>
 <p>One or more arguments that will be treated as strings and written in the
@@ -510,10 +652,9 @@ terminated).</p>
                 
               </p>
               <div id="method-c-warn_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 85</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">warn</span> <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:info</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">@@level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:warn</span>
-  <span class="ruby-identifier">logger</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-identifier">args</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">$stdout</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-string">&#39;WARN&#39;</span>, <span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/logger.rb, line 156</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">warn</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:warn</span>, <span class="ruby-value">:Middleware</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

@@ -581,7 +581,8 @@ returns a Rack representation of the response.</p>
             <div class="description">
               <p>Convert the internal response data into something that Rack expects. The
 return value of this method can be passed back to Rack from Rack middleware
-or applications.</p>
+or applications. Usually, this is only called directly by <a
+href="ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>.</p>
             </div>
           
           
@@ -599,7 +600,7 @@ or applications.</p>
                 
               </p>
               <div id="method-i-for_rack_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 206</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_response.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
 

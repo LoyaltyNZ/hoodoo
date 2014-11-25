@@ -269,7 +269,17 @@ describe ApiTools::ServiceMiddleware do
   #
   context 'with in-thread HTTP service' do
 
-    it 'should be able to list things' do
+    before :example, :check_callbacks => true do
+      expect_any_instance_of( TestEchoServiceImplementation ).to receive( :before ).once
+      expect_any_instance_of( TestEchoServiceImplementation ).to receive( :after ).once
+    end
+
+    before :example, :check_quiet_callbacks => true do
+      expect_any_instance_of( TestEchoQuietServiceImplementation ).to receive( :before ).once
+      expect_any_instance_of( TestEchoQuietServiceImplementation ).to receive( :after ).once
+    end
+
+    def list_things
       response = run_request(
         Net::HTTP::Get,
         'v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two'
@@ -298,7 +308,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to show things' do
+    it 'lists things with callbacks', :check_callbacks => true do
+      list_things()
+    end
+
+    it 'list things without callbacks' do
+      list_things()
+    end
+
+    def show_things
       response = run_request(
         Net::HTTP::Get,
         'v2/test_some_echoes/one/two.tar.gz?_reference=embed_one,embed_two',
@@ -327,7 +345,16 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to show quiet things too' do
+    it 'shows_things_with_callbacks', :check_callbacks => true do
+      show_things()
+    end
+
+    it 'shows_things_without_callbacks' do
+      show_things()
+    end
+
+    it 'should be able to show quiet things too', :check_quiet_callbacks => true do
+
       response = run_request(
         Net::HTTP::Get,
         'v1/test_echo_quiet/some_uuid'
@@ -354,7 +381,7 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to create things' do
+    def create_things
       response = run_request(
         Net::HTTP::Post,
         'v2/test_some_echoes.json?_embed=embed_one,embed_two',
@@ -382,7 +409,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to update things' do
+    it 'creates things with callbacks', :check_callbacks => true do
+      create_things()
+    end
+
+    it 'creates things without callbacks' do
+      create_things()
+    end
+
+    def update_things
       response = run_request(
         Net::HTTP::Patch,
         'v2/test_some_echoes/a/b.json?_embed=embed_one',
@@ -411,7 +446,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to delete things' do
+    it 'updates things with callbacks', :check_callbacks => true do
+      update_things()
+    end
+
+    it 'updates things without callbacks' do
+      update_things()
+    end
+
+    def delete_things
       response = run_request(
         Net::HTTP::Delete,
         'v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two'
@@ -436,6 +479,14 @@ describe ApiTools::ServiceMiddleware do
           'references'          => []
         }
       )
+    end
+
+    it 'deletes things with callbacks', :check_callbacks => true do
+      delete_things()
+    end
+
+    it 'deletes things without callbacks' do
+      delete_things()
     end
 
     it 'should get 405 for bad requests' do
@@ -467,7 +518,14 @@ describe ApiTools::ServiceMiddleware do
       end
     end
 
-    it 'should be able to list things in the remote service' do
+    before :example, :check_callbacks => true do
+      expect_any_instance_of( TestCallServiceImplementation ).to receive( :before ).once
+        expect_any_instance_of( TestEchoServiceImplementation ).to receive( :before ).once
+        expect_any_instance_of( TestEchoServiceImplementation ).to receive( :after ).once
+      expect_any_instance_of( TestCallServiceImplementation ).to receive( :after ).once
+    end
+
+    def list_things
       get(
         '/v1/test_call.tar.gz?limit=25&offset=75',
         nil,
@@ -506,7 +564,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to show things in the remote service' do
+    it 'list things in the remote service with callbacks', :check_callbacks => true do
+      list_things()
+    end
+
+    it 'list things in the remote service without callbacks' do
+      list_things()
+    end
+
+    def show_things
       get(
         '/v1/test_call/one/two.tar.gz',
         nil,
@@ -535,7 +601,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to create things in the remote service' do
+    it 'shows things in the remote service with callbacks', :check_callbacks => true do
+      show_things()
+    end
+
+    it 'shows things in the remote service without callbacks' do
+      show_things()
+    end
+
+    def create_things
       post(
         '/v1/test_call.tar.gz',
         { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
@@ -564,7 +638,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to update things in the remote service' do
+    it 'creates things in the remote service with callbacks', :check_callbacks => true do
+      create_things()
+    end
+
+    it 'creates things in the remote service without callbacks' do
+      create_things()
+    end
+
+    def update_things
       patch(
         '/v1/test_call/aa/bb.tar.gz',
         { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
@@ -593,7 +675,15 @@ describe ApiTools::ServiceMiddleware do
       )
     end
 
-    it 'should be able to delete things in the remote service' do
+    it 'updates things in the remote service with callbacks', :check_callbacks => true do
+      update_things()
+    end
+
+    it 'updates things in the remote service without callbacks' do
+      update_things()
+    end
+
+    def delete_things
       delete(
         '/v1/test_call/aone/btwo.tar.gz',
         nil,
@@ -621,6 +711,14 @@ describe ApiTools::ServiceMiddleware do
           'references'          => []
         }
       )
+    end
+
+    it 'deletes things in the remote service with callbacks', :check_callbacks => true do
+      delete_things()
+    end
+
+    it 'deletes things in the remote service without callbacks' do
+      delete_things()
     end
 
     it 'should receive errors from remote service as if from the local call' do

@@ -18,8 +18,9 @@ module ApiTools
         schema do
           internationalised
 
-          text :code
+          text :code,          :required => :true
           text :name
+          uuid :calculator_id, :resource => :Calculator
         end
 
       end

@@ -18,8 +18,7 @@ module ApiTools
         schema do
           uuid   :outlet_id,      :resource => :Outlet,     :required => true
           uuid   :programme_id,   :resource => :Programme,  :required => true
-          object :calculator_data do
-          end
+          type   :CalculatorConfiguration
         end
 
       end

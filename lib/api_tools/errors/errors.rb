@@ -222,26 +222,12 @@ module ApiTools
     # collection representing the formalised resource.
     #
     def render
-      store! if @created_at.nil?
+      @created_at ||= Time.now
 
       ApiTools::Data::Resources::Errors.render(
         { 'errors' => @errors },
         @uuid,
         @created_at
-      )
-    end
-
-    # TODO: Persistence - e.g. database locally, or queue if available.
-    #
-    def store!
-      # unless persisted...
-      #   created_at = ...
-
-      @created_at ||= Time.now # TODO
-
-      ApiTools::Logger.error(
-        "Storing ApiTools::Errors instance",
-        JSON.pretty_generate( render() )
       )
     end
 
