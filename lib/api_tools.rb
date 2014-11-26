@@ -12,6 +12,7 @@ require root+'active_model/uuid_validator'
 require root+'active_record/error_mapping'
 require root+'active_record/finder'
 require root+'active_record/uuid'
+require root+'active_record/base'
 
 require root+'presenters/base_dsl'
 require root+'presenters/base_presenter'

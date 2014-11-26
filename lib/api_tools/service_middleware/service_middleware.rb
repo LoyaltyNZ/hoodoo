@@ -845,6 +845,11 @@ module ApiTools
       unless SUPPORTED_MEDIA_TYPES.include?( @content_type ) &&
              SUPPORTED_ENCODINGS.include?( @content_encoding )
 
+        # Avoid incorrect Content-Type in responses, which otherwise "inherits"
+        # from inbound type and encoding.
+        #
+        @content_type = @content_encoding = nil
+
         @service_response.errors.add_error(
           'platform.malformed',
           'message' => "Content-Type '#{ @rack_request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
