@@ -22,16 +22,12 @@ require 'database_cleaner'
 require 'active_record'
 require 'logger'
 
-# Since AMQEndpoint is optional, we have to run without it; since files are
-# parsed in the context of whether or not it is defined, we have to define a
-# fake AMQEndpoint message class here for later test use.
+# Include AMQEndpoint for testing only.
 
-module AMQEndpoint
-  class Message
-    def initialize( options ); end
-    def serialize; @content; end
-    def deserialize; end
-  end
+begin
+  require 'amq-endpoint'
+rescue LoadError
+  raise 'Cannot load amq-endpoint; did you run me with "bundle exec..." ?'
 end
 
 # Now it's safe to require Rack test code and APITools itself.
