@@ -17,8 +17,7 @@ module ApiTools
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
     # By including this module, a +before_validation+ filter is set up which
-    # assigns a UUID if none is currently set (+id+ is +nil+). Validations are
-    # added to ensure that the UUID is of an expected format.
+    # assigns a UUID if none is currently set (+id+ is +nil+).
     #
     # *IMPORTANT:* See ApiTools::ActiveRecord::UUID::included for important
     # information about database requirements / table creation when using
@@ -31,7 +30,6 @@ module ApiTools
       # - Declares 'id' as the primary key
       # - Self-assigns a UUID to 'id' via +before_validation+ and
       #   ApiTools::UUID::generate
-      # - Adds validation for 'id' via ApiTools::UUID::valid?
       #
       # Example:
       #
@@ -61,11 +59,8 @@ module ApiTools
           self.id = ApiTools::UUID.generate if self.id.nil?
         end
 
-        model.validates_each :id do | record, attr, value |
-          record.errors.add( attr, 'is invalid' ) unless ApiTools::UUID.valid?( value )
-        end
-
       end
+
     end
   end
 end
