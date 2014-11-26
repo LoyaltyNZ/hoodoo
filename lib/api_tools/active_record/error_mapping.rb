@@ -106,29 +106,31 @@ module ApiTools
         end
       end
 
-    end
+      private
 
-    private
+      # Provides a string description for an attribute. UUIDs are detected
+      # by checking if the attribute uses the UuidValidator. If the attribute
+      # is not a uuid it falls back to a simple type check.
+      #
+      # +attribute_name+:: The string name of the attribute.
+      #
+      # +column+::         The attribute's column
+      #
+      def attribute_type_of( attribute_name, column )
 
-    # Provides a string description for an attribute. UUIDs are detected
-    # by checking if the attribute uses the UuidValidator. If the attribute
-    # is not a uuid it falls back to a simple type check.
-    #
-    # +attribute_name+:: The string name of the attribute.
-    #
-    # +column+::         The attribute's column
-    #
-    def attribute_type_of( attribute_name, column )
+        if defined?( ActiveModel ) && defined?( ActiveModel::EachValidator ) &&
+           self.class.validators_on( attribute_name ).select{ |v| v.instance_of?( UuidValidator ) }.any?
+          # Considered a UUID since it uses the UUID validator
+          return 'uuid'
+        end
 
-      if column.respond_to?( :array ) && column.array
-        'array'
-      elsif self.validators_on( attribute_name ).select{ |v| v.instance_of?( UuidValidator ) }.any?
-        # Considered a UUID since it uses the UUID validator
-        'uuid'
-      else
-        column.type
+        if column.respond_to?( :array ) && column.array
+          'array'
+        else
+          column.type
+        end
+
       end
-
     end
   end
 end

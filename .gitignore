@@ -4,3 +4,4 @@ doc/
 log
 test.log
 *.gem
+tags

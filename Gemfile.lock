@@ -73,7 +73,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activemodel
   activerecord
   api_tools!
   database_cleaner
