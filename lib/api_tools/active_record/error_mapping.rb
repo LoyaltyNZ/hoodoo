@@ -118,8 +118,7 @@ module ApiTools
       #
       def attribute_type_of( attribute_name, column )
 
-        if defined?( ActiveModel ) && defined?( ActiveModel::EachValidator ) &&
-           self.class.validators_on( attribute_name ).select{ |v| v.instance_of?( UuidValidator ) }.any?
+        if self.class.validators_on( attribute_name ).select{ |v| v.instance_of?( UuidValidator ) }.any?
           # Considered a UUID since it uses the UUID validator
           return 'uuid'
         end

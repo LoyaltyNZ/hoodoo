@@ -21,7 +21,7 @@ describe ApiTools::ActiveRecord::UUID do
 
       class RSpecModelUUIDTest < ActiveRecord::Base
         include ApiTools::ActiveRecord::UUID
-        validates :id, uuid: true
+        validates :id, uuid: true, presence: true
       end
 
     ensure
