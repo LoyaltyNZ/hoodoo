@@ -28,7 +28,7 @@
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
 ########################################################################
 
-unless defined?( Rack ).nil? || defined?( Rack::Server ).nil?
+if defined?( Rack ) && defined?( Rack::Server )
   module Rack
     class Server
 

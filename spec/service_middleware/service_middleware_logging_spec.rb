@@ -102,6 +102,8 @@ end
 
 describe ApiTools::ServiceMiddleware::AMQPLogMessage do
 
+  require 'msgpack'
+
   let(:hash) do
     {
       :id => '1',
@@ -117,15 +119,15 @@ describe ApiTools::ServiceMiddleware::AMQPLogMessage do
 
   it 'serializes' do
     obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( hash ) # (Given dummy superclass in spec_helper.rb)
+    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
   end
 
   it 'deserializes' do
     obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( hash ) # (Given dummy superclass in spec_helper.rb)
+    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
     obj.id = nil # Clear some instance vars
     obj.level = nil
     obj.deserialize # Should reset instance vars based on prior serialization
-    expect( obj.serialize ).to eq( hash ) # (Given dummy superclass in spec_helper.rb)
+    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
   end
 end

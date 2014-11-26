@@ -13,10 +13,11 @@
 #           20-Nov-2014 (ADH): Created.
 ########################################################################
 
-if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
+module ApiTools
+  class ServiceMiddleware
 
-  module ApiTools
-    class ServiceMiddleware
+    begin
+      require 'amq-endpoint'
 
       # For AMQEndpoint gem users, the AMQPLogMessage class provides an
       # AMQEndpoint::Message subclass used for sending structured log data to
@@ -24,7 +25,7 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
       #
       # See the AMQEndpoint gem for more details.
       #
-      class AMQPLogMessage < AMQEndpoint::Message
+      class AMQPLogMessage < ::AMQEndpoint::Message
 
         # A UUID to assign to this log message. See ApiTools::UUID::generate.
         #
@@ -116,7 +117,9 @@ if defined?( AMQEndpoint ) && defined?( AMQEndpoint::Message )
           @outlet_id      = options[ :outlet_id      ]
         end
       end
-    end
-  end
 
+    rescue LoadError
+    end
+
+  end
 end
