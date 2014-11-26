@@ -20,11 +20,25 @@ module ApiTools
     #
     module Finder
 
-      # When included into an ActiveRecord::Base subclass, all of the
+      # Instantiates this module when it is included:
+      #
+      # Example:
+      #
+      #     class SomeModel < ActiveRecord::Base
+      #       include ApiTools::ActiveRecord::Finder
+      #       # ...
+      #     end
+      #
+      #
+      def self.included( model )
+        instantiate( model )
+      end
+
+      # When instantiated in an ActiveRecord::Base subclass, all of the
       # ApiTools::ActiveRecord::Finder::ClassMethods methods are defined as
       # class methods on the including class.
       #
-      def self.included( model )
+      def self.instantiate( model )
         model.extend( ClassMethods )
       end
 

@@ -25,11 +25,7 @@ module ApiTools
     #
     module UUID
 
-      # When included in an ActiveRecord::Base subclass, this mixin:
-      #
-      # - Declares 'id' as the primary key
-      # - Self-assigns a UUID to 'id' via +before_validation+ and
-      #   ApiTools::UUID::generate
+      # Instantiates this module when it is included:
       #
       # Example:
       #
@@ -37,6 +33,18 @@ module ApiTools
       #       include ApiTools::ActiveRecord::UUID
       #       # ...
       #     end
+      #
+      def self.included( model )
+
+        instantiate( model )
+
+      end
+
+      # When called, this method:
+      #
+      # - Declares 'id' as the primary key
+      # - Self-assigns a UUID to 'id' via +before_validation+ and
+      #   ApiTools::UUID::generate
       #
       # The model *MUST* define its database representation in migrations so
       # that +id+ is a string based primary key. That means creating the table
@@ -51,7 +59,7 @@ module ApiTools
       #
       #     add_index :model_table_name, :id, :unique => true
       #
-      def self.included( model )
+      def self.instantiate( model )
 
         model.primary_key = 'id'
 
