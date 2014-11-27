@@ -13,17 +13,19 @@ module ApiTools
     begin
       require 'active_model'
 
+      # Provides simple UUID validation via an ActiveModel::EachValidator.
+      # Uuid is not capitalised as ActiveModel's "magic" cannot find the
+      # validator if it is.
+      #
       class ::UuidValidator < ::ActiveModel::EachValidator
 
-        # Provides simple UUID validation via an ActiveModel::EachValidator. Any
-        # field it is applied to will be considered valid if it is +nil+ or not a
-        # valid UUID. In the case of UUIDs which should not be nil, a separate
-        # validation must be added.
+        # Any field this validator is applied to is considered valid if it is
+        # +nil+ or a valid UUID. In the case of UUIDs which should not be nil,
+        # a separate validation must be added.
         #
         # Example:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       include ApiTools::ActiveRecord::UUID
         #
         #       validates :somefield, uuid: true
         #     end
@@ -35,6 +37,7 @@ module ApiTools
           end
 
         end
+
       end
     rescue LoadError
     end
