@@ -19,9 +19,10 @@ describe ApiTools::ActiveRecord::UUID do
 
       ActiveRecord::Migration.add_index( tblname, :id, :unique => true )
 
-      class RSpecModelUUIDTest < ActiveRecord::Base
-        include ApiTools::ActiveRecord::UUID
-        validates :id, uuid: true, presence: true
+      # ApiTools::ActiveRecord::Base adds a filter to assign a uuid before
+      # validation as well as validations to ensure UUID is present and is
+      # a valid UUID.
+      class RSpecModelUUIDTest < ApiTools::ActiveRecord::Base
       end
 
     ensure
