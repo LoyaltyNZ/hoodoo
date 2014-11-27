@@ -18,10 +18,12 @@ module ApiTools
       # ApiTools::ActiveRecord::Base class instead of ActiveRecord::Base.
       #
       class Base < ::ActiveRecord::Base
-        self.abstract_class = true
         include ApiTools::ActiveRecord::UUID
         include ApiTools::ActiveRecord::Finder
         include ApiTools::ActiveRecord::ErrorMapping
+
+        # Tells ActiveRecord this is not a model that is persisted
+        self.abstract_class = true
 
         # Instantiates all the ActiveRecord mixins when this class is
         # inherited.
