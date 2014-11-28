@@ -22,9 +22,9 @@ module ApiTools
       class Version < ApiTools::Data::DocumentedPresenter
 
         schema do
-          integer :major
-          integer :minor
-          integer :patch
+          integer :major, :required => true
+          integer :minor, :required => true
+          integer :patch, :required => true
         end
 
       end
