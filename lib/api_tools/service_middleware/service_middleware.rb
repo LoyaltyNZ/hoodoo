@@ -568,28 +568,32 @@ module ApiTools
       headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
       headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
 
+      set_common_response_headers( @service_response )
+      load_session()
+
+      data = {
+        :interaction_id => @interaction_id,
+        :payload        => {
+          :method  => env[ 'REQUEST_METHOD', ],
+          :scheme  => env[ 'rack.url_scheme' ],
+          :host    => env[ 'SERVER_NAME'     ],
+          :post    => env[ 'SERVER_PORT'     ],
+          :script  => env[ 'SCRIPT_NAME'     ],
+          :path    => env[ 'PATH_INFO'       ],
+          :query   => env[ 'QUERY_STRING'    ],
+          :headers => headers,
+          :body    => body
+        }
+      }
+
+      data[ :session ] = @service_session.to_h unless @service_session.nil?
+
       ApiTools::Logger.report(
         :info,
         :Middleware,
         :inbound,
-        {
-          :interaction_id => @interaction_id,
-          :payload        => {
-            :method  => env[ 'REQUEST_METHOD', ],
-            :scheme  => env[ 'rack.url_scheme' ],
-            :host    => env[ 'SERVER_NAME'     ],
-            :post    => env[ 'SERVER_PORT'     ],
-            :script  => env[ 'SCRIPT_NAME'     ],
-            :path    => env[ 'PATH_INFO'       ],
-            :query   => env[ 'QUERY_STRING'    ],
-            :headers => headers,
-            :body    => body
-          }
-        }
+        data
       )
-
-      set_common_response_headers( @service_response )
-      load_session()
     end
 
     # Process the client's call. The heart of service routing and application
