@@ -31,7 +31,7 @@ module ApiTools
       #
       #
       def self.included( model )
-        instantiate( model )
+        instantiate( model ) unless model == ApiTools::ActiveRecord::Base
       end
 
       # When instantiated in an ActiveRecord::Base subclass, all of the
@@ -189,7 +189,7 @@ module ApiTools
           finder = finder.offset( context.request.list_offset ).limit( context.request.list_limit )
           finder = finder.order( { context.request.list_sort_key => context.request.list_sort_direction.to_sym } )
 
-          search_map = class_variable_get( '@@nz_co_loyalty_list_search_map' )
+          search_map = defined?( @@nz_co_loyalty_list_search_map ) ? class_variable_get( '@@nz_co_loyalty_list_search_map' ) : nil
 
           dry_proc = Proc.new do | data, attr, proc |
             value = data[ attr.to_s ]
@@ -209,7 +209,7 @@ module ApiTools
             end
           end
 
-          filter_map = class_variable_get( '@@nz_co_loyalty_list_filter_map' )
+          filter_map = defined?( @@nz_co_loyalty_list_search_map ) ? class_variable_get( '@@nz_co_loyalty_list_filter_map' ) : nil
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
