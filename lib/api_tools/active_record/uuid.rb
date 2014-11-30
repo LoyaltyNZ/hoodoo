@@ -37,9 +37,7 @@ module ApiTools
       #     end
       #
       def self.included( model )
-
         instantiate( model ) unless model == ApiTools::ActiveRecord::Base
-
       end
 
       # When called, this method:
