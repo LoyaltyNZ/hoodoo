@@ -22,6 +22,11 @@ module ApiTools
     #
     attr_reader :id
 
+    # TODO: Loyalty NZ specific. The ID of the calling client, as defined
+    # in the authorisation application.
+    #
+    attr_reader :client_id
+
     # TODO: Loyalty NZ specific. The UUID of the Participant instance
     # associated with the authorised caller.
     #
@@ -41,6 +46,7 @@ module ApiTools
     @@test_mode    = false
     @@test_session = {
       :id             => '0123456789ABCDEF',
+      :client_id      => 'ABCDEF0123456789',
       :participant_id => 'e9421091be4d45419ed67326392ee641',
       :outlet_id      => '30c13f64e1044026b350b77c9b4aa6aa',
       :roles          => '',
@@ -93,10 +99,11 @@ module ApiTools
 
       # Create and return the new session.
       return ApiTools::ServiceSession.new({
-        :id => session_id,
-        :participant_id => session_hash['participant_id'],
-        :outlet_id => session_hash['outlet_id'],
-        :roles => session_hash['roles'],
+        :id             => session_id,
+        :client_id      => session_hash[ 'client_id'      ],
+        :participant_id => session_hash[ 'participant_id' ],
+        :outlet_id      => session_hash[ 'outlet_id'      ],
+        :roles          => session_hash[ 'roles'          ],
       })
     end
 
@@ -108,6 +115,8 @@ module ApiTools
     # Key/value meanings for options are:
     #
     # +id+::             Session ID, e.g. from an X-Session-ID header.
+    # +client_id+::      TODO: LoyaltyNZ specific. ID of API-calling client,
+    #                    according to OAuth authorisation application.
     # +participant_id+:: TODO: LoyaltyNZ specific. Participant UUID associated
     #                    with this session.
     # +outlet_id+::      TODO: LoyaltyNZ specific. Outlet UUID associated with
@@ -119,12 +128,14 @@ module ApiTools
     def initialize(options = {})
 
       @id             = options[ :id             ]
+      @client_id      = options[ :client_id      ]
       @participant_id = options[ :participant_id ]
       @outlet_id      = options[ :outlet_id      ]
       @roles          = options[ :roles          ].to_s.split( ',' )
 
       @to_h = {
         :id             => @id,
+        :client_id      => @client_id,
         :participant_id => @participant_id,
         :outlet_id      => @outlet_id,
         :roles          => @roles

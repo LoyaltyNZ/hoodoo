@@ -50,11 +50,11 @@ module ApiTools
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an ApiTools::ServiceSession instance. The participant and
-      #              outlet IDs are sent as independent, searchable fields in
-      #              the log payload.
+      #              an ApiTools::ServiceSession instance. The client ID,
+      #              participant UUID and outlet UUID are sent as independent,
+      #              searchable fields in the log payload.
       #
-      # +interaction_id+:: The interaction ID for this client call. This is
+      # +interaction_id+:: The interaction ID for this client's call. This is
       #                    also sent as an independent, searchable field in
       #                    the log payload.
       #
@@ -67,6 +67,7 @@ module ApiTools
 
           interaction_id = data[ :interaction_id ]
           session        = data[ :session ] || {}
+          client_id      = session[ :client_id      ]
           participant_id = session[ :participant_id ]
           outlet_id      = session[ :outlet_id      ]
 
@@ -78,6 +79,7 @@ module ApiTools
 
             :data           => data,
 
+            :client_id      => client_id,
             :interaction_id => interaction_id,
             :participant_id => participant_id,
             :outlet_id      => outlet_id,

@@ -17,7 +17,7 @@ module ApiTools
   class ServiceMiddleware
 
     begin
-      require 'amq-endpoint'
+      require 'amq-endpoint' # Optional
 
       # For AMQEndpoint gem users, the AMQPLogMessage class provides an
       # AMQEndpoint::Message subclass used for sending structured log data to
@@ -47,17 +47,22 @@ module ApiTools
         #
         attr_accessor :data
 
-        # Optional interaction ID, via session data inside the payload - see
+        # Optional calling client ID, via session data inside the payload - see
+        # ApiTools::ServiceMiddleware::StructuredLogger.
+        #
+        attr_accessor :client_id
+
+        # Optional interaction UUID, via session data inside the payload - see
         # ApiTools::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :interaction_id
 
-        # Optional participant ID, via session data inside the payload - see
+        # Optional participant UUID, via session data inside the payload - see
         # ApiTools::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :participant_id
 
-        # Optional outlet ID, via session data inside the payload - see
+        # Optional outlet UUID, via session data inside the payload - see
         # ApiTools::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :outlet_id
@@ -85,6 +90,7 @@ module ApiTools
 
             :data           => @data,
 
+            :client_id      => @client_id,
             :interaction_id => @interaction_id,
             :participant_id => @participant_id,
             :outlet_id      => @outlet_id,
@@ -112,13 +118,14 @@ module ApiTools
 
           @data           = options[ :data           ]
 
+          @client_id      = options[ :client_id      ]
           @interaction_id = options[ :interaction_id ]
           @participant_id = options[ :participant_id ]
           @outlet_id      = options[ :outlet_id      ]
         end
       end
 
-    rescue LoadError
+    rescue LoadError # Optional file 'amq-endpoint' is absent
     end
 
   end

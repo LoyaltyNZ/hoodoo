@@ -90,8 +90,8 @@ describe ApiTools::ServiceMiddleware do
       # prefix "ECHO ", so we expect that too.
       #
       expect($stdout).to receive(:puts).at_least(:once) do | string, *args |
-        expect(string.include?('ECHO ')).to eq(true)
         $stderr.puts( string, args ) # Echo output to stderr for test.log
+        expect(string.include?('ECHO ')).to eq(true)
       end
 
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -111,9 +111,10 @@ describe ApiTools::ServiceMiddleware::AMQPLogMessage do
       :component => :RSpec,
       :code => 'hello',
       :data => { 'this' => 'that' },
-      :interaction_id => '2',
-      :participant_id => '3',
-      :outlet_id => '4'
+      :client_id => '2',
+      :interaction_id => '3',
+      :participant_id => '4',
+      :outlet_id => '5'
     }
   end
 
