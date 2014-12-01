@@ -21,6 +21,21 @@ module ApiTools
         include ApiTools::ActiveRecord::UUID
         include ApiTools::ActiveRecord::Finder
         include ApiTools::ActiveRecord::ErrorMapping
+
+        # Tells ActiveRecord this is not a model that is persisted
+        self.abstract_class = true
+
+        # Instantiates all the ActiveRecord mixins when this class is
+        # inherited.
+        #
+        def self.inherited( model )
+
+          ApiTools::ActiveRecord::UUID.instantiate( model )
+          ApiTools::ActiveRecord::Finder.instantiate( model )
+
+          super
+
+        end
       end
 
     rescue LoadError

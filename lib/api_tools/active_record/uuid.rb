@@ -17,8 +17,9 @@ module ApiTools
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
     # By including this module, a +before_validation+ filter is set up which
-    # assigns a UUID if none is currently set (+id+ is +nil+). Validations are
-    # added to ensure that the UUID is of an expected format.
+    # assigns a UUID if none is currently set (+id+ is +nil+). It also
+    # defines validations to ensure the +id+ is present, unique and a valid
+    # UUID.
     #
     # *IMPORTANT:* See ApiTools::ActiveRecord::UUID::included for important
     # information about database requirements / table creation when using
@@ -26,12 +27,7 @@ module ApiTools
     #
     module UUID
 
-      # When included in an ActiveRecord::Base subclass, this mixin:
-      #
-      # - Declares 'id' as the primary key
-      # - Self-assigns a UUID to 'id' via +before_validation+ and
-      #   ApiTools::UUID::generate
-      # - Adds validation for 'id' via ApiTools::UUID::valid?
+      # Instantiates this module when it is included:
       #
       # Example:
       #
@@ -39,6 +35,18 @@ module ApiTools
       #       include ApiTools::ActiveRecord::UUID
       #       # ...
       #     end
+      #
+      def self.included( model )
+        instantiate( model ) unless model == ApiTools::ActiveRecord::Base
+      end
+
+      # When called, this method:
+      #
+      # - Declares 'id' as the primary key
+      # - Self-assigns a UUID to 'id' via +before_validation+ and
+      #   ApiTools::UUID::generate
+      # - Adds validations to 'id' to ensure it is present, unique and a valid
+      #   UUID.
       #
       # The model *MUST* define its database representation in migrations so
       # that +id+ is a string based primary key. That means creating the table
@@ -53,7 +61,7 @@ module ApiTools
       #
       #     add_index :model_table_name, :id, :unique => true
       #
-      def self.included( model )
+      def self.instantiate( model )
 
         model.primary_key = 'id'
 
@@ -61,11 +69,10 @@ module ApiTools
           self.id = ApiTools::UUID.generate if self.id.nil?
         end
 
-        model.validates_each :id do | record, attr, value |
-          record.errors.add( attr, 'is invalid' ) unless ApiTools::UUID.valid?( value )
-        end
+        model.validates :id, uuid: true, presence: true, uniqueness: true
 
       end
+
     end
   end
 end

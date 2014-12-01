@@ -7,6 +7,8 @@ require root+'json_payload'
 require root+'platform_context'
 require root+'utilities'
 
+require root+'active_model/uuid_validator'
+
 require root+'active_record/error_mapping'
 require root+'active_record/finder'
 require root+'active_record/uuid'
