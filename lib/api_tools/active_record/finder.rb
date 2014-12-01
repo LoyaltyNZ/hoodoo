@@ -95,8 +95,9 @@ module ApiTools
         # Returns a found model instance or +nil+ for no match.
         #
         def polymorphic_find( finder, ident )
-          extra_fields = class_variable_get( '@@nz_co_loyalty_show_id_fields' ) || []
-          id_fields    = [ :id ] + extra_fields
+
+          extra_fields = class_variable_defined?( :@@nz_co_loyalty_show_id_fields ) ? class_variable_get( :@@nz_co_loyalty_show_id_fields ) : nil
+          id_fields    = [ :id ] + ( extra_fields || [] )
 
           id_fields.each do | field |
             checker = finder.where( field => ident )
@@ -185,11 +186,12 @@ module ApiTools
         # +context+:: ApiTools::ServiceContext instance.
         #
         def list_finder( context )
+
           finder = self
           finder = finder.offset( context.request.list_offset ).limit( context.request.list_limit )
           finder = finder.order( { context.request.list_sort_key => context.request.list_sort_direction.to_sym } )
 
-          search_map = defined?( @@nz_co_loyalty_list_search_map ) ? class_variable_get( '@@nz_co_loyalty_list_search_map' ) : nil
+          search_map = class_variable_defined?( :@@nz_co_loyalty_list_search_map ) ? class_variable_get( :@@nz_co_loyalty_list_search_map ) : nil
 
           dry_proc = Proc.new do | data, attr, proc |
             value = data[ attr.to_s ]
@@ -209,7 +211,7 @@ module ApiTools
             end
           end
 
-          filter_map = defined?( @@nz_co_loyalty_list_search_map ) ? class_variable_get( '@@nz_co_loyalty_list_filter_map' ) : nil
+          filter_map = class_variable_defined?( :@@nz_co_loyalty_list_filter_map ) ? class_variable_get( :@@nz_co_loyalty_list_filter_map ) : nil
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
