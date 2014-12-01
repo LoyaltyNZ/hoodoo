@@ -186,11 +186,12 @@ for this log message - if absent, one is generated automatically.</p>
 <dd>
 <p>Description of the current request session when available; an <a
 href="../ServiceSession.html">ApiTools::ServiceSession</a> instance. The
-participant and outlet IDs are sent as independent, searchable fields in
+client ID, participant <a href="../UUID.html">UUID</a> and outlet <a
+href="../UUID.html">UUID</a> are sent as independent, searchable fields in
 the log payload.</p>
 </dd><dt><code>interaction_id</code>
 <dd>
-<p>The interaction ID for this client call. This is also sent as an
+<p>The interaction ID for this client&#39;s call. This is also sent as an
 independent, searchable field in the log payload.</p>
 </dd></dl>
             </div>
@@ -220,6 +221,7 @@ independent, searchable field in the log payload.</p>
 
     <span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ]
     <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
+    <span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:client_id</span>      ]
     <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:participant_id</span> ]
     <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:outlet_id</span>      ]
 
@@ -231,6 +233,7 @@ independent, searchable field in the log payload.</p>
 
       <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
 
+      <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">client_id</span>,
       <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction_id</span>,
       <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">participant_id</span>,
       <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">outlet_id</span>,

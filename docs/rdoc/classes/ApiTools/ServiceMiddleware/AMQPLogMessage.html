@@ -141,6 +141,15 @@ uses this.</p>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>client_id</td>
+            <td class='attr-desc'><p>Optional calling client ID, via session data inside the payload - see <a
+href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>code</td>
             <td class='attr-desc'><p>Component log code. See <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
@@ -178,7 +187,8 @@ href="../UUID.html#method-c-generate">ApiTools::UUID.generate</a>.</p></td>
               [RW]
             </td>
             <td class='attr-name'>interaction_id</td>
-            <td class='attr-desc'><p>Optional interaction ID, via session data inside the payload - see <a
+            <td class='attr-desc'><p>Optional interaction <a href="../UUID.html">UUID</a>, via session data
+inside the payload - see <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
           </tr>
         
@@ -196,7 +206,8 @@ href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.<
               [RW]
             </td>
             <td class='attr-name'>outlet_id</td>
-            <td class='attr-desc'><p>Optional outlet ID, via session data inside the payload - see <a
+            <td class='attr-desc'><p>Optional outlet <a href="../UUID.html">UUID</a>, via session data inside
+the payload - see <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
           </tr>
         
@@ -205,7 +216,8 @@ href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.<
               [RW]
             </td>
             <td class='attr-name'>participant_id</td>
-            <td class='attr-desc'><p>Optional participant ID, via session data inside the payload - see <a
+            <td class='attr-desc'><p>Optional participant <a href="../UUID.html">UUID</a>, via session data
+inside the payload - see <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.</p></td>
           </tr>
         
@@ -247,7 +259,7 @@ default queue packet type of &#39;log&#39;.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 74</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
@@ -290,7 +302,7 @@ gem and AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 98</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
@@ -329,7 +341,7 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 78</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 84</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
@@ -339,6 +351,7 @@ AMQEndpoint::Message#serialize.</p>
 
     <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
 
+    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@client_id</span>,
     <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@interaction_id</span>,
     <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@participant_id</span>,
     <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@outlet_id</span>,
@@ -380,7 +393,7 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 106</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
   <span class="ruby-ivar">@level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]
@@ -389,6 +402,7 @@ attributes defined for the class.</p>
 
   <span class="ruby-ivar">@data</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>           ]
 
+  <span class="ruby-ivar">@client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
   <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction_id</span> ]
   <span class="ruby-ivar">@participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
   <span class="ruby-ivar">@outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]

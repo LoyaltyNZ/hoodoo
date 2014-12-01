@@ -150,6 +150,15 @@ session.</p>
             <td class='attr-rw'>
               [R]
             </td>
+            <td class='attr-name'>client_id</td>
+            <td class='attr-desc'><p>TODO: Loyalty NZ specific. The ID of the calling client, as defined in the
+authorisation application.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
             <td class='attr-name'>id</td>
             <td class='attr-desc'><p>Session ID, matching a value that would appear in an X-Session-ID header.</p></td>
           </tr>
@@ -225,7 +234,7 @@ session does not exist or is invalid.</p>
                 
               </p>
               <div id="method-c-load_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 64</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">load_session</span>(<span class="ruby-identifier">memcache_url</span>, <span class="ruby-identifier">session_id</span>)
 
   <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">@@test_session</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@test_mode</span>
@@ -258,10 +267,11 @@ session does not exist or is invalid.</p>
 
   <span class="ruby-comment"># Create and return the new session.</span>
   <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>({
-    <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_id</span>,
-    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;participant_id&#39;</span>],
-    <span class="ruby-value">:outlet_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;outlet_id&#39;</span>],
-    <span class="ruby-value">:roles</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[<span class="ruby-string">&#39;roles&#39;</span>],
+    <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_id</span>,
+    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;client_id&#39;</span>      ],
+    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;participant_id&#39;</span> ],
+    <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;outlet_id&#39;</span>      ],
+    <span class="ruby-value">:roles</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;roles&#39;</span>          ],
   })
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -290,6 +300,10 @@ with the optional supplied parameters.</p>
 <dl class="rdoc-list note-list"><dt><code>id</code>
 <dd>
 <p>Session ID, e.g. from an X-Session-ID header.</p>
+</dd><dt><code>client_id</code>
+<dd>
+<p>TODO: LoyaltyNZ specific. ID of API-calling client, according to OAuth
+authorisation application.</p>
 </dd><dt><code>participant_id</code>
 <dd>
 <p>TODO: LoyaltyNZ specific. Participant <a href="UUID.html">UUID</a>
@@ -320,16 +334,18 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 119</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
 
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
+  <span class="ruby-ivar">@client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
   <span class="ruby-ivar">@participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
   <span class="ruby-ivar">@outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]
   <span class="ruby-ivar">@roles</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:roles</span>          ].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> )
 
   <span class="ruby-ivar">@to_h</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
+    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@client_id</span>,
     <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@participant_id</span>,
     <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@outlet_id</span>,
     <span class="ruby-value">:roles</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@roles</span>
@@ -372,7 +388,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-testing_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 53</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">testing</span>(<span class="ruby-identifier">test_mode</span>, <span class="ruby-identifier">mock_session</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">@@test_mode</span> = <span class="ruby-identifier">test_mode</span>
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">mock_session</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mock_session</span>.<span class="ruby-identifier">nil?</span>
@@ -412,7 +428,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_all_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 141</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_all_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">length</span>
 <span class="ruby-keyword">end</span></pre>
@@ -449,7 +465,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_any_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 146</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 157</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_any_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -486,7 +502,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_role-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 136</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_role?</span>(<span class="ruby-identifier">role</span>)
   <span class="ruby-ivar">@roles</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -527,7 +543,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 155</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-ivar">@to_h</span>
 <span class="ruby-keyword">end</span></pre>
