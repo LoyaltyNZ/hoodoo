@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Data::Resources::LogEntry do
+describe ApiTools::Data::Resources::Log do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
