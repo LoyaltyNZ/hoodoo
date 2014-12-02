@@ -23,7 +23,7 @@
         </h1>
         <ul class="files">
             <li>README.md</li>
-            <li>Last modified: 2014-12-02 15:50:08 +1300</li>
+            <li>Last modified: 2014-12-03 12:29:18 +1300</li>
         </ul>
     </div>
 
@@ -54,26 +54,6 @@ platform.</p>
 
 <p>Functionality includes:</p>
 <ul><li>
-<p><em>Unified Error Helpers:</em> Adds standard platform error capability to
-any API/class – <a
-href="../classes/ApiTools/ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>,
-<a href="../classes/ApiTools/Errors.html">ApiTools::Errors</a></p>
-</li><li>
-<p><em>Unified Logger:</em> A single logger for use with platform or local
-logs – <a href="../classes/ApiTools/Logger.html">ApiTools::Logger</a></p>
-</li><li>
-<p><em>Generic Presenter Layer:</em> Input and output validation and rendering
-– <a
-href="../classes/ApiTools/Presenters/Base.html">ApiTools::Presenters::Base</a>,
-<a
-href="../classes/ApiTools/Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a></p>
-</li><li>
-<p><em>Type and Resource Presenter Layer:</em> As above, but for formally
-defined platform API level Types and Resources that would be documented (by
-the person defining the API) for API callers – <a
-href="../classes/ApiTools/Presenters/Base.html">ApiTools::Presenters::Base</a>,
-ApiTools::Presenters::DSL</p>
-</li><li>
 <p><em>Middleware:</em> The heart of services; Rake-based service applications
 (think Sinatra, Grape, Rails…) – <a
 href="../classes/ApiTools/ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>;
@@ -92,6 +72,20 @@ href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a>,
 <a
 href="../classes/ApiTools/ServiceContext.html">ApiTools::ServiceContext</a></p>
 </li><li>
+<p><em>Generic Presenter Layer:</em> Input and output validation and rendering
+– <a
+href="../classes/ApiTools/Presenters/Base.html">ApiTools::Presenters::Base</a>,
+<a
+href="../classes/ApiTools/Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a></p>
+</li><li>
+<p><em>Unified Error Helpers:</em> Adds standard platform error capability to
+any API/class – <a
+href="../classes/ApiTools/ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>,
+<a href="../classes/ApiTools/Errors.html">ApiTools::Errors</a></p>
+</li><li>
+<p><em>Unified Logger:</em> A single logger for use with platform or local
+logs – <a href="../classes/ApiTools/Logger.html">ApiTools::Logger</a></p>
+</li><li>
 <p><em>Platform Sessions:</em> Authentication of sessions, session context –
 <a
 href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a></p>
@@ -99,6 +93,11 @@ href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a></p>
 <p><em>Platform Events:</em> Publishes Platform Events when running on a
 queue-based infrastructure – <a
 href="../classes/ApiTools/Events/PlatformEvent.html">ApiTools::Events::PlatformEvent</a></p>
+</li><li>
+<p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional),
+provides support methods/mixins for models to help bridge the gap between
+API resources and persistence – <a
+href="../classes/ApiTools/ActiveRecord.html">ApiTools::ActiveRecord</a></p>
 </li></ul>
 
 <p>Master documentation is through RDoc (see below).</p>
@@ -107,11 +106,11 @@ href="../classes/ApiTools/Events/PlatformEvent.html">ApiTools::Events::PlatformE
 
 <p>Run the tests:</p>
 
-<pre><code>rake</code></pre>
+<pre><code>bundle exec rake</code></pre>
 
 <p>…or…</p>
 
-<pre><code>rspec</code></pre>
+<pre><code>bundle exec rspec</code></pre>
 
 <h2 id="label-Documentation+%28RDoc%29">Documentation (RDoc)</h2>
 

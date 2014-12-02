@@ -1,5 +1,5 @@
-Tue, 02 Dec 2014 16:51:18 +1300
-README.md	Tue, 02 Dec 2014 15:50:08 +1300
+Wed, 03 Dec 2014 12:42:15 +1300
+README.md	Wed, 03 Dec 2014 12:29:18 +1300
 lib/api_tools.rb	Tue, 02 Dec 2014 15:57:10 +1300
 lib/api_tools/active_model/uuid_validator.rb	Mon, 01 Dec 2014 16:02:47 +1300
 lib/api_tools/active_record/base.rb	Mon, 01 Dec 2014 16:02:47 +1300
@@ -69,10 +69,10 @@ lib/api_tools/service_implementations/service_session.rb	Tue, 02 Dec 2014 16:13:
 lib/api_tools/service_middleware/amqp_log_message.rb	Mon, 01 Dec 2014 14:03:13 +1300
 lib/api_tools/service_middleware/rack_monkey_patch.rb	Wed, 26 Nov 2014 16:15:35 +1300
 lib/api_tools/service_middleware/service_endpoint.rb	Fri, 14 Nov 2014 15:05:24 +1300
-lib/api_tools/service_middleware/service_middleware.rb	Tue, 02 Dec 2014 16:19:48 +1300
+lib/api_tools/service_middleware/service_middleware.rb	Wed, 03 Dec 2014 12:41:26 +1300
 lib/api_tools/service_middleware/service_registry_drb_server.rb	Fri, 14 Nov 2014 15:25:14 +1300
 lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 14:46:00 +1300
 lib/api_tools/service_middleware/structured_logger.rb	Mon, 01 Dec 2014 14:12:12 +1300
 lib/api_tools/utilities.rb	Fri, 14 Nov 2014 15:13:02 +1300
 lib/api_tools/uuid.rb	Fri, 14 Nov 2014 15:14:05 +1300
-lib/api_tools/version.rb	Tue, 02 Dec 2014 16:03:56 +1300
+lib/api_tools/version.rb	Wed, 03 Dec 2014 12:26:43 +1300
