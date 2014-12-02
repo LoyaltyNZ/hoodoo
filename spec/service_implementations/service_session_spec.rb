@@ -10,7 +10,7 @@ describe ApiTools::ServiceSession do
     ApiTools::ServiceSession.testing(true)
   end
 
-  describe '#self.load_session?' do
+  describe '#self.load_session' do
 
     it 'should raise an error if memcache_url is nil' do
       expect {
@@ -48,18 +48,18 @@ describe ApiTools::ServiceSession do
 
     it 'should call get on memcache with correct key and return nil if not found' do
       mock_memcache = double('memcache')
-      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(:nil)
+      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(nil)
       expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
       session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
       expect(session).to be_nil
     end
 
-    it 'should warn and return nil if session found and JSON parse fails' do
+    it 'should warn and return nil if memcache get throws' do
       session = 'asjcbasybcoiqhcg3q'
 
       mock_memcache = double('memcache')
-      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(session)
+      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_raise(Exception.new)
       expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
       expect(ApiTools::Logger).to receive(:warn)
@@ -77,7 +77,7 @@ describe ApiTools::ServiceSession do
       }
 
       mock_memcache = double('memcache')
-      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(JSON.fast_generate(session_hash))
+      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(session_hash)
       expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
       session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')

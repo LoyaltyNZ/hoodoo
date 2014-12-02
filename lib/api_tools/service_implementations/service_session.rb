@@ -83,17 +83,14 @@ module ApiTools
       memcache = connect_memcache(memcache_url)
       raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'" if memcache.nil?
 
-      # Get The session from the server
-      session_hash = memcache.get("session_"+session_id)
-      # Return nil if the session can't be found
-      return nil if session_hash.nil?
-
-      # Parse the session
       begin
-        session_hash = JSON.parse(session_hash)
+        # Get The session from the server
+        session_hash = memcache.get("session_"+session_id)
+        # Return nil if the session can't be found
+        return nil if session_hash.nil?
       rescue Exception => exception
         # Log error and Return nil if the session can't be parsed
-        ApiTools::Logger.warn("Session loaded but failed JSON parsing", exception)
+        ApiTools::Logger.warn("Session Loading failed, connection fault or session corrupt", exception)
         return nil
       end
 
