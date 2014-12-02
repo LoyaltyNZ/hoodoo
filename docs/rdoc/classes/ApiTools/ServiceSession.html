@@ -251,17 +251,14 @@ session does not exist or is invalid.</p>
   <span class="ruby-identifier">memcache</span> = <span class="ruby-identifier">connect_memcache</span>(<span class="ruby-identifier">memcache_url</span>)
   <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware cannot connect to memcache server &#39;#{memcache_url}&#39;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">nil?</span>
 
-  <span class="ruby-comment"># Get The session from the server</span>
-  <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-string">&quot;session_&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">session_id</span>)
-  <span class="ruby-comment"># Return nil if the session can&#39;t be found</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-comment"># Parse the session</span>
   <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">session_hash</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">session_hash</span>)
+    <span class="ruby-comment"># Get The session from the server</span>
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-string">&quot;session_&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">session_id</span>)
+    <span class="ruby-comment"># Return nil if the session can&#39;t be found</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
     <span class="ruby-comment"># Log error and Return nil if the session can&#39;t be parsed</span>
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-string">&quot;Session loaded but failed JSON parsing&quot;</span>, <span class="ruby-identifier">exception</span>)
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-string">&quot;Session Loading failed, connection fault or session corrupt&quot;</span>, <span class="ruby-identifier">exception</span>)
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 
@@ -334,7 +331,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 128</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
 
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
@@ -428,7 +425,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_all_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 152</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 149</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_all_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">length</span>
 <span class="ruby-keyword">end</span></pre>
@@ -465,7 +462,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_any_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 157</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_any_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -502,7 +499,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_role-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 147</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_role?</span>(<span class="ruby-identifier">role</span>)
   <span class="ruby-ivar">@roles</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -543,7 +540,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 166</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-ivar">@to_h</span>
 <span class="ruby-keyword">end</span></pre>

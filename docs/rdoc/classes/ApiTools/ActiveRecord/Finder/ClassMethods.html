@@ -153,7 +153,7 @@ href="ClassMethods.html#method-i-list_search_map">list_search_map</a>.</p>
                 
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 270</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 286</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_filter_map&#39;</span>, <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -251,13 +251,14 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
                 
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 173</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">context</span> )
+
   <span class="ruby-identifier">finder</span> = <span class="ruby-keyword">self</span>
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_limit</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( { <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_sort_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_sort_direction</span>.<span class="ruby-identifier">to_sym</span> } )
 
-  <span class="ruby-identifier">search_map</span> = <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_search_map&#39;</span> )
+  <span class="ruby-identifier">search_map</span> = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_list_search_map</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_list_search_map</span> ) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
   <span class="ruby-identifier">dry_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_s</span> ]
@@ -277,7 +278,7 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">filter_map</span> = <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_filter_map&#39;</span> )
+  <span class="ruby-identifier">filter_map</span> = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_list_filter_map</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_list_filter_map</span> ) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
@@ -378,7 +379,7 @@ or Symbols.</p>
                 
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 262</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_search_map&#39;</span>, <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -467,10 +468,11 @@ using +where( attr =&gt; ident )+.</p>
                 
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 83</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 97</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
-  <span class="ruby-identifier">extra_fields</span> = <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_show_id_fields&#39;</span> ) <span class="ruby-operator">||</span> []
-  <span class="ruby-identifier">id_fields</span>    = [ <span class="ruby-value">:id</span> ] <span class="ruby-operator">+</span> <span class="ruby-identifier">extra_fields</span>
+
+  <span class="ruby-identifier">extra_fields</span> = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_show_id_fields</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_show_id_fields</span> ) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">id_fields</span>    = [ <span class="ruby-value">:id</span> ] <span class="ruby-operator">+</span> ( <span class="ruby-identifier">extra_fields</span> <span class="ruby-operator">||</span> [] )
 
   <span class="ruby-identifier">id_fields</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">field</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">checker</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>( <span class="ruby-identifier">field</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> )
@@ -533,7 +535,7 @@ href="ClassMethods.html#method-i-polymorphic_find">polymorphic_find</a>.</p>
                 
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 112</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_show_id_fields&#39;</span>, <span class="ruby-identifier">args</span> )
 <span class="ruby-keyword">end</span></pre>

@@ -61,6 +61,24 @@ href="Base.html">ActiveRecord::Base</a>.</p>
 
 
   
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>I</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-inherited">inherited</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
 
   
     <!-- Includes -->
@@ -109,7 +127,52 @@ href="Base.html">ActiveRecord::Base</a>.</p>
 
 
     <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-inherited">
+            
+              <b>inherited</b>( model )
+            
+            <a href="../../../classes/ApiTools/ActiveRecord/Base.html#method-c-inherited" name="method-c-inherited" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Instantiates all the <a href="../ActiveRecord.html">ActiveRecord</a> mixins
+when this class is inherited.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-inherited_source')" id="l_method-c-inherited_source">show</a>
+                
+              </p>
+              <div id="method-c-inherited_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/base.rb, line 31</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
+
+  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+
+  <span class="ruby-keyword">super</span>
+
+<span class="ruby-keyword">end</span></pre>
               </div>
+            </div>
+            
+          </div>
+                        </div>
 
     </div>
   </body>

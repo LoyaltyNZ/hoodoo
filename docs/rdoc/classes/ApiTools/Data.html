@@ -25,16 +25,6 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../../files/lib/api_tools/data/documented_array_rb.html">lib/api_tools/data/documented_array.rb</a></li>
-            
-            <li><a href="../../files/lib/api_tools/data/documented_dsl_rb.html">lib/api_tools/data/documented_dsl.rb</a></li>
-            
-            <li><a href="../../files/lib/api_tools/data/documented_hash_rb.html">lib/api_tools/data/documented_hash.rb</a></li>
-            
-            <li><a href="../../files/lib/api_tools/data/documented_object_rb.html">lib/api_tools/data/documented_object.rb</a></li>
-            
-            <li><a href="../../files/lib/api_tools/data/documented_presenter_rb.html">lib/api_tools/data/documented_presenter.rb</a></li>
-            
             <li><a href="../../files/lib/api_tools/data/resources/account_rb.html">lib/api_tools/data/resources/account.rb</a></li>
             
             <li><a href="../../files/lib/api_tools/data/resources/balance_rb.html">lib/api_tools/data/resources/balance.rb</a></li>
@@ -95,32 +85,12 @@
             
             <li><a href="../../files/lib/api_tools/errors/errors_rb.html">lib/api_tools/errors/errors.rb</a></li>
             
-            <li><a href="../../files/lib/api_tools/presenters/types/hash_rb.html">lib/api_tools/presenters/types/hash.rb</a></li>
-            
-            <li><a href="../../files/lib/api_tools/service_implementations/service_interface_rb.html">lib/api_tools/service_implementations/service_interface.rb</a></li>
+            <li><a href="../../files/lib/api_tools/presenters/base_dsl_rb.html">lib/api_tools/presenters/base_dsl.rb</a></li>
             
         </ul>
     </div>
     <div id="bodyContent">
         <div id="content">
-  
-    <div class="description">
-      
-<p>Common data definitions and descriptions - describe, through a DSL, the
-<strong>representations</strong> of <a href="Data/Types.html">Types</a> and
-<a href="Data/Resources.html">Resources</a> documented in the Loyalty
-Platform API.</p>
-
-<p>These descriptions omit common fields like “kind” or “created_at”, as those
-are implicit for any resource. Since resource representations are things
-returned by services, the definitions are used for automatic validation of
-service responses, not for validation of data sent in requests. That&#39;s
-done via the DSL available to <a
-href="ServiceInterface.html">ApiTools::ServiceInterface</a> subclasses,
-e.g. <a
-href="ServiceInterface.html#method-i-to_create">ApiTools::ServiceInterface#to_create</a>.</p>
-
-    </div>
   
 
 
@@ -138,37 +108,12 @@ href="ServiceInterface.html#method-i-to_create">ApiTools::ServiceInterface#to_cr
       
         <li>
           <span class="type">MODULE</span>
-          <a href="Data/DocumentedDSL.html">ApiTools::Data::DocumentedDSL</a>
-        </li>
-      
-        <li>
-          <span class="type">MODULE</span>
           <a href="Data/Resources.html">ApiTools::Data::Resources</a>
         </li>
       
         <li>
           <span class="type">MODULE</span>
           <a href="Data/Types.html">ApiTools::Data::Types</a>
-        </li>
-      
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Data/DocumentedArray.html">ApiTools::Data::DocumentedArray</a>
-        </li>
-      
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Data/DocumentedHash.html">ApiTools::Data::DocumentedHash</a>
-        </li>
-      
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>
-        </li>
-      
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Data/DocumentedPresenter.html">ApiTools::Data::DocumentedPresenter</a>
         </li>
       
     </ul>

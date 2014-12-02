@@ -272,8 +272,7 @@ subclass - the class, not an instance of it.</p></td>
               [RW]
             </td>
             <td class='attr-name'>to_create</td>
-            <td class='attr-desc'><p>An <a
-href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>
+            <td class='attr-desc'><p>An <a href="Presenters/Object.html">ApiTools::Presenters::Object</a>
 instance describing the schema for client JSON coming in for calls that
 create instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
@@ -285,8 +284,7 @@ implementation becomes entirely responsible for data validation).</p></td>
               [RW]
             </td>
             <td class='attr-name'>to_update</td>
-            <td class='attr-desc'><p>An <a
-href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>
+            <td class='attr-desc'><p>An <a href="Presenters/Object.html">ApiTools::Presenters::Object</a>
 instance describing the schema for client JSON coming in for calls that
 modify instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
@@ -674,16 +672,16 @@ end
               <p>Optional description of the JSON parameters (schema) that the
 interface&#39;s implementation requires for calls creating resource
 instances. The block uses the DSL from <a
-href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>, so
-you can specify basic object things like <code>string</code>, or higher
-level things like <code>type</code> or <code>resource</code>.</p>
+href="Presenters/Object.html">ApiTools::Presenters::Object</a>, so you can
+specify basic object things like <code>string</code>, or higher level
+things like <code>type</code> or <code>resource</code>.</p>
 
 <p>If a call comes into the middleware from a client which contains body data
 that doesn&#39;t validate according to your schema, it&#39;ll be rejected
 before even getting as far as your interface implementation.</p>
 
 <p>The <a
-href="Data/DocumentedDSL.html#method-i-internationalised">ApiTools::Data::DocumentedDSL#internationalised</a>
+href="Presenters/BaseDSL.html#method-i-internationalised">ApiTools::Presenters::BaseDSL#internationalised</a>
 DSL method can be called within your block harmlessly, but it has no side
 effects. Any resource interface that can take internationalised data for
 creation (or modification) must already have an internationalised
@@ -707,8 +705,8 @@ end</code></pre>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block, passed to <a
-href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>,
-describing the fields used for resource creation.</p>
+href="Presenters/Object.html">ApiTools::Presenters::Object</a>, describing
+the fields used for resource creation.</p>
 </dd></dl>
             </div>
           
@@ -729,7 +727,7 @@ describing the fields used for resource creation.</p>
               <div id="method-i-to_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 395</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
-  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedPresenter</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_create=</span>, <span class="ruby-identifier">obj</span> )
@@ -807,8 +805,8 @@ href="ServiceInterface.html#method-i-update_same_as_create">update_same_as_creat
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block, passed to <a
-href="Data/DocumentedObject.html">ApiTools::Data::DocumentedObject</a>,
-describing the fields used for resource modification.</p>
+href="Presenters/Object.html">ApiTools::Presenters::Object</a>, describing
+the fields used for resource modification.</p>
 </dd></dl>
             </div>
           
@@ -829,7 +827,7 @@ describing the fields used for resource modification.</p>
               <div id="method-i-to_update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 409</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
-  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">DocumentedPresenter</span> )
+  <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-identifier">obj</span> )

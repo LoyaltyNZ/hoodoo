@@ -144,8 +144,8 @@ end
 <pre><code>def create( context )
 
   # Validate inbound creation data by e.g. schema through the
-  # presenter layer - ApiTools::Presenters::BasePresenter and
-  # ApiTools::Data::DocumentedPresenter - then...
+  # presenter layer - ApiTools::Presenters::Base and
+  # ApiTools::Presenters::Base - then...
 
   model             = SomeModel.new
   model.parameter_1 = &#39;something based on inbound creation data&#39;
@@ -192,7 +192,7 @@ end
     <span class="ruby-identifier">column</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">columns_hash</span>[ <span class="ruby-identifier">attribute_name</span>.<span class="ruby-identifier">to_s</span> ]
     <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">nil?</span>
 
-    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">column</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:array</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">array</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;array&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">type</span>
+    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">attribute_type_of</span>(<span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">column</span>)
 
     <span class="ruby-identifier">message_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">|</span>
       <span class="ruby-identifier">error_code</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">message</span>

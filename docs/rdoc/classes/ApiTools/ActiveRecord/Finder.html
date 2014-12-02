@@ -79,7 +79,12 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
             
               
               <li>
-                <a href="#method-c-included">included</a>
+                <a href="#method-c-included">included</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-instantiate">instantiate</a>
               </li>
             
           </ul>
@@ -118,10 +123,15 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
           
           
             <div class="description">
-              <p>When included into an <a href="Base.html">ActiveRecord::Base</a> subclass,
-all of the <a
-href="Finder/ClassMethods.html">ApiTools::ActiveRecord::Finder::ClassMethods</a>
-methods are defined as class methods on the including class.</p>
+              <p>Instantiates this module when it is included:</p>
+
+<p>Example:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include ApiTools::ActiveRecord::Finder
+  # ...
+end
+</code></pre>
             </div>
           
           
@@ -139,8 +149,48 @@ methods are defined as class methods on the including class.</p>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 27</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-instantiate">
+            
+              <b>instantiate</b>( model )
+            
+            <a href="../../../classes/ApiTools/ActiveRecord/Finder.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+subclass, all of the <a
+href="Finder/ClassMethods.html">ApiTools::ActiveRecord::Finder::ClassMethods</a>
+methods are defined as class methods on the including class.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
+                
+              </p>
+              <div id="method-c-instantiate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>

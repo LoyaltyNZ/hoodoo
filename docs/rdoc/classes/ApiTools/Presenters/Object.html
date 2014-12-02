@@ -188,7 +188,9 @@ appropriate name and options</p>
                 <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">options</span> = {})
   <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-ivar">@properties</span> = {}
+
+  <span class="ruby-ivar">@properties</span>        = {}
+  <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -236,7 +238,7 @@ schema.</code></pre>
                 
               </p>
               <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 64</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># In an simple field, e.g. a text field, then whether or not it has</span>
@@ -289,8 +291,8 @@ schema.</code></pre>
 href="../Errors.html">ApiTools::Errors</a> instance with zero (valid) or
 more (has validation problems) errors inside.</p>
 
-<p><code>data</code>: <a href="../Data.html">Data</a> to check (and check
-nested properties therein). Expected</p>
+<p><code>data</code>: Data to check (and check nested properties therein).
+Expected</p>
 
 <pre><code>to be nil (unless field is required) or a Hash.</code></pre>
 
@@ -319,7 +321,7 @@ object at &quot;:foo&quot; would be under &quot;[ :errors, :foo ]&quot;.
                 
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 33</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/object.rb, line 35</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment"># If there are existing errors, we carry on and validate internally too</span>
