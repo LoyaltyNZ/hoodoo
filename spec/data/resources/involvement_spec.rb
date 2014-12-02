@@ -12,6 +12,6 @@ describe ApiTools::Data::Resources::Involvement do
     expect(schema.properties['outlet_id'].resource).to eq(:Outlet)
     expect(schema.properties['programme_id']).to be_a(ApiTools::Presenters::UUID)
     expect(schema.properties['programme_id'].resource).to eq(:Programme)
-    expect(schema.properties['calculator_data']).to be_a(ApiTools::Data::DocumentedHash)
+    expect(schema.properties['calculator_data']).to be_a(ApiTools::Presenters::Hash)
   end
 end

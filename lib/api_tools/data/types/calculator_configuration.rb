@@ -14,7 +14,7 @@ module ApiTools
 
       # Documented Platform API Type 'CalculatorConfiguration'.
       #
-      class CalculatorConfiguration < ApiTools::Data::DocumentedPresenter
+      class CalculatorConfiguration < ApiTools::Presenters::Base
 
         schema do
           hash :calculator_data do

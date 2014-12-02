@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Calculator'.
       #
-      class Calculator < ApiTools::Data::DocumentedPresenter
+      class Calculator < ApiTools::Presenters::Base
 
         schema do
           internationalised

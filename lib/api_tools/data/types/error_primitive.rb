@@ -12,14 +12,14 @@ module ApiTools
 
     # Module used as a namespace to collect classes that represent Types
     # documented by your platform's API. Each is an
-    # ApiTools::Data::DocumentedPresenter subclass, so can be used to render
+    # ApiTools::Presenters::Base subclass, so can be used to render
     # and validate JSON data.
     #
     module Types
 
       # Documented Platform API Type 'ErrorPrimitive'.
       #
-      class ErrorPrimitive < ApiTools::Data::DocumentedPresenter
+      class ErrorPrimitive < ApiTools::Presenters::Base
 
         schema do
           text :code,     :required => true

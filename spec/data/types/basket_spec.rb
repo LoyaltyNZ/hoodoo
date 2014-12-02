@@ -10,17 +10,17 @@ describe ApiTools::Data::Types::Basket do
 
     # BasketItem array
 
-    expect(schema.properties['items']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['items']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['items'].properties.count).to eq(6)
     expect(schema.properties['items'].properties['quantity']).to be_a(ApiTools::Presenters::Integer)
-    expect(schema.properties['items'].properties['currency_amounts']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['items'].properties['currency_amounts']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['items'].properties['product_id']).to be_a(ApiTools::Presenters::UUID)
     expect(schema.properties['items'].properties['product_id'].resource).to eq(:Product)
     expect(schema.properties['items'].properties['product_code']).to be_a(ApiTools::Presenters::Text)
 
-    expect(schema.properties['items'].properties['product_data']).to be_a(ApiTools::Data::DocumentedObject)
+    expect(schema.properties['items'].properties['product_data']).to be_a(ApiTools::Presenters::Object)
     expect(schema.properties['items'].properties['product_data'].properties.count).to eq(4)
     expect(schema.properties['items'].properties['product_data'].properties['code']).to be_a(ApiTools::Presenters::Text)
     expect(schema.properties['items'].properties['product_data'].properties['name']).to be_a(ApiTools::Presenters::Text)
@@ -32,7 +32,7 @@ describe ApiTools::Data::Types::Basket do
 
     # CurrencyAmount array
 
-    expect(schema.properties['totals']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['totals']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['totals'].properties.count).to eq(3)
 

@@ -15,6 +15,6 @@ describe ApiTools::Data::Resources::Log do
     expect(schema.properties['code'].required).to eq(true)
 
     expect(schema.properties['interaction_id']).to be_a(ApiTools::Presenters::UUID)
-    expect(schema.properties['data']).to be_a(ApiTools::Data::DocumentedHash)
+    expect(schema.properties['data']).to be_a(ApiTools::Presenters::Hash)
   end
 end

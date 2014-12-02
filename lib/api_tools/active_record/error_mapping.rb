@@ -53,8 +53,8 @@ module ApiTools
       #     def create( context )
       #
       #       # Validate inbound creation data by e.g. schema through the
-      #       # presenter layer - ApiTools::Presenters::BasePresenter and
-      #       # ApiTools::Data::DocumentedPresenter - then...
+      #       # presenter layer - ApiTools::Presenters::Base and
+      #       # ApiTools::Presenters::Base - then...
       #
       #       model             = SomeModel.new
       #       model.parameter_1 = 'something based on inbound creation data'

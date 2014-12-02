@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ApiTools::Presenters::Enum do
 
   before do
-    class TestPresenter4 < ApiTools::Presenters::BasePresenter
+    class TestPresenter4 < ApiTools::Presenters::Base
 
       schema do
         array :an_array, :required => true do
@@ -20,7 +20,7 @@ describe ApiTools::Presenters::Enum do
   describe '::schema' do
     it 'should raise an error if we use :from incorrectly' do
       expect {
-        class ErroneousEnumTest < ApiTools::Presenters::BasePresenter
+        class ErroneousEnumTest < ApiTools::Presenters::Base
           schema do
             enum :from => "wrong!"
           end

@@ -1,4 +1,4 @@
-# ApiTools::Presenters::BasePresenter
+# ApiTools::Presenters::Base
 
 ## Purpose
 
@@ -13,7 +13,7 @@ In the your presenter classes:
 Then extend the base class:
 
         module YourService
-          class SomePresenter < ApiTools::Presenters::BasePresenter
+          class SomePresenter < ApiTools::Presenters::Base
             schema do
               ...
             end
@@ -22,12 +22,12 @@ Then extend the base class:
 
 The class provides the following methods, plus a DSL for schema definition.
 
-| Method   | Description   |
-|:---------|:--------------|
-| `self.schema(&block)` | Define the schema for validation - please see below. |
-| `self.validate(data)` | Validate the given Hash of data against the schema and return validation/schema structure errors if any. |
-| `self.render(data)`   | Render supplied data Hash including the schema defaults (if any) and return a ruby Hash of the result. |
-| `self.get_schema`     | Return the schema graph. |
+| Method                     | Description   |
+|:---------------------------|:--------------|
+| `self.schema(&block)`      | Define the schema for validation - please see below. |
+| `self.validate(data, ...)` | Validate the given Hash of data against the schema and return validation/schema structure errors if any. |
+| `self.render(data, ...)`   | Render supplied data Hash including the schema defaults (if any) and return a ruby Hash of the result. |
+| `self.get_schema`          | Return the schema graph. |
 
 The intent is to decouple incoming (e.g.) JSON strings / other format inbound data from internal hashes representing the equivalent data; and this in turn is decoupled from any persistence layer you might implement (e.g. ActiveRecord models). The conceptual code flow when you _receive_ data is:
 
@@ -68,7 +68,7 @@ The rules are:
 * Explicit `nil` means `nil`. If you provide a nil value on input for any field, then it'll be a nil value in the outbound representation. No defaults can override it or appear here. The only exception is attempting to render `nil` overall - this is basically meaningless, so treated as if you'd tried to render an empty Hash.
 * Fields in the input data which are not described in the schema will be stripped out. This includes unrecognised hash keys for hashes which use the `key` DSL method to list one or more specific expected named keys.
 
-        class PresenterClass < ApiTools::Presenters::BasePresenter
+        class PresenterClass < ApiTools::Presenters::Base
           schema do
             object :address do
               text :town
@@ -98,7 +98,7 @@ The rules are:
 
 ## Dependencies
 
-`ApiTools::Presenters::BasePresenter` requires the contents of the **presenters/types** directory.
+`ApiTools::Presenters::Base` requires the contents of the **presenters/types** directory.
 
 ## Example & Schema DSL
 
@@ -107,7 +107,7 @@ The rules are:
 
     module Fulfilment
       module Presenters
-        class FulfilmentPresenter < ApiTools::Presenters::BasePresenter
+        class FulfilmentPresenter < ApiTools::Presenters::Base
 
           attr_accessor :errors
 

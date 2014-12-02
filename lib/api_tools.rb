@@ -6,8 +6,8 @@ require root+'uuid'
 
 # Schema based data validation and rendering
 
+require root+'presenters/base'
 require root+'presenters/base_dsl'
-require root+'presenters/base_presenter'
 
 require root+'presenters/types/field'
 require root+'presenters/types/object'
@@ -25,11 +25,7 @@ require root+'presenters/types/date_time'
 require root+'presenters/types/tags'
 require root+'presenters/types/uuid'
 
-require root+'data/documented_dsl'
-require root+'data/documented_object'
-require root+'data/documented_array'
-require root+'data/documented_hash'
-require root+'data/documented_presenter'
+require root+'presenters/common_resource_fields'
 
 # Ordering matters, due to dependencies where one type references another
 

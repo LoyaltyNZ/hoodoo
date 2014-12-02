@@ -4,7 +4,7 @@ describe '#schema' do
 
   before do
 
-    class TestPresenter < ApiTools::Presenters::BasePresenter
+    class TestPresenter < ApiTools::Presenters::Base
 
       schema do
         integer :one, :required => true
@@ -15,7 +15,7 @@ describe '#schema' do
 
     end
 
-    class TestPresenter2 < ApiTools::Presenters::BasePresenter
+    class TestPresenter2 < ApiTools::Presenters::Base
 
       schema do
         object :four, :required => true do
@@ -28,7 +28,7 @@ describe '#schema' do
 
     end
 
-    class TestPresenter3 < ApiTools::Presenters::BasePresenter
+    class TestPresenter3 < ApiTools::Presenters::Base
 
       schema do
         integer :one, :required => true
@@ -42,7 +42,7 @@ describe '#schema' do
 
     end
 
-    class TestPresenter4 < ApiTools::Presenters::BasePresenter
+    class TestPresenter4 < ApiTools::Presenters::Base
 
       schema do
         array :an_array, :required => true do

@@ -72,8 +72,8 @@ module ApiTools
         @specific = true
 
         klass = if block_given?
-          if self.is_a? ApiTools::Data::DocumentedHash
-            ApiTools::Data::DocumentedObject
+          if self.is_a? ApiTools::Presenters::Hash
+            ApiTools::Presenters::Object
           else
             ApiTools::Presenters::Object
           end
@@ -81,7 +81,11 @@ module ApiTools
           ApiTools::Presenters::Field
         end
 
-        property(name, klass, options, &block)
+        prop = property( name, klass, options, &block )
+
+        if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
+          internationalised()
+        end
       end
 
       # Hash DSL: Define general parameters allowed for keys in a Hash and, if
@@ -142,7 +146,7 @@ module ApiTools
       #       }
       #     }
       #
-      def keys(options = {}, &block)
+      def keys( options = {}, &block )
         unless @specific.nil?
           raise "Can't use \#key and then \#keys in the same hash definition, or use \#keys more than once"
         end
@@ -157,8 +161,8 @@ module ApiTools
         property('keys', klass, options)
 
         klass = if block_given?
-          if self.is_a? ApiTools::Data::DocumentedHash
-            ApiTools::Data::DocumentedObject
+          if self.is_a? ApiTools::Presenters::Hash
+            ApiTools::Presenters::Object
           else
             ApiTools::Presenters::Object
           end
@@ -166,7 +170,11 @@ module ApiTools
           ApiTools::Presenters::Field
         end
 
-        property('values', klass, {}, &block)
+        prop = property( 'values', klass, {}, &block )
+
+        if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
+          internationalised()
+        end
       end
 
       # The properties of this object, a +hash+ of +Field+ instances.

@@ -10,21 +10,21 @@ describe ApiTools::Data::Types::CurrencyEarner do
 
     expect(schema.properties['product_tags_included']).to be_a(ApiTools::Presenters::Tags)
     expect(schema.properties['product_tags_excluded']).to be_a(ApiTools::Presenters::Tags)
-    expect(schema.properties['currency_earner']).to be_a(ApiTools::Data::DocumentedObject)
+    expect(schema.properties['currency_earner']).to be_a(ApiTools::Presenters::Object)
 
-    expect(schema.properties['currency_earner'].properties['earned_via']).to be_a(ApiTools::Data::DocumentedHash)
-    expect(schema.properties['currency_earner'].properties['default_currency_code']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['currency_earner'].properties['earned_via']).to be_a(ApiTools::Presenters::Hash)
+    expect(schema.properties['currency_earner'].properties['default_currency_code']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['keys']).to be_a(ApiTools::Presenters::String)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['keys'].length).to eq(ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH)
-    expect(schema.properties['currency_earner'].properties['earned_via'].properties['values']).to be_a(ApiTools::Data::DocumentedObject)
+    expect(schema.properties['currency_earner'].properties['earned_via'].properties['values']).to be_a(ApiTools::Presenters::Object)
 
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['amount']).to be_a(ApiTools::Presenters::Integer)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['qualifier']).to be_a(ApiTools::Presenters::String)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['qualifier'].length).to eq(ApiTools::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['accumulation']).to be_a(ApiTools::Presenters::Enum)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['accumulation'].from).to eq(['discrete', 'cumulative'])
-    expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['source_exchange_rates']).to be_a(ApiTools::Data::DocumentedHash)
+    expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['source_exchange_rates']).to be_a(ApiTools::Presenters::Hash)
 
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['source_exchange_rates'].properties['keys']).to be_a(ApiTools::Presenters::String)
     expect(schema.properties['currency_earner'].properties['earned_via'].properties['values'].properties['source_exchange_rates'].properties['keys'].length).to eq(ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH)

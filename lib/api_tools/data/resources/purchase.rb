@@ -15,7 +15,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Purchase'.
       #
-      class Purchase < ApiTools::Data::DocumentedPresenter
+      class Purchase < ApiTools::Presenters::Base
 
         schema do
           text   :token_identifier

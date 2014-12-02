@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    api_tools (0.3.0)
+    api_tools (0.4.0)
       dalli
       json_builder
       uuidtools

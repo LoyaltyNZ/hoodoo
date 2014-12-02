@@ -18,12 +18,12 @@ module ApiTools
       # require root+'data/resources/account.rb'
       # require root+'data/resources/member.rb'
       #
-      class Member < ApiTools::Data::DocumentedPresenter
+      class Member < ApiTools::Presenters::Base
       end
 
       # Documented Platform API Resource 'Account'.
       #
-      class Account < ApiTools::Data::DocumentedPresenter
+      class Account < ApiTools::Presenters::Base
         schema do
           uuid :owner_id, :resource => Member
         end

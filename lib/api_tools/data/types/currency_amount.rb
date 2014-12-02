@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Type 'CurrencyAmount'.
       #
-      class CurrencyAmount < ApiTools::Data::DocumentedPresenter
+      class CurrencyAmount < ApiTools::Presenters::Base
 
         schema do
           string :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH

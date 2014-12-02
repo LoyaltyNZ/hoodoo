@@ -15,7 +15,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Transaction'.
       #
-      class Transaction < ApiTools::Data::DocumentedPresenter
+      class Transaction < ApiTools::Presenters::Base
 
         schema do
           internationalised

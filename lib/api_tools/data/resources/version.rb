@@ -12,14 +12,14 @@ module ApiTools
 
     # Module used as a namespace to collect classes that represent Resources
     # documented by the your platform's API. Each is an
-    # ApiTools::Data::DocumentedPresenter subclass, so can be used to render
+    # ApiTools::Presenters::Base subclass, so can be used to render
     # and validate JSON data.
     #
     module Resources
 
       # Documented Platform API Resource 'Version'.
       #
-      class Version < ApiTools::Data::DocumentedPresenter
+      class Version < ApiTools::Presenters::Base
 
         schema do
           integer :major, :required => true

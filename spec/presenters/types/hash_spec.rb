@@ -5,7 +5,7 @@ describe ApiTools::Presenters::Hash do
   context 'exceptions' do
     it 'should complain about #key then #keys' do
       expect {
-        class TestHashKeyKeysException < ApiTools::Presenters::BasePresenter
+        class TestHashKeyKeysException < ApiTools::Presenters::Base
           schema do
             hash :foo do
               key :one
@@ -18,7 +18,7 @@ describe ApiTools::Presenters::Hash do
 
     it 'should complain about #keys then #key' do
       expect {
-        class TestHashKeysKeyException < ApiTools::Presenters::BasePresenter
+        class TestHashKeysKeyException < ApiTools::Presenters::Base
           schema do
             hash :foo do
               keys :length => 4
@@ -31,7 +31,7 @@ describe ApiTools::Presenters::Hash do
 
     it 'should complain about #keys twice' do
       expect {
-        class TestHashKeysKeysException < ApiTools::Presenters::BasePresenter
+        class TestHashKeysKeysException < ApiTools::Presenters::Base
           schema do
             hash :foo do
               keys :length => 4
@@ -45,13 +45,13 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashNoKeysPresenter < ApiTools::Presenters::BasePresenter
+  class TestHashNoKeysPresenter < ApiTools::Presenters::Base
     schema do
       hash :specific
     end
   end
 
-  class TestHashNoKeysPresenterRequired < ApiTools::Presenters::BasePresenter
+  class TestHashNoKeysPresenterRequired < ApiTools::Presenters::Base
     schema do
       hash :specific_required, :required => true
     end
@@ -113,7 +113,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenter < ApiTools::Presenters::BasePresenter
+  class TestHashSpecificKeyPresenter < ApiTools::Presenters::Base
     schema do
       hash :specific do
         key :one
@@ -256,7 +256,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestNestedHashSpecificKeyPresenter < ApiTools::Presenters::BasePresenter
+  class TestNestedHashSpecificKeyPresenter < ApiTools::Presenters::Base
     schema do
       object :obj do
         text :obj_text
@@ -352,7 +352,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenterWithRequirements < ApiTools::Presenters::BasePresenter
+  class TestHashSpecificKeyPresenterWithRequirements < ApiTools::Presenters::Base
     schema do
       hash :specific do
         key :one, :required => true
@@ -408,7 +408,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenterWithDefaults < ApiTools::Presenters::BasePresenter
+  class TestHashSpecificKeyPresenterWithDefaults < ApiTools::Presenters::Base
     schema do
       hash :specific_defaults, :default => { 'one' => 'anything', 'two' => { 'foo' => 'valid' }, 'ignoreme' => 'invalid' } do
         key :one, :default => { 'foo' => { 'bar' => 'baz' } }
@@ -426,7 +426,7 @@ describe ApiTools::Presenters::Hash do
     end
   end
 
-  class TestHashSpecificKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::BasePresenter
+  class TestHashSpecificKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::Base
     schema do
       hash :specific_defaults do
         key :one, :default => { 'foo' => { 'bar' => 'baz' } }
@@ -570,7 +570,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterNoValues < ApiTools::Presenters::BasePresenter
+  class TestHashGenericKeyPresenterNoValues < ApiTools::Presenters::Base
     schema do
       hash :generic do
         keys :length => 6
@@ -629,7 +629,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterWithValues < ApiTools::Presenters::BasePresenter
+  class TestHashGenericKeyPresenterWithValues < ApiTools::Presenters::Base
     schema do
       hash :generic do
         keys :length => 4 do
@@ -777,7 +777,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestNestedHashGenericKeyPresenterWithValues < ApiTools::Presenters::BasePresenter
+  class TestNestedHashGenericKeyPresenterWithValues < ApiTools::Presenters::Base
     schema do
       object :obj do
         hash :generic do
@@ -846,7 +846,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterWithRequirements < ApiTools::Presenters::BasePresenter
+  class TestHashGenericKeyPresenterWithRequirements < ApiTools::Presenters::Base
     schema do
       hash :generic do
         keys :length => 4, :required => true do
@@ -909,7 +909,7 @@ describe ApiTools::Presenters::Hash do
 
   it 'complains about generic default keys as they are meaningless' do
     expect {
-      class TestHashGenericKeyPresenterWithMeaninglessDefaults < ApiTools::Presenters::BasePresenter
+      class TestHashGenericKeyPresenterWithMeaninglessDefaults < ApiTools::Presenters::Base
         schema do
           hash :generic_defaults do
             keys :length => 4, :default => { 'meaningless' => 'complain' } do
@@ -921,7 +921,7 @@ describe ApiTools::Presenters::Hash do
     }.to raise_error(RuntimeError)
   end
 
-  class TestHashGenericKeyPresenterWithDefaults < ApiTools::Presenters::BasePresenter
+  class TestHashGenericKeyPresenterWithDefaults < ApiTools::Presenters::Base
     schema do
       hash :generic_defaults, :default => { 'a_default_key' => { 'baz' => 'merge' }, 'a_nil_key' => nil } do
         keys :length => 4 do
@@ -933,7 +933,7 @@ describe ApiTools::Presenters::Hash do
     end
   end
 
-  class TestHashGenericKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::BasePresenter
+  class TestHashGenericKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::Base
     schema do
       hash :generic_defaults do
         keys :length => 4 do

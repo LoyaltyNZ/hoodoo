@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Calculation'.
       #
-      class Calculation < ApiTools::Data::DocumentedPresenter
+      class Calculation < ApiTools::Presenters::Base
 
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator

@@ -361,7 +361,7 @@ module ApiTools
 
     # Optional description of the JSON parameters (schema) that the interface's
     # implementation requires for calls creating resource instances. The block
-    # uses the DSL from ApiTools::Data::DocumentedObject, so you can specify
+    # uses the DSL from ApiTools::Presenters::Object, so you can specify
     # basic object things like +string+, or higher level things like +type+ or
     # +resource+.
     #
@@ -369,7 +369,7 @@ module ApiTools
     # data that doesn't validate according to your schema, it'll be rejected
     # before even getting as far as your interface implementation.
     #
-    # The ApiTools::Data::DocumentedObject#internationalised DSL method can be
+    # The ApiTools::Presenters::Object#internationalised DSL method can be
     # called within your block harmlessly, but it has no side effects. Any
     # resource interface that can take internationalised data for creation (or
     # modification) must already have an internationalised representation, so
@@ -389,11 +389,11 @@ module ApiTools
     #       resource :purchase
     #     end
     #
-    # &block:: Block, passed to ApiTools::Data::DocumentedObject, describing
+    # &block:: Block, passed to ApiTools::Presenters::Object, describing
     #          the fields used for resource creation.
     #
     def to_create( &block )
-      obj = Class.new( ApiTools::Data::DocumentedPresenter )
+      obj = Class.new( ApiTools::Presenters::Base )
       obj.schema( &block )
 
       self.class.send( :to_create=, obj )
@@ -403,11 +403,11 @@ module ApiTools
     # To avoid repeating yourself, if your modification and creation parameter
     # requirements are identical, call #update_same_as_create.
     #
-    # &block:: Block, passed to ApiTools::Data::DocumentedObject, describing
+    # &block:: Block, passed to ApiTools::Presenters::Object, describing
     #          the fields used for resource modification.
     #
     def to_update( &block )
-      obj = Class.new( ApiTools::Data::DocumentedPresenter )
+      obj = Class.new( ApiTools::Presenters::Base )
       obj.schema( &block )
 
       self.class.send( :to_update=, obj )
@@ -574,7 +574,7 @@ module ApiTools
           @to_list
         end
 
-        # An ApiTools::Data::DocumentedObject instance describing the schema
+        # An ApiTools::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that create instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely
@@ -582,7 +582,7 @@ module ApiTools
         #
         attr_reader :to_create
 
-        # An ApiTools::Data::DocumentedObject instance describing the schema
+        # An ApiTools::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that modify instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely

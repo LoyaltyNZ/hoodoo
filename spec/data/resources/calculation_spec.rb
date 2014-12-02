@@ -11,7 +11,7 @@ describe ApiTools::Data::Resources::Calculation do
 
     expect(schema.properties['calculator_id']).to be_a(ApiTools::Presenters::UUID)
     expect(schema.properties['token_identifier']).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties['calculator_data']).to be_a(ApiTools::Data::DocumentedHash)
+    expect(schema.properties['calculator_data']).to be_a(ApiTools::Presenters::Hash)
     expect(schema.properties['currency_amounts']).to be_a(ApiTools::Presenters::Array)
   end
 end

@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Involvement'.
       #
-      class Involvement < ApiTools::Data::DocumentedPresenter
+      class Involvement < ApiTools::Presenters::Base
 
         schema do
           uuid   :outlet_id,      :resource => :Outlet,     :required => true

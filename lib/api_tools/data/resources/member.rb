@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Member'.
       #
-      class Member < ApiTools::Data::DocumentedPresenter
+      class Member < ApiTools::Presenters::Base
 
         schema do
           internationalised

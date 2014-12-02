@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Type 'Basket'.
       #
-      class Basket < ApiTools::Data::DocumentedPresenter
+      class Basket < ApiTools::Presenters::Base
 
         schema do
           array :items do

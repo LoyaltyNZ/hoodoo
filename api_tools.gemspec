@@ -4,7 +4,7 @@ require 'api_tools/version'
 Gem::Specification.new do |s|
   s.name        = 'api_tools'
   s.version     = ApiTools::VERSION
-  s.date        = '2014-11-12'
+  s.date        = '2014-12-02'
   s.summary     = 'Simplify the implementation of services within an API-based software platform.'
   s.description = 'Simplify the implementation of services within an API-based software platform.'
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]

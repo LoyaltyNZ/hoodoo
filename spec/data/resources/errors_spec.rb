@@ -7,7 +7,7 @@ describe ApiTools::Data::Resources::Errors do
     expect(schema.is_internationalised?()).to eq(false)
 
     expect(schema.properties.count).to eq(1)
-    expect(schema.properties['errors']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['errors']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['errors'].properties.count).to eq(3)
     expect(schema.properties['errors'].properties['code']).to be_a(ApiTools::Presenters::Text)

@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Type 'CurrencyEarner'.
       #
-      class CurrencyEarner < ApiTools::Data::DocumentedPresenter
+      class CurrencyEarner < ApiTools::Presenters::Base
 
         # Since this can be used in many contexts, including partial
         # fragments in e.g. Involvements or Memberships, none of the

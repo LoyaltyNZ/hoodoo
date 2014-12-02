@@ -14,7 +14,7 @@ module ApiTools
 
       # Documented Platform API Type 'CalculatorCommon'.
       #
-      class CalculatorCommon < ApiTools::Data::DocumentedPresenter
+      class CalculatorCommon < ApiTools::Presenters::Base
 
         schema do
           tags :product_tags_included

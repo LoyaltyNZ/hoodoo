@@ -5,7 +5,7 @@ describe ApiTools::Presenters::Array do
   before do
     @inst = ApiTools::Presenters::Array.new('one',:required => false)
 
-    class TestPresenterArray < ApiTools::Presenters::BasePresenter
+    class TestPresenterArray < ApiTools::Presenters::Base
 
       schema do
         array :an_array, :required => true do

@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Type 'BasketItem'.
       #
-      class BasketItem < ApiTools::Data::DocumentedPresenter
+      class BasketItem < ApiTools::Presenters::Base
 
         schema do
           integer :quantity, :required => true

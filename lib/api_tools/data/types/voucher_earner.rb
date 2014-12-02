@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Type 'VoucherEarner'.
       #
-      class VoucherEarner < ApiTools::Data::DocumentedPresenter
+      class VoucherEarner < ApiTools::Presenters::Base
 
         # Since this can be used in many contexts, including partial
         # fragments in e.g. Involvements or Memberships, none of the

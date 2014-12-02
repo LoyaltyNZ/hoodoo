@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Voucher'.
       #
-      class Voucher < ApiTools::Data::DocumentedPresenter
+      class Voucher < ApiTools::Presenters::Base
 
         schema do
           internationalised

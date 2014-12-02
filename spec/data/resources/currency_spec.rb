@@ -12,7 +12,7 @@ describe ApiTools::Data::Resources::Currency do
     expect(schema.properties['currency_code'].length).to eq(ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH)
     expect(schema.properties['symbol']).to be_a(ApiTools::Presenters::String)
     expect(schema.properties['symbol'].length).to eq(ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH)
-    expect(schema.properties['qualifiers']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['qualifiers']).to be_a(ApiTools::Presenters::Array)
     expect(schema.properties['precision']).to be_a(ApiTools::Presenters::Integer)
     expect(schema.properties['position']).to be_a(ApiTools::Presenters::Enum)
     expect(schema.properties['position'].from).to eq(['prefix', 'suffix'])
@@ -81,7 +81,7 @@ describe ApiTools::Data::Resources::Currency do
         'qualifiers' => [ 'standard', 'bonus' ],
         'rounding' => 'down'
       },
-      true
+      false
     )
 
     expect(result.errors).to eq([])
@@ -93,7 +93,7 @@ describe ApiTools::Data::Resources::Currency do
         'currency_code' => 'X-FBP',
         'rounding' => 'down'
       },
-      true
+      false
     )
 
     expect(result.errors).to eq([])
@@ -107,7 +107,7 @@ describe ApiTools::Data::Resources::Currency do
         'qualifiers' => [ 'standard', 'bonus' ],
         'rounding' => 'down'
       },
-      true
+      false
     )
 
     expect(result.errors).to eq(

@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Token'.
       #
-      class Token < ApiTools::Data::DocumentedPresenter
+      class Token < ApiTools::Presenters::Base
 
         schema do
           enum :state,      :from     => [:waiting, :active, :closed]

@@ -11,7 +11,7 @@ describe ApiTools::Data::Types::BasketItem do
 
     # CurrencyAmount array
 
-    expect(schema.properties['currency_amounts']).to be_a(ApiTools::Data::DocumentedArray)
+    expect(schema.properties['currency_amounts']).to be_a(ApiTools::Presenters::Array)
 
     expect(schema.properties['currency_amounts'].properties.count).to eq(3)
 
@@ -30,7 +30,7 @@ describe ApiTools::Data::Types::BasketItem do
 
     # Nested Product type
 
-    expect(schema.properties['product_data']).to be_a(ApiTools::Data::DocumentedObject)
+    expect(schema.properties['product_data']).to be_a(ApiTools::Presenters::Object)
     expect(schema.properties['product_data'].properties.count).to eq(4)
     expect(schema.properties['product_data'].properties['code']).to be_a(ApiTools::Presenters::Text)
     expect(schema.properties['product_data'].properties['name']).to be_a(ApiTools::Presenters::Text)

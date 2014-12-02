@@ -5,7 +5,7 @@ describe ApiTools::Presenters::Object do
   before do
     @inst = ApiTools::Presenters::Object.new('one',:required => false)
 
-    class TestPresenterObject < ApiTools::Presenters::BasePresenter
+    class TestPresenterObject < ApiTools::Presenters::Base
 
       schema do
         # Intentional mix of strings and symbols in default object

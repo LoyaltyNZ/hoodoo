@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Product'.
       #
-      class Product < ApiTools::Data::DocumentedPresenter
+      class Product < ApiTools::Presenters::Base
 
         schema do
           type :Product

@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Outlet'.
       #
-      class Outlet < ApiTools::Data::DocumentedPresenter
+      class Outlet < ApiTools::Presenters::Base
 
         schema do
           internationalised

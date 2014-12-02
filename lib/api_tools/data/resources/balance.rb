@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Balance'.
       #
-      class Balance < ApiTools::Data::DocumentedPresenter
+      class Balance < ApiTools::Presenters::Base
 
         schema do
           text :token_identifier,  :required => true

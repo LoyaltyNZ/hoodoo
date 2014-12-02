@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Currency'.
       #
-      class Currency < ApiTools::Data::DocumentedPresenter
+      class Currency < ApiTools::Presenters::Base
 
         schema do
           type :Currency

@@ -1250,9 +1250,9 @@ module ApiTools
 
       unless ( verification_object.nil? )
 
-        # 'true' => validate as type-only, not a resource (no ID, kind etc.)
+        # 'false' => validate as type-only, not a resource (no ID, kind etc.)
         #
-        result = verification_object.validate( body, true )
+        result = verification_object.validate( body, false )
 
         if result.has_errors?
           response.errors.merge!( result )

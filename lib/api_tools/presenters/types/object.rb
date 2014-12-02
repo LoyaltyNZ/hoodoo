@@ -15,7 +15,9 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true
       def initialize(name = nil, options = {})
         super name, options
-        @properties = {}
+
+        @properties        = {}
+        @internationalised = false
       end
 
       # Check if data is a valid Object and return an ApiTools::Errors instance

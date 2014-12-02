@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Programme'.
       #
-      class Programme < ApiTools::Data::DocumentedPresenter
+      class Programme < ApiTools::Presenters::Base
 
         schema do
           internationalised

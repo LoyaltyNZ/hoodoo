@@ -14,7 +14,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Log'.
       #
-      class Log < ApiTools::Data::DocumentedPresenter
+      class Log < ApiTools::Presenters::Base
 
         schema do
           text :level,     :required => true

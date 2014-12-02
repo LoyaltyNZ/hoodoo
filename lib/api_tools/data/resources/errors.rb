@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Errors'.
       #
-      class Errors < ApiTools::Data::DocumentedPresenter
+      class Errors < ApiTools::Presenters::Base
 
         schema do
           array :errors do
