@@ -11,10 +11,10 @@ GIT
 PATH
   remote: .
   specs:
-    api_tools (0.4.0)
-      dalli
-      json_builder
-      uuidtools
+    api_tools (0.4.1)
+      dalli (~> 2.7)
+      json_builder (~> 3.1)
+      uuidtools (~> 2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -52,7 +52,7 @@ GEM
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
-    rake (10.4.0)
+    rake (10.4.1)
     rdoc (4.1.2)
       json (~> 1.4)
     rspec (3.1.0)
@@ -87,15 +87,15 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord
+  activerecord (~> 4.1)
   amq-endpoint!
   api_tools!
-  database_cleaner
-  rack-test
-  rake
-  rdoc
-  rspec
-  rspec-mocks
-  sdoc
-  simplecov-rcov
-  sqlite3
+  database_cleaner (~> 1.3)
+  rack-test (~> 0.6)
+  rake (~> 10.4)
+  rdoc (~> 4.1)
+  rspec (~> 3.1)
+  rspec-mocks (~> 3.1)
+  sdoc (~> 0.4)
+  simplecov-rcov (~> 0.2)
+  sqlite3 (~> 1.3)
