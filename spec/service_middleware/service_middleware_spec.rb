@@ -368,11 +368,6 @@ describe ApiTools::ServiceMiddleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'prods ActiveRecord beforehand' do
-        expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).once.and_call_original
-        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      end
-
       it 'should pass on locale correctly (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
           expect(context.request.locale).to eq('en-gb')
@@ -1467,6 +1462,13 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => [1,2,3,4]})
+  end
+
+  it 'prods ActiveRecord before and after each implementation is called' do
+    expect( ActiveRecord::Base ).to receive( :verify_active_connections! ).twice
+    expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).twice
+
+    list_things()
   end
 
   it 'lists things with callbacks', :check_callbacks => true do

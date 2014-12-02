@@ -777,11 +777,12 @@ module ApiTools
       #
       # and class ConnectionManagement in:
       #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
+      #   https://github.com/janko-m/sinatra-activerecord/blob/master/lib/sinatra/activerecord.rb
       #
       if ( defined?( ::ActiveRecord ) &&
            defined?( ::ActiveRecord::Base ) &&
-           ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
-        ::ActiveRecord::Base.clear_active_connections!
+           ::ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
+        ::ActiveRecord::Base.verify_active_connections!
       end
 
       # Before/after callbacks are invoked always, even if errors are added to
@@ -791,6 +792,12 @@ module ApiTools
       implementation.before( context ) if implementation.respond_to?( :before )
       implementation.send( action, context ) unless context.response.halt_processing?
       implementation.after( context ) if implementation.respond_to?( :after )
+
+      if ( defined?( ::ActiveRecord ) &&
+           defined?( ::ActiveRecord::Base ) &&
+           ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
+        ::ActiveRecord::Base.clear_active_connections!
+      end
 
       @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
 
