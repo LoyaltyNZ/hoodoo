@@ -192,9 +192,7 @@ module ApiTools
         # If anything uses a public interface, we need to tell ourselves that
         # the early exit session check can't be done.
         #
-        unless interface.public_actions.empty?
-          self.class.send( :interfaces_have_public_methods )
-        end
+        interfaces_have_public_methods() unless interface.public_actions.empty?
 
         # Regexp explanation:
         #
@@ -253,6 +251,7 @@ module ApiTools
         return respond_with( @service_response.for_rack() )
 
       rescue => exception
+
         begin
           return respond_with( record_exception( @service_response, exception ) )
 
@@ -277,37 +276,31 @@ module ApiTools
           return rack_response.finish
 
         end
-
-        raise exception if self.class.environment.test?
       end
     end
 
   private
 
-    class << self
-      private
-        @@interfaces_have_public_methods = false
+    @@interfaces_have_public_methods = false
 
-        # Note internally that at least one interface in this Ruby process has
-        # a public interface. This means that the normal early exit for invalid
-        # or missing session keys cannot be performed; we have to continue down
-        # the processing chain as far as determining the target interface and
-        # action in order to find out if it's public or not and *then* check
-        # the session, if necessary. This is clearly less efficient and maybe a
-        # bit more risky.
-        #
-        def interfaces_have_public_methods()
-          @@interfaces_have_public_methods = true
-        end
+    # Note internally that at least one interface in this Ruby process has
+    # a public interface. This means that the normal early exit for invalid
+    # or missing session keys cannot be performed; we have to continue down
+    # the processing chain as far as determining the target interface and
+    # action in order to find out if it's public or not and *then* check
+    # the session, if necessary. This is clearly less efficient and maybe a
+    # bit more risky.
+    #
+    def interfaces_have_public_methods
+      @@interfaces_have_public_methods = true
+    end
 
-        # Do any interfaces in this Ruby process have public methods, requiring
-        # no session data? If so returns +true+, else +false+.
-        #
-        def interfaces_have_public_methods?
-          @@interfaces_have_public_methods
-        end
-
-    end # "class << self"
+    # Do any interfaces in this Ruby process have public methods, requiring
+    # no session data? If so returns +true+, else +false+.
+    #
+    def interfaces_have_public_methods?
+      @@interfaces_have_public_methods
+    end
 
     # Log that we're responding with the in the given Rack response def array,
     # returning the same, so that in #call the idiom can be:
@@ -558,7 +551,7 @@ module ApiTools
         @session_id,
       )
 
-      if @service_session.nil? && self.class.send( :interfaces_have_public_methods? ) == false
+      if @service_session.nil? && interfaces_have_public_methods?() == false
         return @service_response.add_error( 'platform.invalid_session' )
       end
     end
