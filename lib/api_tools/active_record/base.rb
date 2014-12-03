@@ -13,16 +13,18 @@ module ApiTools
     begin
       require 'active_record'
 
-      # While individual ActiveRecord mixins can be included as and when needed,
-      # if you want everything, just define a model which subclasses from this
-      # ApiTools::ActiveRecord::Base class instead of ActiveRecord::Base.
+      # While individual ActiveRecord mixins can be included as and
+      # when needed, if you want everything, just define a model which
+      # subclasses from this ApiTools::ActiveRecord::Base class instead
+      # of ActiveRecord::Base.
       #
       class Base < ::ActiveRecord::Base
         include ApiTools::ActiveRecord::UUID
         include ApiTools::ActiveRecord::Finder
         include ApiTools::ActiveRecord::ErrorMapping
 
-        # Tells ActiveRecord this is not a model that is persisted
+        # Tells ActiveRecord this is not a model that is persisted.
+        #
         self.abstract_class = true
 
         # Instantiates all the ActiveRecord mixins when this class is
