@@ -71,17 +71,8 @@ module ApiTools
 
         @specific = true
 
-        klass = if block_given?
-          if self.is_a? ApiTools::Presenters::Hash
-            ApiTools::Presenters::Object
-          else
-            ApiTools::Presenters::Object
-          end
-        else
-          ApiTools::Presenters::Field
-        end
-
-        prop = property( name, klass, options, &block )
+        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
+        prop  = property( name, klass, options, &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
           internationalised()
@@ -160,17 +151,8 @@ module ApiTools
         klass = options.has_key?( :length ) ? ApiTools::Presenters::String : ApiTools::Presenters::Text
         property('keys', klass, options)
 
-        klass = if block_given?
-          if self.is_a? ApiTools::Presenters::Hash
-            ApiTools::Presenters::Object
-          else
-            ApiTools::Presenters::Object
-          end
-        else
-          ApiTools::Presenters::Field
-        end
-
-        prop = property( 'values', klass, {}, &block )
+        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
+        prop  = property( 'values', klass, {}, &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
           internationalised()
