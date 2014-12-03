@@ -43,6 +43,7 @@ require root+'data/types/calculator_configuration'
 
 require root+'data/resources/account'
 require root+'data/resources/member'
+require root+'data/resources/membership'
 require root+'data/resources/token'
 require root+'data/resources/balance'
 require root+'data/resources/calculation'

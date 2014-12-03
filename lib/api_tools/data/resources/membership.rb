@@ -13,7 +13,7 @@ module ApiTools
 
       # Documented Platform API Resource 'Membership'.
       #
-      class Membership < ApiTools::Data::DocumentedPresenter
+      class Membership < ApiTools::Presenters::Base
 
         schema do
           text :token_identifier, required: true
