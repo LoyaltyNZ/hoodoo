@@ -9,7 +9,7 @@ describe ApiTools::Data::Resources::Member do
     expect(schema.properties.count).to eq(4)
 
     expect(schema.properties['account_id']).to be_a(ApiTools::Presenters::UUID)
-    expect(schema.properties['account_id'].resource).to eq(ApiTools::Data::Resources::Account)
+    expect(schema.properties['account_id'].resource).to eq(:Account)
     expect(schema.properties['account_id'].required).to eq(false)
 
     expect(schema.properties['formal_name']).to be_a(ApiTools::Presenters::Text)

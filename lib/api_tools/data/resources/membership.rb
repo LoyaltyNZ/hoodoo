@@ -16,8 +16,8 @@ module ApiTools
       class Membership < ApiTools::Presenters::Base
 
         schema do
-          text :token_identifier, required: true
-          uuid :programme_id,     required: true, resource: Programme
+          text :token_identifier, :required => true
+          uuid :programme_id,     :required => true, :resource => :Programme
           type :CalculatorConfiguration
         end
 

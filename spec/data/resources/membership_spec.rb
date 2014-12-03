@@ -13,7 +13,7 @@ describe ApiTools::Data::Resources::Membership do
 
     expect(schema.properties['programme_id']).to be_a(ApiTools::Presenters::UUID)
     expect(schema.properties['programme_id'].required).to eq(true)
-    expect(schema.properties['programme_id'].resource).to eq(ApiTools::Data::Resources::Programme)
+    expect(schema.properties['programme_id'].resource).to eq(:Programme)
 
     expect(schema.properties['calculator_data']).to be_a(ApiTools::Presenters::Hash)
     expect(schema.properties['calculator_data'].required).to eq(false)
