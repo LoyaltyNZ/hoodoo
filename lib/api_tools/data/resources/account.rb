@@ -25,7 +25,7 @@ module ApiTools
       #
       class Account < ApiTools::Presenters::Base
         schema do
-          uuid :owner_id, :resource => Member
+          uuid :owner_id, :resource => :Member
         end
 
       end
