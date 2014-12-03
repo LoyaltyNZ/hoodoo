@@ -18,9 +18,9 @@ module ApiTools
         schema do
           internationalised
 
-          uuid :account_id,    :required => false, :resource => Account
-          text :formal_name,   :required => true
+          uuid :account_id,    :resource => Account
           text :informal_name
+          text :formal_name,   :required => true
           date :date_of_birth, :required => true
         end
 
