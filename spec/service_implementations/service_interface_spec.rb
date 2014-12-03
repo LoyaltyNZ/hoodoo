@@ -158,6 +158,22 @@ describe ApiTools::ServiceInterface do
       end
     end
 
+    context 'in #public_action' do
+      it 'should complain about incorrect actions' do
+        class RSpecTestServiceInterfaceImplementationF < ApiTools::ServiceImplementation
+        end
+        class RSpecTestServiceInterfaceInterfaceF < ApiTools::ServiceInterface
+        end
+
+        expect {
+          RSpecTestServiceInterfaceInterfaceF.interface :FooF do
+            endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationF
+            public_actions :create, :made_this_up, :delete, :made_this_up_too
+          end
+        }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+      end
+    end
+
     # This is really an internal sanity test for code coverage purposes...
     #
     it 'should complain about incorrect instantiation' do
