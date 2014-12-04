@@ -36,14 +36,23 @@ describe ApiTools::ServiceRequest do
       expect( @r.uri_path_components ).to eq( []           )
       expect( @r.ident               ).to eq( nil          )
       expect( @r.uri_path_extension  ).to eq( ''           )
+      expect( @r.list.offset         ).to eq( 0            )
+      expect( @r.list.limit          ).to eq( 50           )
+      expect( @r.list.sort_key       ).to eq( 'created_at' )
+      expect( @r.list.sort_direction ).to eq( 'desc'       )
+      expect( @r.list.search_data    ).to eq( {}           )
+      expect( @r.list.filter_data    ).to eq( {}           )
+      expect( @r.embeds              ).to eq( []           )
+      expect( @r.references          ).to eq( []           )
+
+      # Check that deprecated accessors still work
+
       expect( @r.list_offset         ).to eq( 0            )
       expect( @r.list_limit          ).to eq( 50           )
       expect( @r.list_sort_key       ).to eq( 'created_at' )
       expect( @r.list_sort_direction ).to eq( 'desc'       )
       expect( @r.list_search_data    ).to eq( {}           )
       expect( @r.list_filter_data    ).to eq( {}           )
-      expect( @r.embeds              ).to eq( []           )
-      expect( @r.references          ).to eq( []           )
     end
   end
 end

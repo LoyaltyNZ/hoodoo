@@ -29,7 +29,6 @@ module ApiTools
       #       # ...
       #     end
       #
-      #
       def self.included( model )
         instantiate( model ) unless model == ApiTools::ActiveRecord::Base
       end
@@ -59,13 +58,20 @@ module ApiTools
         #
         #     class SomeModel < ActiveRecord::Base
         #       include ApiTools::ActiveRecord::Finder
+        #       polymorphic_id_fields # ...<list-of-other-fields>
         #     end
         #
         #     # ...elsewhere...
         #
         #     def show( context )
         #       found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
-        #       # ...
+        #
+        #       # ...map 'found' to whatever resource you're representing,
+        #       # e.g. via an ApiTools::Presenters::Base subclass with resource
+        #       # schema and the subclass's ApiTools::Presenters::Base::render
+        #       # call, then...
+        #
+        #       context.response.set_resource( resource_representation_of_found )
         #     end
         #
         # More often, though, you might want to restrict the search to model
@@ -78,7 +84,6 @@ module ApiTools
         #     def show( context )
         #       finder = SomeModel.where( :client_id => context.session.client_id )
         #       found = SomeModel.polymorphic_find( finder, context.request.ident )
-        #       # ...
         #     end
         #
         # +finder+:: An ActiveRecord::Base subclass or ActiveRecord::Relation
@@ -144,16 +149,20 @@ module ApiTools
         #
         #     class SomeModel < ActiveRecord::Base
         #       include ApiTools::ActiveRecord::Finder
+        #
+        #       list_search_map # ...<field-to-search-info mapping>
+        #       # ...and/or...
+        #       list_filter_map # ...<field-to-search-info mapping>
         #     end
         #
         #     # ...elsewhere...
         #
         #     def list( context )
-        #       finder = SomeModel.list_finder( context )
+        #       finder = SomeModel.list_finder( context.request.list )
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
-        #       context.response.body = results
+        #       context.response.set_resources( results )
         #     end
         #
         # (Bear in mind that the service middleware enforces sane values for
@@ -170,12 +179,12 @@ module ApiTools
         # a little:
         #
         #     def list( context )
-        #       finder = SomeModel.list_finder( context )
+        #       finder = SomeModel.list_finder( context.request.list )
         #       finder = finder.where( :client_id => context.session.client_id )
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
-        #       context.response.body = results
+        #       context.response.set_resources( results )
         #     end
         #
         # Any of the ActiveRecord::QueryMethods can be called on the returned
@@ -183,13 +192,20 @@ module ApiTools
         #
         # http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
         #
-        # +context+:: ApiTools::ServiceContext instance.
+        # +list_parameters+:: ApiTools::ServiceRequest::ListParameters
+        #                     instance, typically obtained from the
+        #                     ApiTools::ServiceContext instance passed to
+        #                     a service implementation in
+        #                     ApiTools::ServiceImplementation#list, via
+        #                     +context.request.list+ (i.e.
+        #                     ApiTools::ServiceContext#request
+        #                     / ApiTools::ServiceRequest#list).
         #
-        def list_finder( context )
+        def list_finder( list_parameters )
 
           finder = self
-          finder = finder.offset( context.request.list_offset ).limit( context.request.list_limit )
-          finder = finder.order( { context.request.list_sort_key => context.request.list_sort_direction.to_sym } )
+          finder = finder.offset( list_parameters.offset ).limit( list_parameters.limit )
+          finder = finder.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )
 
           search_map = class_variable_defined?( :@@nz_co_loyalty_list_search_map ) ? class_variable_get( :@@nz_co_loyalty_list_search_map ) : nil
 
@@ -198,7 +214,7 @@ module ApiTools
             next if value.nil?
 
             if ( proc.nil? )
-              [ { attr.to_sym => value } ]
+              [ { attr => value } ]
             else
               proc.call( attr, value )
             end
@@ -206,7 +222,7 @@ module ApiTools
 
           unless search_map.nil?
             search_map.each do | attr, proc |
-              args   = dry_proc.call( context.request.list_search_data, attr, proc )
+              args   = dry_proc.call( list_parameters.search_data, attr, proc )
               finder = finder.where( *args ) unless args.nil?
             end
           end
@@ -215,7 +231,7 @@ module ApiTools
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
-              args   = dry_proc.call( context.request.list_filter_data, attr, proc )
+              args   = dry_proc.call( list_parameters.filter_data, attr, proc )
               finder = finder.where.not( *args ) unless args.nil?
             end
           end
@@ -230,22 +246,22 @@ module ApiTools
         # fields +name+ and +colour+:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       list_search_map {
+        #       list_search_map(
         #         :name => nil,
         #         :colour => nil
-        #       }
+        #       )
         #     end
         #
         # More complex example where +colour+ is matched verbatim, but +name+
-        # is matched case-insensitive:
+        # is matched case-insensitive, assuming PostgreSQL's ILIKE is there:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       list_search_map {
+        #       list_search_map(
         #         :name => Proc.new { | attr, value |
-        #           [ "name ILIKE ?", value ]
+        #           [ 'name ILIKE ?', value ]
         #         },
         #         :colour => nil
-        #       }
+        #       )
         #     end
         #
         # Extending the above to use a single Proc that handles case
@@ -256,11 +272,21 @@ module ApiTools
         #         [ "#{ attr } ILIKE ?", value ]
         #       }
         #
-        #       list_search_map {
+        #       list_search_map(
         #         :name   => CI_MATCH,
         #         :colour => CI_MATCH
-        #       }
+        #       )
         #     end
+        #
+        # If you wanted to match against an array of possible matches, something
+        # like this would work:
+        #
+        #     ARRAY_MATCH = Proc.new { | attr, value |
+        #       [ { attr => [ value ].flatten } ]
+        #     }
+        #
+        # Note the returned *array* (see input parameter details) inside which
+        # the usual hash syntax for AREL +.where+-style queries is present.
         #
         # +map+:: A Hash. Keys are attribute names. Values of +nil+ are used
         #         for simple cases - "where( { attr_name => value } )" will be
@@ -276,7 +302,7 @@ module ApiTools
         #         specified as Strings or Symbols.
         #
         def list_search_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_search_map', map )
+          class_variable_set( '@@nz_co_loyalty_list_search_map', ApiTools::Utilities.stringify( map ) )
         end
 
         # As #list_search_map, but used in +where.not+ queries.
@@ -284,7 +310,7 @@ module ApiTools
         # +map+:: As #list_search_map.
         #
         def list_filter_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_filter_map', map )
+          class_variable_set( '@@nz_co_loyalty_list_filter_map', ApiTools::Utilities.stringify( map ) )
         end
       end
     end

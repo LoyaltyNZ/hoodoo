@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    api_tools (0.5.1)
+    api_tools (0.5.2)
       dalli (~> 2.7)
       json_builder (~> 3.1)
       uuidtools (~> 2.1)
@@ -52,7 +52,7 @@ GEM
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
-    rake (10.4.1)
+    rake (10.4.2)
     rdoc (4.1.2)
       json (~> 1.4)
     rspec (3.1.0)

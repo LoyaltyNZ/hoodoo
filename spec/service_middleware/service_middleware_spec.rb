@@ -354,12 +354,12 @@ describe ApiTools::ServiceMiddleware do
           expect(request.uri_path_components).to be_empty
           expect(request.ident).to be_nil
           expect(request.uri_path_extension).to eq('')
-          expect(request.list_offset).to eq(0)
-          expect(request.list_limit).to eq(50)
-          expect(request.list_sort_key).to eq('created_at')
-          expect(request.list_sort_direction).to eq('desc')
-          expect(request.list_search_data).to eq({})
-          expect(request.list_filter_data).to eq({})
+          expect(request.list.offset).to eq(0)
+          expect(request.list.limit).to eq(50)
+          expect(request.list.sort_key).to eq('created_at')
+          expect(request.list.sort_direction).to eq('desc')
+          expect(request.list.search_data).to eq({})
+          expect(request.list.filter_data).to eq({})
           expect(request.embeds).to eq([])
           expect(request.references).to eq([])
         end
@@ -436,8 +436,8 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to limit query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_offset).to eq(0)
-          expect(context.request.list_limit).to eq(42)
+          expect(context.request.list.offset).to eq(0)
+          expect(context.request.list.limit).to eq(42)
         end
 
         get '/v2/rspec_test_service_stub?limit=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -456,8 +456,8 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to offset query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_offset).to eq(42)
-          expect(context.request.list_limit).to eq(50)
+          expect(context.request.list.offset).to eq(42)
+          expect(context.request.list.limit).to eq(50)
         end
 
         get '/v2/rspec_test_service_stub?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -476,8 +476,8 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to sort query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_sort_key).to eq('extra')
-          expect(context.request.list_sort_direction).to eq('up')
+          expect(context.request.list.sort_key).to eq('extra')
+          expect(context.request.list.sort_direction).to eq('up')
         end
 
         get '/v2/rspec_test_service_stub?sort=extra', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -496,8 +496,8 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to direction query parameter (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_sort_key).to eq('created_at')
-          expect(context.request.list_sort_direction).to eq('asc')
+          expect(context.request.list.sort_key).to eq('created_at')
+          expect(context.request.list.sort_direction).to eq('asc')
         end
 
         get '/v2/rspec_test_service_stub?direction=asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -506,8 +506,8 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to direction query parameter (2)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_sort_key).to eq('extra')
-          expect(context.request.list_sort_direction).to eq('down')
+          expect(context.request.list.sort_key).to eq('extra')
+          expect(context.request.list.sort_direction).to eq('down')
         end
 
         get '/v2/rspec_test_service_stub?sort=extra&direction=down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -526,7 +526,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to search query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_search_data).to eq({'foo' => 'val', 'bar' => 'more'})
+          expect(context.request.list.search_data).to eq({'foo' => 'val', 'bar' => 'more'})
         end
 
         get '/v2/rspec_test_service_stub?search=foo%3Dval%26bar%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -545,7 +545,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should respond to filter query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list_filter_data).to eq({'baz' => 'more', 'boo' => 'val'})
+          expect(context.request.list.filter_data).to eq({'baz' => 'more', 'boo' => 'val'})
         end
 
         get '/v2/rspec_test_service_stub?filter=boo%3Dval%26baz%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -1244,7 +1244,7 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
   # method is called that we can check with RSpec.
 
   def list( context )
-    search_offset = ( ( context.request.list_search_data || {} )[ 'offset' ] || '0' ).to_i
+    search_offset = ( ( context.request.list.search_data || {} )[ 'offset' ] || '0' ).to_i
 
     if search_offset > 0
       context.response.add_error( 'service_calls_a.triggered', 'reference' => { :offset => search_offset } )
@@ -1321,8 +1321,8 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
 
     qd = {
       :search => {
-        :offset => context.request.list_offset,
-        :limit  => context.request.list_limit
+        :offset => context.request.list.offset,
+        :limit  => context.request.list.limit
       },
       :_embed => [ 'foo' ]
     }
@@ -1330,7 +1330,7 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
     # Set limit to 10 to force an invalid search parameter which should cause
     # a 422 in A, which B merges and returns.
 
-    if (context.request.list_limit.to_s == '10')
+    if (context.request.list.limit.to_s == '10')
       qd[:search][:foo] = 'bar'
     end
 
@@ -1450,8 +1450,8 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
         expect(context.request.uri_path_extension).to eq('')
-        expect(context.request.list_offset).to eq(0)
-        expect(context.request.list_limit).to eq(50)
+        expect(context.request.list.offset).to eq(0)
+        expect(context.request.list.limit).to eq(50)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1506,8 +1506,8 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
         expect(context.request.uri_path_extension).to eq('')
-        expect(context.request.list_offset).to eq(0)
-        expect(context.request.list_limit).to eq(50)
+        expect(context.request.list.offset).to eq(0)
+        expect(context.request.list.limit).to eq(50)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1655,8 +1655,8 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.uri_path_components).to eq(['hello_return_error'])
         expect(context.request.ident).to eq('hello_return_error')
         expect(context.request.uri_path_extension).to eq('')
-        expect(context.request.list_offset).to eq(0)
-        expect(context.request.list_limit).to eq(50)
+        expect(context.request.list.offset).to eq(0)
+        expect(context.request.list.limit).to eq(50)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once.and_call_original

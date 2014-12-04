@@ -25,6 +25,50 @@ module ApiTools
   #
   class ServiceRequest
 
+    # Encapsulation of all parameters related only to modifying a
+    # list of results. Other parameters may modify lists too, but they
+    # also modify other representations (e.g. single-resource 'show').
+    #
+    class ListParameters
+
+      # List offset, for index views; an integer; always defined.
+      #
+      attr_accessor :offset
+
+      # List page size, for index views; an integer; always defined.
+      #
+      attr_accessor :limit
+
+      # List sort key, for index views; a string; always defined.
+      #
+      attr_accessor :sort_key
+
+      # List sort direction, for index views; a string; always defined.
+      #
+      attr_accessor :sort_direction
+
+      # List search key/value pairs as a hash, all keys/values strings; {}
+      # if there's no search data in the request URI query string.
+      #
+      attr_accessor :search_data
+
+      # List filter key/value pairs as a hash, all keys/values strings; {}
+      # if there's no filter data in the request URI query string.
+      #
+      attr_accessor :filter_data
+
+      # Set up defaults in this instance.
+      #
+      def initialize
+        self.offset         = 0
+        self.limit          = 50
+        self.sort_key       = 'created_at'
+        self.sort_direction = 'desc'
+        self.search_data    = {}
+        self.filter_data    = {}
+      end
+    end
+
     # Requested locale for internationalised operations; +"en-nz"+ by
     # default.
     #
@@ -84,31 +128,30 @@ module ApiTools
     #
     attr_accessor :uri_path_extension
 
-    # List offset, for index views; an integer; always defined.
+    # The ApiTools::ServiceRequest::ListParameters instance
+    # associated with this request.
     #
-    attr_accessor :list_offset
+    attr_accessor :list
 
-    # List page size, for index views; an integer; always defined.
+    # Define a set of now-deprecated accessors that are basically
+    # just proxies through to the "list" instance. See #list.
     #
-    attr_accessor :list_limit
+    %i{
+      offset
+      limit
+      sort_key
+      sort_direction
+      search_data
+      filter_data
+    }.each do | method |
+      define_method( "list_#{ method }" ) do
+        list.send( method )
+      end
 
-    # List sort key, for index views; a string; always defined.
-    #
-    attr_accessor :list_sort_key
-
-    # List sort direction, for index views; a string; always defined.
-    #
-    attr_accessor :list_sort_direction
-
-    # List search key/value pairs as a hash, all keys/values strings; {}
-    # if there's no search data in the request URI query string.
-    #
-    attr_accessor :list_search_data
-
-    # List filter key/value pairs as a hash, all keys/values strings; {}
-    # if there's no filter data in the request URI query string.
-    #
-    attr_accessor :list_filter_data
+      define_method( "list_#{ method }=" ) do | value |
+        list.send( "#{ method }=", value )
+      end
+    end
 
     # Array of strings giving requested embedded items; [] if there are
     # none requested.
@@ -126,12 +169,7 @@ module ApiTools
       self.locale              = 'en-nz'
       self.uri_path_components = []
       self.uri_path_extension  = ''
-      self.list_offset         = 0
-      self.list_limit          = 50
-      self.list_sort_key       = 'created_at'
-      self.list_sort_direction = 'desc'
-      self.list_search_data    = {}
-      self.list_filter_data    = {}
+      self.list                = ApiTools::ServiceRequest::ListParameters.new
       self.embeds              = []
       self.references          = []
     end

@@ -136,3 +136,21 @@ RSpec.configure do | config |
     DatabaseCleaner.clean
   end
 end
+
+# Annoyingly have to silence STDOUT chatter from ActiveRecord::Migration
+# and use an 'ensure' block (see later) to make sure it gets restored.
+# To do this for you, call here and pass a block where you create your
+# table and associated model.
+#
+def spec_helper_define_model( &block )
+  begin
+    $old_stdout = $stdout
+    $stdout     = File.open( File::NULL, 'w' )
+
+    yield
+
+  ensure
+    $stdout = $old_stdout
+
+  end
+end
