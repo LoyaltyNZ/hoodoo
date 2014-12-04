@@ -1240,12 +1240,12 @@ module ApiTools
         'reference' => { :including => malformed }
       ) if malformed
 
-      service_request.list_offset         = offset
-      service_request.list_limit          = limit
-      service_request.list_sort_key       = sort_key
-      service_request.list_sort_direction = direction
-      service_request.list_search_data    = search
-      service_request.list_filter_data    = filter
+      service_request.list.offset         = offset
+      service_request.list.limit          = limit
+      service_request.list.sort_key       = sort_key
+      service_request.list.sort_direction = direction
+      service_request.list.search_data    = search
+      service_request.list.filter_data    = filter
       service_request.embeds              = embeds
       service_request.references          = references
     end

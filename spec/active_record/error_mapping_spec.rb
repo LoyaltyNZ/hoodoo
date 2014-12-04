@@ -3,18 +3,9 @@ require 'active_record'
 
 describe ApiTools::ActiveRecord::ErrorMapping do
   before :all do
-    begin
-
-      # Annoyingly have to silence STDOUT chatter from ActiveRecord::Migration
-      # and use an 'ensure' block (see later) to make sure it gets restored.
-      #
-      $old_stdout = $stdout
-      $stdout     = File.open( File::NULL, 'w' )
-
-      tblname = :r_spec_model_error_mapping_tests
-
-      ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |
-        t.string   :uid # Even with ":id => false", column "id" is magic in ActiveRecord, SMH; don't use that name
+    spec_helper_define_model() do
+      ActiveRecord::Migration.create_table( :r_spec_model_error_mapping_tests ) do | t |
+        t.string   :uuid
         t.boolean  :boolean
         t.date     :date
         t.datetime :datetime
@@ -48,12 +39,8 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
         validates_uniqueness_of :integer
         validates :string, :length => { :maximum => 16 }
-        validates :uid, :uuid => true
+        validates :uuid, :uuid => true
       end
-
-    ensure
-      $stdout = $old_stdout
-
     end
   end
 
@@ -63,7 +50,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'auto-validates and maps errors correctly' do
 
-    m = RSpecModelErrorMappingTest.new( :uid => 'not a valid UUID' )
+    m = RSpecModelErrorMappingTest.new( :uuid => 'not a valid UUID' )
     m.add_errors_to( @errors )
 
     expect( @errors.errors ).to eq( [
@@ -133,7 +120,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       {
         "code" => "generic.invalid_uuid",
         "message" => "is invalid",
-        "reference" => "uid"
+        "reference" => "uuid"
       }
     ] )
   end
@@ -212,7 +199,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'maps duplicates' do
     m = RSpecModelErrorMappingTest.new( {
-      :uid      => ApiTools::UUID.generate(),
+      :uuid      => ApiTools::UUID.generate(),
       :boolean  => true,
       :date     => Time.now,
       :datetime => Time.now,

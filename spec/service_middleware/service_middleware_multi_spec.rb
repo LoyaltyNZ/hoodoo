@@ -49,12 +49,12 @@ class TestEchoServiceImplementation < ApiTools::ServiceImplementation
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
         'uri_path_extension'  => context.request.uri_path_extension,
-        'list_offset'         => context.request.list_offset,
-        'list_limit'          => context.request.list_limit,
-        'list_sort_key'       => context.request.list_sort_key,
-        'list_sort_direction' => context.request.list_sort_direction,
-        'list_search_data'    => context.request.list_search_data,
-        'list_filter_data'    => context.request.list_filter_data,
+        'list_offset'         => context.request.list.offset,
+        'list_limit'          => context.request.list.limit,
+        'list_sort_key'       => context.request.list.sort_key,
+        'list_sort_direction' => context.request.list.sort_direction,
+        'list_search_data'    => context.request.list.search_data,
+        'list_filter_data'    => context.request.list.filter_data,
         'embeds'              => context.request.embeds,
         'references'          => context.request.references
       }
@@ -91,12 +91,12 @@ class TestEchoQuietServiceImplementation < ApiTools::ServiceImplementation
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
         'uri_path_extension'  => context.request.uri_path_extension,
-        'list_offset'         => context.request.list_offset,
-        'list_limit'          => context.request.list_limit,
-        'list_sort_key'       => context.request.list_sort_key,
-        'list_sort_direction' => context.request.list_sort_direction,
-        'list_search_data'    => context.request.list_search_data,
-        'list_filter_data'    => context.request.list_filter_data,
+        'list_offset'         => context.request.list.offset,
+        'list_limit'          => context.request.list.limit,
+        'list_sort_key'       => context.request.list.sort_key,
+        'list_sort_direction' => context.request.list.sort_direction,
+        'list_search_data'    => context.request.list.search_data,
+        'list_filter_data'    => context.request.list.filter_data,
         'embeds'              => context.request.embeds,
         'references'          => context.request.references
       }
@@ -121,12 +121,12 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
     resource = context.resource( :TestEcho, 2 )
     result   = resource.list(
       {
-        'offset'     => context.request.list_offset,
-        'limit'      => context.request.list_limit,
-        'sort'       => context.request.list_sort_key,
-        'direction'  => context.request.list_sort_direction,
-        'search'     => context.request.list_search_data,
-        'filter'     => context.request.list_filter_data,
+        'offset'     => context.request.list.offset,
+        'limit'      => context.request.list.limit,
+        'sort'       => context.request.list.sort_key,
+        'direction'  => context.request.list.sort_direction,
+        'search'     => context.request.list.search_data,
+        'filter'     => context.request.list.filter_data,
         '_embed'     => context.request.embeds,
         '_reference' => context.request.references
       }

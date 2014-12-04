@@ -37,7 +37,7 @@ module ApiTools
       #                ApiTools::ServiceImplementation#list or
       #                ApiTools::ServiceImplementation#show, via
       #                +context.response.errors+
-      #                (ApiTools::ServiceContext#response /
+      #                (i.e. ApiTools::ServiceContext#response /
       #                ApiTools::ServiceResponse#errors). The collection you
       #                pass is updated if there are any errors recorded in
       #                the model, by adding equivalent structured errors to

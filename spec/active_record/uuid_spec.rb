@@ -3,14 +3,7 @@ require 'active_record'
 
 describe ApiTools::ActiveRecord::UUID do
   before :all do
-    begin
-
-      # Annoyingly have to silence STDOUT chatter from ActiveRecord::Migration
-      # and use an 'ensure' block (see later) to make sure it gets restored.
-      #
-      $old_stdout = $stdout
-      $stdout     = File.open( File::NULL, 'w' )
-
+    spec_helper_define_model() do
       tblname = :r_spec_model_uuid_tests
 
       ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |
@@ -22,12 +15,9 @@ describe ApiTools::ActiveRecord::UUID do
       # ApiTools::ActiveRecord::Base adds a filter to assign a uuid before
       # validation as well as validations to ensure UUID is present and is
       # a valid UUID.
+      #
       class RSpecModelUUIDTest < ApiTools::ActiveRecord::Base
       end
-
-    ensure
-      $stdout = $old_stdout
-
     end
   end
 
