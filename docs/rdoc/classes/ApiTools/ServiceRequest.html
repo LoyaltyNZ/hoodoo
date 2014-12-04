@@ -63,6 +63,17 @@ accessors would report <code>nil</code>).</p>
 
 
   
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ServiceRequest/ListParameters.html">ApiTools::ServiceRequest::ListParameters</a>
+        </li>
+      
+    </ul>
+  
 
 
   
@@ -150,50 +161,10 @@ unique identifier is provided through the first path element
             <td class='attr-rw'>
               [RW]
             </td>
-            <td class='attr-name'>list_filter_data</td>
-            <td class='attr-desc'><p>List filter key/value pairs as a hash, all keys/values strings; {} if
-there&#39;s no filter data in the request URI query string.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>list_limit</td>
-            <td class='attr-desc'><p>List page size, for index views; an integer; always defined.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>list_offset</td>
-            <td class='attr-desc'><p>List offset, for index views; an integer; always defined.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>list_search_data</td>
-            <td class='attr-desc'><p>List search key/value pairs as a hash, all keys/values strings; {} if
-there&#39;s no search data in the request URI query string.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>list_sort_direction</td>
-            <td class='attr-desc'><p>List sort direction, for index views; a string; always defined.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>list_sort_key</td>
-            <td class='attr-desc'><p>List sort key, for index views; a string; always defined.</p></td>
+            <td class='attr-name'>list</td>
+            <td class='attr-desc'><p>The <a
+href="ServiceRequest/ListParameters.html">ApiTools::ServiceRequest::ListParameters</a>
+instance associated with this request.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -286,17 +257,12 @@ so for example this URI:</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 125</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>              = <span class="ruby-string">&#39;en-nz&#39;</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_components</span> = []
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_extension</span>  = <span class="ruby-string">&#39;&#39;</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_offset</span>         = <span class="ruby-number">0</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_limit</span>          = <span class="ruby-number">50</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_sort_key</span>       = <span class="ruby-string">&#39;created_at&#39;</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_sort_direction</span> = <span class="ruby-string">&#39;desc&#39;</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_search_data</span>    = {}
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list_filter_data</span>    = {}
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list</span>                = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceRequest</span><span class="ruby-operator">::</span><span class="ruby-constant">ListParameters</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">embeds</span>              = []
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">references</span>          = []
 <span class="ruby-keyword">end</span></pre>
@@ -345,7 +311,7 @@ and <a href="ServiceRequest.html#attribute-i-ident">ident</a>.</p>
                 
               </p>
               <div id="method-i-uri_path_components-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 58</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_request.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uri_path_components=</span>( <span class="ruby-identifier">ary</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-identifier">ary</span>

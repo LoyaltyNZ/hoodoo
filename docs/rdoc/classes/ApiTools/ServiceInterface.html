@@ -129,6 +129,18 @@ details.</p>
           </ul>
         </dd>
       
+        <dt>P</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-public_actions">public_actions</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>T</dt>
         <dd>
           <ul>
@@ -201,10 +213,11 @@ details.</p>
               [RW]
             </td>
             <td class='attr-name'>actions</td>
-            <td class='attr-desc'><p>Supported action methods as a list of symbols, with one or more of
+            <td class='attr-desc'><p>Supported action methods as a Set of symbols with one or more of
 <code>:list</code>, <code>:show</code>, <code>:create</code>,
-<code>:update</code> or <code>:delete</code>. If <code>nil</code>, assume
-all actions are supported.</p></td>
+<code>:update</code> or <code>:delete</code>. The presence of a Symbol
+indicates a supported action. If empty, no actions are supported. The
+default is for all actions to be present in the Set.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -256,6 +269,19 @@ additional error codes beyond the default set.</p></td>
             <td class='attr-desc'><p>Implementation class for the service. An <a
 href="ServiceImplementation.html">ApiTools::ServiceImplementation</a>
 subclass - the class, not an instance of it.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>public_actions</td>
+            <td class='attr-desc'><p>Public action methods as a Set of symbols with one or more of
+<code>:list</code>, <code>:show</code>, <code>:create</code>,
+<code>:update</code> or <code>:delete</code>. The presence of a Symbol
+indicates an action open to the public and not subject to session security.
+If empty, all actions are protected by session security. The default is an
+empty Set.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -376,23 +402,31 @@ mandatory call.</p>
                 
               </p>
               <div id="method-c-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 495</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 525</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-ivar">@to_list</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once&quot;</span>
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
-
-  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-ivar">@to_list</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
 
   <span class="ruby-identifier">interface</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">version</span> <span class="ruby-number">1</span>
+    <span class="ruby-identifier">embeds</span> <span class="ruby-comment"># Nothing</span>
+    <span class="ruby-identifier">actions</span> <span class="ruby-operator">*</span><span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
+    <span class="ruby-identifier">public_actions</span> <span class="ruby-comment"># None</span>
   <span class="ruby-keyword">end</span>
+
   <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceInterface subclasses must always call the &#39;endpoint&#39; DSL method in their interface descriptions&quot;</span>
   <span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -443,15 +477,16 @@ are given.</p>
                 
               </p>
               <div id="method-i-actions_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 308</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 315</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
+  <span class="ruby-identifier">supported_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">supported_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">invalid</span>.<span class="ruby-identifier">empty?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInterface#actions does not recognise one or more actions: &#39;#{ invalid.join( &#39;, &#39; ) }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:actions=</span>, <span class="ruby-identifier">supported_actions</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:actions=</span>, <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">supported_actions</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -509,7 +544,7 @@ would return:</p>
                 
               </p>
               <div id="method-i-embeds_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 341</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 371</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -574,7 +609,7 @@ a request matching the path fragment is received.</p>
                 
               </p>
               <div id="method-i-endpoint_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 268</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C</span>
@@ -644,7 +679,7 @@ end
                 
               </p>
               <div id="method-i-errors_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 448</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 478</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
@@ -653,6 +688,61 @@ end
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-public_actions">
+            
+              <b>public_actions</b>( *public_actions )
+            
+            <a href="../../classes/ApiTools/ServiceInterface.html#method-i-public_actions" name="method-i-public_actions" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>List any actions which are public - NOT PROTECTED BY SESSIONS. For public
+actions, no X-Session-ID or similar header is consulted and no session data
+will be associated with your <a
+href="ServiceContext.html">ApiTools::ServiceContext</a> instance when
+action methods are called. Use with great care!</p>
+<dl class="rdoc-list note-list"><dt>*public_actions
+<dd>
+<p>One or more from <code>:list</code>, <code>:show</code>,
+<code>:create</code>, <code>:update</code> and <code>:delete</code>. Always
+use symbols, not strings. An exception is raised if unrecognised actions
+are given.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-public_actions_source')" id="l_method-i-public_actions_source">show</a>
+                
+              </p>
+              <div id="method-i-public_actions_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 337</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
+  <span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
+  <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">public_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">invalid</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInterface#public_actions does not recognise one or more actions: &#39;#{ invalid.join( &#39;, &#39; ) }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:public_actions=</span>, <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">public_actions</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -725,7 +815,7 @@ the fields used for resource creation.</p>
                 
               </p>
               <div id="method-i-to_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 395</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 425</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -775,7 +865,7 @@ filter   nil
                 
               </p>
               <div id="method-i-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 355</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
@@ -825,7 +915,7 @@ the fields used for resource modification.</p>
                 
               </p>
               <div id="method-i-to_update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 409</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 439</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -873,7 +963,7 @@ same as those required for modifying resources too.</p>
                 
               </p>
               <div id="method-i-update_same_as_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 425</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 455</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -920,7 +1010,7 @@ different since the resulting route to reach them will be different too.</p>
                 
               </p>
               <div id="method-i-version_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 290</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 297</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">version</span>( <span class="ruby-identifier">major_version</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:version=</span>, <span class="ruby-identifier">major_version</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> )
 <span class="ruby-keyword">end</span></pre>

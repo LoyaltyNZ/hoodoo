@@ -126,7 +126,7 @@ the DSL methods, if called, update the values stored herein.</p>
               [RW]
             </td>
             <td class='attr-name'>filter</td>
-            <td class='attr-desc'><p>Array of supported filter keys; empty for none defined.</p></td>
+            <td class='attr-desc'><p>Array of supported filter keys as Strings; empty for none defined.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -142,7 +142,7 @@ the DSL methods, if called, update the values stored herein.</p>
               [RW]
             </td>
             <td class='attr-name'>search</td>
-            <td class='attr-desc'><p>Array of supported search keys; empty for none defined.</p></td>
+            <td class='attr-desc'><p>Array of supported search keys as Strings; empty for none defined.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -191,8 +191,13 @@ sort field.</p></td>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 65</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
+
+  <span class="ruby-comment"># Remember, these are defaults for the &quot;to_list&quot; object of an</span>
+  <span class="ruby-comment"># interface only. For interface-wide top level defaults, use the</span>
+  <span class="ruby-comment"># embedded calls to the DSL in ServiceInterface::interface.</span>
+
   <span class="ruby-ivar">@limit</span>            = <span class="ruby-number">50</span>
   <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] }
   <span class="ruby-ivar">@default_sort_key</span> = <span class="ruby-string">&#39;created_at&#39;</span>
@@ -234,7 +239,7 @@ sort field.</p></td>
                 
               </p>
               <div id="method-i-default_sort_direction_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 51</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">default_sort_direction</span>
   <span class="ruby-ivar">@sort</span>[ <span class="ruby-identifier">default_sort_key</span>() ][ <span class="ruby-number">0</span> ]
 <span class="ruby-keyword">end</span></pre>

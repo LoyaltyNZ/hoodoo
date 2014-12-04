@@ -215,7 +215,7 @@ add_index :model_table_name, :id, :unique =&gt; true
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">primary_key</span> = <span class="ruby-string">&#39;id&#39;</span>
 
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">before_validation</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>() <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validates</span> <span class="ruby-value">:id</span>, <span class="ruby-identifier">uuid</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">presence</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>, <span class="ruby-identifier">uniqueness</span><span class="ruby-operator">:</span> <span class="ruby-keyword">true</span>

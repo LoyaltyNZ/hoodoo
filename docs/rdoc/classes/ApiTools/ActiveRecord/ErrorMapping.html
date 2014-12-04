@@ -103,7 +103,7 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
         <div class="method">
           <div class="title method-title" id="method-i-add_errors_to">
             
-              <b>add_errors_to</b>( context, validate = true )
+              <b>add_errors_to</b>( collection, validate = true )
             
             <a href="../../../classes/ApiTools/ActiveRecord/ErrorMapping.html#method-i-add_errors_to" name="method-i-add_errors_to" class="permalink">Link</a>
           </div>
@@ -116,13 +116,21 @@ context&#39;s response object, if any validation errors occur. See:</p>
 <p><a
 href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
 </li></ul>
-<dl class="rdoc-list note-list"><dt><code>context</code>
+<dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
-<p>The <a href="../ServiceContext.html">ApiTools::ServiceContext</a> instance
-of interest. The <code>context.response</code>
-(ApiTools::ServiceContext#response / <a
-href="../ServiceResponse.html#method-i-add_error">ApiTools::ServiceResponse#add_error</a>)
-is updated if there are any errors recorded in the model.</p>
+<p>An <a href="../Errors.html">ApiTools::Errors</a> instance, typically
+obtained from the <a
+href="../ServiceContext.html">ApiTools::ServiceContext</a> instance passed
+to a service implementation in calls like <a
+href="../ServiceImplementation.html#method-i-list">ApiTools::ServiceImplementation#list</a>
+or <a
+href="../ServiceImplementation.html#method-i-show">ApiTools::ServiceImplementation#show</a>,
+via <code>context.response.errors</code> (i.e. <a
+href="../ServiceContext.html#attribute-i-response">ApiTools::ServiceContext#response</a>
+/ <a
+href="../ServiceResponse.html#attribute-i-errors">ApiTools::ServiceResponse#errors</a>).
+The collection you pass is updated if there are any errors recorded in the
+model, by adding equivalent structured errors to the collection.</p>
 </dd><dt><code>validate</code>
 <dd>
 <p>Optional, defaults to <code>true</code>; the model&#39;s
@@ -154,7 +162,7 @@ end
   # its own ActiveRecord-level validations, adding any errors
   # it detects to the &#39;context.response&#39; errors collection.
 
-  model.add_errors_to( context )
+  model.add_errors_to( context.response.errors )
   return if context.response.halt_processing?
 
   # At this point &#39;model.valid?&#39; should be &#39;true&#39;, so we can use
@@ -167,6 +175,10 @@ end
 
 end
 </code></pre>
+
+<p>The method returns the <code>collection</code> value given as a parameter.
+This may be useful for some alternative usage patterns not shown in the
+example above.</p>
             </div>
           
           
@@ -184,8 +196,8 @@ end
                 
               </p>
               <div id="method-i-add_errors_to_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 79</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors_to</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 90</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors_to</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">validate</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">message_array</span> <span class="ruby-operator">|</span>
@@ -202,17 +214,19 @@ end
           <span class="ruby-identifier">attribute_type</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;text&#39;</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;generic.invalid_string&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;generic.invalid_#{ attribute_type }&quot;</span>
       <span class="ruby-keyword">end</span>
 
-      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">recognised?</span>( <span class="ruby-identifier">error_code</span> )
+      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">recognised?</span>( <span class="ruby-identifier">error_code</span> )
         <span class="ruby-identifier">error_code</span> = <span class="ruby-string">&#39;generic.invalid_parameters&#39;</span>
       <span class="ruby-keyword">end</span>
 
-      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-identifier">collection</span>.<span class="ruby-identifier">add_error</span>(
         <span class="ruby-identifier">error_code</span>,
         <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>,
         <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">attribute_name</span> }
       )
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">collection</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
