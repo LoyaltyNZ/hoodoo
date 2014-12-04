@@ -49,8 +49,34 @@ class RSpecTestServiceInterfaceInterfaceB < ApiTools::ServiceInterface
   end
 end
 
+class RSpecTestServiceInterfaceInterfaceDefault < ApiTools::ServiceInterface
+  interface :RSpecTestServiceInterfaceDefaultResource do
+    endpoint :rspec_test_service_interface_default, RSpecTestServiceInterfaceImplementationA # (sic.)
+  end
+end
+
 describe ApiTools::ServiceInterface do
+
   context 'DSL test classes' do
+
+    it 'acquires defaults' do
+      expect(RSpecTestServiceInterfaceInterfaceDefault.version).to eq(1)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.endpoint).to eq(:rspec_test_service_interface_default)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.resource).to be_a(Symbol)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.resource).to eq(:RSpecTestServiceInterfaceDefaultResource)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.actions).to eq(Set.new([:list, :show, :create, :update, :delete]))
+      expect(RSpecTestServiceInterfaceInterfaceDefault.public_actions).to be_empty
+      expect(RSpecTestServiceInterfaceInterfaceDefault.embeds).to be_empty
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.limit).to eq(50)
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.sort).to eq({"created_at" => [ "desc", "asc" ]})
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.default_sort_key).to eq("created_at")
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.default_sort_direction).to eq("desc")
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.search).to be_empty
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.filter).to be_empty
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_create).to be_nil
+      expect(RSpecTestServiceInterfaceInterfaceDefault.to_update).to be_nil
+    end
 
     # This is checking most of the DSL in non-error call cases
     #
@@ -60,7 +86,7 @@ describe ApiTools::ServiceInterface do
       expect(RSpecTestServiceInterfaceInterfaceA.resource).to be_a(Symbol)
       expect(RSpecTestServiceInterfaceInterfaceA.resource).to eq(:RSpecTestServiceInterfaceAResource)
       expect(RSpecTestServiceInterfaceInterfaceA.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
-      expect(RSpecTestServiceInterfaceInterfaceA.actions).to eq([:show, :create, :delete])
+      expect(RSpecTestServiceInterfaceInterfaceA.actions).to eq(Set.new([:show, :create, :delete]))
       expect(RSpecTestServiceInterfaceInterfaceA.embeds).to eq(["embed_one", "embed_two", "embed_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.limit).to eq(25)
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.sort).to eq({"created_at" => [ "desc", "asc" ], "sort_one" => [ "left", "right" ], "sort_two" => [ "up", "down" ]})
@@ -129,6 +155,22 @@ describe ApiTools::ServiceInterface do
             actions :create, :made_this_up, :delete, :made_this_up_too
           end
         }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+      end
+    end
+
+    context 'in #public_action' do
+      it 'should complain about incorrect actions' do
+        class RSpecTestServiceInterfaceImplementationF < ApiTools::ServiceImplementation
+        end
+        class RSpecTestServiceInterfaceInterfaceF < ApiTools::ServiceInterface
+        end
+
+        expect {
+          RSpecTestServiceInterfaceInterfaceF.interface :FooF do
+            endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationF
+            public_actions :create, :made_this_up, :delete, :made_this_up_too
+          end
+        }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
       end
     end
 

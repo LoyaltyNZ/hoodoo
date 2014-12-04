@@ -11,9 +11,10 @@
 #                              their own files to reduce file size here.
 ########################################################################
 
+require 'set'
+require 'uri'
+require 'net/http'
 require 'drb/drb'
-require "net/http"
-require "uri"
 
 module ApiTools
 
@@ -178,7 +179,7 @@ module ApiTools
       # regexp           Regexp for +String#match+ on the URI path component
       # interface        ApiTools::ServiceInterface subclass associated with
       #                  the endpoint regular expression in +regexp+
-      # actions          Array of symbols naming allowed actions
+      # actions          Set of symbols naming allowed actions
       # implementation   ApiTools::ServiceImplementation subclass *instance* to
       #                  use on match
 
@@ -187,6 +188,11 @@ module ApiTools
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
           raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ @service_container.class }"
         end
+
+        # If anything uses a public interface, we need to tell ourselves that
+        # the early exit session check can't be done.
+        #
+        interfaces_have_public_methods() unless interface.public_actions.empty?
 
         # Regexp explanation:
         #
@@ -202,7 +208,6 @@ module ApiTools
           :interface      => interface,
           :implementation => interface.implementation.new
         }
-
       end
 
       announce_presence_of( @services )
@@ -246,6 +251,7 @@ module ApiTools
         return respond_with( @service_response.for_rack() )
 
       rescue => exception
+
         begin
           return respond_with( record_exception( @service_response, exception ) )
 
@@ -274,6 +280,27 @@ module ApiTools
     end
 
   private
+
+    @@interfaces_have_public_methods = false
+
+    # Note internally that at least one interface in this Ruby process has
+    # a public interface. This means that the normal early exit for invalid
+    # or missing session keys cannot be performed; we have to continue down
+    # the processing chain as far as determining the target interface and
+    # action in order to find out if it's public or not and *then* check
+    # the session, if necessary. This is clearly less efficient and maybe a
+    # bit more risky.
+    #
+    def interfaces_have_public_methods
+      @@interfaces_have_public_methods = true
+    end
+
+    # Do any interfaces in this Ruby process have public methods, requiring
+    # no session data? If so returns +true+, else +false+.
+    #
+    def interfaces_have_public_methods?
+      @@interfaces_have_public_methods
+    end
 
     # Log that we're responding with the in the given Rack response def array,
     # returning the same, so that in #call the idiom can be:
@@ -371,7 +398,7 @@ module ApiTools
 
       data = {
         :interaction_id => @interaction_id,
-        :session        => @service_session.to_h
+        :session        => ( @service_session || {} ).to_h
       }
 
       # Don't bother logging list responses - they could be huge - instead
@@ -524,7 +551,7 @@ module ApiTools
         @session_id,
       )
 
-      if @service_session.nil?
+      if @service_session.nil? && interfaces_have_public_methods?() == false
         return @service_response.add_error( 'platform.invalid_session' )
       end
     end
@@ -657,6 +684,16 @@ module ApiTools
 
       return if @service_response.halt_processing?
 
+      # If we've no session at this point, then one or more interfaces have
+      # public actions. Need to dig deeper.
+
+      if @service_session.nil?
+        unless interface.public_actions.include?( action )
+          @service_response.add_error( 'platform.invalid_session' )
+          return
+        end
+      end
+
       # Looks good so far, so allocate a request object to pass on to the
       # interface and hold other higher level parsed data assembled below.
 
@@ -768,40 +805,50 @@ module ApiTools
     #
     def dispatch_to( interface, implementation, action, context )
 
-      # TODO:
-      #   https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
-      #
-      # then:
-      #
-      #   https://github.com/socialcast/resque-ensure-connected/issues/3
-      #
-      # and class ConnectionManagement in:
-      #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
-      #   https://github.com/janko-m/sinatra-activerecord/blob/master/lib/sinatra/activerecord.rb
-      #
-      if ( defined?( ::ActiveRecord ) &&
-           defined?( ::ActiveRecord::Base ) &&
-           ::ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
-        ::ActiveRecord::Base.verify_active_connections!
-      end
+      dispatch_time = Benchmark.realtime do
 
-      # Before/after callbacks are invoked always, even if errors are added to
-      # the response object during processing. If this matters to 'after' code,
-      # it must check "context.response.halt_processing?" itself.
+        # TODO:
+        #   https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
+        #
+        # then:
+        #
+        #   https://github.com/socialcast/resque-ensure-connected/issues/3
+        #
+        # and class ConnectionManagement in:
+        #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
+        #   https://github.com/janko-m/sinatra-activerecord/blob/master/lib/sinatra/activerecord.rb
+        #
+        if ( defined?( ::ActiveRecord ) &&
+             defined?( ::ActiveRecord::Base ) &&
+             ::ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
+          ::ActiveRecord::Base.verify_active_connections!
+        end
 
-      implementation.before( context ) if implementation.respond_to?( :before )
-      implementation.send( action, context ) unless context.response.halt_processing?
-      implementation.after( context ) if implementation.respond_to?( :after )
+        # Before/after callbacks are invoked always, even if errors are added to
+        # the response object during processing. If this matters to 'after' code,
+        # it must check "context.response.halt_processing?" itself.
 
-      if ( defined?( ::ActiveRecord ) &&
-           defined?( ::ActiveRecord::Base ) &&
-           ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
-        ::ActiveRecord::Base.clear_active_connections!
-      end
+        implementation.before( context ) if implementation.respond_to?( :before )
+        implementation.send( action, context ) unless context.response.halt_processing?
+        implementation.after( context ) if implementation.respond_to?( :after )
 
-      @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
+        if ( defined?( ::ActiveRecord ) &&
+             defined?( ::ActiveRecord::Base ) &&
+             ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
+          ::ActiveRecord::Base.clear_active_connections!
+        end
 
-      auto_log( interface, action, context )
+        @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
+
+        auto_log( interface, action, context )
+
+      end # "Benchmark.realtime do"
+
+      context.response.add_header(
+        'X-Service-Response-Time',
+        "#{ dispatch_time.inspect } seconds",
+        true # Overwrite
+      )
     end
 
     # Run request preprocessing - common actions that occur after service
@@ -1002,8 +1049,7 @@ module ApiTools
     #
     def determine_action( interface, http_method, get_is_list, response )
 
-      http_method     = ( http_method || '' ).upcase
-      allowed_actions = interface.actions || ALLOWED_ACTIONS
+      http_method = ( http_method || '' ).upcase
 
       # Clumsy code because there is no 1:1 map from HTTP method to action
       # (e.g. GET can be :show or :list).
@@ -1019,7 +1065,7 @@ module ApiTools
           get_is_list ? :list : :show
       end
 
-      unless allowed_actions.include?( action )
+      unless interface.actions.include?( action )
         response.add_error(
           'platform.method_not_allowed',
           'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
@@ -1162,28 +1208,29 @@ module ApiTools
 
       unless malformed
         search = query_hash[ 'search' ] || {}
-        unrecognised_search_keys = search.keys - ( interface.to_list.search || [] )
+
+        unrecognised_search_keys = search.keys - interface.to_list.search
         malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
       end
 
       unless malformed
         filter = query_hash[ 'filter' ] || {}
 
-        unrecognised_filter_keys = filter.keys - ( interface.to_list.filter || [] )
+        unrecognised_filter_keys = filter.keys - interface.to_list.filter
         malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
       end
 
       unless malformed
         embeds = query_hash[ '_embed' ] || []
 
-        unrecognised_embeds = embeds - ( interface.embeds || [] )
+        unrecognised_embeds = embeds - interface.embeds
         malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
       end
 
       unless malformed
         references = query_hash[ '_reference' ] || []
 
-        unrecognised_references = references - ( interface.embeds || [] )# (sic.)
+        unrecognised_references = references - interface.embeds # (sic.)
         malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
       end
 

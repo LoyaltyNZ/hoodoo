@@ -31,15 +31,22 @@ module ApiTools
       #
       # * http://guides.rubyonrails.org/active_record_validations.html
       #
-      # +context+::  The ApiTools::ServiceContext instance of interest. The
-      #              +context.response+ (ApiTools::ServiceContext#response /
-      #              ApiTools::ServiceResponse#add_error) is updated if there
-      #              are any errors recorded in the model.
+      # +collection+:: An ApiTools::Errors instance, typically obtained
+      #                from the ApiTools::ServiceContext instance passed to
+      #                a service implementation in calls like
+      #                ApiTools::ServiceImplementation#list or
+      #                ApiTools::ServiceImplementation#show, via
+      #                +context.response.errors+
+      #                (ApiTools::ServiceContext#response /
+      #                ApiTools::ServiceResponse#errors). The collection you
+      #                pass is updated if there are any errors recorded in
+      #                the model, by adding equivalent structured errors to
+      #                the collection.
       #
-      # +validate+:: Optional, defaults to +true+; the model's +#valid?+
-      #              method will be called for you and its errors examined.
-      #              If you don't want to call +#valid?+ for any reason, pass
-      #              +false+ here.
+      # +validate+::   Optional, defaults to +true+; the model's +#valid?+
+      #                method will be called for you and its errors examined.
+      #                If you don't want to call +#valid?+ for any reason,
+      #                pass +false+ here.
       #
       # For example, given this model:
       #
@@ -63,7 +70,7 @@ module ApiTools
       #       # its own ActiveRecord-level validations, adding any errors
       #       # it detects to the 'context.response' errors collection.
       #
-      #       model.add_errors_to( context )
+      #       model.add_errors_to( context.response.errors )
       #       return if context.response.halt_processing?
       #
       #       # At this point 'model.valid?' should be 'true', so we can use
@@ -76,7 +83,11 @@ module ApiTools
       #
       #     end
       #
-      def add_errors_to( context, validate = true )
+      # The method returns the +collection+ value given as a parameter. This
+      # may be useful for some alternative usage patterns not shown in the
+      # example above.
+      #
+      def add_errors_to( collection, validate = true )
         self.valid? if validate
 
         self.errors.messages.each_pair do | attribute_name, message_array |
@@ -93,17 +104,19 @@ module ApiTools
                 attribute_type.to_s == 'text' ? 'generic.invalid_string' : "generic.invalid_#{ attribute_type }"
             end
 
-            unless context.response.errors.descriptions.recognised?( error_code )
+            unless collection.descriptions.recognised?( error_code )
               error_code = 'generic.invalid_parameters'
             end
 
-            context.response.add_error(
+            collection.add_error(
               error_code,
               :message   => message,
               :reference => { :field_name => attribute_name }
             )
           end
         end
+
+        return collection
       end
 
       private

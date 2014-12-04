@@ -66,7 +66,7 @@ module ApiTools
         model.primary_key = 'id'
 
         model.before_validation do
-          self.id = ApiTools::UUID.generate if self.id.nil?
+          self.id = ApiTools::UUID.generate() if self.id.nil?
         end
 
         model.validates :id, uuid: true, presence: true, uniqueness: true

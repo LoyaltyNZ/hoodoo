@@ -18,7 +18,7 @@ module ApiTools
         schema do
           enum :state,      :from     => [:waiting, :active, :closed]
           text :identifier, :required => true
-          uuid :member_id,  :required => true, :resource => Member
+          uuid :member_id,  :required => true, :resource => :Member
         end
 
       end

@@ -1,4 +1,5 @@
 # Set the correct environment for testing
+
 ENV[ 'RACK_ENV' ] = 'test'
 
 # Configure the code coverage analyser.

@@ -13,7 +13,8 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
       tblname = :r_spec_model_error_mapping_tests
 
-      ActiveRecord::Migration.create_table( tblname ) do | t |
+      ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |
+        t.string   :uid # Even with ":id => false", column "id" is magic in ActiveRecord, SMH; don't use that name
         t.boolean  :boolean
         t.date     :date
         t.datetime :datetime
@@ -47,6 +48,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
         validates_uniqueness_of :integer
         validates :string, :length => { :maximum => 16 }
+        validates :uid, :uuid => true
       end
 
     ensure
@@ -56,24 +58,15 @@ describe ApiTools::ActiveRecord::ErrorMapping do
   end
 
   before :each do
-    ses = ApiTools::ServiceSession.new
-    req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new
-
-    # 'nil' below - if in future ServiceContext were to throw exceptions with
-    # this, you could copy the full-fat equivalent from service_context_spec.rb
-    # complete with support test classes declaring a dummy service used to make
-    # a ServiceMiddleware instance. For now, avoid this headache with 'nil'.
-    #
-    @con = ApiTools::ServiceContext.new( ses, req, res, nil )
+    @errors = ApiTools::Errors.new( ApiTools::ErrorDescriptions.new )
   end
 
   it 'auto-validates and maps errors correctly' do
 
-    m = RSpecModelErrorMappingTest.new
-    m.add_errors_to( @con )
+    m = RSpecModelErrorMappingTest.new( :uid => 'not a valid UUID' )
+    m.add_errors_to( @errors )
 
-    expect( @con.response.errors.errors ).to eq( [
+    expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_boolean",
         "message" => "can't be blank",
@@ -133,15 +126,24 @@ describe ApiTools::ActiveRecord::ErrorMapping do
         "code" => "generic.invalid_string",
         "message" => "can't be blank",
         "reference" => "array"
+      },
+
+      # Checks that custom UUID validator is working.
+
+      {
+        "code" => "generic.invalid_uuid",
+        "message" => "is invalid",
+        "reference" => "uid"
       }
     ] )
   end
 
   it 'does not auto-validate if so instructed' do
     m = RSpecModelErrorMappingTest.new
-    m.add_errors_to( @con, false )
+    m.add_errors_to( @errors, false )
+    expect(m).to_not receive(:valid?)
 
-    expect( @con.response.errors.errors ).to eq( [] )
+    expect( @errors.errors ).to eq( [] )
   end
 
   it 'handles varying validation types' do
@@ -158,8 +160,8 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @con )
-    expect( @con.response.errors.errors ).to eq( [
+    m.add_errors_to( @errors )
+    expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_string",
         "message" => "is too long (maximum is 16 characters)",
@@ -168,8 +170,49 @@ describe ApiTools::ActiveRecord::ErrorMapping do
     ] )
   end
 
+  # Nasty test for code coverage - patch the model to make the column
+  # look like it really supports arrays and pass it a non-array type.
+
+  it 'handles arrays' do
+    m = RSpecModelErrorMappingTest.new( {
+      :boolean  => true,
+      :date     => Time.now,
+      :datetime => Time.now,
+      :decimal  => 2.3,
+      :float    => 2.3,
+      :integer  => 42,
+      :string   => 'hello',
+      :text     => 'world',
+      :time     => Time.now,
+      :array    => 'not an array'
+    } )
+
+    array_col = RSpecModelErrorMappingTest.columns_hash[ 'array' ]
+    expect(array_col).to receive(:array).once.and_return(true)
+
+    # So long as there's no database support for arrays, ActiveRecord
+    # won't add an error itself and the test will fail. So check first,
+    # add our own error and call add_errors_to with "false" so that it
+    # doesn't re-call "valid?", which doesn't add to any existing
+    # errors as you might expect - instead it clears them. Thanks for
+    # that, ActiveRecord.
+
+    m.valid?
+    m.errors.add( :array, 'custom message' ) if ( m.errors.messages.empty? )
+    m.add_errors_to( @errors, false )
+
+    expect( @errors.errors ).to eq( [
+      {
+        "code" => "generic.invalid_array",
+        "message" => "custom message",
+        "reference" => "array"
+      }
+    ] )
+  end
+
   it 'maps duplicates' do
     m = RSpecModelErrorMappingTest.new( {
+      :uid      => ApiTools::UUID.generate(),
       :boolean  => true,
       :date     => Time.now,
       :datetime => Time.now,
@@ -182,8 +225,8 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @con )
-    expect( @con.response.errors.errors ).to eq( [] )
+    m.add_errors_to( @errors )
+    expect( @errors.errors ).to eq( [] )
 
     begin
       m.save!
@@ -193,8 +236,8 @@ describe ApiTools::ActiveRecord::ErrorMapping do
     end
 
     n = m.dup
-    n.add_errors_to( @con )
-    expect( @con.response.errors.errors ).to eq( [
+    n.add_errors_to( @errors )
+    expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_duplication",
         "message" => "has already been taken",
@@ -208,11 +251,11 @@ describe ApiTools::ActiveRecord::ErrorMapping do
     class LocalHackableErrors < ApiTools::ErrorDescriptions
     end
 
-    @con.response.errors = ApiTools::Errors.new( ApiTools::ErrorDescriptions.new )
+    @errors = ApiTools::Errors.new( ApiTools::ErrorDescriptions.new )
 
     # We have to hack to test this...
     #
-    desc = @con.response.errors.descriptions.instance_variable_get( '@descriptions' )
+    desc = @errors.descriptions.instance_variable_get( '@descriptions' )
     desc.delete( 'generic.invalid_boolean' )
     desc.delete( 'generic.invalid_date' )
 
@@ -227,9 +270,9 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @con )
+    m.add_errors_to( @errors )
 
-    expect( @con.response.errors.errors ).to eq( [
+    expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_parameters",
         "message" => "can't be blank",

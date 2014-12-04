@@ -10,6 +10,8 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
+require 'set'
+
 module ApiTools
 
   # Service implementation authors subclass this to describe the interface that
@@ -52,17 +54,22 @@ module ApiTools
         @sort[ default_sort_key() ][ 0 ]
       end
 
-      # Array of supported search keys; empty for none defined.
+      # Array of supported search keys as Strings; empty for none defined.
       #
       attr_reader :search
 
-      # Array of supported filter keys; empty for none defined.
+      # Array of supported filter keys as Strings; empty for none defined.
       #
       attr_reader :filter
 
       # Create an instance with default settings.
       #
       def initialize
+
+        # Remember, these are defaults for the "to_list" object of an
+        # interface only. For interface-wide top level defaults, use the
+        # embedded calls to the DSL in ServiceInterface::interface.
+
         @limit            = 50
         @sort             = { 'created_at' => [ 'desc', 'asc' ] }
         @default_sort_key = 'created_at'
@@ -306,13 +313,36 @@ module ApiTools
     #     actions :list, :show
     #
     def actions( *supported_actions )
+      supported_actions.map! { | item | item.to_sym }
       invalid = supported_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
         raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
-      self.class.send( :actions=, supported_actions )
+      self.class.send( :actions=, Set.new( supported_actions ) )
+    end
+
+    # List any actions which are public - NOT PROTECTED BY SESSIONS. For
+    # public actions, no X-Session-ID or similar header is consulted and
+    # no session data will be associated with your
+    # ApiTools::ServiceContext instance when action methods are called.
+    # Use with great care!
+    #
+    # *public_actions:: One or more from +:list+, +:show+, +:create+,
+    #                   +:update+ and +:delete+. Always use symbols, not
+    #                   strings. An exception is raised if unrecognised
+    #                   actions are given.
+    #
+    def public_actions( *public_actions )
+      public_actions.map! { | item | item.to_sym }
+      invalid = public_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+
+      unless invalid.empty?
+        raise "ApiTools::ServiceInterface#public_actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+      end
+
+      self.class.send( :public_actions=, Set.new( public_actions ) )
     end
 
     # An array of supported embed keys (as per documentation, so singular or
@@ -493,21 +523,29 @@ module ApiTools
     #              #endpoint is the only mandatory call.
     #
     def self.interface( resource, &block )
+
+      if @to_list.nil?
+        @to_list = ApiTools::ServiceInterface::ToList.new
+      else
+        raise "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once"
+      end
+
       self.resource = resource.to_sym
-
-      raise "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once" unless @to_list.nil?
-
-      @to_list = ApiTools::ServiceInterface::ToList.new
 
       interface = self.new
       interface.instance_eval do
         version 1
+        embeds # Nothing
+        actions *ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+        public_actions # None
       end
+
       interface.instance_eval( &block )
 
       if self.endpoint.nil?
         raise "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
+
     end
 
     # Define various class instance variable (sic.) accessors.
@@ -542,11 +580,20 @@ module ApiTools
         #
         attr_reader :implementation
 
-        # Supported action methods as a list of symbols, with one or more of
-        # +:list+, +:show+, +:create+, +:update+ or +:delete+. If +nil+, assume
-        # all actions are supported.
+        # Supported action methods as a Set of symbols with one or more of
+        # +:list+, +:show+, +:create+, +:update+ or +:delete+. The presence of
+        # a Symbol indicates a supported action. If empty, no actions are
+        # supported. The default is for all actions to be present in the Set.
         #
         attr_reader :actions
+
+        # Public action methods as a Set of symbols with one or more of
+        # +:list+, +:show+, +:create+, +:update+ or +:delete+. The presence
+        # of a Symbol indicates an action open to the public and not subject
+        # to session security. If empty, all actions are protected by session
+        # security. The default is an empty Set.
+        #
+        attr_reader :public_actions
 
         # Array of strings listing allowed embeddable things. Each string
         # matches the split up comma-separated value for query string
@@ -566,7 +613,7 @@ module ApiTools
         attr_reader :embeds
 
         # An ApiTools::ServiceInterface::ToList instance describing the list
-        # parameters for the interface. See also
+        # parameters for the interface as a Set of Strings. See also
         # ApiTools::ServiceInterface::ToListDSL.
         #
         def to_list
@@ -628,6 +675,12 @@ module ApiTools
         # See ::actions.
         #
         attr_writer :actions
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::public_actions.
+        #
+        attr_writer :public_actions
 
         # Private property writer allows instances running the DSL to set
         # values on the class for querying using the public readers.

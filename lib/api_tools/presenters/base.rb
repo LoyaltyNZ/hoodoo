@@ -125,11 +125,11 @@ module ApiTools
           if self.is_internationalised?
             common_fields[ 'internationalised' ] = data[ 'internationalised' ]
             ApiTools::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = true
-          else
-            ApiTools::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = false
           end
 
           errors.merge!( ApiTools::Presenters::CommonResourceFields.validate( data, false ) )
+
+          ApiTools::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = false
         end
 
         return errors
