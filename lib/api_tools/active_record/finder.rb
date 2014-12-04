@@ -192,13 +192,14 @@ module ApiTools
         #
         # http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
         #
-        # +context+:: ApiTools::ServiceRequest::ListParameters instance,
-        #             typically obtained from the ApiTools::ServiceContext
-        #             instance passed to a service implementation in
-        #             ApiTools::ServiceImplementation#list, via
-        #             +context.request.list+ (i.e.
-        #             ApiTools::ServiceContext#request
-        #             / ApiTools::ServiceRequest#list).
+        # +list_parameters+:: ApiTools::ServiceRequest::ListParameters
+        #                     instance, typically obtained from the
+        #                     ApiTools::ServiceContext instance passed to
+        #                     a service implementation in
+        #                     ApiTools::ServiceImplementation#list, via
+        #                     +context.request.list+ (i.e.
+        #                     ApiTools::ServiceContext#request
+        #                     / ApiTools::ServiceRequest#list).
         #
         def list_finder( list_parameters )
 
