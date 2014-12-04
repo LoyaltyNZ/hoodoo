@@ -14,6 +14,7 @@
 require 'set'
 require 'uri'
 require 'net/http'
+require 'net/https'
 require 'drb/drb'
 
 module ApiTools
