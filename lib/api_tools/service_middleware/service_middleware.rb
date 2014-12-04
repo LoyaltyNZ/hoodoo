@@ -1395,11 +1395,11 @@ module ApiTools
         end
 
         resource_url_mapping = {
-          "programme"   => "http://#{domain}/v#{version}/programmes",
-          "calculation" => "http://#{domain}/v#{version}/calculations",
-          "membership"  => "http://#{domain}/v#{version}/memberships",
-          "involvement" => "http://#{domain}/v#{version}/involvements",
-          "programmes"  => "http://#{domain}/v#{version}/programmes"
+          "programme"   => "https://#{domain}/v#{version}/programmes",
+          "calculation" => "https://#{domain}/v#{version}/calculations",
+          "membership"  => "https://#{domain}/v#{version}/memberships",
+          "involvement" => "https://#{domain}/v#{version}/involvements",
+          "programmes"  => "https://#{domain}/v#{version}/programmes"
         }
         resource_url_mapping[resource.to_s.downcase]
 
