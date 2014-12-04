@@ -15,6 +15,10 @@ module ApiTools
       #
       class VoucherEarner < ApiTools::Presenters::Base
 
+        # Defined values for the +accumulation+ enumeration in the schema.
+        #
+        ACCUMULATIONS = [ :discrete, :cumulative ]
+
         # Since this can be used in many contexts, including partial
         # fragments in e.g. Involvements or Memberships, none of the
         # required fields can get labelled as such. Requirements refer
@@ -27,7 +31,7 @@ module ApiTools
 
           array :voucher_earners do
             object :earned_via do
-              enum :accumulation, :from => [ :discrete, :cumulative ]
+              enum :accumulation, :from => ACCUMULATIONS
               hash :source_exchange_rates do
                 keys :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
               end

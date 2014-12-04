@@ -17,11 +17,16 @@ module ApiTools
       #
       class Transaction < ApiTools::Presenters::Base
 
+        # Defined values for the +business_operation+ enumeration in the
+        # schema.
+        #
+        BUSINESS_OPERATIONS = [ :transfer, :earn, :reverse ]
+
         schema do
           internationalised
 
           uuid     :client_id,                    :required => true
-          enum     :business_operation,           :required => true, :from => [ 'transfer', 'earn', 'reverse' ]
+          enum     :business_operation,           :required => true, :from => BUSINESS_OPERATIONS
           text     :description,                  :required => true
 
           datetime :transaction_time,             :required => true

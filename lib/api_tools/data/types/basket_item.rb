@@ -15,6 +15,10 @@ module ApiTools
       #
       class BasketItem < ApiTools::Presenters::Base
 
+        # Defined values for the +accrual+ enumeration in the schema.
+        #
+        ACCRUALS = [ :excluded ]
+
         schema do
           integer :quantity, :required => true
 
@@ -29,7 +33,7 @@ module ApiTools
             type :Product
           end
 
-          enum :accrual, :from => [ :excluded ]
+          enum :accrual, :from => ACCRUALS
         end
 
       end
