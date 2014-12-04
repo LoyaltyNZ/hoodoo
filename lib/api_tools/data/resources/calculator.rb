@@ -20,7 +20,7 @@ module ApiTools
 
           text   :name,                    :required => true
           text   :description,             :required => true
-          enum   :type,                    :required => true,    :from => [ :earn_currency, :earn_vouchers ]
+          enum   :calculator_type,         :required => true,    :from => [ :earn_currency, :earn_vouchers ]
           type   :CalculatorConfiguration, :required => false
         end
       end
