@@ -1534,6 +1534,7 @@ module ApiTools
         # This is not so cool but want something going.
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
+
       request_class = {
         'POST'   => Net::HTTP::Post,
         'PATCH'  => Net::HTTP::Patch,
@@ -1550,11 +1551,6 @@ module ApiTools
       rescue Errno::ECONNREFUSED => e
         return add_404.call()
       end
-
-      # Parse the response (assumed valid JSON else #for_rack would have failed
-      # when the originating response object was turned into the Rack response).
-
-      parsed = JSON.parse( response.body )
 
       # Deal with headers sent in the call.
 
@@ -1587,6 +1583,15 @@ module ApiTools
       if response.code.to_i > 299
         @service_response.http_status_code = response.code
       end
+
+      if response.body.nil? || response.body.empty?
+        raise "Empty body received for the HTTP status code of #{response.code}, during an inter-service call to #{remote_uri} "
+      end
+
+      # Parse the response (assumed valid JSON else #for_rack would have failed
+      # when the originating response object was turned into the Rack response).
+
+      parsed = JSON.parse( response.body )
 
       if ( parsed[ 'kind' ] == 'Errors' )
         parsed[ 'errors' ].each do | error |
