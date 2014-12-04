@@ -1381,10 +1381,8 @@ module ApiTools
     #
     def remote_service_for( resource, version = 1 )
       if self.class.on_queue?
-        # Static table mapping resource to URI goes here, presumably with
-        # domain switched according to self.class.environment.edge? vs
-        # ...production?
-
+        # static mapping until the service discovery is sorted
+        #
         if self.class.environment.edge?
           domain = "api.loyaltyedge.co.nz"
         elsif self.class.environment.production?
@@ -1402,7 +1400,7 @@ module ApiTools
           "involvement" => "http://#{domain}/v#{version}/involvements",
           "programmes"  => "http://#{domain}/v#{version}/programmes"
         }
-        resource_url_mapping.try(:[],resource.to_s.downcase)
+        resource_url_mapping[resource.to_s.downcase]
 
       else
         begin
