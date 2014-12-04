@@ -142,6 +142,7 @@ module ApiTools
 
     # Returns true if this session has the specified role
     def has_role?(role)
+      return true if @@test_mode && @roles.length == 0 
       @roles.include? role.to_s
     end
 

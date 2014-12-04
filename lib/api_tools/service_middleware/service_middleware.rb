@@ -1162,7 +1162,6 @@ module ApiTools
 
       unless malformed
         search = query_hash[ 'search' ] || {}
-
         unrecognised_search_keys = search.keys - ( interface.to_list.search || [] )
         malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
       end
@@ -1334,13 +1333,38 @@ module ApiTools
     # Returns a URI as a string if an endpoint is found, else +nil+.
     #
     def remote_service_for( resource, version = 1 )
-      begin
-        @drb_service.find( resource, version )
-      rescue
-        nil
+      if self.class.on_queue?
+        # Static table mapping resource to URI goes here, presumably with
+        # domain switched according to self.class.environment.edge? vs
+        # ...production?
+
+        if self.class.environment.edge?
+          domain = "api.loyaltyedge.co.nz"
+        elsif self.class.environment.production?
+          domain = "onloyaltynz.com"
+        elsif self.class.environment.development?
+          domain = "localhost"
+        else
+          return nil
+        end
+
+        resource_url_mapping = {
+          "programme"   => "http://#{domain}/v#{version}/programmes",
+          "calculation" => "http://#{domain}/v#{version}/calculations",
+          "membership"  => "http://#{domain}/v#{version}/memberships",
+          "involvement" => "http://#{domain}/v#{version}/involvements",
+          "programmes"  => "http://#{domain}/v#{version}/programmes"
+        }
+        resource_url_mapping.try(:[],resource.to_s.downcase)
+
+      else
+        begin
+          @drb_service.find( resource, version )
+        rescue
+          nil
+        end
       end
     end
-
     # Perform an inter-service call. This shouldn't be called directly; call
     # via the ApiTools::ServiceMiddleware::ServiceEndpoint subclass specialised
     # methods instead, which makes sure it sets up the required parameters in
@@ -1459,6 +1483,11 @@ module ApiTools
       remote_uri = URI.parse( remote_uri )
       http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
 
+      if remote_uri.scheme == "https"
+        http.use_ssl = true
+        # This is not so cool but want something going.
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       request_class = {
         'POST'   => Net::HTTP::Post,
         'PATCH'  => Net::HTTP::Patch,
