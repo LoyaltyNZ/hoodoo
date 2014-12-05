@@ -38,7 +38,7 @@ describe ApiTools::Data::Resources::Currency do
     expect(json).to eq(
       {
         'id' => id,
-        'created_at' => created_at.iso8601,
+        'created_at' => created_at.utc.iso8601,
         'kind' => 'Currency',
         'currency_code' => 'X-FBP',
         'symbol' => 'pts',
@@ -64,7 +64,7 @@ describe ApiTools::Data::Resources::Currency do
     expect(json).to eq(
       {
         'id' => id,
-        'created_at' => created_at.iso8601,
+        'created_at' => created_at.utc.iso8601,
         'kind' => 'Currency',
         'currency_code' => 'X-FBP',
         'precision' => 2,

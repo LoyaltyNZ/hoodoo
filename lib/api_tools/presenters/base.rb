@@ -90,7 +90,7 @@ module ApiTools
           target.merge!( {
             'id'         => uuid,
             'kind'       => self.name.split( '::' ).last,
-            'created_at' => Time.parse( created_at.to_s ).iso8601
+            'created_at' => Time.parse( created_at.to_s ).utc.iso8601
           } )
 
           target[ 'language' ] = language if self.is_internationalised?()
