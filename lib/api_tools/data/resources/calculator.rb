@@ -23,7 +23,7 @@ module ApiTools
           internationalised
 
           text   :name,                    :required => true
-          text   :description,             :required => true
+          text   :description,             :required => false
           enum   :calculator_type,         :required => true, :from => CALCULATOR_TYPES
           type   :CalculatorConfiguration, :required => false
         end
