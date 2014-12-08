@@ -192,7 +192,7 @@ href="ToList.html">ApiTools::ServiceInterface::ToList</a> has been updated.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 128</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@tl</span> = <span class="ruby-identifier">api_tools_service_interface_to_list_instance</span> <span class="ruby-comment"># Shorthand!</span>
 
@@ -248,7 +248,7 @@ that &#39;<code>code</code>&#39; is to be the default sort order.</p>
                 
               </p>
               <div id="method-i-default_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 200</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">default</span>( <span class="ruby-identifier">sort_key</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
@@ -295,7 +295,7 @@ entries is arbitrary.</p>
                 
               </p>
               <div id="method-i-filter_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 235</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 242</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">filter</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">filter</span> )
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:filter=</span>, <span class="ruby-identifier">filter</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -322,7 +322,8 @@ entries is arbitrary.</p>
 
 <p>Example:</p>
 
-<pre><code>limit 100</code></pre>
+<pre><code>limit 100
+</code></pre>
             </div>
           
           
@@ -340,7 +341,7 @@ entries is arbitrary.</p>
                 
               </p>
               <div id="method-i-limit_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 146</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 153</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">limit</span>( <span class="ruby-identifier">limit</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
@@ -380,7 +381,8 @@ entries is arbitrary.</p>
 <p>Example - allow searches specifying <code>first_name</code> and
 <code>last_name</code> keys:</p>
 
-<pre><code>search :first_name, :last_name</code></pre>
+<pre><code>search :first_name, :last_name
+</code></pre>
             </div>
           
           
@@ -398,7 +400,7 @@ entries is arbitrary.</p>
                 
               </p>
               <div id="method-i-search_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 226</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">search</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">search</span> )
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:search=</span>, <span class="ruby-identifier">search</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -455,7 +457,7 @@ href="ToListDSL.html#method-i-default">default</a> DSL method.</p>
                 
               </p>
               <div id="method-i-sort_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 172</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 179</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">sort</span>( <span class="ruby-identifier">sort</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>

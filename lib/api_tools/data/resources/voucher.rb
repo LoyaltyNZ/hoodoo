@@ -15,10 +15,14 @@ module ApiTools
       #
       class Voucher < ApiTools::Presenters::Base
 
+        # Defined values for the +state+ enumeration in the schema.
+        #
+        STATES = [ :earned, :burned ]
+
         schema do
           internationalised
 
-          enum  :state, :from => [ :earned, :burned ]
+          enum  :state, :from => STATES
           text  :token_identifier
           text  :name
           hash  :burn_reason

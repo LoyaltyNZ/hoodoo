@@ -681,7 +681,7 @@ describe '#schema' do
       )).to eq({
         'id' => uuid,
         'kind' => 'World',
-        'created_at' => time.iso8601,
+        'created_at' => time.utc.iso8601,
         'language' => 'en-gb',
         'errors_id' => data['errors_id'],
         'test_tags' => 'foo,bar,baz',

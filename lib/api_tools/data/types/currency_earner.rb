@@ -15,6 +15,10 @@ module ApiTools
       #
       class CurrencyEarner < ApiTools::Presenters::Base
 
+        # Defined values for the +accumulation+ enumeration in the schema.
+        #
+        ACCUMULATIONS = [ :discrete, :cumulative ]
+
         # Since this can be used in many contexts, including partial
         # fragments in e.g. Involvements or Memberships, none of the
         # required fields can get labelled as such. Requirements refer
@@ -28,7 +32,7 @@ module ApiTools
               keys :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH do
                 integer :amount
                 string :qualifier, :length => ApiTools::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH
-                enum :accumulation, :from => [ :discrete, :cumulative ]
+                enum :accumulation, :from => ACCUMULATIONS
                 hash :source_exchange_rates do
                   keys :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
                 end

@@ -130,7 +130,7 @@ describe ApiTools::ServiceSession do
 
       expect(s.participant_id).to eq(nil)
       expect(s.outlet_id).to eq(nil)
-      expect(s.roles).to eq([])      
+      expect(s.roles).to eq([])
     end
   end
 

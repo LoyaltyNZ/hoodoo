@@ -153,9 +153,9 @@ href="ClassMethods.html#method-i-list_search_map">list_search_map</a>.</p>
                 
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 286</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 312</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
-  <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_filter_map&#39;</span>, <span class="ruby-identifier">map</span> )
+  <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_filter_map&#39;</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">map</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -165,7 +165,7 @@ href="ClassMethods.html#method-i-list_search_map">list_search_map</a>.</p>
         <div class="method">
           <div class="title method-title" id="method-i-list_finder">
             
-              <b>list_finder</b>( context )
+              <b>list_finder</b>( list_parameters )
             
             <a href="../../../../classes/ApiTools/ActiveRecord/Finder/ClassMethods.html#method-i-list_finder" name="method-i-list_finder" class="permalink">Link</a>
           </div>
@@ -190,16 +190,20 @@ unusual constraints, we might do this:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include ApiTools::ActiveRecord::Finder
+
+  list_search_map # ...&lt;field-to-search-info mapping&gt;
+  # ...and/or...
+  list_filter_map # ...&lt;field-to-search-info mapping&gt;
 end
 
 # ...elsewhere...
 
 def list( context )
-  finder = SomeModel.list_finder( context )
+  finder = SomeModel.list_finder( context.request.list )
   results = finder.all.map do | item |
     # ...map database objects to response objects...
   end
-  context.response.body = results
+  context.response.set_resources( results )
 end
 </code></pre>
 
@@ -216,12 +220,12 @@ instances owned by that client, through storing the value with the model in
 a field of the same name. The previous example changes only a little:</p>
 
 <pre><code>def list( context )
-  finder = SomeModel.list_finder( context )
+  finder = SomeModel.list_finder( context.request.list )
   finder = finder.where( :client_id =&gt; context.session.client_id )
   results = finder.all.map do | item |
     # ...map database objects to response objects...
   end
-  context.response.body = results
+  context.response.set_resources( results )
 end
 </code></pre>
 
@@ -230,9 +234,18 @@ See:</p>
 
 <p><a
 href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html</a></p>
-<dl class="rdoc-list note-list"><dt><code>context</code>
+<dl class="rdoc-list note-list"><dt><code>list_parameters</code>
 <dd>
-<p><a href="../../ServiceContext.html">ApiTools::ServiceContext</a> instance.</p>
+<p><a
+href="../../ServiceRequest/ListParameters.html">ApiTools::ServiceRequest::ListParameters</a>
+instance, typically obtained from the <a
+href="../../ServiceContext.html">ApiTools::ServiceContext</a> instance
+passed to a service implementation in <a
+href="../../ServiceImplementation.html#method-i-list">ApiTools::ServiceImplementation#list</a>,
+via <code>context.request.list</code> (i.e. <a
+href="../../ServiceContext.html#attribute-i-request">ApiTools::ServiceContext#request</a>
+/ <a
+href="../../ServiceRequest.html#attribute-i-list">ApiTools::ServiceRequest#list</a>).</p>
 </dd></dl>
             </div>
           
@@ -251,12 +264,12 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
                 
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 188</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">context</span> )
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 204</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
 
   <span class="ruby-identifier">finder</span> = <span class="ruby-keyword">self</span>
-  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_limit</span> )
-  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( { <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_sort_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_sort_direction</span>.<span class="ruby-identifier">to_sym</span> } )
+  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
+  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( { <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_direction</span>.<span class="ruby-identifier">to_sym</span> } )
 
   <span class="ruby-identifier">search_map</span> = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_list_search_map</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_list_search_map</span> ) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
@@ -265,7 +278,7 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
     <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
 
     <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">proc</span>.<span class="ruby-identifier">nil?</span> )
-      [ { <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_sym</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> } ]
+      [ { <span class="ruby-identifier">attr</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> } ]
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> )
     <span class="ruby-keyword">end</span>
@@ -273,7 +286,7 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">search_map</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">search_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
-      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_search_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
+      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">search_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
       <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -282,7 +295,7 @@ href="http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html">api.rub
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
-      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list_filter_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
+      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">filter_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
       <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -312,23 +325,24 @@ automatically restrict list results.</p>
 <code>name</code> and <code>colour</code>:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
-  list_search_map {
+  list_search_map(
     :name =&gt; nil,
     :colour =&gt; nil
-  }
+  )
 end
 </code></pre>
 
 <p>More complex example where <code>colour</code> is matched verbatim, but
-<code>name</code> is matched case-insensitive:</p>
+<code>name</code> is matched case-insensitive, assuming PostgreSQL&#39;s
+ILIKE is there:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
-  list_search_map {
+  list_search_map(
     :name =&gt; Proc.new { | attr, value |
-      [ &quot;name ILIKE ?&quot;, value ]
+      [ &#39;name ILIKE ?&#39;, value ]
     },
     :colour =&gt; nil
-  }
+  )
 end
 </code></pre>
 
@@ -340,12 +354,24 @@ matches across all attributes:</p>
     [ &quot;#{ attr } ILIKE ?&quot;, value ]
   }
 
-  list_search_map {
+  list_search_map(
     :name   =&gt; CI_MATCH,
     :colour =&gt; CI_MATCH
-  }
+  )
 end
 </code></pre>
+
+<p>If you wanted to match against an array of possible matches, something like
+this would work:</p>
+
+<pre><code>ARRAY_MATCH = Proc.new { | attr, value |
+  [ { attr =&gt; [ value ].flatten } ]
+}
+</code></pre>
+
+<p>Note the returned <strong>array</strong> (see input parameter details)
+inside which the usual hash syntax for AREL <code>.where</code>-style
+queries is present.</p>
 <dl class="rdoc-list note-list"><dt><code>map</code>
 <dd>
 <p>A Hash. Keys are attribute names. Values of <code>nil</code> are used for
@@ -379,9 +405,9 @@ or Symbols.</p>
                 
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 278</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 304</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
-  <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_search_map&#39;</span>, <span class="ruby-identifier">map</span> )
+  <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_search_map&#39;</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">map</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -412,13 +438,20 @@ against the identifier thus:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
   include ApiTools::ActiveRecord::Finder
+  polymorphic_id_fields # ...&lt;list-of-other-fields&gt;
 end
 
 # ...elsewhere...
 
 def show( context )
   found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
-  # ...
+
+  # ...map &#39;found&#39; to whatever resource you&#39;re representing,
+  # e.g. via an ApiTools::Presenters::Base subclass with resource
+  # schema and the subclass&#39;s ApiTools::Presenters::Base::render
+  # call, then...
+
+  context.response.set_resource( resource_representation_of_found )
 end
 </code></pre>
 
@@ -431,7 +464,6 @@ through storing the value with the model in a field of the same name.</p>
 <pre><code>def show( context )
   finder = SomeModel.where( :client_id =&gt; context.session.client_id )
   found = SomeModel.polymorphic_find( finder, context.request.ident )
-  # ...
 end
 </code></pre>
 <dl class="rdoc-list note-list"><dt><code>finder</code>
@@ -468,7 +500,7 @@ using +where( attr =&gt; ident )+.</p>
                 
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 97</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
 
   <span class="ruby-identifier">extra_fields</span> = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_show_id_fields</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_show_id_fields</span> ) <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -535,7 +567,7 @@ href="ClassMethods.html#method-i-polymorphic_find">polymorphic_find</a>.</p>
                 
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 127</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_show_id_fields&#39;</span>, <span class="ruby-identifier">args</span> )
 <span class="ruby-keyword">end</span></pre>

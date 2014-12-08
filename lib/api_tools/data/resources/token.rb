@@ -15,8 +15,12 @@ module ApiTools
       #
       class Token < ApiTools::Presenters::Base
 
+        # Defined values for the +state+ enumeration in the schema.
+        #
+        STATES = [ :waiting, :active, :closed ]
+
         schema do
-          enum :state,      :from     => [:waiting, :active, :closed]
+          enum :state,      :from     => STATES
           text :identifier, :required => true
           uuid :member_id,  :required => true, :resource => :Member
         end

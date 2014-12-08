@@ -552,7 +552,7 @@ module ApiTools
         @session_id,
       )
 
-      if @service_session.nil? && interfaces_have_public_methods?() == false
+      if @service_session.nil? && interfaces_have_public_methods? == false
         return @service_response.add_error( 'platform.invalid_session' )
       end
     end
@@ -674,7 +674,7 @@ module ApiTools
 
       update_service_response_for( @service_response, interface )
 
-      # Check for a supported action.
+      # Check for a supported, session-accessible action.
 
       action = determine_action(
         interface,
@@ -684,16 +684,6 @@ module ApiTools
       )
 
       return if @service_response.halt_processing?
-
-      # If we've no session at this point, then one or more interfaces have
-      # public actions. Need to dig deeper.
-
-      if @service_session.nil?
-        unless interface.public_actions.include?( action )
-          @service_response.add_error( 'platform.invalid_session' )
-          return
-        end
-      end
 
       # Looks good so far, so allocate a request object to pass on to the
       # interface and hold other higher level parsed data assembled below.
@@ -1044,8 +1034,8 @@ module ApiTools
     #
     # Returns the action as a symbol (e.g. +:list+) unless there is an error.
     # If the ApiTools::ServiceResponse#halt_processing? result for the given
-    # +response+ parameter is +true+ then the returned value is invalid as
-    # the service does not support the action; +response+ has already been
+    # +response+ parameter is +true+ then the returned value is undefined.
+    # The service does not support the action; +response+ has already been
     # updated with an appropriate error.
     #
     def determine_action( interface, http_method, get_is_list, response )
@@ -1066,12 +1056,26 @@ module ApiTools
           get_is_list ? :list : :show
       end
 
+      # If we've no session at this point, then one or more interfaces have
+      # public actions. Need to dig deeper and possibly bail out.
+
+      if @service_session.nil?
+        unless interface.public_actions.include?( action )
+          return response.add_error( 'platform.invalid_session' )
+        end
+      end
+
+      # At this point the session is present and valid or the action is
+      # public, but does the interfact actually implement it?
+
       unless interface.actions.include?( action )
-        response.add_error(
+        return response.add_error(
           'platform.method_not_allowed',
           'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
         )
       end
+
+      # All good!
 
       return action
     end

@@ -51,9 +51,11 @@ pain and cause developers much frustration.</p>
 <p>This means that whenever a service starts up, it needs to know the HTTP
 host and port under which it is running, then tell the middleware about it.</p>
 
-<p>In the absence of a formal interface in Rack for this, then we could do
-still that relatively nicely by looking up the Rack server in ObjectSpace
-and asking it for its options - except some of the web server adapters do
+<p>In the absence of a formal interface in <a
+href="../../../../classes/Rack.html">Rack</a> for this, then we could do
+still that relatively nicely by looking up the <a
+href="../../../../classes/Rack.html">Rack</a> server in ObjectSpace and
+asking it for its options - except some of the web server adapters do
 really dumb things like “options.delete(:Host)” to read items out,
 destroying the info we need.</p>
 

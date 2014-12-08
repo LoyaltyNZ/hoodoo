@@ -190,8 +190,7 @@ for an example.</p>
   # ...multiple calls would be made to #key usually, to define
   # each allowed key.
 
-end
-</code></pre>
+end</code></pre>
 
 <p>…defines something that this JSON would validate against:</p>
 
@@ -252,17 +251,8 @@ end
 
   <span class="ruby-ivar">@specific</span> = <span class="ruby-keyword">true</span>
 
-  <span class="ruby-identifier">klass</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
-      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">prop</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span> <span class="ruby-operator">:</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
+  <span class="ruby-identifier">prop</span>  = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">prop</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">prop</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:is_internationalised?</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">prop</span>.<span class="ruby-identifier">is_internationalised?</span>
     <span class="ruby-identifier">internationalised</span>()
@@ -304,8 +294,7 @@ option is omitted, keys can be any length.</p>
   # ...only one call is made to #keys, because it defines the
   # permitted form of all keys and values for the whole Hash.
 
-end
-</code></pre>
+end</code></pre>
 
 <p>…defines a <a href="Hash.html">Hash</a> with keys that have a maximum
 string length of 4 characters (inclusive) and simple object values with
@@ -361,7 +350,7 @@ just a single text field. This JSON would validate against the definition:</p>
                 
               </p>
               <div id="method-i-keys_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 149</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 140</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@specific</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#key and then \#keys in the same hash definition, or use \#keys more than once&quot;</span>
@@ -376,17 +365,8 @@ just a single text field. This JSON would validate against the definition:</p>
   <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:length</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span> <span class="ruby-operator">:</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>
   <span class="ruby-identifier">property</span>(<span class="ruby-string">&#39;keys&#39;</span>, <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">options</span>)
 
-  <span class="ruby-identifier">klass</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>
-      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">prop</span> = <span class="ruby-identifier">property</span>( <span class="ruby-string">&#39;values&#39;</span>, <span class="ruby-identifier">klass</span>, {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">block_given?</span> <span class="ruby-operator">?</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span> <span class="ruby-operator">:</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Field</span>
+  <span class="ruby-identifier">prop</span>  = <span class="ruby-identifier">property</span>( <span class="ruby-string">&#39;values&#39;</span>, <span class="ruby-identifier">klass</span>, {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">prop</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">prop</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:is_internationalised?</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">prop</span>.<span class="ruby-identifier">is_internationalised?</span>
     <span class="ruby-identifier">internationalised</span>()
@@ -436,7 +416,7 @@ yielding the rendered hash.</p>
                 
               </p>
               <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 286</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 268</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span>)
 
   <span class="ruby-comment"># Data provided is explicitly nil or not a hash? Don&#39;t need to render</span>
@@ -534,7 +514,7 @@ href="../Errors.html">ApiTools::Errors</a> instance</p>
                 
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 184</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/presenters/types/hash.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)

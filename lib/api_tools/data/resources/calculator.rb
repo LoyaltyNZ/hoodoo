@@ -15,12 +15,16 @@ module ApiTools
       #
       class Calculator < ApiTools::Presenters::Base
 
+        # Defined values for the +calculator_type+ enumeration in the schema.
+        #
+        CALCULATOR_TYPES = [ :earn_currency, :earn_vouchers ]
+
         schema do
           internationalised
 
           text   :name,                    :required => true
-          text   :description,             :required => true
-          enum   :calculator_type,         :required => true,    :from => [ :earn_currency, :earn_vouchers ]
+          text   :description,             :required => false
+          enum   :calculator_type,         :required => true, :from => CALCULATOR_TYPES
           type   :CalculatorConfiguration, :required => false
         end
       end

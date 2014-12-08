@@ -49,7 +49,7 @@ module ApiTools
       :client_id      => 'ABCDEF0123456789',
       :participant_id => 'e9421091be4d45419ed67326392ee641',
       :outlet_id      => '30c13f64e1044026b350b77c9b4aa6aa',
-      :roles          => '',
+      :roles          => ENV[ 'API_TOOLS_TEST_SESSION_ROLES' ] || '',
     }
 
     # Set testing mode.

@@ -16,14 +16,22 @@ module ApiTools
       #
       class Currency < ApiTools::Presenters::Base
 
+        # Defined values for the +position+ enumeration in the schema.
+        #
+        POSITIONS = [ :prefix, :suffix ]
+
+        # Defined values for the +rounding+ enumeration in the schema.
+        #
+        ROUNDINGS = [ :down, :up, :half_down, :half_up, :half_even ]
+
         schema do
-          string :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
-          array :qualifiers
-          string :symbol, :length => ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
-          enum :position, :from => [ :prefix, :suffix ]
+          string  :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
+          array   :qualifiers
+          string  :symbol,                           :length => ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
+          enum    :position, :from => POSITIONS
 
           integer :precision, :default => 2
-          enum :rounding, :from => [ :down, :up, :half_down, :half_up, :half_even ], :required => true
+          enum    :rounding,  :from    => ROUNDINGS, :required => true
         end
 
       end

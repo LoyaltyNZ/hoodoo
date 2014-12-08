@@ -303,9 +303,10 @@ hash (“+{}+”) instead.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
 <p><a href="Hash.html">Hash</a> or <a href="Array.html">Array</a> (depending
-on resource&#39;s top-level data container type) to be represented. Data
-within this is compared against the schema being called to ensure that
-correct information is returned and unknown data is ignored.</p>
+on resource&#39;s top-level data container type) to be represented. <a
+href="../Data.html">Data</a> within this is compared against the schema
+being called to ensure that correct information is returned and unknown
+data is ignored.</p>
 </dd><dt><code>uuid</code>
 <dd>
 <p>Unique ID of the resource instance that is to be represented. If nil /
@@ -361,7 +362,7 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
       <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
       <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;::&#39;</span> ).<span class="ruby-identifier">last</span>,
-      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_s</span> ).<span class="ruby-identifier">iso8601</span>
+      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_s</span> ).<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>
     } )
 
     <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span> ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
@@ -474,11 +475,11 @@ Optional; default is <code>false</code>.</p>
     <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>
       <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ] = <span class="ruby-identifier">data</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ]
       <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">get_schema</span>.<span class="ruby-identifier">properties</span>[ <span class="ruby-string">&#39;language&#39;</span> ].<span class="ruby-identifier">required</span> = <span class="ruby-keyword">true</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">get_schema</span>.<span class="ruby-identifier">properties</span>[ <span class="ruby-string">&#39;language&#39;</span> ].<span class="ruby-identifier">required</span> = <span class="ruby-keyword">false</span>
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-keyword">false</span> ) )
+
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">CommonResourceFields</span>.<span class="ruby-identifier">get_schema</span>.<span class="ruby-identifier">properties</span>[ <span class="ruby-string">&#39;language&#39;</span> ].<span class="ruby-identifier">required</span> = <span class="ruby-keyword">false</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span>
