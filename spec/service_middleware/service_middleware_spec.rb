@@ -1236,12 +1236,14 @@ end
 # Inter-service local calls
 ###############################################################################
 
-class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementation
+# This gets inter-service called from ...BImplementation. It expects search
+# data containing an 'offset' key and string/integer value. If > 0, an error
+# is triggered quoting the offset value in the reference data; else a hook
+# method is called that we can check with RSpec.
+#
+# It contains one public action, to test public-to-public calling from ...B.
 
-  # This gets inter-service called from ...BImplementation. It expects search
-  # data containing an 'offset' key and string/integer value. If > 0, an error
-  # is triggered quoting the offset value in the reference data; else a hook
-  # method is called that we can check with RSpec.
+class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementation
 
   def list( context )
     search_offset = ( ( context.request.list.search_data || {} )[ 'offset' ] || '0' ).to_i
@@ -1293,7 +1295,10 @@ end
 class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
   interface :RSpecTestInterServiceCallsAResource do
     endpoint :rspec_test_inter_service_calls_a, RSpecTestInterServiceCallsAImplementation
+    public_actions :delete
+
     embeds :foo, :bar
+
     to_list do
       search :offset, :limit
     end
@@ -1311,6 +1316,13 @@ class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
     end
   end
 end
+
+# This calls ...AImplementation. Its interface contains two public actions,
+# one calling through to a public action in ...AInterface, checking that a
+# public action calling to another public action is successful; the other
+# calls a secure method in ...AInterface and is used to make sure that a
+# public action calling to a secure action is handled correctly (i.e. overall
+# response is 401).
 
 class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementation
   def list( context )
@@ -1397,6 +1409,7 @@ end
 class RSpecTestInterServiceCallsBInterface < ApiTools::ServiceInterface
   interface :RSpecTestInterServiceCallsBResource do
     endpoint :rspec_test_inter_service_calls_b, RSpecTestInterServiceCallsBImplementation
+    public_actions :update, :delete
   end
 end
 
@@ -1681,5 +1694,21 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     result = JSON.parse(last_response.body)
     expect( result[ 'errors' ] ).to_not be_nil
     expect( result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.method_not_allowed' )
+  end
+
+  context 'with no session' do
+    before :each do
+      expect( ApiTools::ServiceSession ).to receive( :load_session ).once.and_return( nil )
+    end
+
+    it 'can call public-to-public actions successfully' do
+      delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'cannot call the secure update method in the other service without a session' do
+      patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      expect(last_response.status).to eq(401)
+    end
   end
 end
