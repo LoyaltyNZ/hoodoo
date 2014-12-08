@@ -51,6 +51,41 @@
 
 
   
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-racks_original_start">racks_original_start</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-start">start</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-start_and_record_host_and_port">start_and_record_host_and_port</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
 
   
 
@@ -69,7 +104,105 @@
 
 
     <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-racks_original_start">
+            
+              <b>racks_original_start</b>( options = nil )
+            
+            <a href="../../classes/Rack/Server.html#method-c-racks_original_start" name="method-c-racks_original_start" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+
+          
+            <div class="aka">
+              Alias for: <a href="Server.html#method-c-start">start</a>
+            </div>
+          
+          
+          
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-start">
+            
+              <b>start</b>( options = nil )
+            
+            <a href="../../classes/Rack/Server.html#method-c-start" name="method-c-start" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+            <div class="aka">
+              Also aliased as: <a href="Server.html#method-c-racks_original_start">racks_original_start</a>
+            </div>
+          
+
+          
+            <div class="aka">
+              Alias for: <a href="Server.html#method-c-start_and_record_host_and_port">start_and_record_host_and_port</a>
+            </div>
+          
+          
+          
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-start_and_record_host_and_port">
+            
+              <b>start_and_record_host_and_port</b>( options = nil )
+            
+            <a href="../../classes/Rack/Server.html#method-c-start_and_record_host_and_port" name="method-c-start_and_record_host_and_port" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+            <div class="aka">
+              Also aliased as: <a href="Server.html#method-c-start">start</a>
+            </div>
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-start_and_record_host_and_port_source')" id="l_method-c-start_and_record_host_and_port_source">show</a>
+                
+              </p>
+              <div id="method-c-start_and_record_host_and_port_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/rack_monkey_patch.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-identifier">racks_original_start</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">end</span></pre>
               </div>
+            </div>
+            
+          </div>
+                        </div>
 
     </div>
   </body>

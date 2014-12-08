@@ -152,6 +152,11 @@ details.</p>
             
               
               <li>
+                <a href="#method-c-to_list">to_list</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-i-to_list">to_list</a>,
               </li>
             
@@ -233,11 +238,13 @@ keys. For example:</p>
 
 <p>…would be valid provided there was an embedding declaration such as:</p>
 
-<pre><code>embeds :foo, :bar</code></pre>
+<pre><code>embeds :foo, :bar
+</code></pre>
 
 <p>…which would in turn lead this accessor to return:</p>
 
-<pre><code>[ &#39;foo&#39;, &#39;bar&#39; ]</code></pre></td>
+<pre><code>[ &#39;foo&#39;, &#39;bar&#39; ]
+</code></pre></td>
           </tr>
         
           <tr valign='top'>
@@ -332,6 +339,50 @@ implementation becomes entirely responsible for data validation).</p></td>
 
     <!-- Methods -->
     
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-to_list">
+            
+              <b>to_list</b>()
+            
+            <a href="../../classes/ApiTools/ServiceInterface.html#method-c-to_list" name="method-c-to_list" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>An <a
+href="ServiceInterface/ToList.html">ApiTools::ServiceInterface::ToList</a>
+instance describing the list parameters for the interface as a Set of
+Strings. See also <a
+href="ServiceInterface/ToListDSL.html">ApiTools::ServiceInterface::ToListDSL</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-to_list_source')" id="l_method-c-to_list_source">show</a>
+                
+              </p>
+              <div id="method-c-to_list_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_interface.rb, line 619</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
+  <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceInterface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@to_list</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+              
       <div class="sectiontitle">Class Protected methods</div>
       
         <div class="method">
@@ -459,7 +510,8 @@ are given.</p>
 
 <p>Example:</p>
 
-<pre><code>actions :list, :show</code></pre>
+<pre><code>actions :list, :show
+</code></pre>
             </div>
           
           
@@ -521,12 +573,14 @@ order of array entries is arbitrary.</p>
 <p>Example: An interface permits lists that request embedding or referencing
 of “vouchers”, “balances” and “member”:</p>
 
-<pre><code>embed :vouchers, :balances, :member</code></pre>
+<pre><code>embed :vouchers, :balances, :member
+</code></pre>
 
 <p>As a result, <a href="ServiceInterface.html#method-i-embeds">embeds</a>
 would return:</p>
 
-<pre><code>[ &#39;vouchers&#39;, &#39;balances&#39;, &#39;member&#39; ]</code></pre>
+<pre><code>[ &#39;vouchers&#39;, &#39;balances&#39;, &#39;member&#39; ]
+</code></pre>
             </div>
           
           
@@ -575,7 +629,8 @@ href="ServiceInterface.html#method-i-version">version</a>.</p>
 
 <p>Example:</p>
 
-<pre><code>endpoint :estimations, PurchaseServiceImplementation</code></pre>
+<pre><code>endpoint :estimations, PurchaseServiceImplementation
+</code></pre>
 <dl class="rdoc-list note-list"><dt><code>uri_path_fragment</code>
 <dd>
 <p>Path fragment to match at the start of a URL path, as a symbol or string,
@@ -784,14 +839,14 @@ already have declared that internationalisation applies.</p>
 <pre><code>to_create do
   string :name, :length =&gt; 32, :required =&gt; true
   text :description
-end
-</code></pre>
+end</code></pre>
 
 <p>Example 2: With a resource</p>
 
 <pre><code>to_create do
   resource :purchase
-end</code></pre>
+end
+</code></pre>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block, passed to <a
@@ -943,7 +998,8 @@ same as those required for modifying resources too.</p>
 
 <p>Example:</p>
 
-<pre><code>update_same_as_create</code></pre>
+<pre><code>update_same_as_create
+</code></pre>
 
 <p>…and that&#39;s all. There are no parameters or blocks needed.</p>
             </div>

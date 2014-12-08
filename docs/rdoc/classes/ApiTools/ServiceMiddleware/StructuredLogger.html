@@ -128,12 +128,12 @@ of the <a
 href="AMQPLogMessage.html">ApiTools::ServiceMiddleware::AMQPLogMessage</a>
 class. See the AMQEndpoint gem for details.</p>
 
-<p>If you&#39;re running with Rack on top of Alchemy, then the
-<code>call</code> method&#39;s <code>env</code> parameter containing the
-Rack environment should have a key of <code>rack.alchemy</code> or
-<code>alchemy</code> with a value that can be assigned here. The logger
-will then use the active Alchemy service to send messages to its configured
-queue.</p>
+<p>If you&#39;re running with <a href="../../Rack.html">Rack</a> on top of
+Alchemy, then the <code>call</code> method&#39;s <code>env</code> parameter
+containing the <a href="../../Rack.html">Rack</a> environment should have a
+key of <code>rack.alchemy</code> or <code>alchemy</code> with a value that
+can be assigned here. The logger will then use the active Alchemy service
+to send messages to its configured queue.</p>
             </div>
           
           

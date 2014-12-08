@@ -48,24 +48,28 @@
   
     <div class="description">
       
-<p>Rack middleware, declared in (e.g.) a <code>config.ru</code> file in the
-usual way:</p>
+<p><a href="../Rack.html">Rack</a> middleware, declared in (e.g.) a
+<code>config.ru</code> file in the usual way:</p>
 
-<pre><code>use( ApiTools::ServiceMiddleware )</code></pre>
+<pre><code>use( ApiTools::ServiceMiddleware )
+</code></pre>
 
-<p>This is the core of the common service implementation on the Rack
-client-request-handling side. It is run in the context of an <a
+<p>This is the core of the common service implementation on the <a
+href="../Rack.html">Rack</a> client-request-handling side. It is run in the
+context of an <a
 href="ServiceApplication.html">ApiTools::ServiceApplication</a> subclass
-that&#39;s been given to Rack as the Rack endpoint application; it looks at
-the component interfaces supported by the service and routes requests to
-the correct one (or raises a 404).</p>
+that&#39;s been given to <a href="../Rack.html">Rack</a> as the <a
+href="../Rack.html">Rack</a> endpoint application; it looks at the
+component interfaces supported by the service and routes requests to the
+correct one (or raises a 404).</p>
 
 <p>Lots of preprocessing and postprocessing gets done to set up things like
 locale information, enforce content types and so-forth. Request data is
 assembled in a parsed, structured format for passing to service
 implementations and a response object built so that services have a
 consistent way to return results, which can be post-processed further by
-the middleware before returning the data to Rack.</p>
+the middleware before returning the data to <a
+href="../Rack.html">Rack</a>.</p>
 
 <p>The middleware supports structured logging - see <a
 href="Logger.html#method-c-report">ApiTools::Logger.report</a>. Its own log
@@ -404,7 +408,8 @@ according to the <code>RACK_ENV</code> environment variable setting.</p>
 
 <pre><code>if ApiTools::ServiceMiddleware.environment.production?
   # ...do something only if RACK_ENV=&quot;production&quot;
-end</code></pre>
+end
+</code></pre>
             </div>
           
           
@@ -483,7 +488,8 @@ need to check this.</p>
             <div class="description">
               <p>Initialize the middleware instance.</p>
 
-<p><code>app</code> Rack app instance to which calls should be passed.</p>
+<p><code>app</code> <a href="../Rack.html">Rack</a> app instance to which
+calls should be passed.</p>
             </div>
           
           
@@ -620,8 +626,8 @@ need to check this.</p>
             <div class="description">
               <p>Record internally the HTTP host and port during local development via e.g
 <code>rackup</code> or testing with rspec. This is usually not called
-directly except via the Rack startup monkey patch code in
-<code>rack_monkey_patch.rb</code>.</p>
+directly except via the <a href="../Rack.html">Rack</a> startup monkey
+patch code in <code>rack_monkey_patch.rb</code>.</p>
 
 <p>Options hash <code>:Host</code> and <code>:Port</code> entries are
 recorded.</p>
@@ -664,10 +670,11 @@ recorded.</p>
           
           
             <div class="description">
-              <p>Run a Rack request, returning the [status, headers, body-array] data as per
-the Rack protocol requirements.</p>
+              <p>Run a <a href="../Rack.html">Rack</a> request, returning the [status,
+headers, body-array] data as per the <a href="../Rack.html">Rack</a>
+protocol requirements.</p>
 
-<p><code>env</code> Rack environment.</p>
+<p><code>env</code> <a href="../Rack.html">Rack</a> environment.</p>
             </div>
           
           
@@ -828,7 +835,7 @@ list action case.</p>
                 
               </p>
               <div id="method-i-inter_service_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1444</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1448</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -891,7 +898,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1617</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1621</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1033,7 +1040,7 @@ href="ServiceMiddleware.html#method-i-inter_service">inter_service</a>.</p>
                 
               </p>
               <div id="method-i-inter_service_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1471</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1475</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_service_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1217,7 +1224,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1362</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1366</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1270,7 +1277,7 @@ HTTP?</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1383</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1387</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
     <span class="ruby-comment"># static mapping until the service discovery is sorted</span>
@@ -1286,11 +1293,11 @@ HTTP?</p>
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-identifier">resource_url_mapping</span> = {
-      <span class="ruby-string">&quot;programme&quot;</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;http://#{domain}/v#{version}/programmes&quot;</span>,
-      <span class="ruby-string">&quot;calculation&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;http://#{domain}/v#{version}/calculations&quot;</span>,
-      <span class="ruby-string">&quot;membership&quot;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;http://#{domain}/v#{version}/memberships&quot;</span>,
-      <span class="ruby-string">&quot;involvement&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;http://#{domain}/v#{version}/involvements&quot;</span>,
-      <span class="ruby-string">&quot;programmes&quot;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;http://#{domain}/v#{version}/programmes&quot;</span>
+      <span class="ruby-string">&quot;programme&quot;</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;https://#{domain}/v#{version}/programmes&quot;</span>,
+      <span class="ruby-string">&quot;calculation&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;https://#{domain}/v#{version}/calculations&quot;</span>,
+      <span class="ruby-string">&quot;membership&quot;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;https://#{domain}/v#{version}/memberships&quot;</span>,
+      <span class="ruby-string">&quot;involvement&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;https://#{domain}/v#{version}/involvements&quot;</span>,
+      <span class="ruby-string">&quot;programmes&quot;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;https://#{domain}/v#{version}/programmes&quot;</span>
     }
     <span class="ruby-identifier">resource_url_mapping</span>[<span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>]
 

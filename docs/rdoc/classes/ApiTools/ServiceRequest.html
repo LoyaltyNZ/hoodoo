@@ -42,8 +42,8 @@
       
 <p>Instances of the <a href="ServiceRequest.html">ApiTools::ServiceRequest</a>
 class are passed to service interface implementations when requests come in
-via Rack, after basic checks have been passed and a particular interface
-implementation has been identified by endpoint.</p>
+via <a href="../Rack.html">Rack</a>, after basic checks have been passed
+and a particular interface implementation has been identified by endpoint.</p>
 
 <p>Descriptions of default values expected out of accessors herein refer to
 the use case when driven through <a
@@ -193,11 +193,13 @@ requested.</p></td>
 <strong>after</strong> the service endpoint has been accounted for. For
 example, with a service endpoint of “products”, this URI:</p>
 
-<pre><code>http://test.com/products/1234/foo.json</code></pre>
+<pre><code>http://test.com/products/1234/foo.json
+</code></pre>
 
 <p>…would lead to this path component array:</p>
 
-<pre><code>[ &#39;1234&#39;, &#39;foo&#39; ]</code></pre>
+<pre><code>[ &#39;1234&#39;, &#39;foo&#39; ]
+</code></pre>
 
 <p>The first element of the path components array is exposed in the read-only
 <a href="ServiceRequest.html#attribute-i-ident">ident</a> accessor.</p></td>
@@ -218,7 +220,8 @@ so for example this URI:</p>
 
 <p>…would lead to this URI path extension string:</p>
 
-<pre><code>&#39;my.tar.gz&#39;</code></pre></td>
+<pre><code>&#39;my.tar.gz&#39;
+</code></pre></td>
           </tr>
         
       </table>

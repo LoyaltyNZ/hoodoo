@@ -42,9 +42,12 @@
 <p>Define a class that service authors subclass and use to declare the
 component interfaces within the service via a very small DSL.</p>
 
-<p>This class is passed to Rack and treated like an endpoint Rack application,
-though the service middleware in practice does not pass on calls using the
-Rack interface; it uses the custom calls exposed by <a
+<p>This class is passed to <a href="../../../../classes/Rack.html">Rack</a>
+and treated like an endpoint <a
+href="../../../../classes/Rack.html">Rack</a> application, though the
+service middleware in practice does not pass on calls using the <a
+href="../../../../classes/Rack.html">Rack</a> interface; it uses the custom
+calls exposed by <a
 href="../../../../classes/ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>.
 Rack&#39;s involvement between the two is really limited to just passing an
 instance of the service application subclass to the middleware so it knows

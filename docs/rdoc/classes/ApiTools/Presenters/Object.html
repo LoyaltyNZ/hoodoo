@@ -291,8 +291,8 @@ schema.</code></pre>
 href="../Errors.html">ApiTools::Errors</a> instance with zero (valid) or
 more (has validation problems) errors inside.</p>
 
-<p><code>data</code>: Data to check (and check nested properties therein).
-Expected</p>
+<p><code>data</code>: <a href="../Data.html">Data</a> to check (and check
+nested properties therein). Expected</p>
 
 <pre><code>to be nil (unless field is required) or a Hash.</code></pre>
 
@@ -302,8 +302,7 @@ human-readable</p>
 <pre><code>path to this &quot;level&quot;, as an array. Omitted at the top level.
 In :errors =&gt; { :foo =&gt; { ... } }, validation of &quot;:foo&quot; would
 be at path &quot;[ :errors ]&quot;. Validation of the contents of the
-object at &quot;:foo&quot; would be under &quot;[ :errors, :foo ]&quot;.
-</code></pre>
+object at &quot;:foo&quot; would be under &quot;[ :errors, :foo ]&quot;.</code></pre>
             </div>
           
           

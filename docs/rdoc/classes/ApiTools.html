@@ -777,9 +777,10 @@ referring to a specific other Resource.</p>
 <p>Define a class that service authors subclass and use to declare the
 component interfaces within the service via a very small DSL.</p>
 
-<p>This class is passed to Rack and treated like an endpoint Rack application,
-though the service middleware in practice does not pass on calls using the
-Rack interface; it uses the custom calls exposed by <a
+<p>This class is passed to <a href="Rack.html">Rack</a> and treated like an
+endpoint <a href="Rack.html">Rack</a> application, though the service
+middleware in practice does not pass on calls using the <a
+href="Rack.html">Rack</a> interface; it uses the custom calls exposed by <a
 href="ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>.
 Rack&#39;s involvement between the two is really limited to just passing an
 instance of the service application subclass to the middleware so it knows
@@ -834,8 +835,8 @@ that service authors use.</p>
 </dd><dt>Purpose
 <dd>
 <p>A high level description of a client&#39;s request, with all of the “raw”
-Rack request data parsed, verified as far as possible and generally cleaned
-up. Instances of this class are given to <a
+<a href="Rack.html">Rack</a> request data parsed, verified as far as
+possible and generally cleaned up. Instances of this class are given to <a
 href="ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>
 methods for each new request.</p>
 </dd></dl>
@@ -1087,7 +1088,7 @@ thing.</p>
           <tr valign='top'>
             <td class="attr-name">VERSION</td>
             <td>=</td>
-            <td class="attr-value">&#39;0.5.2&#39;</td>
+            <td class="attr-value">&#39;0.5.4&#39;</td>
           </tr>
           
             <tr valign='top'>
