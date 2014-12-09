@@ -245,7 +245,9 @@ module ApiTools
 
         @service_response = ApiTools::ServiceResponse.new
 
-        preprocess()
+        early_response = preprocess()
+        return early_response unless early_response.nil?
+
         process()     unless @service_response.halt_processing?
         postprocess() unless @service_response.halt_processing?
 
@@ -561,9 +563,13 @@ module ApiTools
     # Run request preprocessing - common actions that occur prior to any service
     # instance selection or service-specific processing.
     #
-    # On exit, +@service_response+ may have been updated. Be sure to check
-    # +@service_response.halt_processing?+ to see if processing should abort
-    # and return immediately.
+    # If the method returns +nil+, +@service_response+ may have been updated.
+    # Be sure to check +@service_response.halt_processing?+ to see if
+    # processing should abort and return immediately.
+    #
+    # If the method returns something else, it's a Rack response; an early
+    # and immediate response has been created. Return this (through whatever
+    # call chain is necessary) as the return value for #call.
     #
     def preprocess
 
@@ -598,6 +604,29 @@ module ApiTools
       headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
 
       set_common_response_headers( @service_response )
+
+      # Simplisitic CORS preflight handler.
+      #
+      # http://www.html5rocks.com/en/tutorials/cors/
+      # http://www.html5rocks.com/static/images/cors_server_flowchart.png
+      #
+      if @rack_request.request_method == 'OPTIONS'
+        if headers.has_key?( 'HTTP_ORIGIN' )
+          requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
+          requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
+          allowed           = Set.new( %w( GET POST PATCH DELETE ) )
+
+          if allowed.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
+            set_cors_response_headers( @service_response, headers )
+            @service_response.set_resources( [] )
+
+            return respond_with( @service_response.for_rack() )
+          end
+        end
+
+        return @service_response.add_error( 'platform.method_not_allowed' )
+      end
+
       load_session()
 
       data = {
@@ -623,6 +652,8 @@ module ApiTools
         :inbound,
         data
       )
+
+      return nil
     end
 
     # Process the client's call. The heart of service routing and application
@@ -954,6 +985,46 @@ module ApiTools
     #
     def set_common_response_headers( response )
       response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
+    end
+
+    # Preprocessing stage that sets up CORS response headers in response to a
+    # preflight CORS response, based on given inbound headers.
+    #
+    # http://www.html5rocks.com/en/tutorials/cors/
+    # http://www.html5rocks.com/static/images/cors_server_flowchart.png
+    #
+    # +response+::        ApiTools::ServiceResponse instance to update.
+    #
+    # +inbound_headers+:: Hash of header names (*upper case strings*) and
+    #                     values for inbound request. Used for one or more
+    #                     of the response header values.
+    #
+    def set_cors_response_headers( response, inbound_headers )
+
+      # Repeat inbound origin in outbound header.
+
+      response.add_header(
+        'Access-Control-Allow-Origin',
+        inbound_headers[ 'HTTP_ORIGIN' ]
+      )
+
+      # We don't try and figure out a target resource interface and give back
+      # just the verbs it supports in preflight; too much trouble; just list
+      # all *possible* supported methods.
+
+      response.add_header(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, DELETE'
+      )
+
+      # Only allow X-Session-ID inbound. Don't let any of the custom headers
+      # be exposed to JavaScript (no "Access-Control-Expose-Headers" is set).
+
+      response.add_header(
+        'Access-Control-Allow-Headers',
+        'X-Session-ID'
+      )
+
     end
 
     # Match a URI string against a service endpoint regexp and return broken
