@@ -1581,22 +1581,22 @@ module ApiTools
         @service_response.add_header( name, value, true ) unless ignores.include?( name.downcase )
       end
 
-      # Since "parsed" now has the decoded Hash payload, we use it to see if
-      # there is error data there. If so, add it verbatim into the local errors
-      # collection. Attempt to carry over the remote call's HTTP status code.
-
       if response.code.to_i > 299
         @service_response.http_status_code = response.code
       end
 
       if response.body.nil? || response.body.empty?
-        raise "Empty body received for the HTTP status code of #{response.code}, during an inter-service call to #{remote_uri} "
+        raise "Empty body received for the HTTP status code of #{ response.code }, during an inter-service call to #{ remote_uri }"
       end
 
       # Parse the response (assumed valid JSON else #for_rack would have failed
       # when the originating response object was turned into the Rack response).
 
       parsed = JSON.parse( response.body )
+
+      # Since "parsed" now has the decoded Hash payload, we use it to see if
+      # there is error data there. If so, add it verbatim into the local errors
+      # collection. Attempt to carry over the remote call's HTTP status code.
 
       if ( parsed[ 'kind' ] == 'Errors' )
         parsed[ 'errors' ].each do | error |
