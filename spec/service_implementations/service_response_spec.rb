@@ -177,4 +177,20 @@ describe ApiTools::ServiceResponse do
       expect(body.body).to eq([expected])
     end
   end
+
+  context "#not_found" do
+
+    let(:ident) { 'an_ident' }
+    before { @r.not_found(ident) }
+
+    it 'sets the generic.not_found code' do
+      expect(@r.errors.errors.first['code']).to eq('generic.not_found')
+    end
+    it 'sets the the reference to be the ident passed in' do
+      expect(@r.errors.errors.first['reference']).to eq(ident)
+    end
+    it 'sets halt processing to true' do
+      expect(@r.halt_processing?).to eq(true)
+    end
+  end
 end
