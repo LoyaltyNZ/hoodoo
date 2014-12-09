@@ -252,8 +252,9 @@ module ApiTools
         return respond_with( @service_response.for_rack() )
 
       rescue => exception
-
         begin
+
+          ExceptionReporting.report( exception )
           return respond_with( record_exception( @service_response, exception ) )
 
         rescue
@@ -1717,13 +1718,6 @@ module ApiTools
 
       return local_service_response.body
     end
-
-    # See also:
-    #
-    #   rack_monkey_patch.rb
-    #   service_endpoint.rb
-    #   service_registry_drb_server.rb
-    #   service_registry_drb_configuration.rb
 
     # The following must appear at the end of this class definition.
 

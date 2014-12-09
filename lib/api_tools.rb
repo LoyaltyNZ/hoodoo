@@ -74,6 +74,11 @@ require root+'service_middleware/structured_logger'
 require root+'service_middleware/service_middleware'
 require root+'service_middleware/service_endpoint'
 
+require root+'service_middleware/exception_reporting/exception_reporting'
+require root+'service_middleware/exception_reporting/reporters/base'
+require root+'service_middleware/exception_reporting/reporters/airbrake_reporter'
+require root+'service_middleware/exception_reporting/reporters/raygun_reporter'
+
 require root+'service_implementations/service_session'
 require root+'service_implementations/service_request'
 require root+'service_implementations/service_response'
