@@ -610,21 +610,24 @@ module ApiTools
       # http://www.html5rocks.com/en/tutorials/cors/
       # http://www.html5rocks.com/static/images/cors_server_flowchart.png
       #
-      if @rack_request.request_method == 'OPTIONS'
-        if headers.has_key?( 'HTTP_ORIGIN' )
+      origin = headers[ 'HTTP_ORIGIN' ]
+
+      unless ( origin.nil? )
+        ok = false
+
+        if @rack_request.request_method == 'OPTIONS'
           requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
           requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
           allowed           = Set.new( %w( GET POST PATCH DELETE ) )
 
           if allowed.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
-            set_cors_response_headers( @service_response, headers )
+            set_cors_preflight_response_headers( @service_response, origin )
             @service_response.set_resources( [] )
-
             return respond_with( @service_response.for_rack() )
           end
+        else
+          set_cors_normal_response_headers( @service_response, origin )
         end
-
-        return @service_response.add_error( 'platform.method_not_allowed' )
       end
 
       load_session()
@@ -988,25 +991,30 @@ module ApiTools
     end
 
     # Preprocessing stage that sets up CORS response headers in response to a
+    # normal (or preflight) CORS response.
+    #
+    # http://www.html5rocks.com/en/tutorials/cors/
+    # http://www.html5rocks.com/static/images/cors_server_flowchart.png
+    #
+    # +response+:: ApiTools::ServiceResponse instance to update.
+    # +origin+::   Value of inbound request's "Origin" HTTP header.
+    #
+    def set_cors_normal_response_headers( response, origin )
+      response.add_header( 'Access-Control-Allow-Origin', origin )
+    end
+
+    # Preprocessing stage that sets up CORS response headers in response to a
     # preflight CORS response, based on given inbound headers.
     #
     # http://www.html5rocks.com/en/tutorials/cors/
     # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
-    # +response+::        ApiTools::ServiceResponse instance to update.
+    # +response+:: ApiTools::ServiceResponse instance to update.
+    # +origin+::   Value of inbound request's "Origin" HTTP header.
     #
-    # +inbound_headers+:: Hash of header names (*upper case strings*) and
-    #                     values for inbound request. Used for one or more
-    #                     of the response header values.
-    #
-    def set_cors_response_headers( response, inbound_headers )
+    def set_cors_preflight_response_headers( response, origin )
 
-      # Repeat inbound origin in outbound header.
-
-      response.add_header(
-        'Access-Control-Allow-Origin',
-        inbound_headers[ 'HTTP_ORIGIN' ]
-      )
+      set_cors_normal_response_headers( response, origin )
 
       # We don't try and figure out a target resource interface and give back
       # just the verbs it supports in preflight; too much trouble; just list
