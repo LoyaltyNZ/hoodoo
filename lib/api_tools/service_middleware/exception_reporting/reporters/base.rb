@@ -7,6 +7,8 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
+require 'singleton'
+
 module ApiTools
   class ServiceMiddleware
     class ExceptionReporting
