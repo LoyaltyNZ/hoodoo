@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'raygun4ruby'
 
-# This doesn't test the Airbrake gem / configuration itself - Airbrake has its
-# own test suite - just check that the appropriate Airbrake method gets called.
+# This doesn't test the Airbrake gem / configuration itself - just check that
+# the appropriate Airbrake method gets called.
 
 describe ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter do
 

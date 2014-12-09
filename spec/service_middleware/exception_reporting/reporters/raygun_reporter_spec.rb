@@ -1,8 +1,8 @@
 require 'spec_helper'
 require 'airbrake'
 
-# This doesn't test the Raygun gem / configuration itself - Raygun has its
-# own test suite - just check that the appropriate Raygun method gets called.
+# This doesn't test the Raygun gem / configuration itself - just check that
+# the appropriate Raygun method gets called.
 
 describe ApiTools::ServiceMiddleware::ExceptionReporting::RaygunReporter do
 
