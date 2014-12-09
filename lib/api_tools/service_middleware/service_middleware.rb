@@ -238,8 +238,8 @@ module ApiTools
 
         # Don't spew debug logs in non-test-like environments.
         #
-        env = ApiTools::ServiceMiddleware.environment()
-        ApiTools::Logger.level = :info unless env.test? || env.development?
+        environment = ApiTools::ServiceMiddleware.environment()
+        ApiTools::Logger.level = :info unless environment.test? || environment.development?
 
         debug_log()
 

@@ -51,8 +51,8 @@ module ApiTools
         #         exception reports made in the context of Rack request
         #         handling.
         #
-        def report( e, env = {} )
-          Raygun.track_exception( e, :rack_env => env )
+        def report( e, env = nil )
+          Raygun.track_exception( e, env )
         end
       end
 

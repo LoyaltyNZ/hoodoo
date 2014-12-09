@@ -18,7 +18,7 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter do
   it 'calls Airbrake' do
     ApiTools::ServiceMiddleware::ExceptionReporting.add( described_class )
     ex = RuntimeError.new( 'A' )
-    expect( Airbrake ).to receive( :notify_or_ignore ).once.with( ex, {:parameters => {}} )
+    expect( Airbrake ).to receive( :notify_or_ignore ).once.with( ex, { :rack_env => nil } )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex )
   end
 end

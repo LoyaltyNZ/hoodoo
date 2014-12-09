@@ -73,7 +73,7 @@ module ApiTools
         #         exception reports made in the context of Rack request
         #         handling.
         #
-        def report( e, env = {} )
+        def report( e, env = nil )
           ApiTools::Logger.debug( 'Subclasses must implement #report' )
         end
       end

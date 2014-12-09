@@ -70,13 +70,16 @@ module ApiTools
       #
       # See also ::add.
       #
-      def self.report( exception, rack_env )
+      def self.report( exception, rack_env = nil )
         @@exception_reporters.each do | reporter |
+
           begin
             @@thread_group.add( Thread.new do
               reporter.report( exception, rack_env )
             end )
+
           rescue => reporter_exception
+
             # Ignore reporter exceptions, apart from logging them.
             begin
               ApiTools::Logger.debug(
@@ -84,9 +87,11 @@ module ApiTools
                 "Exception reporter class #{ reporter.class.name } raised exception during reporting",
                 reporter_exception.to_s
               )
+
             rescue
               # Ignore debug log exceptions. Can't do anything about them.
             end
+
           end
         end
       end

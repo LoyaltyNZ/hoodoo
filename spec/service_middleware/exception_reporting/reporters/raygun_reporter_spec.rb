@@ -17,7 +17,7 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting::RaygunReporter do
 
   it 'calls Raygun' do
     ex = RuntimeError.new( 'A' )
-    expect( Raygun ).to receive( :track_exception ).once.with( ex, {:rack_env => {}} )
+    expect( Raygun ).to receive( :track_exception ).once.with( ex, nil )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex )
   end
 end

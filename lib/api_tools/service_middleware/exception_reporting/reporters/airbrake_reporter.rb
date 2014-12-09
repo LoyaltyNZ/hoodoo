@@ -49,10 +49,11 @@ module ApiTools
         #
         # +env+:: Optional Rack environment hash for the inbound request, for
         #         exception reports made in the context of Rack request
-        #         handling.
+        #         handling. In the case of Airbrake, the call may just hang
+        #         unless a Rack environment is provided.
         #
-        def report( e, env = {} )
-          Airbrake.notify_or_ignore( e, :parameters => env )
+        def report( e, env = nil )
+          Airbrake.notify_or_ignore( e, :rack_env => env )
         end
       end
 
