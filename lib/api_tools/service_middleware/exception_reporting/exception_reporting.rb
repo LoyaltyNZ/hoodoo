@@ -73,26 +73,29 @@ module ApiTools
       def self.report( exception, rack_env = nil )
         @@exception_reporters.each do | reporter |
 
-          begin
-            @@thread_group.add( Thread.new do
-              reporter.report( exception, rack_env )
-            end )
-
-          rescue => reporter_exception
-
-            # Ignore reporter exceptions, apart from logging them.
+          @@thread_group.add( Thread.new do
             begin
-              ApiTools::Logger.debug(
-                'ApiTools::ServiceMiddleware#call_exception_reporters_with',
-                "Exception reporter class #{ reporter.class.name } raised exception during reporting",
-                reporter_exception.to_s
-              )
+              reporter.report( exception, rack_env )
 
-            rescue
-              # Ignore debug log exceptions. Can't do anything about them.
+            rescue => reporter_exception
+              # Ignore reporter exceptions, apart from logging them.
+
+              begin
+                Thread.exclusive do
+                  ApiTools::Logger.debug(
+                    'ApiTools::ServiceMiddleware#call_exception_reporters_with',
+                    "Exception reporter class #{ reporter.class.name } raised exception during reporting",
+                    reporter_exception.to_s
+                  )
+                end
+
+              rescue
+                # Ignore debug log exceptions. Can't do anything about them.
+
+              end
             end
+          end ) # ")" closes "@@thread_group.add("
 
-          end
         end
       end
 
