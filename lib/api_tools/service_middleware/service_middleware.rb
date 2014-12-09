@@ -254,7 +254,7 @@ module ApiTools
       rescue => exception
         begin
 
-          ExceptionReporting.report( exception )
+          ExceptionReporting.report( exception, env )
           return respond_with( record_exception( @service_response, exception ) )
 
         rescue
