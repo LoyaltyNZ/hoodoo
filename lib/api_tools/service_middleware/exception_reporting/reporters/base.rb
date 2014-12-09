@@ -31,7 +31,7 @@ module ApiTools
       #
       class Base
 
-        include Singleton
+        include ::Singleton
 
         # Subclasses implement this method. The middleware creates the singleton
         # instance of the subclass, then calls your implementation of the method
