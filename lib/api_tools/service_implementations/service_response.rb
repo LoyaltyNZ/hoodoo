@@ -199,6 +199,20 @@ module ApiTools
       @errors.merge!( errors_object )
     end
 
+    # Set the standard not found error message (generic.not_found), to
+    # be used durning a 'show' call when the requested resource does not
+    # exist.
+    #
+    # +ident+::  The identifier of the resource which was not found
+    #
+    # Example:
+    #
+    #      return response.not_found( ident ) if resource.nil?
+    #
+    def not_found( ident )
+      @errors.add_error( 'generic.not_found', :reference => { :ident => ident } )
+    end
+
     # Convert the internal response data into something that Rack expects.
     # The return value of this method can be passed back to Rack from Rack
     # middleware or applications. Usually, this is only called directly by
