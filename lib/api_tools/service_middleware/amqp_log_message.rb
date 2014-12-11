@@ -27,6 +27,9 @@ module ApiTools
       #
       class AMQPLogMessage < ::AMQEndpoint::Message
 
+        TYPE = 'api_tools_service_middleware_amqp_log_message'
+        ::AMQEndpoint::Message.register_type( TYPE, self )
+
         # A UUID to assign to this log message. See ApiTools::UUID::generate.
         #
         attr_accessor :id
@@ -68,14 +71,13 @@ module ApiTools
         attr_accessor :outlet_id
 
         # Create an instance with options keyed on the attributes defined for
-        # the class. In addition, option +:type+ can be used to override the
-        # default queue packet type of 'log'.
+        # the class.
         #
         def initialize(options = {})
           update( options )
           super( options )
 
-          @type = options[ :type ] || 'log'
+          @type = AMQPLogMessage::TYPE
         end
 
         # Seralize this instance. See the AMQEndpoint gem and

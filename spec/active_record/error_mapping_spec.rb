@@ -51,7 +51,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
   it 'auto-validates and maps errors correctly' do
 
     m = RSpecModelErrorMappingTest.new( :uuid => 'not a valid UUID' )
-    m.add_errors_to( @errors )
+    expect( m.adds_errors_to?( @errors ) ).to eq( true )
 
     expect( @errors.errors ).to eq( [
       {
@@ -127,8 +127,9 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'does not auto-validate if so instructed' do
     m = RSpecModelErrorMappingTest.new
-    m.add_errors_to( @errors, false )
-    expect(m).to_not receive(:valid?)
+
+    expect( m.adds_errors_to?( @errors, false ) ).to eq( false )
+    expect( m ).to_not receive( :valid? )
 
     expect( @errors.errors ).to eq( [] )
   end
@@ -147,7 +148,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @errors )
+    m.adds_errors_to?( @errors )
     expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_string",
@@ -179,14 +180,14 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
     # So long as there's no database support for arrays, ActiveRecord
     # won't add an error itself and the test will fail. So check first,
-    # add our own error and call add_errors_to with "false" so that it
-    # doesn't re-call "valid?", which doesn't add to any existing
+    # add our own error and call adds_errors_to? with "false" so that
+    # it doesn't re-call "valid?", which doesn't add to any existing
     # errors as you might expect - instead it clears them. Thanks for
     # that, ActiveRecord.
 
     m.valid?
     m.errors.add( :array, 'custom message' ) if ( m.errors.messages.empty? )
-    m.add_errors_to( @errors, false )
+    m.adds_errors_to?( @errors, false )
 
     expect( @errors.errors ).to eq( [
       {
@@ -212,7 +213,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @errors )
+    m.adds_errors_to?( @errors )
     expect( @errors.errors ).to eq( [] )
 
     begin
@@ -223,7 +224,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
     end
 
     n = m.dup
-    n.add_errors_to( @errors )
+    n.adds_errors_to?( @errors )
     expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_duplication",
@@ -257,7 +258,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       :array    => [ 'hello' ]
     } )
 
-    m.add_errors_to( @errors )
+    m.adds_errors_to?( @errors )
 
     expect( @errors.errors ).to eq( [
       {
@@ -271,5 +272,33 @@ describe ApiTools::ActiveRecord::ErrorMapping do
         "reference" => "date"
       }
     ] )
+  end
+
+  it 'adds nothing if the model is valid' do
+    m = RSpecModelErrorMappingTest.new( {
+      :uuid      => ApiTools::UUID.generate(),
+      :boolean  => true,
+      :date     => Time.now,
+      :datetime => Time.now,
+      :decimal  => 2.3,
+      :float    => 2.3,
+      :integer  => 42,
+      :string   => "hello",
+      :text     => "hello",
+      :time     => Time.now,
+      :array    => [ 'hello' ]
+    } )
+
+    expect( m.adds_errors_to?( @errors ) ).to eq( false )
+    expect( @errors.errors ).to eq( [] )
+
+    expect {
+      begin
+        m.save!
+      rescue TypeError
+        m.array = 'This version of SQLite does not support arrays'
+        m.save!
+      end
+    }.to_not raise_error
   end
 end

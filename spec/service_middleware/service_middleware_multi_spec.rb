@@ -1,5 +1,5 @@
 # service_middleware_spec.rb is too large and this set of tests is weird
-# anyway - we want to test inter-service remote calls, so we start multiple
+# anyway - we want to test inter-resource remote calls, so we start multiple
 # HTTP server instances in threads and have them talk to each other.
 
 require 'spec_helper'
@@ -153,6 +153,7 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
       }
     )
 
+    context.response.add_errors( result.platform_errors )
     context.response.body = { 'show' => result }
   end
 
@@ -510,7 +511,7 @@ describe ApiTools::ServiceMiddleware do
 
   #############################################################################
 
-  context 'remote inter-service calls' do
+  context 'remote inter-resource calls' do
     def app
       Rack::Builder.new do
         use ApiTools::ServiceMiddleware
@@ -538,7 +539,7 @@ describe ApiTools::ServiceMiddleware do
 
       # Outer calls wrap arrays in object with "_data" key for JSON (since we
       # don't do JSON5 and only JSON5 allows outermost / top-level arrays), but
-      # the inter-service calls unpack that for us, so we should see the outer
+      # the inter-resource calls unpack that for us, so we should see the outer
       # service's "_data" array nesting directly the inner service's array if
       # the middleware dereferenced it correctly for us.
 
@@ -588,7 +589,7 @@ describe ApiTools::ServiceMiddleware do
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [ 'one,two' ],
-          'uri_path_extension'  => '', # This is the *inner* inter-service call's state and no filename extensions are used internally
+          'uri_path_extension'  => '', # This is the *inner* inter-resource call's state and no filename extensions are used internally
           'list_offset'         => 0,
           'list_limit'          => 50,
           'list_sort_key'       => 'created_at',
