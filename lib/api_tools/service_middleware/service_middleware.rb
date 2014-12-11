@@ -1735,10 +1735,10 @@ module ApiTools
         # This isn't an array, it's an AugmentedHash describing errors. Turn
         # this into a formal errors collection.
 
-        errors_from_other_service = ApiTools::Errors.new()
+        errors_from_other_resource = ApiTools::Errors.new()
 
         parsed[ 'errors' ].each do | error |
-          errors_from_other_service.add_precompiled_error(
+          errors_from_other_resource.add_precompiled_error(
             error[ 'code'      ],
             error[ 'message'   ],
             error[ 'reference' ],
@@ -1747,7 +1747,7 @@ module ApiTools
         end
 
         parsed.set_platform_errors(
-          translate_errors_from_other_service( errors_from_other_service )
+          translate_errors_from_other_resource( errors_from_other_resource )
         )
       end
 
@@ -1870,7 +1870,7 @@ module ApiTools
       end
 
       data.set_platform_errors(
-        translate_errors_from_other_service( local_service_response.errors )
+        translate_errors_from_other_resource( local_service_response.errors )
       )
 
       return data
@@ -1878,9 +1878,18 @@ module ApiTools
 
     # Take an ApiTools::Errors instance constructed from, or obtained via
     # a call to another service (inter-resource local or remote call) and
-    # translate the contents to make sense when those
-
-    def translate_errors_from_other_service( errors )
+    # translate the contents to make sense when those errors are reported
+    # in the context of an outer resource's response to a request.
+    #
+    # For example, if one resource tries to look up a reference to another
+    # as part of a +show+ action, but that _referred_ resource is not found,
+    # internally that would be reported via HTTP 404. This would confuse
+    # callers if returned verbatim as it implies the target, outermost
+    # resource wasn't found, even though it was. Instead, the 404 is turned
+    # into a 422 with code/message/reference data describing the equivalent
+    # "inner reference not found" condition.
+    #
+    def translate_errors_from_other_resource( errors )
       # TODO
       return errors
     end
