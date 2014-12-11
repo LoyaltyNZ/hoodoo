@@ -1663,7 +1663,7 @@ module ApiTools
         # Call via Alchemy.
 
         unless defined?( @@alchemy )
-          raise "Inter-service call requested on queue, but no Alchemy endpoint was sent in the Rack environment"
+          raise 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment'
         end
 
         alchemy_options[ :body    ] = body_data

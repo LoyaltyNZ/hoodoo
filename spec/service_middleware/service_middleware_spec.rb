@@ -1233,7 +1233,7 @@ end
 
 
 ###############################################################################
-# Inter-service local calls
+# Inter-resource local calls
 ###############################################################################
 
 # This gets inter-resource called from ...BImplementation. It expects search
