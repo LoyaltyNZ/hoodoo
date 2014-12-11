@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:LoyaltyNZ/amq-endpoint.git
-  revision: 3914529af1ca833072d9a3be31829df788b23d70
+  revision: 44aa02fc09ef282078d642163af72031559b2e65
   branch: master
   specs:
-    amq-endpoint (0.1.0)
+    amq-endpoint (0.3.0)
       bunny (= 1.5.1)
       msgpack (= 0.5.9)
       uuidtools (= 2.1.5)

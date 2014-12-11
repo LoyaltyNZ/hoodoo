@@ -6,7 +6,7 @@
 #
 #           For local development, the service middleware needs to know
 #           where other resource endpoints are in terms of HTTP host and
-#           port, so that remote inter-service calls can work without
+#           port, so that remote inter-resource calls can work without
 #           up-front static configuration of service host/port data. To
 #           have to manage a fixed list of local development ports in
 #           the face of arbitrary resource endpoint divisions would be a

@@ -234,7 +234,8 @@ module ApiTools
         # Rack environment. Send this to the structured logger so it can do
         # queue-based structured logging via the provided service.
         #
-        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = env[ 'rack.alchemy' ]
+        @@alchemy = env[ 'rack.alchemy' ]
+        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = @@alchemy
 
         # Don't spew debug logs in non-test-like environments.
         #
@@ -575,7 +576,7 @@ module ApiTools
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-service
+      # Additions here may require corresponding additions to the inter-resource
       # local call code.
       # =======================================================================
 
@@ -667,7 +668,7 @@ module ApiTools
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-service
+      # Additions here may require corresponding additions to the inter-resource
       # local call code.
       # =======================================================================
 
@@ -886,7 +887,7 @@ module ApiTools
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-service
+      # Additions here may require corresponding additions to the inter-resource
       # local call code.
       # =======================================================================
 
@@ -1462,40 +1463,68 @@ module ApiTools
     # +version+::  Version of interface required as an Integer. Optional -
     #              default is 1.
     #
-    # Returns a URI as a string if an endpoint is found, else +nil+.
+    # Returns:
+    #
+    # * +nil+ if the endpoint is not found.
+    #
+    # * URI as a string if an endpoint is found and we are _not_ running on an
+    #   AMQP/Alchemy based architecture (see ::on_queue?).
+    #
+    # * If an endpoint is found and we _are_ running on an AMQP/Alchemy based
+    #   architecture (see ::on_queue?), this is a Hash with keys +:queue+
+    #   (value is the AMQP queue name) and +path+ (the equivalent URI path that
+    #   would be used, were this an HTTP request).
     #
     def remote_service_for( resource, version = 1 )
-      if self.class.on_queue?
-        # static mapping until the service discovery is sorted
-        #
-        if self.class.environment.edge?
-          domain = "api.loyaltyedge.co.nz"
-        elsif self.class.environment.production?
-          domain = "onloyaltynz.com"
-        elsif self.class.environment.development?
-          domain = "localhost"
-        else
-          return nil
-        end
 
-        resource_url_mapping = {
-          "programme"   => "https://#{domain}/v#{version}/programmes",
-          "calculation" => "https://#{domain}/v#{version}/calculations",
-          "membership"  => "https://#{domain}/v#{version}/memberships",
-          "involvement" => "https://#{domain}/v#{version}/involvements",
-          "programmes"  => "https://#{domain}/v#{version}/programmes"
-        }
-        resource_url_mapping[resource.to_s.downcase]
+      if self.class.on_queue?
+
+        v = "/v#{ version }/"
+
+        # Static mapping until service discovery is sorted. Yes, this Hash gets
+        # computed at run-time for every call. It's a temporary stopgap.
+        #
+        return {
+
+          'Health'      => { :queue => 'service.utility',   :path => v + 'health'       },
+          'Version'     => { :queue => 'service.utility',   :path => v + 'version'      },
+
+          'Log'         => { :queue => 'service.logging',   :path => v + 'logs'         },
+          'Errors'      => { :queue => 'service.logging',   :path => v + 'errors'       },
+          'Statistic'   => { :queue => 'service.logging',   :path => v + 'statistics'   },
+
+          'Account'     => { :queue => 'service.member',    :path => v + 'accounts'     },
+          'Member'      => { :queue => 'service.member',    :path => v + 'members'      },
+          'Membership'  => { :queue => 'service.member',    :path => v + 'memberships'  },
+          'Token'       => { :queue => 'service.member',    :path => v + 'tokens'       },
+
+          'Participant' => { :queue => 'service.programme', :path => v + 'participants' },
+          'Outlet'      => { :queue => 'service.programme', :path => v + 'outlets'      },
+          'Involvement' => { :queue => 'service.programme', :path => v + 'involvements' },
+          'Programme'   => { :queue => 'service.programme', :path => v + 'programmes'   },
+
+          'Balance'     => { :queue => 'service.financial', :path => v + 'balances'     },
+          'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
+          'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
+          'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
+          'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
+
+          'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
+
+        }[ resource.to_s ]
 
       else
+
         begin
           @drb_service.find( resource, version )
         rescue
           nil
         end
+
       end
     end
-    # Perform an inter-service call. This shouldn't be called directly; call
+
+    # Perform an inter-resource call. This shouldn't be called directly; call
     # via the ApiTools::ServiceMiddleware::ServiceEndpoint subclass specialised
     # methods instead, which makes sure it sets up the required parameters in
     # correct combinations. Undefined results will arise for incorrect calls.
@@ -1506,9 +1535,10 @@ module ApiTools
     #
     # +local+::       A +@services+ entry (see implementation of #initialize)
     #                 describing the service to call if local, else +nil+ or
-    #                 absent.
-    # +remote+::      A URI as a String for a remote service endpoint, else
-    #                 +nil+ or absent.
+    #                 absent for remote calls.
+    # +remote+::      A return value of #remote_service_for describing the
+    #                 location of a service for remote calls, else +nil+ or
+    #                 absent for local calls.
     # +resource+::    The String or Symbol resource name, e.g. "Product".
     # +version+::     The Integer endpoint API version, e.g. 2.
     # +http_method+:: HTTP method as a String, e.g. "+GET+", "+DELETE+".
@@ -1519,61 +1549,75 @@ module ApiTools
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # @service_response is updated on exit. If this says "halt processing",
-    # errors were generated. Ignore the function return value. Otherwise,
-    # returns a Has equivalent of the JSON resource representation in the
-    # non-list-action cases, else an array of zero or more JSON resource
-    # representations in the list action case.
+    # An ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray or
+    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash is returned
+    # from these methods; @service_response or the wider processing context
+    # is not automatically modified. Callers MUST use the methods provided by
+    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase to detect
+    # and handle error conditions, unless for some reason they wish to ignore
+    # resource-to-resource call errors.
     #
-    def inter_service( options )
+    def inter_resource( options )
 
       remote = options[ :local ].nil?
 
-      debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call requested with options #{ options }" )
+      debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call requested with options #{ options }" )
 
       if ( remote )
-        result = inter_service_remote( options )
+        result = inter_resource_remote( options )
       else
-        result = inter_service_local( options )
+        result = inter_resource_local( options )
       end
 
-      if @service_response.halt_processing?
-        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call halted processing with errors #{ @service_response.errors.errors }" )
+      if result.platform_errors.has_errors?
+        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call halted processing with errors #{ result.platform_errors }" )
       else
-        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-service call succeeded with result '#{ result }'" )
+        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call succeeded with result '#{ result }'" )
       end
 
       return result
     end
 
-    # Make a remote (HTTP) inter-service call. Slow.
+    # Make a remote (HTTP) inter-resource call. Slow.
     #
-    # +options+:: See #inter_service.
+    # +options+:: See #inter_resource.
     #
-    # Returns:: See #inter_service.
+    # Returns:: See #inter_resource.
     #
-    def inter_service_remote( options )
-      remote_uri  = options[ :remote      ]
+    def inter_resource_remote( options )
+      remote_info = options[ :remote      ]
       http_method = options[ :http_method ]
       ident       = options[ :ident       ]
       body_hash   = options[ :body_hash   ]
       query_hash  = options[ :query_hash  ]
 
+      on_queue = self.class.on_queue?
+
       # Add a 404 error to the response (via a Proc for internal reuse).
 
       add_404 = Proc.new {
-        @service_response.add_error(
+        hash = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
+        hash.platform_errors.add_error(
           'platform.not_found',
           'reference' => { :entity_name => "v#{ options[ :version ] } of #{ options[ :resource ] } interface endpoint" }
         )
+        hash
       }
 
       # No endpoint found? Yikes!
 
-      if ( remote_uri.nil? )
+      if ( remote_info.nil? )
         return add_404.call()
 
+      elsif on_queue
+        alchemy_options = {
+          :session_id => @session_id,
+          :host       => @rack_request.host,
+          :port       => @rack_request.port
+        }
+
       else
+        remote_uri = remote_info
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
@@ -1597,7 +1641,11 @@ module ApiTools
       end
 
       unless query_hash.nil? || query_hash.empty?
-        remote_uri << '?' << URI.encode_www_form( query_hash )
+        if on_queue
+          alchemy_options[ :query ] = query_hash
+        else
+          remote_uri << '?' << URI.encode_www_form( query_hash )
+        end
       end
 
       body_data = body_hash.nil? ? '' : body_hash.to_json
@@ -1608,102 +1656,111 @@ module ApiTools
         'X-Session-ID'     => @session_id     || '+'
       }
 
-      # Drive the HTTP library using the data assembled above
+      # Use HTTP or Alchemy for the actual communications.
 
-      remote_uri = URI.parse( remote_uri )
-      http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
+      if on_queue
 
-      if remote_uri.scheme == "https"
-        http.use_ssl = true
-        # This is not so cool but want something going.
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
+        # Call via Alchemy.
 
-      request_class = {
-        'POST'   => Net::HTTP::Post,
-        'PATCH'  => Net::HTTP::Patch,
-        'DELETE' => Net::HTTP::Delete
-      }[ http_method ] || Net::HTTP::Get
+        unless defined?( @@alchemy )
+          raise "Inter-service call requested on queue, but no Alchemy endpoint was sent in the Rack environment"
+        end
 
-      request      = request_class.new( remote_uri.request_uri() )
-      request.body = body_data unless body_data.empty?
+        alchemy_options[ :body    ] = body_data
+        alchemy_options[ :headers ] = headers
 
-      request.initialize_http_header( headers )
+        response = @@alchemy.http_request(
+          remote_info[ :queue ],
+          http_method,
+          remote_info[ :path ],
+          alchemy_options
+        )
 
-      begin
-        response = http.request( request )
-      rescue Errno::ECONNREFUSED => e
-        return add_404.call()
-      end
+      else
 
-      # Deal with headers sent in the call.
+        # Drive Net::HTTP directly.
 
-      ignores = Set.new( [
+        remote_uri = URI.parse( remote_uri )
+        http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
 
-        # These are standard and automatic anyway
+        if remote_uri.scheme == "https"
+          http.use_ssl = true
+          # TODO: This is not so cool but want something going.
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
 
-        'content-type',
-        'content-language',
-        'x-interaction-id',
-        'x-session-id',
+        request_class = {
+          'POST'   => Net::HTTP::Post,
+          'PATCH'  => Net::HTTP::Patch,
+          'DELETE' => Net::HTTP::Delete
+        }[ http_method ] || Net::HTTP::Get
 
-        # These can be set by HTTP operations and we're not interested in them
+        request      = request_class.new( remote_uri.request_uri() )
+        request.body = body_data unless body_data.empty?
 
-        'content-length',
-        'server',
-        'date',
-        'connection'
+        request.initialize_http_header( headers )
 
-      ] )
+        begin
+          response = http.request( request )
+        rescue Errno::ECONNREFUSED => e
+          return add_404.call()
+        end
 
-      response.each_header do | name, value |
-        @service_response.add_header( name, value, true ) unless ignores.include?( name.downcase )
-      end
-
-      if response.code.to_i > 299
-        @service_response.http_status_code = response.code
-      end
-
-      if response.body.nil? || response.body.empty?
-        raise "Empty body received for the HTTP status code of #{ response.code }, during an inter-service call to #{ remote_uri }"
       end
 
       # Parse the response (assumed valid JSON else #for_rack would have failed
       # when the originating response object was turned into the Rack response).
 
-      parsed = JSON.parse( response.body )
+      parsed = JSON.parse(
+        response.body,
+        :object_class => ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash,
+        :array_class  => ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray
+      )
 
-      # Since "parsed" now has the decoded Hash payload, we use it to see if
-      # there is error data there. If so, add it verbatim into the local errors
-      # collection. Attempt to carry over the remote call's HTTP status code.
+      # Just in case someone changes JSON parsers under us and the replacement
+      # doesn't support the options used above...
 
-      if ( parsed[ 'kind' ] == 'Errors' )
+      unless parsed.is_a?( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash )
+        raise "ApiTools::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
+      end
+
+      # If the parsed data wrapped an array, extract just the array part, else
+      # the hash part.
+
+      if ( parsed[ '_data' ].is_a?( ::Array ) )
+        parsed = parsed[ '_data' ]
+
+      elsif ( parsed[ 'kind' ] == 'Errors' )
+
+        # This isn't an array, it's an AugmentedHash describing errors. Turn
+        # this into a formal errors collection.
+
+        errors_from_other_resource = ApiTools::Errors.new()
+
         parsed[ 'errors' ].each do | error |
-          @service_response.add_precompiled_error(
+          errors_from_other_resource.add_precompiled_error(
             error[ 'code'      ],
             error[ 'message'   ],
             error[ 'reference' ],
             response.code
           )
         end
-      end
 
-      # If the parsed data wrapped an array, extract just the array part.
-
-      if ( parsed[ '_data' ].is_a?( ::Array ) )
-        parsed = parsed[ '_data' ]
+        parsed.set_platform_errors(
+          translate_errors_from_other_resource( errors_from_other_resource )
+        )
       end
 
       return parsed
     end
 
-    # Make a local (non-HTTP local Ruby method call) inter-service call. Fast.
+    # Make a local (non-HTTP local Ruby method call) inter-resource call. Fast.
     #
-    # +options+:: See #inter_service.
+    # +options+:: See #inter_resource.
     #
-    # Returns:: See #inter_service.
+    # Returns:: See #inter_resource.
     #
-    def inter_service_local( options )
+    def inter_resource_local( options )
       service        = options[ :local       ]
       http_method    = options[ :http_method ]
       ident          = options[ :ident       ]
@@ -1733,10 +1790,16 @@ module ApiTools
         local_service_response
       )
 
-      if local_service_response.halt_processing?
-        @service_response.errors.merge!( local_service_response.errors )
-        return nil
-      end
+      # Add errors from the local service response into an augmented hash
+      # for responding early (via a Proc for internal reuse later).
+
+      add_local_errors = Proc.new {
+        hash = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
+        hash.platform_errors.merge!( local_service_response.errors )
+        hash
+      }
+
+      return add_local_errors.call() if local_service_response.halt_processing?
 
       local_service_request                     = new_service_request_for( interface )
       local_service_request.uri_path_components = upc
@@ -1745,7 +1808,7 @@ module ApiTools
       unless query_hash.nil?
         query_hash = ApiTools::Utilities.stringify( query_hash )
 
-        # This is for inter-service local calls where a service author
+        # This is for inter-resource local calls where a service author
         # specifies ":_embed => 'foo'" accidentally, forgetting that it
         # should be a single element array. It's such a common mistake
         # that we tolerate it here. Same for "_reference".
@@ -1779,15 +1842,12 @@ module ApiTools
                                 local_service_response )
       end
 
-      if local_service_response.halt_processing?
-        @service_response.errors.merge!( local_service_response.errors )
-        return nil
-      end
+      return add_local_errors.call() if local_service_response.halt_processing?
 
       # Dispatch the call, merge any errors that might have come back and
       # return the body of the called service's response.
 
-      debug_log( "Dispatching local inter-service call with parsed body data: '#{ local_service_request.body }'" )
+      debug_log( "Dispatching local inter-resource call with parsed body data: '#{ local_service_request.body }'" )
 
       context = ApiTools::ServiceContext.new(
         @service_session,
@@ -1798,9 +1858,40 @@ module ApiTools
 
       dispatch_to( interface, implementation, action, context )
 
-      @service_response.errors.merge!( local_service_response.errors )
+      # Extract the returned data and "rephrase" it as an augmented
+      # array or hash carrying error data if necessary.
 
-      return local_service_response.body
+      data = local_service_response.body
+
+      if data.is_a? Array
+        data = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new( data )
+      else
+        data = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash[ data ]
+      end
+
+      data.set_platform_errors(
+        translate_errors_from_other_resource( local_service_response.errors )
+      )
+
+      return data
+    end
+
+    # Take an ApiTools::Errors instance constructed from, or obtained via
+    # a call to another service (inter-resource local or remote call) and
+    # translate the contents to make sense when those errors are reported
+    # in the context of an outer resource's response to a request.
+    #
+    # For example, if one resource tries to look up a reference to another
+    # as part of a +show+ action, but that _referred_ resource is not found,
+    # internally that would be reported via HTTP 404. This would confuse
+    # callers if returned verbatim as it implies the target, outermost
+    # resource wasn't found, even though it was. Instead, the 404 is turned
+    # into a 422 with code/message/reference data describing the equivalent
+    # "inner reference not found" condition.
+    #
+    def translate_errors_from_other_resource( errors )
+      # TODO
+      return errors
     end
 
     # The following must appear at the end of this class definition.

@@ -1236,14 +1236,14 @@ end
 # Inter-service local calls
 ###############################################################################
 
-# This gets inter-service called from ...BImplementation. It expects search
+# This gets inter-resource called from ...BImplementation. It expects search
 # data containing an 'offset' key and string/integer value. If > 0, an error
 # is triggered quoting the offset value in the reference data; else a hook
 # method is called that we can check with RSpec.
 #
 # It contains one public action, to test public-to-public calling from ...B.
 
-class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsAImplementation < ApiTools::ServiceImplementation
 
   def list( context )
     search_offset = ( ( context.request.list.search_data || {} )[ 'offset' ] || '0' ).to_i
@@ -1292,9 +1292,9 @@ class RSpecTestInterServiceCallsAImplementation < ApiTools::ServiceImplementatio
   end
 end
 
-class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
-  interface :RSpecTestInterServiceCallsAResource do
-    endpoint :rspec_test_inter_service_calls_a, RSpecTestInterServiceCallsAImplementation
+class RSpecTestInterResourceCallsAInterface < ApiTools::ServiceInterface
+  interface :RSpecTestInterResourceCallsAResource do
+    endpoint :rspec_test_inter_resource_calls_a, RSpecTestInterResourceCallsAImplementation
     public_actions :delete
 
     embeds :foo, :bar
@@ -1304,7 +1304,7 @@ class RSpecTestInterServiceCallsAInterface < ApiTools::ServiceInterface
     end
 
     # Most of the to-create/to-update options are tested already; just use this
-    # small bit of interface definition to make sure that inter-service local
+    # small bit of interface definition to make sure that inter-resource local
     # calls get the validation performed correctly on the "inner" service.
 
     to_create do
@@ -1324,10 +1324,10 @@ end
 # public action calling to a secure action is handled correctly (i.e. overall
 # response is 401).
 
-class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsBImplementation < ApiTools::ServiceImplementation
   def list( context )
 
-    # Call RSpecTestInterServiceCallsAImplementation#list, with a query string
+    # Call RSpecTestInterResourceCallsAImplementation#list, with a query string
     # that 'searches' for offset and limit quantities that we get from the
     # inbound request.
 
@@ -1346,52 +1346,60 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
       qd[:search][:foo] = 'bar'
     end
 
-    result = context.resource( :RSpecTestInterServiceCallsAResource ).list(qd)
+    result = context.resource( :RSpecTestInterResourceCallsAResource ).list(qd)
+    result.adds_errors_to?( context.response.errors )
     expectable_hook( result )
     context.response.body = { result: result }
   end
 
   def show( context )
     if context.request.ident == 'call_c'
-      result = context.resource( :RSpecTestInterServiceCallsCResource ).show(
+      result = context.resource( :RSpecTestInterResourceCallsCResource ).show(
         context.request.ident,
         {}
       )
     else
-      result = context.resource( :RSpecTestInterServiceCallsAResource ).show(
+      result = context.resource( :RSpecTestInterResourceCallsAResource ).show(
         'hello' + context.request.ident,
         { _embed: :foo }
       )
     end
 
     expectable_hook( result )
+
+    context.response.add_errors( result.platform_errors )
     context.response.body = { result: result }
   end
 
   def create( context )
-    result = context.resource( :RSpecTestInterServiceCallsAResource ).create(
+    result = context.resource( :RSpecTestInterResourceCallsAResource ).create(
       { number: '42' }.merge( context.request.body ),
       { _embed: 'foo' }
     )
 
-    unless context.response.halt_processing?
+    # There are two tests hidden here. Note that if there's an error,
+    # we're actually not setting response body, leaving it 'nil'; make
+    # sure nothing barfs on that.
+
+    unless result.adds_errors_to?( context.response.errors )
       expectable_hook( result )
       context.response.body = { result: result }
     end
   end
 
   def update( context )
-    result = context.resource( :RSpecTestInterServiceCallsAResource ).update(
+    result = context.resource( :RSpecTestInterResourceCallsAResource ).update(
       'hello' + context.request.ident,
       { number: '42' }.merge( context.request.body ),
       { _embed: 'foo' }
     )
     expectable_hook( result )
+    context.response.add_errors( result.platform_errors )
     context.response.body = { result: result }
   end
 
   def delete( context )
-    result = context.resource( :RSpecTestInterServiceCallsAResource ).delete(
+    result = context.resource( :RSpecTestInterResourceCallsAResource ).delete(
       'hello' + context.request.ident,
       { _embed: [ :foo ] }
     )
@@ -1406,16 +1414,16 @@ class RSpecTestInterServiceCallsBImplementation < ApiTools::ServiceImplementatio
   end
 end
 
-class RSpecTestInterServiceCallsBInterface < ApiTools::ServiceInterface
-  interface :RSpecTestInterServiceCallsBResource do
-    endpoint :rspec_test_inter_service_calls_b, RSpecTestInterServiceCallsBImplementation
+class RSpecTestInterResourceCallsBInterface < ApiTools::ServiceInterface
+  interface :RSpecTestInterResourceCallsBResource do
+    endpoint :rspec_test_inter_resource_calls_b, RSpecTestInterResourceCallsBImplementation
     public_actions :update, :delete
   end
 end
 
-class RSpecTestInterServiceCallsCImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsCImplementation < ApiTools::ServiceImplementation
 
-  # This gets inter-service called from ...BImplementation too. It only implements
+  # This gets inter-resource called from ...BImplementation too. It only implements
   # one action so is used for action validation tests.
 
   def list( context )
@@ -1423,17 +1431,17 @@ class RSpecTestInterServiceCallsCImplementation < ApiTools::ServiceImplementatio
   end
 end
 
-class RSpecTestInterServiceCallsCInterface < ApiTools::ServiceInterface
-  interface :RSpecTestInterServiceCallsCResource do
-    endpoint :rspec_test_inter_service_calls_c, RSpecTestInterServiceCallsCImplementation
+class RSpecTestInterResourceCallsCInterface < ApiTools::ServiceInterface
+  interface :RSpecTestInterResourceCallsCResource do
+    endpoint :rspec_test_inter_resource_calls_c, RSpecTestInterResourceCallsCImplementation
     actions :list
   end
 end
 
-class RSpecTestInterServiceCalls < ApiTools::ServiceApplication
-  comprised_of RSpecTestInterServiceCallsAInterface,
-               RSpecTestInterServiceCallsBInterface,
-               RSpecTestInterServiceCallsCInterface
+class RSpecTestInterResourceCalls < ApiTools::ServiceApplication
+  comprised_of RSpecTestInterResourceCallsAInterface,
+               RSpecTestInterResourceCallsBInterface,
+               RSpecTestInterResourceCallsCInterface
 end
 
 describe ApiTools::ServiceMiddleware::ServiceEndpoint do
@@ -1441,24 +1449,24 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   def app
     Rack::Builder.new do
       use ApiTools::ServiceMiddleware
-      run RSpecTestInterServiceCalls.new
+      run RSpecTestInterResourceCalls.new
     end
   end
 
   before :example, :check_callbacks => true do
-    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
+    expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :before ).once
     # -> A
-      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :before ).once
-      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to receive( :after ).once
+      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to receive( :before ).once
+      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to receive( :after ).once
     # <- B
-    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
+    expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :after ).once
   end
 
   def list_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:list).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:list).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:list).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:list).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
@@ -1467,11 +1475,11 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.list.limit).to eq(50)
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq([1,2,3,4])
     end
 
-    get '/v1/rspec_test_inter_service_calls_b', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => [1,2,3,4]})
@@ -1493,7 +1501,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   it 'should report middleware level errors from the secondary service' do
-    get '/v1/rspec_test_inter_service_calls_b?limit=10', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b?limit=10', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)
     result = JSON.parse(last_response.body)
     expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -1502,7 +1510,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   it 'should custom errors from the secondary service' do
-    get '/v1/rspec_test_inter_service_calls_b?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(412)
     result = JSON.parse(last_response.body)
     expect(result['errors'][0]['code']).to eq('service_calls_a.triggered')
@@ -1510,10 +1518,10 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   def show_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:show).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
@@ -1523,11 +1531,11 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.list.limit).to eq(50)
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'shown' })
     end
 
-    get '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'shown'}})
@@ -1542,35 +1550,35 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   def create_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:create).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:create).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to eq({number: '42', 'foo' => 'required'})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
         expect(context.request.ident).to be_nil
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'created' })
     end
 
-    post '/v1/rspec_test_inter_service_calls_b/', '{"foo": "required"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    post '/v1/rspec_test_inter_resource_calls_b/', '{"foo": "required"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'created'}})
   end
 
   def fail_to_create_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:create).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:create).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to_not receive(:create)
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to_not receive(:expectable_hook)
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to_not receive(:create)
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to_not receive(:expectable_hook)
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to_not receive(:expectable_hook)
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to_not receive(:expectable_hook)
 
-    post '/v1/rspec_test_inter_service_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    post '/v1/rspec_test_inter_resource_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)
     result = JSON.parse(last_response.body)
     expect(result['errors'].size).to eq(1)
@@ -1586,12 +1594,12 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   it 'refuses to create things when the inner service gets invalid data, with callbacks' do
-    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :before ).once
+    expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :before ).once
     # -> A
-      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to_not receive( :before )
-      expect_any_instance_of( RSpecTestInterServiceCallsAImplementation ).to_not receive( :after )
+      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to_not receive( :before )
+      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to_not receive( :after )
     # <- B
-    expect_any_instance_of( RSpecTestInterServiceCallsBImplementation ).to receive( :after ).once
+    expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :after ).once
 
     fail_to_create_things()
   end
@@ -1601,21 +1609,21 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   def update_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:update).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:update).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:update).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to eq({number: '42', 'sum' => 70})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'updated' })
     end
 
-    patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    patch '/v1/rspec_test_inter_resource_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'updated'}})
@@ -1630,21 +1638,21 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   def delete_things
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:delete).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:delete).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:delete).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq({ 'inner' => 'deleted' })
     end
 
-    delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    delete '/v1/rspec_test_inter_resource_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'deleted'}})
@@ -1659,10 +1667,10 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   it 'should see errors from the inner call correctly' do
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:show).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:show).once.and_call_original
     # -> A
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:show).once.and_call_original
-      expect_any_instance_of(RSpecTestInterServiceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show).once.and_call_original
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['hello_return_error'])
@@ -1672,9 +1680,9 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
         expect(context.request.list.limit).to eq(50)
       end
     # <- B
-    expect_any_instance_of(RSpecTestInterServiceCallsBImplementation).to receive(:expectable_hook).once.and_call_original
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once.and_call_original
 
-    get '/v1/rspec_test_inter_service_calls_b/_return_error', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b/_return_error', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)
     result = JSON.parse(last_response.body)
     expect( result[ 'errors' ] ).to_not be_nil
@@ -1686,10 +1694,10 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
   end
 
   it 'should get told if an action is not supported' do
-    expect_any_instance_of(RSpecTestInterServiceCallsCImplementation).to_not receive(:show)
-    expect_any_instance_of(RSpecTestInterServiceCallsCImplementation).to_not receive(:expectable_hook)
+    expect_any_instance_of(RSpecTestInterResourceCallsCImplementation).to_not receive(:show)
+    expect_any_instance_of(RSpecTestInterResourceCallsCImplementation).to_not receive(:expectable_hook)
 
-    get '/v1/rspec_test_inter_service_calls_b/call_c', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b/call_c', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(405)
     result = JSON.parse(last_response.body)
     expect( result[ 'errors' ] ).to_not be_nil
@@ -1702,12 +1710,12 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     end
 
     it 'can call public-to-public actions successfully' do
-      delete '/v1/rspec_test_inter_service_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      delete '/v1/rspec_test_inter_resource_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(200)
     end
 
     it 'cannot call the secure update method in the other service without a session' do
-      patch '/v1/rspec_test_inter_service_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      patch '/v1/rspec_test_inter_resource_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(401)
     end
   end

@@ -33,7 +33,7 @@ module ApiTools
         def validate_each( record, attribute, value )
 
           unless value.nil? || ApiTools::UUID.valid?( value )
-            record.errors[attribute] << ( options[:message] || "is invalid" )
+            record.errors[attribute] << ( options[ :message ] || "is invalid" )
           end
 
         end

@@ -4,7 +4,7 @@
 #
 # Purpose:: A subclass of ApiTools::ServiceMiddleware in order to gain
 #           access to middleware protected methods, this code is used
-#           for inter-service calls. Instances of this class are given
+#           for inter-resource calls. Instances of this class are given
 #           to service action implementations through the +context+
 #           variable, through ApiTools::ServiceContext#resource.
 #
@@ -19,13 +19,22 @@ module ApiTools
   class ServiceMiddleware
 
     # Representation of a callable service endpoint for a specific resource.
-    # Services that wish to call other services should obtain an endpoint
-    # instance via ApiTools::ServiceContext#resource then use the instance
-    # methods described for this class to call other services. The calls they
-    # use look very similar to the calls they implement for their own
-    # instances. The response they get is in the form of an
-    # ApiTools::ServiceResponse instance describing the inter-service call's
-    # results.
+    # When the implementation of one resource endpoint wants to perform an
+    # operation on another resource, it should obtain an endpoint instance
+    # via ApiTools::ServiceContext#resource then use the instance methods
+    # described for this class to communicate with the other resource.
+    #
+    # In the case where the resource implementations exist in different
+    # service applications, this is the only high level way for one resource
+    # to talk to another.
+    #
+    # In the case where both resource implementations are held in the same
+    # service application, this isn't strictly necessary. The implementation
+    # code most likely has access to the same database tables so one could
+    # directly look up data for another. That is however not recommended
+    # unless profiling shows that it's required for performance reasons;
+    # ideally you should *only* use the defined resource's API and thus keep
+    # your resource implementation data layers decoupled from one another.
     #
     class ServiceEndpoint < ApiTools::ServiceMiddleware
 
@@ -51,14 +60,11 @@ module ApiTools
       # +version+::  Optional required interface (API) version for that
       #              endpoint. Integer. Default is 1.
       #
-      # When calls are made through endpoints, the caller's call context data
-      # is updated. The ApiTools::ServiceResponse instance in the context will
-      # hold error details, if there were any. Callers must always check their
-      # ApiTools::ServiceResponse#halt_processing? value and if +true+ should
-      # exit early.
-      #
-      # Endpoint methods for listing, creating etc. resources have common
-      # parameters some or all of which are used across the method 'family':
+      # The instance is then used with the #list, #show, #create, #update or
+      # #delete methods to perform operations on the target resource. See
+      # each of those methods for details of their specific requirements;
+      # however all have common parameters some or all of which are used
+      # across the method 'family':
       #
       # +ident+::      An identifier. This is usually a UUID but some resources
       #                support e.g. a "show" action based on either a UUID or
@@ -88,12 +94,18 @@ module ApiTools
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
       def initialize( middleware_instance, resource, version = 1 )
+
         @middleware    = middleware_instance
         @resource      = resource.to_s
         @version       = version.to_i
 
         @local_service = @middleware.local_service_for( @resource, @version )
-        @remote_uri    = @middleware.remote_service_for( @resource, @version )
+        @remote_info   = @middleware.remote_service_for( @resource, @version )
+
+        # ...noting that @remote_info may now contain either a URI for local
+        # development / real HTTP environments, or a Hash with ":queue" and
+        # ":path" values - see the middleware's #remote_service_for.
+
       end
 
       # Obtain a list of resource instance representations.
@@ -103,14 +115,19 @@ module ApiTools
       #                supported search/filter parameters and the platform's
       #                common all-resource behaviour.
       #
-      # Returns an array of zero or more resource representations as Hashes,
-      # unless there's an error (check the ApiTools::ServiceContext instance's
-      # request object's ApiTools::ServiceResponse#halt_processing? value).
+      # Returns an ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray
+      # representation of the requested list of resource instances. Call
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray#adds_errors_to?
+      # or
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray#platform_errors
+      # on the returned instance to detect and resolve error conditions _before_
+      # examining its Array-derived contents. The contents will be empty in
+      # non-error cases if no items satisfying the list conditions were found.
       #
       def list( query_hash = nil )
-        @middleware.inter_service(
+        return @middleware.inter_resource(
           :local       => @local_service,
-          :remote      => @remote_uri,
+          :remote      => @remote_info,
           :resource    => @resource,
           :version     => @version,
 
@@ -121,17 +138,21 @@ module ApiTools
 
       # Obtain a resource instance representation.
       #
-      # +ident+::      See #intiialize.
+      # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hash representation of a resource instance, unless there's an
-      # error (check the ApiTools::ServiceContext instance's request object's
-      # ApiTools::ServiceResponse#halt_processing? value).
+      # Returns an ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash
+      # representation of the requested resource instance. Call
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#adds_errors_to?
+      # or
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#platform_errors
+      # on the returned instance to detect and resolve error conditions _before_
+      # examining its Hash-derived fields.
       #
       def show( ident, query_hash = nil )
-        @middleware.inter_service(
+        return @middleware.inter_resource(
           :local       => @local_service,
-          :remote      => @remote_uri,
+          :remote      => @remote_info,
           :resource    => @resource,
           :version     => @version,
 
@@ -143,17 +164,21 @@ module ApiTools
 
       # Create a resource instance.
       #
-      # +body_hash+::  See #intiialize.
+      # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hash representation of the new resource instance, unless
-      # there's an error (check the ApiTools::ServiceContext instance's request
-      # object's ApiTools::ServiceResponse#halt_processing? value).
+      # Returns an ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash
+      # representation of the new resource instance. Call
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#adds_errors_to?
+      # or
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#platform_errors
+      # on the returned instance to detect and resolve error conditions _before_
+      # examining its Hash-derived fields.
       #
       def create( body_hash, query_hash = nil )
-        @middleware.inter_service(
+        return @middleware.inter_resource(
           :local       => @local_service,
-          :remote      => @remote_uri,
+          :remote      => @remote_info,
           :resource    => @resource,
           :version     => @version,
 
@@ -165,18 +190,22 @@ module ApiTools
 
       # Update a resource instance.
       #
-      # +ident+::      See #intiialize.
-      # +body_hash+::  See #intiialize.
+      # +ident+::      See #initialize.
+      # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hash representation of the updated resource instance, unless
-      # there's an error (check the ApiTools::ServiceContext instance's request
-      # object's ApiTools::ServiceResponse#halt_processing? value).
+      # Returns an ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash
+      # representation of the updated resource instance. Call
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#adds_errors_to?
+      # or
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#platform_errors
+      # on the returned instance to detect and resolve error conditions _before_
+      # examining its Hash-derived fields.
       #
       def update( ident, body_hash, query_hash = nil )
-        @middleware.inter_service(
+        return @middleware.inter_resource(
           :local       => @local_service,
-          :remote      => @remote_uri,
+          :remote      => @remote_info,
           :resource    => @resource,
           :version     => @version,
 
@@ -189,17 +218,21 @@ module ApiTools
 
       # Delete a resource instance.
       #
-      # +ident+::      See #intiialize.
+      # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hash representation of the now-deleted resource instance,
-      # unless there's an error (check the ApiTools::ServiceContext instance's
-      # request object's ApiTools::ServiceResponse#halt_processing? value).
+      # Returns an ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash
+      # representation of the now-deleted resource instance. Call
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#adds_errors_to?
+      # or
+      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash#platform_errors
+      # on the returned instance to detect and resolve error conditions _before_
+      # examining its Hash-derived fields.
       #
       def delete( ident, query_hash = nil )
-        @middleware.inter_service(
+        return @middleware.inter_resource(
           :local       => @local_service,
-          :remote      => @remote_uri,
+          :remote      => @remote_info,
           :resource    => @resource,
           :version     => @version,
 
@@ -208,7 +241,6 @@ module ApiTools
           :query_hash  => query_hash
         )
       end
-
     end
   end
 end

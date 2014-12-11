@@ -28,7 +28,8 @@ module ApiTools
       #
       # Each reporter is called from its own Ruby Thread so that client API
       # call response is kept fast. If a call fails, a debug log entry is
-      # made but processing of other reporters continues uninterrupted.
+      # made but processing of other reporters continues uninterrupted. It is
+      # up to individual reporter classes to manage thread safety.
       #
       # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::Base
       #           subclass (class, not instance) to add.
@@ -44,7 +45,6 @@ module ApiTools
       # Remove an exception reporter class from the set of reporters. See
       # ::add for details.
       #
-      #
       # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::Base
       #           subclass (class, not instance) to remove.
       #
@@ -56,19 +56,13 @@ module ApiTools
         @@exception_reporters -= [ klass.instance ] # Base includes Singleton
       end
 
-      # Call the exception reporters in @@exception_reporters to report an
-      # exception. Each is called in its own Thread. Exceptions from the
-      # reporters themselves are logged with a debug level, but otherwise
-      # ignored. Any other reporters are still called. It is up to individual
-      # reporter classes to manage thread safety.
+      # Call all added exception reporters (see ::add) to report an exception.
       #
       # +exception+:: Exception or Exception subclass instance to report.
       #
       # +rack_env+::  Optional Rack environment hash for the inbound request,
       #               for exception reports made in the context of Rack request
       #               handling.
-      #
-      # See also ::add.
       #
       def self.report( exception, rack_env = nil )
         @@exception_reporters.each do | reporter |

@@ -110,7 +110,7 @@ module ApiTools
     end
 
     # The first entry in the #uri_path_components array, or +nil+ if the
-    # array is empty. This supports a common case for inter-service calls
+    # array is empty. This supports a common case for inter-resource calls
     # where a UUID or other unique identifier is provided through the first
     # path element ("+.../v1/resource/uuid+").
     #

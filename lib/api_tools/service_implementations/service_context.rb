@@ -54,8 +54,11 @@ module ApiTools
     # You can request an endpoint for any resource name, whether or not an
     # implementation actually exists for it. Until you try and talk to the
     # interface through the endpoint instance, you won't know if it is there.
-    # Examine the returned value's ApiTools::ServiceResponse#http_status_code
-    # to see if you got a 404.
+    # All endpoint methods return instances of classes that mix in
+    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase; these
+    # mixin methods provide error handling options to detect a "not found"
+    # error (equivanent to HTTP status code 404) returned when a resource
+    # implementation turns out to not actually be present.
     #
     # +resource+:: Resource name for the endpoint, e.g. +:Purchase+. String
     #              or symbol.
