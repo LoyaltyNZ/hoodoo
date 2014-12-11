@@ -158,6 +158,30 @@ describe ApiTools::ActiveRecord::ErrorMapping do
     ] )
   end
 
+  it 'handles varying validation types via the alternative interface' do
+    m = RSpecModelErrorMappingTest.new( {
+      :boolean  => true,
+      :date     => Time.now,
+      :datetime => Time.now,
+      :decimal  => 2.3,
+      :float    => 2.3,
+      :integer  => 42,
+      :string   => "hello - this is far too long for the maximum field length",
+      :text     => "hello",
+      :time     => Time.now,
+      :array    => [ 'hello' ]
+    } )
+
+    errors = m.platform_errors
+    expect( errors.errors ).to eq( [
+      {
+        "code" => "generic.invalid_string",
+        "message" => "is too long (maximum is 16 characters)",
+        "reference" => "string"
+      }
+    ] )
+  end
+
   # Nasty test for code coverage - patch the model to make the column
   # look like it really supports arrays and pass it a non-array type.
 
