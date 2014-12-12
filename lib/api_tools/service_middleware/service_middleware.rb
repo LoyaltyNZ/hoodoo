@@ -1651,7 +1651,7 @@ module ApiTools
       body_data = body_hash.nil? ? '' : body_hash.to_json
       headers   = {
         'Content-Type'     => 'application/json; charset=utf-8',
-        'Content-Language' => @locale,
+        'Content-Language' => @locale         || 'en-nz',
         'X-Interaction-ID' => @interaction_id || '+',
         'X-Session-ID'     => @session_id     || '+'
       }

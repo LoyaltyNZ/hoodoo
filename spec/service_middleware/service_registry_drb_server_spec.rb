@@ -121,90 +121,19 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
 
   context 'via middleware' do
 
-    # Make an HTTP GET request using the given class to the given path and port.
-
-    def run_request( path, port )
-      headers    = { 'Content-Type' => 'application/json; charset=utf-8' }
-      remote_uri = URI.parse( "http://127.0.0.1:#{ port }/#{ path }" )
-      http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
-      request    = Net::HTTP::Get.new( remote_uri.request_uri() )
-
-      request.initialize_http_header( headers )
-      return http.request( request )
-    end
-
     before :all do
-
       ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = ApiTools::Utilities.spare_port().to_s
 
-      # Bring up the 'Time' resource endpoint server.
-
-      @port1   = ApiTools::Utilities.spare_port()
-      @thread1 = Thread.start do
-        app1 = Rack::Builder.new do
-          use ApiTools::ServiceMiddleware
-          run RSpecTestClock.new
-        end
-
-        # This command never returns. The Ruby thread is not really
-        # killable or manageable at all; we just let it die when the
-        # whole test suite exits.
-
-        Rack::Server.start(
-          :app  => app1,
-          :Host => '127.0.0.1',
-          :Port => @port1,
-          :server => :webrick
-        )
-      end
-
-      # Wait for the server to come up. I tried many approaches. In the end,
-      # only this hacky polling-talk-to-server code worked reliably.
-
-      repeat = true
-      while repeat
-        begin
-          run_request('', @port1)
-          repeat = false
-        rescue Errno::ECONNREFUSED
-          sleep 0.1
-        end
-      end
-
-      # Same for the 'Clock' resource endpoint server.
-
-      @port2   = ApiTools::Utilities.spare_port()
-      @thread2 = Thread.start do
-        app2 = Rack::Builder.new do
-          use ApiTools::ServiceMiddleware
-          run RSpecTestTime.new
-        end
-        Rack::Server.start(
-          :app  => app2,
-          :Host => '127.0.0.1',
-          :Port => @port2,
-          :server => :webrick
-        )
-      end
-
-      repeat = true
-      while repeat
-        begin
-          run_request('', @port2)
-          repeat = false
-        rescue Errno::ECONNREFUSED
-          sleep 0.1
-        end
-      end
+      @port1 = spec_helper_start_svc_app_in_thread_for( RSpecTestClock )
+      @port2 = spec_helper_start_svc_app_in_thread_for( RSpecTestTime  )
     end
 
-    # Above: That's a lot of support code for one little test :-) but this
-    # is a significant integration test; it runs two real Webrick instances
+    # This is a significant integration test; two real Webrick instances
     # each with its own service on a free HTTP port; one talks to the other
     # over local machine HTTP via the DRb service for discovery.
     #
     it 'properly supports service discovery' do
-      response = run_request( '/v1/clock', @port1 )
+      response = spec_helper_http( path: '/v1/clock', port: @port1 )
       expect( response.code ).to eq( '200' )
 
       parsed = JSON.parse( response.body )

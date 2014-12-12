@@ -3,6 +3,7 @@
 # HTTP server instances in threads and have them talk to each other.
 
 require 'spec_helper'
+require 'json'
 
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
@@ -205,62 +206,12 @@ class TestCallServiceApplication < ApiTools::ServiceApplication
   comprised_of TestCallServiceInterface
 end
 
-# Make an HTTP request using the given class to the given path (string, with
-# query string if you want one) with optional extra headers (as a name/value
-# Hash) and body data (as a String containing JSON data).
-
-def run_request( klass, path, body = nil, headers = {} )
-  headers    = { 'Content-Type' => 'application/json; charset=utf-8' }.merge( headers )
-  remote_uri = URI.parse( "http://127.0.0.1:#{ @port }/#{ path }" )
-  http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
-  request    = klass.new( remote_uri.request_uri() )
-
-  request.initialize_http_header( headers )
-  request.body = body unless body.nil?
-
-  return http.request( request )
-end
-
 # And Finally - the tests.
 
 describe ApiTools::ServiceMiddleware do
 
   before :all do
-
-    # Bring up the web server running the echo service inside @thread.
-
-    @port   = ApiTools::Utilities.spare_port()
-    @thread = Thread.start do
-      app = Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
-        run TestEchoServiceApplication.new
-      end
-
-      # This command never returns. Since this server brings up the echo
-      # service application before anything else happens, this is the
-      # application which will also run the DRb server.
-
-      Rack::Server.start(
-        :app  => app,
-        :Host => '127.0.0.1',
-        :Port => @port,
-        :server => :webrick
-      )
-    end
-
-    # Wait for the server to come up. I tried many approaches. In the end,
-    # only this hacky polling-talk-to-server code worked reliably.
-
-    repeat = true
-
-    while repeat
-      begin
-        run_request(Net::HTTP::Get, '')
-        repeat = false
-      rescue Errno::ECONNREFUSED
-        sleep 0.1
-      end
-    end
+    @port = spec_helper_start_svc_app_in_thread_for( TestEchoServiceApplication )
   end
 
   # Although tests can run in random order so we can't force this set to come
@@ -281,9 +232,9 @@ describe ApiTools::ServiceMiddleware do
     end
 
     def list_things
-      response = run_request(
-        Net::HTTP::Get,
-        'v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two'
+      response = spec_helper_http(
+        port: @port,
+        path: '/v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two'
       )
 
       expect( response.code ).to eq( '200' )
@@ -318,11 +269,10 @@ describe ApiTools::ServiceMiddleware do
     end
 
     def show_things
-      response = run_request(
-        Net::HTTP::Get,
-        'v2/test_some_echoes/one/two.tar.gz?_reference=embed_one,embed_two',
-        nil,
-        { 'Content-Language' => 'fr' }
+      response = spec_helper_http(
+        port:    @port,
+        path:    '/v2/test_some_echoes/one/two.tar.gz?_reference=embed_one,embed_two',
+        headers: { 'Content-Language' => 'fr' }
       )
 
       expect( response.code ).to eq( '200' )
@@ -356,9 +306,9 @@ describe ApiTools::ServiceMiddleware do
 
     it 'should be able to show quiet things too', :check_quiet_callbacks => true do
 
-      response = run_request(
-        Net::HTTP::Get,
-        'v1/test_echo_quiet/some_uuid'
+      response = spec_helper_http(
+        port: @port,
+        path: '/v1/test_echo_quiet/some_uuid'
       )
 
       expect( response.code ).to eq( '200' )
@@ -383,10 +333,11 @@ describe ApiTools::ServiceMiddleware do
     end
 
     def create_things
-      response = run_request(
-        Net::HTTP::Post,
-        'v2/test_some_echoes.json?_embed=embed_one,embed_two',
-        { 'foo' => 'bar', 'baz' => 'boo' }.to_json
+      response = spec_helper_http(
+        klass: Net::HTTP::Post,
+        port:  @port,
+        path:  '/v2/test_some_echoes.json?_embed=embed_one,embed_two',
+        body:  { 'foo' => 'bar', 'baz' => 'boo' }.to_json
       )
 
       expect( response.code ).to eq( '200' )
@@ -419,11 +370,12 @@ describe ApiTools::ServiceMiddleware do
     end
 
     def update_things
-      response = run_request(
-        Net::HTTP::Patch,
-        'v2/test_some_echoes/a/b.json?_embed=embed_one',
-        { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
-        { 'Content-Language' => 'de' }
+      response = spec_helper_http(
+        klass:   Net::HTTP::Patch,
+        port:    @port,
+        path:    '/v2/test_some_echoes/a/b.json?_embed=embed_one',
+        body:    { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
+        headers: { 'Content-Language' => 'de' }
       )
 
       expect( response.code ).to eq( '200' )
@@ -456,9 +408,10 @@ describe ApiTools::ServiceMiddleware do
     end
 
     def delete_things
-      response = run_request(
-        Net::HTTP::Delete,
-        'v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two'
+      response = spec_helper_http(
+        klass: Net::HTTP::Delete,
+        port:  @port,
+        path:  '/v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two'
       )
 
       expect( response.code ).to eq( '200' )
@@ -491,18 +444,18 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'should get 405 for bad requests' do
-      response = run_request(
-        Net::HTTP::Get,
-        'v1/test_echo_quiet' # I.e. "list" action, but service only does "show"
+      response = spec_helper_http(
+        port: @port,
+        path: '/v1/test_echo_quiet' # I.e. "list" action, but service only does "show"
       )
 
       expect( response.code ).to eq( '405' )
     end
 
     it 'should be detect 404 OK' do
-      response = run_request(
-        Net::HTTP::Get,
-        'v1/not_present'
+      response = spec_helper_http(
+        port: @port,
+        path: '/v1/not_present'
       )
 
       expect( response.code ).to eq( '404' )
@@ -571,6 +524,37 @@ describe ApiTools::ServiceMiddleware do
 
     it 'list things in the remote service without callbacks' do
       list_things()
+    end
+
+    it 'complains if the JSON implementation is not up to scratch' do
+      module JSON
+        class << self
+          def dumb_parse( data, ignored )
+            JSON.original_parse( data )
+          end
+
+          alias original_parse parse
+          alias parse dumb_parse
+        end
+      end
+
+      get(
+        '/v1/test_call.tar.gz?limit=25&offset=75',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+          'HTTP_CONTENT_LANGUAGE' => 'de' }
+      )
+
+      module JSON
+        class << self
+          alias parse original_parse
+        end
+      end
+
+      expect( last_response.status ).to eq( 500 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "ApiTools::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
     end
 
     def show_things
@@ -753,10 +737,10 @@ describe ApiTools::ServiceMiddleware do
 
     # Ruby can't kill off an "unresponsive" thread - there seems to be no
     # equivalent of "kill -9" and the likes of "#exit!" are long gone - so
-    # the server running in "@thread", which never returns to the Ruby
-    # interpreter after the Rack::Server.start() call, can't die. Instead
-    # we are forced to write a weak test that simulates a connection
-    # failure to the endpoint.
+    # the WEBrick server thread, which never returns to the Ruby interpreter
+    # after the Rack::Server.start() call (or equivalent) can't die. Instead
+    # we are forced to write a weak test that simulates a connection failure
+    # to the endpoint.
     #
     it 'should get a 404 for no-longer-running endpoints' do
       expect_any_instance_of(Net::HTTP).to receive(:request).once.and_raise(Errno::ECONNREFUSED)

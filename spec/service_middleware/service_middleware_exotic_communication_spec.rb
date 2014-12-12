@@ -7,6 +7,9 @@ require 'spec_helper'
 describe ApiTools::ServiceMiddleware do
 
   class RSpecTestServiceExoticStubImplementation < ApiTools::ServiceImplementation
+    def list( context )
+      context.response.set_resources( [] )
+    end
   end
 
   class RSpecTestServiceExoticStubInterface < ApiTools::ServiceInterface
@@ -109,7 +112,7 @@ describe ApiTools::ServiceMiddleware do
             :query      => mock_query,
             :headers    => {
               'Content-Type' => 'application/json; charset=utf-8',
-              'Content-Language' => nil,
+              'Content-Language' => 'en-nz',
               'X-Interaction-ID' => '+', # "+" == ApiTools 'not present' marker
               'X-Session-ID' => '+'
             },
@@ -128,6 +131,52 @@ describe ApiTools::ServiceMiddleware do
       )
 
       expect( mock_result ).to eq( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new )
+    end
+  end
+
+  context 'over HTTPS' do
+    before :all do
+      @port = spec_helper_start_svc_app_in_thread_for(
+        RSpecTestServiceExoticStub,
+        true # Use SSL
+      )
+    end
+
+    # In random order the test after this might work first, but the idea here
+    # is just to make a normal Net::HTTP request over SSL to the service using
+    # the appropriate spec_helper.rb support method, just to see if it's awake.
+    # If not, we don't expect the middleware's internal routines to manage it!
+    #
+    it 'demonstrates working HTTPS generally' do
+      response = spec_helper_http(
+        port: @port,
+        path: '/v2/version',
+        ssl:  true
+      )
+
+      expect( response.code ).to eq( '200' )
+    end
+
+    # This is the *real* internal test, though done via calling down into the
+    # middleware's private implementation rather than worrying about standing
+    # up two services and making a 'real' inter-resource call across them.
+    # That's done elsewhere over HTTP. We just want to know if HTTPS functions
+    # at all from that same chunk of code here.
+    #
+    it 'attempts HTTPS communication' do
+      mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+
+      mock_result = mw.send(
+        :inter_resource_remote,
+        {
+          :remote      => "https://127.0.0.1:#{ @port }/v2/version",
+          :http_method => 'GET'
+        }
+      )
+
+      # Expect an empty *array* back. A Hash implies an error.
+
+      expect( mock_result ).to eq( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new )
     end
   end
 end

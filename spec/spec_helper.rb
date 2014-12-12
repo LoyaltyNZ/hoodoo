@@ -154,3 +154,113 @@ def spec_helper_define_model( &block )
 
   end
 end
+
+# Start up a service application under WEBrick via Rack on localhost, using
+# any available free port. The server is run in a Ruby Thread and *cannot be
+# killed* once started. It will only exit when the entire calling process shuts
+# down.
+#
+# Only returns once the server is running and accepting connections. Returns
+# the port number upon which the server is listening.
+#
+# +app_class+:: ApiTools::ServiceApplication subclass for the service to start.
+#
+# +use_ssl+::   If +true+, SSL self-signed certificates in +spec/files+ are
+#               used to support SSL testing, provided certificate chain
+#               verification is bypassed. Optional; default is +false+, which
+#               uses normal HTTP.
+#
+
+require 'webrick'
+require 'webrick/https'
+
+def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
+
+  port   = ApiTools::Utilities.spare_port()
+  thread = Thread.start do
+    app = Rack::Builder.new do
+      use ApiTools::ServiceMiddleware
+      run app_class.new
+    end
+
+    options = {
+      :app    => app,
+      :Port   => port,
+      :Host   => '127.0.0.1',
+      :server => :webrick
+    }
+
+    pem = File.join( File.dirname( __FILE__ ), 'files', 'ssl.pem' )
+    key = File.join( File.dirname( __FILE__ ), 'files', 'ssl.key' )
+
+    if ( use_ssl )
+      options.merge!( {
+        :SSLEnable      => true,
+        :SSLCertificate => OpenSSL::X509::Certificate.new( File.open( pem ).read ),
+        :SSLPrivateKey  => OpenSSL::PKey::RSA.new( File.open( key ).read ),
+        :SSLCertName    => [ [ "CN", WEBrick::Utils::getservername() ] ]
+      } )
+    end
+
+    # This command never returns. Since this server usually brings up the
+    # service application before anything else happens (dependent upon the
+    # exact call order of a test, but it's always true at the time of writing),
+    # this is the application which will also run a local DRb server.
+
+    begin
+      Rack::Server.start( options )
+    rescue => e
+      puts "TEST SERVER FAILURE: #{e.inspect}"
+      puts e.backtrace
+    end
+  end
+
+  # Wait for the server to come up. I tried many approaches. In the end,
+  # only this hacky polling-talk-to-server code worked reliably.
+
+  repeat = true
+
+  while repeat
+    begin
+      spec_helper_http( path: '/', port: port, ssl: use_ssl )
+      repeat = false
+    rescue Errno::ECONNREFUSED
+      sleep 0.1
+    end
+  end
+
+  return port
+end
+
+# Run an HTTP request on localhost and return the result as a
+# +Net::HTTP::Response+ instance.
+#
+# +path+::    URI path _including_ leading "/".
+# +port+::    Port number (String or Integer)
+# +ssl+::     (Optional) +true+ to use HTTPS, else HTTP
+# +klass+::   (Optional) Class to use for request, default +Net::HTTP::Get+
+# +body+::    (Optional) Body for request (POST/PATCH only), default +nil+
+# +headers+:: (Optional) Header name/value Hash, default empty.
+#
+def spec_helper_http( path:,
+                      port:,
+                      ssl:     false,
+                      klass:   Net::HTTP::Get,
+                      body:    nil,
+                      headers: {} )
+
+  headers    = { 'Content-Type' => 'application/json; charset=utf-8' }.merge( headers )
+  remote_uri = URI.parse( "http://127.0.0.1:#{ port }#{ path }" )
+  http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
+  request    = klass.new( remote_uri.request_uri() )
+
+  if ( ssl )
+    http.use_ssl     = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  end
+
+  request.initialize_http_header( headers )
+  request.body = body unless body.nil?
+
+  return http.request( request )
+end
