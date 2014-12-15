@@ -24,6 +24,11 @@ module ApiTools
         #
         ROUNDINGS = [ :down, :up, :half_down, :half_up, :half_even ]
 
+        # Defined values for the +external_currency_types+ enumeration in the schema.
+        # see: https://github.com/LoyaltyNZ/awg/blob/master/prototype/platform_api.md#currency.type
+        #
+        EXTERNAL_TYPES = [ "nz.co.loyalty.txn.fbpts", "nz.co.loyalty.txn.apd" ]
+
         schema do
           string  :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
           array   :qualifiers
@@ -31,7 +36,9 @@ module ApiTools
           enum    :position, :from => POSITIONS
 
           integer :precision, :default => 2
-          enum    :rounding,  :from    => ROUNDINGS, :required => true
+
+          enum    :rounding,               :from    => ROUNDINGS,      :required => true
+          enum    :external_currency_type, :from    => EXTERNAL_TYPES, :required => false
         end
 
       end
