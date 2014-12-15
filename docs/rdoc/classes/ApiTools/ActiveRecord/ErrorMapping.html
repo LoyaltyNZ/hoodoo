@@ -46,6 +46,10 @@ for examples, along with:</p>
 href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
 </li></ul>
 
+<p>The error handling mechanism this mixin provides is intentionally analogous
+to that used for resource-to-resource calls through <a
+href="../ServiceMiddleware/ServiceEndpoint/AugmentedBase.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase</a>.</p>
+
     </div>
   
 
@@ -71,7 +75,19 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
             
               
               <li>
-                <a href="#method-i-add_errors_to">add_errors_to</a>
+                <a href="#method-i-adds_errors_to-3F">adds_errors_to?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>P</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-platform_errors">platform_errors</a>
               </li>
             
           </ul>
@@ -101,21 +117,71 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
       <div class="sectiontitle">Instance Public methods</div>
       
         <div class="method">
-          <div class="title method-title" id="method-i-add_errors_to">
+          <div class="title method-title" id="method-i-adds_errors_to-3F">
             
-              <b>add_errors_to</b>( collection, validate = true )
+              <b>adds_errors_to?</b>( collection, validate = true )
             
-            <a href="../../../classes/ApiTools/ActiveRecord/ErrorMapping.html#method-i-add_errors_to" name="method-i-add_errors_to" class="permalink">Link</a>
+            <a href="../../../classes/ApiTools/ActiveRecord/ErrorMapping.html#method-i-adds_errors_to-3F" name="method-i-adds_errors_to-3F" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Validate the model instance and add mapped-to-platform errors to a given
-context&#39;s response object, if any validation errors occur. See:</p>
+              <p>Validates the model instance and adds mapped-to-platform errors to a given
+<a href="../Errors.html">ApiTools::Errors</a> instance, if any validation
+errors occur. For <a href="../ActiveRecord.html">ActiveRecord</a>
+validation documentation, see:</p>
 <ul><li>
 <p><a
 href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
 </li></ul>
+
+<p>Returns <code>true</code> if any errors were added (model instance is
+invalid) else <code>false</code> if everything is OK (model instance is
+valid).</p>
+
+<p>This makes the idiomatic example for “check errors in the model, map them
+to platform errors in my service&#39;s response and return the result” very
+simple, at the expense of modifying the passed-in error collection contents
+(mutating a parameter is a risky pattern). For an alternative pattern which
+avoids this, see <a
+href="ErrorMapping.html#method-i-platform_errors">platform_errors</a>.</p>
+
+<p>Otherwise, given this example model:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include ApiTools::ActiveRecord::ErrorMapping
+  # ...
+end
+</code></pre>
+
+<p>…then a service&#39;s create method could do something like:</p>
+
+<pre><code>def create( context )
+
+  # Validate inbound creation data by e.g. schema through the
+  # presenter layer - ApiTools::Presenters::Base and
+  # ApiTools::Presenters::Base - then...
+
+  model         = SomeModel.new
+  model.param_1 = &#39;something based on inbound creation data&#39;
+
+  # ...etc., setting other parameters, then have the model run
+  # its own ActiveRecord-level validations, adding any errors it
+  # detects to the &#39;context.response&#39; errors collection and exit
+  # if there were any added, all in a single line:
+
+  return if model.adds_errors_to?( context.response.errors )
+
+  # At this point &#39;model.valid?&#39; must be &#39;true&#39;, so we can use
+  # the throw-exception &#39;#save!&#39; and rely on the middleware&#39;s
+  # exception handler to catch unexpected ActiveRecord failures.
+
+  model.save!
+
+  # ...then set &#39;context.response&#39; data appropriately.
+
+end
+</code></pre>
 <dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
 <p>An <a href="../Errors.html">ApiTools::Errors</a> instance, typically
@@ -136,49 +202,11 @@ model, by adding equivalent structured errors to the collection.</p>
 <p>Optional, defaults to <code>true</code>; the model&#39;s
 <code>#valid?</code> method will be called for you and its errors examined.
 If you don&#39;t want to call <code>#valid?</code> for any reason, pass
-<code>false</code> here.</p>
+<code>false</code> here. Only any errors already reported by
+ActiveModel::Validations#errors will be mapped. See <a
+href="http://api.rubyonrails.org/classes/ActiveModel/Validations.html#method-i-errors">api.rubyonrails.org/classes/ActiveModel/Validations.html#method-i-errors</a>
+for more information.</p>
 </dd></dl>
-
-<p>For example, given this model:</p>
-
-<pre><code>class SomeModel &lt; ActiveRecord::Base
-  include ApiTools::ActiveRecord::ErrorMapping
-  # ...
-end
-</code></pre>
-
-<p>…then a service&#39;s create method could do something like:</p>
-
-<pre><code>def create( context )
-
-  # Validate inbound creation data by e.g. schema through the
-  # presenter layer - ApiTools::Presenters::Base and
-  # ApiTools::Presenters::Base - then...
-
-  model             = SomeModel.new
-  model.parameter_1 = &#39;something based on inbound creation data&#39;
-
-  # ...etc., setting other parameters, then have the model run
-  # its own ActiveRecord-level validations, adding any errors
-  # it detects to the &#39;context.response&#39; errors collection.
-
-  model.add_errors_to( context.response.errors )
-  return if context.response.halt_processing?
-
-  # At this point &#39;model.valid?&#39; should be &#39;true&#39;, so we can use
-  # the throw-exception &#39;#save!&#39; and rely on the middleware&#39;s
-  # exception handler to catch what will be an unexpected failure.
-
-  model.save!
-
-  # ...then set &#39;context.response&#39; data appropriately.
-
-end
-</code></pre>
-
-<p>The method returns the <code>collection</code> value given as a parameter.
-This may be useful for some alternative usage patterns not shown in the
-example above.</p>
             </div>
           
           
@@ -192,19 +220,21 @@ example above.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-add_errors_to_source')" id="l_method-i-add_errors_to_source">show</a>
+                <a href="javascript:toggleSource('method-i-adds_errors_to-3F_source')" id="l_method-i-adds_errors_to-3F_source">show</a>
                 
               </p>
-              <div id="method-i-add_errors_to_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 90</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors_to</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
+              <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 103</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">validate</span>
+
+  <span class="ruby-identifier">added</span> = <span class="ruby-keyword">false</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">messages</span>.<span class="ruby-identifier">each_pair</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">message_array</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">column</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">columns_hash</span>[ <span class="ruby-identifier">attribute_name</span>.<span class="ruby-identifier">to_s</span> ]
     <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">column</span>.<span class="ruby-identifier">nil?</span>
 
-    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">attribute_type_of</span>(<span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">column</span>)
+    <span class="ruby-identifier">attribute_type</span> = <span class="ruby-identifier">attribute_type_of</span>( <span class="ruby-identifier">attribute_name</span>, <span class="ruby-identifier">column</span> )
 
     <span class="ruby-identifier">message_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">message</span> <span class="ruby-operator">|</span>
       <span class="ruby-identifier">error_code</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">message</span>
@@ -223,8 +253,93 @@ example above.</p>
         <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">message</span>,
         <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">attribute_name</span> }
       )
+
+      <span class="ruby-identifier">added</span> = <span class="ruby-keyword">true</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">added</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-platform_errors">
+            
+              <b>platform_errors</b>( validate = true )
+            
+            <a href="../../../classes/ApiTools/ActiveRecord/ErrorMapping.html#method-i-platform_errors" name="method-i-platform_errors" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Validate the model instance and return an <a
+href="../Errors.html">ApiTools::Errors</a> instance which contains no
+platform errors if there are no model validation errors, else
+mapped-to-platform errors if validation errors are encountered. For <a
+href="../ActiveRecord.html">ActiveRecord</a> validation documentation, see:</p>
+<ul><li>
+<p><a
+href="http://guides.rubyonrails.org/active_record_validations.html">guides.rubyonrails.org/active_record_validations.html</a></p>
+</li></ul>
+
+<p>This mixin method provides support for an alternative coding style to
+method <a
+href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>, by
+generating an <a href="../Errors.html">Errors</a> collection internally
+rather than modifying one passed by the caller. It is less efficient than
+calling <a
+href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a> if
+you have an existing errors collection already constructed, but otherwise
+follows a cleaner design pattern.</p>
+
+<p>See <a
+href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>
+examples first, then compare the idiom shown there:</p>
+
+<pre><code>return if model.adds_errors_to?( context.response.errors )
+</code></pre>
+
+<p>…with the idiomatic use of this method:</p>
+
+<pre><code>context.response.add_errors( model.platform_errors )
+return if context.response.halt_processing?
+</code></pre>
+
+<p>It is a little more verbose and in this example will run a little slower
+due to the construction of the internal <a
+href="../Errors.html">ApiTools::Errors</a> instance followed by the
+addition to the <code>context.response</code> collection, but you may
+prefer the conceptually cleaner code.</p>
+<dl class="rdoc-list note-list"><dt><code>validate</code>
+<dd>
+<p>Optional, defaults to <code>true</code>; same meaning as the same name
+parameter in <a
+href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-platform_errors_source')" id="l_method-i-platform_errors_source">show</a>
+                
+              </p>
+              <div id="method-i-platform_errors_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/error_mapping.rb, line 170</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>( <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
+  <span class="ruby-identifier">collection</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">collection</span>
 <span class="ruby-keyword">end</span></pre>

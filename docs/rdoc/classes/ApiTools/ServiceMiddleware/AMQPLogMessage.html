@@ -40,14 +40,15 @@
   
     <div class="description">
       
-<p>For AMQEndpoint gem users, the <a
-href="AMQPLogMessage.html">AMQPLogMessage</a> class provides an
+<p>For <a href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a> gem users,
+the <a href="AMQPLogMessage.html">AMQPLogMessage</a> class provides an
 AMQEndpoint::Message subclass used for sending structured log data to the
 queue. <a
 href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>
 uses this.</p>
 
-<p>See the AMQEndpoint gem for more details.</p>
+<p>See the <a href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a> gem for
+more details.</p>
 
     </div>
   
@@ -60,6 +61,17 @@ uses this.</p>
   
 
 
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="AMQPLogMessage/AMQEndpoint.html">ApiTools::ServiceMiddleware::AMQPLogMessage::AMQEndpoint</a>
+        </li>
+      
+    </ul>
   
 
 
@@ -129,6 +141,24 @@ uses this.</p>
 
     
 
+    
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">TYPE</td>
+            <td>=</td>
+            <td class="attr-value">&#39;api_tools_service_middleware_amqp_log_message&#39;</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"></td>
+            </tr>
+          
+        
+      </table>
     
 
 
@@ -240,8 +270,7 @@ href="StructuredLogger.html">ApiTools::ServiceMiddleware::StructuredLogger</a>.<
           
             <div class="description">
               <p>Create an instance with options keyed on the attributes defined for the
-class. In addition, option <code>:type</code> can be used to override the
-default queue packet type of &#39;log&#39;.</p>
+class.</p>
             </div>
           
           
@@ -259,12 +288,12 @@ default queue packet type of &#39;log&#39;.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 74</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
 
-  <span class="ruby-ivar">@type</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:type</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;log&#39;</span>
+  <span class="ruby-ivar">@type</span> = <span class="ruby-constant">AMQPLogMessage</span><span class="ruby-operator">::</span><span class="ruby-constant">TYPE</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -283,8 +312,9 @@ default queue packet type of &#39;log&#39;.</p>
           
           
             <div class="description">
-              <p>Unpack a serialized representation into this instance. See the AMQEndpoint
-gem and AMQEndpoint::Message#deserialize.</p>
+              <p>Unpack a serialized representation into this instance. See the <a
+href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a> gem and
+AMQEndpoint::Message#deserialize.</p>
             </div>
           
           
@@ -302,7 +332,7 @@ gem and AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 105</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
@@ -322,7 +352,8 @@ gem and AMQEndpoint::Message#deserialize.</p>
           
           
             <div class="description">
-              <p>Seralize this instance. See the AMQEndpoint gem and
+              <p>Seralize this instance. See the <a
+href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a> gem and
 AMQEndpoint::Message#serialize.</p>
             </div>
           
@@ -341,7 +372,7 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 84</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
@@ -393,7 +424,7 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 113</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/amqp_log_message.rb, line 115</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
   <span class="ruby-ivar">@level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]

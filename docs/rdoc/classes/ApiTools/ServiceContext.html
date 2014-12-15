@@ -218,9 +218,11 @@ href="ServiceMiddleware/ServiceEndpoint.html">ApiTools::ServiceMiddleware::Servi
 <p>You can request an endpoint for any resource name, whether or not an
 implementation actually exists for it. Until you try and talk to the
 interface through the endpoint instance, you won&#39;t know if it is there.
-Examine the returned value&#39;s <a
-href="ServiceResponse.html#attribute-i-http_status_code">ApiTools::ServiceResponse#http_status_code</a>
-to see if you got a 404.</p>
+All endpoint methods return instances of classes that mix in <a
+href="ServiceMiddleware/ServiceEndpoint/AugmentedBase.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase</a>;
+these mixin methods provide error handling options to detect a “not found”
+error (equivanent to HTTP status code 404) returned when a resource
+implementation turns out to not actually be present.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
@@ -247,7 +249,7 @@ defaults to 1.</p>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 66</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_context.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-node">&quot;#{ resource_name }/#{ version }&quot;</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceEndpoint</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-ivar">@middleware</span>,

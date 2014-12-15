@@ -153,7 +153,7 @@ href="ClassMethods.html#method-i-list_search_map">list_search_map</a>.</p>
                 
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 312</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 331</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_filter_map&#39;</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">map</span> ) )
 <span class="ruby-keyword">end</span></pre>
@@ -264,7 +264,7 @@ href="../../ServiceRequest.html#attribute-i-list">ApiTools::ServiceRequest#list<
                 
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 204</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 223</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
 
   <span class="ruby-identifier">finder</span> = <span class="ruby-keyword">self</span>
@@ -405,7 +405,7 @@ or Symbols.</p>
                 
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 304</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 323</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_list_search_map&#39;</span>, <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">map</span> ) )
 <span class="ruby-keyword">end</span></pre>
@@ -507,7 +507,26 @@ using +where( attr =&gt; ident )+.</p>
   <span class="ruby-identifier">id_fields</span>    = [ <span class="ruby-value">:id</span> ] <span class="ruby-operator">+</span> ( <span class="ruby-identifier">extra_fields</span> <span class="ruby-operator">||</span> [] )
 
   <span class="ruby-identifier">id_fields</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">field</span> <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">checker</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>( <span class="ruby-identifier">field</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> )
+
+    <span class="ruby-comment"># This is fiddly.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># You must use a string with field substitution approach, rather</span>
+    <span class="ruby-comment"># than e.g. &quot;.where( :field =&gt; :ident )&quot;. AREL/ActiveRecord will,</span>
+    <span class="ruby-comment"># in the latter case, compose rational SQL based on column data</span>
+    <span class="ruby-comment"># types. If you have an *integer* ID field, then, it&#39;ll try to</span>
+    <span class="ruby-comment"># convert a *string* ident to an integer. This can give Hilarious</span>
+    <span class="ruby-comment"># Consequences. Consider looking up on (integer) field &quot;id&quot; or</span>
+    <span class="ruby-comment"># (text) field &quot;uuid&quot;, with a string ident of &quot;1f294942...&quot; - the</span>
+    <span class="ruby-comment"># text UUID would be fine, but the integer ID may end up with the</span>
+    <span class="ruby-comment"># UUID being &quot;to_i&quot;&#39;d, yielding integer 1. If the ID field is</span>
+    <span class="ruby-comment"># looked at first, you&#39;re highly likely to find the wrong record.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># The solution is, as written, simple; just use the substitution</span>
+    <span class="ruby-comment"># approach rather than higher level AREL, causing a string-like SQL</span>
+    <span class="ruby-comment"># query on all adapters which SQL handles just fine for varying</span>
+    <span class="ruby-comment"># field data types.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-identifier">checker</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>( [ <span class="ruby-node">&quot;#{ field } = ?&quot;</span>, <span class="ruby-identifier">ident</span> ] )
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">checker</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">checker</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-number">0</span>
   <span class="ruby-keyword">end</span>
 
@@ -567,7 +586,7 @@ href="ClassMethods.html#method-i-polymorphic_find">polymorphic_find</a>.</p>
                 
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 132</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/active_record/finder.rb, line 151</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_show_id_fields&#39;</span>, <span class="ruby-identifier">args</span> )
 <span class="ruby-keyword">end</span></pre>

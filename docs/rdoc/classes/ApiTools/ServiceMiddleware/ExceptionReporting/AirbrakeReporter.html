@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p><a
+href="Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+subclass giving <a
+href="../ExceptionReporting.html">ApiTools::ServiceMiddleware::ExceptionReporting</a>
+access to Airbrake for error reporting. See <a
+href="https://airbrake.io">airbrake.io</a>.</p>
+
+<p>Your application must include the Airbrake gem &#39;airbrake&#39; via
+Gemfile (+gem &#39;airbrake&#39;+ / +bundle install) or direct installation
+(+gem install airbrake+).</p>
+
+<p>The API key must be set during your application initialization and the
+class must be added to <a href="../../../ApiTools.html">ApiTools</a> for
+use as an error reporter, e.g. through a &#39;config/initializers&#39;
+folder, as follows:</p>
+
+<pre><code>require &#39;airbrake&#39;
+
+Airbrake.configure do | config |
+  config.api_key = &#39;YOUR_AIRBRAKE_API_KEY&#39;
+end
+
+ApiTools::ServiceMiddleware::ExceptionReporting.add(
+  ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter
+)
+</code></pre>
+
+<p>Services and the <a href="../../../ApiTools.html">ApiTools</a> middleware
+do not pass Rails-like params around in forms or query strings, but do
+beware of search or filter query data containing sensitive material or POST
+bodies in e.g. JSON encoding containing sensitive data. This comes down to
+the filtering ability of the Airbrake gem:</p>
+
+<pre><code>https://github.com/airbrake/airbrake/wiki/Customizing-your-airbrake.rb
+</code></pre>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-report">report</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-report">
+            
+              <b>report</b>( e, env = nil )
+            
+            <a href="../../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting/AirbrakeReporter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Report an exception to Airbrake.</p>
+<dl class="rdoc-list note-list"><dt>e
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt>env
+<dd>
+<p>Optional <a href="../../../Rack.html">Rack</a> environment hash for the
+inbound request, for exception reports made in the context of <a
+href="../../../Rack.html">Rack</a> request handling. In the case of
+Airbrake, the call may just hang unless a <a
+href="../../../Rack.html">Rack</a> environment is provided.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
+                
+              </p>
+              <div id="method-i-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_or_ignore</span>( <span class="ruby-identifier">e</span>, <span class="ruby-value">:rack_env</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

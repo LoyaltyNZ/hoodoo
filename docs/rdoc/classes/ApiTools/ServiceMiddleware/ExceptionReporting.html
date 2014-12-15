@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>ApiTools::ServiceMiddleware::ExceptionReporting</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            ApiTools::ServiceMiddleware::ExceptionReporting 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/exception_reporting_rb.html">lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/base_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/base.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/raygun_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/raygun_reporter.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Exception reporting / monitoring through external services.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/AirbrakeReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::AirbrakeReporter</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/Payload.html">ApiTools::ServiceMiddleware::ExceptionReporting::Payload</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ExceptionReporting/RaygunReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::RaygunReporter</a>
+        </li>
+      
+    </ul>
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-add">add</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-remove">remove</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-report">report</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>W</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-wait">wait</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-add">
+            
+              <b>add</b>( klass )
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting.html#method-c-add" name="method-c-add" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Add an exception reporter class to the set of reporters. See the <a
+href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+class for an overview.</p>
+
+<p>Whenever the middleware&#39;s own exception handler catches an exception,
+it will run through the set of exception reporters (if any) and call each
+one to report exception details.</p>
+
+<p>Reporters are maintained in a Set. Only one class will ever be stored and
+called once per exception; the original order of addition before duplicates
+is maintained (so if you add class A, then B, then A again, then class A is
+called first and only once, then B once).</p>
+
+<p>Each reporter is called from its own Ruby Thread so that client API call
+response is kept fast. If a call fails, a debug log entry is made but
+processing of other reporters continues uninterrupted. It is up to
+individual reporter classes to manage thread safety.</p>
+<dl class="rdoc-list note-list"><dt><code>klass</code>
+<dd>
+<p><a
+href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+subclass (class, not instance) to add.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-add_source')" id="l_method-c-add_source">show</a>
+                
+              </p>
+              <div id="method-c-add_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-remove">
+            
+              <b>remove</b>( klass )
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting.html#method-c-remove" name="method-c-remove" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Remove an exception reporter class from the set of reporters. See <a
+href="ExceptionReporting.html#method-c-add">::add</a> for details.</p>
+<dl class="rdoc-list note-list"><dt>klass
+<dd>
+<p><a
+href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+subclass (class, not instance) to remove.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-remove_source')" id="l_method-c-remove_source">show</a>
+                
+              </p>
+              <div id="method-c-remove_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-report">
+            
+              <b>report</b>( exception, rack_env = nil )
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting.html#method-c-report" name="method-c-report" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Call all added exception reporters (see <a
+href="ExceptionReporting.html#method-c-add">::add</a>) to report an
+exception.</p>
+<dl class="rdoc-list note-list"><dt>exception
+<dd>
+<p>Exception or Exception subclass instance to report.</p>
+</dd><dt><code>rack_env</code>
+<dd>
+<p>Optional <a href="../../Rack.html">Rack</a> environment hash for the
+inbound request, for exception reports made in the context of <a
+href="../../Rack.html">Rack</a> request handling.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-report_source')" id="l_method-c-report_source">show</a>
+                
+              </p>
+              <div id="method-c-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">payload</span> = <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">exception</span><span class="ruby-operator">:</span> <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">rack_env</span><span class="ruby-operator">:</span> <span class="ruby-identifier">rack_env</span> )
+  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">payload</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-wait">
+            
+              <b>wait</b>( timeout = 5 )
+            
+            <a href="../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting.html#method-c-wait" name="method-c-wait" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Wait for all executing reporter threads to catch up before continuing.</p>
+<dl class="rdoc-list note-list"><dt>timeout
+<dd>
+<p>Optional timeout wait delay <strong>for</strong> <strong>each</strong>
+<strong>thread</strong>. Default is 5 seconds.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-wait_source')" id="l_method-c-wait_source">show</a>
+                
+              </p>
+              <div id="method-c-wait_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-identifier">timeout</span> = <span class="ruby-number">5</span> )
+  <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">wait</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-identifier">timeout</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                        </div>
+
+    </div>
+  </body>
+</html>    

@@ -31,7 +31,15 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../../../files/lib/api_tools/service_middleware/service_endpoint_rb.html">lib/api_tools/service_middleware/service_endpoint.rb</a></li>
+            <li><a href="../../../files/lib/api_tools/service_middleware/service_endpoint/augmented_array_rb.html">lib/api_tools/service_middleware/service_endpoint/augmented_array.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/service_endpoint/augmented_base_rb.html">lib/api_tools/service_middleware/service_endpoint/augmented_base.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/service_endpoint/augmented_hash_rb.html">lib/api_tools/service_middleware/service_endpoint/augmented_hash.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/service_endpoint/service_endpoint_rb.html">lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb</a></li>
+            
+            <li><a href="../../../files/lib/api_tools/service_middleware/service_middleware_rb.html">lib/api_tools/service_middleware/service_middleware.rb</a></li>
             
         </ul>
     </div>
@@ -40,15 +48,24 @@
   
     <div class="description">
       
-<p>Representation of a callable service endpoint for a specific resource.
-Services that wish to call other services should obtain an endpoint
-instance via <a
+<p>Representation of a callable service endpoint for a specific resource. When
+the implementation of one resource endpoint wants to perform an operation
+on another resource, it should obtain an endpoint instance via <a
 href="../ServiceContext.html#method-i-resource">ApiTools::ServiceContext#resource</a>
-then use the instance methods described for this class to call other
-services. The calls they use look very similar to the calls they implement
-for their own instances. The response they get is in the form of an <a
-href="../ServiceResponse.html">ApiTools::ServiceResponse</a> instance
-describing the inter-service call&#39;s results.</p>
+then use the instance methods described for this class to communicate with
+the other resource.</p>
+
+<p>In the case where the resource implementations exist in different service
+applications, this is the only high level way for one resource to talk to
+another.</p>
+
+<p>In the case where both resource implementations are held in the same
+service application, this isn&#39;t strictly necessary. The implementation
+code most likely has access to the same database tables so one could
+directly look up data for another. That is however not recommended unless
+profiling shows that it&#39;s required for performance reasons; ideally you
+should <strong>only</strong> use the defined resource&#39;s API and thus
+keep your resource implementation data layers decoupled from one another.</p>
 
     </div>
   
@@ -61,6 +78,27 @@ describing the inter-service call&#39;s results.</p>
   
 
 
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="ServiceEndpoint/AugmentedBase.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ServiceEndpoint/AugmentedArray.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ServiceEndpoint/AugmentedHash.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash</a>
+        </li>
+      
+    </ul>
   
 
 
@@ -203,17 +241,15 @@ symbol.</p>
 Default is 1.</p>
 </dd></dl>
 
-<p>When calls are made through endpoints, the caller&#39;s call context data
-is updated. The <a
-href="../ServiceResponse.html">ApiTools::ServiceResponse</a> instance in
-the context will hold error details, if there were any. Callers must always
-check their <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value and if <code>true</code> should exit early.</p>
-
-<p>Endpoint methods for listing, creating etc. resources have common
-parameters some or all of which are used across the method
-&#39;family&#39;:</p>
+<p>The instance is then used with the <a
+href="ServiceEndpoint.html#method-i-list">list</a>, <a
+href="ServiceEndpoint.html#method-i-show">show</a>, <a
+href="ServiceEndpoint.html#method-i-create">create</a>, <a
+href="ServiceEndpoint.html#method-i-update">update</a> or <a
+href="ServiceEndpoint.html#method-i-delete">delete</a> methods to perform
+operations on the target resource. See each of those methods for details of
+their specific requirements; however all have common parameters some or all
+of which are used across the method &#39;family&#39;:</p>
 <dl class="rdoc-list note-list"><dt><code>ident</code>
 <dd>
 <p>An identifier. This is usually a <a href="../UUID.html">UUID</a> but some
@@ -263,14 +299,20 @@ request (i.e. JSON, as a Hash).</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 90</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">middleware_instance</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+
   <span class="ruby-ivar">@middleware</span>    = <span class="ruby-identifier">middleware_instance</span>
   <span class="ruby-ivar">@resource</span>      = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-ivar">@version</span>       = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
   <span class="ruby-ivar">@local_service</span> = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
-  <span class="ruby-ivar">@remote_uri</span>    = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@remote_info</span>   = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+
+  <span class="ruby-comment"># ...noting that @remote_info may now contain either a URI for local</span>
+  <span class="ruby-comment"># development / real HTTP environments, or a Hash with &quot;:queue&quot; and</span>
+  <span class="ruby-comment"># &quot;:path&quot; values - see the middleware&#39;s #remote_service_for.</span>
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -292,18 +334,20 @@ request (i.e. JSON, as a Hash).</p>
               <p>Create a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>body_hash
 <dd>
-<p>See intiialize.</p>
+<p>See initialize.</p>
 </dd><dt>query_hash
 <dd>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns a Hash representation of the new resource instance, unless
-there&#39;s an error (check the <a
-href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value).</p>
+<p>Returns an <a
+href="ServiceEndpoint/AugmentedHash.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash</a>
+representation of the new resource instance. Call <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-adds_errors_to-3F">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-platform_errors">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
             </div>
           
           
@@ -321,11 +365,11 @@ value).</p>
                 
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 153</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 178</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_uri</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
     <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
     <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
 
@@ -352,18 +396,20 @@ value).</p>
               <p>Delete a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
-<p>See intiialize.</p>
+<p>See initialize.</p>
 </dd><dt>query_hash
 <dd>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns a Hash representation of the now-deleted resource instance, unless
-there&#39;s an error (check the <a
-href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value).</p>
+<p>Returns an <a
+href="ServiceEndpoint/AugmentedHash.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash</a>
+representation of the now-deleted resource instance. Call <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-adds_errors_to-3F">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-platform_errors">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
             </div>
           
           
@@ -381,11 +427,11 @@ value).</p>
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 199</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_uri</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
     <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
     <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
 
@@ -431,7 +477,7 @@ network.</p>
                 
               </p>
               <div id="method-i-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 38</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">interface</span>
   <span class="ruby-ivar">@local_service</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@local_service</span>[ <span class="ruby-value">:interface</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -458,12 +504,16 @@ to the targer Resource&#39;s documented supported search/filter parameters
 and the platform&#39;s common all-resource behaviour.</p>
 </dd></dl>
 
-<p>Returns an array of zero or more resource representations as Hashes, unless
-there&#39;s an error (check the <a
-href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value).</p>
+<p>Returns an <a
+href="ServiceEndpoint/AugmentedArray.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray</a>
+representation of the requested list of resource instances. Call <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-adds_errors_to-3F">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-platform_errors">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Array-derived contents. The contents will be
+empty in non-error cases if no items satisfying the list conditions were
+found.</p>
             </div>
           
           
@@ -481,11 +531,11 @@ value).</p>
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 110</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_uri</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
     <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
     <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
 
@@ -511,18 +561,20 @@ value).</p>
               <p>Obtain a resource instance representation.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
-<p>See intiialize.</p>
+<p>See initialize.</p>
 </dd><dt>query_hash
 <dd>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns a Hash representation of a resource instance, unless there&#39;s an
-error (check the <a
-href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value).</p>
+<p>Returns an <a
+href="ServiceEndpoint/AugmentedHash.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash</a>
+representation of the requested resource instance. Call <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-adds_errors_to-3F">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-platform_errors">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
             </div>
           
           
@@ -540,11 +592,11 @@ value).</p>
                 
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 131</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_uri</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
     <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
     <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
 
@@ -571,21 +623,23 @@ value).</p>
               <p>Update a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
-<p>See intiialize.</p>
+<p>See initialize.</p>
 </dd><dt>body_hash
 <dd>
-<p>See intiialize.</p>
+<p>See initialize.</p>
 </dd><dt><code>query_hash</code>
 <dd>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns a Hash representation of the updated resource instance, unless
-there&#39;s an error (check the <a
-href="../ServiceContext.html">ApiTools::ServiceContext</a> instance&#39;s
-request object&#39;s <a
-href="../ServiceResponse.html#method-i-halt_processing-3F">ApiTools::ServiceResponse#halt_processing?</a>
-value).</p>
+<p>Returns an <a
+href="ServiceEndpoint/AugmentedHash.html">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash</a>
+representation of the updated resource instance. Call <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-adds_errors_to-3F">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="ServiceEndpoint/AugmentedBase.html#method-i-platform_errors">ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
             </div>
           
           
@@ -603,11 +657,11 @@ value).</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint.rb, line 176</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb, line 205</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_service</span>(
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_uri</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
     <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
     <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
 
