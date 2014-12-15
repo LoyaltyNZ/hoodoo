@@ -40,6 +40,8 @@
   
     <div class="description">
       
+<p>See <a href="Pool.html">ApiTools::Communicators::Pool</a> for details.</p>
+
 <p>A “slow communicator”. Subclass this to create a class where instances are
 invoked via <a href="Slow.html#method-i-communicate">#communicate</a> with
 some parameter and, in response, they talk to some other piece of software
@@ -164,7 +166,7 @@ with that value.</p>
                 
               </p>
               <div id="method-i-communicate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/communicators/slow.rb, line 44</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/communicators/slow.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #communicate&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -215,7 +217,7 @@ about to be made.</p>
                 
               </p>
               <div id="method-i-dropped_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/communicators/slow.rb, line 59</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/communicators/slow.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped</span>( <span class="ruby-identifier">count</span> )
   <span class="ruby-comment"># This Implementation Intentionally Left Blank</span>
 <span class="ruby-keyword">end</span></pre>

@@ -11,6 +11,8 @@
 module ApiTools
   module Communicators
 
+    # See ApiTools::Communicators::Pool for details.
+    #
     # A "slow communicator". Subclass this to create a class where instances
     # are invoked via ApiTools::Communicators::Slow#communicate with some
     # parameter and, in response, they talk to some other piece of software to

@@ -1,4 +1,4 @@
-Tue, 16 Dec 2014 11:02:02 +1300
+Tue, 16 Dec 2014 11:04:05 +1300
 README.md	Wed, 03 Dec 2014 12:29:18 +1300
 lib/api_tools.rb	Mon, 15 Dec 2014 14:17:40 +1300
 lib/api_tools/active_model/uuid_validator.rb	Fri, 12 Dec 2014 11:35:55 +1300
@@ -7,9 +7,9 @@ lib/api_tools/active_record/error_mapping.rb	Fri, 12 Dec 2014 11:35:55 +1300
 lib/api_tools/active_record/finder.rb	Tue, 16 Dec 2014 10:58:21 +1300
 lib/api_tools/active_record/uuid.rb	Thu, 04 Dec 2014 14:05:46 +1300
 lib/api_tools/auth/platform_auth.rb	Tue, 09 Sep 2014 10:33:33 +1200
-lib/api_tools/communicators/fast.rb	Mon, 15 Dec 2014 15:47:02 +1300
+lib/api_tools/communicators/fast.rb	Tue, 16 Dec 2014 11:03:34 +1300
 lib/api_tools/communicators/pool.rb	Tue, 16 Dec 2014 10:31:05 +1300
-lib/api_tools/communicators/slow.rb	Mon, 15 Dec 2014 15:49:58 +1300
+lib/api_tools/communicators/slow.rb	Tue, 16 Dec 2014 11:03:36 +1300
 lib/api_tools/data/resources/account.rb	Thu, 04 Dec 2014 11:42:38 +1300
 lib/api_tools/data/resources/balance.rb	Tue, 02 Dec 2014 15:49:58 +1300
 lib/api_tools/data/resources/calculation.rb	Tue, 02 Dec 2014 15:49:58 +1300
