@@ -143,6 +143,14 @@ describe ApiTools::ServiceMiddleware do
 
   context 'with mixed access across interfaces' do
 
+    # Middleware maintains class-level record of whether or not any interfaces
+    # had public actions for efficiency; ensure this is cleared after all these
+    # tests run, so it's a clean slate for the next set.
+    #
+    after :all do
+      ApiTools::ServiceMiddleware::class_variable_set( '@@interfaces_have_public_methods', false )
+    end
+
     def app
       Rack::Builder.new do
         use ApiTools::ServiceMiddleware

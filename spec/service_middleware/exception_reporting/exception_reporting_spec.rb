@@ -24,6 +24,9 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
 
   after :each do
     ApiTools::ServiceMiddleware::ExceptionReporting.wait()
+    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
+    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
+    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterC )
   end
 
   it 'lets me add and remove handlers' do
@@ -39,7 +42,6 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
     ha = { :foo => :bar }
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex, ha )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex, ha )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
   end
 
   it 'calls handler B' do
@@ -47,7 +49,6 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
     ex = RuntimeError.new( 'B' )
     expect( TestReporterB.instance ).to receive( :expectable_hook_b ).once.with( ex, nil )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
   end
 
   it 'calls all handlers' do
@@ -64,9 +65,6 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
 
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex_one, nil )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex_two, nil )
-
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
   end
 
   it 'complains about bad additions' do
@@ -82,16 +80,13 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
   end
 
   it 'ignores exceptions in reporters' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterC )
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
+    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterC ) # Add "exception raiser first
+    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA ) # Then this after, which should still be called
 
     ex = RuntimeError.new( 'A' )
     ha = { :foo => :bar }
 
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex, ha )
     ApiTools::ServiceMiddleware::ExceptionReporting.report( ex, ha )
-
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterC )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
   end
 end

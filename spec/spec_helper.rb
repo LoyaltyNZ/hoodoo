@@ -100,7 +100,7 @@ RSpec.configure do | config |
 
   raise "Unexpected logging configuration" unless ApiTools::Logger.logger == ApiTools::ServiceMiddleware::StructuredLogger
 
-  # As per previous comments, redirect STDERR before each test plus various
+  # As per previous comments, redirect $stderr before each test plus various
   # other before/after stuff related to sessions, databases and so-on.
 
   config.before( :all ) do

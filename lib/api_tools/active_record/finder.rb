@@ -105,7 +105,26 @@ module ApiTools
           id_fields    = [ :id ] + ( extra_fields || [] )
 
           id_fields.each do | field |
-            checker = finder.where( field => ident )
+
+            # This is fiddly.
+            #
+            # You must use a string with field substitution approach, rather
+            # than e.g. ".where( :field => :ident )". AREL/ActiveRecord will,
+            # in the latter case, compose rational SQL based on column data
+            # types. If you have an *integer* ID field, then, it'll try to
+            # convert a *string* ident to an integer. This can give Hilarious
+            # Consequences. Consider looking up on (integer) field "id" or
+            # (text) field "uuid", with a string ident of "1f294942..." - the
+            # text UUID would be fine, but the integer ID may end up with the
+            # UUID being "to_i"'d, yielding integer 1. If the ID field is
+            # looked at first, you're highly likely to find the wrong record.
+            #
+            # The solution is, as written, simple; just use the substitution
+            # approach rather than higher level AREL, causing a string-like SQL
+            # query on all adapters which SQL handles just fine for varying
+            # field data types.
+            #
+            checker = finder.where( [ "#{ field } = ?", ident ] )
             return checker.first unless checker.count == 0
           end
 

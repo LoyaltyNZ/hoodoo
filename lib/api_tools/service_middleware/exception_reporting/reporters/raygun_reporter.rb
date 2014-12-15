@@ -2,7 +2,7 @@
 # File::    raygun_reporter.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: Connect the middleware to Raygun.
+# Purpose:: Send exception details to Raygun.
 # ----------------------------------------------------------------------
 #           08-Dec-2014 (ADH): Created.
 ########################################################################

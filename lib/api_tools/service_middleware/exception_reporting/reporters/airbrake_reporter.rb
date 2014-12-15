@@ -2,7 +2,7 @@
 # File::    airbrake_reporter.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: Connect the middleware to Airbrake.
+# Purpose:: Send exception details to Airbrake.
 # ----------------------------------------------------------------------
 #           08-Dec-2014 (ADH): Created.
 ########################################################################

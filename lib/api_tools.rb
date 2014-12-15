@@ -4,6 +4,10 @@ require root+'utilities'
 require root+'logger'
 require root+'uuid'
 
+require root+'communicators/fast'
+require root+'communicators/slow'
+require root+'communicators/pool'
+
 # Schema based data validation and rendering
 
 require root+'presenters/base'

@@ -28,10 +28,14 @@ module ApiTools
       # ApiTools' reserved namespace and may cause a naming collision in future
       # ApiTools versions.
       #
+      # "Under the hood" the ApiTools::Communicators::Pool mechanism is used.
+      # All reporters are assumed to be (comparatively) slow communicators so
+      # are descendants of ApiTools::Communicators::Slow.
+      #
       # Add a reporter class to the middleware from any service application by
       # calling ApiTools::ServiceMiddleware::ExceptionReporting.add.
       #
-      class Base
+      class Base < ApiTools::Communicators::Slow
 
         include ::Singleton
 
@@ -75,6 +79,20 @@ module ApiTools
         #
         def report( e, env = nil )
           ApiTools::Logger.debug( 'Subclasses must implement #report' )
+        end
+
+        # Subclasses *MUST* *NOT* override this method, which is part of the
+        # base class implementation and implements
+        # ApiTools::Communicators::Slow#communicate. It calls through to the
+        # #report method which subclasses do implement, unpacking a payload
+        # used for the internal communicators into the parameters that
+        # #report expects.
+        #
+        # +object+:: ApiTools::ServiceMiddleware::ExceptionReporting::Payload
+        #            instance.
+        #
+        def communicate( object )
+          self.report( object.exception, object.rack_env )
         end
       end
 

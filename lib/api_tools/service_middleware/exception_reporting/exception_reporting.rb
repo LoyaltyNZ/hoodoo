@@ -1,3 +1,13 @@
+########################################################################
+# File::    exception_reporting.rb
+# (C)::     Loyalty New Zealand 2014
+#
+# Purpose:: Reporting exceptions to third party error management
+#           services.
+# ----------------------------------------------------------------------
+#           08-Dec-2014 (ADH): Created.
+########################################################################
+
 module ApiTools
   class ServiceMiddleware
 
@@ -5,13 +15,9 @@ module ApiTools
     #
     class ExceptionReporting
 
-      # Set of exception reporting instances. See ::add_exception_reporter.
+      # Pool of exception reporters.
       #
-      @@exception_reporters = Set.new
-
-      # Group of processing Threads currently in use.
-      #
-      @@thread_group = ThreadGroup.new
+      @@reporter_pool = ApiTools::Communicators::Pool.new
 
       # Add an exception reporter class to the set of reporters. See the
       # ApiTools::ServiceMiddleware::ExceptionReporting::Base class for an
@@ -39,7 +45,7 @@ module ApiTools
           raise "ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass"
         end
 
-        @@exception_reporters << klass.instance # Base includes Singleton
+        @@reporter_pool.add( klass.instance )
       end
 
       # Remove an exception reporter class from the set of reporters. See
@@ -53,7 +59,7 @@ module ApiTools
           raise "ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass"
         end
 
-        @@exception_reporters -= [ klass.instance ] # Base includes Singleton
+        @@reporter_pool.remove( klass.instance )
       end
 
       # Call all added exception reporters (see ::add) to report an exception.
@@ -65,42 +71,42 @@ module ApiTools
       #               handling.
       #
       def self.report( exception, rack_env = nil )
-        @@exception_reporters.each do | reporter |
-
-          @@thread_group.add( Thread.new do
-            begin
-              reporter.report( exception, rack_env )
-
-            rescue => reporter_exception
-              # Ignore reporter exceptions, apart from logging them.
-
-              begin
-                Thread.exclusive do
-                  ApiTools::Logger.debug(
-                    'ApiTools::ServiceMiddleware#call_exception_reporters_with',
-                    "Exception reporter class #{ reporter.class.name } raised exception during reporting",
-                    reporter_exception.to_s
-                  )
-                end
-
-              rescue
-                # Ignore debug log exceptions. Can't do anything about them.
-
-              end
-            end
-          end ) # ")" closes "@@thread_group.add("
-
-        end
+        payload = Payload.new( exception: exception, rack_env: rack_env )
+        @@reporter_pool.communicate( payload )
       end
 
-      # Wait for all executing reporter threads to complete before continuing.
+      # Wait for all executing reporter threads to catch up before continuing.
       #
-      # +timeout+:: Optional timeout wait delay FOR EACH THEAD. Default is 10
-      #             seconds.
+      # +timeout+:: Optional timeout wait delay *for* *each* *thread*. Default
+      #             is 5 seconds.
       #
-      def self.wait( timeout = 10 )
-        @@thread_group.list.each do | thread |
-          thread.join( timeout )
+      def self.wait( timeout = 5 )
+        @@reporter_pool.wait( per_instance_timeout: timeout )
+      end
+
+      # Implementation detail of
+      # ApiTools::ServiceMiddleware::ExceptionReporting used to carry
+      # multiple parameters describing exception related data through the
+      # ApiTools::Communicators::Pool#communicate mechanism.
+      #
+      class Payload
+
+        # Exception (or Exception subclass) instance.
+        #
+        attr_accessor :exception
+
+        # Rack environment (the unprocessed, original Hash). May be +nil+.
+        #
+        attr_accessor :rack_env
+
+        # Initialize this instance with named parameters:
+        #
+        # +exception+:: Exception (or Exception subclass) instance. Mandatory.
+        # +rack_env+::  Rack environment hash. Optional.
+        #
+        def initialize( exception:, rack_env: nil )
+          @exception = exception
+          @rack_env  = rack_env
         end
       end
     end
