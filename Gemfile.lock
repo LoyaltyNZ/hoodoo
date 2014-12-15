@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:LoyaltyNZ/amq-endpoint.git
-  revision: 44aa02fc09ef282078d642163af72031559b2e65
+  revision: 2e130a6ed30ff07c884889a08f4cbc2033dad04e
   branch: master
   specs:
     amq-endpoint (0.3.0)
@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    api_tools (0.5.4)
+    api_tools (0.6.0)
       dalli (~> 2.7)
       json_builder (~> 3.1)
       uuidtools (~> 2.1)
@@ -52,7 +52,7 @@ GEM
     json_builder (3.1.7)
       activesupport (>= 2.0.0)
       json
-    minitest (5.4.3)
+    minitest (5.5.0)
     msgpack (0.5.9)
     multi_json (1.10.1)
     multi_xml (0.5.5)
