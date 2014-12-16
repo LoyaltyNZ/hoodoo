@@ -25,13 +25,13 @@ module ApiTools
   # * ApiTools::Logger::StreamWriter - write to output streams, typically
   #   expected to be fast, e.g. unredirected $stdout or $stderr.
   #
-  # * ApiTools::Logger::FileWriter - write to files.
-  #
-  # * ApiTools::Logger::AMQPWriter - write to AMQP-based queues.
+  # * ApiTools::Logger::FileWriter - write to files, typically expected to
+  #   be relatively slow.
   #
   # Some loggers can preserve structural logged data (see #report) while others
   # flatten all log messages. For example, ApiTools::Logger::StreamWriter must
-  # flatten messages while ApiTools::Logger::AMQPWriter preserves structure.
+  # flatten messages but a custom writer that, say, persisted messages in a
+  # database should be able to preserve structure.
   #
   # Writers are either considered fast or slow. Fast writers are called inline
   # as soon as a message gets logged. Slow writers are called asynchronously
@@ -46,7 +46,7 @@ module ApiTools
   #
   class Logger
 
-    # Create a new logger instance.
+    # Create a new logger instance. Once created, use #add to add writers.
     #
     # +component+:: Flat logging methods (see #debug, #info, #warn and #error)
     #               are internally logged through the structured logger (see
@@ -56,21 +56,33 @@ module ApiTools
     #
     def initialize( component = :Middleware )
       @level     = :debug
-      @pool      = ApiTools::Communicator::Pool.new
+      @pool      = ApiTools::Communicators::Pool.new
       @component = component
       @writers   = {}
     end
 
-    # Add a new writer instance to this logger.
+    # Add a new writer instance to this logger. Example:
+    #
+    #     file_writer   = ApiTools::Logger::FileWriter.new( 'output.log' )
+    #     stdout_writer = ApiTools::Logger::StreamWriter.new
+    #
+    #     @logger = ApiTools::Logger.new
+    #
+    #     logger.add( file_writer   )
+    #     logger.add( stdout_writer )
+    #
+    #     # ...then later...
+    #
+    #     logger.report( ... ) # -> Sends to "output.log" and $stdout
     #
     # +writer_instance+:: An _instance_ of a subclass of
     #                     ApiTools::Logger::FastWriter or
     #                     ApiTools::Logger::SlowWriter.
     #
     def add( writer_instance )
-      communicator = if writer.is_a?( ApiTools::Logger::FastWriter )
+      communicator = if writer_instance.is_a?( ApiTools::Logger::FastWriter )
         FastCommunicator.new( writer_instance, self )
-      elsif writer.is_a?( ApiTools::Logger::SlowWriter )
+      elsif writer_instance.is_a?( ApiTools::Logger::SlowWriter )
         SlowCommunicator.new( writer_instance, self )
       else
         raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"

@@ -46,8 +46,10 @@ module ApiTools
         # monitoring or reporting service. The return value is ignored.
         #
         # The middleware wraps calls to your subclass in a nested exception
-        # handler. If you raise an exception, the middleware logs details with a
-        # +:debug+ level through ApiTools::Logger then continues processing.
+        # handler. If you raise an exception, the middleware logs details with
+        # a +:debug+ level through its logger instance if possible (see
+        # ApiTools::ServiceMiddleware::logger) along with printing details to
+        # $stderr, then continues processing.
         #
         # If service applications are expecting potential exceptions to occur
         # and they catch them without re-raising for the middleware to catch,
@@ -78,7 +80,7 @@ module ApiTools
         #         handling.
         #
         def report( e, env = nil )
-          ApiTools::Logger.debug( 'Subclasses must implement #report' )
+          raise( 'Subclasses must implement #report' )
         end
 
         # Subclasses *MUST* *NOT* override this method, which is part of the

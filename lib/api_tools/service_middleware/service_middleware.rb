@@ -36,16 +36,22 @@ module ApiTools
   # consistent way to return results, which can be post-processed further by
   # the middleware before returning the data to Rack.
   #
-  # The middleware supports structured logging - see ApiTools::Logger::report.
-  # Its own log data uses component +Middleware+. It will also log essential
-  # data for successful and failed interactions with resource endpoints using
-  # the resource name as the component. In such cases, the codes it uses are
-  # always prefixed by +middleware_+ and service applications should consider
-  # codes with this prefix reserved - do not use such codes yourself.
+  # The middleware supports structured logging through ApiTools::Logger via the
+  # custom ApiTools::ServiceMiddleware::AMQPLogWriter class. Access the logger
+  # instance with ApiTools::ServiceMiddleware::logger. Call +report+ on this
+  # (see ApiTools::Logger::WriterMixin#report) to make structured log entries.
+  # The middleware's own entries use component +Middleware+ for general data.
+  # It also logs essential essential information about successful and failed
+  # interactions with resource endpoints using the resource name as the
+  # component. In such cases, the codes it uses are always prefixed by
+  # +middleware_+ and service applications must consider codes with this prefix
+  # reserved - do not use such codes yourself.
+  #
+  # The middleware adds a STDERR stream writer logger by default and an AMQP
+  # log writer on the first Rack +call+ should the Rack environment provide an
+  # Alchemy endpoint (see the Alchemy and AMQEndpoint gems).
   #
   class ServiceMiddleware
-
-    ApiTools::Logger.logger = ApiTools::ServiceMiddleware::StructuredLogger
 
     # All allowed action names in implementations, used for internal checks.
     # This is also the default supported set of actions. Symbols.
@@ -132,6 +138,29 @@ module ApiTools
     def self.on_queue?
       q = ENV[ 'AMQ_ENDPOINT' ]
       q.nil? == false && q.empty? == false
+    end
+
+    # Access the middleware's logging instance. Call +report+ on this to make
+    # structured log entries. See ApiTools::Logger::WriterMixin#report along
+    # with ApiTools::Logger for other calls you can use.
+    #
+    def self.logger
+      @@logger
+    end
+
+    # Set up the logger instance and add a STDERR stream writer by default.
+    # An AMQP writer can only be added once the first Rack request arrives,
+    # giving us the Alchemy endpoint needed to instantiate an AMQP writer.
+    # Configure non-debug logs only in non-test-like environments.
+
+    @@logger = ApiTools::Logger.new
+    @@logger.add( ApiTools::Logger::StreamWriter.new( $stderr ) )
+    @@logger_amqp_writer = nil
+
+    if self.environment().test? || self.environment().development?
+      @@logger.level = :debug
+    else
+      @@logger.level = :info
     end
 
     # Record internally the HTTP host and port during local development via
@@ -235,12 +264,11 @@ module ApiTools
         # queue-based structured logging via the provided service.
         #
         @@alchemy = env[ 'rack.alchemy' ]
-        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = @@alchemy
 
-        # Don't spew debug logs in non-test-like environments.
-        #
-        environment = ApiTools::ServiceMiddleware.environment()
-        ApiTools::Logger.level = :info unless environment.test? || environment.development?
+        if ( ! @@alchemy.nil? && @@logger_amqp_writer.nil? )
+          @@logger_amqp_writer = ApiTools::ServiceMiddleware::AMQPLogWriter.new( @@alchemy )
+          @@logger.add( @@logger_amqp_writer )
+        end
 
         debug_log()
 
@@ -263,7 +291,7 @@ module ApiTools
         rescue
 
           begin
-            ApiTools::Logger.error(
+            @@logger.error(
               'ApiTools::ServiceMiddleware#call',
               'Middleware exception in exception handler',
               exception.to_s
@@ -363,7 +391,7 @@ module ApiTools
       data[ :session  ] = @service_session.to_h unless @service_session.nil?
       data[ :resource ] = @target_resource_for_error_reports.to_s unless @target_resource_for_error_reports.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         level,
         :Middleware,
         :outbound,
@@ -420,7 +448,7 @@ module ApiTools
         data[ :payload ] = context.response.body
       end
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :info,
         interface.resource,
         "middleware_#{ action }",
@@ -446,7 +474,7 @@ module ApiTools
 
       data[ :session  ] = @service_session.to_h unless @service_session.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :debug,
         :Middleware,
         :log,
@@ -650,7 +678,7 @@ module ApiTools
 
       data[ :session ] = @service_session.to_h unless @service_session.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :info,
         :Middleware,
         :inbound,

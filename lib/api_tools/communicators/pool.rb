@@ -412,19 +412,35 @@ module ApiTools
         end
       end
 
-      # Intended for cases where a communicator raised an exception - print
-      # details to $stderr.
+      # Intended for cases where a communicator raised an exception - attempt
+      # to log a warning through the middleware or print details to $stderr.
       #
       # +exception+::    Exception (or Exception subclass) instance to print.
       # +communicator+:: Communicator instance that raised the exception.
       #
       def print_exception( exception, communicator )
         begin
-          $stderr.puts( "Slow communicator class #{ communicator.class.name } raised exception #{ exception }: #{ exception.backtrace }" )
+          exception = "Slow communicator class #{ communicator.class.name } raised exception #{ exception }"
+          backtrace = ": #{ exception.backtrace }"
+
+          begin
+            environment = ApiTools::ServiceMiddleware.environment()
+            logger      = ApiTools::ServiceMiddleware.logger()
+
+            if environment.test? || environment.development?
+              logger.warn( exception + backtrace )
+            else
+              logger.warn( exception )
+            end
+          rescue
+            $stderr.puts( exception + backtrace )
+          end
+
         rescue
           # If the above fails then everything else is probably about to
           # collapse, but optimistically try to ignore the error and keep
           # the wider processing code alive.
+
         end
       end
 
