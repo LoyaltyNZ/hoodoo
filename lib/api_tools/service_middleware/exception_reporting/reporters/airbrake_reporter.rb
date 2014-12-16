@@ -11,9 +11,9 @@ module ApiTools
   class ServiceMiddleware
     class ExceptionReporting
 
-      # ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass giving
-      # ApiTools::ServiceMiddleware::ExceptionReporting access to Airbrake for
-      # error reporting. See https://airbrake.io.
+      # ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
+      # giving ApiTools::ServiceMiddleware::ExceptionReporting access to
+      # Airbrake for error reporting. See https://airbrake.io.
       #
       # Your application must include the Airbrake gem 'airbrake' via Gemfile
       # (+gem 'airbrake'+ / +bundle install) or direct installation (+gem
@@ -41,7 +41,7 @@ module ApiTools
       #
       #   https://github.com/airbrake/airbrake/wiki/Customizing-your-airbrake.rb
       #
-      class AirbrakeReporter < ApiTools::ServiceMiddleware::ExceptionReporting::Base
+      class AirbrakeReporter < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
 
         # Report an exception to Airbrake.
         #

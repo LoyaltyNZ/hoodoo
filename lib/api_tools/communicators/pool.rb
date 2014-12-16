@@ -231,20 +231,23 @@ module ApiTools
         end
       end
 
-      # This method is only useful if there are any
+      # The communication pool is "emptied" by this call, going back to a
+      # clean state as if just initialised. New workers can be added via #add
+      # and then called via #communicate if you so wish.
+      #
+      # ApiTools::Communciators::Fast subclass instances are removed
+      # immediately without complications.
+      #
       # ApiTools::Communicators::Slow subclass instances in the communication
-      # pool. Each instance is called via a worker Thread; this method shuts
-      # down all such worker Threads, clearing their work queues and asking
-      # each one to exit (politely). There is no mechanism (other than overall
-      # Ruby process exit) available to shut down the Threads by force.
+      # pool are called via a worker Thread; this method shuts down all such
+      # worker Threads, clearing their work queues and asking each one to exit
+      # (politely). There is no mechanism (other than overall Ruby process
+      # exit) available to shut down the Threads by force, so some Threads may
+      # not respond and time out.
       #
       # When this method exits, all workers will have either exited or timed
       # out and possibly still be running, but are considered too slow or dead.
       # No further communications are made to them.
-      #
-      # This communication pool is "emptied" by this call, going back to a
-      # clean state as if just initialised. New workers can be added via #add
-      # and then called via #communicate if you so wish.
       #
       # The following *named* parameters are supported:
       #

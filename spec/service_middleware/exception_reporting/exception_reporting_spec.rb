@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe ApiTools::ServiceMiddleware::ExceptionReporting do
 
-  class TestReporterA < ApiTools::ServiceMiddleware::ExceptionReporting::Base
+  class TestReporterA < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       expectable_hook_a( e, env )
       sleep 0.2 # Deliberate delay to make sure ::wait() works;
@@ -10,13 +10,13 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
     end
   end
 
-  class TestReporterB < ApiTools::ServiceMiddleware::ExceptionReporting::Base
+  class TestReporterB < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       expectable_hook_b( e, env )
     end
   end
 
-  class TestReporterC < ApiTools::ServiceMiddleware::ExceptionReporting::Base
+  class TestReporterC < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       raise 'I am broken'
     end

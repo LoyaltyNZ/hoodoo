@@ -82,7 +82,7 @@ require root+'service_middleware/service_endpoint/augmented_array'
 require root+'service_middleware/service_endpoint/service_endpoint'
 
 require root+'service_middleware/exception_reporting/exception_reporting'
-require root+'service_middleware/exception_reporting/reporters/base'
+require root+'service_middleware/exception_reporting/base_reporter'
 require root+'service_middleware/exception_reporting/reporters/airbrake_reporter'
 require root+'service_middleware/exception_reporting/reporters/raygun_reporter'
 

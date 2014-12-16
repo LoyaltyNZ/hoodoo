@@ -20,7 +20,7 @@ module ApiTools
       @@reporter_pool = ApiTools::Communicators::Pool.new
 
       # Add an exception reporter class to the set of reporters. See the
-      # ApiTools::ServiceMiddleware::ExceptionReporting::Base class for an
+      # ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter class for an
       # overview.
       #
       # Whenever the middleware's own exception handler catches an exception,
@@ -37,12 +37,12 @@ module ApiTools
       # made but processing of other reporters continues uninterrupted. It is
       # up to individual reporter classes to manage thread safety.
       #
-      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::Base
+      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to add.
       #
       def self.add( klass )
-        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::Base
-          raise "ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass"
+        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+          raise "ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.add( klass.instance )
@@ -51,12 +51,12 @@ module ApiTools
       # Remove an exception reporter class from the set of reporters. See
       # ::add for details.
       #
-      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::Base
+      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to remove.
       #
       def self.remove( klass )
-        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::Base
-          raise "ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass"
+        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+          raise "ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.remove( klass.instance )

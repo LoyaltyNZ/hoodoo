@@ -35,7 +35,7 @@ module ApiTools
       # Add a reporter class to the middleware from any service application by
       # calling ApiTools::ServiceMiddleware::ExceptionReporting.add.
       #
-      class Base < ApiTools::Communicators::Slow
+      class BaseReporter < ApiTools::Communicators::Slow
 
         include ::Singleton
 

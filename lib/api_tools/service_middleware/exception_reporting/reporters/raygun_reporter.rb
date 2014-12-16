@@ -11,9 +11,9 @@ module ApiTools
   class ServiceMiddleware
     class ExceptionReporting
 
-      # ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass giving
-      # ApiTools::ServiceMiddleware::ExceptionReporting access to Raygun for
-      # error reporting. See https://raygun.io.
+      # ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
+      # giving ApiTools::ServiceMiddleware::ExceptionReporting access to
+      # Raygun for error reporting. See https://raygun.io.
       #
       # Your application must include the Raygun gem 'raygun4ruby' via Gemfile
       # (+gem 'raygun4ruby'+ / +bundle install) or direct installation (+gem
@@ -41,7 +41,7 @@ module ApiTools
       #
       #   https://github.com/MindscapeHQ/raygun4ruby
       #
-      class RaygunReporter < ApiTools::ServiceMiddleware::ExceptionReporting::Base
+      class RaygunReporter < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
 
         # Report an exception to Raygun.
         #

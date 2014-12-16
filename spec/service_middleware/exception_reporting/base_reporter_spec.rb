@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceMiddleware::ExceptionReporting::Base do
+describe ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter do
   class TestERBase < described_class
   end
 
