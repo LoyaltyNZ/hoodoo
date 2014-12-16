@@ -74,34 +74,9 @@ RSpec.configure do | config |
 
   DatabaseCleaner.strategy = :transaction # MUST NOT be changed
 
-  # The normal logger logs to stdout and stderr - stderr output can be useful
-  # in real tests but pollutes visual test output. Redirect it. "#error" calls
-  # to the ApiTools logger will end up in the log.
-
-  class StdErrTestLogger
-    def self.debug *args
-      $stderr.puts('DEBUG',args)
-    end
-    def self.info *args
-      $stderr.puts('INFO',args)
-    end
-    def self.warn *args
-      $stderr.puts('WARN',args)
-    end
-    def self.error *args
-      $stderr.puts('ERROR',args)
-    end
-  end
-
-  # There used to be a logger_spec.rb test to make sure that the initial logger
-  # value is nil, but we can't do that when we're using a stderr test logger.
-  # Moreover, the middleware assigns its structured logger... So check for that
-  # now as a prerequisite.
-
-  raise "Unexpected logging configuration" unless ApiTools::Logger.logger == ApiTools::ServiceMiddleware::StructuredLogger
-
-  # As per previous comments, redirect $stderr before each test plus various
-  # other before/after stuff related to sessions, databases and so-on.
+  # Redirect $stderr before each test so a test log gets written without
+  # disturbing the RSpec terminal output; make sure the session system is
+  # in "test mode".
 
   config.before( :all ) do
     log = File.new( 'test.log', 'a+')
@@ -111,19 +86,13 @@ RSpec.configure do | config |
     $stderr << Time.now.to_s << "\n"
     $stderr << "*"*80 << "\n\n"
 
-    ApiTools::Logger.logger = StdErrTestLogger
-    ApiTools::Logger.level  = :debug
-
-    ApiTools::ServiceSession.testing true
+    ApiTools::ServiceSession.testing( true )
   end
 
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :all ) do
-    ApiTools::Logger.logger = ApiTools::Logger
-    ApiTools::Logger.level  = :debug
-
-    ApiTools::ServiceSession.testing false
+    ApiTools::ServiceSession.testing( false )
   end
 
   # Make sure DatabaseCleaner runs between each test.

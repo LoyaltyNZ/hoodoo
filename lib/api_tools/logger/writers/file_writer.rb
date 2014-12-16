@@ -34,7 +34,7 @@ module ApiTools
       # See ApiTools::Logger::WriterMixin#report.
       #
       def report( log_level, component, code, data )
-        File.open( pathname, 'ab' ) do | file |
+        File.open( @pathname, 'ab' ) do | file |
           file.puts(
             log_level.to_s.upcase,
             component,

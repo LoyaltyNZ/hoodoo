@@ -140,7 +140,7 @@ module ApiTools
             begin
               communicator.communicate( object )
             rescue => exception
-              print_exception( exception, communicator )
+              handle_exception( exception, communicator )
             end
 
           else
@@ -337,7 +337,7 @@ module ApiTools
               end
 
             rescue => exception
-              print_exception( exception, communicator )
+              handle_exception( exception, communicator )
 
             end
           end
@@ -418,7 +418,7 @@ module ApiTools
       # +exception+::    Exception (or Exception subclass) instance to print.
       # +communicator+:: Communicator instance that raised the exception.
       #
-      def print_exception( exception, communicator )
+      def handle_exception( exception, communicator )
         begin
           exception = "Slow communicator class #{ communicator.class.name } raised exception #{ exception }"
           backtrace = ": #{ exception.backtrace }"
