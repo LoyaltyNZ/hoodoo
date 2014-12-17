@@ -38,7 +38,6 @@ module ApiTools
           integer :precision, :default => 2
 
           enum    :rounding,               :from    => ROUNDINGS,      :required => true
-          enum    :external_currency_type, :from    => EXTERNAL_TYPES, :required => false
         end
 
       end
