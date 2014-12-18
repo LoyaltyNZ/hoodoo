@@ -144,16 +144,16 @@ module ApiTools
             end
 
           else
-            slow   = item[ :slow ]
-            queue  = slow[ :queue  ]
-            thread = slow[ :thread ]
+            data       = item[ :slow       ]
+            thread     = data[ :thread     ]
+            work_queue = data[ :work_queue ]
 
             # This is inaccurate if one or more "dropped messages" reports are
             # on the queue, but since some communicators might report them in
             # the same way as other messages, it's not necessarily incorrect
             # either.
             #
-            if queue.size < MAX_SLOW_QUEUE_SIZE
+            if work_queue.size < MAX_SLOW_QUEUE_SIZE
               dropped = thread[ :dropped_messages ]
 
               if dropped > 0
@@ -166,10 +166,10 @@ module ApiTools
                 # some communicators might deal with them slowly, others may
                 # just ignore them.
                 #
-                queue << QueueEntry.new( dropped: dropped )
+                work_queue << QueueEntry.new( dropped: dropped )
               end
 
-              queue << QueueEntry.new( payload: object )
+              work_queue << QueueEntry.new( payload: object )
 
             else
               thread[ :dropped_messages ] += 1
@@ -208,25 +208,27 @@ module ApiTools
         if communicator.nil?
           @pool.each do | communicator, item |
             next unless item.has_key?( :slow )
+            data = item[ :slow ]
 
-            slow   = item[ :slow ]
-            queue  = slow[ :queue  ]
-            thread = slow[ :thread ]
-
-            wait_for( queue, thread, per_instance_timeout )
+            wait_for(
+              work_queue: data[ :work_queue ],
+              sync_queue: data[ :sync_queue ],
+              timeout:    per_instance_timeout
+            )
           end
 
         else
-          info = @pool[ communicator ]
-          return if info.nil?
+          return unless @pool.has_key?( communicator )
+          item = @pool[ communicator ]
 
-          slow = info[ :slow ]
-          return if slow.nil?
+          return unless item.has_key?( :slow )
+          data = item[ :slow ]
 
-          queue  = slow[ :queue  ]
-          thread = slow[ :thread ]
-
-          wait_for( queue, thread, per_instance_timeout )
+          wait_for(
+            work_queue: data[ :work_queue ],
+            sync_queue: data[ :sync_queue ],
+            timeout:    per_instance_timeout
+          )
 
         end
       end
@@ -261,15 +263,17 @@ module ApiTools
       #
       def terminate( per_instance_timeout: THREAD_EXIT_TIMEOUT )
         loop do
-          klass, item = @pool.shift()
+          klass, item = @pool.shift() # Hash#shift -> remove a key/value pair.
           break if klass.nil?
-          next if item.has_key?( :fast )
 
-          slow   = item[ :slow ]
-          queue  = slow[ :queue  ]
-          thread = slow[ :thread ]
+          next unless item.has_key?( :slow )
+          data = item[ :slow ]
 
-          request_termination_for( queue, thread, per_instance_timeout )
+          request_termination_for(
+            thread:     data[ :thread     ],
+            work_queue: data[ :work_queue ],
+            timeout:    per_instance_timeout
+          )
         end
       end
 
@@ -306,7 +310,8 @@ module ApiTools
       #
       def add_slow_communicator( communicator )
 
-        queue = Queue.new
+        work_queue = Queue.new
+        sync_queue = QueueWithTimeout.new
 
         # Start (and keep a reference to) a thread that just loops around
         # processing queue messages until asked to exit.
@@ -325,10 +330,12 @@ module ApiTools
               # via a +nil+ queue entry.
               #
               loop do
-                entry = queue.pop()
+                entry = work_queue.shift() # ".shift" => FIFO, ".pop" would be LIFO
 
                 if entry.terminate?
                   Thread.exit
+                elsif entry.sync?
+                  sync_queue << :sync
                 elsif entry.dropped?
                   communicator.dropped( entry.dropped )
                 else
@@ -348,8 +355,9 @@ module ApiTools
         @group.add( thread )
         @pool[ communicator ] = {
           :slow => {
-            :queue  => queue,
-            :thread => thread
+            :thread     => thread,
+            :work_queue => work_queue,
+            :sync_queue => sync_queue,
           }
         }
       end
@@ -363,84 +371,152 @@ module ApiTools
       #                  to remove from the pool.
       #
       def remove_slow_communicator( communicator )
-        info   = @pool[ communicator ]
-        slow   = info[ :slow ]
-        queue  = slow[ :queue  ]
-        thread = slow[ :thread ]
+        item = @pool[ communicator ]
+        data = item[ :slow ]
 
-        request_termination_for( queue, thread )
+        request_termination_for(
+          thread:     data[ :thread     ],
+          work_queue: data[ :work_queue ]
+        )
 
         @pool.delete( communicator )
       end
 
-      # Ask a slow communicator thread to exit.
+      # Ask a slow communicator Thread to exit. Existing work on any Queues
+      # is cleared first, so only the current in-process message for a given
+      # communicator has to finish prior to exit.
       #
-      # +queue+::   Queue to use for thread communication.
-      # +thread+::  Thread listening to the Queue.
-      # +timeout+:: Timeout in seconds - default is THREAD_EXIT_TIMEOUT.
+      # *Named* parameters are:
+      #
+      # +:thread+::     Mandatory. Worker Thread for the communicator.
+      # +:work_queue+:: Mandatory. Queue used to send work to the Thread.
+      # +timeout+::     Optional timeout in seconds - default is
+      #                 THREAD_EXIT_TIMEOUT.
       #
       # The method returns if the timeout threshold is exceeded, without
       # raising any exceptions.
       #
-      def request_termination_for( queue, thread, timeout = THREAD_EXIT_TIMEOUT )
-        queue.clear()
-        queue << QueueEntry.new( terminate: true )
+      def request_termination_for( thread:, work_queue:, timeout: THREAD_EXIT_TIMEOUT )
+        work_queue.clear()
+        work_queue << QueueEntry.new( terminate: true )
+
         thread.join( timeout )
       end
 
-      # Wait for a slow communicator thread to empty its queue.
+      # Wait for a slow communicator Thread to empty its work Queue. *Named*
+      # parameters are:
       #
-      # +queue+::   Queue to use for thread communication.
-      # +thread+::  Thread listening to the Queue.
-      # +timeout+:: Timeout in seconds - default is THREAD_WAIT_TIMEOUT.
+      # +:work_queue+:: Mandatory. Queue used to send work to the Thread.
+      # +:sync_queue+:: Mandatory. Queue used by that Thread to send back a
+      #                 sync notification to the pool.
+      # +timeout+::     Optional timeout in seconds - default is
+      #                 THREAD_WAIT_TIMEOUT.
       #
       # The method returns if the timeout threshold is exceeded, without
       # raising any exceptions.
       #
-      def wait_for( queue, thread, timeout = THREAD_WAIT_TIMEOUT )
-        begin
-          Timeout::timeout( timeout ) do
-            loop do
-              break if queue.size == 0
-              sleep 0.1
-            end
-          end
+      def wait_for( work_queue:, sync_queue:, timeout: THREAD_WAIT_TIMEOUT )
 
-        rescue Timeout::Error
+        # Push a 'sync' entry onto the work Queue. Once the worker Thread gets
+        # through other Queue items and reaches this entry, it'll respond
+        # by pushing an item onto its sync Queue.
+
+        work_queue << QueueEntry.new( sync: true )
+
+        # Wait on the sync Queue for the worker Thread to send the requested
+        # message indicating that we're in sync.
+
+        begin
+          sync_queue.shift( timeout )
+
+        rescue ThreadError
           # Do nothing
 
         end
       end
 
-      # Intended for cases where a communicator raised an exception - attempt
-      # to log a warning through the middleware or print details to $stderr.
+      # Intended for cases where a communicator raised an exception - print
+      # details to $stderr. This is all we can do; the logging engine runs
+      # through the communications pool so attempting to log an exception
+      # might cause an exception that we then attempt to log - and so-on.
       #
       # +exception+::    Exception (or Exception subclass) instance to print.
       # +communicator+:: Communicator instance that raised the exception.
       #
       def handle_exception( exception, communicator )
         begin
-          exception = "Slow communicator class #{ communicator.class.name } raised exception #{ exception }"
-          backtrace = ": #{ exception.backtrace }"
-
-          begin
-            environment = ApiTools::ServiceMiddleware.environment()
-            logger      = ApiTools::ServiceMiddleware.logger()
-
-            if environment.test? || environment.development?
-              logger.warn( exception + backtrace )
-            else
-              logger.warn( exception )
-            end
-          rescue
-            $stderr.puts( exception + backtrace )
-          end
+          report = "Slow communicator class #{ communicator.class.name } raised exception '#{ exception }': #{ exception.backtrace }"
+          $stderr.puts( report )
 
         rescue
           # If the above fails then everything else is probably about to
           # collapse, but optimistically try to ignore the error and keep
           # the wider processing code alive.
 
+        end
+      end
+
+      # Internal implementation detail of ApiTools::Communicators::Pool.
+      #
+      # Since pool clients can say "wait until (one or all) workers have
+      # processed their Queue contents", we need to have some way of seeing
+      # when all work is done. The clean way to do it is to push 'sync now'
+      # messages onto the communicator Threads work Queues, so that as they
+      # work through the Queue they'll eventually reach that message. They then
+      # push a message onto a sync Queue for that worker. Meanwhile the waiting
+      # pool does (e.g.) a +pop+ on the sync Queue, which means it blocks until
+      # the workers say they've finished. No busy waiting, Ruby gets to make
+      # its best guess at scheduling, etc.; all good.
+      #
+      # The catch? You can't use +Timeout::timeout...do...+ around a Queue
+      # +pop+. It just doesn't work. It's a strange omission and requires code
+      # gymnastics to work around.
+      #
+      # Enter QueueWithTimeout, from:
+      #
+      #   http://spin.atomicobject.com/2014/07/07/ruby-queue-pop-timeout/
+      #
+      class QueueWithTimeout
+
+        # Create a new instance.
+        #
+        def initialize
+          @mutex    = Mutex.new
+          @queue    = []
+          @recieved = ConditionVariable.new
+        end
+
+        # Push a new entry to the end of the queue.
+        #
+        # +entry+:: Entry to put onto the end of the queue.
+        #
+        def <<( entry )
+          @mutex.synchronize do
+            @queue << entry
+            @recieved.signal
+          end
+        end
+
+        # Take an entry from the front of the queue (FIFO) with optional
+        # timeout if the queue is empty.
+        #
+        # +timeout+:: Timeout (in seconds, Integer or Float) to wait for an
+        #             item to appear on the queue, if the queue is empty. If
+        #             +nil+, there is no timeout (waits indefinitely).
+        #             Optional; default is +nil+.
+        #
+        # If given a non-+nil+ timeout value and the timeout expires, raises
+        # a ThreadError exception (just as non-blocking Ruby Queue#pop would).
+        #
+        def shift( timeout = nil )
+          @mutex.synchronize do
+            if @queue.empty?
+              @recieved.wait( @mutex, timeout ) if timeout != 0
+              raise( ThreadError, 'queue empty' ) if @queue.empty?
+            end
+
+            @queue.shift
+          end
         end
       end
 
@@ -453,6 +529,11 @@ module ApiTools
         # If +true+, the processing Thread should exit. See also #terminate?.
         #
         attr_accessor :terminate
+
+        # If +true+, the processing Thread should push one item with any
+        # payload onto its sync Queue. See also #sync?
+        #
+        attr_accessor :sync
 
         # If not +nil+ or zero, the number of dropped messages that should be
         # send to the slow communicator subclass's #dropped method. See also
@@ -474,11 +555,13 @@ module ApiTools
         # +dropped+::   The integer to send to #dropped in the communicator.
         # +terminate+:: Set to +true+ to exit the processing thread when the
         #               entry is read from the Queue.
+        # +sync+::      Set to +true+ to push a message onto the sync Queue.
         #
-        def initialize( payload: nil, terminate: false, dropped: nil )
-          @terminate = terminate
+        def initialize( payload: nil, dropped: nil, terminate: false, sync: false )
           @payload   = payload
           @dropped   = dropped
+          @terminate = terminate
+          @sync      = sync
         end
 
         # Returns +true+ if encountering this queue entry should terminate the
@@ -486,6 +569,13 @@ module ApiTools
         #
         def terminate?
           @terminate == true
+        end
+
+        # Returns +true+ if this queue entry represents a request to push a
+        # message onto the processing Thread's sync Queue.
+        #
+        def sync?
+          @sync == true
         end
 
         # Returns +true+ if this queue entry represents a dropped message count

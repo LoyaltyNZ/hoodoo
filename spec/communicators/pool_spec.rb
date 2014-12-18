@@ -6,11 +6,10 @@ describe ApiTools::Communicators::Pool do
     @pool = ApiTools::Communicators::Pool.new
   end
 
-  after :each do
-    @pool.wait()
-  end
-
   context 'general operation' do
+    after :each do
+      @pool.wait()
+    end
 
     class TestFastCommunicatorA < ApiTools::Communicators::Fast
       def communicate( obj )
@@ -132,7 +131,7 @@ describe ApiTools::Communicators::Pool do
     end
 
     it 'ignores exceptions in reporters' do
-      c1 = @pool.add( TestFastCommunicatorC.new ) # Add "exception raisers first
+      c1 = @pool.add( TestFastCommunicatorC.new ) # Add exception raisers first
       c2 = @pool.add( TestSlowCommunicatorC.new )
       c3 = @pool.add( TestFastCommunicatorA.new ) # Then these after, which should still be called
       c4 = @pool.add( TestSlowCommunicatorA.new )
@@ -143,7 +142,7 @@ describe ApiTools::Communicators::Pool do
     end
 
     it 'ignores exceptions in exception handler' do
-      c1 = @pool.add( TestFastCommunicatorC.new ) # Add "exception raisers first
+      c1 = @pool.add( TestFastCommunicatorC.new ) # Add exception raisers first
       c2 = @pool.add( TestSlowCommunicatorC.new )
       c3 = @pool.add( TestFastCommunicatorA.new ) # Then these after, which should still be called
       c4 = @pool.add( TestSlowCommunicatorA.new )
@@ -164,8 +163,14 @@ describe ApiTools::Communicators::Pool do
   end
 
   context 'message dropping' do
-    before :all do
+    before :each do
+
+      # This sync queue is pushed from the running test and popped from the
+      # communicators inside their message handler, so that we can force the
+      # communicators to halt "mid-message" by not pushing until we're ready.
+
       $sync_queue = Queue.new
+
     end
 
     class TestSlowCommunicatorDrops < ApiTools::Communicators::Slow
@@ -173,11 +178,8 @@ describe ApiTools::Communicators::Pool do
         @count = 0
       end
 
-      # This consumes one message then tries to pop a queue item, forcing it
-      # to wait for the test code to push. This lets us control completely
-      # consistently thread execution, guaranteeing no further processing of
-      # messages until we want to let it run.
-      #
+      attr_reader :count
+
       def communicate( obj )
         $sync_queue.pop if @count == 0
         @count += 1
@@ -186,45 +188,45 @@ describe ApiTools::Communicators::Pool do
       def dropped( number )
         @count += number
       end
-
-      def count
-        @count
-      end
     end
-
-    # Potentially fragile, but on all except the very slowest machines, the
-    # sleep times should give plenty of CPU cycles up for things to finish
-    # in the implied order.
 
     it 'reports dropped messages' do
       c = @pool.add( TestSlowCommunicatorDrops.new )
       o = { :foo => :bar }
 
-      # Send one message, causing the communicator to process it and then wait
-      # on the queue. Wait for the pool to drain so we know it has done this.
+      # Send a message. The only way we have to sync up in this test here
+      # is to busy poll our sync queue until we see the communicator thread
+      # waiting on it. That means it pulled the message of its work queue and
+      # is now blocked in the message handler until we push to the sync queue.
 
-      expect(c).to receive(:communicate).exactly( 1 ).times.and_call_original
-
+      expect(c).to receive(:communicate).once.with( o ).and_call_original
       @pool.communicate( o )
-      @pool.wait( communicator: c )
 
-      # Now send a full queue of messages, plus some additional ones.
-
-      limit = ApiTools::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
-      additional = 10
-
-      1.upto( limit + additional ) do |i|
-        @pool.communicate( o )
+      loop do
+        sleep 0.01
+        break if $sync_queue.num_waiting > 0
       end
 
-      # The slow communicator is still waiting on our sync queue after that
-      # first message. Let it run; we thus expect it to process a full queue
-      # size of messages, but the 'additional' ones will have been dropped.
+      # Now send a full queue of messages. That'll send "limit", none of which
+      # will be processed yet, then queue "additional".
 
-      expect(c).to receive(:communicate).exactly( limit ).times.and_call_original
-      $sync_queue.push( :anything )
+      limit      = ApiTools::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
+      additional = 10
 
-      # Wait for it to finish processing again.
+      1.upto( limit + additional ) do | i |
+        @pool.communicate( o )
+        sleep 1 if i == 1
+      end
+
+      # The communicator's still waiting on our sync queue. We expect it to get
+      # the "limit" queued calls; let it start processing by pushing something
+      # to the sync queue.
+
+      expect(c).to receive(:communicate).exactly( limit ).times.with( o ).and_call_original
+      $sync_queue << :go!
+
+      # Wait for the communicator to finish processing. Implicit test -
+      # variant of "wait" that takes a specific communicator.
 
       @pool.wait( communicator: c )
 
@@ -232,29 +234,40 @@ describe ApiTools::Communicators::Pool do
       # saying "<x> were dropped between the last communication and this one",
       # then send in the recent message.
 
-      expect(c).to receive(:communicate).exactly( 1 ).times.and_call_original
-      expect(c).to receive(:dropped).exactly( 1 ).times.with( additional ).and_call_original
+      expect(c).to receive(:dropped).once.with( additional ).and_call_original
+      expect(c).to receive(:communicate).once.with( o ).and_call_original
 
       @pool.communicate( o )
-
-      # Finally, wait for all processing to be done by the communicator before
-      # verifying that it saw the right number of messages or drops.
-
       @pool.wait( communicator: c )
+
+      # The 'count' variable in the communicator records the number of
+      # messages it received, or that were dropped, adding them all up.
+      # There was the first 'sync up' message, 'limit' messages in the
+      # queue, 'additional' counted via the "dropped" call and one more
+      # message that provoked the "dropped" call.
 
       expect( c.count ).to eq( 1 + limit + additional + 1 )
     end
   end
 
   context 'waiting, termination and timeouts' do
-    class TestSlowCommunicatorSleeps < ApiTools::Communicators::Slow
-      def communicate( obj )
-        sleep( obj )
-      end
-    end
 
     before :each do
-      @pool = ApiTools::Communicators::Pool.new
+
+      # This sync queue gets pushed from the communicators before they sleep,
+      # and popped by the running test so it knows the communicator threads
+      # received a message and are about to sleep for a while within their
+      # message handler.
+      #
+      $sync_queue = Queue.new
+
+    end
+
+    class TestSlowCommunicatorSleeps < ApiTools::Communicators::Slow
+      def communicate( obj )
+        $sync_queue << :sync
+        sleep( obj )
+      end
     end
 
     it 'times out waiting' do
@@ -264,16 +277,18 @@ describe ApiTools::Communicators::Pool do
 
       expect( @pool.group.list.size ).to eq( 3 )
 
-      # Sleep each for 2 seconds, wait with a timeout of 0.02 seconds,
-      # expect the test to take less than 1 second overall. Non-timeout
-      # waiting is already tested elsewhere.
+      # Sleep each for 1 second, wait with a timeout of 0.02 seconds, expect
+      # the test to take less than 0.5 seconds overall. Non-timeout waiting
+      # is already tested elsewhere.
 
       now = Time.now
 
-      @pool.communicate( 2 )
+      @pool.communicate( 1 )
+      1.upto( 3 ) { $sync_queue.pop() } # Make sure all threads got the message
+
       @pool.wait( per_instance_timeout: 0.02 )
 
-      expect( Time.now - now ).to be < 1
+      expect( Time.now - now ).to be < 0.5
     end
 
     it 'times out termination' do
@@ -283,18 +298,22 @@ describe ApiTools::Communicators::Pool do
 
       expect( @pool.group.list.size ).to eq( 3 )
 
-      # Sleep each for 9999 seconds, terminate with a 0.02 second timeout.
+      # Sleep each for 5 seconds, terminate with a 0.02 second timeout.
       # Expect to exit the termination early, with the pool still intact
       # (since all threads should've timed out).
+      #
+      # The test comms threads will hang around in the runtime for a while
+      # then expire naturally or, if the test suite exits first, get killed
+      # off along with the running Ruby process.
 
       now = Time.now
 
-      @pool.communicate( 9999 )
-      @pool.wait # Make sure all communicators received message and are sleeping
-      @pool.terminate( per_instance_timeout: 0.02 )
+      @pool.communicate( 5 )
+      1.upto( 3 ) { $sync_queue.pop() } # Make sure all threads got the message
+      @pool.terminate( per_instance_timeout: 0.02 ) # Now we know they're all asleep, try a timed-out termination.
 
       expect( Time.now - now ).to be < 1
-      expect( @pool.group.list.size ).to eq( 3 )
+      expect( @pool.group.list.size ).to eq( 3 ) # All threads timed out
     end
 
     it 'terminates properly without timeout' do
@@ -307,10 +326,14 @@ describe ApiTools::Communicators::Pool do
       # Sleep each communicator for just 0.02 seconds and terminate without
       # timeouts. Expect it to all succeed, with nothing left in the pool.
 
+      now = Time.now
+
       @pool.communicate( 0.02 )
+      1.upto( 3 ) { $sync_queue.pop() } # Make sure all threads got the message
       @pool.terminate()
 
-      expect( @pool.group.list.size ).to eq( 0 )
+      expect( Time.now - now ).to be < 1
+      expect( @pool.group.list.size ).to eq( 0 ) # All threads exited
     end
   end
 end

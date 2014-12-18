@@ -1645,7 +1645,7 @@ module ApiTools
         }
 
       else
-        remote_uri = remote_info
+        remote_uri = remote_info.dup
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
@@ -1918,7 +1918,8 @@ module ApiTools
     # "inner reference not found" condition.
     #
     def translate_errors_from_other_resource( errors )
-      # TODO
+      # TODO - lots of testing; e.g. c.f. nested basket items accumulating
+      # a bunch of 404s for products which weren't found via a complex path.
       return errors
     end
 

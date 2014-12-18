@@ -182,7 +182,6 @@ module ApiTools
     def report( log_level, component, code, data )
       return unless self.report?( log_level )
 
-      puts "COMM OUTER"
       @pool.communicate(
         Payload.new(
           log_level: log_level,
@@ -191,7 +190,6 @@ module ApiTools
           data:      data
         )
       )
-      puts "DONE"
     end
 
     # Write a +debug+ log message, provided the log level is +:debug+.
