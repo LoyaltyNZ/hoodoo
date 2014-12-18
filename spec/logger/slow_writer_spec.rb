@@ -92,7 +92,6 @@ describe ApiTools::Logger::SlowWriter do
 
       # See communicators/pool_spec.rb for rationale.
 
-      puts "Push"
       1.upto( limit + additional ) do | i |
         @logger.report( *args )
         sleep 2 if i == 1
@@ -105,9 +104,7 @@ describe ApiTools::Logger::SlowWriter do
 
       # See communicators/pool_spec.rb for rationale.
 
-      puts "Wait"
       @logger.wait()
-      puts "Done"
 
       # See communicators/pool_spec.rb for rationale; send another report in,
       # provoking first a 'dropped messages' log report.
