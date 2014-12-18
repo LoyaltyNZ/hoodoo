@@ -140,22 +140,31 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
   end
 
   def show( context )
-    resource = if ( context.request.uri_path_components[ 0 ] == 'generate_404' )
-      context.resource( :NotFound, 42 )
-    else
-      context.resource( :TestEcho, 2 )
+
+    # (Exercise 'uri_path_components' array vs 'ident' in passing).
+
+    repeat = context.request.ident == 'ensure_repeated_use_works' ? 10 : 1
+
+    1.upto( repeat ) do
+
+      resource = if ( context.request.uri_path_components[ 0 ] == 'generate_404' )
+        context.resource( :NotFound, 42 )
+      else
+        context.resource( :TestEcho, 2 )
+      end
+
+      result = resource.show(
+        context.request.uri_path_components.join( ',' ),
+        {
+          '_embed'     => context.request.embeds,
+          '_reference' => context.request.references
+        }
+      )
+
+      context.response.add_errors( result.platform_errors )
+      context.response.body = { 'show' => result }
+
     end
-
-    result = resource.show(
-      context.request.uri_path_components.join( ',' ),
-      {
-        '_embed'     => context.request.embeds,
-        '_reference' => context.request.references
-      }
-    )
-
-    context.response.add_errors( result.platform_errors )
-    context.response.body = { 'show' => result }
   end
 
   def create( context )
@@ -725,7 +734,7 @@ describe ApiTools::ServiceMiddleware do
       })
     end
 
-    it 'should get a 404 for missing endpoints' do
+    it 'gets a 404 for missing endpoints' do
       get(
         '/v1/test_call/generate_404',
         nil,
@@ -733,6 +742,20 @@ describe ApiTools::ServiceMiddleware do
       )
 
       expect( last_response.status ).to eq( 404 )
+    end
+
+    it 'can reuse an endpoint' do
+      get(
+        '/v1/test_call/ensure_repeated_use_works',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 200 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'show' ]).to_not be_nil
+      expect( parsed[ 'show' ][ 'show' ][ 'uri_path_components' ] ).to eq( [ 'ensure_repeated_use_works' ] )
     end
 
     # Ruby can't kill off an "unresponsive" thread - there seems to be no

@@ -1617,8 +1617,8 @@ module ApiTools
         }
 
       else
-        remote_uri = remote_info
-        remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
+        remote_uri  = remote_info
+        remote_uri += "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
 
