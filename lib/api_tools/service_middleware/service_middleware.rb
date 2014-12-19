@@ -144,18 +144,63 @@ module ApiTools
     # structured log entries. See ApiTools::Logger::WriterMixin#report along
     # with ApiTools::Logger for other calls you can use.
     #
+    # The logger is automatically configured with a set of writers as follows:
+    #
+    # * If off queue:
+    #   - All RACK_ENV values (including "test"):
+    #     = File "log/{environment}.log"
+    #   - RACK_ENV "development"
+    #     = Also to $stdout
+    #
+    # * If on queue:
+    #   - RACK ENV "test"
+    #     = File "log/test.log"
+    #   - All other RACK_ENV values
+    #     = AMQP writer (see below)
+    #   - RACK_ENV "development"
+    #     = Also to $stdout
+    #
+    # Or to put it another way, in test mode only file output to 'test.log'
+    # happens; in development mode $stdout always happens; and in addition
+    # for non-test environment, you'll get a queue-based or file-based
+    # logger depending on whether or not a queue is available.
+    #
+    # All writers are available immediately after the ServiceMiddleware class
+    # itself has been parsed by Ruby, _except_ for the AMQP writer. This neeeds
+    # an Alchemy endpoint passed to it from Rack and thus can only be added at
+    # the point the very first Rack request comes into a middleware instance
+    # through #call. If you intend to use the middleware logger for logging
+    # things before your service is running (e.g. as part of initialisation),
+    # bear in mind that in queue-based evironments, these initialisation logs
+    # can't be sent to the queue.
+    #
     def self.logger
       @@logger
     end
 
-    # Set up the logger instance and add a STDERR stream writer by default.
-    # An AMQP writer can only be added once the first Rack request arrives,
-    # giving us the Alchemy endpoint needed to instantiate an AMQP writer.
-    # Configure non-debug logs only in non-test-like environments.
+    # Set up a logger instance and determine what loggers to add as per above
+    # documentation for the ::logger class method.
 
-    @@logger = ApiTools::Logger.new
-    @@logger.add( ApiTools::Logger::StreamWriter.new( $stderr ) )
+    @@logger             = ApiTools::Logger.new
+    @@logger_file_path   = File.join( 'log', "#{ self.environment() }.log" )
     @@logger_amqp_writer = nil
+
+    if self.environment().test?
+      @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
+    else
+      if self.environment().development?
+        @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
+      end
+
+      # The on-queue case can't be dealt with until #call is invoked by Rack.
+      #
+      unless self.on_queue?
+        @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
+      end
+    end
+
+    # RACK_ENV "test" and "development" environments have debug level logging.
+    # Other environments have info-level logging.
 
     if self.environment().test? || self.environment().development?
       @@logger.level = :debug

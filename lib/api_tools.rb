@@ -9,6 +9,7 @@ require root+'communicators/slow'
 
 require root+'logger/logger'
 require root+'logger/writer_mixin'
+require root+'logger/flattener_mixin'
 require root+'logger/fast_writer'
 require root+'logger/slow_writer'
 require root+'logger/writers/file_writer'

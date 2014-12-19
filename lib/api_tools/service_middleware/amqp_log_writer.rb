@@ -12,11 +12,15 @@
 module ApiTools
   class ServiceMiddleware
 
-    # Writes structured messages to an AMQP-based queue via the Alchemy
-    # and AMQEndpoint gems; an ApiTools::Logger::SlowWriter subclass. See
-    # also ApiTools::Logger and ApiTools::ServiceMiddleware::AMQPLogMessage.
+    # Log writer which sends structured messages to an AMQP-based queue via the
+    # Alchemy and AMQEndpoint gems. An ApiTools::Logger::FastWriter subclass,
+    # since though talking to the queue might be comparatively slow, Alchemy
+    # itself uses an asynchronous Thread for this so there's no need to add
+    # another one for this logger.
     #
-    class AMQPLogWriter < ApiTools::Logger::SlowWriter
+    # See also ApiTools::Logger and ApiTools::ServiceMiddleware::AMQPLogMessage.
+    #
+    class AMQPLogWriter < ApiTools::Logger::FastWriter
 
       # Create an AMQP logger instance.
       #

@@ -15,6 +15,8 @@ module ApiTools
     #
     class FileWriter < ApiTools::Logger::SlowWriter
 
+      include ApiTools::Logger::FlattenerMixin
+
       # Create a file writer instance. Files are written by opening,
       # adding a log message and closing again, to provide reliability.
       # For this reason, this is an ApiTools::Logger::SlowWriter subclass.
@@ -35,12 +37,7 @@ module ApiTools
       #
       def report( log_level, component, code, data )
         File.open( @pathname, 'ab' ) do | file |
-          file.puts(
-            log_level.to_s.upcase,
-            component,
-            code,
-            data.inspect
-          )
+          file.puts( flatten( log_level, component, code, data ) )
         end
       end
     end

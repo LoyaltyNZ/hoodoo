@@ -17,6 +17,8 @@ module ApiTools
     #
     class StreamWriter < ApiTools::Logger::FastWriter
 
+      include ApiTools::Logger::FlattenerMixin
+
       # Create a stream writer instance. Although you could initialize this
       # class with a slow output stream, they're expected to be fast (e.g.
       # terminal output) as this is an ApiTools::Logger::FastWriter subclass.
@@ -34,12 +36,7 @@ module ApiTools
       # See ApiTools::Logger::WriterMixin#report.
       #
       def report( log_level, component, code, data )
-        @output_stream.puts(
-          log_level.to_s.upcase,
-          component,
-          code,
-          data.inspect
-        )
+        @output_stream.puts( flatten( log_level, component, code, data ) )
       end
     end
   end
