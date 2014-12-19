@@ -33,11 +33,12 @@ module ApiTools
           string  :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
           array   :qualifiers
           string  :symbol,                           :length => ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
+
           enum    :position, :from => POSITIONS
+          enum    :rounding, :from => ROUNDINGS, :required => true
 
           integer :precision, :default => 2
 
-          enum    :rounding,               :from    => ROUNDINGS,      :required => true
         end
 
       end
