@@ -79,7 +79,7 @@ RSpec.configure do | config |
   # in "test mode".
 
   config.before( :all ) do
-    log = File.new( 'test.log', 'a+')
+    log = File.new( 'log/test.log', 'a+')
     $stderr.reopen(log)
 
     $stderr << "\n" << "*"*80 << "\n"
