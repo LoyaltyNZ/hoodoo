@@ -10,4 +10,9 @@ describe ApiTools::Logger::FastWriter do
     expect( ApiTools::Logger::StreamWriter < described_class ).to eq( true )
   end
 
+  it 'complains about missing subclass implementation' do
+    expect {
+      ApiTools::Logger::FastWriter.new().report( 1, 2, 3, 4 )
+    }.to raise_error( RuntimeError )
+  end
 end
