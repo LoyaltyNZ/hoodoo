@@ -159,10 +159,10 @@ def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
       :server => :webrick
     }
 
-    pem = File.join( File.dirname( __FILE__ ), 'files', 'ssl.pem' )
-    key = File.join( File.dirname( __FILE__ ), 'files', 'ssl.key' )
-
     if ( use_ssl )
+      pem = File.join( File.dirname( __FILE__ ), 'files', 'ssl.pem' )
+      key = File.join( File.dirname( __FILE__ ), 'files', 'ssl.key' )
+
       options.merge!( {
         :SSLEnable      => true,
         :SSLCertificate => OpenSSL::X509::Certificate.new( File.open( pem ).read ),
