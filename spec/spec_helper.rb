@@ -106,20 +106,22 @@ RSpec.configure do | config |
   end
 end
 
-# Annoyingly have to silence STDOUT chatter from ActiveRecord::Migration
-# and use an 'ensure' block (see later) to make sure it gets restored.
-# To do this for you, call here and pass a block where you create your
-# table and associated model.
+# For things like ActiveRecord::Migrations used during database-orientated
+# tests, or for certain logger tests, have to silence STDOUT chatter to avoid
+# messing up RSpec's output, but we need to be sure it's restored.
 #
-def spec_helper_define_model( &block )
+# This method is called with a block. It redirects STODUT to File::NULL and
+# executes the block. An 'ensure' clause restores STDOUT always.
+#
+def spec_helper_silence_stdout( &block )
   begin
-    $old_stdout = $stdout
-    $stdout     = File.open( File::NULL, 'w' )
+    $old_stdout = $stdout.clone
+    $stdout.reopen( File::NULL, 'w' )
 
     yield
 
   ensure
-    $stdout = $old_stdout
+    $stdout.reopen( $old_stdout )
 
   end
 end

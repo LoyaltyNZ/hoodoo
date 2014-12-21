@@ -121,7 +121,7 @@ module ApiTools
     #     end
     #
     def self.environment
-      @_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
+      @@_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
     # Do we have Memcache available? If not, assume local development with
@@ -175,37 +175,11 @@ module ApiTools
     # can't be sent to the queue.
     #
     def self.logger
-      @@logger
-    end
 
-    # Set up a logger instance and determine what loggers to add as per above
-    # documentation for the ::logger class method.
-
-    @@logger             = ApiTools::Logger.new
-    @@logger_file_path   = File.join( 'log', "#{ self.environment() }.log" )
-    @@logger_amqp_writer = nil
-
-    if self.environment().test?
-      @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
-    else
-      if self.environment().development?
-        @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
-      end
-
-      # The on-queue case can't be dealt with until #call is invoked by Rack.
+      # See ::set_up_logging and near end-of-file for where this is called.
       #
-      unless self.on_queue?
-        @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
-      end
-    end
+      @@logger
 
-    # RACK_ENV "test" and "development" environments have debug level logging.
-    # Other environments have info-level logging.
-
-    if self.environment().test? || self.environment().development?
-      @@logger.level = :debug
-    else
-      @@logger.level = :info
     end
 
     # Record internally the HTTP host and port during local development via
@@ -379,6 +353,42 @@ module ApiTools
     def interfaces_have_public_methods?
       @@interfaces_have_public_methods
     end
+
+    # Set up the @@logger variable with log writer instances appropriate for
+    # the current ::environment. See ::logger for details.
+    #
+    def self.set_up_logging
+
+      @@logger             = ApiTools::Logger.new
+      @@logger_file_path   = File.join( 'log', "#{ self.environment() }.log" )
+      @@logger_amqp_writer = nil
+
+      if self.environment().test?
+        @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
+      else
+        if self.environment().development?
+          @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
+        end
+
+        # The on-queue case can't be dealt with until #call is invoked by
+        # Rack.
+        #
+        unless self.on_queue?
+          @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
+        end
+      end
+
+      # RACK_ENV "test" and "development" environments have debug level
+      # logging. Other environments have info-level logging.
+
+      if self.environment().test? || self.environment().development?
+        @@logger.level = :debug
+      else
+        @@logger.level = :info
+      end
+    end
+
+    private_class_method :set_up_logging
 
     # Log that we're responding with the in the given Rack response def array,
     # returning the same, so that in #call the idiom can be:
@@ -1980,6 +1990,10 @@ module ApiTools
     # Singleton "Front object" for the DRB service used in local development.
     #
     FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
+
+    # Self-configure logging instances.
+    #
+    self.send( :set_up_logging )
 
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'

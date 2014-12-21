@@ -20,18 +20,39 @@ class TestLogServiceApplication < ApiTools::ServiceApplication
   comprised_of TestLogServiceInterface
 end
 
+# Force the middleware logging mode to that passed as a string in 'test_env'.
+# You must have an 'after' block which restores normal test logging if you
+# use this, else other tests may subsequently fail. Returns the log writer
+# instances now in use as an array (ApiTools::Logger#instances).
+#
+def force_logging_to( test_env )
+  ApiTools::ServiceMiddleware.class_variable_set( '@@_env', ApiTools::StringInquirer.new( test_env ) )
+  ApiTools::ServiceMiddleware.send( :set_up_logging )
+  return ApiTools::ServiceMiddleware.logger.instances
+end
+
 describe ApiTools::ServiceMiddleware do
 
   before :each do
-    @old_logger = ApiTools::Logger.logger
-    ApiTools::Logger.logger = ApiTools::ServiceMiddleware::StructuredLogger
+    @old_env = ApiTools::ServiceMiddleware::class_variable_get( '@@_env' )
+    @old_logger = ApiTools::ServiceMiddleware::logger
   end
 
   after :each do
-    ApiTools::Logger.logger = @old_logger
+    ApiTools::ServiceMiddleware::logger.wait()
+    force_logging_to( 'test' )
+    ApiTools::ServiceMiddleware::class_variable_set( '@@_env', @old_env )
+    ApiTools::ServiceMiddleware::class_variable_set( '@@logger', @old_logger )
   end
 
-  context 'without Alchemy' do
+  context 'off queue' do
+    before :each do
+      @old_queue = ENV.delete( 'AMQ_ENDPOINT' )
+    end
+
+    after :each do
+      ENV[ 'AMQ_ENDPOINT' ] = @old_queue unless @old_queue.nil?
+    end
 
     def app
       Rack::Builder.new do
@@ -40,17 +61,42 @@ describe ApiTools::ServiceMiddleware do
       end
     end
 
-    it 'logs to stdout with the structured logger' do
-      expect(ApiTools::ServiceMiddleware::StructuredLogger).to receive(:report).at_least(:once).and_call_original
-      expect($stdout).to receive(:puts).at_least(:once) do | *args |
-        $stderr.puts( args ) # Echo output to stderr for test.log
-      end
-      get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+    it 'has the expected "test" mode loggers' do
+      instances = force_logging_to( 'test' )
+
+      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+    end
+
+    it 'has the expected "development" mode loggers' do
+      instances = force_logging_to( 'development' )
+
+      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::StreamWriter )
+      expect( instances[ 1 ] ).to be_a( ApiTools::Logger::FileWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+    end
+
+    it 'has the expected "production" mode loggers' do
+      instances = force_logging_to( 'production' )
+
+      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :info )
     end
   end
 
-  context 'with fake Alchemy' do
+  context 'on queue' do
+    before :each do
+      @old_queue = ENV.delete( 'AMQ_ENDPOINT' )
+      ENV[ 'AMQ_ENDPOINT' ] = 'amqp://127.0.0.1:1234/'
+    end
+
+    after :each do
+      if @old_queue.nil?
+        ENV.delete( 'AMQ_ENDPOINT' )
+      else
+        ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+      end
+    end
 
     class FakeAlchemy
       def initialize(app)
@@ -60,7 +106,7 @@ describe ApiTools::ServiceMiddleware do
         env['rack.alchemy'] = self
         @app.call(env)
       end
-      def send_message()
+      def send_message(*args)
       end
     end
 
@@ -72,63 +118,43 @@ describe ApiTools::ServiceMiddleware do
       end
     end
 
-    it 'logs to stdout with the structured logger' do
+    # In these tests, the logger instance array isn't complete until at least
+    # one call has gone through the middleware, providing an Alchemy endpoint
+    # and allowing the on-queue logger to be added.
 
-      # So obviously we should be calling the structured logger.
-      #
-      expect(ApiTools::ServiceMiddleware::StructuredLogger).to receive(:report).at_least(:once).and_call_original
-
-      # Since we're running with FakeAlchemy middleware and it sets
-      # itself up as the alchemy endpoint, we expect it to receive a
-      # "send_message" call as the structured logger tries to log to
-      # the queue.
-      #
-      expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
-
-      # In development and test modes, the middleware copies terse
-      # versions of its queue-logged messages to the console with the
-      # prefix "ECHO ", so we expect that too.
-      #
-      expect($stdout).to receive(:puts).at_least(:once) do | string, *args |
-        $stderr.puts( string, args ) # Echo output to stderr for test.log
-        expect(string.include?('ECHO ')).to eq(true)
-      end
+    it 'has the expected "test" mode loggers' do
+      force_logging_to( 'test' )
 
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+
+      instances = ApiTools::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
     end
-  end
-end
 
-describe ApiTools::ServiceMiddleware::AMQPLogMessage do
+    it 'has the expected "development" mode loggers' do
+      force_logging_to( 'development' )
 
-  require 'msgpack'
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
+      spec_helper_silence_stdout() do
+        get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
 
-  let(:hash) do
-    {
-      :id => '1',
-      :level => :info,
-      :component => :RSpec,
-      :code => 'hello',
-      :data => { 'this' => 'that' },
-      :client_id => '2',
-      :interaction_id => '3',
-      :participant_id => '4',
-      :outlet_id => '5'
-    }
-  end
+      instances = ApiTools::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::StreamWriter )
+      expect( instances[ 1 ] ).to be_a( ApiTools::ServiceMiddleware::AMQPLogWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+    end
 
-  it 'serializes' do
-    obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
-  end
+    it 'has the expected "production" mode loggers' do
+      force_logging_to( 'production' )
 
-  it 'deserializes' do
-    obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
-    obj.id = nil # Clear some instance vars
-    obj.level = nil
-    obj.deserialize # Should reset instance vars based on prior serialization
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
+      get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      instances = ApiTools::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( ApiTools::ServiceMiddleware::AMQPLogWriter )
+      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :info )
+    end
   end
 end

@@ -85,10 +85,10 @@ module ApiTools
           :participant_id => participant_id,
           :outlet_id      => outlet_id,
 
-          :routing_key    => @@queue,
+          :routing_key    => @queue_name,
         )
 
-        @@alchemy.send_message( message )
+        @alchemy.send_message( message )
       end
     end
   end

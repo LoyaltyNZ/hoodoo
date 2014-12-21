@@ -75,21 +75,24 @@ module ApiTools
     #
     #     logger.report( ... ) # -> Sends to "output.log" and $stdout
     #
-    # +writer_instance+:: An _instance_ of a subclass of
-    #                     ApiTools::Logger::FastWriter or
-    #                     ApiTools::Logger::SlowWriter.
+    # +writer_instances+:: One or more _instances_ of a subclass of
+    #                      ApiTools::Logger::FastWriter or
+    #                      ApiTools::Logger::SlowWriter, passed as one or
+    #                      more comma-separated parameters.
     #
-    def add( writer_instance )
-      communicator = if writer_instance.is_a?( ApiTools::Logger::FastWriter )
-        FastCommunicator.new( writer_instance, self )
-      elsif writer_instance.is_a?( ApiTools::Logger::SlowWriter )
-        SlowCommunicator.new( writer_instance, self )
-      else
-        raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
-      end
+    def add( *writer_instances )
+      writer_instances.each do | writer_instance |
+        communicator = if writer_instance.is_a?( ApiTools::Logger::FastWriter )
+          FastCommunicator.new( writer_instance, self )
+        elsif writer_instance.is_a?( ApiTools::Logger::SlowWriter )
+          SlowCommunicator.new( writer_instance, self )
+        else
+          raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
+        end
 
-      @pool.add( communicator )
-      @writers[ writer_instance ] = communicator
+        @pool.add( communicator )
+        @writers[ writer_instance ] = communicator
+      end
     end
 
     # Remove a writer instance from this logger. If the instance has not been
@@ -119,6 +122,18 @@ module ApiTools
     def remove_all
       @pool.terminate()
       @writers = {}
+    end
+
+    # Returns an array of all log writer instances currently in use, in order
+    # of addition. See #add.
+    #
+    def instances
+
+      # Implicit ordering relies on Ruby >= 1.9 documented behaviour of
+      # preserving order of addition to a Hash.
+      #
+      @writers.keys
+
     end
 
     # Wait for all writers to finish writing all log messages sent up to the

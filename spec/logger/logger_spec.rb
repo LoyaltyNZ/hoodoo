@@ -36,9 +36,10 @@ describe ApiTools::Logger do
       @stderr_2 = ApiTools::Logger::StreamWriter.new( $stderr )
       @stderr_3 = ApiTools::Logger::StreamWriter.new( $stderr )
 
+      # Test single & multiple additions in passing.
+      #
       @logger.add( @stderr_1 )
-      @logger.add( @stderr_2 )
-      @logger.add( @stderr_3 )
+      @logger.add( @stderr_2, @stderr_3 )
     end
 
     it 'calls added instances' do
@@ -70,6 +71,10 @@ describe ApiTools::Logger do
       expect( $stderr ).to_not receive( :puts )
 
       @logger.error( 'No instances of StreamWriter' )
+    end
+
+    it 'retrieves instances in order' do
+      expect( @logger.instances ).to eq( [ @stderr_1, @stderr_2, @stderr_3 ] )
     end
   end
 

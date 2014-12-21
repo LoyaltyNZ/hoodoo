@@ -62,7 +62,7 @@ describe ApiTools::ServiceSession do
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_raise(Exception.new)
       expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
-      expect(ApiTools::Logger).to receive(:warn)
+      expect(ApiTools::ServiceMiddleware.logger).to receive(:warn)
 
       session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
       expect(session).to be_nil
