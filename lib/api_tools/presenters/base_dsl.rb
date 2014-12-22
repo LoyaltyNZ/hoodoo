@@ -390,7 +390,7 @@ module ApiTools
         begin
           klass = ApiTools::Data::Resources.const_get( resource_name )
         rescue
-          raise "DocumentedObject#resource: Unrecognised resource name '#{resource_name}'"
+          raise "DocumentedObject#resource: Unrecognised resource name '#{ resource_name }'"
         end
 
         self.instance_exec( &klass.get_schema_definition() )
