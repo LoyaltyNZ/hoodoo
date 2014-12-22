@@ -31,7 +31,7 @@ describe ApiTools::Logger::FileWriter do
     expect( File.exist?( @temp_path ) ).to be( true )
 
     logged = File.read( @temp_path )
-    expect( logged ).to eq( "A [2014-01-01T00:00:00Z] b - c: :d\n")
+    expect( logged ).to eq( "A [2014-01-01T00:00:00.000000Z] b - c: :d\n")
 
   end
 end
