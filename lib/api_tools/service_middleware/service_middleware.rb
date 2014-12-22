@@ -144,42 +144,34 @@ module ApiTools
     # structured log entries. See ApiTools::Logger::WriterMixin#report along
     # with ApiTools::Logger for other calls you can use.
     #
-    # The logging system is only available after the first Rack call through
-    # the middleware via #call. Services should normally have no problems with
-    # this, since service implementation code always runs after that; however
-    # if you want to log information from initializers at startup, before any
-    # Rack calls have arrived, you will need to use ApiTools::Logger directly
-    # and set up your own logging for that phase of execution.
+    # The logging system 'wakes up' in stages. Initially, only console based
+    # output is added, as the Middleware Ruby code is parsed and configures
+    # a basic logger. If you call ::set_log_folder, file-based logging may be
+    # available. In AMQP based environments, queue based logging will become
+    # automatically available via Rack and the Alchemy gem once the middleware
+    # starts handling its very first request, but not before.
     #
-    # The logger is automatically configured with a set of writers as follows:
+    # With this in mind, the logger is ultimately configured with a set of
+    # writers as follows:
     #
     # * If off queue:
-    #   - All RACK_ENV values (including "test"):
-    #     = File "log/{environment}.log"
-    #   - RACK_ENV "development"
-    #     = Also to $stdout
+    #   * All RACK_ENV values (including "test"):
+    #     * File "log/{environment}.log"
+    #   * RACK_ENV "development"
+    #     * Also to $stdout
     #
     # * If on queue:
-    #   - RACK ENV "test"
-    #     = File "log/test.log"
-    #   - All other RACK_ENV values
-    #     = AMQP writer (see below)
-    #   - RACK_ENV "development"
-    #     = Also to $stdout
+    #   * RACK ENV "test"
+    #     * File "log/test.log"
+    #   * All other RACK_ENV values
+    #     * AMQP writer (see below)
+    #   * RACK_ENV "development"
+    #     * Also to $stdout
     #
     # Or to put it another way, in test mode only file output to 'test.log'
     # happens; in development mode $stdout always happens; and in addition
     # for non-test environment, you'll get a queue-based or file-based
     # logger depending on whether or not a queue is available.
-    #
-    # File-based loggers can only work if the base path of the calling code is
-    # known - i.e. a full pathname, inside which a "log" folder must exist so
-    # that an "{envrionment}.log" file can be written inside it. Use
-    # ::set_base_log_file_path to specify this. If a Rack call arrives before
-    # any such call is made, the logging system will try to find an
-    # 'environment.rb' file from a conventional service shell in the logger
-    # backtrace; if it can't find that, it gives up and no file output will be
-    # generated.
     #
     def self.logger
       @@logger # See self.set_up_basic_logging and self.set_logger
@@ -212,7 +204,7 @@ module ApiTools
     #
     # You can call more than once to output to more than one log folder.
     #
-    # +base_path+:: Path to folder to use for logs; file +#{environment}.log+
+    # +base_path+:: Path to folder to use for logs; file "#{environment}.log"
     #               may be written inside (see ::environment).
     #
     def self.set_log_folder( base_path )

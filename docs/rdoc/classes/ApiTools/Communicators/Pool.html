@@ -57,6 +57,11 @@
           <a href="Pool/QueueEntry.html">ApiTools::Communicators::Pool::QueueEntry</a>
         </li>
       
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Pool/QueueWithTimeout.html">ApiTools::Communicators::Pool::QueueWithTimeout</a>
+        </li>
+      
     </ul>
   
 
@@ -397,20 +402,20 @@ href="Pool.html#method-i-communicate">communicate</a> methods.</p>
       <span class="ruby-keyword">begin</span>
         <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">object</span> )
       <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
-        <span class="ruby-identifier">print_exception</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">communicator</span> )
+        <span class="ruby-identifier">handle_exception</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">communicator</span> )
       <span class="ruby-keyword">end</span>
 
     <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">slow</span>   = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
-      <span class="ruby-identifier">queue</span>  = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:queue</span>  ]
-      <span class="ruby-identifier">thread</span> = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:thread</span> ]
+      <span class="ruby-identifier">data</span>       = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span>       ]
+      <span class="ruby-identifier">thread</span>     = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:thread</span>     ]
+      <span class="ruby-identifier">work_queue</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ]
 
       <span class="ruby-comment"># This is inaccurate if one or more &quot;dropped messages&quot; reports are</span>
       <span class="ruby-comment"># on the queue, but since some communicators might report them in</span>
       <span class="ruby-comment"># the same way as other messages, it&#39;s not necessarily incorrect</span>
       <span class="ruby-comment"># either.</span>
       <span class="ruby-comment">#</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">queue</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MAX_SLOW_QUEUE_SIZE</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">work_queue</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MAX_SLOW_QUEUE_SIZE</span>
         <span class="ruby-identifier">dropped</span> = <span class="ruby-identifier">thread</span>[ <span class="ruby-value">:dropped_messages</span> ]
 
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">dropped</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
@@ -423,10 +428,10 @@ href="Pool.html#method-i-communicate">communicate</a> methods.</p>
           <span class="ruby-comment"># some communicators might deal with them slowly, others may</span>
           <span class="ruby-comment"># just ignore them.</span>
           <span class="ruby-comment">#</span>
-          <span class="ruby-identifier">queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-identifier">dropped</span> )
+          <span class="ruby-identifier">work_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-identifier">dropped</span> )
         <span class="ruby-keyword">end</span>
 
-        <span class="ruby-identifier">queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-identifier">object</span> )
+        <span class="ruby-identifier">work_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-identifier">object</span> )
 
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">thread</span>[ <span class="ruby-value">:dropped_messages</span> ] <span class="ruby-operator">+=</span> <span class="ruby-number">1</span>
@@ -518,21 +523,24 @@ href="Slow.html">ApiTools::Communicators::Slow</a> subclass instance.</p>
           
           
             <div class="description">
-              <p>This method is only useful if there are any <a
-href="Slow.html">ApiTools::Communicators::Slow</a> subclass instances in
-the communication pool. Each instance is called via a worker Thread; this
-method shuts down all such worker Threads, clearing their work queues and
-asking each one to exit (politely). There is no mechanism (other than
-overall Ruby process exit) available to shut down the Threads by force.</p>
+              <p>The communication pool is “emptied” by this call, going back to a clean
+state as if just initialised. New workers can be added via <a
+href="Pool.html#method-i-add">add</a> and then called via <a
+href="Pool.html#method-i-communicate">communicate</a> if you so wish.</p>
+
+<p>ApiTools::Communciators::Fast subclass instances are removed immediately
+without complications.</p>
+
+<p><a href="Slow.html">ApiTools::Communicators::Slow</a> subclass instances in
+the communication pool are called via a worker Thread; this method shuts
+down all such worker Threads, clearing their work queues and asking each
+one to exit (politely). There is no mechanism (other than overall Ruby
+process exit) available to shut down the Threads by force, so some Threads
+may not respond and time out.</p>
 
 <p>When this method exits, all workers will have either exited or timed out
 and possibly still be running, but are considered too slow or dead. No
 further communications are made to them.</p>
-
-<p>This communication pool is “emptied” by this call, going back to a clean
-state as if just initialised. New workers can be added via <a
-href="Pool.html#method-i-add">add</a> and then called via <a
-href="Pool.html#method-i-communicate">communicate</a> if you so wish.</p>
 
 <p>The following <strong>named</strong> parameters are supported:</p>
 <dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
@@ -560,18 +568,20 @@ timeout).</p>
                 
               </p>
               <div id="method-i-terminate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/communicators/pool.rb, line 259</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/communicators/pool.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">terminate</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-constant">THREAD_EXIT_TIMEOUT</span> )
   <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">shift</span>()
+    <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">shift</span>() <span class="ruby-comment"># Hash#shift -&gt; remove a key/value pair.</span>
     <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:fast</span> )
 
-    <span class="ruby-identifier">slow</span>   = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
-    <span class="ruby-identifier">queue</span>  = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:queue</span>  ]
-    <span class="ruby-identifier">thread</span> = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:thread</span> ]
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
 
-    <span class="ruby-identifier">request_termination_for</span>( <span class="ruby-identifier">queue</span>, <span class="ruby-identifier">thread</span>, <span class="ruby-identifier">per_instance_timeout</span> )
+    <span class="ruby-identifier">request_termination_for</span>(
+      <span class="ruby-identifier">thread</span><span class="ruby-operator">:</span>     <span class="ruby-identifier">data</span>[ <span class="ruby-value">:thread</span>     ],
+      <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+      <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+    )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -635,25 +645,27 @@ error raised. The method simply returns immediately.</p>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">communicator</span>, <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
       <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+      <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
 
-      <span class="ruby-identifier">slow</span>   = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
-      <span class="ruby-identifier">queue</span>  = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:queue</span>  ]
-      <span class="ruby-identifier">thread</span> = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:thread</span> ]
-
-      <span class="ruby-identifier">wait_for</span>( <span class="ruby-identifier">queue</span>, <span class="ruby-identifier">thread</span>, <span class="ruby-identifier">per_instance_timeout</span> )
+      <span class="ruby-identifier">wait_for</span>(
+        <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+        <span class="ruby-identifier">sync_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:sync_queue</span> ],
+        <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+      )
     <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">info</span> = <span class="ruby-ivar">@pool</span>[ <span class="ruby-identifier">communicator</span> ]
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">info</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">communicator</span> )
+    <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>[ <span class="ruby-identifier">communicator</span> ]
 
-    <span class="ruby-identifier">slow</span> = <span class="ruby-identifier">info</span>[ <span class="ruby-value">:slow</span> ]
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">slow</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
 
-    <span class="ruby-identifier">queue</span>  = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:queue</span>  ]
-    <span class="ruby-identifier">thread</span> = <span class="ruby-identifier">slow</span>[ <span class="ruby-value">:thread</span> ]
-
-    <span class="ruby-identifier">wait_for</span>( <span class="ruby-identifier">queue</span>, <span class="ruby-identifier">thread</span>, <span class="ruby-identifier">per_instance_timeout</span> )
+    <span class="ruby-identifier">wait_for</span>(
+      <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+      <span class="ruby-identifier">sync_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:sync_queue</span> ],
+      <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+    )
 
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>

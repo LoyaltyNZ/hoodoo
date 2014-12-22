@@ -202,21 +202,28 @@ describing roles. Role meanings are defined by role usage within services.</p></
         <div class="method">
           <div class="title method-title" id="method-c-load_session">
             
-              <b>load_session</b>(memcache_url, session_id)
+              <b>load_session</b>( memcache_url, session_id )
             
             <a href="../../classes/ApiTools/ServiceSession.html#method-c-load_session" name="method-c-load_session" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Create a <a href="ServiceSession.html">ServiceSession</a> instance by
-loading the session from memcache.</p>
+              <p>TODO: Loyalty NZ derived, needs better specification.</p>
 
-<p>The <code>memcache_url</code> parameter should be set to the session
-memcache server, the <code>session_id</code> parameter is the ID of the
-session to load. The method will return either a valid <a
-href="ServiceSession.html">ServiceSession</a> instance, or nil if the
-session does not exist or is invalid.</p>
+<p>Create a <a href="ServiceSession.html">ServiceSession</a> instance by
+loading session data from Memcached, or a test mock session if in test mode
+(see <a href="ServiceSession.html#method-c-testing">::testing</a>).</p>
+<dl class="rdoc-list note-list"><dt><code>memcache_url</code>
+<dd>
+<p>Connection URL for Memcached.</p>
+</dd><dt><code>session_id</code>
+<dd>
+<p>ID of the session to load.</p>
+</dd></dl>
+
+<p>Returns either a valid <a href="ServiceSession.html">ServiceSession</a>
+instance, or <code>nil</code> if the session does not exist or is invalid.</p>
             </div>
           
           
@@ -234,42 +241,52 @@ session does not exist or is invalid.</p>
                 
               </p>
               <div id="method-c-load_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 70</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">load_session</span>(<span class="ruby-identifier">memcache_url</span>, <span class="ruby-identifier">session_id</span>)
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 85</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">load_session</span>( <span class="ruby-identifier">memcache_url</span>, <span class="ruby-identifier">session_id</span> )
 
-  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">@@test_session</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@test_mode</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">@@test_session</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@test_mode</span>
 
-  <span class="ruby-comment"># Check that ENV[MEMCACHE_URL] exists.</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware memcache server URL is nil or empty&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware memcache server URL is nil or empty&quot;</span>
+  <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Return nil if the session_id is nil, empty or less than 32 chars long.</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">length</span><span class="ruby-operator">&lt;</span><span class="ruby-number">32</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-number">32</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Connect to memcache, raise an error if we cant</span>
-  <span class="ruby-identifier">memcache</span> = <span class="ruby-identifier">connect_memcache</span>(<span class="ruby-identifier">memcache_url</span>)
-  <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware cannot connect to memcache server &#39;#{memcache_url}&#39;&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">memcache</span> = <span class="ruby-identifier">connect_memcache</span>( <span class="ruby-identifier">memcache_url</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;ApiTools::ServiceMiddleware cannot connect to memcache server &#39;#{memcache_url}&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">begin</span>
-    <span class="ruby-comment"># Get The session from the server</span>
-    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>(<span class="ruby-string">&quot;session_&quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">session_id</span>)
-    <span class="ruby-comment"># Return nil if the session can&#39;t be found</span>
+
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>( <span class="ruby-node">&quot;session_#{ session_id }&quot;</span> )
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
+
   <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
-    <span class="ruby-comment"># Log error and Return nil if the session can&#39;t be parsed</span>
-    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">warn</span>(<span class="ruby-string">&quot;Session Loading failed, connection fault or session corrupt&quot;</span>, <span class="ruby-identifier">exception</span>)
+
+    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+      <span class="ruby-string">&quot;Session Loading failed, connection fault or session corrupt&quot;</span>,
+      <span class="ruby-identifier">exception</span>
+    )
+
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Create and return the new session.</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>({
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceSession</span>.<span class="ruby-identifier">new</span>( {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_id</span>,
     <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;client_id&#39;</span>      ],
     <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;participant_id&#39;</span> ],
     <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;outlet_id&#39;</span>      ],
     <span class="ruby-value">:roles</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;roles&#39;</span>          ],
-  })
+  } )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -331,7 +348,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 125</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
 
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
@@ -364,10 +381,21 @@ Array. Role meanings are defined by role usage within services.</p>
           
           
             <div class="description">
-              <p>Set testing mode.</p>
+              <p>TODO: Loyalty NZ derived, needs better specification.</p>
 
-<p><code>test_mode</code> should be set to true/false. The optional
-<code>mock_session</code> parameter defines the test session supplied.</p>
+<p>Set testing mode.</p>
+<dl class="rdoc-list note-list"><dt>test_mode
+<dd>
+<p><code>true</code> to use a static mock test session, <code>false</code> to
+read real session data from Memcached based on inbound requests&#39;
+X-Session-ID header values.</p>
+</dd><dt><code>mock_session</code>
+<dd>
+<p>Optional mock session to use, overriding internal test mock session. The
+internal static test session has no roles assigned, but will read a string
+of comma-separated roles from +ENV[ &#39;API_TOOLS_TEST_SESSION_ROLES&#39;
+]+ if defined.</p>
+</dd></dl>
             </div>
           
           
@@ -385,7 +413,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-testing_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 59</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">testing</span>(<span class="ruby-identifier">test_mode</span>, <span class="ruby-identifier">mock_session</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">@@test_mode</span> = <span class="ruby-identifier">test_mode</span>
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">mock_session</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mock_session</span>.<span class="ruby-identifier">nil?</span>
@@ -425,7 +453,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_all_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 149</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 174</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_all_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">length</span>
 <span class="ruby-keyword">end</span></pre>
@@ -462,7 +490,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_any_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 154</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 179</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_any_roles?</span>(<span class="ruby-identifier">roles</span>)
   (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -499,7 +527,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-has_role-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 144</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 169</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_role?</span>(<span class="ruby-identifier">role</span>)
   <span class="ruby-ivar">@roles</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -540,7 +568,7 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 163</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_session.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-ivar">@to_h</span>
 <span class="ruby-keyword">end</span></pre>

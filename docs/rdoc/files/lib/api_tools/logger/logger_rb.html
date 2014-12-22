@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>platform_auth.rb</title>
+    <title>logger.rb</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
@@ -19,39 +19,36 @@
     <div class="banner">
         
         <h1>
-            platform_auth.rb
+            logger.rb
         </h1>
         <ul class="files">
-            <li>lib/api_tools/auth/platform_auth.rb</li>
-            <li>Last modified: 2014-09-09 10:33:33 +1200</li>
+            <li>lib/api_tools/logger/logger.rb</li>
+            <li>Last modified: 2014-12-22 15:56:43 +1300</li>
         </ul>
     </div>
 
     <div id="bodyContent">
         <div id="content">
   
+    <div class="description">
+      <dl class="rdoc-list note-list"><dt>File
+<dd>
+<p>logger.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2014</p>
+</dd><dt>Purpose
+<dd>
+<p>Multiple output logging via local code or external services.</p>
+</dd></dl>
+<hr>
 
+<pre><code>16-Dec-2014 (ADH): Created.</code></pre>
 
+    </div>
   
-    <!-- File only: requires -->
-    <div class="sectiontitle">Required Files</div>
-    <ul>
-      
-        <li>resolv</li>
-      
-        <li>dalli</li>
-      
-        <li>openssl</li>
-      
-        <li>base64</li>
-      
-        <li>json</li>
-      
-        <li>net/http</li>
-      
-        <li>uri</li>
-      
-    </ul>
+
+
   
 
 
@@ -71,12 +68,32 @@
       
         <li>
           <span class="type">MODULE</span>
-          <a href="../../../../classes/ApiTools/Auth.html">ApiTools::Auth</a>
+          <a href="../../../../classes/ApiTools/Communicators.html">ApiTools::Communicators</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="../../../../classes/ApiTools/Logger/Communicator.html">ApiTools::Logger::Communicator</a>
         </li>
       
         <li>
           <span class="type">CLASS</span>
-          <a href="../../../../classes/ApiTools/Auth/PlatformAuth.html">ApiTools::Auth::PlatformAuth</a>
+          <a href="../../../../classes/ApiTools/Logger.html">ApiTools::Logger</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="../../../../classes/ApiTools/Logger/FastCommunicator.html">ApiTools::Logger::FastCommunicator</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="../../../../classes/ApiTools/Logger/Payload.html">ApiTools::Logger::Payload</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="../../../../classes/ApiTools/Logger/SlowCommunicator.html">ApiTools::Logger::SlowCommunicator</a>
         </li>
       
     </ul>

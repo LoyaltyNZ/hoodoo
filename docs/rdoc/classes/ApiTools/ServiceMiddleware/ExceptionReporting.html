@@ -31,11 +31,11 @@
         </h1>
         <ul class="files">
             
+            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/base_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/base_reporter.rb</a></li>
+            
             <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/exception_reporting_rb.html">lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb</a></li>
             
             <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/airbrake_reporter.rb</a></li>
-            
-            <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/base_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/base.rb</a></li>
             
             <li><a href="../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/raygun_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/raygun_reporter.rb</a></li>
             
@@ -71,7 +71,7 @@
       
         <li>
           <span class="type">CLASS</span>
-          <a href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+          <a href="ExceptionReporting/BaseReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter</a>
         </li>
       
         <li>
@@ -168,7 +168,7 @@
           
             <div class="description">
               <p>Add an exception reporter class to the set of reporters. See the <a
-href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+href="ExceptionReporting/BaseReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter</a>
 class for an overview.</p>
 
 <p>Whenever the middleware&#39;s own exception handler catches an exception,
@@ -187,7 +187,7 @@ individual reporter classes to manage thread safety.</p>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
 <p><a
-href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+href="ExceptionReporting/BaseReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter</a>
 subclass (class, not instance) to add.</p>
 </dd></dl>
             </div>
@@ -209,8 +209,8 @@ subclass (class, not instance) to add.</p>
               <div id="method-c-add_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 43</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span> )
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass&quot;</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
@@ -235,7 +235,7 @@ href="ExceptionReporting.html#method-c-add">::add</a> for details.</p>
 <dl class="rdoc-list note-list"><dt>klass
 <dd>
 <p><a
-href="ExceptionReporting/Base.html">ApiTools::ServiceMiddleware::ExceptionReporting::Base</a>
+href="ExceptionReporting/BaseReporter.html">ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter</a>
 subclass (class, not instance) to remove.</p>
 </dd></dl>
             </div>
@@ -257,8 +257,8 @@ subclass (class, not instance) to remove.</p>
               <div id="method-c-remove_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/exception_reporting.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span> )
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::Base subclass&quot;</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">ServiceMiddleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )

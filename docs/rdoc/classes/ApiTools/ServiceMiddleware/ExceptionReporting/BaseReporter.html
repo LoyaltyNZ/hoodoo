@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>ApiTools::ServiceMiddleware::ExceptionReporting::Base</title>
+    <title>ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
@@ -20,7 +20,7 @@
         
         <h1>
             <span class="type">Class</span> 
-            ApiTools::ServiceMiddleware::ExceptionReporting::Base 
+            ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter 
             
                 <span class="parent">&lt; 
                     
@@ -31,7 +31,7 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../../../../files/lib/api_tools/service_middleware/exception_reporting/reporters/base_rb.html">lib/api_tools/service_middleware/exception_reporting/reporters/base.rb</a></li>
+            <li><a href="../../../../files/lib/api_tools/service_middleware/exception_reporting/base_reporter_rb.html">lib/api_tools/service_middleware/exception_reporting/base_reporter.rb</a></li>
             
         </ul>
     </div>
@@ -153,7 +153,7 @@ href="../ExceptionReporting.html#method-c-add">ApiTools::ServiceMiddleware::Exce
             
               <b>communicate</b>( object )
             
-            <a href="../../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting/Base.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
+            <a href="../../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting/BaseReporter.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
           </div>
           
           
@@ -161,10 +161,11 @@ href="../ExceptionReporting.html#method-c-add">ApiTools::ServiceMiddleware::Exce
               <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method,
 which is part of the base class implementation and implements <a
 href="../../Communicators/Slow.html#method-i-communicate">ApiTools::Communicators::Slow#communicate</a>.
-It calls through to the <a href="Base.html#method-i-report">report</a>
-method which subclasses do implement, unpacking a payload used for the
-internal communicators into the parameters that <a
-href="Base.html#method-i-report">report</a> expects.</p>
+It calls through to the <a
+href="BaseReporter.html#method-i-report">report</a> method which subclasses
+do implement, unpacking a payload used for the internal communicators into
+the parameters that <a href="BaseReporter.html#method-i-report">report</a>
+expects.</p>
 <dl class="rdoc-list note-list"><dt><code>object</code>
 <dd>
 <p><a
@@ -188,7 +189,7 @@ instance.</p>
                 
               </p>
               <div id="method-i-communicate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/reporters/base.rb, line 94</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/base_reporter.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">exception</span>, <span class="ruby-identifier">object</span>.<span class="ruby-identifier">rack_env</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -202,7 +203,7 @@ instance.</p>
             
               <b>report</b>( e, env = nil )
             
-            <a href="../../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting/Base.html#method-i-report" name="method-i-report" class="permalink">Link</a>
+            <a href="../../../../classes/ApiTools/ServiceMiddleware/ExceptionReporting/BaseReporter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
           </div>
           
           
@@ -215,8 +216,9 @@ monitoring or reporting service. The return value is ignored.</p>
 
 <p>The middleware wraps calls to your subclass in a nested exception handler.
 If you raise an exception, the middleware logs details with a
-<code>:debug</code> level through <a
-href="../../Logger.html">ApiTools::Logger</a> then continues processing.</p>
+<code>:debug</code> level through its logger instance if possible (see <a
+href="../../ServiceMiddleware.html#method-c-logger">ApiTools::ServiceMiddleware.logger</a>)
+along with printing details to $stderr, then continues processing.</p>
 
 <p>If service applications are expecting potential exceptions to occur and
 they catch them without re-raising for the middleware to catch, this
@@ -267,9 +269,9 @@ href="../../../Rack.html">Rack</a> request handling.</p>
                 
               </p>
               <div id="method-i-report_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/reporters/base.rb, line 80</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/exception_reporting/base_reporter.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span>.<span class="ruby-identifier">debug</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
