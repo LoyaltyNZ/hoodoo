@@ -29,7 +29,7 @@ module ApiTools
       # return a single line string representing the "flattened" log data.
       #
       def flatten( log_level, component, code, data )
-        "#{ log_level.to_s.upcase } [#{ Time.now.iso8601 }] #{ component } - #{ code }: #{ data.inspect }"
+        "#{ log_level.to_s.upcase } [#{ Time.now.iso8601( 6 ) }] #{ component } - #{ code }: #{ data.inspect }"
       end
     end
   end
