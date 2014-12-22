@@ -6,7 +6,7 @@ describe ApiTools::Data::Resources::Currency do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(7)
+    expect(schema.properties.count).to eq(6)
 
     expect(schema.properties['currency_code']).to be_a(ApiTools::Presenters::String)
     expect(schema.properties['currency_code'].length).to eq(ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH)
@@ -18,8 +18,6 @@ describe ApiTools::Data::Resources::Currency do
     expect(schema.properties['position'].from).to eq(['prefix', 'suffix'])
     expect(schema.properties['rounding']).to be_a(ApiTools::Presenters::Enum)
     expect(schema.properties['rounding'].from.sort).to eq(['up', 'down', 'half_up', 'half_down', 'half_even'].sort)
-    expect(schema.properties['external_currency_type']).to be_a(ApiTools::Presenters::Enum)
-    expect(schema.properties['external_currency_type'].from).to match_array( [ "nz.co.loyalty.txn.fbpts", "nz.co.loyalty.txn.apd" ] )
   end
 
   it 'should be renderable with all data' do
@@ -118,27 +116,6 @@ describe ApiTools::Data::Resources::Currency do
           'code' => 'generic.required_field_missing',
           'message' => 'Field `currency_code` is required',
           'reference' => 'currency_code'
-        }
-      ]
-    )
-  end
-
-  it 'is invalid when an invalid external currency type is given' do
-    result = described_class.validate(
-      {
-        'currency_code' => 'X-FBP',
-        'rounding' => 'down',
-        'external_currency_type' => 'pts'
-      },
-      false
-    )
-
-    expect(result.errors).to eq(
-      [
-        {
-          'code' => 'generic.invalid_enum',
-          'message' => 'Field `external_currency_type` does not contain an allowed reference value from this list: `["nz.co.loyalty.txn.fbpts", "nz.co.loyalty.txn.apd"]`',
-          'reference' => 'external_currency_type'
         }
       ]
     )

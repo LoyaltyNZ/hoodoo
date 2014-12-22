@@ -1776,7 +1776,7 @@ module ApiTools
         }
 
       else
-        remote_uri = remote_info.dup
+        remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
