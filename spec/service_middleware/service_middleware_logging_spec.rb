@@ -76,11 +76,26 @@ describe ApiTools::ServiceMiddleware do
 
   context 'off queue' do
     before :each do
-      @old_queue = ENV.delete( 'AMQ_ENDPOINT' )
+      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
+      ENV[ 'AMQ_ENDPOINT' ] = nil
+
+      @cvar = false
+      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+        @cvar = true
+        @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
+      end
     end
 
     after :each do
-      ENV[ 'AMQ_ENDPOINT' ] = @old_queue unless @old_queue.nil?
+      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+
+      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+        if @cvar == true
+          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+        else
+          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+        end
+      end
     end
 
     def app
@@ -115,15 +130,25 @@ describe ApiTools::ServiceMiddleware do
 
   context 'on queue' do
     before :each do
-      @old_queue = ENV.delete( 'AMQ_ENDPOINT' )
-      ENV[ 'AMQ_ENDPOINT' ] = 'amqp://127.0.0.1:1234/'
+      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
+      ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
+
+      @cvar = false
+      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+        @cvar = true
+        @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
+      end
     end
 
     after :each do
-      if @old_queue.nil?
-        ENV.delete( 'AMQ_ENDPOINT' )
-      else
-        ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+
+      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+        if @cvar == true
+          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+        else
+          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+        end
       end
     end
 
@@ -177,6 +202,7 @@ describe ApiTools::ServiceMiddleware do
 
     it 'has the expected "production" mode loggers' do
       force_logging_to( 'production' )
+      puts "QUEUE? #{ApiTools::ServiceMiddleware.on_queue?} ENV #{ApiTools::ServiceMiddleware.environment}"
 
       expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }

@@ -25,24 +25,25 @@ describe ApiTools::ServiceMiddleware do
 
   context 'on queue' do
     before :each do
+      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
       ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
       @mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
 
-      @no_cvar = true
+      @cvar = false
       if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
-        @no_cvar = false
+        @cvar = true
         @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
       end
     end
 
     after :each do
-      ENV.delete( 'AMQ_ENDPOINT' )
+      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
 
       if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
-        if @no_cvar == true
-          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+        if @cvar == true
+          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
         else
-          @cvar_val = ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val)
+          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
         end
       end
     end
