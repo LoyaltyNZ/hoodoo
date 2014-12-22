@@ -314,8 +314,9 @@ module ApiTools
         @interaction_id = @session_id = nil
         @rack_request   = Rack::Request.new( env )
 
-        unless defined?( @@alchemy )
-          @@alchemy = env[ 'rack.alchemy' ]
+        alchemy = env[ 'rack.alchemy' ]
+        unless alchemy.nil? || defined?( @@alchemy )
+          @@alchemy = alchemy
           self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?
         end
 
