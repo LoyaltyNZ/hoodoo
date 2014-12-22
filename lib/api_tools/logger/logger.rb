@@ -25,13 +25,13 @@ module ApiTools
   # * ApiTools::Logger::StreamWriter - write to output streams, typically
   #   expected to be fast, e.g. unredirected $stdout or $stderr.
   #
-  # * ApiTools::Logger::FileWriter - write to files.
-  #
-  # * ApiTools::Logger::AMQPWriter - write to AMQP-based queues.
+  # * ApiTools::Logger::FileWriter - write to files, typically expected to
+  #   be relatively slow.
   #
   # Some loggers can preserve structural logged data (see #report) while others
   # flatten all log messages. For example, ApiTools::Logger::StreamWriter must
-  # flatten messages while ApiTools::Logger::AMQPWriter preserves structure.
+  # flatten messages but a custom writer that, say, persisted messages in a
+  # database should be able to preserve structure.
   #
   # Writers are either considered fast or slow. Fast writers are called inline
   # as soon as a message gets logged. Slow writers are called asynchronously
@@ -46,7 +46,7 @@ module ApiTools
   #
   class Logger
 
-    # Create a new logger instance.
+    # Create a new logger instance. Once created, use #add to add writers.
     #
     # +component+:: Flat logging methods (see #debug, #info, #warn and #error)
     #               are internally logged through the structured logger (see
@@ -56,28 +56,43 @@ module ApiTools
     #
     def initialize( component = :Middleware )
       @level     = :debug
-      @pool      = ApiTools::Communicator::Pool.new
+      @pool      = ApiTools::Communicators::Pool.new
       @component = component
       @writers   = {}
     end
 
-    # Add a new writer instance to this logger.
+    # Add a new writer instance to this logger. Example:
     #
-    # +writer_instance+:: An _instance_ of a subclass of
-    #                     ApiTools::Logger::FastWriter or
-    #                     ApiTools::Logger::SlowWriter.
+    #     file_writer   = ApiTools::Logger::FileWriter.new( 'output.log' )
+    #     stdout_writer = ApiTools::Logger::StreamWriter.new
     #
-    def add( writer_instance )
-      communicator = if writer.is_a?( ApiTools::Logger::FastWriter )
-        FastCommunicator.new( writer_instance, self )
-      elsif writer.is_a?( ApiTools::Logger::SlowWriter )
-        SlowCommunicator.new( writer_instance, self )
-      else
-        raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
-      end
+    #     @logger = ApiTools::Logger.new
+    #
+    #     logger.add( file_writer   )
+    #     logger.add( stdout_writer )
+    #
+    #     # ...then later...
+    #
+    #     logger.report( ... ) # -> Sends to "output.log" and $stdout
+    #
+    # +writer_instances+:: One or more _instances_ of a subclass of
+    #                      ApiTools::Logger::FastWriter or
+    #                      ApiTools::Logger::SlowWriter, passed as one or
+    #                      more comma-separated parameters.
+    #
+    def add( *writer_instances )
+      writer_instances.each do | writer_instance |
+        communicator = if writer_instance.is_a?( ApiTools::Logger::FastWriter )
+          FastCommunicator.new( writer_instance, self )
+        elsif writer_instance.is_a?( ApiTools::Logger::SlowWriter )
+          SlowCommunicator.new( writer_instance, self )
+        else
+          raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
+        end
 
-      @pool.add( communicator )
-      @writers[ writer_instance ] = communicator
+        @pool.add( communicator )
+        @writers[ writer_instance ] = communicator
+      end
     end
 
     # Remove a writer instance from this logger. If the instance has not been
@@ -107,6 +122,18 @@ module ApiTools
     def remove_all
       @pool.terminate()
       @writers = {}
+    end
+
+    # Returns an array of all log writer instances currently in use, in order
+    # of addition. See #add.
+    #
+    def instances
+
+      # Implicit ordering relies on Ruby >= 1.9 documented behaviour of
+      # preserving order of addition to a Hash.
+      #
+      @writers.keys
+
     end
 
     # Wait for all writers to finish writing all log messages sent up to the
@@ -172,10 +199,10 @@ module ApiTools
 
       @pool.communicate(
         Payload.new(
-          log_level,
-          component,
-          code,
-          data
+          log_level: log_level,
+          component: component,
+          code:      code,
+          data:      data
         )
       )
     end

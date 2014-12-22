@@ -9,7 +9,8 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter do
   end
 
   it 'provides a reporting example' do
-    expect( ApiTools::Logger ).to receive( :debug )
-    TestERBase.instance.report( RuntimeError.new )
+    expect {
+      TestERBase.instance.report( RuntimeError.new )
+    }.to raise_exception( RuntimeError )
   end
 end

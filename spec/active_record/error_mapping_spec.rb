@@ -3,7 +3,7 @@ require 'active_record'
 
 describe ApiTools::ActiveRecord::ErrorMapping do
   before :all do
-    spec_helper_define_model() do
+    spec_helper_silence_stdout() do
       ActiveRecord::Migration.create_table( :r_spec_model_error_mapping_tests ) do | t |
         t.string   :uuid
         t.boolean  :boolean

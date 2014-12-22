@@ -1,12 +1,19 @@
 root = File.dirname(__FILE__)+'/api_tools/'
 
 require root+'utilities'
-require root+'logger'
 require root+'uuid'
 
+require root+'communicators/pool'
 require root+'communicators/fast'
 require root+'communicators/slow'
-require root+'communicators/pool'
+
+require root+'logger/logger'
+require root+'logger/writer_mixin'
+require root+'logger/flattener_mixin'
+require root+'logger/fast_writer'
+require root+'logger/slow_writer'
+require root+'logger/writers/file_writer'
+require root+'logger/writers/stream_writer'
 
 # Schema based data validation and rendering
 
@@ -74,7 +81,7 @@ require root+'service_middleware/string_inquirer'
 require root+'service_middleware/rack_monkey_patch'
 require root+'service_middleware/service_registry_drb_server'
 require root+'service_middleware/amqp_log_message'
-require root+'service_middleware/structured_logger'
+require root+'service_middleware/amqp_log_writer'
 require root+'service_middleware/service_middleware'
 require root+'service_middleware/service_endpoint/augmented_base'
 require root+'service_middleware/service_endpoint/augmented_hash'

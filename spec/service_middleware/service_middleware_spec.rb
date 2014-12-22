@@ -280,7 +280,14 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'a matching endpoint should use fallback exception handler if early failures occur' do
-      expect(ApiTools::ServiceMiddleware::StructuredLogger).to receive(:alchemy=).and_raise("boo!")
+
+      # Stub out anything early in request handling inside call() and make it
+      # throw an exception. Can't throw for Rack::Request.new as other parts
+      # of the handler chain are able to call this an arbitrary number of
+      # times. At the time of writing, the next thing along is a call to
+      # private method "debug_log".
+
+      expect_any_instance_of(ApiTools::ServiceMiddleware).to receive(:debug_log).and_raise("boo!")
 
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
@@ -290,7 +297,7 @@ describe ApiTools::ServiceMiddleware do
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
 
-      expect_any_instance_of(ApiTools::ServiceMiddleware).to receive(:record_exception).and_raise("boo!")
+      expect(ApiTools::ServiceMiddleware::ExceptionReporting).to receive(:report).and_raise("boo!")
 
       # Route through to the unimplemented "list" call, so the subclass raises
       # an exception. This is tested independently elsewhere too. This causes

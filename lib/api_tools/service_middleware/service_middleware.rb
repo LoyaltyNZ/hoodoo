@@ -36,16 +36,22 @@ module ApiTools
   # consistent way to return results, which can be post-processed further by
   # the middleware before returning the data to Rack.
   #
-  # The middleware supports structured logging - see ApiTools::Logger::report.
-  # Its own log data uses component +Middleware+. It will also log essential
-  # data for successful and failed interactions with resource endpoints using
-  # the resource name as the component. In such cases, the codes it uses are
-  # always prefixed by +middleware_+ and service applications should consider
-  # codes with this prefix reserved - do not use such codes yourself.
+  # The middleware supports structured logging through ApiTools::Logger via the
+  # custom ApiTools::ServiceMiddleware::AMQPLogWriter class. Access the logger
+  # instance with ApiTools::ServiceMiddleware::logger. Call +report+ on this
+  # (see ApiTools::Logger::WriterMixin#report) to make structured log entries.
+  # The middleware's own entries use component +Middleware+ for general data.
+  # It also logs essential essential information about successful and failed
+  # interactions with resource endpoints using the resource name as the
+  # component. In such cases, the codes it uses are always prefixed by
+  # +middleware_+ and service applications must consider codes with this prefix
+  # reserved - do not use such codes yourself.
+  #
+  # The middleware adds a STDERR stream writer logger by default and an AMQP
+  # log writer on the first Rack +call+ should the Rack environment provide an
+  # Alchemy endpoint (see the Alchemy and AMQEndpoint gems).
   #
   class ServiceMiddleware
-
-    ApiTools::Logger.logger = ApiTools::ServiceMiddleware::StructuredLogger
 
     # All allowed action names in implementations, used for internal checks.
     # This is also the default supported set of actions. Symbols.
@@ -115,7 +121,7 @@ module ApiTools
     #     end
     #
     def self.environment
-      @_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
+      @@_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
     # Do we have Memcache available? If not, assume local development with
@@ -132,6 +138,85 @@ module ApiTools
     def self.on_queue?
       q = ENV[ 'AMQ_ENDPOINT' ]
       q.nil? == false && q.empty? == false
+    end
+
+    # Access the middleware's logging instance. Call +report+ on this to make
+    # structured log entries. See ApiTools::Logger::WriterMixin#report along
+    # with ApiTools::Logger for other calls you can use.
+    #
+    # The logging system is only available after the first Rack call through
+    # the middleware via #call. Services should normally have no problems with
+    # this, since service implementation code always runs after that; however
+    # if you want to log information from initializers at startup, before any
+    # Rack calls have arrived, you will need to use ApiTools::Logger directly
+    # and set up your own logging for that phase of execution.
+    #
+    # The logger is automatically configured with a set of writers as follows:
+    #
+    # * If off queue:
+    #   - All RACK_ENV values (including "test"):
+    #     = File "log/{environment}.log"
+    #   - RACK_ENV "development"
+    #     = Also to $stdout
+    #
+    # * If on queue:
+    #   - RACK ENV "test"
+    #     = File "log/test.log"
+    #   - All other RACK_ENV values
+    #     = AMQP writer (see below)
+    #   - RACK_ENV "development"
+    #     = Also to $stdout
+    #
+    # Or to put it another way, in test mode only file output to 'test.log'
+    # happens; in development mode $stdout always happens; and in addition
+    # for non-test environment, you'll get a queue-based or file-based
+    # logger depending on whether or not a queue is available.
+    #
+    # File-based loggers can only work if the base path of the calling code is
+    # known - i.e. a full pathname, inside which a "log" folder must exist so
+    # that an "{envrionment}.log" file can be written inside it. Use
+    # ::set_base_log_file_path to specify this. If a Rack call arrives before
+    # any such call is made, the logging system will try to find an
+    # 'environment.rb' file from a conventional service shell in the logger
+    # backtrace; if it can't find that, it gives up and no file output will be
+    # generated.
+    #
+    def self.logger
+      @@logger # See self.set_up_basic_logging and self.set_logger
+    end
+
+    # The middleware sets up a logger itself (see ::logger) with various log
+    # mechanisms set up (mostly) without service author intervention.
+    #
+    # If you want to completely override the middleware's logger and replace
+    # it with your own at any time (not recommended), call here.
+    #
+    # +logger+:: Alternative ApiTools::Logger instance to use for all
+    #            middleware logging from this point onwards. The value will
+    #            subsequently be returned by the ::logger class method.
+    #
+    def self.set_logger( logger )
+      unless logger.is_a?( ApiTools::Logger )
+        raise "ApiTools::Communicators::set_logger must be called with an instance of ApiTools::Logger only"
+      end
+
+      @@external_logger = true
+      @@logger          = logger
+    end
+
+    # If using the middleware logger (see ::logger) with no external custom
+    # logger set up (see ::set_logger), call here to configure the folder used
+    # for logs when file output is active.
+    #
+    # If you don't do this at least once, no log file output can occur.
+    #
+    # You can call more than once to output to more than one log folder.
+    #
+    # +base_path+:: Path to folder to use for logs; file +#{environment}.log+
+    #               may be written inside (see ::environment).
+    #
+    def self.set_log_folder( base_path )
+      self.send( :add_file_logging, base_path )
     end
 
     # Record internally the HTTP host and port during local development via
@@ -229,18 +314,11 @@ module ApiTools
         @interaction_id = @session_id = nil
         @rack_request   = Rack::Request.new( env )
 
-        # If running on Alchemy / an AMQP based architecture, it'll have
-        # forwarded details of the AMQEndpoint gem's queue service via the
-        # Rack environment. Send this to the structured logger so it can do
-        # queue-based structured logging via the provided service.
-        #
-        @@alchemy = env[ 'rack.alchemy' ]
-        ApiTools::ServiceMiddleware::StructuredLogger.alchemy = @@alchemy
-
-        # Don't spew debug logs in non-test-like environments.
-        #
-        environment = ApiTools::ServiceMiddleware.environment()
-        ApiTools::Logger.level = :info unless environment.test? || environment.development?
+        alchemy = env[ 'rack.alchemy' ]
+        unless alchemy.nil? || defined?( @@alchemy )
+          @@alchemy = alchemy
+          self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?
+        end
 
         debug_log()
 
@@ -263,7 +341,7 @@ module ApiTools
         rescue
 
           begin
-            ApiTools::Logger.error(
+            @@logger.error(
               'ApiTools::ServiceMiddleware#call',
               'Middleware exception in exception handler',
               exception.to_s
@@ -306,6 +384,84 @@ module ApiTools
     def interfaces_have_public_methods?
       @@interfaces_have_public_methods
     end
+
+    # Private class method.
+    #
+    # Sets up a logger instance with appropriate log level for the environment
+    # (see ::environment) and any logger writers appropriate for that
+    # environment which can be constructed with no extra configuration data.
+    # In practice this just means a $stdout stream writer in development mode.
+    #
+    def self.set_up_basic_logging
+
+      @@external_logger = false
+      @@logger          = ApiTools::Logger.new
+
+      # RACK_ENV "test" and "development" environments have debug level
+      # logging. Other environments have info-level logging.
+
+      if self.environment.test? || self.environment.development?
+        @@logger.level = :debug
+      else
+        @@logger.level = :info
+      end
+
+      # The only environment that gets a simple writer we can create right
+      # now is "development", which always logs to stdout.
+
+      if self.environment.development?
+        @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
+      end
+    end
+
+    private_class_method( :set_up_basic_logging )
+
+    # Private class method.
+    #
+    # Assuming ::set_up_basic_logging has previously run, add in a file
+    # writer if in a test environment, or if in any other environment
+    # without an AMQP based queue available.
+    #
+    # The method does nothing if an external logger is in use.
+    #
+    # +base_path+:: Path to folder to use for logs; file "{environment}.log"
+    #               may be written inside.
+    #
+    def self.add_file_logging( base_path )
+      return if @@external_logger == true
+
+      if self.environment.test? || self.on_queue? == false
+        log_path    = File.join( base_path, "#{ self.environment }.log" )
+        file_writer = ApiTools::Logger::FileWriter.new( log_path )
+
+        @@logger.add( file_writer )
+      end
+    end
+
+    private_class_method( :add_file_logging )
+
+    # Private class method.
+    #
+    # Assuming ::set_up_basic_logging has previously run, add in an Alchemy
+    # based queue writer if in a non-test environment with an AMQP based queue
+    # available.
+    #
+    # The method does nothing if an external logger is in use.
+    #
+    # +alchemy+:: A valid Alchemy endpoint instance upon which #send_message
+    #             will be invoked, to send logging messages on to the queue.
+    #
+    def self.add_queue_logging( alchemy )
+      return if @@external_logger == true
+
+      if self.environment.test? == false && self.on_queue?
+        alchemy_queue_writer = ApiTools::ServiceMiddleware::AMQPLogWriter.new( alchemy )
+
+        @@logger.add( alchemy_queue_writer )
+      end
+    end
+
+    private_class_method( :add_queue_logging )
 
     # Log that we're responding with the in the given Rack response def array,
     # returning the same, so that in #call the idiom can be:
@@ -363,7 +519,7 @@ module ApiTools
       data[ :session  ] = @service_session.to_h unless @service_session.nil?
       data[ :resource ] = @target_resource_for_error_reports.to_s unless @target_resource_for_error_reports.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         level,
         :Middleware,
         :outbound,
@@ -420,7 +576,7 @@ module ApiTools
         data[ :payload ] = context.response.body
       end
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :info,
         interface.resource,
         "middleware_#{ action }",
@@ -446,7 +602,7 @@ module ApiTools
 
       data[ :session  ] = @service_session.to_h unless @service_session.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :debug,
         :Middleware,
         :log,
@@ -484,14 +640,17 @@ module ApiTools
         # If there isn't just one, we rely on the Rack monkey patch or a
         # hard coded default.
 
-        host    = nil
-        port    = nil
-        servers = ObjectSpace.each_object( Rack::Server )
+        host = nil
+        port = nil
 
-        if servers.count == 1
-          server = servers.first
-          host   = server.options[ :Host ]
-          port   = server.options[ :Port ]
+        if defined?( ::Rack ) && defined?( ::Rack::Server )
+          servers = ObjectSpace.each_object( ::Rack::Server )
+
+          if servers.count == 1
+            server = servers.first
+            host   = server.options[ :Host ]
+            port   = server.options[ :Port ]
+          end
         end
 
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
@@ -650,7 +809,7 @@ module ApiTools
 
       data[ :session ] = @service_session.to_h unless @service_session.nil?
 
-      ApiTools::Logger.report(
+      @@logger.report(
         :info,
         :Middleware,
         :inbound,
@@ -1617,8 +1776,8 @@ module ApiTools
         }
 
       else
-        remote_uri  = remote_info
-        remote_uri += "/#{ URI::escape( ident ) }" unless ident.nil?
+        remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       end
 
@@ -1662,7 +1821,7 @@ module ApiTools
 
         # Call via Alchemy.
 
-        unless defined?( @@alchemy )
+        unless defined?( @@alchemy ) && @@alchemy.nil? == false
           raise 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment'
         end
 
@@ -1890,11 +2049,14 @@ module ApiTools
     # "inner reference not found" condition.
     #
     def translate_errors_from_other_resource( errors )
-      # TODO
+      # TODO - lots of testing; e.g. c.f. nested basket items accumulating
+      # a bunch of 404s for products which weren't found via a complex path.
       return errors
     end
 
     # The following must appear at the end of this class definition.
+
+    set_up_basic_logging()
 
     # For local development, a DRb service is used. We thus must
     # "disable eval() and friends":

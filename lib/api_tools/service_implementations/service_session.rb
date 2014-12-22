@@ -52,56 +52,81 @@ module ApiTools
       :roles          => ENV[ 'API_TOOLS_TEST_SESSION_ROLES' ] || '',
     }
 
+    # TODO: Loyalty NZ derived, needs better specification.
+    #
     # Set testing mode.
     #
-    # +test_mode+ should be set to true/false. The optional +mock_session+ parameter
-    # defines the test session supplied.
+    # +test_mode+::    +true+ to use a static mock test session, +false+ to
+    #                  read real session data from Memcached based on inbound
+    #                  requests' X-Session-ID header values.
+    #
+    # +mock_session+:: Optional mock session to use, overriding internal test
+    #                  mock session. The internal static test session has no
+    #                  roles assigned, but will read a string of
+    #                  comma-separated roles from
+    #                  +ENV[ 'API_TOOLS_TEST_SESSION_ROLES' ]+ if defined.
+    #
     def self.testing(test_mode, mock_session = nil)
       @@test_mode = test_mode
       @@test_session = mock_session unless mock_session.nil?
     end
 
-    # Create a ServiceSession instance by loading the session from memcache.
+    # TODO: Loyalty NZ derived, needs better specification.
     #
-    # The +memcache_url+ parameter should be set to the session memcache server, the
-    # +session_id+ parameter is the ID of the session to load. The method will return
-    # either a valid ServiceSession instance, or nil if the session does not exist or is
-    # invalid.
-    def self.load_session(memcache_url, session_id)
+    # Create a ServiceSession instance by loading session data from Memcached,
+    # or a test mock session if in test mode (see ::testing).
+    #
+    # +memcache_url+:: Connection URL for Memcached.
+    # +session_id+::   ID of the session to load.
+    #
+    # Returns either a valid ServiceSession instance, or +nil+ if the session
+    # does not exist or is invalid.
+    #
+    def self.load_session( memcache_url, session_id )
 
-      return ApiTools::ServiceSession.new(@@test_session) if @@test_mode
+      return ApiTools::ServiceSession.new( @@test_session ) if @@test_mode
 
-      # Check that ENV[MEMCACHE_URL] exists.
-      raise "ApiTools::ServiceMiddleware memcache server URL is nil or empty" if memcache_url.nil? || memcache_url.empty?
+      if memcache_url.nil? || memcache_url.empty?
+        raise "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
+      end
 
-      # Return nil if the session_id is nil, empty or less than 32 chars long.
-      if session_id.nil? or session_id.empty? or session_id.length<32
+      if session_id.nil? || session_id.empty? || session_id.length < 32
         return nil
       end
 
-      # Connect to memcache, raise an error if we cant
-      memcache = connect_memcache(memcache_url)
-      raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'" if memcache.nil?
+      memcache = connect_memcache( memcache_url )
+
+      if memcache.nil?
+        raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'"
+      end
 
       begin
-        # Get The session from the server
-        session_hash = memcache.get("session_"+session_id)
-        # Return nil if the session can't be found
+
+        session_hash = memcache.get( "session_#{ session_id }" )
         return nil if session_hash.nil?
+
       rescue Exception => exception
-        # Log error and Return nil if the session can't be parsed
-        ApiTools::Logger.warn("Session Loading failed, connection fault or session corrupt", exception)
+
+        # Log error and return nil if the session can't be parsed
+        #
+        ApiTools::ServiceMiddleware.logger.warn(
+          "Session Loading failed, connection fault or session corrupt",
+          exception
+        )
+
         return nil
+
       end
 
       # Create and return the new session.
-      return ApiTools::ServiceSession.new({
+      #
+      return ApiTools::ServiceSession.new( {
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],
         :outlet_id      => session_hash[ 'outlet_id'      ],
         :roles          => session_hash[ 'roles'          ],
-      })
+      } )
     end
 
     # Instantiate a new ServiceSession instance with the optional supplied
@@ -166,15 +191,26 @@ module ApiTools
 
     private
 
-    # Connect to the Memcache Session Server
-    def self.connect_memcache(url)
+    # Connect to the Memcached server.
+    #
+    # +url+:: Connection URL for Memcached.
+    #
+    def self.connect_memcache( url )
       stats = nil
+
       begin
-        memcache = Dalli::Client.new(url, { :compress=>false, :serializer => JSON })
+        memcache = Dalli::Client.new(
+          url,
+          { :compress=>false, :serializer => JSON }
+        )
+
         stats = memcache.stats
+
       rescue Exception => e
         stats = nil
+
       end
+
       stats.nil? ? nil : memcache
     end
   end

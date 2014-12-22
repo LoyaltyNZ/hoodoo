@@ -3,7 +3,7 @@ require 'active_record'
 
 describe ApiTools::ActiveRecord::UUID do
   before :all do
-    spec_helper_define_model() do
+    spec_helper_silence_stdout() do
       tblname = :r_spec_model_uuid_tests
 
       ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |

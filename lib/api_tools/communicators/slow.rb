@@ -26,8 +26,25 @@ module ApiTools
     # ApiTools::Communicators::Fast instead.
     #
     # Example: A communicator might be part of a logging scheme which talks to
-    #          a network-based third party logging service. The parameter it
-    #          expects would be a log message string.
+    # a network-based third party logging service. The parameter it expects
+    # would be a log message string.
+    #
+    # *IMPORTANT*: If you use ActiveRecord in a slow communicator class, beware
+    # that your writer runs in a ruby Thread. Unless you take steps to prevent
+    # it, ActiveRecord will implicitly check out a connection which stays with
+    # your Thread forever. This steals a connection from the pool. To prevent
+    # this issue, you must use the following pattern:
+    #
+    #     def communicate( object )
+    #       ActiveRecord::Base.connection_pool.with_connection do
+    #         # ...Any AciveRecord code goes here...
+    #       end
+    #     end
+    #
+    # Code within the +with_connection+ block uses a temporary connection from
+    # the pool which is returned once the block has finished processing. Even
+    # if exceptions occur within your ActiveRecord code, the connection is
+    # still correctly returned to the pool using the above approach.
     #
     class Slow
 

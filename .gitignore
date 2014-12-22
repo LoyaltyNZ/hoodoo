@@ -1,7 +1,7 @@
 .elasticbeanstalk/
 coverage/
 doc/
-log
+log/*.log
 test.log
 *.gem
 tags
