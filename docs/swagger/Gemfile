@@ -1,0 +1,8 @@
+ruby   '2.1.2'
+source 'https://rubygems.org'
+
+gem 'api_tools', :git     => 'git@github.com:LoyaltyNZ/api_tools.git',
+                 :branch  => 'master'
+
+gem 'activesupport', '~> 4.1', :require => 'active_support'
+gem 'json-schema',   '~> 2.4'

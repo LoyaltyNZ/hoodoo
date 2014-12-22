@@ -1,0 +1,74 @@
+# Organisation name, web site URL and API support contact e-mail address. The
+# organisation name is also used as "See <name>" for the licence name and the
+# organisation web site used as the licence URL, so the web site you quote
+# here should include obvious links to licence conditions for API use. Further,
+# the web site link is used for the terms-of-service section of the Swagger
+# description, so those should be present too.
+
+org_name:  'Loyalty New Zealand'
+org_site:  'https://www.loyalty.co.nz'
+org_email: 'support@loyalty.co.nz'
+
+# API documentation root URL. Links to specific resources are expected to be
+# supported via HTML named anchors of the form "<name>.resource", where
+# "<name>" is the snake case version of a resource name. For example, with
+# doc_root set to "http://foo.com/docs.html", documentation for resource
+# "LogEvent" would be at "http://foo.com/docs.html#log_event.resource".
+
+doc_root: 'https://github.com/LoyaltyNZ/awg/blob/master/prototype/platform_api.md'
+
+# Title of the above documentation, e.g. a title. For resources, this
+# will have ": <name>" added; e.g. "Foo Inc. API" => "Foo Inc. API: LogEvent".
+
+doc_name: 'Loyalty Platform API'
+
+# Extended description of the documentation. GitHub flavour MarkDown is
+# supported here (because that's what the Swagger specification supports).
+
+doc_description: >
+  A Loyalty **Programme** encourages **Members** to shop at **Outlets**
+  owned/run by **Participants**, by offering those **Members** some
+  incentives such as **Vouchers** or amounts of **Currencies** in return
+  for their **Purchases**. The **Loyalty Platform** exposes **Resources**
+  that are used to construct and manage loyalty **Programmes**.
+
+# Hostname only, optional port. HTTPS assumed.
+
+host: 'api.onloyaltynz.com'
+
+# API version to report, but if you have a Version Service with a
+# VersionImplementation class that returns a resource with "major", "minor"
+# and "patch" fields, then that will be used instead and the config value
+# bellow will BE IGNORED.
+
+version: '1.0.0'
+
+# Collection (array) of supported inbound/outbound content types.
+
+content_types:
+  - 'application/json; charset=utf-8'
+
+# Collection (array) of service application folders of interest, relative
+# to PWD when script is executed; *OR* a collection of GitHub URLs for
+# projects to clone temporarily and use for data.
+#
+# Repositories are a string of "<branch> <repo URL>".
+#
+# If you specify repositories, the paths configuration IS IGNORED.
+
+paths:
+ - '../service_utility'
+ - '../service_financial'
+
+repositories:
+  - 'develop git@github.com:LoyaltyNZ/service_financial.git'
+  - 'develop git@github.com:LoyaltyNZ/service_logging.git'
+  - 'develop git@github.com:LoyaltyNZ/service_member.git'
+  - 'develop git@github.com:LoyaltyNZ/service_product.git'
+  - 'develop git@github.com:LoyaltyNZ/service_programme.git'
+  - 'develop git@github.com:LoyaltyNZ/service_purchase.git'
+  - 'develop git@github.com:LoyaltyNZ/service_utility.git'
+
+# Default output filename.
+
+output_filename: 'swagger.json'
