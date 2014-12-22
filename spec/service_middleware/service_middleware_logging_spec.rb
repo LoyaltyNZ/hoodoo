@@ -27,7 +27,9 @@ end
 #
 def force_logging_to( test_env )
   ApiTools::ServiceMiddleware.class_variable_set( '@@_env', ApiTools::StringInquirer.new( test_env ) )
-  ApiTools::ServiceMiddleware.send( :set_up_logging )
+  ApiTools::ServiceMiddleware.class_variable_set( '@@external_logger', false )
+  ApiTools::ServiceMiddleware.send( :set_up_basic_logging )
+  ApiTools::ServiceMiddleware.send( :add_file_logging, File.join( File.dirname( __FILE__), '..', '..', 'log' ) )
   return ApiTools::ServiceMiddleware.logger.instances
 end
 
@@ -41,8 +43,35 @@ describe ApiTools::ServiceMiddleware do
   after :each do
     ApiTools::ServiceMiddleware::logger.wait()
     force_logging_to( 'test' )
-    ApiTools::ServiceMiddleware::class_variable_set( '@@_env', @old_env )
-    ApiTools::ServiceMiddleware::class_variable_set( '@@logger', @old_logger )
+    ApiTools::ServiceMiddleware.class_variable_set( '@@_env', @old_env )
+    ApiTools::ServiceMiddleware.class_variable_set( '@@logger', @old_logger )
+    begin
+      ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+    rescue
+    end
+  end
+
+  context 'custom loggers' do
+    before :each do
+      @custom = ApiTools::Logger.new
+      ApiTools::ServiceMiddleware.set_logger( @custom )
+    end
+
+    it 'sets a custom logger' do
+      expect( ApiTools::ServiceMiddleware.logger ).to eq( @custom )
+    end
+
+    it 'complains about bad custom loggers' do
+      expect {
+        ApiTools::ServiceMiddleware.set_logger( Object )
+      }.to raise_error( RuntimeError, "ApiTools::Communicators::set_logger must be called with an instance of ApiTools::Logger only" )
+    end
+
+    it 'does not add other writers' do
+      ApiTools::ServiceMiddleware.set_log_folder( '/foo' )
+      ApiTools::ServiceMiddleware.set_log_folder( '/bar' )
+      expect( @custom.instances ).to be_empty
+    end
   end
 
   context 'off queue' do

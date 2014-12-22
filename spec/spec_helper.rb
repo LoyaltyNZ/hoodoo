@@ -78,8 +78,10 @@ RSpec.configure do | config |
   # disturbing the RSpec terminal output; make sure the session system is
   # in "test mode".
 
-  config.before( :all ) do
-    log = File.new( 'log/test.log', 'a+')
+  config.before( :suite ) do
+    base_path = File.join( File.dirname( __FILE__ ), '..', 'log' )
+    log       = File.new( File.join( base_path, 'test.log' ), 'a+' )
+
     $stderr.reopen(log)
 
     $stderr << "\n" << "*"*80 << "\n"
@@ -87,11 +89,12 @@ RSpec.configure do | config |
     $stderr << "*"*80 << "\n\n"
 
     ApiTools::ServiceSession.testing( true )
+    ApiTools::ServiceMiddleware.set_log_folder( base_path )
   end
 
   # Session test mode - test mode disabled explicitly for session tests.
 
-  config.after( :all ) do
+  config.after( :suite ) do
     ApiTools::ServiceSession.testing( false )
   end
 

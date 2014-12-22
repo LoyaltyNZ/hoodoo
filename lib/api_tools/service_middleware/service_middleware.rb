@@ -144,6 +144,13 @@ module ApiTools
     # structured log entries. See ApiTools::Logger::WriterMixin#report along
     # with ApiTools::Logger for other calls you can use.
     #
+    # The logging system is only available after the first Rack call through
+    # the middleware via #call. Services should normally have no problems with
+    # this, since service implementation code always runs after that; however
+    # if you want to log information from initializers at startup, before any
+    # Rack calls have arrived, you will need to use ApiTools::Logger directly
+    # and set up your own logging for that phase of execution.
+    #
     # The logger is automatically configured with a set of writers as follows:
     #
     # * If off queue:
@@ -165,21 +172,51 @@ module ApiTools
     # for non-test environment, you'll get a queue-based or file-based
     # logger depending on whether or not a queue is available.
     #
-    # All writers are available immediately after the ServiceMiddleware class
-    # itself has been parsed by Ruby, _except_ for the AMQP writer. This neeeds
-    # an Alchemy endpoint passed to it from Rack and thus can only be added at
-    # the point the very first Rack request comes into a middleware instance
-    # through #call. If you intend to use the middleware logger for logging
-    # things before your service is running (e.g. as part of initialisation),
-    # bear in mind that in queue-based evironments, these initialisation logs
-    # can't be sent to the queue.
+    # File-based loggers can only work if the base path of the calling code is
+    # known - i.e. a full pathname, inside which a "log" folder must exist so
+    # that an "{envrionment}.log" file can be written inside it. Use
+    # ::set_base_log_file_path to specify this. If a Rack call arrives before
+    # any such call is made, the logging system will try to find an
+    # 'environment.rb' file from a conventional service shell in the logger
+    # backtrace; if it can't find that, it gives up and no file output will be
+    # generated.
     #
     def self.logger
+      @@logger # See self.set_up_basic_logging and self.set_logger
+    end
 
-      # See ::set_up_logging and near end-of-file for where this is called.
-      #
-      @@logger
+    # The middleware sets up a logger itself (see ::logger) with various log
+    # mechanisms set up (mostly) without service author intervention.
+    #
+    # If you want to completely override the middleware's logger and replace
+    # it with your own at any time (not recommended), call here.
+    #
+    # +logger+:: Alternative ApiTools::Logger instance to use for all
+    #            middleware logging from this point onwards. The value will
+    #            subsequently be returned by the ::logger class method.
+    #
+    def self.set_logger( logger )
+      unless logger.is_a?( ApiTools::Logger )
+        raise "ApiTools::Communicators::set_logger must be called with an instance of ApiTools::Logger only"
+      end
 
+      @@external_logger = true
+      @@logger          = logger
+    end
+
+    # If using the middleware logger (see ::logger) with no external custom
+    # logger set up (see ::set_logger), call here to configure the folder used
+    # for logs when file output is active.
+    #
+    # If you don't do this at least once, no log file output can occur.
+    #
+    # You can call more than once to output to more than one log folder.
+    #
+    # +base_path+:: Path to folder to use for logs; file +#{environment}.log+
+    #               may be written inside (see ::environment).
+    #
+    def self.set_log_folder( base_path )
+      self.send( :add_file_logging, base_path )
     end
 
     # Record internally the HTTP host and port during local development via
@@ -277,16 +314,9 @@ module ApiTools
         @interaction_id = @session_id = nil
         @rack_request   = Rack::Request.new( env )
 
-        # If running on Alchemy / an AMQP based architecture, it'll have
-        # forwarded details of the AMQEndpoint gem's queue service via the
-        # Rack environment. Send this to the structured logger so it can do
-        # queue-based structured logging via the provided service.
-        #
-        @@alchemy = env[ 'rack.alchemy' ]
-
-        if ( ! @@alchemy.nil? && @@logger_amqp_writer.nil? )
-          @@logger_amqp_writer = ApiTools::ServiceMiddleware::AMQPLogWriter.new( @@alchemy )
-          @@logger.add( @@logger_amqp_writer )
+        unless defined?( @@alchemy )
+          @@alchemy = env[ 'rack.alchemy' ]
+          self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?
         end
 
         debug_log()
@@ -354,41 +384,83 @@ module ApiTools
       @@interfaces_have_public_methods
     end
 
-    # Set up the @@logger variable with log writer instances appropriate for
-    # the current ::environment. See ::logger for details.
+    # Private class method.
     #
-    def self.set_up_logging
+    # Sets up a logger instance with appropriate log level for the environment
+    # (see ::environment) and any logger writers appropriate for that
+    # environment which can be constructed with no extra configuration data.
+    # In practice this just means a $stdout stream writer in development mode.
+    #
+    def self.set_up_basic_logging
 
-      @@logger             = ApiTools::Logger.new
-      @@logger_file_path   = File.join( 'log', "#{ self.environment() }.log" )
-      @@logger_amqp_writer = nil
-
-      if self.environment().test?
-        @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
-      else
-        if self.environment().development?
-          @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
-        end
-
-        # The on-queue case can't be dealt with until #call is invoked by
-        # Rack.
-        #
-        unless self.on_queue?
-          @@logger.add( ApiTools::Logger::FileWriter.new( @@logger_file_path ) )
-        end
-      end
+      @@external_logger = false
+      @@logger          = ApiTools::Logger.new
 
       # RACK_ENV "test" and "development" environments have debug level
       # logging. Other environments have info-level logging.
 
-      if self.environment().test? || self.environment().development?
+      if self.environment.test? || self.environment.development?
         @@logger.level = :debug
       else
         @@logger.level = :info
       end
+
+      # The only environment that gets a simple writer we can create right
+      # now is "development", which always logs to stdout.
+
+      if self.environment.development?
+        @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
+      end
     end
 
-    private_class_method :set_up_logging
+    private_class_method( :set_up_basic_logging )
+
+    # Private class method.
+    #
+    # Assuming ::set_up_basic_logging has previously run, add in a file
+    # writer if in a test environment, or if in any other environment
+    # without an AMQP based queue available.
+    #
+    # The method does nothing if an external logger is in use.
+    #
+    # +base_path+:: Path to folder to use for logs; file "{environment}.log"
+    #               may be written inside.
+    #
+    def self.add_file_logging( base_path )
+      return if @@external_logger == true
+
+      if self.environment.test? || self.on_queue? == false
+        log_path    = File.join( base_path, "#{ self.environment }.log" )
+        file_writer = ApiTools::Logger::FileWriter.new( log_path )
+
+        @@logger.add( file_writer )
+      end
+    end
+
+    private_class_method( :add_file_logging )
+
+    # Private class method.
+    #
+    # Assuming ::set_up_basic_logging has previously run, add in an Alchemy
+    # based queue writer if in a non-test environment with an AMQP based queue
+    # available.
+    #
+    # The method does nothing if an external logger is in use.
+    #
+    # +alchemy+:: A valid Alchemy endpoint instance upon which #send_message
+    #             will be invoked, to send logging messages on to the queue.
+    #
+    def self.add_queue_logging( alchemy )
+      return if @@external_logger == true
+
+      if self.environment.test? == false && self.on_queue?
+        alchemy_queue_writer = ApiTools::ServiceMiddleware::AMQPLogWriter.new( alchemy )
+
+        @@logger.add( alchemy_queue_writer )
+      end
+    end
+
+    private_class_method( :add_queue_logging )
 
     # Log that we're responding with the in the given Rack response def array,
     # returning the same, so that in #call the idiom can be:
@@ -567,14 +639,17 @@ module ApiTools
         # If there isn't just one, we rely on the Rack monkey patch or a
         # hard coded default.
 
-        host    = nil
-        port    = nil
-        servers = ObjectSpace.each_object( Rack::Server )
+        host = nil
+        port = nil
 
-        if servers.count == 1
-          server = servers.first
-          host   = server.options[ :Host ]
-          port   = server.options[ :Port ]
+        if defined?( ::Rack ) && defined?( ::Rack::Server )
+          servers = ObjectSpace.each_object( ::Rack::Server )
+
+          if servers.count == 1
+            server = servers.first
+            host   = server.options[ :Host ]
+            port   = server.options[ :Port ]
+          end
         end
 
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
@@ -1745,7 +1820,7 @@ module ApiTools
 
         # Call via Alchemy.
 
-        unless defined?( @@alchemy )
+        unless defined?( @@alchemy ) && @@alchemy.nil? == false
           raise 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment'
         end
 
@@ -1980,6 +2055,8 @@ module ApiTools
 
     # The following must appear at the end of this class definition.
 
+    set_up_basic_logging()
+
     # For local development, a DRb service is used. We thus must
     # "disable eval() and friends":
     #
@@ -1990,10 +2067,6 @@ module ApiTools
     # Singleton "Front object" for the DRB service used in local development.
     #
     FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
-
-    # Self-configure logging instances.
-    #
-    self.send( :set_up_logging )
 
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'
