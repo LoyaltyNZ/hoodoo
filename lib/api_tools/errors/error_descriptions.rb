@@ -96,25 +96,26 @@ module ApiTools
       # Up to date at Preview Release 9, 2014-11-10.
 
       errors_for 'generic' do
-        error 'not_found',              status: 404, message: 'Resource not found',           reference: [ :ident ]
+        error 'not_found',              status: 404, message: 'Resource not found',            reference: [ :ident ]
         error 'malformed',              status: 422, message: 'Malformed payload'
-        error 'required_field_missing', status: 422, message: 'Required field missing',       reference: [ :field_name ]
-        error 'invalid_string',         status: 422, message: 'Invalid string format',        reference: [ :field_name ]
-        error 'invalid_integer',        status: 422, message: 'Invalid integer format',       reference: [ :field_name ]
-        error 'invalid_float',          status: 422, message: 'Invalid float format',         reference: [ :field_name ]
-        error 'invalid_decimal',        status: 422, message: 'Invalid decimal format',       reference: [ :field_name ]
-        error 'invalid_boolean',        status: 422, message: 'Invalid boolean format',       reference: [ :field_name ]
-        error 'invalid_enum',           status: 422, message: 'Invalid enumeration',          reference: [ :field_name ]
-        error 'invalid_date',           status: 422, message: 'Invalid date specifier',       reference: [ :field_name ]
-        error 'invalid_time',           status: 422, message: 'Invalid time specifier',       reference: [ :field_name ]
-        error 'invalid_datetime',       status: 422, message: 'Invalid date-time specifier',  reference: [ :field_name ]
-        error 'invalid_uuid',           status: 422, message: 'Invalid UUID',                 reference: [ :field_name ]
-        error 'invalid_array',          status: 422, message: 'Invalid array',                reference: [ :field_name ]
-        error 'invalid_object',         status: 422, message: 'Invalid object',               reference: [ :field_name ]
-        error 'invalid_hash',           status: 422, message: 'Invalid hash',                 reference: [ :field_name ]
-        error 'invalid_duplication',    status: 422, message: 'Duplicates not allowed',       reference: [ :field_name ]
-        error 'invalid_state',          status: 422, message: 'State transition not allowed', reference: [ :destination_state ]
+        error 'required_field_missing', status: 422, message: 'Required field missing',        reference: [ :field_name ]
+        error 'invalid_string',         status: 422, message: 'Invalid string format',         reference: [ :field_name ]
+        error 'invalid_integer',        status: 422, message: 'Invalid integer format',        reference: [ :field_name ]
+        error 'invalid_float',          status: 422, message: 'Invalid float format',          reference: [ :field_name ]
+        error 'invalid_decimal',        status: 422, message: 'Invalid decimal format',        reference: [ :field_name ]
+        error 'invalid_boolean',        status: 422, message: 'Invalid boolean format',        reference: [ :field_name ]
+        error 'invalid_enum',           status: 422, message: 'Invalid enumeration',           reference: [ :field_name ]
+        error 'invalid_date',           status: 422, message: 'Invalid date specifier',        reference: [ :field_name ]
+        error 'invalid_time',           status: 422, message: 'Invalid time specifier',        reference: [ :field_name ]
+        error 'invalid_datetime',       status: 422, message: 'Invalid date-time specifier',   reference: [ :field_name ]
+        error 'invalid_uuid',           status: 422, message: 'Invalid UUID',                  reference: [ :field_name ]
+        error 'invalid_array',          status: 422, message: 'Invalid array',                 reference: [ :field_name ]
+        error 'invalid_object',         status: 422, message: 'Invalid object',                reference: [ :field_name ]
+        error 'invalid_hash',           status: 422, message: 'Invalid hash',                  reference: [ :field_name ]
+        error 'invalid_duplication',    status: 422, message: 'Duplicates not allowed',        reference: [ :field_name ]
+        error 'invalid_state',          status: 422, message: 'State transition not allowed',  reference: [ :destination_state ]
         error 'invalid_parameters',     status: 422, message: 'Invalid parameters'
+        error 'mutually_exclusive',     status: 422, message: 'Mutually exclusive parameters', reference: [ :field_names ]
       end
 
       # Add caller's custom errors for the shorthand form, if provided.
