@@ -115,7 +115,7 @@ module ApiTools
         error 'invalid_duplication',    status: 422, message: 'Duplicates not allowed',        reference: [ :field_name ]
         error 'invalid_state',          status: 422, message: 'State transition not allowed',  reference: [ :destination_state ]
         error 'invalid_parameters',     status: 422, message: 'Invalid parameters'
-        error 'mutually_exclusive',     status: 422, message: 'Mutually exclusive parameters', reference: [ :field_name ]
+        error 'mutually_exclusive',     status: 422, message: 'Mutually exclusive parameters', reference: [ :field_names ]
       end
 
       # Add caller's custom errors for the shorthand form, if provided.
