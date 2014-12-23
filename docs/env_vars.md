@@ -13,7 +13,7 @@ Various environment variables can be used to override defaults or otherwise modi
 ## Environment variable list
 
 | Variable | Use |
-|==========|=====|
+|:---------|:----|
 | `AMQ_ENDPOINT` | Used by Alchemy to determine the location of the AMQP server; its presence is taken by ApiTools to indicate that a queue-based environment is in use. |
 | `AMQ_LOGGING_ENDPOINT` | If running in an AMQP/Alchemy based environment, service log data is sent to queue name `platform.logging` by default, unless you set this variable to an alternative queue name. |
 | `MEMCACHE_URL` | Used by the service session engine and the Dalli gem to talk to a Memcached instance at the indicated URL. If absent, ApiTools assumes that Memcached is not available. |
