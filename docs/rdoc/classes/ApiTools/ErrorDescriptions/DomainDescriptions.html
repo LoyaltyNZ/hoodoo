@@ -169,7 +169,7 @@ name like <code>members</code> or <code>transactions</code>.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 183</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 184</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">domain</span> )
   <span class="ruby-ivar">@domain</span>       = <span class="ruby-identifier">domain</span>
   <span class="ruby-ivar">@descriptions</span> = {}
@@ -235,7 +235,7 @@ fully qualified error data is logged and sent to clients.</p>
                 
               </p>
               <div id="method-i-error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 211</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/errors/error_descriptions.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">options</span>       = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">required_keys</span> = [ <span class="ruby-string">&#39;status&#39;</span>, <span class="ruby-string">&#39;message&#39;</span> ]

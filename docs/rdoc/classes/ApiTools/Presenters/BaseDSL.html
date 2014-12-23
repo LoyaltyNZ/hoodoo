@@ -971,7 +971,7 @@ end
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">klass</span> = <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Resources</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">resource_name</span> )
   <span class="ruby-keyword">rescue</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#resource: Unrecognised resource name &#39;#{resource_name}&#39;&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#resource: Unrecognised resource name &#39;#{ resource_name }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">get_schema_definition</span>() )
