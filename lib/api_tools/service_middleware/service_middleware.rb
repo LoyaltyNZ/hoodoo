@@ -1576,7 +1576,7 @@ module ApiTools
         :exception => exception.message
       }
 
-      unless self.class.environment.production? || self.class.environment.uat?
+      unless self.class.environment.production? || self.class.environment.red?
         reference[ :backtrace ] = exception.backtrace.join( " | " )
       end
 
