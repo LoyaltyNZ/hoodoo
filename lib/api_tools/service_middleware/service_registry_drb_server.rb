@@ -62,14 +62,12 @@ module ApiTools
       # Create an instance ready for use as a DRb "front object".
       #
       def initialize
-        puts "INIT"
         @repository = {}
       end
 
       # Check to see if this DRb service is awake. Returns +true+.
       #
       def ping
-        puts "PING"
         return true
       end
 
@@ -82,7 +80,6 @@ module ApiTools
       #              as a String.
       #
       def add( resource, version, uri )
-        puts "ADD #{ resource }/#{ version }: #{ uri }"
         @repository[ "#{ resource }/#{ version }" ] = uri
       end
 
@@ -93,7 +90,6 @@ module ApiTools
       # +version+::  Endpoint's implemented API version as an Integer, e.g. 1
       #
       def find( resource, version )
-        puts "FIND #{ resource }/#{ version }: #{@repository[ "#{ resource }/#{ version }" ]}"
         @repository[ "#{ resource }/#{ version }" ]
       end
 
