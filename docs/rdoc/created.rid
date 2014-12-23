@@ -1,4 +1,4 @@
-Wed, 24 Dec 2014 10:55:34 +1300
+Wed, 24 Dec 2014 10:57:18 +1300
 README.md	Wed, 24 Dec 2014 09:05:54 +1300
 lib/api_tools.rb	Wed, 24 Dec 2014 08:58:35 +1300
 lib/api_tools/active_model/uuid_validator.rb	Sun, 21 Dec 2014 11:41:18 +1300
@@ -88,7 +88,7 @@ lib/api_tools/service_middleware/service_endpoint/augmented_hash.rb	Sun, 21 Dec 
 lib/api_tools/service_middleware/service_endpoint/service_endpoint.rb	Sun, 21 Dec 2014 11:41:18 +1300
 lib/api_tools/service_middleware/service_middleware.rb	Wed, 24 Dec 2014 10:37:03 +1300
 lib/api_tools/service_middleware/service_registry_drb_server.rb	Wed, 24 Dec 2014 10:36:40 +1300
-lib/api_tools/service_middleware/service_registry_drb_server_start.rb	Wed, 24 Dec 2014 08:58:35 +1300
+lib/api_tools/service_middleware/service_registry_drb_server_start.rb	Wed, 24 Dec 2014 10:57:12 +1300
 lib/api_tools/service_middleware/string_inquirer.rb	Fri, 03 Oct 2014 19:59:44 +1300
 lib/api_tools/utilities.rb	Sat, 29 Nov 2014 11:47:28 +1300
 lib/api_tools/uuid.rb	Sat, 29 Nov 2014 11:47:28 +1300
