@@ -648,32 +648,43 @@ module ApiTools
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
         port = @@recorded_port if port.nil? && defined?( @@recorded_port )
 
-        host ||= '127.0.0.1'
-        port ||= 9292
+        # Now attempt to contact the DRb server daemon. If it can't be
+        # contacted, try to start it first, then connect.
 
-        # URI for DRb server used during local machine development as a registry
-        # of service endpoints. Whichever service starts first runs the server
-        # which others connect to if subsequently started.
-        #
-        # Use IP address, rather than 'localhost' here, to ensure that "address
-        # in use" errors are raised immediately if a second server startup
-        # attempt is made:
-        #
-        #   https://bugs.ruby-lang.org/issues/3052
-        #
-        drb_uri = "druby://127.0.0.1:#{ ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
+        drb_uri = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.uri()
+        DRb.start_service
 
-        # Start the DRb server, or connect to it if already running.
-        #
         begin
-          DRb.start_service( drb_uri, FRONT_OBJECT )
           @drb_service = DRbObject.new_with_uri( drb_uri )
-        rescue Errno::EADDRINUSE => e
-          DRb.start_service
-          @drb_service = DRbObject.new_with_uri( drb_uri )
+          @drb_service.ping()
+
+        rescue DRb::DRbConnError
+          script_path = File.join( File.dirname( __FILE__ ), 'service_registry_drb_server_start.rb' )
+          Process.detach( spawn( "bundle exec ruby '#{ script_path }'" ) )
+
+          begin
+            Timeout::timeout( 5 ) do
+              loop do
+                begin
+                  @drb_service = DRbObject.new_with_uri( drb_uri )
+                  @drb_service.ping()
+                  break
+                rescue DRb::DRbConnError
+                  sleep 0.1
+                end
+              end
+            end
+
+          rescue Timeout::Error
+            raise "Middleware timed out while waiting for DRb service registry to start"
+
+          end
         end
 
-        # Announce our local services.
+        # Announce our local services if we managed to find the host and port,
+        # but no point otherwise; the values could be anything. In a 'guard'
+        # based envrionment, first-run determines host and port but subsequent
+        # runs do not - yet it stays the same, so it works out OK there.
         #
         services.each do | service |
           interface = service[ :interface ]
@@ -683,7 +694,7 @@ module ApiTools
             interface.version,
             "http://#{ host }:#{ port }#{ service[ :path ] }"
           )
-        end
+        end unless host.nil? || port.nil?
       end
     end
 
@@ -1666,7 +1677,7 @@ module ApiTools
 
       else
 
-        begin
+        return begin
           @drb_service.find( resource, version )
         rescue
           nil
@@ -2049,17 +2060,6 @@ module ApiTools
     # The following must appear at the end of this class definition.
 
     set_up_basic_logging()
-
-    # For local development, a DRb service is used. We thus must
-    # "disable eval() and friends":
-    #
-    # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
-    #
-    $SAFE = 1
-
-    # Singleton "Front object" for the DRB service used in local development.
-    #
-    FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
 
   end   # 'class ServiceMiddleware'
 end     # 'module ApiTools'

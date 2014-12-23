@@ -15,6 +15,11 @@
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
 ########################################################################
 
+require 'api_tools'
+
+require 'drb/drb'
+require 'drb/acl'
+
 module ApiTools
   class ServiceMiddleware
 
@@ -24,10 +29,48 @@ module ApiTools
     #
     class ServiceRegistryDRbServer
 
+      # URI for DRb server used during local machine development as a registry
+      # of service endpoints. Whichever service starts first runs the server
+      # which others connect to if subsequently started.
+      #
+      def self.uri
+
+        # Use IP address, rather than 'localhost' here, to ensure that "address
+        # in use" errors are raised immediately if a second server startup
+        # attempt is made:
+        #
+        #   https://bugs.ruby-lang.org/issues/3052
+        #
+        "druby://127.0.0.1:#{ ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
+
+      end
+
+      # Start the DRb server. Does not return (joins the DRb thread). If the
+      # server is already running, expect an "address in use" connection
+      # exception from DRb.
+      #
+      def self.start
+        drb_uri = self.uri()
+
+        DRb.start_service( drb_uri,
+                           FRONT_OBJECT,
+                           :tcp_acl => LOCAL_ACL )
+
+        DRb.thread.join()
+      end
+
       # Create an instance ready for use as a DRb "front object".
       #
       def initialize
+        puts "INIT"
         @repository = {}
+      end
+
+      # Check to see if this DRb service is awake. Returns +true+.
+      #
+      def ping
+        puts "PING"
+        return true
       end
 
       # Add an endpoint to the list.
@@ -39,6 +82,7 @@ module ApiTools
       #              as a String.
       #
       def add( resource, version, uri )
+        puts "ADD #{ resource }/#{ version }: #{ uri }"
         @repository[ "#{ resource }/#{ version }" ] = uri
       end
 
@@ -49,9 +93,26 @@ module ApiTools
       # +version+::  Endpoint's implemented API version as an Integer, e.g. 1
       #
       def find( resource, version )
+        puts "FIND #{ resource }/#{ version }: #{@repository[ "#{ resource }/#{ version }" ]}"
         @repository[ "#{ resource }/#{ version }" ]
       end
 
     end
+
+    # For local development, a DRb service is used. We thus must
+    # "disable eval() and friends":
+    #
+    # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
+    #
+    $SAFE = 1
+
+    # Singleton "Front object" for the DRB service used in local development.
+    #
+    FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
+
+    # Only allow connections from 127.0.0.1.
+    #
+    LOCAL_ACL = ACL.new( [ 'deny', 'all', 'allow', '127.0.0.1' ] )
+
   end
 end
