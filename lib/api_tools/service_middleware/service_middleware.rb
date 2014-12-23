@@ -648,6 +648,14 @@ module ApiTools
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
         port = @@recorded_port if port.nil? && defined?( @@recorded_port )
 
+        # In a test environment, default to a fake host and port if
+        # need be.
+
+        if ( self.class.environment.test? )
+          host ||= '127.0.0.1'
+          port ||= '9292'
+        end
+
         # Now attempt to contact the DRb server daemon. If it can't be
         # contacted, try to start it first, then connect.
 
@@ -686,15 +694,17 @@ module ApiTools
         # based envrionment, first-run determines host and port but subsequent
         # runs do not - yet it stays the same, so it works out OK there.
         #
-        services.each do | service |
-          interface = service[ :interface ]
+        unless host.nil? || port.nil?
+          services.each do | service |
+            interface = service[ :interface ]
 
-          @drb_service.add(
-            interface.resource,
-            interface.version,
-            "http://#{ host }:#{ port }#{ service[ :path ] }"
-          )
-        end unless host.nil? || port.nil?
+            @drb_service.add(
+              interface.resource,
+              interface.version,
+              "http://#{ host }:#{ port }#{ service[ :path ] }"
+            )
+          end
+        end
       end
     end
 

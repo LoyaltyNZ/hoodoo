@@ -122,8 +122,6 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
   context 'via middleware' do
 
     before :all do
-      ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = ApiTools::Utilities.spare_port().to_s
-
       @port1 = spec_helper_start_svc_app_in_thread_for( RSpecTestClock )
       @port2 = spec_helper_start_svc_app_in_thread_for( RSpecTestTime  )
     end

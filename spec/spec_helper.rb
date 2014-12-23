@@ -76,7 +76,8 @@ RSpec.configure do | config |
 
   # Redirect $stderr before each test so a test log gets written without
   # disturbing the RSpec terminal output; make sure the session system is
-  # in "test mode".
+  # in "test mode"; make sure we get a unique DRb daemon instance for the
+  # tests, which we can shut down afterwards.
 
   config.before( :suite ) do
     base_path = File.join( File.dirname( __FILE__ ), '..', 'log' )
@@ -90,12 +91,20 @@ RSpec.configure do | config |
 
     ApiTools::ServiceSession.testing( true )
     ApiTools::ServiceMiddleware.set_log_folder( base_path )
+
+    ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = ApiTools::Utilities.spare_port().to_s()
   end
 
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :suite ) do
     ApiTools::ServiceSession.testing( false )
+
+    DRb.start_service
+    drb_uri = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.uri()
+    @drb_service = DRbObject.new_with_uri( drb_uri )
+    @drb_service.stop()
+    DRb.stop_service
   end
 
   # Make sure DatabaseCleaner runs between each test.
