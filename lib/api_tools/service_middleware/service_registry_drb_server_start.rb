@@ -7,6 +7,8 @@
 #
 #               bundle exec ruby service_registry_drb_server_start.rb
 #
+#           There is usually no need to do this manually, as the
+#           middleware does it for you automatically.
 # ----------------------------------------------------------------------
 #           23-Dec-2014 (ADH): Created.
 ########################################################################

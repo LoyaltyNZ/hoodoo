@@ -93,6 +93,11 @@ module ApiTools
         @repository[ "#{ resource }/#{ version }" ]
       end
 
+      # Shut down this DRb service.
+      #
+      def stop
+        DRb.thread.exit
+      end
     end
 
     # For local development, a DRb service is used. We thus must

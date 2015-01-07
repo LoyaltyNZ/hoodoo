@@ -57,6 +57,8 @@
             
             <li><a href="../../files/lib/api_tools/service_middleware/service_registry_drb_server_rb.html">lib/api_tools/service_middleware/service_registry_drb_server.rb</a></li>
             
+            <li><a href="../../files/lib/api_tools/service_middleware/service_registry_drb_server_start_rb.html">lib/api_tools/service_middleware/service_registry_drb_server_start.rb</a></li>
+            
         </ul>
     </div>
     <div id="bodyContent">
@@ -447,6 +449,18 @@ attempts to consume RAM.</p></td>
             <tr valign='top'>
               <td>&nbsp;</td>
               <td colspan="2" class="attr-desc"><p>Singleton “Front object” for the DRB service used in local development.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">LOCAL_ACL</td>
+            <td>=</td>
+            <td class="attr-value">ACL.new( [ &#39;deny&#39;, &#39;all&#39;, &#39;allow&#39;, &#39;127.0.0.1&#39; ] )</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Only allow connections from 127.0.0.1.</p></td>
             </tr>
           
         
@@ -1106,7 +1120,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1711</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1732</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -1169,7 +1183,7 @@ href="ServiceMiddleware.html#method-i-inter_resource">inter_resource</a>.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1914</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1935</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1327,7 +1341,7 @@ href="ServiceMiddleware.html#method-i-inter_resource">inter_resource</a>.</p>
                 
               </p>
               <div id="method-i-inter_resource_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1738</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1759</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_info</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1541,7 +1555,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1598</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1619</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1608,7 +1622,7 @@ HTTP request).</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1629</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 1650</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
@@ -1649,7 +1663,7 @@ HTTP request).</p>
 
   <span class="ruby-keyword">else</span>
 
-    <span class="ruby-keyword">begin</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">begin</span>
       <span class="ruby-ivar">@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
     <span class="ruby-keyword">rescue</span>
       <span class="ruby-keyword">nil</span>
@@ -1701,7 +1715,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 2043</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_middleware/service_middleware.rb, line 2064</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>
