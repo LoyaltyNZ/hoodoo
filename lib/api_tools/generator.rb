@@ -20,12 +20,14 @@ module ApiTools
       return create_service(name)
     end
 
-private
+  private
 
     def create_service(name)
       return ERROR_EXIT_CODE unless create_dir(name)
       return ERROR_EXIT_CODE unless clone_service_shell(name)
       return ERROR_EXIT_CODE unless remove_dot_git(name)
+      return ERROR_EXIT_CODE unless replace_strings(name)
+
       puts "Success! ./#{name} created."
       return SUCCESS_EXIT_CODE
     end
@@ -48,6 +50,27 @@ private
       else
         raise "Expecting to find the .git folder with a config file in it"
       end
+    end
+
+    def replace_strings(name)
+      human_name = name.split('_')
+      human_name = human_name.drop(1) if (human_name[0].downcase == 'service')
+      human_name = human_name.map(&:capitalize).join(' ')
+
+      base_cmd   = "find #{name} -type f -print0 | xargs -0 sed -i '' 's/%s/g'"
+      uscore_cmd = base_cmd % "service_shell/#{Regexp.escape(name)}"
+      human_cmd  = base_cmd % "#{Regexp.escape('Platform Service: Generic')}/#{Regexp.escape('Platform Service: ' + human_name)}"
+
+      puts "Replacing shell names with real service name:"
+      puts uscore_cmd
+      `#{uscore_cmd}`
+      result = $?.to_i == 0
+      return false unless result == true
+
+      puts human_cmd
+      `#{human_cmd}`
+      result = $?.to_i == 0
+      return result
     end
 
     def args_empty?(args)
