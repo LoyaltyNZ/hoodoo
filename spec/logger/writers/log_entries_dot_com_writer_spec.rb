@@ -12,13 +12,13 @@ describe ApiTools::Logger::LogEntriesDotComWriter do
     @logger = @instance.class.class_variable_get( '@@logger' )
   end
 
-  it 'calls the Le class instance' do
+  it 'calls the "Le" class instance' do
     expect( @logger ).to receive( :info ).once
     @instance.report( :info, :b, :c, :d )
   end
 
-  it 'converts unrecognised debug levels to "error"' do
-    expect( @logger ).to receive( :error ).once
+  it 'converts unrecognised debug levels to "unknown"' do
+    expect( @logger ).to receive( :unknown ).once
     @instance.report( :a, :b, :c, :d )
   end
 end

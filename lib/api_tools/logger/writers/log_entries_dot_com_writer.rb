@@ -35,7 +35,7 @@ module ApiTools
             when :debug, :info, :warn, :error
               log_level
             else
-              :error
+              :unknown
           end
 
           message = {
