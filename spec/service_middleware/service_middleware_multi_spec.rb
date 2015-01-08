@@ -217,6 +217,20 @@ end
 
 # And Finally - the tests.
 
+describe 'DRb start timeout' do
+  context 'for test coverage purposes' do
+    it 'checks for timeouts' do
+      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( DRb::DRbConnError )
+      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( Timeout::Error )
+
+      spec_helper_http(
+        port: spec_helper_start_svc_app_in_thread_for( TestEchoServiceApplication ),
+        path: '/v2/test_some_echoes'
+      )
+    end
+  end
+end
+
 describe ApiTools::ServiceMiddleware do
 
   before :all do

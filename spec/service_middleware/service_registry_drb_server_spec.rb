@@ -28,6 +28,27 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
       expect( @inst.find( :Foo, 2 ) ).to eq( 'http://localhost:3030/v2/foo' )
       expect( @inst.find( :Bar, 2 ) ).to be_nil
     end
+
+    # RCov report coverage only; tests elsewhere call these but code runs
+    # in unusual execution contexts and doesn't get reported as covered.
+    #
+    it '#ping' do
+      expect( @inst.ping() ).to eq( true )
+    end
+    #
+    # (See #ping above).
+    #
+    it '#stop' do
+
+      # Ensure DRb.thread.exit() is called by the 'stop' method, without
+      # needing to have that code actually execute (since this requires an
+      # active DRb thread and RCov doesn't report the code as covered).
+
+      drb_thread = double()
+      expect( DRb ).to receive( :thread ).once.and_return( drb_thread )
+      expect( drb_thread ).to receive( :exit ).once
+      @inst.stop()
+    end
   end
 
   context "via DRb" do
@@ -40,6 +61,39 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
       end.to_not raise_error
 
       DRb.stop_service
+    end
+
+    it 'runs in a thread, can be pinged and shuts down' do
+      expect {
+        port = ApiTools::Utilities.spare_port().to_s
+
+        thread = Thread.new do
+          ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
+          described_class.start()
+        end
+
+        client = nil
+
+        begin
+          Timeout::timeout( 5 ) do
+            loop do
+              begin
+                client = DRbObject.new_with_uri( described_class.uri() )
+                client.ping()
+                break
+              rescue DRb::DRbConnError
+                sleep 0.1
+              end
+            end
+          end
+        rescue Timeout::Error
+          raise "Timed out while waiting for DRb service registry to start"
+        end
+
+        ENV.delete( 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' )
+        client.stop()
+
+      }.to_not raise_error
     end
 
     it 'starts as a client' do
