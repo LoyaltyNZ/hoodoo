@@ -14,6 +14,7 @@ require root+'logger/fast_writer'
 require root+'logger/slow_writer'
 require root+'logger/writers/file_writer'
 require root+'logger/writers/stream_writer'
+require root+'logger/writers/log_entries_dot_com_writer'
 
 # Schema based data validation and rendering
 
