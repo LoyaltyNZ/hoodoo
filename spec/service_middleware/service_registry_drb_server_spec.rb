@@ -70,6 +70,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
         thread = Thread.new do
           ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
           described_class.start()
+          ENV.delete( 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' )
         end
 
         client = nil
@@ -80,6 +81,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
               begin
                 client = DRbObject.new_with_uri( described_class.uri() )
                 client.ping()
+                client.stop()
                 break
               rescue DRb::DRbConnError
                 sleep 0.1
@@ -90,8 +92,9 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
           raise "Timed out while waiting for DRb service registry to start"
         end
 
+        # For good measure...
+        #
         ENV.delete( 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' )
-        client.stop()
 
       }.to_not raise_error
     end
