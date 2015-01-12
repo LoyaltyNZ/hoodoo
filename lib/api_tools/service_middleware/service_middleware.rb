@@ -294,9 +294,21 @@ module ApiTools
     # Run a Rack request, returning the [status, headers, body-array] data as
     # per the Rack protocol requirements.
     #
+    # Duplicates "this" instance for thread safety and invokes #_call.
+    #
     # +env+ Rack environment.
     #
     def call( env )
+      dup._call( env )
+    end
+
+    # Run a Rack request, returning the [status, headers, body-array] data as
+    # per the Rack protocol requirements. Called via #call, in a duplicated
+    # instance for thread safety.
+    #
+    # +env+ Rack environment.
+    #
+    def _call( env )
 
       # Global exception handler - catch problems in service implementations
       # and send back a 500 response as per API documentation (if possible).
@@ -1006,35 +1018,23 @@ module ApiTools
 
       dispatch_time = Benchmark.realtime do
 
-        # TODO:
-        #   https://trello.com/c/Z4qu2mGv/20-revisit-activerecord-is-connection-active-recovery
-        #
-        # then:
-        #
-        #   https://github.com/socialcast/resque-ensure-connected/issues/3
-        #
-        # and class ConnectionManagement in:
-        #   https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connection_adapters/abstract/connection_pool.rb
-        #   https://github.com/janko-m/sinatra-activerecord/blob/master/lib/sinatra/activerecord.rb
-        #
-        if ( defined?( ::ActiveRecord ) &&
-             defined?( ::ActiveRecord::Base ) &&
-             ::ActiveRecord::Base.respond_to?( :verify_active_connections! ) )
-          ::ActiveRecord::Base.verify_active_connections!
+        block = Proc.new do
+
+          # Before/after callbacks are invoked always, even if errors are
+          # added to the response object during processing. If this matters
+          # to 'after' code, it must check "context.response.halt_processing?"
+          # itself.
+
+          implementation.before( context ) if implementation.respond_to?( :before )
+          implementation.send( action, context ) unless context.response.halt_processing?
+          implementation.after( context ) if implementation.respond_to?( :after )
+
         end
 
-        # Before/after callbacks are invoked always, even if errors are added to
-        # the response object during processing. If this matters to 'after' code,
-        # it must check "context.response.halt_processing?" itself.
-
-        implementation.before( context ) if implementation.respond_to?( :before )
-        implementation.send( action, context ) unless context.response.halt_processing?
-        implementation.after( context ) if implementation.respond_to?( :after )
-
-        if ( defined?( ::ActiveRecord ) &&
-             defined?( ::ActiveRecord::Base ) &&
-             ::ActiveRecord::Base.respond_to?( :clear_active_connections! ) )
-          ::ActiveRecord::Base.clear_active_connections!
+        if ( defined?( ::ActiveRecord ) && defined?( ::ActiveRecord::Base ) )
+          ::ActiveRecord::Base.connection_pool.with_connection( &block )
+        else
+          block.call
         end
 
         @target_resource_for_error_reports = interface.resource if context.response.halt_processing?

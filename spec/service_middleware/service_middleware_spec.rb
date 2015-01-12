@@ -1500,9 +1500,11 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
     expect(result).to eq({'result' => [1,2,3,4]})
   end
 
-  it 'prods ActiveRecord before and after each implementation is called' do
-    expect( ActiveRecord::Base ).to receive( :verify_active_connections! ).twice
-    expect( ActiveRecord::Base ).to receive( :clear_active_connections! ).twice
+  it 'manages ActiveRecord when implementation is called in its presence' do
+    pool = ActiveRecord::Base.connection_pool
+
+    expect( ActiveRecord::Base ).to receive( :connection_pool ).twice.and_call_original
+    expect( pool               ).to receive( :with_connection ).twice.and_call_original
 
     list_things()
   end
