@@ -598,6 +598,12 @@ module ApiTools
     #
     def debug_log( *args )
 
+      # Even though the logger itself would check this itself, check and exit
+      # early here to avoid object creation and string composition overheads
+      # from the code that would otherwise run even in non-debug environments.
+
+      return unless @@logger.report?( :debug )
+
       data = {
         :full_uri       => "#{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }",
         :interaction_id => @interaction_id,
@@ -963,7 +969,7 @@ module ApiTools
                                             'message' => 'Body data exceeds configured maximum size for platform' )
       end
 
-      debug_log( "Raw body data read successfully: '#{ body }'" )
+      debug_log( 'Raw body data read successfully', body )
 
       if action == :create || action == :update
         service_request.body = payload_to_hash( body )
@@ -985,7 +991,7 @@ module ApiTools
 
       end
 
-      debug_log( "Dispatching with parsed body data: '#{ service_request.body }'" )
+      debug_log( 'Dispatching with parsed body data', service_request.body )
 
       # Finally - dispatch to service.
 
@@ -1733,7 +1739,16 @@ module ApiTools
 
       remote = options[ :local ].nil?
 
-      debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call requested with options #{ options }" )
+      # Don't use string composition here; profiling shows it is slow and
+      # this is only for debugging anyway.
+
+      debug_str = if remote
+        'Remote inter-resource call'
+      else
+        'Local inter-resource call'
+      end
+
+      debug_log( debug_str, 'requested', options )
 
       if ( remote )
         result = inter_resource_remote( options )
@@ -1742,9 +1757,9 @@ module ApiTools
       end
 
       if result.platform_errors.has_errors?
-        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call halted processing with errors #{ result.platform_errors }" )
+        debug_log( debug_str, 'halted processing', result.platform_errors )
       else
-        debug_log( "#{ remote ? 'Remote' : 'Local' } inter-resource call succeeded with result '#{ result }'" )
+        debug_log( debug_str, 'succeeded', result )
       end
 
       return result
@@ -2019,7 +2034,7 @@ module ApiTools
       # Dispatch the call, merge any errors that might have come back and
       # return the body of the called service's response.
 
-      debug_log( "Dispatching local inter-resource call with parsed body data: '#{ local_service_request.body }'" )
+      debug_log( 'Dispatching local inter-resource call', local_service_request.body )
 
       context = ApiTools::ServiceContext.new(
         @service_session,
