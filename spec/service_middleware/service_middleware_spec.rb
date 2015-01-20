@@ -182,15 +182,15 @@ describe ApiTools::ServiceMiddleware do
 
     # This is a fairly nasty heavy assumptions test which poorly implements
     # code coverage for the 'rescue' in 'remote_service_for'. It's probably
-    # quite fragile in the face of code changes. It assumes '@drb_service'
-    # is the instance variable used for DRb comms and that overwriting that
+    # quite fragile in the face of code changes. It assumes '@@drb_service'
+    # is the class variable used for DRb comms and that overwriting that
     # with something silly will result in the exception 'rescue' code running.
     #
     it 'internally responds with "nil" if local DRb service malfunctions' do
       mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceStub.new )
       expect( mw.send( :remote_service_for, :RSpecTestResource, 2 ) ).to_not be_nil
 
-      mw.instance_variable_set( '@drb_service', 'I am not a DRb object' )
+      mw.class.class_variable_set( '@@drb_service', 'I am not a DRb object' )
       expect( mw.send( :remote_service_for, :RSpecTestResource, 2 ) ).to be_nil
     end
   end

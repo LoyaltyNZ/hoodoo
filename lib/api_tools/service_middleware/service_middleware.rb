@@ -229,24 +229,24 @@ module ApiTools
     #
     def initialize( app )
 
-      @service_container = app
+      service_container = app
 
       if defined?( NewRelic ) &&
          defined?( NewRelic::Agent ) &&
          defined?( NewRelic::Agent::Instrumentation ) &&
          defined?( NewRelic::Agent::Instrumentation::MiddlewareProxy ) &&
-         @service_container.is_a?( NewRelic::Agent::Instrumentation::MiddlewareProxy )
+         service_container.is_a?( NewRelic::Agent::Instrumentation::MiddlewareProxy )
 
-        if @service_container.respond_to?( :target )
-          @newrelic_wrapper  = @service_container
-          @service_container = @service_container.target()
+        if service_container.respond_to?( :target )
+          newrelic_wrapper  = service_container
+          service_container = service_container.target()
         else
           raise "ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version."
         end
       end
 
-      unless @service_container.is_a?( ApiTools::ServiceApplication )
-        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ @service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+      unless service_container.is_a?( ApiTools::ServiceApplication )
+        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
       end
 
       # Collect together the implementation instances and the matching regexps
@@ -261,10 +261,10 @@ module ApiTools
       # implementation   ApiTools::ServiceImplementation subclass *instance* to
       #                  use on match
 
-      @services = @service_container.component_interfaces.map do | interface |
+      @@services = service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
-          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ @service_container.class }"
+          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ service_container.class }"
         end
 
         # If anything uses a public interface, we need to tell ourselves that
@@ -288,7 +288,7 @@ module ApiTools
         }
       end
 
-      announce_presence_of( @services )
+      announce_presence_of( @@services )
     end
 
     # Run a Rack request, returning the [status, headers, body-array] data as
@@ -675,8 +675,8 @@ module ApiTools
         DRb.start_service
 
         begin
-          @drb_service = DRbObject.new_with_uri( drb_uri )
-          @drb_service.ping()
+          @@drb_service = DRbObject.new_with_uri( drb_uri )
+          @@drb_service.ping()
 
         rescue DRb::DRbConnError
           script_path = File.join( File.dirname( __FILE__ ), 'service_registry_drb_server_start.rb' )
@@ -686,8 +686,8 @@ module ApiTools
             Timeout::timeout( 5 ) do
               loop do
                 begin
-                  @drb_service = DRbObject.new_with_uri( drb_uri )
-                  @drb_service.ping()
+                  @@drb_service = DRbObject.new_with_uri( drb_uri )
+                  @@drb_service.ping()
                   break
                 rescue DRb::DRbConnError
                   sleep 0.1
@@ -710,7 +710,7 @@ module ApiTools
           services.each do | service |
             interface = service[ :interface ]
 
-            @drb_service.add(
+            @@drb_service.add(
               interface.resource,
               interface.version,
               "http://#{ host }:#{ port }#{ service[ :path ] }"
@@ -864,7 +864,7 @@ module ApiTools
 
       uri_path = CGI.unescape( @rack_request.path() )
 
-      selected_services = @services.select do | service_data |
+      selected_services = @@services.select do | service_data |
         path_data = process_uri_path( uri_path, service_data[ :regexp ] )
 
         if path_data.nil?
@@ -1613,14 +1613,14 @@ module ApiTools
     # +version+::  Version of interface required as an Integer. Optional -
     #              default is 1.
     #
-    # Returns an @services entry (see implementation of #initialize) if local,
+    # Returns an @@services entry (see implementation of #initialize) if local,
     # else +nil+.
     #
     def local_service_for( resource, version = 1 )
       resource = resource.to_sym
       version  = version.to_i
 
-      @services.find do | entry |
+      @@services.find do | entry |
         interface = entry[ :interface ]
         interface.resource == resource && interface.version == version
       end
@@ -1688,7 +1688,7 @@ module ApiTools
       else
 
         return begin
-          @drb_service.find( resource, version )
+          @@drb_service.find( resource, version )
         rescue
           nil
         end
@@ -1705,7 +1705,7 @@ module ApiTools
     #
     # Options are as follows - keys must be Symbols:
     #
-    # +local+::       A +@services+ entry (see implementation of #initialize)
+    # +local+::       A +@@services+ entry (see implementation of #initialize)
     #                 describing the service to call if local, else +nil+ or
     #                 absent for remote calls.
     # +remote+::      A return value of #remote_service_for describing the

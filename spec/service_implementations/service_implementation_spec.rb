@@ -19,7 +19,7 @@ describe ApiTools::ServiceImplementation do
     req = ApiTools::ServiceRequest.new
     res = ApiTools::ServiceResponse.new
     mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceImplementation.new )
-    con = ApiTools::ServiceContext.new( ses, req, res, con )
+    con = ApiTools::ServiceContext.new( ses, req, res, mid )
     int = ApiTools::ServiceImplementation.new
 
     expect {

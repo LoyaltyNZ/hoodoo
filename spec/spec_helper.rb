@@ -102,8 +102,8 @@ RSpec.configure do | config |
 
     DRb.start_service
     drb_uri = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.uri()
-    @drb_service = DRbObject.new_with_uri( drb_uri )
-    @drb_service.stop()
+    drb_service = DRbObject.new_with_uri( drb_uri )
+    drb_service.stop()
     DRb.stop_service
   end
 
