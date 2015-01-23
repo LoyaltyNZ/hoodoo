@@ -412,6 +412,23 @@ describe ApiTools::ServiceMiddleware do
         expect(last_response.status).to eq(200)
       end
 
+      context 'without ActiveRecord' do
+        before :each do
+          @ar = ActiveRecord
+          Object.send( :remove_const, :ActiveRecord )
+        end
+
+        after :each do
+          ActiveRecord = @ar
+        end
+
+        it 'still calls the service' do
+          expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list)
+          get '/v2/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect(last_response.status).to eq(200)
+        end
+      end
+
       # We allow this odd form because if it were to be considered 'show', then
       # it'd be show with no path components and a JSON format request. That
       # makes no sense. So it drops out logically as 'list'.
