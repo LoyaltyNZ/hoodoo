@@ -9,7 +9,7 @@ describe ApiTools::Data::Resources::Errors do
     expect(schema.properties.count).to eq(2)
 
     expect(schema.properties['interaction_id']).to be_a(ApiTools::Presenters::UUID)
-    expect(schema.properties['interaction_id'].required).to eq(true)
+    expect(schema.properties['interaction_id'].required).to eq(false)
 
     expect(schema.properties['errors']).to be_a(ApiTools::Presenters::Array)
     expect(schema.properties['errors'].required).to eq(true)

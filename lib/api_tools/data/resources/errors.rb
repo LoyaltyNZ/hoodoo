@@ -16,7 +16,7 @@ module ApiTools
       class Errors < ApiTools::Presenters::Base
 
         schema do
-          uuid :interaction_id, :required => true
+          uuid :interaction_id
           array :errors, :required => true do
             type :ErrorPrimitive
           end
