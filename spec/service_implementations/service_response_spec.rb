@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe ApiTools::ServiceResponse do
-  before do
-    @r = ApiTools::ServiceResponse.new
+  before :each do
+    @r = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
   end
 
   it 'should acquire the expected default values when instantiated' do
@@ -11,6 +11,26 @@ describe ApiTools::ServiceResponse do
     expect(@r.http_status_code).to eq(200)
     expect(@r.body).to eq({})
     expect(@r.instance_variable_get('@headers')).to eq({})
+  end
+
+  context 'instantiation' do
+    it 'rejects a nil interaction ID' do
+      expect {
+        ApiTools::ServiceResponse.new( nil )
+      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got 'nil')" )
+    end
+
+    it 'rejects a non-string interaction ID' do
+      expect {
+        ApiTools::ServiceResponse.new( 12345 )
+      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '12345')" )
+    end
+
+    it 'rejects an invalid string interaction ID' do
+      expect {
+        ApiTools::ServiceResponse.new( 'hello' )
+      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '\"hello\"')" )
+    end
   end
 
   context '#add_error and #halt_processing?' do
@@ -117,6 +137,7 @@ describe ApiTools::ServiceResponse do
   end
 
   context '#for_rack' do
+
     it 'should return default empty data correctly' do
       status, headers, body = @r.for_rack
 
@@ -144,7 +165,7 @@ describe ApiTools::ServiceResponse do
 
       @r.body = { this: 'should be ignored' }
 
-      errors_hash = @r.errors.render()
+      errors_hash = @r.errors.render(@r.instance_variable_get('@interaction_id'))
       status, headers, body = @r.for_rack
 
       expected = JSON.pretty_generate(errors_hash)

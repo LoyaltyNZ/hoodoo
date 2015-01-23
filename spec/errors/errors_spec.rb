@@ -131,11 +131,25 @@ describe ApiTools::Errors do
   end
 
   describe '#render' do
+    it 'complains about invalid Interaction IDs' do
+      expect {
+        @errors.render( nil )
+      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got 'nil')" )
+
+      expect {
+        @errors.render( 12345 )
+      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got '12345')" )
+
+      expect {
+        @errors.render( 'hello' )
+      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got '\"hello\"')" )
+    end
+
     it 'renders' do
       @errors.clear_errors
       @errors.add_error('platform.malformed')
 
-      data = @errors.render()
+      data = @errors.render(ApiTools::UUID.generate())
       expect(data['errors']).to be_a(Array)
       expect(data['errors'].count).to eq(1)
       expect(data['errors'][0]['code']).to eq('platform.malformed')
@@ -316,7 +330,7 @@ describe ApiTools::Errors do
       @errors.clear_errors
       @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
 
-      rendered = @errors.render
+      rendered = @errors.render(ApiTools::UUID.generate())
       ary = @errors.unjoin_and_unescape_commas(rendered['errors'][0]['reference'])
       expect(ary).to eq(['ref \\ 2 data', 'ref, 3, data', 'ref4-data'])
     end

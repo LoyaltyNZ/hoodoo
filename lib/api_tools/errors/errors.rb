@@ -221,11 +221,21 @@ module ApiTools
     # Return a Hash rendered through the ApiTools::Data::Resources::Errors
     # collection representing the formalised resource.
     #
-    def render
+    # +interaction_id+: Mandatory Interaction ID (UUID) to associate with
+    #                   the collection.
+    #
+    def render( interaction_id )
+      unless ApiTools::UUID.valid?( interaction_id )
+        raise "ApiTools::Errors\#render must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
+      end
+
       @created_at ||= Time.now
 
       ApiTools::Data::Resources::Errors.render(
-        { 'errors' => @errors },
+        {
+          'interaction_id' => interaction_id,
+          'errors'         => @errors
+        },
         @uuid,
         @created_at
       )

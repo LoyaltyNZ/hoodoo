@@ -69,11 +69,21 @@ module ApiTools
     # Create a new instance, ready to take on a response. The service
     # middleware is responsible for doing this.
     #
-    def initialize
+    # +interaction_id+: The UUID of the interaction taking place for which a
+    #                   response is required.
+    #
+    def initialize( interaction_id )
+
+      unless ApiTools::UUID.valid?( interaction_id )
+        raise "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
+      end
+
+      @interaction_id   = interaction_id
       @errors           = ApiTools::Errors.new()
       @headers          = {}
       @http_status_code = 200
       @body             = {}
+
     end
 
     # Returns +true+ if processing should halt, e.g. because errors have been
@@ -219,13 +229,14 @@ module ApiTools
     # ApiTools::ServiceMiddleware.
     #
     def for_rack
+
       rack_response = Rack::Response.new
 
       # Work out the status code and basic response body
 
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
-        body_data        = @errors.render()
+        body_data        = @errors.render( @interaction_id )
       else
         http_status_code = @http_status_code
         body_data        = @body

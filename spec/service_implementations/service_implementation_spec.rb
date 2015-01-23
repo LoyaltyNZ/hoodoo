@@ -17,7 +17,7 @@ describe ApiTools::ServiceImplementation do
   it 'should raise base class exceptions' do
     ses = ApiTools::ServiceSession.new
     req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new
+    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
     mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceImplementation.new )
     con = ApiTools::ServiceContext.new( ses, req, res, mid )
     int = ApiTools::ServiceImplementation.new

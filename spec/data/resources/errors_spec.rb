@@ -6,8 +6,13 @@ describe ApiTools::Data::Resources::Errors do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(1)
+    expect(schema.properties.count).to eq(2)
+
+    expect(schema.properties['interaction_id']).to be_a(ApiTools::Presenters::UUID)
+    expect(schema.properties['interaction_id'].required).to eq(true)
+
     expect(schema.properties['errors']).to be_a(ApiTools::Presenters::Array)
+    expect(schema.properties['errors'].required).to eq(true)
 
     expect(schema.properties['errors'].properties.count).to eq(3)
     expect(schema.properties['errors'].properties['code']).to be_a(ApiTools::Presenters::Text)

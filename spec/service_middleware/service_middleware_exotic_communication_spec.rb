@@ -68,7 +68,13 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'complains about missing Alchemy' do
+      interaction_id = ApiTools::UUID.generate()
+      session_id = ApiTools::UUID.generate()
+
       @mw.instance_variable_set( '@rack_request', OpenStruct.new )
+      @mw.instance_variable_set( '@locale', 'fr' )
+      @mw.instance_variable_set( '@interaction_id', interaction_id )
+      @mw.instance_variable_set( '@session_id', session_id )
 
       if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
@@ -87,7 +93,13 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'calls Alchemy' do
+      interaction_id = ApiTools::UUID.generate()
+      session_id = ApiTools::UUID.generate()
+
       @mw.instance_variable_set( '@rack_request', OpenStruct.new )
+      @mw.instance_variable_set( '@locale', 'fr' )
+      @mw.instance_variable_set( '@interaction_id', interaction_id )
+      @mw.instance_variable_set( '@session_id', session_id )
 
       mock_alchemy = OpenStruct.new
       ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', mock_alchemy )
@@ -106,17 +118,17 @@ describe ApiTools::ServiceMiddleware do
         expect( path ).to eq( mock_path )
         expect( opts ).to eq(
           {
-            :session_id => nil,
+            :session_id => session_id,
             :host       => nil,
             :port       => nil,
             :body       => '',
             :query      => mock_query,
             :headers    => {
               'Content-Type' => 'application/json; charset=utf-8',
-              'Content-Language' => 'en-nz',
-              'X-Interaction-ID' => '+', # "+" == ApiTools 'not present' marker
-              'X-Session-ID' => '+'
-            },
+              'Content-Language' => 'fr',
+              'X-Interaction-ID' => interaction_id,
+              'X-Session-ID' => session_id
+            }
           }
         )
       end.and_return( mock_response )
@@ -166,6 +178,14 @@ describe ApiTools::ServiceMiddleware do
     #
     it 'attempts HTTPS communication' do
       mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+
+      interaction_id = ApiTools::UUID.generate()
+      session_id = ApiTools::UUID.generate()
+
+      mw.instance_variable_set( '@rack_request', OpenStruct.new )
+      mw.instance_variable_set( '@locale', 'fr' )
+      mw.instance_variable_set( '@interaction_id', interaction_id )
+      mw.instance_variable_set( '@session_id', session_id )
 
       mock_result = mw.send(
         :inter_resource_remote,

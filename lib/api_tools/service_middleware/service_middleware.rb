@@ -315,8 +315,7 @@ module ApiTools
       #
       begin
 
-        @interaction_id = @session_id = nil
-        @rack_request   = Rack::Request.new( env )
+        @rack_request = Rack::Request.new( env )
 
         alchemy = env[ 'rack.alchemy' ]
         unless alchemy.nil? || defined?( @@alchemy )
@@ -325,8 +324,6 @@ module ApiTools
         end
 
         debug_log()
-
-        @service_response = ApiTools::ServiceResponse.new
 
         early_response = preprocess()
         return early_response unless early_response.nil?
@@ -752,11 +749,12 @@ module ApiTools
     end
 
     # Run request preprocessing - common actions that occur prior to any service
-    # instance selection or service-specific processing.
+    # instance selection or service-specific processing. Generates the service
+    # response object in @service_response, interaction ID in @interaction_id,
+    # locale data in @locale and so-on.
     #
-    # If the method returns +nil+, +@service_response+ may have been updated.
-    # Be sure to check +@service_response.halt_processing?+ to see if
-    # processing should abort and return immediately.
+    # After calling, be sure to check +@service_response.halt_processing?+ to
+    # see if processing should abort and return immediately.
     #
     # If the method returns something else, it's a Rack response; an early
     # and immediate response has been created. Return this (through whatever
@@ -771,10 +769,11 @@ module ApiTools
       # =======================================================================
 
 
-      check_content_type_header()
+      @locale           = deal_with_language_header()
+      @interaction_id   = find_or_generate_interaction_id()
+      @service_response = ApiTools::ServiceResponse.new( @interaction_id )
 
-      @locale         = deal_with_language_header()
-      @interaction_id = find_or_generate_interaction_id()
+      check_content_type_header()
 
       # This is far too much work just to log the full details of the inbound
       # request, but Rack makes it ridiculously hard to extract the original
@@ -1144,15 +1143,11 @@ module ApiTools
     end
 
     # Find the value of an X-Interaction-ID header (if one is already present)
-    # or generate a new Interaction ID and store the result for the response,
-    # as a new X-Interaction-ID header.
+    # or generate a new Interaction ID.
     #
     def find_or_generate_interaction_id
       iid = @rack_request.env[ 'HTTP_X_INTERACTION_ID' ]
       iid = ApiTools::UUID.generate() if iid.nil? || iid == ''
-
-      @service_response.add_header( 'X-Interaction-ID', iid )
-
       iid
     end
 
@@ -1166,6 +1161,7 @@ module ApiTools
     # +response+:: ApiTools::ServiceResponse instance to update.
     #
     def set_common_response_headers( response )
+      response.add_header( 'X-Interaction-ID', @interaction_id )
       response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
     end
 
@@ -1838,10 +1834,11 @@ module ApiTools
       body_data = body_hash.nil? ? '' : body_hash.to_json
       headers   = {
         'Content-Type'     => 'application/json; charset=utf-8',
-        'Content-Language' => @locale         || 'en-nz',
-        'X-Interaction-ID' => @interaction_id || '+',
-        'X-Session-ID'     => @session_id     || '+'
+        'Content-Language' => @locale,
+        'X-Interaction-ID' => @interaction_id
       }
+
+      headers[ 'X-Session-ID' ] = @session_id unless @session_id.nil?
 
       # Use HTTP or Alchemy for the actual communications.
 
@@ -1963,7 +1960,7 @@ module ApiTools
       # parsed an inbound HTTP request and a response object that contains
       # the usual default data.
 
-      local_service_response = ApiTools::ServiceResponse.new
+      local_service_response = ApiTools::ServiceResponse.new( @interaction_id )
       set_common_response_headers( local_service_response )
       update_service_response_for( local_service_response, interface )
 

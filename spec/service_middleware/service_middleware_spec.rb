@@ -154,7 +154,6 @@ describe ApiTools::ServiceMiddleware do
     it 'should self-check content type' do
       mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceStub.new )
       mw.instance_variable_set( '@content_type', 'application/xml' )
-      mw.instance_variable_set( '@response', ApiTools::ServiceResponse.new )
       expect {
         mw.send( :payload_to_hash, '{}' )
       }.to raise_error(RuntimeError, "Internal error - content type 'application/xml' is not supported here; \#check_content_type_header() should have caught that");

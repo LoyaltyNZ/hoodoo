@@ -18,7 +18,7 @@ describe ApiTools::ServiceContext do
   it 'should initialise correctly' do
     ses = ApiTools::ServiceSession.new
     req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new
+    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
     mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceContext.new )
     con = ApiTools::ServiceContext.new( ses, req, res, mid )
 
@@ -30,7 +30,7 @@ describe ApiTools::ServiceContext do
   it 'should report endpoints' do
     ses = ApiTools::ServiceSession.new
     req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new
+    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
     mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceContext.new )
     con = ApiTools::ServiceContext.new( ses, req, res, mid )
 

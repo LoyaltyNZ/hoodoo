@@ -22,7 +22,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase do
     it 'merges properly' do
       # There are no errors inside @abt to add to @fof, so should return 'false'
       expect( @abt.adds_errors_to?( @fof ) ).to eq( false )
-      data = @fof.render()
+      data = @fof.render( ApiTools::UUID.generate() )
       expect( data[ 'errors' ] ).to be_a( Array )
       expect( data[ 'errors' ].size ).to eq( 1 )
       expect( data[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
@@ -41,7 +41,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase do
       col = ApiTools::Errors.new
       @abt.set_platform_errors( @fof )
       expect( @abt.adds_errors_to?( col ) ).to eq( true )
-      data = col.render()
+      data = col.render( ApiTools::UUID.generate() )
       expect( data[ 'errors' ] ).to be_a( Array )
       expect( data[ 'errors' ].size ).to eq( 1 )
       expect( data[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
