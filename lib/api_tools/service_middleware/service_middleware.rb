@@ -336,7 +336,10 @@ module ApiTools
       rescue => exception
         begin
 
-          ExceptionReporting.report( exception, env )
+          unless self.class.environment.test? || self.class.environment.development?
+            ExceptionReporting.report( exception, env )
+          end
+
           return respond_with( record_exception( @service_response, exception ) )
 
         rescue

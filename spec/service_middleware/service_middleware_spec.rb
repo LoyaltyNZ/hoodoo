@@ -296,6 +296,12 @@ describe ApiTools::ServiceMiddleware do
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
 
+      # This implicitly tests that ApiTools' exception handler checks for test
+      # and development mode and if both are false, calls the exception reporter.
+
+      expect(ApiTools::ServiceMiddleware.environment).to receive(:test?).exactly(3).times.and_return(true)
+      expect(ApiTools::ServiceMiddleware.environment).to receive(:test?).once.and_return(false)
+      expect(ApiTools::ServiceMiddleware.environment).to receive(:development?).and_return(false)
       expect(ApiTools::ServiceMiddleware::ExceptionReporting).to receive(:report).and_raise("boo!")
 
       # Route through to the unimplemented "list" call, so the subclass raises
