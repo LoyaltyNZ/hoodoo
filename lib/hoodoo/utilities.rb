@@ -7,5 +7,5 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
-require 'utilities/utilities'
-require 'utilities/uuid'
+require 'hoodoo/utilities/utilities'
+require 'hoodoo/utilities/uuid'

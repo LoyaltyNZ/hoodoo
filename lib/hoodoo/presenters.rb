@@ -7,23 +7,29 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
-require 'presenters/base'
-require 'presenters/base_dsl'
+# Dependencies
 
-require 'presenters/types/field'
-require 'presenters/types/object'
-require 'presenters/types/array'
-require 'presenters/types/hash'
-require 'presenters/types/string'
-require 'presenters/types/text'
-require 'presenters/types/enum'
-require 'presenters/types/boolean'
-require 'presenters/types/float'
-require 'presenters/types/integer'
-require 'presenters/types/decimal'
-require 'presenters/types/date'
-require 'presenters/types/date_time'
-require 'presenters/types/tags'
-require 'presenters/types/uuid'
+require 'hoodoo/utilities'
 
-require 'presenters/common_resource_fields'
+# Presenters
+
+require 'hoodoo/presenters/base'
+require 'hoodoo/presenters/base_dsl'
+
+require 'hoodoo/presenters/types/field'
+require 'hoodoo/presenters/types/object'
+require 'hoodoo/presenters/types/array'
+require 'hoodoo/presenters/types/hash'
+require 'hoodoo/presenters/types/string'
+require 'hoodoo/presenters/types/text'
+require 'hoodoo/presenters/types/enum'
+require 'hoodoo/presenters/types/boolean'
+require 'hoodoo/presenters/types/float'
+require 'hoodoo/presenters/types/integer'
+require 'hoodoo/presenters/types/decimal'
+require 'hoodoo/presenters/types/date'
+require 'hoodoo/presenters/types/date_time'
+require 'hoodoo/presenters/types/tags'
+require 'hoodoo/presenters/types/uuid'
+
+require 'hoodoo/presenters/common_resource_fields'

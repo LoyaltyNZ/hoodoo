@@ -9,15 +9,15 @@
 
 # Dependencies
 
-require 'communicators'
+require 'hoodoo/communicators'
 
 # Logger code
 
-require 'logger/logger'
-require 'logger/writer_mixin'
-require 'logger/flattener_mixin'
-require 'logger/fast_writer'
-require 'logger/slow_writer'
-require 'logger/writers/file_writer'
-require 'logger/writers/stream_writer'
-require 'logger/writers/log_entries_dot_com_writer'
+require 'hoodoo/logger/logger'
+require 'hoodoo/logger/writer_mixin'
+require 'hoodoo/logger/flattener_mixin'
+require 'hoodoo/logger/fast_writer'
+require 'hoodoo/logger/slow_writer'
+require 'hoodoo/logger/writers/file_writer'
+require 'hoodoo/logger/writers/stream_writer'
+require 'hoodoo/logger/writers/log_entries_dot_com_writer'

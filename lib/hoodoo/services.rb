@@ -9,15 +9,15 @@
 
 # Dependencies
 
-require 'logger'
+require 'hoodoo/logger'
 
 # Services
 
-require 'services/services/permissions'
-require 'services/services/session'
-require 'services/services/request'
-require 'services/services/response'
-require 'services/services/context'
-require 'services/services/interface'
-require 'services/services/implementation'
-require 'services/services/application'
+require 'hoodoo/services/services/permissions'
+require 'hoodoo/services/services/session'
+require 'hoodoo/services/services/request'
+require 'hoodoo/services/services/response'
+require 'hoodoo/services/services/context'
+require 'hoodoo/services/services/interface'
+require 'hoodoo/services/services/implementation'
+require 'hoodoo/services/services/application'

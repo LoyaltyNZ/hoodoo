@@ -8,6 +8,6 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
-require 'communicators/pool'
-require 'communicators/fast'
-require 'communicators/slow'
+require 'hoodoo/communicators/pool'
+require 'hoodoo/communicators/fast'
+require 'hoodoo/communicators/slow'

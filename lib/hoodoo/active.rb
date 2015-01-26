@@ -10,14 +10,14 @@
 
 # Dependencies
 
-require 'utilities'
-require 'errors'
+require 'hoodoo/utilities'
+require 'hoodoo/errors'
 
 # ActiveRecord / ActiveModel extras
 
-require 'active/active_model/uuid_validator'
+require 'hoodoo/active/active_model/uuid_validator'
 
-require 'active/active_record/error_mapping'
-require 'active/active_record/finder'
-require 'active/active_record/uuid'
-require 'active/active_record/base'
+require 'hoodoo/active/active_record/error_mapping'
+require 'hoodoo/active/active_record/finder'
+require 'hoodoo/active/active_record/uuid'
+require 'hoodoo/active/active_record/base'

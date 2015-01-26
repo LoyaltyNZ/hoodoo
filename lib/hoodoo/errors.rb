@@ -9,10 +9,11 @@
 
 # Dependencies
 
-require 'presenters'
-require 'data'
+require 'hoodoo/utilities'
+require 'hoodoo/presenters'
+require 'hoodoo/data'
 
 # Error management
 
-require 'errors/error_descriptions'
-require 'errors/errors'
+require 'hoodoo/errors/error_descriptions'
+require 'hoodoo/errors/errors'

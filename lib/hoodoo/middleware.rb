@@ -9,24 +9,25 @@
 
 # Dependencies
 
-require 'errors'
-require 'communicators'
-require 'logger'
+require 'hoodoo/utilities'
+require 'hoodoo/errors'
+require 'hoodoo/communicators'
+require 'hoodoo/logger'
 
 # Middleware
 
-require 'services/middleware/rack_monkey_patch'
-require 'services/middleware/string_inquirer'
-require 'services/middleware/amqp_log_message'
-require 'services/middleware/amqp_log_writer'
-require 'services/middleware/endpoint/augmented_base'
-require 'services/middleware/endpoint/augmented_hash'
-require 'services/middleware/endpoint/augmented_array'
-require 'services/middleware/endpoint/endpoint'
-require 'services/middleware/service_registry_drb_server'
-require 'services/middleware/middleware'
+require 'hoodoo/services/middleware/rack_monkey_patch'
+require 'hoodoo/services/middleware/string_inquirer'
+require 'hoodoo/services/middleware/amqp_log_message'
+require 'hoodoo/services/middleware/amqp_log_writer'
+require 'hoodoo/services/middleware/endpoint/augmented_base'
+require 'hoodoo/services/middleware/endpoint/augmented_hash'
+require 'hoodoo/services/middleware/endpoint/augmented_array'
+require 'hoodoo/services/middleware/endpoint/endpoint'
+require 'hoodoo/services/middleware/service_registry_drb_server'
+require 'hoodoo/services/middleware/middleware'
 
-require 'services/middleware/exception_reporting/exception_reporting'
-require 'services/middleware/exception_reporting/base_reporter'
-require 'services/middleware/exception_reporting/reporters/airbrake_reporter'
-require 'services/middleware/exception_reporting/reporters/raygun_reporter'
+require 'hoodoo/services/middleware/exception_reporting/exception_reporting'
+require 'hoodoo/services/middleware/exception_reporting/base_reporter'
+require 'hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter'
+require 'hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter'
