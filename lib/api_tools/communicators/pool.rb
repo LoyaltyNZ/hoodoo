@@ -45,7 +45,7 @@ module Hoodoo
       #
       def initialize
         @pool  = {}
-        @group = ThreadGroup.new
+        @group = ::ThreadGroup.new
       end
 
       # Add a communicator instance to the pool. Future calls to #communicate
@@ -310,13 +310,13 @@ module Hoodoo
       #
       def add_slow_communicator( communicator )
 
-        work_queue = Queue.new
+        work_queue = ::Queue.new
         sync_queue = QueueWithTimeout.new
 
         # Start (and keep a reference to) a thread that just loops around
         # processing queue messages until asked to exit.
 
-        thread = Thread.new do
+        thread = ::Thread.new do
 
           # Outer infinite loop restarts queue processing if exceptions occur.
           #
@@ -333,7 +333,7 @@ module Hoodoo
                 entry = work_queue.shift() # ".shift" => FIFO, ".pop" would be LIFO
 
                 if entry.terminate?
-                  Thread.exit
+                  ::Thread.exit
                 elsif entry.sync?
                   sync_queue << :sync
                 elsif entry.dropped?
@@ -481,9 +481,9 @@ module Hoodoo
         # Create a new instance.
         #
         def initialize
-          @mutex    = Mutex.new
+          @mutex    = ::Mutex.new
           @queue    = []
-          @recieved = ConditionVariable.new
+          @recieved = ::ConditionVariable.new
         end
 
         # Push a new entry to the end of the queue.
