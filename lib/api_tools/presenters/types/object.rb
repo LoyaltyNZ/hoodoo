@@ -1,9 +1,9 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON object schema member
-    class Object < ApiTools::Presenters::Field
+    class Object < Hoodoo::Presenters::Field
 
-      include ApiTools::Presenters::BaseDSL
+      include Hoodoo::Presenters::BaseDSL
 
       # The properties of this object; a Hash of +Field+ instances keyed by
       # field name.
@@ -20,7 +20,7 @@ module ApiTools
         @internationalised = false
       end
 
-      # Check if data is a valid Object and return an ApiTools::Errors instance
+      # Check if data is a valid Object and return an Hoodoo::Errors instance
       # with zero (valid) or more (has validation problems) errors inside.
       #
       # +data+: Data to check (and check nested properties therein). Expected

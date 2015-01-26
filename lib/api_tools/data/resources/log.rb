@@ -8,13 +8,13 @@
 #           01-Dec-2014 (ADH): Renamed resource from LogEntry to Log.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Log'.
       #
-      class Log < ApiTools::Presenters::Base
+      class Log < Hoodoo::Presenters::Base
 
         schema do
           text :level,     :required => true

@@ -7,7 +7,7 @@ require 'spec_helper'
 # actions. The second has one interface with a public and private action. The
 # last contains both interfaces.
 
-class TestNoPublicActionServiceImplementation < ApiTools::ServiceImplementation
+class TestNoPublicActionServiceImplementation < Hoodoo::ServiceImplementation
   def list( context )
     context.response.set_resources( [ { 'private' => true } ] )
   end
@@ -17,7 +17,7 @@ class TestNoPublicActionServiceImplementation < ApiTools::ServiceImplementation
   end
 end
 
-class TestPublicActionServiceImplementation < ApiTools::ServiceImplementation
+class TestPublicActionServiceImplementation < Hoodoo::ServiceImplementation
   def list( context )
     context.response.set_resources( [ { 'public' => true } ] )
   end
@@ -27,14 +27,14 @@ class TestPublicActionServiceImplementation < ApiTools::ServiceImplementation
   end
 end
 
-class TestNoPublicActionServiceInterface < ApiTools::ServiceInterface
+class TestNoPublicActionServiceInterface < Hoodoo::ServiceInterface
   interface :NoPublicAction do
     endpoint :no_public_action, TestNoPublicActionServiceImplementation
     actions :show, :list
   end
 end
 
-class TestPublicActionServiceInterface < ApiTools::ServiceInterface
+class TestPublicActionServiceInterface < Hoodoo::ServiceInterface
   interface :PublicAction do
     endpoint :public_action, TestPublicActionServiceImplementation
     actions :show, :list
@@ -42,22 +42,22 @@ class TestPublicActionServiceInterface < ApiTools::ServiceInterface
   end
 end
 
-class TestNoPublicActionServiceApplication < ApiTools::ServiceApplication
+class TestNoPublicActionServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestNoPublicActionServiceInterface
 end
 
-class TestPublicActionServiceApplication < ApiTools::ServiceApplication
+class TestPublicActionServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestPublicActionServiceInterface
 end
 
-class TestMixPublicActionServiceApplication < ApiTools::ServiceApplication
+class TestMixPublicActionServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestNoPublicActionServiceInterface,
                TestPublicActionServiceInterface
 end
 
 # Run the tests
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   def try_to_call( endpoint, ident = nil )
     get(
@@ -68,7 +68,7 @@ describe ApiTools::ServiceMiddleware do
   end
 
   before :example, :without_session => true do
-    expect( ApiTools::ServiceSession ).to receive( :load_session ).once.and_return( nil )
+    expect( Hoodoo::ServiceSession ).to receive( :load_session ).once.and_return( nil )
   end
 
   # -------------------------------------------------------------------------
@@ -77,7 +77,7 @@ describe ApiTools::ServiceMiddleware do
 
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestNoPublicActionServiceApplication.new
       end
     end
@@ -113,7 +113,7 @@ describe ApiTools::ServiceMiddleware do
 
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestPublicActionServiceApplication.new
       end
     end
@@ -148,12 +148,12 @@ describe ApiTools::ServiceMiddleware do
     # tests run, so it's a clean slate for the next set.
     #
     after :all do
-      ApiTools::ServiceMiddleware::class_variable_set( '@@interfaces_have_public_methods', false )
+      Hoodoo::ServiceMiddleware::class_variable_set( '@@interfaces_have_public_methods', false )
     end
 
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestMixPublicActionServiceApplication.new
       end
     end

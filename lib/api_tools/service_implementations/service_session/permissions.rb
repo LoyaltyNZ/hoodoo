@@ -1,4 +1,4 @@
-module ApiTools
+module Hoodoo
   class ServiceSession
     class Permissions
 

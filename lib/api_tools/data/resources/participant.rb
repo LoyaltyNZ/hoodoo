@@ -7,13 +7,13 @@
 #           23-Oct-2014 (JML): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Participant'.
       #
-      class Participant < ApiTools::Presenters::Base
+      class Participant < Hoodoo::Presenters::Base
 
         schema do
           internationalised

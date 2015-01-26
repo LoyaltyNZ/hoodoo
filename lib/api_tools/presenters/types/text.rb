@@ -1,9 +1,9 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON string schema member - unlimited length string
-    class Text < ApiTools::Presenters::Field
+    class Text < Hoodoo::Presenters::Field
 
-      # Check if data is a valid String and return an ApiTools::Errors instance
+      # Check if data is a valid String and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray do
+describe Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray do
 
   # However much the class arrangement might change in future, ultimately the
   # class must inherit from Array and support a basic interface expected by

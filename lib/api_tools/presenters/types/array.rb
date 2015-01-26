@@ -1,14 +1,14 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON array schema member
-    class Array < ApiTools::Presenters::Field
+    class Array < Hoodoo::Presenters::Field
 
-      include ApiTools::Presenters::BaseDSL
+      include Hoodoo::Presenters::BaseDSL
 
       # The properties of this object, an +array+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Array and return an ApiTools::Errors instance
+      # Check if data is a valid Array and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

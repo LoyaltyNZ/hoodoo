@@ -1,7 +1,7 @@
-root = File.dirname(__FILE__)+'/api_tools/'
+root = File.dirname(__FILE__)+'/hoodoo/'
 
-require root+'utilities'
-require root+'uuid'
+require root+'utilities/utilities'
+require root+'utilities/uuid'
 
 require root+'communicators/pool'
 require root+'communicators/fast'
@@ -106,11 +106,11 @@ require root+'service_implementations/service_implementation'
 
 # Optional ActiveRecord (and related ActiveModel) related components
 
-require root+'active_model/uuid_validator'
+require root+'active/active_model/uuid_validator'
 
-require root+'active_record/error_mapping'
-require root+'active_record/finder'
-require root+'active_record/uuid'
-require root+'active_record/base'
+require root+'active/active_record/error_mapping'
+require root+'active/active_record/finder'
+require root+'active/active_record/uuid'
+require root+'active/active_record/base'
 
 require root+'version'

@@ -7,7 +7,7 @@
 #           08-Jan-2015 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class Logger
 
     begin          # Exception handler as 'le' gem inclusion is optional.
@@ -15,10 +15,10 @@ module ApiTools
 
       # Writes structured messages to logentries.com via the "le" gem,
       # which uses its own asynchronous worker thread for network data.
-      # Thus, an ApiTools::Logger::FastWriter subclass. See also
-      # ApiTools::Logger.
+      # Thus, an Hoodoo::Logger::FastWriter subclass. See also
+      # Hoodoo::Logger.
       #
-      class LogEntriesDotComWriter < ApiTools::Logger::FastWriter
+      class LogEntriesDotComWriter < Hoodoo::Logger::FastWriter
 
         # Create a log writer instance.
         #
@@ -28,7 +28,7 @@ module ApiTools
           @@logger ||= Le.new( token, :ssl => true )
         end
 
-        # See ApiTools::Logger::WriterMixin#report.
+        # See Hoodoo::Logger::WriterMixin#report.
         #
         def report( log_level, component, code, data )
           method = case log_level

@@ -9,13 +9,13 @@
 #                              specification changes.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Purchase'.
       #
-      class Purchase < ApiTools::Presenters::Base
+      class Purchase < Hoodoo::Presenters::Base
 
         schema do
           text   :token_identifier

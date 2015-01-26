@@ -7,10 +7,10 @@
 #           16-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class Logger
 
-    # Log writer classes are used through the ApiTools::Logger class.
+    # Log writer classes are used through the Hoodoo::Logger class.
     #
     # Subclass SlowWriter if you are writing a log data output mechanism which
     # does not respond very quickly. File output might fall into this category
@@ -18,7 +18,7 @@ module ApiTools
     # remote logging service over the network would certainly qualify.
     #
     # The subclass only needs to implement
-    # ApiTools::Logger::WriterMixin#report.
+    # Hoodoo::Logger::WriterMixin#report.
     #
     # If a slow writer cannot keep up with a high rate of log messages, some
     # may be dropped. A +:warn+ level message is reported automatically for
@@ -43,7 +43,7 @@ module ApiTools
     # still correctly returned to the pool using the above approach.
     #
     class SlowWriter
-      include ApiTools::Logger::WriterMixin
+      include Hoodoo::Logger::WriterMixin
     end
   end
 end

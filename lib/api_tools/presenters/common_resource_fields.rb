@@ -8,13 +8,13 @@
 #           02-Dec-2014 (ADH): Split from DocumentedPresenter.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Presenters
 
     # Used internally for additional validation of common Resource fields.
-    # See ApiTools::Presenters::Base::validate.
+    # See Hoodoo::Presenters::Base::validate.
     #
-    class CommonResourceFields < ApiTools::Presenters::Base
+    class CommonResourceFields < Hoodoo::Presenters::Base
       schema do
         uuid     :id,         :required => true
         datetime :created_at, :required => true

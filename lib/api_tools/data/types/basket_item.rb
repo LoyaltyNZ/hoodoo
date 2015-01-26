@@ -7,13 +7,13 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'BasketItem'.
       #
-      class BasketItem < ApiTools::Presenters::Base
+      class BasketItem < Hoodoo::Presenters::Base
 
         # Defined values for the +accrual+ enumeration in the schema.
         #

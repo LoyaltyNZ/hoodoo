@@ -7,13 +7,13 @@
 #           07-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Member'.
       #
-      class Member < ApiTools::Presenters::Base
+      class Member < Hoodoo::Presenters::Base
 
         schema do
           internationalised

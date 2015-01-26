@@ -5,22 +5,22 @@
 # Purpose:: Structured logging support for the middleware.
 # ----------------------------------------------------------------------
 #           20-Nov-2014 (ADH): Created.
-#           16-Dec-2014 (ADH): Changed into a new ApiTools::Logger style
+#           16-Dec-2014 (ADH): Changed into a new Hoodoo::Logger style
 #                              instantiable log writer.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
 
     # Log writer which sends structured messages to an AMQP-based queue via the
-    # Alchemy and AMQEndpoint gems. An ApiTools::Logger::FastWriter subclass,
+    # Alchemy and AMQEndpoint gems. An Hoodoo::Logger::FastWriter subclass,
     # since though talking to the queue might be comparatively slow, Alchemy
     # itself uses an asynchronous Thread for this so there's no need to add
     # another one for this logger.
     #
-    # See also ApiTools::Logger and ApiTools::ServiceMiddleware::AMQPLogMessage.
+    # See also Hoodoo::Logger and Hoodoo::ServiceMiddleware::AMQPLogMessage.
     #
-    class AMQPLogWriter < ApiTools::Logger::FastWriter
+    class AMQPLogWriter < Hoodoo::Logger::FastWriter
 
       # Create an AMQP logger instance.
       #
@@ -42,18 +42,18 @@ module ApiTools
         @queue_name = queue_name || ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
       end
 
-      # Custom implementation of the ApiTools::Logger::WriterMixin#report
+      # Custom implementation of the Hoodoo::Logger::WriterMixin#report
       # interface. See that method for parameter details.
       #
       # The middleware custom logger has expectations about the data payload.
       # It expects these optional but recommended (where the information is
       # available / has been generated) keys/values:
       #
-      # +:id+::      A UUID (via ApiTools::UUID::generate) to use for this log
+      # +:id+::      A UUID (via Hoodoo::UUID::generate) to use for this log
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an ApiTools::ServiceSession instance. The client ID,
+      #              an Hoodoo::ServiceSession instance. The client ID,
       #              participant UUID and outlet UUID are sent as independent,
       #              searchable fields in the log payload.
       #
@@ -62,9 +62,9 @@ module ApiTools
       #                    the log payload.
       #
       def report( level, component, code, data )
-        return if @alchemy.nil? || defined?( ApiTools::ServiceMiddleware::AMQPLogMessage ).nil?
+        return if @alchemy.nil? || defined?( Hoodoo::ServiceMiddleware::AMQPLogMessage ).nil?
 
-        data[ :id ] ||= ApiTools::UUID.generate()
+        data[ :id ] ||= Hoodoo::UUID.generate()
 
         interaction_id = data[ :interaction_id ]
         session        = data[ :session ] || {}
@@ -72,7 +72,7 @@ module ApiTools
         participant_id = session[ :participant_id ]
         outlet_id      = session[ :outlet_id      ]
 
-        message = ApiTools::ServiceMiddleware::AMQPLogMessage.new(
+        message = Hoodoo::ServiceMiddleware::AMQPLogMessage.new(
           :id             => data[ :id ],
           :level          => level,
           :component      => component,

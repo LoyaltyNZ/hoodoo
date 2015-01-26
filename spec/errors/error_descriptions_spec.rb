@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe ApiTools::ErrorDescriptions do
+describe Hoodoo::ErrorDescriptions do
 
   # Test that DSL exceptions are raised as expected
 
   context 'incorrect definitions' do
     it 'should complain about missing message' do
       expect {
-        ApiTools::ErrorDescriptions.new( :test_domain ) do
+        Hoodoo::ErrorDescriptions.new( :test_domain ) do
           error 'http_123', 'status' => 123
         end
       }.to raise_error(RuntimeError, "Error description options hash missing required key 'message'")
@@ -15,7 +15,7 @@ describe ApiTools::ErrorDescriptions do
 
     it 'should complain about missing status' do
       expect {
-        ApiTools::ErrorDescriptions.new( :test_domain ) do
+        Hoodoo::ErrorDescriptions.new( :test_domain ) do
           error 'http_123', 'message' => 'hello world'
         end
       }.to raise_error(RuntimeError, "Error description options hash missing required key 'status'")
@@ -28,7 +28,7 @@ describe ApiTools::ErrorDescriptions do
   context 'correct definitions' do
     describe '#describe' do
       it 'should report correct custom definitions' do
-        desc = ApiTools::ErrorDescriptions.new( :test_domain ) do
+        desc = Hoodoo::ErrorDescriptions.new( :test_domain ) do
           error 'http_234_no_references',  'status' => 234, :message => '234 message'
           error 'http_345_has_reference',  :status => 345, 'message' => '345 message', 'reference' => [ :ref1 ]
           error 'http_456_has_references', 'status' => 456, 'message' => '456 message', :reference => [ :ref2, :ref3, :ref4 ]
@@ -46,7 +46,7 @@ describe ApiTools::ErrorDescriptions do
 
   context 'correct definitions' do
     before do
-      @desc = ApiTools::ErrorDescriptions.new
+      @desc = Hoodoo::ErrorDescriptions.new
       @desc.errors_for( :test_domain ) do
         error 'http_345_no_references',  'status' => 345, 'message' => '345 message'
         error 'http_456_has_reference',  'status' => 456, 'message' => '456 message', 'reference' => [ :ref1 ]

@@ -7,13 +7,13 @@
 #           17-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Calculator'.
       #
-      class Calculator < ApiTools::Presenters::Base
+      class Calculator < Hoodoo::Presenters::Base
 
         # Defined values for the +calculator_type+ enumeration in the schema.
         #

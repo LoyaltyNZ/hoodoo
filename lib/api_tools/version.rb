@@ -1,6 +1,6 @@
-module ApiTools
+module Hoodoo
 
-  # The ApiTools gem version.
+  # The Hoodoo gem version.
   #
   VERSION = '0.6.0'
 

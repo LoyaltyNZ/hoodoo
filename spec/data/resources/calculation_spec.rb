@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Data::Resources::Calculation do
+describe Hoodoo::Data::Resources::Calculation do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
@@ -9,9 +9,9 @@ describe ApiTools::Data::Resources::Calculation do
 
     expect(schema.properties.count).to eq(4)
 
-    expect(schema.properties['calculator_id']).to be_a(ApiTools::Presenters::UUID)
-    expect(schema.properties['token_identifier']).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties['calculator_data']).to be_a(ApiTools::Presenters::Hash)
-    expect(schema.properties['currency_amounts']).to be_a(ApiTools::Presenters::Array)
+    expect(schema.properties['calculator_id']).to be_a(Hoodoo::Presenters::UUID)
+    expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['calculator_data']).to be_a(Hoodoo::Presenters::Hash)
+    expect(schema.properties['currency_amounts']).to be_a(Hoodoo::Presenters::Array)
   end
 end

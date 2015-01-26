@@ -7,7 +7,7 @@
 #           16-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # Multiple output logging via local code or external services. Instantiate
   # a new Logger, then use #add to add _instances_ of writer classes to the
@@ -20,16 +20,16 @@ module ApiTools
   # messages will not go anywhere. You must use #add to add at least one
   # writer for the instance to be useful.
   #
-  # Some writer classes are provided by ApiTools, including:
+  # Some writer classes are provided by Hoodoo, including:
   #
-  # * ApiTools::Logger::StreamWriter - write to output streams, typically
+  # * Hoodoo::Logger::StreamWriter - write to output streams, typically
   #   expected to be fast, e.g. unredirected $stdout or $stderr.
   #
-  # * ApiTools::Logger::FileWriter - write to files, typically expected to
+  # * Hoodoo::Logger::FileWriter - write to files, typically expected to
   #   be relatively slow.
   #
   # Some loggers can preserve structural logged data (see #report) while others
-  # flatten all log messages. For example, ApiTools::Logger::StreamWriter must
+  # flatten all log messages. For example, Hoodoo::Logger::StreamWriter must
   # flatten messages but a custom writer that, say, persisted messages in a
   # database should be able to preserve structure.
   #
@@ -41,7 +41,7 @@ module ApiTools
   # dropped messages in the interim.
   #
   # To create a new custom writer class of any name/namespace, just subclass
-  # ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter - see those
+  # Hoodoo::Logger::FastWriter or Hoodoo::Logger::SlowWriter - see those
   # classes for details.
   #
   class Logger
@@ -56,17 +56,17 @@ module ApiTools
     #
     def initialize( component = :Middleware )
       @level     = :debug
-      @pool      = ApiTools::Communicators::Pool.new
+      @pool      = Hoodoo::Communicators::Pool.new
       @component = component
       @writers   = {}
     end
 
     # Add a new writer instance to this logger. Example:
     #
-    #     file_writer   = ApiTools::Logger::FileWriter.new( 'output.log' )
-    #     stdout_writer = ApiTools::Logger::StreamWriter.new
+    #     file_writer   = Hoodoo::Logger::FileWriter.new( 'output.log' )
+    #     stdout_writer = Hoodoo::Logger::StreamWriter.new
     #
-    #     @logger = ApiTools::Logger.new
+    #     @logger = Hoodoo::Logger.new
     #
     #     logger.add( file_writer   )
     #     logger.add( stdout_writer )
@@ -76,18 +76,18 @@ module ApiTools
     #     logger.report( ... ) # -> Sends to "output.log" and $stdout
     #
     # +writer_instances+:: One or more _instances_ of a subclass of
-    #                      ApiTools::Logger::FastWriter or
-    #                      ApiTools::Logger::SlowWriter, passed as one or
+    #                      Hoodoo::Logger::FastWriter or
+    #                      Hoodoo::Logger::SlowWriter, passed as one or
     #                      more comma-separated parameters.
     #
     def add( *writer_instances )
       writer_instances.each do | writer_instance |
-        communicator = if writer_instance.is_a?( ApiTools::Logger::FastWriter )
+        communicator = if writer_instance.is_a?( Hoodoo::Logger::FastWriter )
           FastCommunicator.new( writer_instance, self )
-        elsif writer_instance.is_a?( ApiTools::Logger::SlowWriter )
+        elsif writer_instance.is_a?( Hoodoo::Logger::SlowWriter )
           SlowCommunicator.new( writer_instance, self )
         else
-          raise "ApiTools::Logger\#add: Only instances of ApiTools::Logger::FastWriter or ApiTools::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
+          raise "Hoodoo::Logger\#add: Only instances of Hoodoo::Logger::FastWriter or Hoodoo::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given"
         end
 
         @pool.add( communicator )
@@ -104,8 +104,8 @@ module ApiTools
     # (possibly entirely hung).
     #
     # +writer_instance+:: An _instance_ of a subclass of
-    #                     ApiTools::Logger::FastWriter or
-    #                     ApiTools::Logger::SlowWriter.
+    #                     Hoodoo::Logger::FastWriter or
+    #                     Hoodoo::Logger::SlowWriter.
     #
     def remove( writer_instance )
       communicator = @writers[ writer_instance ]
@@ -180,7 +180,7 @@ module ApiTools
     #               severe, +:debug+, +:info+, +:warn+ or +:error+.
     #
     # +component+:: Component; for example, the resource name for a specific
-    #               resource endpoint implementation, 'Middleware' for ApiTools
+    #               resource endpoint implementation, 'Middleware' for Hoodoo
     #               middleware itself, or some other name you think is useful.
     #               String or Symbol.
     #
@@ -274,35 +274,35 @@ module ApiTools
     end
 
     # Used internally toommunicate details of a log message across the
-    # ApiTools::Communicators::Pool mechanism and through to a log writer.
+    # Hoodoo::Communicators::Pool mechanism and through to a log writer.
     # Log writer authors do not need to use this class;
-    # ApiTools::Logger::WriterMixin unpacks it and calls your subclass's
+    # Hoodoo::Logger::WriterMixin unpacks it and calls your subclass's
     # #report implementation with individual parameters for you.
     #
     class Payload
 
-      # Log level - see ApiTools::Logger#report.
+      # Log level - see Hoodoo::Logger#report.
       #
       attr_reader :log_level
 
-      # Component - see ApiTools::Logger#report.
+      # Component - see Hoodoo::Logger#report.
       #
       attr_reader :component
 
-      # Code - see ApiTools::Logger#report.
+      # Code - see Hoodoo::Logger#report.
       #
       attr_reader :code
 
-      # Data - see ApiTools::Logger#report.
+      # Data - see Hoodoo::Logger#report.
       #
       attr_reader :data
 
       # Create an instance. Named parameters are:
       #
-      # +log_level+:: See ApiTools::Logger#report.
-      # +component+:: See ApiTools::Logger#report.
-      # +code+::      See ApiTools::Logger#report.
-      # +data+::      See ApiTools::Logger#report.
+      # +log_level+:: See Hoodoo::Logger#report.
+      # +component+:: See Hoodoo::Logger#report.
+      # +code+::      See Hoodoo::Logger#report.
+      # +data+::      See Hoodoo::Logger#report.
       #
       def initialize( log_level:, component:, code:, data: )
         @log_level = log_level
@@ -321,8 +321,8 @@ module ApiTools
         @owning_logger   = owning_logger
       end
 
-      # Implement ApiTools::Communicators::Base#communicate for both slow and
-      # fast writers. Assumes it will be passed an ApiTools::Logger::Payload
+      # Implement Hoodoo::Communicators::Base#communicate for both slow and
+      # fast writers. Assumes it will be passed an Hoodoo::Logger::Payload
       # class instance which describes the structured log data to report; also
       # assumes it is only called when the calling logger's configured log
       # level threshold should allow through the level of the log message in
@@ -337,12 +337,12 @@ module ApiTools
         )
       end
 
-      # Implement optional method ApiTools::Communicators::Slow#dropped on
+      # Implement optional method Hoodoo::Communicators::Slow#dropped on
       # behalf of subclasses. The method turns the 'messages dropped'
       # notification into a log message of +:warn+ level and which it reports
       # internally immediately for the Writer instance only (since different
       # writers have different queues and thus different dropped message
-      # warnings), provided that the owning ApiTools::Logger instance log
+      # warnings), provided that the owning Hoodoo::Logger instance log
       # level lets warnings through.
       #
       def dropped( number )
@@ -357,17 +357,17 @@ module ApiTools
       end
     end
 
-    # Used internally as an ApiTools::Communicator::Pool communicator wrapping
+    # Used internally as an Hoodoo::Communicator::Pool communicator wrapping
     # fast log writer instances.
     #
-    class FastCommunicator < ApiTools::Communicators::Fast
+    class FastCommunicator < Hoodoo::Communicators::Fast
       include Communicator
     end
 
-    # Used internally as an ApiTools::Communicator::Pool communicator wrapping
+    # Used internally as an Hoodoo::Communicator::Pool communicator wrapping
     # slow log writer instances.
     #
-    class SlowCommunicator < ApiTools::Communicators::Slow
+    class SlowCommunicator < Hoodoo::Communicators::Slow
       include Communicator
     end
 

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceRequest do
+describe Hoodoo::ServiceRequest do
   context 'uri_path_components' do
     before do
-      @r = ApiTools::ServiceRequest.new
+      @r = Hoodoo::ServiceRequest.new
     end
 
     it 'should record path components properly' do

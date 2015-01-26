@@ -8,7 +8,7 @@
 #           26-Nov-2014 (RJS): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module ActiveRecord
     begin
       require 'active_model'
@@ -32,7 +32,7 @@ module ApiTools
         #
         def validate_each( record, attribute, value )
 
-          unless value.nil? || ApiTools::UUID.valid?( value )
+          unless value.nil? || Hoodoo::UUID.valid?( value )
             record.errors[attribute] << ( options[ :message ] || "is invalid" )
           end
 

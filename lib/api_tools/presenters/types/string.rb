@@ -1,7 +1,7 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON string schema member
-    class String < ApiTools::Presenters::Field
+    class String < Hoodoo::Presenters::Field
 
       # The maximum length of the string
       attr_accessor :length
@@ -11,11 +11,11 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
       def initialize(name, options = {})
         super name, options
-        raise ArgumentError.new('ApiTools::Presenters::String must have a :length') unless options.has_key?(:length)
+        raise ArgumentError.new('Hoodoo::Presenters::String must have a :length') unless options.has_key?(:length)
         @length = options[:length]
       end
 
-      # Check if data is a valid String and return an ApiTools::Errors instance
+      # Check if data is a valid String and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

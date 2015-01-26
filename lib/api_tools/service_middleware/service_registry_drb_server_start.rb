@@ -13,7 +13,7 @@
 #           23-Dec-2014 (ADH): Created.
 ########################################################################
 
-require 'api_tools'
+require 'hoodoo'
 
 Process.setsid()
-ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.start()
+Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.start()

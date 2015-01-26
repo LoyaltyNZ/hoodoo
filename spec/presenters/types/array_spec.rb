@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Array do
+describe Hoodoo::Presenters::Array do
 
   before do
-    @inst = ApiTools::Presenters::Array.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Array.new('one',:required => false)
 
-    class TestPresenterArray < ApiTools::Presenters::Base
+    class TestPresenterArray < Hoodoo::Presenters::Base
 
       schema do
         array :an_array, :required => true do

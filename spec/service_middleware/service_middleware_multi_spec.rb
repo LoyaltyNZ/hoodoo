@@ -8,7 +8,7 @@ require 'json'
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
 
-class TestEchoServiceImplementation < ApiTools::ServiceImplementation
+class TestEchoServiceImplementation < Hoodoo::ServiceImplementation
 
   public
 
@@ -62,7 +62,7 @@ class TestEchoServiceImplementation < ApiTools::ServiceImplementation
     end
 end
 
-class TestEchoServiceInterface < ApiTools::ServiceInterface
+class TestEchoServiceInterface < Hoodoo::ServiceInterface
   interface :TestEcho do
     version 2
     endpoint :test_some_echoes, TestEchoServiceImplementation
@@ -76,7 +76,7 @@ class TestEchoServiceInterface < ApiTools::ServiceInterface
   end
 end
 
-class TestEchoQuietServiceImplementation < ApiTools::ServiceImplementation
+class TestEchoQuietServiceImplementation < Hoodoo::ServiceImplementation
 
   public
 
@@ -104,20 +104,20 @@ class TestEchoQuietServiceImplementation < ApiTools::ServiceImplementation
     end
 end
 
-class TestEchoQuietServiceInterface < ApiTools::ServiceInterface
+class TestEchoQuietServiceInterface < Hoodoo::ServiceInterface
   interface :TestEchoQuiet do
     endpoint :test_echo_quiet, TestEchoQuietServiceImplementation
     actions :show
   end
 end
 
-class TestEchoServiceApplication < ApiTools::ServiceApplication
+class TestEchoServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestEchoServiceInterface, TestEchoQuietServiceInterface
 end
 
 # Now the calling service that'll call over to the echo services above.
 
-class TestCallServiceImplementation < ApiTools::ServiceImplementation
+class TestCallServiceImplementation < Hoodoo::ServiceImplementation
   def list( context )
     resource = context.resource( :TestEcho, 2 )
     result   = resource.list(
@@ -205,13 +205,13 @@ class TestCallServiceImplementation < ApiTools::ServiceImplementation
   end
 end
 
-class TestCallServiceInterface < ApiTools::ServiceInterface
+class TestCallServiceInterface < Hoodoo::ServiceInterface
   interface :TestCall do
     endpoint :test_call, TestCallServiceImplementation
   end
 end
 
-class TestCallServiceApplication < ApiTools::ServiceApplication
+class TestCallServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestCallServiceInterface
 end
 
@@ -231,7 +231,7 @@ describe 'DRb start timeout' do
   end
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   before :all do
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoServiceApplication )
@@ -490,7 +490,7 @@ describe ApiTools::ServiceMiddleware do
   context 'remote inter-resource calls' do
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestCallServiceApplication.new
       end
     end
@@ -577,7 +577,7 @@ describe ApiTools::ServiceMiddleware do
       expect( last_response.status ).to eq( 500 )
       parsed = JSON.parse( last_response.body )
 
-      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "ApiTools::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
+      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "Hoodoo::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
     end
 
     def show_things

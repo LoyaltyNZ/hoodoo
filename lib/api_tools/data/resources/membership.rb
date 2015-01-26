@@ -7,13 +7,13 @@
 #           03-Dec-2014 (RJS): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Membership'.
       #
-      class Membership < ApiTools::Presenters::Base
+      class Membership < Hoodoo::Presenters::Base
 
         schema do
           text :token_identifier, :required => true

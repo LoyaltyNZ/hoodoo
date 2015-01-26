@@ -1,44 +1,44 @@
 require 'spec_helper'
 
-class RSpecTestServiceApplicationImplementationA < ApiTools::ServiceImplementation
+class RSpecTestServiceApplicationImplementationA < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceApplicationImplementationB < ApiTools::ServiceImplementation
+class RSpecTestServiceApplicationImplementationB < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceApplicationInterfaceA < ApiTools::ServiceInterface
+class RSpecTestServiceApplicationInterfaceA < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     endpoint :rspec_test_service_application_a, RSpecTestServiceApplicationImplementationA
   end
 end
 
-class RSpecTestServiceApplicationInterfaceB < ApiTools::ServiceInterface
+class RSpecTestServiceApplicationInterfaceB < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     endpoint :rspec_test_service_application_b, RSpecTestServiceApplicationImplementationA
   end
 end
 
-class RSpecTestServiceApplication < ApiTools::ServiceApplication
+class RSpecTestServiceApplication < Hoodoo::ServiceApplication
 end
 
-class RSpecTestServiceApplication2 < ApiTools::ServiceApplication
+class RSpecTestServiceApplication2 < Hoodoo::ServiceApplication
 end
 
-describe ApiTools::ServiceApplication do
+describe Hoodoo::ServiceApplication do
   it 'should complain about incorrect interface classes' do
     expect {
       RSpecTestServiceApplication.comprised_of( Hash )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation::comprised_of expects ApiTools::ServiceInterface subclasses only - got 'Hash'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got 'Hash'")
 
     expect {
-      RSpecTestServiceApplication.comprised_of( ApiTools::ServiceInterface )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation::comprised_of expects ApiTools::ServiceInterface subclasses only - got 'ApiTools::ServiceInterface'")
+      RSpecTestServiceApplication.comprised_of( Hoodoo::ServiceInterface )
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got 'Hoodoo::ServiceInterface'")
   end
 
   it 'should complain if called directly' do
     expect {
       RSpecTestServiceApplication.new.call( nil )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses should only be called through the middleware - add 'use ApiTools::ServiceMiddleware' to (e.g.) config.ru")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses should only be called through the middleware - add 'use Hoodoo::ServiceMiddleware' to (e.g.) config.ru")
   end
 
   it 'should correctly report its component classes' do

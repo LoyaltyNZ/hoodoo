@@ -3,22 +3,22 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A subclass of Ruby standard library Array used by the
-#           ApiTools::ServiceMiddleware::ServiceEndpoint family of
+#           Hoodoo::ServiceMiddleware::ServiceEndpoint family of
 #           inter-resource calls.
 # ----------------------------------------------------------------------
 #           11-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
-    class ServiceEndpoint < ApiTools::ServiceMiddleware
+    class ServiceEndpoint < Hoodoo::ServiceMiddleware
 
       # Ruby standard library Array subclass which mixes in
-      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase.
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase.
       # See that for details.
       #
       class AugmentedArray < ::Array
-        include ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase
+        include Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase
       end
 
     end

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceResponse do
+describe Hoodoo::ServiceResponse do
   before :each do
-    @r = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
+    @r = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
   end
 
   it 'should acquire the expected default values when instantiated' do
-    expect(@r.errors).to be_a(ApiTools::Errors)
+    expect(@r.errors).to be_a(Hoodoo::Errors)
     expect(@r.errors.has_errors?).to eq(false)
     expect(@r.http_status_code).to eq(200)
     expect(@r.body).to eq({})
@@ -16,20 +16,20 @@ describe ApiTools::ServiceResponse do
   context 'instantiation' do
     it 'rejects a nil interaction ID' do
       expect {
-        ApiTools::ServiceResponse.new( nil )
-      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got 'nil')" )
+        Hoodoo::ServiceResponse.new( nil )
+      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got 'nil')" )
     end
 
     it 'rejects a non-string interaction ID' do
       expect {
-        ApiTools::ServiceResponse.new( 12345 )
-      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '12345')" )
+        Hoodoo::ServiceResponse.new( 12345 )
+      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '12345')" )
     end
 
     it 'rejects an invalid string interaction ID' do
       expect {
-        ApiTools::ServiceResponse.new( 'hello' )
-      }.to raise_error( RuntimeError, "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '\"hello\"')" )
+        Hoodoo::ServiceResponse.new( 'hello' )
+      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '\"hello\"')" )
     end
   end
 
@@ -48,7 +48,7 @@ describe ApiTools::ServiceResponse do
 
   context '#add_errors' do
     it 'should merge errors (1)' do
-      e = ApiTools::Errors.new
+      e = Hoodoo::Errors.new
       e.add_error( 'platform.malformed' )
       e.add_error( 'generic.malformed' )
 
@@ -68,7 +68,7 @@ describe ApiTools::ServiceResponse do
     end
 
     it 'should merge errors (2)' do
-      e = ApiTools::Errors.new
+      e = Hoodoo::Errors.new
       e.add_error( 'platform.malformed' )
       e.add_error( 'generic.malformed' )
 
@@ -126,7 +126,7 @@ describe ApiTools::ServiceResponse do
       @r.add_header( 'X-Foo', 'baz' )
       expect {
         @r.add_header( 'x-fOO', 'thing' )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceResponse\#add_header: Value 'baz' already defined for header 'X-Foo'")
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceResponse\#add_header: Value 'baz' already defined for header 'X-Foo'")
     end
 
     it 'should allow me to overwrite a header value' do

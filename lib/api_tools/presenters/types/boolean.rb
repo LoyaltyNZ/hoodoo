@@ -1,9 +1,9 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON boolean schema member
-    class Boolean < ApiTools::Presenters::Field
+    class Boolean < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Boolean and return an ApiTools::Errors instance
+      # Check if data is a valid Boolean and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

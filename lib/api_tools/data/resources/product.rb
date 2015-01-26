@@ -7,13 +7,13 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Product'.
       #
-      class Product < ApiTools::Presenters::Base
+      class Product < Hoodoo::Presenters::Base
 
         schema do
           type :Product

@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'api_tools/generator'
+require 'hoodoo/generator'
 
-exit ApiTools::Generator.instance.run!(ARGV)
+exit Hoodoo::Generator.instance.run!(ARGV)

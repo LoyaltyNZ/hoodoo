@@ -7,13 +7,13 @@
 #           11-Nov-2014 (JML): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Voucher'.
       #
-      class Voucher < ApiTools::Presenters::Base
+      class Voucher < Hoodoo::Presenters::Base
 
         # Defined values for the +state+ enumeration in the schema.
         #

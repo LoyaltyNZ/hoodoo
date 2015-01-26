@@ -9,7 +9,7 @@
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module ActiveRecord
 
     # Support mixin for models subclassed from ActiveRecord::Base providing
@@ -25,16 +25,16 @@ module ApiTools
       # Example:
       #
       #     class SomeModel < ActiveRecord::Base
-      #       include ApiTools::ActiveRecord::Finder
+      #       include Hoodoo::ActiveRecord::Finder
       #       # ...
       #     end
       #
       def self.included( model )
-        instantiate( model ) unless model == ApiTools::ActiveRecord::Base
+        instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
       end
 
       # When instantiated in an ActiveRecord::Base subclass, all of the
-      # ApiTools::ActiveRecord::Finder::ClassMethods methods are defined as
+      # Hoodoo::ActiveRecord::Finder::ClassMethods methods are defined as
       # class methods on the including class.
       #
       def self.instantiate( model )
@@ -42,7 +42,7 @@ module ApiTools
       end
 
       # Collection of class methods that get defined on an including class via
-      # ApiTools::ActiveRecord::Finder::included.
+      # Hoodoo::ActiveRecord::Finder::included.
       #
       module ClassMethods
 
@@ -57,7 +57,7 @@ module ApiTools
         # a match against the identifier thus:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       include ApiTools::ActiveRecord::Finder
+        #       include Hoodoo::ActiveRecord::Finder
         #       polymorphic_id_fields # ...<list-of-other-fields>
         #     end
         #
@@ -67,8 +67,8 @@ module ApiTools
         #       found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
         #
         #       # ...map 'found' to whatever resource you're representing,
-        #       # e.g. via an ApiTools::Presenters::Base subclass with resource
-        #       # schema and the subclass's ApiTools::Presenters::Base::render
+        #       # e.g. via an Hoodoo::Presenters::Base subclass with resource
+        #       # schema and the subclass's Hoodoo::Presenters::Base::render
         #       # call, then...
         #
         #       context.response.set_resource( resource_representation_of_found )
@@ -140,7 +140,7 @@ module ApiTools
         # +:code+ attribute, then declare the situation thus:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       include ApiTools::ActiveRecord::Finder
+        #       include Hoodoo::ActiveRecord::Finder
         #       polymorphic_id_fields :code
         #     end
         #
@@ -157,8 +157,8 @@ module ApiTools
         # database.
         #
         # The returned relation is generated via a given instance of
-        # ApiTools::ServiceContext. It takes into account the context's
-        # ApiTools::ServiceRequest and the list offset, list limit, list sort
+        # Hoodoo::ServiceContext. It takes into account the context's
+        # Hoodoo::ServiceRequest and the list offset, list limit, list sort
         # key and list sort direction automatically. In addition, it can do
         # simple search and filter operations if search and filter mappings
         # are set up via #list_search_map and #list_filter_map.
@@ -167,7 +167,7 @@ module ApiTools
         # unusual constraints, we might do this:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       include ApiTools::ActiveRecord::Finder
+        #       include Hoodoo::ActiveRecord::Finder
         #
         #       list_search_map # ...<field-to-search-info mapping>
         #       # ...and/or...
@@ -211,14 +211,14 @@ module ApiTools
         #
         # http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
         #
-        # +list_parameters+:: ApiTools::ServiceRequest::ListParameters
+        # +list_parameters+:: Hoodoo::ServiceRequest::ListParameters
         #                     instance, typically obtained from the
-        #                     ApiTools::ServiceContext instance passed to
+        #                     Hoodoo::ServiceContext instance passed to
         #                     a service implementation in
-        #                     ApiTools::ServiceImplementation#list, via
+        #                     Hoodoo::ServiceImplementation#list, via
         #                     +context.request.list+ (i.e.
-        #                     ApiTools::ServiceContext#request
-        #                     / ApiTools::ServiceRequest#list).
+        #                     Hoodoo::ServiceContext#request
+        #                     / Hoodoo::ServiceRequest#list).
         #
         def list_finder( list_parameters )
 
@@ -321,7 +321,7 @@ module ApiTools
         #         specified as Strings or Symbols.
         #
         def list_search_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_search_map', ApiTools::Utilities.stringify( map ) )
+          class_variable_set( '@@nz_co_loyalty_list_search_map', Hoodoo::Utilities.stringify( map ) )
         end
 
         # As #list_search_map, but used in +where.not+ queries.
@@ -329,7 +329,7 @@ module ApiTools
         # +map+:: As #list_search_map.
         #
         def list_filter_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_filter_map', ApiTools::Utilities.stringify( map ) )
+          class_variable_set( '@@nz_co_loyalty_list_filter_map', Hoodoo::Utilities.stringify( map ) )
         end
       end
     end

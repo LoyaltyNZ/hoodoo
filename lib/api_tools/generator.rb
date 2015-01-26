@@ -1,7 +1,7 @@
 require 'singleton'
 require 'fileutils'
 
-module ApiTools
+module Hoodoo
   class Generator
     include Singleton
 
@@ -82,7 +82,7 @@ module ApiTools
     end
 
     def show_usage
-      puts "Usage: api_tools SERVICE_NAME"
+      puts "Usage: hoodoo SERVICE_NAME"
       return ERROR_EXIT_CODE
     end
 

@@ -9,7 +9,7 @@ end
 Rake::RDocTask.new do | rd |
  rd.rdoc_files.include( 'README.md', 'lib/**/*.rb' )
  rd.rdoc_dir = 'docs/rdoc'
- rd.title = 'ApiTools'
+ rd.title = 'Hoodoo'
  rd.main = 'README.md'
  rd.generator = 'sdoc'
 end

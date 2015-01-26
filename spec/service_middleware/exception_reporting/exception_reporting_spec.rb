@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceMiddleware::ExceptionReporting do
+describe Hoodoo::ServiceMiddleware::ExceptionReporting do
 
-  class TestReporterA < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+  class TestReporterA < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       expectable_hook_a( e, env )
       sleep 0.2 # Deliberate delay to make sure ::wait() works;
@@ -10,50 +10,50 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
     end
   end
 
-  class TestReporterB < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+  class TestReporterB < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       expectable_hook_b( e, env )
     end
   end
 
-  class TestReporterC < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+  class TestReporterC < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
     def report( e, env = nil )
       raise 'I am broken'
     end
   end
 
   after :each do
-    ApiTools::ServiceMiddleware::ExceptionReporting.wait()
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterC )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.wait()
+    Hoodoo::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.remove( TestReporterC )
   end
 
   it 'lets me add and remove handlers' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
-    ApiTools::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.remove( TestReporterA )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.remove( TestReporterB )
   end
 
   it 'calls handler A' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
     ex = RuntimeError.new( 'A' )
     ha = { :foo => :bar }
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex, ha )
-    ApiTools::ServiceMiddleware::ExceptionReporting.report( ex, ha )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.report( ex, ha )
   end
 
   it 'calls handler B' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
     ex = RuntimeError.new( 'B' )
     expect( TestReporterB.instance ).to receive( :expectable_hook_b ).once.with( ex, nil )
-    ApiTools::ServiceMiddleware::ExceptionReporting.report( ex )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.report( ex )
   end
 
   it 'calls all handlers' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterA )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterB )
 
     ex_one = RuntimeError.new( 'One' )
     ex_two = RuntimeError.new( 'Two' )
@@ -63,30 +63,30 @@ describe ApiTools::ServiceMiddleware::ExceptionReporting do
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex_two, nil )
     expect( TestReporterB.instance ).to receive( :expectable_hook_b ).once.with( ex_two, nil )
 
-    ApiTools::ServiceMiddleware::ExceptionReporting.report( ex_one, nil )
-    ApiTools::ServiceMiddleware::ExceptionReporting.report( ex_two, nil )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.report( ex_one, nil )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.report( ex_two, nil )
   end
 
   it 'complains about bad additions' do
     expect {
-      ApiTools::ServiceMiddleware::ExceptionReporting.add( Object )
+      Hoodoo::ServiceMiddleware::ExceptionReporting.add( Object )
     }.to raise_exception( RuntimeError )
   end
 
   it 'complains about bad removals' do
     expect {
-      ApiTools::ServiceMiddleware::ExceptionReporting.remove( Object )
+      Hoodoo::ServiceMiddleware::ExceptionReporting.remove( Object )
     }.to raise_exception( RuntimeError )
   end
 
   it 'ignores exceptions in reporters' do
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterC ) # Add "exception raiser first
-    ApiTools::ServiceMiddleware::ExceptionReporting.add( TestReporterA ) # Then this after, which should still be called
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterC ) # Add "exception raiser first
+    Hoodoo::ServiceMiddleware::ExceptionReporting.add( TestReporterA ) # Then this after, which should still be called
 
     ex = RuntimeError.new( 'A' )
     ha = { :foo => :bar }
 
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex, ha )
-    ApiTools::ServiceMiddleware::ExceptionReporting.report( ex, ha )
+    Hoodoo::ServiceMiddleware::ExceptionReporting.report( ex, ha )
   end
 end

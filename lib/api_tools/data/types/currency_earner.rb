@@ -7,13 +7,13 @@
 #           05-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'CurrencyEarner'.
       #
-      class CurrencyEarner < ApiTools::Presenters::Base
+      class CurrencyEarner < Hoodoo::Presenters::Base
 
         # Defined values for the +accumulation+ enumeration in the schema.
         #
@@ -29,12 +29,12 @@ module ApiTools
 
           object :currency_earner do
             hash :earned_via do
-              keys :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH do
+              keys :length => Hoodoo::Data::Types::CURRENCY_CODE_MAX_LENGTH do
                 integer :amount
-                string :qualifier, :length => ApiTools::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH
+                string :qualifier, :length => Hoodoo::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH
                 enum :accumulation, :from => ACCUMULATIONS
                 hash :source_exchange_rates do
-                  keys :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
+                  keys :length => Hoodoo::Data::Types::CURRENCY_CODE_MAX_LENGTH
                 end
               end
             end

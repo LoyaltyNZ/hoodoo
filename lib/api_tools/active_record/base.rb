@@ -7,7 +7,7 @@
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module ActiveRecord
 
     begin
@@ -15,13 +15,13 @@ module ApiTools
 
       # While individual ActiveRecord mixins can be included as and
       # when needed, if you want everything, just define a model which
-      # subclasses from this ApiTools::ActiveRecord::Base class instead
+      # subclasses from this Hoodoo::ActiveRecord::Base class instead
       # of ActiveRecord::Base.
       #
       class Base < ::ActiveRecord::Base
-        include ApiTools::ActiveRecord::UUID
-        include ApiTools::ActiveRecord::Finder
-        include ApiTools::ActiveRecord::ErrorMapping
+        include Hoodoo::ActiveRecord::UUID
+        include Hoodoo::ActiveRecord::Finder
+        include Hoodoo::ActiveRecord::ErrorMapping
 
         # Tells ActiveRecord this is not a model that is persisted.
         #
@@ -32,8 +32,8 @@ module ApiTools
         #
         def self.inherited( model )
 
-          ApiTools::ActiveRecord::UUID.instantiate( model )
-          ApiTools::ActiveRecord::Finder.instantiate( model )
+          Hoodoo::ActiveRecord::UUID.instantiate( model )
+          Hoodoo::ActiveRecord::Finder.instantiate( model )
 
           super
 

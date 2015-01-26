@@ -9,11 +9,11 @@
 #           15-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Communicators
     class Pool
 
-      # ApiTools::Communicators::Slow subclass communicators are called in
+      # Hoodoo::Communicators::Slow subclass communicators are called in
       # their own Threads via a processing Queue. There is the potential for
       # a flood of communications to cause the queue to back up considerably,
       # so a maximum number of messages is defined. If the queue size is
@@ -40,7 +40,7 @@ module ApiTools
       attr_accessor :group
 
       # Create a new pool of communicators - instances of subclasses of
-      # ApiTools::Communicators::Fast or ApiTools::Communicators::Slow,
+      # Hoodoo::Communicators::Fast or Hoodoo::Communicators::Slow,
       # are added with #add and called with #communicate.
       #
       def initialize
@@ -51,8 +51,8 @@ module ApiTools
       # Add a communicator instance to the pool. Future calls to #communicate
       # will call the same-named method in that instance.
       #
-      # Subclasses of ApiTools::Communicators::Slow are called within a
-      # processing Thread. Subclasses of ApiTools::Communicators::Fast are
+      # Subclasses of Hoodoo::Communicators::Slow are called within a
+      # processing Thread. Subclasses of Hoodoo::Communicators::Fast are
       # called inline. The instances are called in the order of addition, but
       # since each slow communicator runs in its own Thread, the execution
       # order is indeterminate for such instances.
@@ -62,7 +62,7 @@ module ApiTools
       # will start being dropped until the communicator clears the backlog and
       # at last one space opens on the queue. Slow communicators can detect
       # when this has happened by implementing
-      # ApiTools::Communicators::Slow#dropped in the subclass.
+      # Hoodoo::Communicators::Slow#dropped in the subclass.
       #
       # If you pass the same instance more than once, the subsequent calls are
       # ignored. You can add many instances of the same class if that's useful
@@ -71,18 +71,18 @@ module ApiTools
       # Returns the passed-in communicator instance parameter, for convenience.
       #
       # +communicator+:: Instance is to be added to the pool. Must be
-      #                  either an ApiTools::Communicators::Fast or
-      #                  ApiTools::Communicators::Slow subclass instance.
+      #                  either an Hoodoo::Communicators::Fast or
+      #                  Hoodoo::Communicators::Slow subclass instance.
       #
       def add( communicator )
-        unless ( communicator.class < ApiTools::Communicators::Fast ||
-                 communicator.class < ApiTools::Communicators::Slow )
-          raise "ApiTools::Communicators::Pool\#add must be called with an instance of a subclass of ApiTools::Communicators::Fast or ApiTools::Communicators::Slow only"
+        unless ( communicator.class < Hoodoo::Communicators::Fast ||
+                 communicator.class < Hoodoo::Communicators::Slow )
+          raise "Hoodoo::Communicators::Pool\#add must be called with an instance of a subclass of Hoodoo::Communicators::Fast or Hoodoo::Communicators::Slow only"
         end
 
         return if @pool.has_key?( communicator )
 
-        if communicator.is_a?( ApiTools::Communicators::Fast )
+        if communicator.is_a?( Hoodoo::Communicators::Fast )
           add_fast_communicator( communicator )
         else
           add_slow_communicator( communicator )
@@ -104,18 +104,18 @@ module ApiTools
       # Returns the passed-in communicator instance parameter, for convenience.
       #
       # +communicator+:: Instance is to be removed from the pool. Must be
-      #                  either an ApiTools::Communicators::Fast or
-      #                  ApiTools::Communicators::Slow subclass instance.
+      #                  either an Hoodoo::Communicators::Fast or
+      #                  Hoodoo::Communicators::Slow subclass instance.
       #
       def remove( communicator )
-        unless ( communicator.class < ApiTools::Communicators::Fast ||
-                 communicator.class < ApiTools::Communicators::Slow )
-          raise "ApiTools::Communicators::Pool\#remove must be called with an instance of a subclass of ApiTools::Communicators::Fast or ApiTools::Communicators::Slow only"
+        unless ( communicator.class < Hoodoo::Communicators::Fast ||
+                 communicator.class < Hoodoo::Communicators::Slow )
+          raise "Hoodoo::Communicators::Pool\#remove must be called with an instance of a subclass of Hoodoo::Communicators::Fast or Hoodoo::Communicators::Slow only"
         end
 
         return unless @pool.has_key?( communicator )
 
-        if communicator.is_a?( ApiTools::Communicators::Fast )
+        if communicator.is_a?( Hoodoo::Communicators::Fast )
           remove_fast_communicator( communicator )
         else
           remove_slow_communicator( communicator )
@@ -181,7 +181,7 @@ module ApiTools
       end
 
       # This method is only useful if there are any
-      # ApiTools::Communicators::Slow subclass instances in the communication
+      # Hoodoo::Communicators::Slow subclass instances in the communication
       # pool. Each instance is called via a worker Thread; this method waits
       # for each communicator to drain its queue before returning. This is
       # useful if you have a requirement to wait for all communications to
@@ -237,10 +237,10 @@ module ApiTools
       # clean state as if just initialised. New workers can be added via #add
       # and then called via #communicate if you so wish.
       #
-      # ApiTools::Communciators::Fast subclass instances are removed
+      # Hoodoo::Communciators::Fast subclass instances are removed
       # immediately without complications.
       #
-      # ApiTools::Communicators::Slow subclass instances in the communication
+      # Hoodoo::Communicators::Slow subclass instances in the communication
       # pool are called via a worker Thread; this method shuts down all such
       # worker Threads, clearing their work queues and asking each one to exit
       # (politely). There is no mechanism (other than overall Ruby process
@@ -284,7 +284,7 @@ module ApiTools
       # Trusted internal interface - pass the correct subclass and don't pass
       # it more than once unless #terminate has cleared the pool beforehand.
       #
-      # +communicator+:: The ApiTools::Communicators::Fast subclass instance
+      # +communicator+:: The Hoodoo::Communicators::Fast subclass instance
       #                  to add to the pool.
       #
       def add_fast_communicator( communicator )
@@ -293,7 +293,7 @@ module ApiTools
 
       # Remove a fast communicator from the pool. See #add_fast_communicator.
       #
-      # +communicator+:: The ApiTools::Communicators::Fast subclass instance
+      # +communicator+:: The Hoodoo::Communicators::Fast subclass instance
       #                  to remove from the pool.
       #
       def remove_fast_communicator( communicator )
@@ -305,7 +305,7 @@ module ApiTools
       # Trusted internal interface - pass the correct subclass and don't pass
       # it more than once unless #terminate has cleared the pool beforehand.
       #
-      # +communicator+:: The ApiTools::Communicators::Slow subclass instance
+      # +communicator+:: The Hoodoo::Communicators::Slow subclass instance
       #                  to add to the pool.
       #
       def add_slow_communicator( communicator )
@@ -367,7 +367,7 @@ module ApiTools
       # May take a while to return, as it must request thread shutdown via
       # #request_termination_for (and uses the default timeout for that).
       #
-      # +communicator+:: The ApiTools::Communicators::Slow subclass instance
+      # +communicator+:: The Hoodoo::Communicators::Slow subclass instance
       #                  to remove from the pool.
       #
       def remove_slow_communicator( communicator )
@@ -456,7 +456,7 @@ module ApiTools
         end
       end
 
-      # Internal implementation detail of ApiTools::Communicators::Pool.
+      # Internal implementation detail of Hoodoo::Communicators::Pool.
       #
       # Since pool clients can say "wait until (one or all) workers have
       # processed their Queue contents", we need to have some way of seeing
@@ -520,7 +520,7 @@ module ApiTools
         end
       end
 
-      # Internal implementation detail of ApiTools::Communicators::Pool which
+      # Internal implementation detail of Hoodoo::Communicators::Pool which
       # is placed on a Ruby Queue and used as part of thread processing for
       # slow communicators.
       #

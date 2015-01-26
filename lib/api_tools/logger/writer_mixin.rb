@@ -7,15 +7,15 @@
 #           16-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class Logger
 
-    # This mixin is used by ApiTools::Logger::FastWriter and
-    # ApiTools::Logger::SlowWriter. See those two classes for details.
+    # This mixin is used by Hoodoo::Logger::FastWriter and
+    # Hoodoo::Logger::SlowWriter. See those two classes for details.
     #
     module WriterMixin
 
-      # ApiTools::Logger::FastWriter and ApiTools::Logger::SlowWriter
+      # Hoodoo::Logger::FastWriter and Hoodoo::Logger::SlowWriter
       # subclasses implement this method.
       #
       # Write a structured log message. Writers sending data somewhere with no
@@ -30,7 +30,7 @@ module ApiTools
       #               severe, +:debug+, +:info+, +:warn+ or +:error+.
       #
       # +component+:: Component - for example, a resource name for a specific
-      #               service implementation, 'Middleware' for ApiTools itself,
+      #               service implementation, 'Middleware' for Hoodoo itself,
       #               or some other name you think is useful. String or Symbol.
       #
       # +code+::      Component-defined code. Think of this in a manner similar

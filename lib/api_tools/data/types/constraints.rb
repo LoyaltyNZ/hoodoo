@@ -8,7 +8,7 @@
 #           05-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 

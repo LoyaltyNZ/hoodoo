@@ -1,4 +1,4 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON string schema member. An enumeration (of sorts) - a list of
     # discrete string values that are permitted for the value of a field of
@@ -6,7 +6,7 @@ module ApiTools
     # white space etc.). Allowed values are expressed as Ruby strings or
     # symbols (converted to and matched as strings) via an array under key
     # +:from+ in the options hash provided to the constructor.
-    class Enum < ApiTools::Presenters::Field
+    class Enum < Hoodoo::Presenters::Field
 
       # Permitted values
       attr_accessor :from
@@ -23,11 +23,11 @@ module ApiTools
         if @from.is_a?( ::Array )
           @from = @from.map { |entry| entry.to_s }
         else
-          raise ArgumentError.new('ApiTools::Presenters::Enum must have a :from array listing allowed values')
+          raise ArgumentError.new('Hoodoo::Presenters::Enum must have a :from array listing allowed values')
         end
       end
 
-      # Check if data is a valid String and return an ApiTools::Errors instance
+      # Check if data is a valid String and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

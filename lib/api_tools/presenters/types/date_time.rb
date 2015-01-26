@@ -1,9 +1,9 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON datetime schema member
-    class DateTime < ApiTools::Presenters::Field
+    class DateTime < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Datetime and return an ApiTools::Errors instance
+      # Check if data is a valid Datetime and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

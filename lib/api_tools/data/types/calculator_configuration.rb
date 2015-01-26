@@ -8,13 +8,13 @@
 #           05-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'CalculatorConfiguration'.
       #
-      class CalculatorConfiguration < ApiTools::Presenters::Base
+      class CalculatorConfiguration < Hoodoo::Presenters::Base
 
         schema do
           hash :calculator_data do

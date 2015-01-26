@@ -4,22 +4,22 @@
 
 require 'spec_helper'
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
-  class RSpecTestServiceExoticStubImplementation < ApiTools::ServiceImplementation
+  class RSpecTestServiceExoticStubImplementation < Hoodoo::ServiceImplementation
     def list( context )
       context.response.set_resources( [] )
     end
   end
 
-  class RSpecTestServiceExoticStubInterface < ApiTools::ServiceInterface
+  class RSpecTestServiceExoticStubInterface < Hoodoo::ServiceInterface
     interface :Version do
       endpoint :version, RSpecTestServiceExoticStubImplementation
       version 2
     end
   end
 
-  class RSpecTestServiceExoticStub < ApiTools::ServiceApplication
+  class RSpecTestServiceExoticStub < Hoodoo::ServiceApplication
     comprised_of RSpecTestServiceExoticStubInterface
   end
 
@@ -27,29 +27,29 @@ describe ApiTools::ServiceMiddleware do
     before :each do
       @old_queue = ENV[ 'AMQ_ENDPOINT' ]
       ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
-      @mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+      @mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
 
       @cvar = false
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         @cvar = true
-        @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
+        @cvar_val = Hoodoo::ServiceMiddleware.class_variable_get( '@@alchemy' )
       end
     end
 
     after :each do
       ENV[ 'AMQ_ENDPOINT' ] = @old_queue
 
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
-          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+          Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
         else
-          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+          Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
         end
       end
     end
 
     it 'knows it is on-queue' do
-      expect( ApiTools::ServiceMiddleware.on_queue? ).to eq( true )
+      expect( Hoodoo::ServiceMiddleware.on_queue? ).to eq( true )
     end
 
     # TODO: Weak test! Assumes static mappings. Will need modification
@@ -68,16 +68,16 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'complains about missing Alchemy' do
-      interaction_id = ApiTools::UUID.generate()
-      session_id = ApiTools::UUID.generate()
+      interaction_id = Hoodoo::UUID.generate()
+      session_id = Hoodoo::UUID.generate()
 
       @mw.instance_variable_set( '@rack_request', OpenStruct.new )
       @mw.instance_variable_set( '@locale', 'fr' )
       @mw.instance_variable_set( '@interaction_id', interaction_id )
       @mw.instance_variable_set( '@session_id', session_id )
 
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
-        ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+        Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
       end
 
       expect {
@@ -93,8 +93,8 @@ describe ApiTools::ServiceMiddleware do
     end
 
     it 'calls Alchemy' do
-      interaction_id = ApiTools::UUID.generate()
-      session_id = ApiTools::UUID.generate()
+      interaction_id = Hoodoo::UUID.generate()
+      session_id = Hoodoo::UUID.generate()
 
       @mw.instance_variable_set( '@rack_request', OpenStruct.new )
       @mw.instance_variable_set( '@locale', 'fr' )
@@ -102,7 +102,7 @@ describe ApiTools::ServiceMiddleware do
       @mw.instance_variable_set( '@session_id', session_id )
 
       mock_alchemy = OpenStruct.new
-      ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', mock_alchemy )
+      Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', mock_alchemy )
 
       mock_queue  = 'service.utility'
       mock_path   = '/v2/version'
@@ -143,7 +143,7 @@ describe ApiTools::ServiceMiddleware do
         }
       )
 
-      expect( mock_result ).to eq( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new )
+      expect( mock_result ).to eq( Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new )
     end
   end
 
@@ -177,10 +177,10 @@ describe ApiTools::ServiceMiddleware do
     # at all from that same chunk of code here.
     #
     it 'attempts HTTPS communication' do
-      mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+      mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
 
-      interaction_id = ApiTools::UUID.generate()
-      session_id = ApiTools::UUID.generate()
+      interaction_id = Hoodoo::UUID.generate()
+      session_id = Hoodoo::UUID.generate()
 
       mw.instance_variable_set( '@rack_request', OpenStruct.new )
       mw.instance_variable_set( '@locale', 'fr' )
@@ -197,7 +197,7 @@ describe ApiTools::ServiceMiddleware do
 
       # Expect an empty *array* back. A Hash implies an error.
 
-      expect( mock_result ).to eq( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new )
+      expect( mock_result ).to eq( Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new )
     end
   end
 end

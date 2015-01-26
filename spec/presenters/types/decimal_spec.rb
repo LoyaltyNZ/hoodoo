@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Decimal do
+describe Hoodoo::Presenters::Decimal do
 
   before do
-    @inst = ApiTools::Presenters::Decimal.new('one',:precision => 20)
+    @inst = Hoodoo::Presenters::Decimal.new('one',:precision => 20)
   end
 
   describe '#initialize' do
     it 'should raise an error if precision is not defined' do
       expect {
-        ApiTools::Presenters::Decimal.new('one',:required => false)
+        Hoodoo::Presenters::Decimal.new('one',:required => false)
       }.to raise_error(ArgumentError)
     end
   end

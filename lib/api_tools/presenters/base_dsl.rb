@@ -8,13 +8,13 @@
 #           02-Dec-2014 (ADH): Merge of DocumentedDSL code into BaseDSL.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Presenters
 
     # A mixin to be used by any presenter that wants to support the
-    # ApiTools::Presenters family of schema DSL methods. See e.g.
-    # ApiTools::Presenters::Base. Mixed in by e.g.
-    # ApiTools::Presenters::Object so that an instance can nest
+    # Hoodoo::Presenters family of schema DSL methods. See e.g.
+    # Hoodoo::Presenters::Base. Mixed in by e.g.
+    # Hoodoo::Presenters::Object so that an instance can nest
     # definitions of fields inside itself using this DSL.
     #
     module BaseDSL
@@ -26,13 +26,13 @@ module ApiTools
       # &block::    Block declaring the fields making up the nested object
       #
       # Example - mandatory JSON field "currencies" would lead to an object
-      # which had the same fields as ApiTools::Data::Types::Currency along with
+      # which had the same fields as Hoodoo::Data::Types::Currency along with
       # an up-to-32 character string with field name "notes", that field also
       # being required. Whether or not the fields of the referenced Currency
       # type are needed is up to the definition of that type. See #type for
       # more information.
       #
-      #     class Wealthy < ApiTools::Presenters::Object
+      #     class Wealthy < Hoodoo::Presenters::Object
       #       object :currencies, :required => true do
       #         type :Currency
       #         string :notes, :required => true, :length => 32
@@ -40,9 +40,9 @@ module ApiTools
       #     end
       #
       def object( name, options = {}, &block )
-        raise ArgumentError.new('ApiTools::Presenters::Object must have block') unless block_given?
+        raise ArgumentError.new('Hoodoo::Presenters::Object must have block') unless block_given?
 
-        obj = property( name, ApiTools::Presenters::Object, options, &block )
+        obj = property( name, Hoodoo::Presenters::Object, options, &block )
         internationalised() if obj.is_internationalised?()
       end
 
@@ -63,12 +63,12 @@ module ApiTools
       #
       # Example - mandatory JSON field "currencies" would lead to an array
       # where each array entry contains the fields defined by
-      # ApiTools::Data::Types::Currency along with an up-to-32 character string
+      # Hoodoo::Data::Types::Currency along with an up-to-32 character string
       # with field name "notes", that field also being required. Whether or not
       # the fields of the referenced Currency type are needed is up to the
       # definition of that type. See #type for more information.
       #
-      #     class VeryWealthy < ApiTools::Presenters::Object
+      #     class VeryWealthy < Hoodoo::Presenters::Object
       #       array :currencies, :required => true do
       #         type :Currency
       #         string :notes, :required => true, :length => 32
@@ -76,7 +76,7 @@ module ApiTools
       #     end
       #
       def array( name, options = {}, &block )
-        ary = property( name, ApiTools::Presenters::Array, options, &block )
+        ary = property( name, Hoodoo::Presenters::Array, options, &block )
         internationalised() if ary.is_internationalised?()
       end
 
@@ -90,9 +90,9 @@ module ApiTools
       #             hash
       #
       # Example 1 - a Hash where keys must be <= 16 characters long and values
-      #             must match the ApiTools::Data::Types::Currency type.
+      #             must match the Hoodoo::Data::Types::Currency type.
       #
-      #     class CurrencyHash < ApiTools::Presenters::Object
+      #     class CurrencyHash < Hoodoo::Presenters::Object
       #       hash :currencies do
       #         keys :length => 16 do
       #           type :Currency
@@ -100,12 +100,12 @@ module ApiTools
       #       end
       #     end
       #
-      # See ApiTools::Presenters::Hash#keys for more information and examples.
+      # See Hoodoo::Presenters::Hash#keys for more information and examples.
       #
       # Example 2 - a Hash where keys must be 'one' or 'two', each with a
       #             value matching the given schema.
       #
-      #     class AltCurrencyHash < ApiTools::Presenters::Object
+      #     class AltCurrencyHash < Hoodoo::Presenters::Object
       #       hash :currencies do
       #         key :one do
       #           type :Currency
@@ -118,10 +118,10 @@ module ApiTools
       #       end
       #     end
       #
-      # See ApiTools::Presenters::Hash#key for more information and examples.
+      # See Hoodoo::Presenters::Hash#key for more information and examples.
       #
       def hash( name, options = {}, &block )
-        hash = property( name, ApiTools::Presenters::Hash, options, &block )
+        hash = property( name, Hoodoo::Presenters::Hash, options, &block )
         internationalised() if hash.is_internationalised?()
       end
 
@@ -130,7 +130,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def integer(name, options = {})
-        property(name, ApiTools::Presenters::Integer, options)
+        property(name, Hoodoo::Presenters::Integer, options)
       end
 
       # Define a JSON string with the supplied name and options
@@ -138,7 +138,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
       def string(name, options = {})
-        property(name, ApiTools::Presenters::String, options)
+        property(name, Hoodoo::Presenters::String, options)
       end
 
       # Define a JSON float with the supplied name and options
@@ -146,7 +146,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def float(name, options = {})
-        property(name, ApiTools::Presenters::Float, options)
+        property(name, Hoodoo::Presenters::Float, options)
       end
 
       # Define a JSON decimal with the supplied name and options
@@ -154,7 +154,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true, :precision => 10
       def decimal(name, options = {})
-        property(name, ApiTools::Presenters::Decimal, options)
+        property(name, Hoodoo::Presenters::Decimal, options)
       end
 
       # Define a JSON boolean with the supplied name and options
@@ -162,7 +162,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def boolean(name, options = {})
-        property(name, ApiTools::Presenters::Boolean, options)
+        property(name, Hoodoo::Presenters::Boolean, options)
       end
 
       # Define a JSON date with the supplied name and options
@@ -170,7 +170,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def date(name, options = {})
-        property(name, ApiTools::Presenters::Date, options)
+        property(name, Hoodoo::Presenters::Date, options)
       end
 
       # Define a JSON datetime with the supplied name and options
@@ -178,7 +178,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def datetime(name, options = {})
-        property(name, ApiTools::Presenters::DateTime, options)
+        property(name, Hoodoo::Presenters::DateTime, options)
       end
 
       # Define a JSON string of unlimited length with the supplied name
@@ -187,7 +187,7 @@ module ApiTools
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
       def text(name, options = {})
-        property(name, ApiTools::Presenters::Text, options)
+        property(name, Hoodoo::Presenters::Text, options)
       end
 
       # Define a JSON string which can only have a restricted set of exactly
@@ -197,18 +197,18 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true and mandatory
       #             :from => [array-of-allowed-strings-or-symbols]
       def enum(name, options = {})
-        property(name, ApiTools::Presenters::Enum, options)
+        property(name, Hoodoo::Presenters::Enum, options)
       end
 
       # Declares that this Type or Resource has a string field of unlimited
       # length that contains comma-separated tag strings.
       #
       # +field_name+:: Name of the field that will hold the tags.
-      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
       #
       # Example - a Product resource which supports product tagging:
       #
-      #     class Product < ApiTools::Presenters::Object
+      #     class Product < Hoodoo::Presenters::Object
       #
       #       internationalised
       #
@@ -221,7 +221,7 @@ module ApiTools
       #
       def tags( field_name, options = nil )
         options ||= {}
-        property(field_name, ApiTools::Presenters::Tags, options)
+        property(field_name, Hoodoo::Presenters::Tags, options)
       end
 
       # Declares that this Type or Resource _refers to_ another Resource
@@ -233,7 +233,7 @@ module ApiTools
       # +field_name+:: Name of the field that will hold the UUID.
       # +options+:: Options hash. See below.
       #
-      # In addition to standard options from ApiTools::Presenters::BaseDSL,
+      # In addition to standard options from Hoodoo::Presenters::BaseDSL,
       # extra option keys and values are:
       #
       # +:resource+:: The name of a resource (as a symbol, e.g. +:Product+) that
@@ -245,7 +245,7 @@ module ApiTools
       # Example - a basket item that refers to an integer quantity of some
       # specific Product resource instance:
       #
-      #     class BasketItem < ApiTools::Presenters::Object
+      #     class BasketItem < Hoodoo::Presenters::Object
       #
       #       integer :quantity, :required => true
       #       uuid :product_id, :resource => :Product
@@ -254,7 +254,7 @@ module ApiTools
       #
       def uuid( field_name, options = nil )
         options ||= {}
-        property(field_name, ApiTools::Presenters::UUID, options)
+        property(field_name, Hoodoo::Presenters::UUID, options)
       end
 
       # Declare that a nested type of a given name is included at this point.
@@ -263,7 +263,7 @@ module ApiTools
       # at the point of declaration - essentially, it's macro expansion.
       #
       # +type_name+:: Name of the type to nest as a symbol, e.g. +:BasketItem+.
-      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
       #
       # It doesn't make sense to mark a +type+ 'field' as +:required+ in the
       # options since the declaration just expands to the contents of the
@@ -272,7 +272,7 @@ module ApiTools
       #
       # Example 1 - a basket includes an array of the type +BasketItems+.
       #
-      #     class Basket < ApiTools::Presenters::Object
+      #     class Basket < Hoodoo::Presenters::Object
       #       array :items do
       #         type :BasketItem
       #       end
@@ -295,13 +295,13 @@ module ApiTools
       # Example 2 - a basket item refers to a product description by having
       # its fields inline. So suppose we have this:
       #
-      #     class Product < ApiTools::Presenters::Object
+      #     class Product < Hoodoo::Presenters::Object
       #       internationalised
       #       text :name
       #       text :description
       #     end
       #
-      #     class BasketItem < ApiTools::Presenters::Object
+      #     class BasketItem < Hoodoo::Presenters::Object
       #       object :product_data do
       #         type :Product
       #       end
@@ -344,7 +344,7 @@ module ApiTools
         options ||= {}
 
         begin
-          klass = ApiTools::Data::Types.const_get( type_name )
+          klass = Hoodoo::Data::Types.const_get( type_name )
         rescue
           raise "DocumentedObject#type: Unrecognised type name '#{type_name}'"
         end
@@ -359,7 +359,7 @@ module ApiTools
       # expansion.
       #
       # +resource_name+:: Name of the resource as a symbol, e.g. +:Purchase+.
-      # +options+:: Optional options hash. See ApiTools::Presenters::BaseDSL.
+      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
       #
       # It doesn't make sense to mark a +resource+ 'field' as +:required+ in the
       # options since the declaration just expands to the contents of the
@@ -367,7 +367,7 @@ module ApiTools
       # determines whether or not its various field(s) are optional or required.
       #
       # Example - an iterface takes an +Outlet+ resource in its create action.
-      #     class Outlet < ApiTools::Presenters::Base
+      #     class Outlet < Hoodoo::Presenters::Base
       #       schema do
       #         internationalised
       #
@@ -377,7 +377,7 @@ module ApiTools
       #       end
       #     end
       #
-      #     class OutletInterface < ApiTools::ServiceInterface
+      #     class OutletInterface < Hoodoo::ServiceInterface
       #       to_create do
       #         resource :Outlet
       #       end
@@ -388,7 +388,7 @@ module ApiTools
         options ||= {}
 
         begin
-          klass = ApiTools::Data::Resources.const_get( resource_name )
+          klass = Hoodoo::Data::Resources.const_get( resource_name )
         rescue
           raise "DocumentedObject#resource: Unrecognised resource name '#{ resource_name }'"
         end
@@ -411,7 +411,7 @@ module ApiTools
       # Example - a Member resource with internationalised fields such as
       # the member's name:
       #
-      #     class Member < ApiTools::Presenters::Object
+      #     class Member < Hoodoo::Presenters::Object
       #
       #       # Say that Member will contain at least one field that holds
       #       # human readable data, causing the Member to be subject to

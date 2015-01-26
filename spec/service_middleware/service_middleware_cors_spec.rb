@@ -1,26 +1,26 @@
 require 'spec_helper'
 
-class TestCORSServiceImplementation < ApiTools::ServiceImplementation
+class TestCORSServiceImplementation < Hoodoo::ServiceImplementation
   def show( context )
     context.response.body = { 'show' => 'the thing', 'the_thing' => context.request.ident }
   end
 end
 
-class TestCORSServiceInterface < ApiTools::ServiceInterface
+class TestCORSServiceInterface < Hoodoo::ServiceInterface
   interface :TestCORS do
     endpoint :test_cors, TestCORSServiceImplementation
     actions :show
   end
 end
 
-class TestCORSServiceApplication < ApiTools::ServiceApplication
+class TestCORSServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestCORSServiceInterface
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
   def app
     Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run TestCORSServiceApplication.new
     end
   end

@@ -8,13 +8,13 @@
 #           05-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'CalculatorCommon'.
       #
-      class CalculatorCommon < ApiTools::Presenters::Base
+      class CalculatorCommon < Hoodoo::Presenters::Base
 
         schema do
           tags :product_tags_included

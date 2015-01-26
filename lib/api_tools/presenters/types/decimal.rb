@@ -1,9 +1,9 @@
 require 'bigdecimal'
 
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON decimal schema member
-    class Decimal < ApiTools::Presenters::Field
+    class Decimal < Hoodoo::Presenters::Field
 
       # The precision of the decimal
       attr_accessor :precision
@@ -13,12 +13,12 @@ module ApiTools
       # +options+:: A +Hash+ of options, e.g. :required => true, :precision => 10
       def initialize(name, options = {})
         super name, options
-        raise ArgumentError.new('ApiTools::Presenters::Decimal must have a :precision') unless options.has_key?(:precision)
+        raise ArgumentError.new('Hoodoo::Presenters::Decimal must have a :precision') unless options.has_key?(:precision)
 
         @precision = options[:precision]
       end
 
-      # Check if data is a valid Decimal and return an ApiTools::Errors instance
+      # Check if data is a valid Decimal and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

@@ -7,12 +7,12 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
     class ExceptionReporting
 
-      # ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
-      # giving ApiTools::ServiceMiddleware::ExceptionReporting access to
+      # Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
+      # giving Hoodoo::ServiceMiddleware::ExceptionReporting access to
       # Raygun for error reporting. See https://raygun.io.
       #
       # Your application must include the Raygun gem 'raygun4ruby' via Gemfile
@@ -20,7 +20,7 @@ module ApiTools
       # install raygun4ruby+).
       #
       # The API key must be set during your application initialization and the
-      # class must be added to ApiTools for use as an error reporter, e.g.
+      # class must be added to Hoodoo for use as an error reporter, e.g.
       # through a 'config/initializers' folder, as follows:
       #
       #     require 'raygun4ruby'
@@ -29,11 +29,11 @@ module ApiTools
       #       config.api_key = 'YOUR_RAYGUN_API_KEY'
       #     end
       #
-      #     ApiTools::ServiceMiddleware::ExceptionReporting.add(
-      #       ApiTools::ServiceMiddleware::ExceptionReporting::RaygunReporter
+      #     Hoodoo::ServiceMiddleware::ExceptionReporting.add(
+      #       Hoodoo::ServiceMiddleware::ExceptionReporting::RaygunReporter
       #     )
       #
-      # Services and the ApiTools middleware do not pass Rails-like params
+      # Services and the Hoodoo middleware do not pass Rails-like params
       # around in forms or query strings, but do beware of search or filter
       # query data containing sensitive material or POST bodies in e.g. JSON
       # encoding containing sensitive data. This comes down to the filtering
@@ -41,7 +41,7 @@ module ApiTools
       #
       #   https://github.com/MindscapeHQ/raygun4ruby
       #
-      class RaygunReporter < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+      class RaygunReporter < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
 
         # Report an exception to Raygun.
         #

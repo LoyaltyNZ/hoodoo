@@ -8,13 +8,13 @@
 #           09-Oct-2014 (ADH): Updated for Preview Release 8.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'Currency'.
       #
-      class Currency < ApiTools::Presenters::Base
+      class Currency < Hoodoo::Presenters::Base
 
         # Defined values for the +position+ enumeration in the schema.
         #
@@ -30,9 +30,9 @@ module ApiTools
         EXTERNAL_TYPES = [ "nz.co.loyalty.txn.fbpts", "nz.co.loyalty.txn.apd" ]
 
         schema do
-          string  :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
+          string  :currency_code, :required => true, :length => Hoodoo::Data::Types::CURRENCY_CODE_MAX_LENGTH
           array   :qualifiers
-          string  :symbol,                           :length => ApiTools::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
+          string  :symbol,                           :length => Hoodoo::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
 
           enum    :position, :from => POSITIONS
           enum    :rounding, :from => ROUNDINGS, :required => true

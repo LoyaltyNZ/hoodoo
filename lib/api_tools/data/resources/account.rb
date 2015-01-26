@@ -7,23 +7,23 @@
 #           07-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       #  Since Member references Account and Account references Member, we have
       #  to define a dummy Member class here and ensure that the below
-      #  ordering in api_tools.rb is maintained (account before member)
+      #  ordering in hoodoo.rb is maintained (account before member)
       #
       # require root+'data/resources/account.rb'
       # require root+'data/resources/member.rb'
       #
-      class Member < ApiTools::Presenters::Base
+      class Member < Hoodoo::Presenters::Base
       end
 
       # Documented Platform API Resource 'Account'.
       #
-      class Account < ApiTools::Presenters::Base
+      class Account < Hoodoo::Presenters::Base
         schema do
           uuid :owner_id, :resource => :Member
         end

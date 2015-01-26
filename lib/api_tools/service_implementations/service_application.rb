@@ -9,7 +9,7 @@
 #           This class is passed to Rack and treated like an endpoint
 #           Rack application, though the service middleware in practice
 #           does not pass on calls using the Rack interface; it uses the
-#           custom calls exposed by ApiTools::ServiceImplementation.
+#           custom calls exposed by Hoodoo::ServiceImplementation.
 #           Rack's involvement between the two is really limited to just
 #           passing an instance of the service application subclass to
 #           the middleware so it knows who to "talk to".
@@ -17,14 +17,14 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
-  # ApiTools::ServiceApplication is subclassed by people writing service
+  # Hoodoo::ServiceApplication is subclassed by people writing service
   # implementations; the subclasses are the entrypoint for platform services.
   #
   # It's really just a container of one or more interface classes, which are
-  # all ApiTools::ServiceInterface subclasses. The Rack middleware in
-  # ApiTools::ServiceMiddleware uses the ApiTools::ServiceApplication to find
+  # all Hoodoo::ServiceInterface subclasses. The Rack middleware in
+  # Hoodoo::ServiceMiddleware uses the Hoodoo::ServiceApplication to find
   # out what interfaces it implements. Those interface classes nominate a Ruby
   # class of the author's choice in which they've written the implementation
   # for that interface. Interfaces also declare themselves to be available at
@@ -34,22 +34,22 @@ module ApiTools
   # Suppose we defined a PurchaseInterface and RefundInterface which we wanted
   # both to be available as a Shopping Service:
   #
-  #     class PurchaseImplementation < ApiTools::ServiceImplementation
+  #     class PurchaseImplementation < Hoodoo::ServiceImplementation
   #       # ...
   #     end
   #
-  #     class PurchaseInterface < ApiTools::ServiceInterface
+  #     class PurchaseInterface < Hoodoo::ServiceInterface
   #       interface :Purchase do
   #         endpoint :purchases, PurchaseImplementation
   #         # ...
   #       end
   #     end
   #
-  #     class RefundImplementation < ApiTools::ServiceImplementation
+  #     class RefundImplementation < Hoodoo::ServiceImplementation
   #       # ...
   #     end
   #
-  #     class RefundInterface < ApiTools::ServiceInterface
+  #     class RefundInterface < Hoodoo::ServiceInterface
   #       interface :Refund do
   #         endpoint :refunds, RefundImplementation
   #         # ...
@@ -59,7 +59,7 @@ module ApiTools
   # ...then the *entire* ServiceApplication subclass for the Shopping Service
   # could be as small as this:
   #
-  #     class ShoppingService < ApiTools::ServiceApplication
+  #     class ShoppingService < Hoodoo::ServiceApplication
   #       comprised_of PurchaseInterface,
   #                    RefundInterface
   #     end
@@ -80,7 +80,7 @@ module ApiTools
   class ServiceApplication
 
     # Return an array of the classes that make up the interfaces for this
-    # service. Each is an ApiTools::ServiceInterface subclass that was
+    # service. Each is an Hoodoo::ServiceInterface subclass that was
     # registered by the subclass through a call to #comprised_of.
     #
     def self.component_interfaces
@@ -102,22 +102,22 @@ module ApiTools
     # +env+:: Rack environment (ignored).
     #
     def call( env )
-      raise "ApiTools::ServiceImplementation subclasses should only be called through the middleware - add 'use ApiTools::ServiceMiddleware' to (e.g.) config.ru"
+      raise "Hoodoo::ServiceImplementation subclasses should only be called through the middleware - add 'use Hoodoo::ServiceMiddleware' to (e.g.) config.ru"
     end
 
   protected
 
-    # Called by subclasses listing one or more ApiTools::ServiceInterface
+    # Called by subclasses listing one or more Hoodoo::ServiceInterface
     # subclasses that make up the service implementation as a whole.
     #
     # Example:
     #
-    #     class ShoppingService < ApiTools::ServiceApplication
+    #     class ShoppingService < Hoodoo::ServiceApplication
     #       comprised_of PurchaseInterface,
     #                    RefundInterface
     #     end
     #
-    # See this class's general ApiTools::ServiceApplication documentation for
+    # See this class's general Hoodoo::ServiceApplication documentation for
     # more details.
     #
     def self.comprised_of( *classes )
@@ -125,8 +125,8 @@ module ApiTools
       # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
       classes.each do | klass |
-        unless klass < ApiTools::ServiceInterface
-          raise "ApiTools::ServiceImplementation::comprised_of expects ApiTools::ServiceInterface subclasses only - got '#{ klass }'"
+        unless klass < Hoodoo::ServiceInterface
+          raise "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got '#{ klass }'"
         end
       end
 

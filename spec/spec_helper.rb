@@ -34,7 +34,7 @@ end
 # Now it's safe to require Rack test code and APITools itself.
 
 require 'rack/test'
-require 'api_tools'
+require 'hoodoo'
 
 RSpec.configure do | config |
 
@@ -89,19 +89,19 @@ RSpec.configure do | config |
     $stderr << Time.now.to_s << "\n"
     $stderr << "*"*80 << "\n\n"
 
-    ApiTools::ServiceSession.testing( true )
-    ApiTools::ServiceMiddleware.set_log_folder( base_path )
+    Hoodoo::ServiceSession.testing( true )
+    Hoodoo::ServiceMiddleware.set_log_folder( base_path )
 
-    ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = ApiTools::Utilities.spare_port().to_s()
+    ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
   end
 
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :suite ) do
-    ApiTools::ServiceSession.testing( false )
+    Hoodoo::ServiceSession.testing( false )
 
     DRb.start_service
-    drb_uri = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.uri()
+    drb_uri = Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.uri()
     drb_service = DRbObject.new_with_uri( drb_uri )
     drb_service.stop()
     DRb.stop_service
@@ -146,7 +146,7 @@ end
 # Only returns once the server is running and accepting connections. Returns
 # the port number upon which the server is listening.
 #
-# +app_class+:: ApiTools::ServiceApplication subclass for the service to start.
+# +app_class+:: Hoodoo::ServiceApplication subclass for the service to start.
 #
 # +use_ssl+::   If +true+, SSL self-signed certificates in +spec/files+ are
 #               used to support SSL testing, provided certificate chain
@@ -159,10 +159,10 @@ require 'webrick/https'
 
 def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
 
-  port   = ApiTools::Utilities.spare_port()
+  port   = Hoodoo::Utilities.spare_port()
   thread = Thread.start do
     app = Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run app_class.new
     end
 

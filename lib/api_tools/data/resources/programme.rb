@@ -7,13 +7,13 @@
 #           23-Oct-2014 (JML): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Programme'.
       #
-      class Programme < ApiTools::Presenters::Base
+      class Programme < Hoodoo::Presenters::Base
 
         schema do
           internationalised

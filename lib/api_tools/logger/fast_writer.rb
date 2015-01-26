@@ -7,10 +7,10 @@
 #           16-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class Logger
 
-    # Log writer classes are used through the ApiTools::Logger class.
+    # Log writer classes are used through the Hoodoo::Logger class.
     #
     # Subclass FastWriter if you are writing a log data output mechanism which
     # responds very quickly. File output might fall into this category
@@ -18,10 +18,10 @@ module ApiTools
     # would certainly qualify.
     #
     # The subclass only needs to implement
-    # ApiTools::Logger::WriterMixin#report.
+    # Hoodoo::Logger::WriterMixin#report.
     #
     class FastWriter
-      include ApiTools::Logger::WriterMixin
+      include Hoodoo::Logger::WriterMixin
     end
   end
 end

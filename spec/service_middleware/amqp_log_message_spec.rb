@@ -1,6 +1,6 @@
 require 'spec_helper.rb'
 
-describe ApiTools::ServiceMiddleware::AMQPLogMessage do
+describe Hoodoo::ServiceMiddleware::AMQPLogMessage do
 
   require 'msgpack'
 

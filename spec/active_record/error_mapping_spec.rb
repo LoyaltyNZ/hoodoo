@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'active_record'
 
-describe ApiTools::ActiveRecord::ErrorMapping do
+describe Hoodoo::ActiveRecord::ErrorMapping do
   before :all do
     spec_helper_silence_stdout() do
       ActiveRecord::Migration.create_table( :r_spec_model_error_mapping_tests ) do | t |
@@ -24,7 +24,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
       end
 
       class RSpecModelErrorMappingTest < ActiveRecord::Base
-        include ApiTools::ActiveRecord::ErrorMapping
+        include Hoodoo::ActiveRecord::ErrorMapping
 
         validates_presence_of :boolean,
                               :date,
@@ -45,7 +45,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
   end
 
   before :each do
-    @errors = ApiTools::Errors.new( ApiTools::ErrorDescriptions.new )
+    @errors = Hoodoo::Errors.new( Hoodoo::ErrorDescriptions.new )
   end
 
   it 'auto-validates and maps errors correctly' do
@@ -224,7 +224,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'maps duplicates' do
     m = RSpecModelErrorMappingTest.new( {
-      :uuid      => ApiTools::UUID.generate(),
+      :uuid      => Hoodoo::UUID.generate(),
       :boolean  => true,
       :date     => Time.now,
       :datetime => Time.now,
@@ -260,10 +260,10 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'handles downgrade to generic error code' do
 
-    class LocalHackableErrors < ApiTools::ErrorDescriptions
+    class LocalHackableErrors < Hoodoo::ErrorDescriptions
     end
 
-    @errors = ApiTools::Errors.new( ApiTools::ErrorDescriptions.new )
+    @errors = Hoodoo::Errors.new( Hoodoo::ErrorDescriptions.new )
 
     # We have to hack to test this...
     #
@@ -300,7 +300,7 @@ describe ApiTools::ActiveRecord::ErrorMapping do
 
   it 'adds nothing if the model is valid' do
     m = RSpecModelErrorMappingTest.new( {
-      :uuid      => ApiTools::UUID.generate(),
+      :uuid      => Hoodoo::UUID.generate(),
       :boolean  => true,
       :date     => Time.now,
       :datetime => Time.now,

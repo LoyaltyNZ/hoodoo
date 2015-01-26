@@ -2,7 +2,7 @@
 # File::    tags.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: ApiTools::Presenters::BaseDSL field implementation
+# Purpose:: Hoodoo::Presenters::BaseDSL field implementation
 #           which supports a field defined to contain a string of
 #           comma separated tags.
 # ----------------------------------------------------------------------
@@ -11,10 +11,10 @@
 #                              documented data layer.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON UUID schema member
-    class Tags < ApiTools::Presenters::Text
+    class Tags < Hoodoo::Presenters::Text
       # TODO: Note inheritance from "...::Text" not "...::Field"
       # TODO: Future validations to ensure string looks tag-like?
     end

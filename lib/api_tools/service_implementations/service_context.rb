@@ -8,7 +8,7 @@
 #           03-Oct-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # A collection of objects which describe the context in which a service is
   # being called. The service reads session and request information and returns
@@ -16,18 +16,18 @@ module ApiTools
   #
   class ServiceContext
 
-    # The ApiTools::ServiceSession instance describing the authorised call
+    # The Hoodoo::ServiceSession instance describing the authorised call
     # context.
     #
     attr_reader :session
 
-    # The ApiTools::ServiceRequest instance giving details about the inbound
+    # The Hoodoo::ServiceRequest instance giving details about the inbound
     # request. Relevant information will depend upon the endpoint service
     # implementation action being addressed.
     #
     attr_reader :request
 
-    # The ApiTools::ServiceResponse instance that a service implementation
+    # The Hoodoo::ServiceResponse instance that a service implementation
     # updates with results of its processing.
     #
     attr_reader :response
@@ -37,7 +37,7 @@ module ApiTools
     # +session+:: See #session.
     # +request+:: See #request.
     # +response+:: See #response.
-    # +middleware+:: ApiTools::ServiceMiddleware instance creating this item.
+    # +middleware+:: Hoodoo::ServiceMiddleware instance creating this item.
     #
     def initialize( session, request, response, middleware )
       @session    = session
@@ -49,13 +49,13 @@ module ApiTools
 
     # Request (and lazy-initialize) a new resource endpoint instance for
     # talking to a resource's interface. See
-    # ApiTools::ServiceMiddleware::ServiceEndpoint.
+    # Hoodoo::ServiceMiddleware::ServiceEndpoint.
     #
     # You can request an endpoint for any resource name, whether or not an
     # implementation actually exists for it. Until you try and talk to the
     # interface through the endpoint instance, you won't know if it is there.
     # All endpoint methods return instances of classes that mix in
-    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase; these
+    # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase; these
     # mixin methods provide error handling options to detect a "not found"
     # error (equivanent to HTTP status code 404) returned when a resource
     # implementation turns out to not actually be present.
@@ -67,7 +67,7 @@ module ApiTools
     #              an Integer - defaults to 1.
     #
     def resource( resource_name, version = 1 )
-      @endpoints[ "#{ resource_name }/#{ version }" ] ||= ApiTools::ServiceMiddleware::ServiceEndpoint.new(
+      @endpoints[ "#{ resource_name }/#{ version }" ] ||= Hoodoo::ServiceMiddleware::ServiceEndpoint.new(
         @middleware,
         resource_name,
         version

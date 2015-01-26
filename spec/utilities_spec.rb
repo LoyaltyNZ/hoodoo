@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Utilities do
+describe Hoodoo::Utilities do
 
   describe '#symbolize' do
     it 'should symbolize keys on a nested hash' do
@@ -17,7 +17,7 @@ describe ApiTools::Utilities do
 
       data[0] = 'zero'
 
-      expect(ApiTools::Utilities.symbolize(data)).to eq({
+      expect(Hoodoo::Utilities.symbolize(data)).to eq({
         :'0' => 'zero',
         :one => 1,
         :two => {
@@ -54,7 +54,7 @@ describe ApiTools::Utilities do
         }
       ]
 
-      expect(ApiTools::Utilities.symbolize(data)).to eq([
+      expect(Hoodoo::Utilities.symbolize(data)).to eq([
         {
           :one => 1,
           :two => {
@@ -100,7 +100,7 @@ describe ApiTools::Utilities do
         ]
       }
 
-      expect(ApiTools::Utilities.symbolize(data)).to eq({
+      expect(Hoodoo::Utilities.symbolize(data)).to eq({
         :one => 1,
         :two => [
           {
@@ -137,7 +137,7 @@ describe ApiTools::Utilities do
 
       data[0] = 'zero'
 
-      expect(ApiTools::Utilities.stringify(data)).to eq({
+      expect(Hoodoo::Utilities.stringify(data)).to eq({
         '0' => 'zero',
         'one' => 1,
         'two' => {
@@ -174,7 +174,7 @@ describe ApiTools::Utilities do
         }
       ]
 
-      expect(ApiTools::Utilities.stringify(data)).to eq([
+      expect(Hoodoo::Utilities.stringify(data)).to eq([
         {
           'one' => 1,
           'two' => {
@@ -220,7 +220,7 @@ describe ApiTools::Utilities do
         ]
       }
 
-      expect(ApiTools::Utilities.stringify(data)).to eq({
+      expect(Hoodoo::Utilities.stringify(data)).to eq({
         'one' => 1,
         'two' => [
           {
@@ -244,15 +244,15 @@ describe ApiTools::Utilities do
 
   describe "#to_integer?" do
     it 'should return integer equivalents for valid values' do
-      expect(ApiTools::Utilities.to_integer?(21)).to eq(21)
-      expect(ApiTools::Utilities.to_integer?('21')).to eq(21)
-      expect(ApiTools::Utilities.to_integer?(:'21')).to eq(21)
+      expect(Hoodoo::Utilities.to_integer?(21)).to eq(21)
+      expect(Hoodoo::Utilities.to_integer?('21')).to eq(21)
+      expect(Hoodoo::Utilities.to_integer?(:'21')).to eq(21)
     end
 
     it 'should return nil for invalid values' do
-      expect(ApiTools::Utilities.to_integer?(2.1)).to eq(nil)
-      expect(ApiTools::Utilities.to_integer?('hello')).to eq(nil)
-      expect(ApiTools::Utilities.to_integer?(Time.now)).to eq(nil)
+      expect(Hoodoo::Utilities.to_integer?(2.1)).to eq(nil)
+      expect(Hoodoo::Utilities.to_integer?('hello')).to eq(nil)
+      expect(Hoodoo::Utilities.to_integer?(Time.now)).to eq(nil)
     end
   end
 end

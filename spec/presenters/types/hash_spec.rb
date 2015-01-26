@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Hash do
+describe Hoodoo::Presenters::Hash do
 
   context 'exceptions' do
     it 'should complain about #key then #keys' do
       expect {
-        class TestHashKeyKeysException < ApiTools::Presenters::Base
+        class TestHashKeyKeysException < Hoodoo::Presenters::Base
           schema do
             hash :foo do
               key :one
@@ -18,7 +18,7 @@ describe ApiTools::Presenters::Hash do
 
     it 'should complain about #keys then #key' do
       expect {
-        class TestHashKeysKeyException < ApiTools::Presenters::Base
+        class TestHashKeysKeyException < Hoodoo::Presenters::Base
           schema do
             hash :foo do
               keys :length => 4
@@ -31,7 +31,7 @@ describe ApiTools::Presenters::Hash do
 
     it 'should complain about #keys twice' do
       expect {
-        class TestHashKeysKeysException < ApiTools::Presenters::Base
+        class TestHashKeysKeysException < Hoodoo::Presenters::Base
           schema do
             hash :foo do
               keys :length => 4
@@ -45,13 +45,13 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashNoKeysPresenter < ApiTools::Presenters::Base
+  class TestHashNoKeysPresenter < Hoodoo::Presenters::Base
     schema do
       hash :specific
     end
   end
 
-  class TestHashNoKeysPresenterRequired < ApiTools::Presenters::Base
+  class TestHashNoKeysPresenterRequired < Hoodoo::Presenters::Base
     schema do
       hash :specific_required, :required => true
     end
@@ -113,7 +113,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenter < ApiTools::Presenters::Base
+  class TestHashSpecificKeyPresenter < Hoodoo::Presenters::Base
     schema do
       hash :specific do
         key :one
@@ -144,14 +144,14 @@ describe ApiTools::Presenters::Hash do
       end
 
       it 'should return [] when valid object (3)' do
-        data = { 'specific' => { 'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } } }
+        data = { 'specific' => { 'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } } }
         expect( TestHashSpecificKeyPresenter.validate( data ).errors ).to eq( [] )
       end
 
       it 'should return [] when valid object (4)' do
         data = { 'specific' => { 'one' => 'anything',
                                  'two' => { 'foo' => 'foov', 'bar' => 'barv' },
-                                 'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } } }
+                                 'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } } }
 
         expect( TestHashSpecificKeyPresenter.validate( data ).errors ).to eq( [] )
       end
@@ -170,7 +170,7 @@ describe ApiTools::Presenters::Hash do
       it 'should return correct error when unexpected keys are present' do
         data = { 'specific' => { 'hi' => 'there',
                                  'foo' => { 'bar' => 'baz' },
-                                 'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } } }
+                                 'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } } }
         errors = [ {
           'code'      => 'generic.invalid_hash',
           'message'   => 'Field `specific` is an invalid hash due to unrecognised keys `hi, foo`',
@@ -221,7 +221,7 @@ describe ApiTools::Presenters::Hash do
       end
 
       it 'should render correctly (3)' do
-        data   = { 'specific' => { 'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } } }
+        data   = { 'specific' => { 'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } } }
         result = TestHashSpecificKeyPresenter.render( data )
 
         expect( result ).to eq( data )
@@ -230,7 +230,7 @@ describe ApiTools::Presenters::Hash do
       it 'should render correctly (4)' do
         data   = { 'specific' => { 'one' => 'anything',
                                    'two' => { 'foo' => 'foov', 'bar' => 'barv' },
-                                   'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } } }
+                                   'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } } }
         result = TestHashSpecificKeyPresenter.render( data )
 
         expect( result ).to eq( data )
@@ -239,7 +239,7 @@ describe ApiTools::Presenters::Hash do
       it 'should ignore unspecified entries' do
         inner = { 'one' => 'anything',
                   'two' => { 'foo' => 'foov', 'bar' => 'barv' },
-                  'three' => { 'int' => 23, 'id' => ApiTools::UUID.generate() } }
+                  'three' => { 'int' => 23, 'id' => Hoodoo::UUID.generate() } }
 
         valid = { 'specific' => inner.dup }
         data  = { 'specific' => inner.dup }
@@ -256,7 +256,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestNestedHashSpecificKeyPresenter < ApiTools::Presenters::Base
+  class TestNestedHashSpecificKeyPresenter < Hoodoo::Presenters::Base
     schema do
       object :obj do
         text :obj_text
@@ -352,7 +352,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenterWithRequirements < ApiTools::Presenters::Base
+  class TestHashSpecificKeyPresenterWithRequirements < Hoodoo::Presenters::Base
     schema do
       hash :specific do
         key :one, :required => true
@@ -408,7 +408,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashSpecificKeyPresenterWithDefaults < ApiTools::Presenters::Base
+  class TestHashSpecificKeyPresenterWithDefaults < Hoodoo::Presenters::Base
     schema do
       hash :specific_defaults, :default => { 'one' => 'anything', 'two' => { 'foo' => 'valid' }, 'ignoreme' => 'invalid' } do
         key :one, :default => { 'foo' => { 'bar' => 'baz' } }
@@ -426,7 +426,7 @@ describe ApiTools::Presenters::Hash do
     end
   end
 
-  class TestHashSpecificKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::Base
+  class TestHashSpecificKeyPresenterWithDefaultsExceptHash < Hoodoo::Presenters::Base
     schema do
       hash :specific_defaults do
         key :one, :default => { 'foo' => { 'bar' => 'baz' } }
@@ -570,7 +570,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterNoValues < ApiTools::Presenters::Base
+  class TestHashGenericKeyPresenterNoValues < Hoodoo::Presenters::Base
     schema do
       hash :generic do
         keys :length => 6
@@ -629,7 +629,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterWithValues < ApiTools::Presenters::Base
+  class TestHashGenericKeyPresenterWithValues < Hoodoo::Presenters::Base
     schema do
       hash :generic do
         keys :length => 4 do
@@ -777,7 +777,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestNestedHashGenericKeyPresenterWithValues < ApiTools::Presenters::Base
+  class TestNestedHashGenericKeyPresenterWithValues < Hoodoo::Presenters::Base
     schema do
       object :obj do
         hash :generic do
@@ -846,7 +846,7 @@ describe ApiTools::Presenters::Hash do
 
   ############################################################################
 
-  class TestHashGenericKeyPresenterWithRequirements < ApiTools::Presenters::Base
+  class TestHashGenericKeyPresenterWithRequirements < Hoodoo::Presenters::Base
     schema do
       hash :generic do
         keys :length => 4, :required => true do
@@ -909,7 +909,7 @@ describe ApiTools::Presenters::Hash do
 
   it 'complains about generic default keys as they are meaningless' do
     expect {
-      class TestHashGenericKeyPresenterWithMeaninglessDefaults < ApiTools::Presenters::Base
+      class TestHashGenericKeyPresenterWithMeaninglessDefaults < Hoodoo::Presenters::Base
         schema do
           hash :generic_defaults do
             keys :length => 4, :default => { 'meaningless' => 'complain' } do
@@ -921,7 +921,7 @@ describe ApiTools::Presenters::Hash do
     }.to raise_error(RuntimeError)
   end
 
-  class TestHashGenericKeyPresenterWithDefaults < ApiTools::Presenters::Base
+  class TestHashGenericKeyPresenterWithDefaults < Hoodoo::Presenters::Base
     schema do
       hash :generic_defaults, :default => { 'a_default_key' => { 'baz' => 'merge' }, 'a_nil_key' => nil } do
         keys :length => 4 do
@@ -933,7 +933,7 @@ describe ApiTools::Presenters::Hash do
     end
   end
 
-  class TestHashGenericKeyPresenterWithDefaultsExceptHash < ApiTools::Presenters::Base
+  class TestHashGenericKeyPresenterWithDefaultsExceptHash < Hoodoo::Presenters::Base
     schema do
       hash :generic_defaults do
         keys :length => 4 do

@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'active_record'
 
-describe ApiTools::ActiveRecord::Finder do
+describe Hoodoo::ActiveRecord::Finder do
   before :all do
     spec_helper_silence_stdout() do
       ActiveRecord::Migration.create_table( :r_spec_model_finder_tests ) do | t |
@@ -15,7 +15,7 @@ describe ApiTools::ActiveRecord::Finder do
       end
 
       class RSpecModelFinderTest < ActiveRecord::Base
-        include ApiTools::ActiveRecord::Finder
+        include Hoodoo::ActiveRecord::Finder
 
         polymorphic_id_fields :uuid, :code
 
@@ -59,7 +59,7 @@ describe ApiTools::ActiveRecord::Finder do
     @id = @a.id
 
     @b = RSpecModelFinderTest.new
-    @b.uuid = ApiTools::UUID.generate
+    @b.uuid = Hoodoo::UUID.generate
     @b.field_one = 'group 1'
     @b.field_two = 'two b'
     @b.field_three = 'three b'
@@ -74,7 +74,7 @@ describe ApiTools::ActiveRecord::Finder do
     @c.save!
     @code = @c.code
 
-    @list_params = ApiTools::ServiceRequest::ListParameters.new
+    @list_params = Hoodoo::ServiceRequest::ListParameters.new
   end
 
   # ==========================================================================

@@ -12,10 +12,10 @@ require 'spec_helper'
 ###############################################################################
 
 
-class RSpecTestServiceStubImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceStubImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceStubBeforeAfterImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceStubBeforeAfterImplementation < Hoodoo::ServiceImplementation
   def before(context)
   end
 
@@ -23,7 +23,7 @@ class RSpecTestServiceStubBeforeAfterImplementation < ApiTools::ServiceImplement
   end
 end
 
-class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
+class RSpecTestServiceStubInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
@@ -44,14 +44,14 @@ class RSpecTestServiceStubInterface < ApiTools::ServiceInterface
   end
 end
 
-class RSpecTestMatchingServiceStubInterface < ApiTools::ServiceInterface
+class RSpecTestMatchingServiceStubInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
   end
 end
 
-class RSpecTestServiceStubBeforeInterface < ApiTools::ServiceInterface
+class RSpecTestServiceStubBeforeInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_before_after_stub, RSpecTestServiceStubBeforeAfterImplementation
@@ -64,15 +64,15 @@ class RSpecTestServiceStubBeforeInterface < ApiTools::ServiceInterface
   end
 end
 
-class RSpecTestServiceStub < ApiTools::ServiceApplication
+class RSpecTestServiceStub < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceStubInterface, RSpecTestServiceStubBeforeInterface
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run RSpecTestServiceStub.new
     end
   end
@@ -80,8 +80,8 @@ describe ApiTools::ServiceMiddleware do
   context 'internal sanity checks' do
     it 'should complain about bad instantiation' do
       expect {
-        ApiTools::ServiceMiddleware.new( {} )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
+        Hoodoo::ServiceMiddleware.new( {} )
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
     end
 
     it 'should complain about bad instantiation due to bad NewRelic' do
@@ -95,8 +95,8 @@ describe ApiTools::ServiceMiddleware do
           end
         end
 
-        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version.")
+        Hoodoo::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by Hoodoo; incompatible NewRelic version.")
 
       Object.send( :remove_const, :NewRelic )
     end
@@ -115,22 +115,22 @@ describe ApiTools::ServiceMiddleware do
           end
         end
 
-        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
+        Hoodoo::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceMiddleware instance created with non-ServiceApplication entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
 
       Object.send( :remove_const, :NewRelic )
     end
 
     it 'should complain about bad applications directly or via NewRelic' do
-      class RSpecTestServiceStubBadInterface < ApiTools::ServiceInterface
+      class RSpecTestServiceStubBadInterface < Hoodoo::ServiceInterface
       end
-      class RSpecTestServiceStubBad < ApiTools::ServiceApplication
+      class RSpecTestServiceStubBad < Hoodoo::ServiceApplication
         comprised_of RSpecTestServiceStubBadInterface
       end
 
       expect {
-        ApiTools::ServiceMiddleware.new( RSpecTestServiceStubBad.new )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
+        Hoodoo::ServiceMiddleware.new( RSpecTestServiceStubBad.new )
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
 
       expect {
         module NewRelic
@@ -145,14 +145,14 @@ describe ApiTools::ServiceMiddleware do
           end
         end
 
-        ApiTools::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
-      }.to raise_error(RuntimeError, "ApiTools::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
+        Hoodoo::ServiceMiddleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceMiddleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
 
       Object.send( :remove_const, :NewRelic )
     end
 
     it 'should self-check content type' do
-      mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceStub.new )
+      mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceStub.new )
       mw.instance_variable_set( '@content_type', 'application/xml' )
       expect {
         mw.send( :payload_to_hash, '{}' )
@@ -164,18 +164,18 @@ describe ApiTools::ServiceMiddleware do
     it 'should know about MemCache' do
       old = ENV[ 'MEMCACHE_URL' ]
       ENV[ 'MEMCACHE_URL' ] = nil
-      expect(ApiTools::ServiceMiddleware.has_memcache?).to eq(false)
+      expect(Hoodoo::ServiceMiddleware.has_memcache?).to eq(false)
       ENV[ 'MEMCACHE_URL' ] = 'foo'
-      expect(ApiTools::ServiceMiddleware.has_memcache?).to eq(true)
+      expect(Hoodoo::ServiceMiddleware.has_memcache?).to eq(true)
       ENV[ 'MEMCACHE_URL' ] = old
     end
 
     it 'should know about a queue' do
       old = ENV[ 'AMQ_ENDPOINT' ]
       ENV[ 'AMQ_ENDPOINT' ] = nil
-      expect(ApiTools::ServiceMiddleware.on_queue?).to eq(false)
+      expect(Hoodoo::ServiceMiddleware.on_queue?).to eq(false)
       ENV[ 'AMQ_ENDPOINT' ] = 'foo'
-      expect(ApiTools::ServiceMiddleware.on_queue?).to eq(true)
+      expect(Hoodoo::ServiceMiddleware.on_queue?).to eq(true)
       ENV[ 'AMQ_ENDPOINT' ] = old
     end
 
@@ -186,7 +186,7 @@ describe ApiTools::ServiceMiddleware do
     # with something silly will result in the exception 'rescue' code running.
     #
     it 'internally responds with "nil" if local DRb service malfunctions' do
-      mw = ApiTools::ServiceMiddleware.new( RSpecTestServiceStub.new )
+      mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceStub.new )
       expect( mw.send( :remote_service_for, :RSpecTestResource, 2 ) ).to_not be_nil
 
       mw.class.class_variable_set( '@@drb_service', 'I am not a DRb object' )
@@ -250,14 +250,14 @@ describe ApiTools::ServiceMiddleware do
   context 'sessions' do
 
     it 'should check for session data' do
-      expect(ApiTools::ServiceSession).to receive(:load_session).and_call_original
+      expect(Hoodoo::ServiceSession).to receive(:load_session).and_call_original
       expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(200)
     end
 
     it 'should check for missing session data' do
-      expect(ApiTools::ServiceSession).to receive(:load_session).and_return(nil)
+      expect(Hoodoo::ServiceSession).to receive(:load_session).and_return(nil)
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(401)
       result = JSON.parse(last_response.body)
@@ -286,7 +286,7 @@ describe ApiTools::ServiceMiddleware do
       # times. At the time of writing, the next thing along is a call to
       # private method "debug_log".
 
-      expect_any_instance_of(ApiTools::ServiceMiddleware).to receive(:debug_log).and_raise("boo!")
+      expect_any_instance_of(Hoodoo::ServiceMiddleware).to receive(:debug_log).and_raise("boo!")
 
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
@@ -296,13 +296,13 @@ describe ApiTools::ServiceMiddleware do
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do
 
-      # This implicitly tests that ApiTools' exception handler checks for test
+      # This implicitly tests that Hoodoo' exception handler checks for test
       # and development mode and if both are false, calls the exception reporter.
 
-      expect(ApiTools::ServiceMiddleware.environment).to receive(:test?).exactly(3).times.and_return(true)
-      expect(ApiTools::ServiceMiddleware.environment).to receive(:test?).once.and_return(false)
-      expect(ApiTools::ServiceMiddleware.environment).to receive(:development?).and_return(false)
-      expect(ApiTools::ServiceMiddleware::ExceptionReporting).to receive(:report).and_raise("boo!")
+      expect(Hoodoo::ServiceMiddleware.environment).to receive(:test?).exactly(3).times.and_return(true)
+      expect(Hoodoo::ServiceMiddleware.environment).to receive(:test?).once.and_return(false)
+      expect(Hoodoo::ServiceMiddleware.environment).to receive(:development?).and_return(false)
+      expect(Hoodoo::ServiceMiddleware::ExceptionReporting).to receive(:report).and_raise("boo!")
 
       # Route through to the unimplemented "list" call, so the subclass raises
       # an exception. This is tested independently elsewhere too. This causes
@@ -321,15 +321,15 @@ describe ApiTools::ServiceMiddleware do
     describe 'service implementation #before and #after' do
       it 'should get called if defined in correct order' do
         expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:before).once do | ignored_rspec_mock_instance, context |
-          expect(context).to be_a(ApiTools::ServiceContext)
+          expect(context).to be_a(Hoodoo::ServiceContext)
         end
 
         expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context).to be_a(ApiTools::ServiceContext)
+          expect(context).to be_a(Hoodoo::ServiceContext)
         end
 
         expect_any_instance_of(RSpecTestServiceStubBeforeAfterImplementation).to receive(:after).once do | ignored_rspec_mock_instance, context |
-          expect(context).to be_a(ApiTools::ServiceContext)
+          expect(context).to be_a(Hoodoo::ServiceContext)
         end
 
         get '/v2/rspec_test_service_before_after_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -352,15 +352,15 @@ describe ApiTools::ServiceMiddleware do
       it 'should get called with default values' do
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context).to be_a(ApiTools::ServiceContext)
+          expect(context).to be_a(Hoodoo::ServiceContext)
 
           session = context.session
           request = context.request
           response = context.response
 
-          expect(session).to be_a(ApiTools::ServiceSession)
-          expect(request).to be_a(ApiTools::ServiceRequest)
-          expect(response).to be_a(ApiTools::ServiceResponse)
+          expect(session).to be_a(Hoodoo::ServiceSession)
+          expect(request).to be_a(Hoodoo::ServiceRequest)
+          expect(response).to be_a(Hoodoo::ServiceResponse)
 
           expect(request.locale).to eq('en-nz')
           expect(request.uri_path_components).to be_empty
@@ -444,7 +444,7 @@ describe ApiTools::ServiceMiddleware do
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'list'")
+        expect(result['errors'][0]['message']).to eq("Hoodoo::ServiceImplementation subclasses must implement 'list'")
       end
 
       it 'should complain if any body data is given' do
@@ -675,7 +675,7 @@ describe ApiTools::ServiceMiddleware do
         get '/v2/rspec_test_service_stub/12345.tar.gz', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'show'")
+        expect(result['errors'][0]['message']).to eq("Hoodoo::ServiceImplementation subclasses must implement 'show'")
       end
 
       it 'should complain if any body data is given' do
@@ -762,7 +762,7 @@ describe ApiTools::ServiceMiddleware do
 
       it 'should complain if the payload is too large' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:create)
-        post '/v2/rspec_test_service_stub', "{\"foo\": \"#{'*' * ApiTools::ServiceMiddleware::MAXIMUM_PAYLOAD_SIZE }\"}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        post '/v2/rspec_test_service_stub', "{\"foo\": \"#{'*' * Hoodoo::ServiceMiddleware::MAXIMUM_PAYLOAD_SIZE }\"}", { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -812,7 +812,7 @@ describe ApiTools::ServiceMiddleware do
         post '/v2/rspec_test_service_stub/', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'create'")
+        expect(result['errors'][0]['message']).to eq("Hoodoo::ServiceImplementation subclasses must implement 'create'")
       end
 
       it 'should complain about prohibited query entries (1)' do
@@ -939,7 +939,7 @@ describe ApiTools::ServiceMiddleware do
         patch '/v2/rspec_test_service_stub/12345.tar.gz', '{ "baz": "string", "foo": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'update'")
+        expect(result['errors'][0]['message']).to eq("Hoodoo::ServiceImplementation subclasses must implement 'update'")
       end
 
       it 'should complain about prohibited query entries (1)' do
@@ -1017,7 +1017,7 @@ describe ApiTools::ServiceMiddleware do
         delete '/v2/rspec_test_service_stub/12345.tar.gz', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(500)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['message']).to eq("ApiTools::ServiceImplementation subclasses must implement 'delete'")
+        expect(result['errors'][0]['message']).to eq("Hoodoo::ServiceImplementation subclasses must implement 'delete'")
       end
 
       it 'should complain if any body data is given' do
@@ -1091,17 +1091,17 @@ end
 ###############################################################################
 
 
-class RSpecTestBrokenServiceStub < ApiTools::ServiceApplication
+class RSpecTestBrokenServiceStub < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
                RSpecTestMatchingServiceStubInterface # I.e. same endpoint twice
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
   context 'bad endpoint configuration' do
 
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run RSpecTestBrokenServiceStub.new
       end
     end
@@ -1123,37 +1123,37 @@ end
 ###############################################################################
 
 
-class RSpecTestServiceV1StubImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceV1StubImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceV1StubInterface < ApiTools::ServiceInterface
+class RSpecTestServiceV1StubInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     endpoint :rspec_test_service_stub, RSpecTestServiceV1StubImplementation
     actions :list, :create, :update
   end
 end
 
-class RSpecTestServiceAltStubImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceAltStubImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceAltStubInterface < ApiTools::ServiceInterface
+class RSpecTestServiceAltStubInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     version 2
     endpoint :rspec_test_service_alt_stub, RSpecTestServiceAltStubImplementation
   end
 end
 
-class RSpecTestMultipleEndpointServiceStub < ApiTools::ServiceApplication
+class RSpecTestMultipleEndpointServiceStub < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceStubInterface,
                RSpecTestServiceV1StubInterface,
                RSpecTestServiceAltStubInterface
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run RSpecTestMultipleEndpointServiceStub.new
     end
   end
@@ -1224,10 +1224,10 @@ end
 ###############################################################################
 
 
-class RSpecTestServiceWithErrorsStubImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceWithErrorsStubImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceWithErrorsStubInterface < ApiTools::ServiceInterface
+class RSpecTestServiceWithErrorsStubInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     version 42
     endpoint :rspec_test_service_with_errors_stub, RSpecTestServiceWithErrorsStubImplementation
@@ -1237,15 +1237,15 @@ class RSpecTestServiceWithErrorsStubInterface < ApiTools::ServiceInterface
   end
 end
 
-class RSpecTestServiceWithErrorsStub < ApiTools::ServiceApplication
+class RSpecTestServiceWithErrorsStub < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceWithErrorsStubInterface
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   def app
     Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run RSpecTestServiceWithErrorsStub.new
     end
   end
@@ -1272,7 +1272,7 @@ end
 #
 # It contains one public action, to test public-to-public calling from ...B.
 
-class RSpecTestInterResourceCallsAImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsAImplementation < Hoodoo::ServiceImplementation
 
   def list( context )
     search_offset = ( ( context.request.list.search_data || {} )[ 'offset' ] || '0' ).to_i
@@ -1321,7 +1321,7 @@ class RSpecTestInterResourceCallsAImplementation < ApiTools::ServiceImplementati
   end
 end
 
-class RSpecTestInterResourceCallsAInterface < ApiTools::ServiceInterface
+class RSpecTestInterResourceCallsAInterface < Hoodoo::ServiceInterface
   interface :RSpecTestInterResourceCallsAResource do
     endpoint :rspec_test_inter_resource_calls_a, RSpecTestInterResourceCallsAImplementation
     public_actions :delete
@@ -1353,7 +1353,7 @@ end
 # public action calling to a secure action is handled correctly (i.e. overall
 # response is 401).
 
-class RSpecTestInterResourceCallsBImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsBImplementation < Hoodoo::ServiceImplementation
   def list( context )
 
     # Call RSpecTestInterResourceCallsAImplementation#list, with a query string
@@ -1443,14 +1443,14 @@ class RSpecTestInterResourceCallsBImplementation < ApiTools::ServiceImplementati
   end
 end
 
-class RSpecTestInterResourceCallsBInterface < ApiTools::ServiceInterface
+class RSpecTestInterResourceCallsBInterface < Hoodoo::ServiceInterface
   interface :RSpecTestInterResourceCallsBResource do
     endpoint :rspec_test_inter_resource_calls_b, RSpecTestInterResourceCallsBImplementation
     public_actions :update, :delete
   end
 end
 
-class RSpecTestInterResourceCallsCImplementation < ApiTools::ServiceImplementation
+class RSpecTestInterResourceCallsCImplementation < Hoodoo::ServiceImplementation
 
   # This gets inter-resource called from ...BImplementation too. It only implements
   # one action so is used for action validation tests.
@@ -1460,32 +1460,32 @@ class RSpecTestInterResourceCallsCImplementation < ApiTools::ServiceImplementati
   end
 end
 
-class RSpecTestInterResourceCallsCInterface < ApiTools::ServiceInterface
+class RSpecTestInterResourceCallsCInterface < Hoodoo::ServiceInterface
   interface :RSpecTestInterResourceCallsCResource do
     endpoint :rspec_test_inter_resource_calls_c, RSpecTestInterResourceCallsCImplementation
     actions :list
   end
 end
 
-class RSpecTestInterResourceCalls < ApiTools::ServiceApplication
+class RSpecTestInterResourceCalls < Hoodoo::ServiceApplication
   comprised_of RSpecTestInterResourceCallsAInterface,
                RSpecTestInterResourceCallsBInterface,
                RSpecTestInterResourceCallsCInterface
 end
 
-describe ApiTools::ServiceMiddleware::ServiceEndpoint do
+describe Hoodoo::ServiceMiddleware::ServiceEndpoint do
 
   # Middleware maintains class-level record of whether or not any interfaces
   # had public actions for efficiency; ensure this is cleared after all these
   # tests run, so it's a clean slate for the next set.
   #
   after :all do
-    ApiTools::ServiceMiddleware::class_variable_set( '@@interfaces_have_public_methods', false )
+    Hoodoo::ServiceMiddleware::class_variable_set( '@@interfaces_have_public_methods', false )
   end
 
   def app
     Rack::Builder.new do
-      use ApiTools::ServiceMiddleware
+      use Hoodoo::ServiceMiddleware
       run RSpecTestInterResourceCalls.new
     end
   end
@@ -1745,7 +1745,7 @@ describe ApiTools::ServiceMiddleware::ServiceEndpoint do
 
   context 'with no session' do
     before :each do
-      expect( ApiTools::ServiceSession ).to receive( :load_session ).once.and_return( nil )
+      expect( Hoodoo::ServiceSession ).to receive( :load_session ).once.and_return( nil )
     end
 
     it 'can call public-to-public actions successfully' do

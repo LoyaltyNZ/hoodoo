@@ -5,15 +5,15 @@
 # Purpose:: A high level description of a service's response to a
 #           client's request. The middleware constructs instances and
 #           fills in some of the data for every client request, then
-#           passes it to ApiTools::ServiceImplementation methods so
+#           passes it to Hoodoo::ServiceImplementation methods so
 #           the service can fill in the rest of the data.
 # ----------------------------------------------------------------------
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
-  # The service middleware creates an ApiTools::ServiceResponse instance for
+  # The service middleware creates an Hoodoo::ServiceResponse instance for
   # each request it handles, populating it with some data before and after the
   # service implementation runs as part of standard pre- and post-processing.
   # In the middle, the service implementation is given the instance and adds
@@ -29,8 +29,8 @@ module ApiTools
   #
   class ServiceResponse
 
-    # Obtain a reference to the ApiTools::Errors instance for this response;
-    # use ApiTools::Errors#add_error to add to the collection directly. For
+    # Obtain a reference to the Hoodoo::Errors instance for this response;
+    # use Hoodoo::Errors#add_error to add to the collection directly. For
     # convenience, this class also provides the #add_error proxy instance
     # method (syntactic sugar for most service implementations, but with a
     # return value that helps keep the service middleware code clean).
@@ -74,12 +74,12 @@ module ApiTools
     #
     def initialize( interaction_id )
 
-      unless ApiTools::UUID.valid?( interaction_id )
-        raise "ApiTools::ServiceResponse.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
+      unless Hoodoo::UUID.valid?( interaction_id )
+        raise "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
       end
 
       @interaction_id   = interaction_id
-      @errors           = ApiTools::Errors.new()
+      @errors           = Hoodoo::Errors.new()
       @headers          = {}
       @http_status_code = 200
       @body             = {}
@@ -120,7 +120,7 @@ module ApiTools
         hash  = @headers[ dname ]
         name  = hash.keys[ 0 ]
         value = hash.values[ 0 ]
-        raise "ApiTools::ServiceResponse\#add_header: Value '#{ value }' already defined for header '#{ name }'"
+        raise "Hoodoo::ServiceResponse\#add_header: Value '#{ value }' already defined for header '#{ name }'"
       else
         @headers[ dname ] = { name => value }
       end
@@ -147,7 +147,7 @@ module ApiTools
     end
 
     # Add an error to the internal collection. Passes input parameters through
-    # to ApiTools::Errors#add_error, so see that for details. For convenience,
+    # to Hoodoo::Errors#add_error, so see that for details. For convenience,
     # returns the for-rack representation of the response so far, so that code
     # which wishes to add one error and abort request processing immediately
     # can just do:
@@ -158,7 +158,7 @@ module ApiTools
     # really only useful for the service middleware.
     #
     # +code+::    Error code (e.g. "platform.generic").
-    # +options+:: Options Hash - see ApiTools::Errors#add_error.
+    # +options+:: Options Hash - see Hoodoo::Errors#add_error.
     #
     # Example:
     #
@@ -170,7 +170,7 @@ module ApiTools
     #
     # In the above example, the mandatory reference data +uuid+ comes
     # from the description for the 'platform.not_found' message - see the
-    # ApiTools::ErrorDescriptions#initialize _implementation_ and Platform API.
+    # Hoodoo::ErrorDescriptions#initialize _implementation_ and Platform API.
     #
     def add_error( code, options = nil )
       @errors.add_error( code, options )
@@ -199,10 +199,10 @@ module ApiTools
       return for_rack()
     end
 
-    # Add errors from an ApiTools::Errors instance to this response's error
+    # Add errors from an Hoodoo::Errors instance to this response's error
     # collection.
     #
-    # +errors_object+:: ApiTools::Errors instance to merge into the error
+    # +errors_object+:: Hoodoo::Errors instance to merge into the error
     #                   collection of 'this' response object.
     #
     def add_errors( errors_object )
@@ -226,7 +226,7 @@ module ApiTools
     # Convert the internal response data into something that Rack expects.
     # The return value of this method can be passed back to Rack from Rack
     # middleware or applications. Usually, this is only called directly by
-    # ApiTools::ServiceMiddleware.
+    # Hoodoo::ServiceMiddleware.
     #
     def for_rack
 

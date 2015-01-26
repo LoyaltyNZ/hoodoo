@@ -7,13 +7,13 @@
 #           07-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Token'.
       #
-      class Token < ApiTools::Presenters::Base
+      class Token < Hoodoo::Presenters::Base
 
         # Defined values for the +state+ enumeration in the schema.
         #

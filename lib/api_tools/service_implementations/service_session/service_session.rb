@@ -11,7 +11,7 @@
 
 require 'dalli'
 
-module ApiTools
+module Hoodoo
 
   # +ServiceSession+ contains all functionality related to a context session.
   #
@@ -84,10 +84,10 @@ module ApiTools
     #
     def self.load_session( memcache_url, session_id )
 
-      return ApiTools::ServiceSession.new( @@test_session ) if @@test_mode
+      return Hoodoo::ServiceSession.new( @@test_session ) if @@test_mode
 
       if memcache_url.nil? || memcache_url.empty?
-        raise "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
+        raise "Hoodoo::ServiceMiddleware memcache server URL is nil or empty"
       end
 
       if session_id.nil? || session_id.empty? || session_id.length < 32
@@ -97,7 +97,7 @@ module ApiTools
       memcache = connect_memcache( memcache_url )
 
       if memcache.nil?
-        raise "ApiTools::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'"
+        raise "Hoodoo::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'"
       end
 
       begin
@@ -109,7 +109,7 @@ module ApiTools
 
         # Log error and return nil if the session can't be parsed
         #
-        ApiTools::ServiceMiddleware.logger.warn(
+        Hoodoo::ServiceMiddleware.logger.warn(
           "Session Loading failed, connection fault or session corrupt",
           exception
         )
@@ -120,7 +120,7 @@ module ApiTools
 
       # Create and return the new session.
       #
-      return ApiTools::ServiceSession.new( {
+      return Hoodoo::ServiceSession.new( {
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],

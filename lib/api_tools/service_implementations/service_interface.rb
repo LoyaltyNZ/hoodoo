@@ -12,7 +12,7 @@
 
 require 'set'
 
-module ApiTools
+module Hoodoo
 
   # Service implementation authors subclass this to describe the interface that
   # they implement for a particular Resource, as documented in the Loyalty
@@ -29,7 +29,7 @@ module ApiTools
     # validate incoming query strings for lists and reject requests that ask
     # for unsupported things. When instantiated the class sets itself up with
     # defaults that match those described by the your platform's API. When
-    # passed to an ApiTools::ServiceInterface::ToListDSL instance, the DSL
+    # passed to an Hoodoo::ServiceInterface::ToListDSL instance, the DSL
     # methods, if called, update the values stored herein.
     #
     class ToList
@@ -80,31 +80,31 @@ module ApiTools
       private
 
         # Private writer - see #limit - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :limit
 
         # Private writer - see #sort - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :sort
 
         # Private writer - see #default_sort_key - but there's a special
-        # contract with ApiTools::ServiceInterface::ToListDSL which permits it
+        # contract with Hoodoo::ServiceInterface::ToListDSL which permits it
         # to call here bypassing +private+ via +send()+.
         #
         attr_writer :default_sort_key
 
         # Private writer - see #search - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :search
 
         # Private writer - see #filter - but there's a special contract with
-        # ApiTools::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :filter
@@ -114,29 +114,29 @@ module ApiTools
     ###########################################################################
 
     # Implementation of the DSL that's written inside a block passed to
-    # ApiTools::ServiceInterface#to_list. This is an internal implementation
-    # class. Instantiate with an ApiTools::ServiceInterface::ToList instance,
+    # Hoodoo::ServiceInterface#to_list. This is an internal implementation
+    # class. Instantiate with an Hoodoo::ServiceInterface::ToList instance,
     # the data in which is updated as the DSL methods run.
     #
     class ToListDSL
 
       # Initialize an instance and run the DSL methods.
       #
-      # +api_tools_service_interface_to_list_instance+:: Instance of
-      #                                                  ApiTools::ServiceInterface::ToList
+      # +hoodoo_service_interface_to_list_instance+:: Instance of
+      #                                                  Hoodoo::ServiceInterface::ToList
       #                                                  to update with data
       #                                                  from DSL method calls.
       #
       # &block:: Block of code that makes calls to the DSL herein.
       #
-      # On exit, the DSL is run and the ApiTools::ServiceInterface::ToList has
+      # On exit, the DSL is run and the Hoodoo::ServiceInterface::ToList has
       # been updated.
       #
-      def initialize( api_tools_service_interface_to_list_instance, &block )
-        @tl = api_tools_service_interface_to_list_instance # Shorthand!
+      def initialize( hoodoo_service_interface_to_list_instance, &block )
+        @tl = hoodoo_service_interface_to_list_instance # Shorthand!
 
-        unless @tl.instance_of?( ApiTools::ServiceInterface::ToList )
-          raise "ApiTools::ServiceInstance::ToListDSL\#initialize requires an ApiTools::ServiceInstance::ToList instance - got '#{ @tl.class }'"
+        unless @tl.instance_of?( Hoodoo::ServiceInterface::ToList )
+          raise "Hoodoo::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::ServiceInstance::ToList instance - got '#{ @tl.class }'"
         end
 
         self.instance_eval( &block )
@@ -152,7 +152,7 @@ module ApiTools
       #
       def limit( limit )
         unless limit.is_a?( ::Integer )
-          raise "ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
+          raise "Hoodoo::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
         end
 
         @tl.send( :limit=, limit )
@@ -178,7 +178,7 @@ module ApiTools
       #
       def sort( sort )
         unless sort.is_a?( ::Hash )
-          raise "ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
+          raise "Hoodoo::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
         # Convert hash keys to strings and values in arrays to strings too.
@@ -206,7 +206,7 @@ module ApiTools
       #
       def default( sort_key )
         unless sort_key.is_a?( ::String ) || sort_key.is_a?( ::Symbol )
-          raise "ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
+          raise "Hoodoo::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 
         @tl.send( :default_sort_key=, sort_key.to_s )
@@ -247,7 +247,7 @@ module ApiTools
     ###########################################################################
 
     # Mandatory part of the interface DSL. Declare the interface's URL endpoint
-    # and the ApiTools::ServiceImplementation subclass to be invoked when
+    # and the Hoodoo::ServiceImplementation subclass to be invoked when
     # client requests are sent to a URL matching the endpoint.
     #
     # No two interfaces can use the same endpoint within a service application,
@@ -267,7 +267,7 @@ module ApiTools
     #                       +/products.json+ or +/products/22+, but does not
     #                       match +/products_and_things+.
     #
-    # +implementation_class+:: The ApiTools::ServiceImplementation subclass
+    # +implementation_class+:: The Hoodoo::ServiceImplementation subclass
     #                          (the class itself, not an instance of it) that
     #                          should be used when a request matching the
     #                          path fragment is received.
@@ -276,8 +276,8 @@ module ApiTools
 
       # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
-      unless implementation_class < ApiTools::ServiceImplementation
-        raise "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but '#{ implementation_class }' was given instead"
+      unless implementation_class < Hoodoo::ServiceImplementation
+        raise "Hoodoo::ServiceInterface#endpoint must provide Hoodoo::ServiceImplementation subclasses, but '#{ implementation_class }' was given instead"
       end
 
       self.class.send( :endpoint=,       uri_path_fragment    )
@@ -314,10 +314,10 @@ module ApiTools
     #
     def actions( *supported_actions )
       supported_actions.map! { | item | item.to_sym }
-      invalid = supported_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+      invalid = supported_actions - Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "ApiTools::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+        raise "Hoodoo::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :actions=, Set.new( supported_actions ) )
@@ -326,7 +326,7 @@ module ApiTools
     # List any actions which are public - NOT PROTECTED BY SESSIONS. For
     # public actions, no X-Session-ID or similar header is consulted and
     # no session data will be associated with your
-    # ApiTools::ServiceContext instance when action methods are called.
+    # Hoodoo::ServiceContext instance when action methods are called.
     # Use with great care!
     #
     # *public_actions:: One or more from +:list+, +:show+, +:create+,
@@ -336,10 +336,10 @@ module ApiTools
     #
     def public_actions( *public_actions )
       public_actions.map! { | item | item.to_sym }
-      invalid = public_actions - ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+      invalid = public_actions - Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "ApiTools::ServiceInterface#public_actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+        raise "Hoodoo::ServiceInterface#public_actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :public_actions=, Set.new( public_actions ) )
@@ -373,7 +373,7 @@ module ApiTools
     end
 
     # Specify parameters related to common index parameters. The block contains
-    # calls to the DSL described by ApiTools::ServiceInterface::ToListDSL. The
+    # calls to the DSL described by Hoodoo::ServiceInterface::ToListDSL. The
     # default values should be described by your platform's API - hard-coded at
     # the time of writing as:
     #
@@ -383,7 +383,7 @@ module ApiTools
     #     filter   nil
     #
     def to_list( &block )
-      ApiTools::ServiceInterface::ToListDSL.new(
+      Hoodoo::ServiceInterface::ToListDSL.new(
         self.class.instance_variable_get( '@to_list' ),
         &block
       )
@@ -391,7 +391,7 @@ module ApiTools
 
     # Optional description of the JSON parameters (schema) that the interface's
     # implementation requires for calls creating resource instances. The block
-    # uses the DSL from ApiTools::Presenters::Object, so you can specify
+    # uses the DSL from Hoodoo::Presenters::Object, so you can specify
     # basic object things like +string+, or higher level things like +type+ or
     # +resource+.
     #
@@ -399,11 +399,11 @@ module ApiTools
     # data that doesn't validate according to your schema, it'll be rejected
     # before even getting as far as your interface implementation.
     #
-    # The ApiTools::Presenters::Object#internationalised DSL method can be
+    # The Hoodoo::Presenters::Object#internationalised DSL method can be
     # called within your block harmlessly, but it has no side effects. Any
     # resource interface that can take internationalised data for creation (or
     # modification) must already have an internationalised representation, so
-    # the standard resources in the ApiTools::Data::Resources collection will
+    # the standard resources in the Hoodoo::Data::Resources collection will
     # already have declared that internationalisation applies.
     #
     # Example 1:
@@ -419,11 +419,11 @@ module ApiTools
     #       resource :purchase
     #     end
     #
-    # &block:: Block, passed to ApiTools::Presenters::Object, describing
+    # &block:: Block, passed to Hoodoo::Presenters::Object, describing
     #          the fields used for resource creation.
     #
     def to_create( &block )
-      obj = Class.new( ApiTools::Presenters::Base )
+      obj = Class.new( Hoodoo::Presenters::Base )
       obj.schema( &block )
 
       self.class.send( :to_create=, obj )
@@ -433,11 +433,11 @@ module ApiTools
     # To avoid repeating yourself, if your modification and creation parameter
     # requirements are identical, call #update_same_as_create.
     #
-    # &block:: Block, passed to ApiTools::Presenters::Object, describing
+    # &block:: Block, passed to Hoodoo::Presenters::Object, describing
     #          the fields used for resource modification.
     #
     def to_update( &block )
-      obj = Class.new( ApiTools::Presenters::Base )
+      obj = Class.new( Hoodoo::Presenters::Base )
       obj.schema( &block )
 
       self.class.send( :to_update=, obj )
@@ -457,7 +457,7 @@ module ApiTools
     end
 
     # Declares custom errors that are part of this defined interface. This
-    # calls directly through to ApiTools::ErrorDescriptions#errors_for, so
+    # calls directly through to Hoodoo::ErrorDescriptions#errors_for, so
     # see that for details.
     #
     # A service should usually define only a single domain of error using one
@@ -465,9 +465,9 @@ module ApiTools
     # domains as required. Definitions are merged.
     #
     # +domain+:: Domain, e.g. 'purchase', 'transaction' - see
-    #            ApiTools::ErrorDescriptions#errors_for for details.
+    #            Hoodoo::ErrorDescriptions#errors_for for details.
     #
-    # &block::   Code block making ApiTools::ErrorDescriptions DSL calls.
+    # &block::   Code block making Hoodoo::ErrorDescriptions DSL calls.
     #
     # Example:
     #
@@ -479,7 +479,7 @@ module ApiTools
       descriptions = self.class.errors_for
 
       if descriptions.nil?
-        descriptions = self.class.send( :errors_for=, ApiTools::ErrorDescriptions.new )
+        descriptions = self.class.send( :errors_for=, Hoodoo::ErrorDescriptions.new )
       end
 
       descriptions.errors_for( domain, &block )
@@ -488,18 +488,18 @@ module ApiTools
   protected
 
     # Define the subclass service's interface. A DSL is used with methods
-    # documented in the ApiTools::ServiceInterfaceDSL class.
+    # documented in the Hoodoo::ServiceInterfaceDSL class.
     #
     # The absolute bare minimum interface description just states that a
     # particular implementation class is used when requests are made to a
     # particular URL endpoint, which is implementing an interface for a
     # particular given resource. For a hypothetical Magic resource interface:
     #
-    #     class MagicServiceImplementation < ApiTools::ServiceImplementation
+    #     class MagicServiceImplementation < Hoodoo::ServiceImplementation
     #       # ...implementation code goes here...
     #     end
     #
-    #     class MagicServiceInterface < ApiTools::ServiceInterface
+    #     class MagicServiceInterface < Hoodoo::ServiceInterface
     #       interface :Magic do
     #         endpoint :paul_daniels, MagicServiceImplementation
     #       end
@@ -519,15 +519,15 @@ module ApiTools
     #
     # +resource+:: Name of the resource that the interface is for, as a symbol;
     #              for example, ':Purchase'.
-    # &block::     Block that calls the ApiTools::ServiceInterfaceDSL methods;
+    # &block::     Block that calls the Hoodoo::ServiceInterfaceDSL methods;
     #              #endpoint is the only mandatory call.
     #
     def self.interface( resource, &block )
 
       if @to_list.nil?
-        @to_list = ApiTools::ServiceInterface::ToList.new
+        @to_list = Hoodoo::ServiceInterface::ToList.new
       else
-        raise "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once"
+        raise "Hoodoo::ServiceInterface subclass unexpectedly ran ::interface more than once"
       end
 
       self.resource = resource.to_sym
@@ -536,14 +536,14 @@ module ApiTools
       interface.instance_eval do
         version 1
         embeds # Nothing
-        actions *ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+        actions *Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
         public_actions # None
       end
 
       interface.instance_eval( &block )
 
       if self.endpoint.nil?
-        raise "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
+        raise "Hoodoo::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
 
     end
@@ -575,7 +575,7 @@ module ApiTools
         attr_reader :resource
 
         # Implementation class for the service. An
-        # ApiTools::ServiceImplementation subclass - the class, not an
+        # Hoodoo::ServiceImplementation subclass - the class, not an
         # instance of it.
         #
         attr_reader :implementation
@@ -612,16 +612,16 @@ module ApiTools
         #
         attr_reader :embeds
 
-        # An ApiTools::ServiceInterface::ToList instance describing the list
+        # An Hoodoo::ServiceInterface::ToList instance describing the list
         # parameters for the interface as a Set of Strings. See also
-        # ApiTools::ServiceInterface::ToListDSL.
+        # Hoodoo::ServiceInterface::ToListDSL.
         #
         def to_list
-          @to_list ||= ApiTools::ServiceInterface::ToList.new
+          @to_list ||= Hoodoo::ServiceInterface::ToList.new
           @to_list
         end
 
-        # An ApiTools::Presenters::Object instance describing the schema
+        # An Hoodoo::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that create instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely
@@ -629,7 +629,7 @@ module ApiTools
         #
         attr_reader :to_create
 
-        # An ApiTools::Presenters::Object instance describing the schema
+        # An Hoodoo::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that modify instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely
@@ -637,7 +637,7 @@ module ApiTools
         #
         attr_reader :to_update
 
-        # An ApiTools::ErrorDescriptions instance describing all errors that
+        # An Hoodoo::ErrorDescriptions instance describing all errors that
         # the interface might return, including the default set of platform
         # and generic errors. If nil, there are no additional error codes
         # beyond the default set.
@@ -708,4 +708,4 @@ module ApiTools
 
     end # 'class << self'
   end   # 'class ServiceInterface'
-end     # 'module ApiTools'
+end     # 'module Hoodoo'

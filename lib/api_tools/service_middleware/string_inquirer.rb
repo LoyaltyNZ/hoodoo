@@ -7,7 +7,7 @@
 #           02-Oct-2014 (ADH): Copied from ActiveSupport 4.1.6.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # Given a string, provides an object that takes the string's value and
   # turns it into a method "#{value}?", returning +true+; other methods
@@ -15,7 +15,7 @@ module ApiTools
   #
   # Example:
   #
-  #     greeting = ApiTools::StringInquirer.new( 'hello' )
+  #     greeting = Hoodoo::StringInquirer.new( 'hello' )
   #     greeting.hello? # => true
   #     greeting.hi?    # => false
   #

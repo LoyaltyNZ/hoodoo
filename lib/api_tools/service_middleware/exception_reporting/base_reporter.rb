@@ -9,7 +9,7 @@
 
 require 'singleton'
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
     class ExceptionReporting
 
@@ -21,21 +21,21 @@ module ApiTools
       # * Exceptional: http://www.exceptional.io
       # * Airbrake:    https://airbrake.io
       #
-      # ApiTools includes some classes for integration which you can choose from
+      # Hoodoo includes some classes for integration which you can choose from
       # if you want to use the integrated service. Alternatively write your own.
-      # When you do this, name your class *outside* the ApiTools namespace (the
+      # When you do this, name your class *outside* the Hoodoo namespace (the
       # class's name can be anything you like). Otherwise you will trample upon
-      # ApiTools' reserved namespace and may cause a naming collision in future
-      # ApiTools versions.
+      # Hoodoo' reserved namespace and may cause a naming collision in future
+      # Hoodoo versions.
       #
-      # "Under the hood" the ApiTools::Communicators::Pool mechanism is used.
+      # "Under the hood" the Hoodoo::Communicators::Pool mechanism is used.
       # All reporters are assumed to be (comparatively) slow communicators so
-      # are descendants of ApiTools::Communicators::Slow.
+      # are descendants of Hoodoo::Communicators::Slow.
       #
       # Add a reporter class to the middleware from any service application by
-      # calling ApiTools::ServiceMiddleware::ExceptionReporting.add.
+      # calling Hoodoo::ServiceMiddleware::ExceptionReporting.add.
       #
-      class BaseReporter < ApiTools::Communicators::Slow
+      class BaseReporter < Hoodoo::Communicators::Slow
 
         include ::Singleton
 
@@ -48,7 +48,7 @@ module ApiTools
         # The middleware wraps calls to your subclass in a nested exception
         # handler. If you raise an exception, the middleware logs details with
         # a +:debug+ level through its logger instance if possible (see
-        # ApiTools::ServiceMiddleware::logger) along with printing details to
+        # Hoodoo::ServiceMiddleware::logger) along with printing details to
         # $stderr, then continues processing.
         #
         # If service applications are expecting potential exceptions to occur
@@ -85,12 +85,12 @@ module ApiTools
 
         # Subclasses *MUST* *NOT* override this method, which is part of the
         # base class implementation and implements
-        # ApiTools::Communicators::Slow#communicate. It calls through to the
+        # Hoodoo::Communicators::Slow#communicate. It calls through to the
         # #report method which subclasses do implement, unpacking a payload
         # used for the internal communicators into the parameters that
         # #report expects.
         #
-        # +object+:: ApiTools::ServiceMiddleware::ExceptionReporting::Payload
+        # +object+:: Hoodoo::ServiceMiddleware::ExceptionReporting::Payload
         #            instance.
         #
         def communicate( object )

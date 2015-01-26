@@ -7,13 +7,13 @@
 #           29-Oct-2014 (JML): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Involvement'.
       #
-      class Involvement < ApiTools::Presenters::Base
+      class Involvement < Hoodoo::Presenters::Base
 
         schema do
           uuid   :outlet_id,      :resource => :Outlet,     :required => true

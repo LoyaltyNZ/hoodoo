@@ -7,13 +7,13 @@
 #           17-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Calculation'.
       #
-      class Calculation < ApiTools::Presenters::Base
+      class Calculation < Hoodoo::Presenters::Base
 
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator

@@ -5,15 +5,15 @@
 # Purpose:: A collection of error messages, starting empty, with one
 #           or more messages added to it as errors are encountered by
 #           some processing task. Errors are added according to codes
-#           described by ApiTools::ErrorDescriptions instances.
+#           described by Hoodoo::ErrorDescriptions instances.
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # During request processing, API service implementations create an
-  # ApiTools::Errors instance and add error(s) to the collection as they arise
+  # Hoodoo::Errors instance and add error(s) to the collection as they arise
   # using #add_error. That same instance can then be returned for the on-error
   # handling path of whatever wider service framework is in use by the service
   # code in question. Services should use new instances for each request.
@@ -32,10 +32,10 @@ module ApiTools
     class MissingReferenceData < RuntimeError
     end
 
-    # Default ApiTools::ErrorDescriptions instance, used if the instantiator
+    # Default Hoodoo::ErrorDescriptions instance, used if the instantiator
     # provides no alternative.
     #
-    DEFAULT_ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new()
+    DEFAULT_ERROR_DESCRIPTIONS = Hoodoo::ErrorDescriptions.new()
 
     # Errors are manifestations of the Errors resource. They acquire a UUID
     # when instantiated, even if the instance is never used or persisted.
@@ -52,23 +52,23 @@ module ApiTools
     #
     attr_reader( :http_status_code )
 
-    # The ApiTools::ErrorDescriptions instance associated with this error
+    # The Hoodoo::ErrorDescriptions instance associated with this error
     # collection. Only error codes that the instance's
-    # ApiTools::ErrorDescriptions#recognised? method says are recognised
+    # Hoodoo::ErrorDescriptions#recognised? method says are recognised
     # can be added to the error collection, else
-    # ApiTools::Errors::UnknownCode will be raised.
+    # Hoodoo::Errors::UnknownCode will be raised.
     #
     attr_reader( :descriptions )
 
     # Create an instance.
     #
-    # +descriptions+:: (Optional) ApiTools::ErrorDescriptions instance with
+    # +descriptions+:: (Optional) Hoodoo::ErrorDescriptions instance with
     #                  service-domain-specific error descriptions added, or
     #                  omit for a default instance describing +platform+ and
     #                  +generic+ error domains only.
     #
     def initialize( descriptions = DEFAULT_ERROR_DESCRIPTIONS )
-      @uuid             = ApiTools::UUID.generate()
+      @uuid             = Hoodoo::UUID.generate()
       @descriptions     = descriptions
       @errors           = []
       @http_status_code = 500
@@ -98,7 +98,7 @@ module ApiTools
     #               requirements array of the error declaration, followed by
     #               any extra values in undefined order.
     #
-    #               See also ApiTools::ErrorDescriptions::DomainDescriptions#error
+    #               See also Hoodoo::ErrorDescriptions::DomainDescriptions#error
     #
     # +message+::   Optional human-readable for-developer message, +en-nz+
     #               locale. Default messages are provided for all errors, but
@@ -115,12 +115,12 @@ module ApiTools
     #
     # In the above example, the mandatory reference data +entity_name+ comes
     # from the description for the 'platform.not_found' message - see the
-    # ApiTools::ErrorDescriptions#initialize _implementation_ and Platform API.
+    # Hoodoo::ErrorDescriptions#initialize _implementation_ and Platform API.
     #
     def add_error( code, options = nil )
 
-      options   = ApiTools::Utilities.stringify( options || {} )
-      reference = ApiTools::Utilities.stringify( options[ 'reference' ] || {} )
+      options   = Hoodoo::Utilities.stringify( options || {} )
+      reference = Hoodoo::Utilities.stringify( options[ 'reference' ] || {} )
       message   = options[ 'message' ]
 
       # Make sure nobody uses an undeclared error code.
@@ -218,20 +218,20 @@ module ApiTools
       @http_status_code = 500
     end
 
-    # Return a Hash rendered through the ApiTools::Data::Resources::Errors
+    # Return a Hash rendered through the Hoodoo::Data::Resources::Errors
     # collection representing the formalised resource.
     #
     # +interaction_id+: Mandatory Interaction ID (UUID) to associate with
     #                   the collection.
     #
     def render( interaction_id )
-      unless ApiTools::UUID.valid?( interaction_id )
-        raise "ApiTools::Errors\#render must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
+      unless Hoodoo::UUID.valid?( interaction_id )
+        raise "Hoodoo::Errors\#render must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
       end
 
       @created_at ||= Time.now
 
-      ApiTools::Data::Resources::Errors.render(
+      Hoodoo::Data::Resources::Errors.render(
         {
           'interaction_id' => interaction_id,
           'errors'         => @errors

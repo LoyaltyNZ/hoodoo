@@ -2,7 +2,7 @@
 # File::    documented_uuid.rb
 # (C)::     Loyalty New Zealand 2014
 #
-# Purpose:: ApiTools::Presenters::BaseDSL field implementation
+# Purpose:: Hoodoo::Presenters::BaseDSL field implementation
 #           which supports a field defined to contain a UUID that
 #           (optionally) can be verified as referring to a specific
 #           other Resource.
@@ -12,10 +12,10 @@
 #                              documented data layer.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON UUID schema member
-    class UUID < ApiTools::Presenters::Field
+    class UUID < Hoodoo::Presenters::Field
 
       # The optional associated resource kind, as a symbol (e.g. ':Product').
       attr_accessor :resource
@@ -28,12 +28,12 @@ module ApiTools
         super name, options
       end
 
-      # Check if data is a valid UUID and return an ApiTools::Errors instance
+      # Check if data is a valid UUID and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)
 
-        unless ApiTools::UUID.valid?( data )
+        unless Hoodoo::UUID.valid?( data )
           errors.add_error(
             'generic.invalid_uuid',
             :message   => "Field `#{ full_path( path ) }` is an invalid UUID",

@@ -7,24 +7,24 @@
 #           16-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class Logger
 
-    # Writes unstructured messages to a file. ApiTools::Logger::SlowWriter
-    # subclass. See also ApiTools::Logger.
+    # Writes unstructured messages to a file. Hoodoo::Logger::SlowWriter
+    # subclass. See also Hoodoo::Logger.
     #
-    class FileWriter < ApiTools::Logger::SlowWriter
+    class FileWriter < Hoodoo::Logger::SlowWriter
 
-      include ApiTools::Logger::FlattenerMixin
+      include Hoodoo::Logger::FlattenerMixin
 
       # Create a file writer instance. Files are written by opening,
       # adding a log message and closing again, to provide reliability.
-      # For this reason, this is an ApiTools::Logger::SlowWriter subclass.
+      # For this reason, this is an Hoodoo::Logger::SlowWriter subclass.
       #
       # If you want faster file access at the expense of immediate updates
       # / reliability due to buffering, open a file externally to create an
       # I/O stream and pass this persistently-open file's stream to an
-      # ApiTools::Logger::StreamWriter class instead.
+      # Hoodoo::Logger::StreamWriter class instead.
       #
       # +pathname+:: Full pathname of a file that can be opened in "ab"
       #              (append for writing at end-of-file) mode.
@@ -33,7 +33,7 @@ module ApiTools
         @pathname = pathname
       end
 
-      # See ApiTools::Logger::WriterMixin#report.
+      # See Hoodoo::Logger::WriterMixin#report.
       #
       def report( log_level, component, code, data )
         File.open( @pathname, 'ab' ) do | file |

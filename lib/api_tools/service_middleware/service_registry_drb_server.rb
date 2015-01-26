@@ -9,22 +9,22 @@
 #           to the existing DRb server started by the first.
 #
 #           This class is almost a private implementation detail of
-#           ApiTools::ServiceMiddleware and is namespaced inside it.
+#           Hoodoo::ServiceMiddleware and is namespaced inside it.
 #           File "service_middleware.rb" must be "require"'d first.
 # ----------------------------------------------------------------------
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
 ########################################################################
 
-require 'api_tools'
+require 'hoodoo'
 
 require 'drb/drb'
 require 'drb/acl'
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
 
     # A registry of service endpoints, implenented as a DRB server class. An
-    # internal implementation detail of ApiTools::ServiceMiddleware, in most
+    # internal implementation detail of Hoodoo::ServiceMiddleware, in most
     # respects.
     #
     class ServiceRegistryDRbServer
@@ -109,7 +109,7 @@ module ApiTools
 
     # Singleton "Front object" for the DRB service used in local development.
     #
-    FRONT_OBJECT = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.new
+    FRONT_OBJECT = Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.new
 
     # Only allow connections from 127.0.0.1.
     #

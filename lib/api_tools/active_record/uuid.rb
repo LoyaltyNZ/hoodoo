@@ -8,7 +8,7 @@
 #           17-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module ActiveRecord
 
     # Support mixin for models subclassed from ActiveRecord::Base providing
@@ -21,7 +21,7 @@ module ApiTools
     # defines validations to ensure the +id+ is present, unique and a valid
     # UUID.
     #
-    # *IMPORTANT:* See ApiTools::ActiveRecord::UUID::included for important
+    # *IMPORTANT:* See Hoodoo::ActiveRecord::UUID::included for important
     # information about database requirements / table creation when using
     # this mixin.
     #
@@ -32,19 +32,19 @@ module ApiTools
       # Example:
       #
       #     class SomeModel < ActiveRecord::Base
-      #       include ApiTools::ActiveRecord::UUID
+      #       include Hoodoo::ActiveRecord::UUID
       #       # ...
       #     end
       #
       def self.included( model )
-        instantiate( model ) unless model == ApiTools::ActiveRecord::Base
+        instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
       end
 
       # When called, this method:
       #
       # - Declares 'id' as the primary key
       # - Self-assigns a UUID to 'id' via +before_validation+ and
-      #   ApiTools::UUID::generate
+      #   Hoodoo::UUID::generate
       # - Adds validations to 'id' to ensure it is present, unique and a valid
       #   UUID.
       #
@@ -66,7 +66,7 @@ module ApiTools
         model.primary_key = 'id'
 
         model.before_validation do
-          self.id = ApiTools::UUID.generate() if self.id.nil?
+          self.id = Hoodoo::UUID.generate() if self.id.nil?
         end
 
         model.validates :id, uuid: true, presence: true, uniqueness: true

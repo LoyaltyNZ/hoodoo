@@ -1,57 +1,57 @@
 require 'spec_helper'
 
-describe ApiTools::ServiceSession do
+describe Hoodoo::ServiceSession do
 
   before do
-    ApiTools::ServiceSession.testing(false)
+    Hoodoo::ServiceSession.testing(false)
   end
 
   after do
-    ApiTools::ServiceSession.testing(true)
+    Hoodoo::ServiceSession.testing(true)
   end
 
   describe '#self.load_session' do
 
     it 'should raise an error if memcache_url is nil' do
       expect {
-        ApiTools::ServiceSession.load_session(nil, '0123456789ABCDEF')
-      }.to raise_error "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
+        Hoodoo::ServiceSession.load_session(nil, '0123456789ABCDEF')
+      }.to raise_error "Hoodoo::ServiceMiddleware memcache server URL is nil or empty"
     end
 
     it 'should raise an error if memcache_url is empty' do
       expect {
-        ApiTools::ServiceSession.load_session('', '0123456789ABCDEF')
-      }.to raise_error "ApiTools::ServiceMiddleware memcache server URL is nil or empty"
+        Hoodoo::ServiceSession.load_session('', '0123456789ABCDEF')
+      }.to raise_error "Hoodoo::ServiceMiddleware memcache server URL is nil or empty"
     end
 
     it 'should return nil if session_id is nil' do
-      session = ApiTools::ServiceSession.load_session('url', nil)
+      session = Hoodoo::ServiceSession.load_session('url', nil)
       expect(session).to be_nil
     end
 
     it 'should return nil if session_id is empty' do
-      session = ApiTools::ServiceSession.load_session('url', '')
+      session = Hoodoo::ServiceSession.load_session('url', '')
       expect(session).to be_nil
     end
 
     it 'should return nil if session_id is less than 32 chars' do
-      session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDE')
+      session = Hoodoo::ServiceSession.load_session('url', '0123456789ABCDE')
       expect(session).to be_nil
     end
 
     it 'should call connect_memcache and raise error if return is nil' do
-      expect(ApiTools::ServiceSession).to receive(:connect_memcache).with('url').and_return(nil)
+      expect(Hoodoo::ServiceSession).to receive(:connect_memcache).with('url').and_return(nil)
       expect {
-        ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
-      }.to raise_error "ApiTools::ServiceMiddleware cannot connect to memcache server 'url'"
+        Hoodoo::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      }.to raise_error "Hoodoo::ServiceMiddleware cannot connect to memcache server 'url'"
     end
 
     it 'should call get on memcache with correct key and return nil if not found' do
       mock_memcache = double('memcache')
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(nil)
-      expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
+      expect(Hoodoo::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
-      session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
       expect(session).to be_nil
     end
 
@@ -60,11 +60,11 @@ describe ApiTools::ServiceSession do
 
       mock_memcache = double('memcache')
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_raise(Exception.new)
-      expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
+      expect(Hoodoo::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
-      expect(ApiTools::ServiceMiddleware.logger).to receive(:warn)
+      expect(Hoodoo::ServiceMiddleware.logger).to receive(:warn)
 
-      session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
       expect(session).to be_nil
     end
 
@@ -78,9 +78,9 @@ describe ApiTools::ServiceSession do
 
       mock_memcache = double('memcache')
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(session_hash)
-      expect(ApiTools::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
+      expect(Hoodoo::ServiceSession).to receive(:connect_memcache).and_return(mock_memcache)
 
-      session = ApiTools::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::ServiceSession.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
       expect(session.id).to eq('0123456789ABCDEF0123456789ABCDEF')
       expect(session.participant_id).to eq(session_hash["participant_id"])
       expect(session.outlet_id).to eq(session_hash["outlet_id"])
@@ -93,14 +93,14 @@ describe ApiTools::ServiceSession do
       mock_memcache = double('memcache')
       expect(mock_memcache).to receive(:stats).and_return true
       expect(Dalli::Client).to receive(:new).with('one',{ :compress=>false, :serializer => JSON }).and_return(mock_memcache)
-      expect(ApiTools::ServiceSession.send(:connect_memcache, 'one')).to eq(mock_memcache)
+      expect(Hoodoo::ServiceSession.send(:connect_memcache, 'one')).to eq(mock_memcache)
     end
 
     it 'should return nil if Dalli::Client.new raises an error' do
       expect(Dalli::Client).to receive(:new) do
         raise "Error!"
       end
-      expect(ApiTools::ServiceSession.send(:connect_memcache, 'one')).to be_nil
+      expect(Hoodoo::ServiceSession.send(:connect_memcache, 'one')).to be_nil
     end
 
     it 'should return nil if Dalli::Client stats call raises error' do
@@ -109,13 +109,13 @@ describe ApiTools::ServiceSession do
         raise "Error!"
       end
       expect(Dalli::Client).to receive(:new).with('one',{ :compress=>false, :serializer => JSON }).and_return(mock_memcache)
-      expect(ApiTools::ServiceSession.send(:connect_memcache, 'one')).to be_nil
+      expect(Hoodoo::ServiceSession.send(:connect_memcache, 'one')).to be_nil
     end
   end
 
   describe '#initialize' do
     it 'should load correct options' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :participant_id => "TESTPART1",
         :outlet_id => "TESTOUTLET1",
         :roles => "TESTROLE1,TESTROLE2",
@@ -126,7 +126,7 @@ describe ApiTools::ServiceSession do
       expect(s.roles).to eq(["TESTROLE1","TESTROLE2"])
     end
     it 'should set options to defaults when options empty' do
-      s = ApiTools::ServiceSession.new
+      s = Hoodoo::ServiceSession.new
 
       expect(s.participant_id).to eq(nil)
       expect(s.outlet_id).to eq(nil)
@@ -136,7 +136,7 @@ describe ApiTools::ServiceSession do
 
   describe '#has_role?' do
     it 'should return true if role exists in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -144,7 +144,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return false if role does not exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -152,7 +152,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return false if session has no roles' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => ''
       })
 
@@ -162,7 +162,7 @@ describe ApiTools::ServiceSession do
 
   describe '#has_all_roles?' do
     it 'should return true if one role exists in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -170,7 +170,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return true if some roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -178,7 +178,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return true if all roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -186,7 +186,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return false if no roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'four,five,six'
       })
 
@@ -194,7 +194,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return false if only some roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'four,five,six'
       })
 
@@ -204,7 +204,7 @@ describe ApiTools::ServiceSession do
 
   describe '#has_any_roles?' do
     it 'should return true if one role exists in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -212,7 +212,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return true if some roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -220,7 +220,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return true if all roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'one,two,three'
       })
 
@@ -228,7 +228,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return true if only some roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'four,five,six'
       })
 
@@ -236,7 +236,7 @@ describe ApiTools::ServiceSession do
     end
 
     it 'should return false if no roles exist in session' do
-      s = ApiTools::ServiceSession.new({
+      s = Hoodoo::ServiceSession.new({
         :roles => 'four,five,six'
       })
 

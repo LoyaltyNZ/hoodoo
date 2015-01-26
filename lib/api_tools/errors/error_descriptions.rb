@@ -12,7 +12,7 @@
 #           16-Oct-2014 (TC):  Added session error
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # A collection of error descriptions. API service implementations create one
   # of these, which self-declares platform and generic error domain codes. A
@@ -22,11 +22,11 @@ module ApiTools
   # conditions, the service's _interface_ class uses the interface description
   # DSL to call through to here behind the scenes; for example:
   #
-  #     class TransactionImplementation < ApiTools::ServiceImplementation
+  #     class TransactionImplementation < Hoodoo::ServiceImplementation
   #       # ...
   #     end
   #
-  #     class TransactionInterface < ApiTools::ServiceInterface
+  #     class TransactionInterface < Hoodoo::ServiceInterface
   #       interface :Transaction do
   #         endpoint :transactions, TransactionImplementation
   #         errors_for 'transaction' do
@@ -38,15 +38,15 @@ module ApiTools
   # The #errors_for method takes the domain of the error as a string - the
   # part that comes before the "+.+" in error codes. Then a series of +error+
   # calls describe the individual error codes. See
-  # ApiTools::ErrorDescriptions::DomainDescriptions#error for details.
+  # Hoodoo::ErrorDescriptions::DomainDescriptions#error for details.
   #
-  # An instance of the ApiTools::ErrorDescriptions class gets built behind
+  # An instance of the Hoodoo::ErrorDescriptions class gets built behind
   # the scenes as part of the service interface description. This is found by
-  # the middleware and passed to an ApiTools::Errors constructor. The result
-  # is stored in an ApiTools::ServiceResponse instance and passed to handler
-  # methods in the service's ApiTools::ServiceImplementation subclass for each
+  # the middleware and passed to an Hoodoo::Errors constructor. The result
+  # is stored in an Hoodoo::ServiceResponse instance and passed to handler
+  # methods in the service's Hoodoo::ServiceImplementation subclass for each
   # request. Service implementations access the errors collection through
-  # ApiTools::ServiceResponse#errors and can then add errors using the generic
+  # Hoodoo::ServiceResponse#errors and can then add errors using the generic
   # or platform domains, or whatever additional custom domain(s) they defined
   # in the service interface subclass.
   #
@@ -54,7 +54,7 @@ module ApiTools
   # invoke the DSL where the constructor is used in the same way as
   # #errors_for:
   #
-  #     ERROR_DESCRIPTIONS = ApiTools::ErrorDescriptions.new( 'transaction' ) do
+  #     ERROR_DESCRIPTIONS = Hoodoo::ErrorDescriptions.new( 'transaction' ) do
   #       error 'duplicate_transaction', status: 409, message: 'Duplicate transaction', :required => [ :client_uid ]
   #     end
   #
@@ -62,10 +62,10 @@ module ApiTools
   #
   # As per the example above, services can share an instance across requests
   # (and threads) via a class's variable if the descriptions don't change. You
-  # would use the descriptions to inform an ApiTools::Errors instance of the
+  # would use the descriptions to inform an Hoodoo::Errors instance of the
   # available codes and their requirements:
   #
-  #    @errors = ApiTools::Errors.new( ERROR_DESCRIPTIONS )
+  #    @errors = Hoodoo::Errors.new( ERROR_DESCRIPTIONS )
   #
   class ErrorDescriptions
 
@@ -130,7 +130,7 @@ module ApiTools
     # service name or resource name, e.g. "+transaction+" and defined by the
     # part of the Platform API the service is implementing) and a block. The
     # block makes one or more "+error+" calls, which actually end up calling
-    # ApiTools::ErrorDescriptions::DomainDescriptions#error behind the scenes.
+    # Hoodoo::ErrorDescriptions::DomainDescriptions#error behind the scenes.
     #
     # See the implementation of #initialize for a worked example.
     #
@@ -138,7 +138,7 @@ module ApiTools
     # &block:: Block which makes one or more calls to "+error+"
     #
     def errors_for( domain, &block )
-      domain_descriptions = ApiTools::ErrorDescriptions::DomainDescriptions.new( domain )
+      domain_descriptions = Hoodoo::ErrorDescriptions::DomainDescriptions.new( domain )
       domain_descriptions.instance_eval( &block )
 
       @descriptions.merge!( domain_descriptions.descriptions )
@@ -163,7 +163,7 @@ module ApiTools
 
     # Contain a description of errors for a particular domain, where the domain
     # is a grouping string such as "platform", "generic", or a short service
-    # name. Usually driven via ApiTools::ErrorDescriptions, not directly.
+    # name. Usually driven via Hoodoo::ErrorDescriptions, not directly.
     #
     class DomainDescriptions
 
@@ -203,14 +203,14 @@ module ApiTools
       #               for developers.
       #
       # +reference+:: Optional array of required named references. When errors
-      #               are added (via ApiTools::Errors#add_error) to a
+      #               are added (via Hoodoo::Errors#add_error) to a
       #               collection, required reference(s) from this array must
       #               be provided by the error-adding caller else an exception
       #               will be raised. This ensures correct, fully qualified
       #               error data is logged and sent to clients.
       #
       def error( name, options )
-        options       = ApiTools::Utilities.stringify( options )
+        options       = Hoodoo::Utilities.stringify( options )
         required_keys = [ 'status', 'message' ]
 
         reference              = options[ 'reference' ]

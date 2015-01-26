@@ -3,38 +3,38 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A subclass of Ruby standard library Array used by the
-#           ApiTools::ServiceMiddleware::ServiceEndpoint family of
+#           Hoodoo::ServiceMiddleware::ServiceEndpoint family of
 #           inter-resource calls.
 # ----------------------------------------------------------------------
 #           11-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
-    class ServiceEndpoint < ApiTools::ServiceMiddleware
+    class ServiceEndpoint < Hoodoo::ServiceMiddleware
 
       # Base mixin for
-      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash and
-      # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray,
-      # used by ApiTools::ServiceMiddleware::ServiceEndpoint for return
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash and
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray,
+      # used by Hoodoo::ServiceMiddleware::ServiceEndpoint for return
       # values in its resource calling API - see
-      # ApiTools::ServiceMiddleware::ServiceEndpoint#list,
-      # ApiTools::ServiceMiddleware::ServiceEndpoint#show,
-      # ApiTools::ServiceMiddleware::ServiceEndpoint#create,
-      # ApiTools::ServiceMiddleware::ServiceEndpoint#update and
-      # ApiTools::ServiceMiddleware::ServiceEndpoint#delete.
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint#list,
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint#show,
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint#create,
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint#update and
+      # Hoodoo::ServiceMiddleware::ServiceEndpoint#delete.
       #
       # The error handling mechanism this mixin provides is intentionally
       # analogous to that used for mapping ActiveRecord model validation
-      # failures to platform errors in ApiTools::ActiveRecord::ErrorMapping.
+      # failures to platform errors in Hoodoo::ActiveRecord::ErrorMapping.
       #
       module AugmentedBase
 
         # Adds errors set via #set_platform_errors to the
-        # given ApiTools::Errors instance. Generally, #set_platform_errors is
+        # given Hoodoo::Errors instance. Generally, #set_platform_errors is
         # only ever called by the middleware when one resource calls another
-        # resource via ApiTools::ServiceContext#resource and the methods in
-        # the ApiTools::ServiceMiddleware::ServiceEndpoint instance it
+        # resource via Hoodoo::ServiceContext#resource and the methods in
+        # the Hoodoo::ServiceMiddleware::ServiceEndpoint instance it
         # returns.
         #
         # Returns +true+ if any errors were added else +false+ if everything
@@ -56,14 +56,14 @@ module ApiTools
         #       # ...
         #     end
         #
-        # +collection+:: An ApiTools::Errors instance, typically obtained
-        #                from the ApiTools::ServiceContext instance passed to
+        # +collection+:: An Hoodoo::Errors instance, typically obtained
+        #                from the Hoodoo::ServiceContext instance passed to
         #                a service implementation in calls like
-        #                ApiTools::ServiceImplementation#list or
-        #                ApiTools::ServiceImplementation#show, via
+        #                Hoodoo::ServiceImplementation#list or
+        #                Hoodoo::ServiceImplementation#show, via
         #                +context.response.errors+
-        #                (i.e. ApiTools::ServiceContext#response /
-        #                ApiTools::ServiceResponse#errors). The collection you
+        #                (i.e. Hoodoo::ServiceContext#response /
+        #                Hoodoo::ServiceResponse#errors). The collection you
         #                pass is updated with any errors noted internally via
         #                (usually-middleware-automatically-called) method
         #                #set_platform_errors.
@@ -79,7 +79,7 @@ module ApiTools
           end
         end
 
-        # Returns an ApiTools::Errors instance that's either been assigned
+        # Returns an Hoodoo::Errors instance that's either been assigned
         # via #set_platform_errors or is an empty, internally assigned
         # collection. This method is very closely related to
         # #adds_errors_to? and, if you have not already done so, you should
@@ -102,13 +102,13 @@ module ApiTools
         # conceptually cleaner code.
         #
         def platform_errors
-          @nz_co_loyalty_platform_errors ||= ApiTools::Errors.new
+          @nz_co_loyalty_platform_errors ||= Hoodoo::Errors.new
         end
 
-        # Sets the ApiTools::Errors instance used by #adds_errors_to? or
+        # Sets the Hoodoo::Errors instance used by #adds_errors_to? or
         # returned by #platform_errors.
         #
-        # It is expected that only ApiTools middleware code will call this
+        # It is expected that only Hoodoo middleware code will call this
         # method as part of inter-resource call handling for the internal
         # use cases of this class, though client code may find other uses
         # that are independent of the inter-resource call case wherein the

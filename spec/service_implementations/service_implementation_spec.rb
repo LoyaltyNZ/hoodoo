@@ -1,45 +1,45 @@
 require 'spec_helper'
 
-class RSpecTestServiceImplementationImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceImplementationImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceImplementationInterface < ApiTools::ServiceInterface
+class RSpecTestServiceImplementationInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     endpoint :rspec_test_service_stub, RSpecTestServiceImplementationImplementation
   end
 end
 
-class RSpecTestServiceImplementation < ApiTools::ServiceApplication
+class RSpecTestServiceImplementation < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceImplementationInterface
 end
 
-describe ApiTools::ServiceImplementation do
+describe Hoodoo::ServiceImplementation do
   it 'should raise base class exceptions' do
-    ses = ApiTools::ServiceSession.new
-    req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
-    mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceImplementation.new )
-    con = ApiTools::ServiceContext.new( ses, req, res, mid )
-    int = ApiTools::ServiceImplementation.new
+    ses = Hoodoo::ServiceSession.new
+    req = Hoodoo::ServiceRequest.new
+    res = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
+    mid = Hoodoo::ServiceMiddleware.new( RSpecTestServiceImplementation.new )
+    con = Hoodoo::ServiceContext.new( ses, req, res, mid )
+    int = Hoodoo::ServiceImplementation.new
 
     expect {
       int.list( con )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses must implement 'list'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses must implement 'list'")
 
     expect {
       int.show( con )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses must implement 'show'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses must implement 'show'")
 
     expect {
       int.create( con )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses must implement 'create'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses must implement 'create'")
 
     expect {
       int.update( con )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses must implement 'update'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses must implement 'update'")
 
     expect {
       int.delete( con )
-    }.to raise_error(RuntimeError, "ApiTools::ServiceImplementation subclasses must implement 'delete'")
+    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses must implement 'delete'")
   end
 end

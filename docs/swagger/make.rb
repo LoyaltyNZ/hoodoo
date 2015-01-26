@@ -30,7 +30,7 @@ require 'json-schema'
 
 # Other external gems
 
-require 'api_tools'
+require 'hoodoo'
 require 'active_support/inflector'
 
 ###############################################################################
@@ -125,8 +125,8 @@ begin
 
   interfaces = Set.new
 
-  ObjectSpace.each_object( ApiTools::ServiceInterface.singleton_class ) do | klass |
-    interfaces << klass unless klass == ApiTools::ServiceInterface
+  ObjectSpace.each_object( Hoodoo::ServiceInterface.singleton_class ) do | klass |
+    interfaces << klass unless klass == Hoodoo::ServiceInterface
   end
 
   # With this, 'interfaces' becomes an Array, not a Set.
@@ -211,16 +211,16 @@ def external_docs( resource = nil )
   }
 end
 
-# Map ApiTools presenter DSL data to JSON schema.
+# Map Hoodoo presenter DSL data to JSON schema.
 #
 # +resource+::   Capitalised resource name, e.g. Person, Reward, LogEntry as a
 #                String or Symbol.
 #
 # +properties+:: Hash of properties from the inbound DSL, keyed by property
-#                name as a String with an ApiTools::Presenters::Field
+#                name as a String with an Hoodoo::Presenters::Field
 #                *subclass* *instance* as the value. For example, the return
 #                value of hypothetical resource class call
-#                ApiTools::Data::Resources::Foo.get_schema().properties() is
+#                Hoodoo::Data::Resources::Foo.get_schema().properties() is
 #                suitable here.
 #
 # +json+::       Top-level callers omit this parameter. Internally, it's an
@@ -240,7 +240,7 @@ def to_json_schema( resource, properties, json = nil )
   required = []
 
   properties.each do | name, property |
-    defn = if property.is_a?( ApiTools::Presenters::Array )
+    defn = if property.is_a?( Hoodoo::Presenters::Array )
       ret   = { :type => 'array', :properties => {} }
       items = unless property.properties.nil? || property.properties.empty?
         to_json_schema( resource, property.properties, ret )
@@ -250,39 +250,39 @@ def to_json_schema( resource, properties, json = nil )
       items = { :type => 'string' } if items.nil? || items.empty?
       ret[ :items ] = items
       ret
-    elsif property.is_a?( ApiTools::Presenters::Boolean )
+    elsif property.is_a?( Hoodoo::Presenters::Boolean )
       {
         :type => 'boolean'
       }
-    elsif property.is_a?( ApiTools::Presenters::DateTime )
+    elsif property.is_a?( Hoodoo::Presenters::DateTime )
       {
         :type   => 'string',
         :format => 'date-time'
       }
-    elsif property.is_a?( ApiTools::Presenters::Date )
+    elsif property.is_a?( Hoodoo::Presenters::Date )
       {
         :type   => 'string',
         :format => 'date'
       }
-    elsif property.is_a?( ApiTools::Presenters::Decimal )
+    elsif property.is_a?( Hoodoo::Presenters::Decimal )
       {
         :type        => 'string',
         :format      => 'decimal',
         :description => "Precision #{ property.precision }"
       }
-    elsif property.is_a?( ApiTools::Presenters::Enum )
+    elsif property.is_a?( Hoodoo::Presenters::Enum )
       list = property.from
       list = [ 'any' ] if list.nil? || list.empty?
       {
         :type => 'string',
         :enum => list
       }
-    elsif property.is_a?( ApiTools::Presenters::Float )
+    elsif property.is_a?( Hoodoo::Presenters::Float )
       {
         :type   => 'number',
         :format => 'double'
       }
-    elsif property.is_a?( ApiTools::Presenters::Hash )
+    elsif property.is_a?( Hoodoo::Presenters::Hash )
       ret = { :type => 'object', :properties => {} }
       unless property.properties.nil? || property.properties.empty?
         # Swagger spec doesn't seem to support saying "any key with values
@@ -291,35 +291,35 @@ def to_json_schema( resource, properties, json = nil )
           to_json_schema( resource, property.properties, ret )
         end
       end
-    elsif property.is_a?( ApiTools::Presenters::Integer )
+    elsif property.is_a?( Hoodoo::Presenters::Integer )
       {
         :type   => 'integer',
         :format => 'int32'
       }
-    elsif property.is_a?( ApiTools::Presenters::Object )
+    elsif property.is_a?( Hoodoo::Presenters::Object )
       ret = { :type => 'object', :properties => {} }
       unless property.properties.nil? || property.properties.empty?
         to_json_schema( resource, property.properties, ret )
       end
-    elsif property.is_a?( ApiTools::Presenters::String )
+    elsif property.is_a?( Hoodoo::Presenters::String )
       ret = { :type => 'string' }
       ret[ :maxLength ] = property.length unless property.length.nil? || property.length == 0
       ret
-    elsif property.is_a?( ApiTools::Presenters::Tags )
+    elsif property.is_a?( Hoodoo::Presenters::Tags )
       {
         :type   => 'string',
         :format => 'comma-separated-tag-names'
       }
-    elsif property.is_a?( ApiTools::Presenters::Text )
+    elsif property.is_a?( Hoodoo::Presenters::Text )
       {
         :type => 'string'
       }
-    elsif property.is_a?( ApiTools::Presenters::UUID )
+    elsif property.is_a?( Hoodoo::Presenters::UUID )
       {
         :type      => 'string',
         :format    => 'uuid',
-        :minLength => ApiTools::UUID.generate.length,
-        :maxLength => ApiTools::UUID.generate.length
+        :minLength => Hoodoo::UUID.generate.length,
+        :maxLength => Hoodoo::UUID.generate.length
       }
 
     else
@@ -379,13 +379,13 @@ paths                        = {}
 required_reference_resources = []
 
 interfaces.each do | interface |
-  actions = interface.actions || ApiTools::ServiceMiddleware::ALLOWED_ACTIONS
+  actions = interface.actions || Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
   next if actions.empty?
 
   base = "/v#{ interface.version }/#{ interface.endpoint }"
 
   actions.each do | action |
-    queries = ApiTools::ServiceMiddleware::ALLOWED_QUERIES_ALL.dup
+    queries = Hoodoo::ServiceMiddleware::ALLOWED_QUERIES_ALL.dup
 
     case action
       when :show
@@ -394,7 +394,7 @@ interfaces.each do | interface |
       when :list
         method   = :get
         path     = base
-        queries += ApiTools::ServiceMiddleware::ALLOWED_QUERIES_LIST
+        queries += Hoodoo::ServiceMiddleware::ALLOWED_QUERIES_LIST
       when :create
         method = :post
         path   = base + "/{ident}"
@@ -556,14 +556,14 @@ end
 # Define named resource schemas used above.
 
 resource_schemas = {}
-resources        = ApiTools::Data::Resources.constants.select do | c |
-  Class === ApiTools::Data::Resources.const_get( c )
+resources        = Hoodoo::Data::Resources.constants.select do | c |
+  Class === Hoodoo::Data::Resources.const_get( c )
 end
 
 resources.each do | resource |
   next unless required_reference_resources.include?( resource )
 
-  klass = ApiTools::Data::Resources.const_get( resource )
+  klass = Hoodoo::Data::Resources.const_get( resource )
   dsl   = klass.get_schema()
 
   resource_schemas[ resource ] = to_json_schema( resource, dsl.properties )

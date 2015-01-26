@@ -7,17 +7,17 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'CurrencyAmount'.
       #
-      class CurrencyAmount < ApiTools::Presenters::Base
+      class CurrencyAmount < Hoodoo::Presenters::Base
 
         schema do
-          string :currency_code, :required => true, :length => ApiTools::Data::Types::CURRENCY_CODE_MAX_LENGTH
-          string :qualifier, :length => ApiTools::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH
+          string :currency_code, :required => true, :length => Hoodoo::Data::Types::CURRENCY_CODE_MAX_LENGTH
+          string :qualifier, :length => Hoodoo::Data::Types::CURRENCY_QUALIFIER_MAX_LENGTH
           text :amount, :required => true
         end
 

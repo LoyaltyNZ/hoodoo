@@ -3,7 +3,7 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Rack middleware, declared in a +config.ru+ file in the usual
-#           way - "use( ApiTools::ServiceMiddleware )".
+#           way - "use( Hoodoo::ServiceMiddleware )".
 # ----------------------------------------------------------------------
 #           22-Sep-2014 (ADH): Created.
 #           16-Oct-2014 (TC):  Added Session Code.
@@ -17,15 +17,15 @@ require 'net/http'
 require 'net/https'
 require 'drb/drb'
 
-module ApiTools
+module Hoodoo
 
   # Rack middleware, declared in (e.g.) a +config.ru+ file in the usual way:
   #
-  #      use( ApiTools::ServiceMiddleware )
+  #      use( Hoodoo::ServiceMiddleware )
   #
   # This is the core of the common service implementation on the Rack
   # client-request-handling side. It is run in the context of an
-  # ApiTools::ServiceApplication subclass that's been given to Rack as the Rack
+  # Hoodoo::ServiceApplication subclass that's been given to Rack as the Rack
   # endpoint application; it looks at the component interfaces supported by the
   # service and routes requests to the correct one (or raises a 404).
   #
@@ -36,10 +36,10 @@ module ApiTools
   # consistent way to return results, which can be post-processed further by
   # the middleware before returning the data to Rack.
   #
-  # The middleware supports structured logging through ApiTools::Logger via the
-  # custom ApiTools::ServiceMiddleware::AMQPLogWriter class. Access the logger
-  # instance with ApiTools::ServiceMiddleware::logger. Call +report+ on this
-  # (see ApiTools::Logger::WriterMixin#report) to make structured log entries.
+  # The middleware supports structured logging through Hoodoo::Logger via the
+  # custom Hoodoo::ServiceMiddleware::AMQPLogWriter class. Access the logger
+  # instance with Hoodoo::ServiceMiddleware::logger. Call +report+ on this
+  # (see Hoodoo::Logger::WriterMixin#report) to make structured log entries.
   # The middleware's own entries use component +Middleware+ for general data.
   # It also logs essential essential information about successful and failed
   # interactions with resource endpoints using the resource name as the
@@ -116,12 +116,12 @@ module ApiTools
     #
     # Example:
     #
-    #     if ApiTools::ServiceMiddleware.environment.production?
+    #     if Hoodoo::ServiceMiddleware.environment.production?
     #       # ...do something only if RACK_ENV="production"
     #     end
     #
     def self.environment
-      @@_env ||= ApiTools::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
+      @@_env ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
     # Do we have Memcache available? If not, assume local development with
@@ -141,8 +141,8 @@ module ApiTools
     end
 
     # Access the middleware's logging instance. Call +report+ on this to make
-    # structured log entries. See ApiTools::Logger::WriterMixin#report along
-    # with ApiTools::Logger for other calls you can use.
+    # structured log entries. See Hoodoo::Logger::WriterMixin#report along
+    # with Hoodoo::Logger for other calls you can use.
     #
     # The logging system 'wakes up' in stages. Initially, only console based
     # output is added, as the Middleware Ruby code is parsed and configures
@@ -183,13 +183,13 @@ module ApiTools
     # If you want to completely override the middleware's logger and replace
     # it with your own at any time (not recommended), call here.
     #
-    # +logger+:: Alternative ApiTools::Logger instance to use for all
+    # +logger+:: Alternative Hoodoo::Logger instance to use for all
     #            middleware logging from this point onwards. The value will
     #            subsequently be returned by the ::logger class method.
     #
     def self.set_logger( logger )
-      unless logger.is_a?( ApiTools::Logger )
-        raise "ApiTools::Communicators::set_logger must be called with an instance of ApiTools::Logger only"
+      unless logger.is_a?( Hoodoo::Logger )
+        raise "Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only"
       end
 
       @@external_logger = true
@@ -241,12 +241,12 @@ module ApiTools
           newrelic_wrapper  = service_container
           service_container = service_container.target()
         else
-          raise "ApiTools::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by ApiTools; incompatible NewRelic version."
+          raise "Hoodoo::ServiceMiddleware instance created with NewRelic-wrapped ServiceApplication entity, but NewRelic API is not as expected by Hoodoo; incompatible NewRelic version."
         end
       end
 
-      unless service_container.is_a?( ApiTools::ServiceApplication )
-        raise "ApiTools::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
+      unless service_container.is_a?( Hoodoo::ServiceApplication )
+        raise "Hoodoo::ServiceMiddleware instance created with non-ServiceApplication entity of class '#{ service_container.class }' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?"
       end
 
       # Collect together the implementation instances and the matching regexps
@@ -255,16 +255,16 @@ module ApiTools
       # Key              Value
       # =======================================================================
       # regexp           Regexp for +String#match+ on the URI path component
-      # interface        ApiTools::ServiceInterface subclass associated with
+      # interface        Hoodoo::ServiceInterface subclass associated with
       #                  the endpoint regular expression in +regexp+
       # actions          Set of symbols naming allowed actions
-      # implementation   ApiTools::ServiceImplementation subclass *instance* to
+      # implementation   Hoodoo::ServiceImplementation subclass *instance* to
       #                  use on match
 
       @@services = service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
-          raise "ApiTools::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ service_container.class }"
+          raise "Hoodoo::ServiceMiddleware encountered invalid interface class #{ interface } via service class #{ service_container.class }"
         end
 
         # If anything uses a public interface, we need to tell ourselves that
@@ -346,7 +346,7 @@ module ApiTools
 
           begin
             @@logger.error(
-              'ApiTools::ServiceMiddleware#call',
+              'Hoodoo::ServiceMiddleware#call',
               'Middleware exception in exception handler',
               exception.to_s
             )
@@ -399,7 +399,7 @@ module ApiTools
     def self.set_up_basic_logging
 
       @@external_logger = false
-      @@logger          = ApiTools::Logger.new
+      @@logger          = Hoodoo::Logger.new
 
       # RACK_ENV "test" and "development" environments have debug level
       # logging. Other environments have info-level logging.
@@ -414,7 +414,7 @@ module ApiTools
       # now is "development", which always logs to stdout.
 
       if self.environment.development?
-        @@logger.add( ApiTools::Logger::StreamWriter.new( $stdout ) )
+        @@logger.add( Hoodoo::Logger::StreamWriter.new( $stdout ) )
       end
     end
 
@@ -436,7 +436,7 @@ module ApiTools
 
       if self.environment.test? || self.on_queue? == false
         log_path    = File.join( base_path, "#{ self.environment }.log" )
-        file_writer = ApiTools::Logger::FileWriter.new( log_path )
+        file_writer = Hoodoo::Logger::FileWriter.new( log_path )
 
         @@logger.add( file_writer )
       end
@@ -459,7 +459,7 @@ module ApiTools
       return if @@external_logger == true
 
       if self.environment.test? == false && self.on_queue?
-        alchemy_queue_writer = ApiTools::ServiceMiddleware::AMQPLogWriter.new( alchemy )
+        alchemy_queue_writer = Hoodoo::ServiceMiddleware::AMQPLogWriter.new( alchemy )
 
         @@logger.add( alchemy_queue_writer )
       end
@@ -541,13 +541,13 @@ module ApiTools
     # the fact* of calling the implementation, using the target interface's
     # resource name for the structured log entry's "component" field.
     #
-    # +interface+::      The ApiTools::ServiceInterface subclass referring to
+    # +interface+::      The Hoodoo::ServiceInterface subclass referring to
     #                    the service implementation that was called.
     #
     # +action+::         Name of method that was called in the service instance
     #                    as a Symbol, e.g. :list, :show.
     #
-    # +context+::        ApiTools::ServiceContext instance containing request
+    # +context+::        Hoodoo::ServiceContext instance containing request
     #                    and response details.
     #
     def auto_log( interface, action, context )
@@ -559,7 +559,7 @@ module ApiTools
       #
       return if ( context.response.halt_processing? )
 
-      # Data as per ApiTools::ServiceMiddleware::StructuredLogger.
+      # Data as per Hoodoo::ServiceMiddleware::StructuredLogger.
 
       data = {
         :interaction_id => @interaction_id,
@@ -677,7 +677,7 @@ module ApiTools
         # Now attempt to contact the DRb server daemon. If it can't be
         # contacted, try to start it first, then connect.
 
-        drb_uri = ApiTools::ServiceMiddleware::ServiceRegistryDRbServer.uri()
+        drb_uri = Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.uri()
         DRb.start_service
 
         begin
@@ -739,9 +739,9 @@ module ApiTools
       # no configured MemCache available (assume local development).
 
       environment = self.class.environment()
-      ApiTools::ServiceSession.testing( environment.test? || ! self.class.has_memcache? )
+      Hoodoo::ServiceSession.testing( environment.test? || ! self.class.has_memcache? )
 
-      @service_session = ApiTools::ServiceSession.load_session(
+      @service_session = Hoodoo::ServiceSession.load_session(
         ENV[ 'MEMCACHE_URL' ],
         @session_id,
       )
@@ -774,7 +774,7 @@ module ApiTools
 
       @locale           = deal_with_language_header()
       @interaction_id   = find_or_generate_interaction_id()
-      @service_response = ApiTools::ServiceResponse.new( @interaction_id )
+      @service_response = Hoodoo::ServiceResponse.new( @interaction_id )
 
       check_content_type_header()
 
@@ -997,7 +997,7 @@ module ApiTools
 
       # Finally - dispatch to service.
 
-      context = ApiTools::ServiceContext.new(
+      context = Hoodoo::ServiceContext.new(
         @service_session,
         service_request,
         @service_response,
@@ -1009,17 +1009,17 @@ module ApiTools
 
     # Dispatch a call to the given implementation, with before/after actions.
     #
-    # +interface+::      The ApiTools::ServiceInterface subclass referring
+    # +interface+::      The Hoodoo::ServiceInterface subclass referring
     #                    to the implementation class of which an instance is
     #                    given in the +implementation+ parameter.
     #
-    # +implementation+:: ApiTools::ServiceImplementation subclass instance to
+    # +implementation+:: Hoodoo::ServiceImplementation subclass instance to
     #                    call.
     #
     # +action+::         Name of method to call in that instance as a Symbol,
     #                    e.g. :list, :show.
     #
-    # +context+::        ApiTools::ServiceContext instance to pass to the
+    # +context+::        Hoodoo::ServiceContext instance to pass to the
     #                    named action method as the sole input parameter.
     #
     def dispatch_to( interface, implementation, action, context )
@@ -1078,7 +1078,7 @@ module ApiTools
       # the validation of the service's output (internal self-check) according
       # the expected returned Resource that the interface class defines (see
       # the "interface.resource" property), so long as it's defined in the
-      # ApiTools::Data::Resources collection.
+      # Hoodoo::Data::Resources collection.
       #
       # The outgoing response body in the service response object is an Array
       # or Hash. We can check, for known resource types, the "language" of the
@@ -1150,7 +1150,7 @@ module ApiTools
     #
     def find_or_generate_interaction_id
       iid = @rack_request.env[ 'HTTP_X_INTERACTION_ID' ]
-      iid = ApiTools::UUID.generate() if iid.nil? || iid == ''
+      iid = Hoodoo::UUID.generate() if iid.nil? || iid == ''
       iid
     end
 
@@ -1161,7 +1161,7 @@ module ApiTools
     # (At the time of writing, platform documentations say we're JSON only - but
     # there's an strong chance of e.g. XML representation being demanded later).
     #
-    # +response+:: ApiTools::ServiceResponse instance to update.
+    # +response+:: Hoodoo::ServiceResponse instance to update.
     #
     def set_common_response_headers( response )
       response.add_header( 'X-Interaction-ID', @interaction_id )
@@ -1174,7 +1174,7 @@ module ApiTools
     # http://www.html5rocks.com/en/tutorials/cors/
     # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
-    # +response+:: ApiTools::ServiceResponse instance to update.
+    # +response+:: Hoodoo::ServiceResponse instance to update.
     # +origin+::   Value of inbound request's "Origin" HTTP header.
     #
     def set_cors_normal_response_headers( response, origin )
@@ -1187,7 +1187,7 @@ module ApiTools
     # http://www.html5rocks.com/en/tutorials/cors/
     # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
-    # +response+:: ApiTools::ServiceResponse instance to update.
+    # +response+:: Hoodoo::ServiceResponse instance to update.
     # +origin+::   Value of inbound request's "Origin" HTTP header.
     #
     def set_cors_preflight_response_headers( response, origin )
@@ -1279,19 +1279,19 @@ module ApiTools
     # Determine the action to call in a service for the given inbound HTTP
     # method.
     #
-    # +interface+::       ApiTools::ServiceInterface for which the call is
+    # +interface+::       Hoodoo::ServiceInterface for which the call is
     #                     being made.
     # +http_method+::     Inbound method as a string, e.g. +'POST'+
     # +get_is_list+::     If +true+, treat GET methods as +:list+, else as
     #                     +:show+. This is often determined on the basis
     #                     of e.g. path components after the endpoint part
     #                     of the URI path being absent or present.
-    # +response+::        ApiTools::ServiceResponse instance that will be
+    # +response+::        Hoodoo::ServiceResponse instance that will be
     #                     updated with an error if the HTTP method does not
     #                     map to an allowed action.
     #
     # Returns the action as a symbol (e.g. +:list+) unless there is an error.
-    # If the ApiTools::ServiceResponse#halt_processing? result for the given
+    # If the Hoodoo::ServiceResponse#halt_processing? result for the given
     # +response+ parameter is +true+ then the returned value is undefined.
     # The service does not support the action; +response+ has already been
     # updated with an appropriate error.
@@ -1338,31 +1338,31 @@ module ApiTools
       return action
     end
 
-    # Update a ApiTools::ServiceResponse instance for making a call to
-    # the given ApiTools::ServiceInterface, setting up error description
+    # Update a Hoodoo::ServiceResponse instance for making a call to
+    # the given Hoodoo::ServiceInterface, setting up error description
     # information. Other initialisation is left to the caller.
     #
-    # +response+::  ApiTools::ServiceResponse instance to update.
-    # +interface+:: ApiTools::ServiceInterface for which the request is being
+    # +response+::  Hoodoo::ServiceResponse instance to update.
+    # +interface+:: Hoodoo::ServiceInterface for which the request is being
     #               constructed. Custom error descriptions from that
     #               interface, if any, are included in the response object's
     #               error collection data.
     #
     def update_service_response_for( response, interface )
       unless interface.errors_for.nil?
-        response.errors = ApiTools::Errors.new( interface.errors_for )
+        response.errors = Hoodoo::Errors.new( interface.errors_for )
       end
     end
 
-    # Returns a new ApiTools::ServiceRequest instance for making a call to
-    # the given ApiTools::ServiceInterface, setting up locale information.
+    # Returns a new Hoodoo::ServiceRequest instance for making a call to
+    # the given Hoodoo::ServiceInterface, setting up locale information.
     # Other initialisation is left to the caller.
     #
-    # +interface+:: ApiTools::ServiceInterface for which the request is being
+    # +interface+:: Hoodoo::ServiceInterface for which the request is being
     #               constructed.
     #
     def new_service_request_for( interface )
-      request        = ApiTools::ServiceRequest.new
+      request        = Hoodoo::ServiceRequest.new
       request.locale = @locale
 
       return request
@@ -1376,9 +1376,9 @@ module ApiTools
     #                     different things in the query string.
     # +query_string+::    The 'raw' query string from Rack.
     # +interface+::       Interface definition for the service being targeted.
-    # +service_request::  An ApiTools::ServiceRequest instance. This will be
+    # +service_request::  An Hoodoo::ServiceRequest instance. This will be
     #                     updated if successful with list parameter data.
-    # +service_response:: An ApiTools::ServiceResponse instance. This will be
+    # +service_response:: An Hoodoo::ServiceResponse instance. This will be
     #                     updated if unsuccessful with error data.
     #
     # On exit, +service_response+ will be updated with errors or
@@ -1443,7 +1443,7 @@ module ApiTools
 
       unless malformed
         if query_hash.has_key?( 'limit' )
-          limit     = ApiTools::Utilities::to_integer?( query_hash[ 'limit' ] )
+          limit     = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] )
           malformed = :limit if limit.nil?
         else
           limit = interface.to_list.limit.to_i
@@ -1452,7 +1452,7 @@ module ApiTools
 
       unless malformed
         if query_hash.has_key?( 'offset' )
-          offset    = ApiTools::Utilities::to_integer?( query_hash[ 'offset' ] )
+          offset    = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] )
           malformed = :offset if offset.nil?
         else
           offset = 0
@@ -1550,11 +1550,11 @@ module ApiTools
     #
     # +action+::    Must be +:create+ or +:update+.
     #
-    # +interface+:: ApiTools::ServiceInterface to use for verification schema.
+    # +interface+:: Hoodoo::ServiceInterface to use for verification schema.
     #
     # +body+::      Hash of body data to verify under verification schema.
     #
-    # +response+::  ApiTools::ServiceResponse instance to update if errors are
+    # +response+::  Hoodoo::ServiceResponse instance to update if errors are
     #               found in the body data.
     #
     def validate_body_data_for( action, interface, body, response )
@@ -1579,12 +1579,12 @@ module ApiTools
     # Record an exception in a given response object, overwriting any previous
     # error data if present.
     #
-    # +response+::  The ApiTools::ServiceResponse object to record in; its
-    #               ApiTools::ServiceResponse#errors collection is overwritten.
+    # +response+::  The Hoodoo::ServiceResponse object to record in; its
+    #               Hoodoo::ServiceResponse#errors collection is overwritten.
     #
     # +exception+:: The Exception instance to record.
     #
-    # Returns the result of ApiTools::ServiceResponse#add_error.
+    # Returns the result of Hoodoo::ServiceResponse#add_error.
     #
     def record_exception( response, exception )
       reference = {
@@ -1598,7 +1598,7 @@ module ApiTools
       # A service can rewrite this field with a different object, leading
       # to an exception within the exception handler; so use a new one!
       #
-      response.errors = ApiTools::Errors.new()
+      response.errors = Hoodoo::Errors.new()
 
       return response.add_error(
         'platform.fault',
@@ -1702,7 +1702,7 @@ module ApiTools
     end
 
     # Perform an inter-resource call. This shouldn't be called directly; call
-    # via the ApiTools::ServiceMiddleware::ServiceEndpoint subclass specialised
+    # via the Hoodoo::ServiceMiddleware::ServiceEndpoint subclass specialised
     # methods instead, which makes sure it sets up the required parameters in
     # correct combinations. Undefined results will arise for incorrect calls.
     #
@@ -1726,11 +1726,11 @@ module ApiTools
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # An ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray or
-    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash is returned
+    # An Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray or
+    # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash is returned
     # from these methods; @service_response or the wider processing context
     # is not automatically modified. Callers MUST use the methods provided by
-    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase to detect
+    # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase to detect
     # and handle error conditions, unless for some reason they wish to ignore
     # resource-to-resource call errors.
     #
@@ -1782,7 +1782,7 @@ module ApiTools
       # Add a 404 error to the response (via a Proc for internal reuse).
 
       add_404 = Proc.new {
-        hash = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
+        hash = Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
         hash.platform_errors.add_error(
           'platform.not_found',
           'reference' => { :entity_name => "v#{ options[ :version ] } of #{ options[ :resource ] } interface endpoint" }
@@ -1900,15 +1900,15 @@ module ApiTools
 
       parsed = JSON.parse(
         response.body,
-        :object_class => ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash,
-        :array_class  => ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray
+        :object_class => Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash,
+        :array_class  => Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray
       )
 
       # Just in case someone changes JSON parsers under us and the replacement
       # doesn't support the options used above...
 
-      unless parsed.is_a?( ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash )
-        raise "ApiTools::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
+      unless parsed.is_a?( Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash )
+        raise "Hoodoo::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
       end
 
       # If the parsed data wrapped an array, extract just the array part, else
@@ -1922,7 +1922,7 @@ module ApiTools
         # This isn't an array, it's an AugmentedHash describing errors. Turn
         # this into a formal errors collection.
 
-        errors_from_other_resource = ApiTools::Errors.new()
+        errors_from_other_resource = Hoodoo::Errors.new()
 
         parsed[ 'errors' ].each do | error |
           errors_from_other_resource.add_precompiled_error(
@@ -1963,7 +1963,7 @@ module ApiTools
       # parsed an inbound HTTP request and a response object that contains
       # the usual default data.
 
-      local_service_response = ApiTools::ServiceResponse.new( @interaction_id )
+      local_service_response = Hoodoo::ServiceResponse.new( @interaction_id )
       set_common_response_headers( local_service_response )
       update_service_response_for( local_service_response, interface )
 
@@ -1981,7 +1981,7 @@ module ApiTools
       # for responding early (via a Proc for internal reuse later).
 
       add_local_errors = Proc.new {
-        hash = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
+        hash = Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new
         hash.platform_errors.merge!( local_service_response.errors )
         hash
       }
@@ -1993,7 +1993,7 @@ module ApiTools
       local_service_request.uri_path_extension  = ''
 
       unless query_hash.nil?
-        query_hash = ApiTools::Utilities.stringify( query_hash )
+        query_hash = Hoodoo::Utilities.stringify( query_hash )
 
         # This is for inter-resource local calls where a service author
         # specifies ":_embed => 'foo'" accidentally, forgetting that it
@@ -2036,7 +2036,7 @@ module ApiTools
 
       debug_log( 'Dispatching local inter-resource call', local_service_request.body )
 
-      context = ApiTools::ServiceContext.new(
+      context = Hoodoo::ServiceContext.new(
         @service_session,
         local_service_request,
         local_service_response,
@@ -2051,9 +2051,9 @@ module ApiTools
       data = local_service_response.body
 
       if data.is_a? Array
-        data = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new( data )
+        data = Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new( data )
       else
-        data = ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedHash[ data ]
+        data = Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash[ data ]
       end
 
       data.set_platform_errors(
@@ -2063,7 +2063,7 @@ module ApiTools
       return data
     end
 
-    # Take an ApiTools::Errors instance constructed from, or obtained via
+    # Take an Hoodoo::Errors instance constructed from, or obtained via
     # a call to another service (inter-resource local or remote call) and
     # translate the contents to make sense when those errors are reported
     # in the context of an outer resource's response to a request.
@@ -2087,4 +2087,4 @@ module ApiTools
     set_up_basic_logging()
 
   end   # 'class ServiceMiddleware'
-end     # 'module ApiTools'
+end     # 'module Hoodoo'

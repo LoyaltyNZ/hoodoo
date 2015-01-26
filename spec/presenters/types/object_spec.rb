@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Object do
+describe Hoodoo::Presenters::Object do
 
   before do
-    @inst = ApiTools::Presenters::Object.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Object.new('one',:required => false)
 
-    class TestPresenterObject < ApiTools::Presenters::Base
+    class TestPresenterObject < Hoodoo::Presenters::Base
 
       schema do
         # Intentional mix of strings and symbols in default object

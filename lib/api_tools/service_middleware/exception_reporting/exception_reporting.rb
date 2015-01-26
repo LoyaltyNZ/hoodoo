@@ -8,7 +8,7 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
 
     # Exception reporting / monitoring through external services.
@@ -17,10 +17,10 @@ module ApiTools
 
       # Pool of exception reporters.
       #
-      @@reporter_pool = ApiTools::Communicators::Pool.new
+      @@reporter_pool = Hoodoo::Communicators::Pool.new
 
       # Add an exception reporter class to the set of reporters. See the
-      # ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter class for an
+      # Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter class for an
       # overview.
       #
       # Whenever the middleware's own exception handler catches an exception,
@@ -37,12 +37,12 @@ module ApiTools
       # made but processing of other reporters continues uninterrupted. It is
       # up to individual reporter classes to manage thread safety.
       #
-      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+      # +klass+:: Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to add.
       #
       def self.add( klass )
-        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
-          raise "ApiTools::ServiceMiddleware.add must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
+        unless klass < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+          raise "Hoodoo::ServiceMiddleware.add must be called with an Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.add( klass.instance )
@@ -51,12 +51,12 @@ module ApiTools
       # Remove an exception reporter class from the set of reporters. See
       # ::add for details.
       #
-      # +klass+:: ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
+      # +klass+:: Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to remove.
       #
       def self.remove( klass )
-        unless klass < ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter
-          raise "ApiTools::ServiceMiddleware.remove must be called with an ApiTools::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
+        unless klass < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+          raise "Hoodoo::ServiceMiddleware.remove must be called with an Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.remove( klass.instance )
@@ -85,9 +85,9 @@ module ApiTools
       end
 
       # Implementation detail of
-      # ApiTools::ServiceMiddleware::ExceptionReporting used to carry
+      # Hoodoo::ServiceMiddleware::ExceptionReporting used to carry
       # multiple parameters describing exception related data through the
-      # ApiTools::Communicators::Pool#communicate mechanism.
+      # Hoodoo::Communicators::Pool#communicate mechanism.
       #
       class Payload
 

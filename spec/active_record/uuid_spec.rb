@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'active_record'
 
-describe ApiTools::ActiveRecord::UUID do
+describe Hoodoo::ActiveRecord::UUID do
   before :all do
     spec_helper_silence_stdout() do
       tblname = :r_spec_model_uuid_tests
@@ -12,11 +12,11 @@ describe ApiTools::ActiveRecord::UUID do
 
       ActiveRecord::Migration.add_index( tblname, :id, :unique => true )
 
-      # ApiTools::ActiveRecord::Base adds a filter to assign a uuid before
+      # Hoodoo::ActiveRecord::Base adds a filter to assign a uuid before
       # validation as well as validations to ensure UUID is present and is
       # a valid UUID.
       #
-      class RSpecModelUUIDTest < ApiTools::ActiveRecord::Base
+      class RSpecModelUUIDTest < Hoodoo::ActiveRecord::Base
       end
     end
   end
@@ -26,7 +26,7 @@ describe ApiTools::ActiveRecord::UUID do
     m.save
 
     expect( m.id ).to_not be_nil
-    expect( ApiTools::UUID.valid?( m.id ) ).to eq( true )
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
 
   it 'should complain about a bad UUID' do
@@ -34,18 +34,18 @@ describe ApiTools::ActiveRecord::UUID do
     m.id = "hello"
 
     expect( m.save ).to eq( false )
-    expect( ApiTools::UUID.valid?( m.id ) ).to eq( false )
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( false )
     expect( m.errors ).to_not be_empty
     expect( m.errors.messages ).to eq( { :id => [ 'is invalid' ] } )
   end
 
   it 'should not overwrite a good UUID' do
     m = RSpecModelUUIDTest.new
-    uuid = ApiTools::UUID.generate()
+    uuid = Hoodoo::UUID.generate()
     m.id = uuid
     m.save
 
     expect( m.id ).to eq( uuid )
-    expect( ApiTools::UUID.valid?( m.id ) ).to eq( true )
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
 end

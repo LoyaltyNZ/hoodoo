@@ -1,6 +1,6 @@
 require "uuidtools"
 
-module ApiTools
+module Hoodoo
 
   # Class that handles generation and validation of UUIDs. Whenever you
   # want to associate an identifier with something, you should use this

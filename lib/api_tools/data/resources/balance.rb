@@ -7,13 +7,13 @@
 #           07-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Balance'.
       #
-      class Balance < ApiTools::Presenters::Base
+      class Balance < Hoodoo::Presenters::Base
 
         schema do
           text :token_identifier,  :required => true

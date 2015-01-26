@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-class RSpecTestServiceInterfaceImplementationA < ApiTools::ServiceImplementation
+class RSpecTestServiceInterfaceImplementationA < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceInterfaceImplementationB < ApiTools::ServiceImplementation
+class RSpecTestServiceInterfaceImplementationB < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceInterfaceInterfaceA < ApiTools::ServiceInterface
+class RSpecTestServiceInterfaceInterfaceA < Hoodoo::ServiceInterface
   interface "RSpecTestServiceInterfaceAResource" do
     version 42
     endpoint :rspec_test_service_interface_a, RSpecTestServiceInterfaceImplementationA
@@ -36,7 +36,7 @@ class RSpecTestServiceInterfaceInterfaceA < ApiTools::ServiceInterface
   end
 end
 
-class RSpecTestServiceInterfaceInterfaceB < ApiTools::ServiceInterface
+class RSpecTestServiceInterfaceInterfaceB < Hoodoo::ServiceInterface
   interface :RSpecTestServiceInterfaceBResource do
     endpoint :rspec_test_service_interface_b, RSpecTestServiceInterfaceImplementationB
 
@@ -49,13 +49,13 @@ class RSpecTestServiceInterfaceInterfaceB < ApiTools::ServiceInterface
   end
 end
 
-class RSpecTestServiceInterfaceInterfaceDefault < ApiTools::ServiceInterface
+class RSpecTestServiceInterfaceInterfaceDefault < Hoodoo::ServiceInterface
   interface :RSpecTestServiceInterfaceDefaultResource do
     endpoint :rspec_test_service_interface_default, RSpecTestServiceInterfaceImplementationA # (sic.)
   end
 end
 
-describe ApiTools::ServiceInterface do
+describe Hoodoo::ServiceInterface do
 
   context 'DSL test classes' do
 
@@ -95,11 +95,11 @@ describe ApiTools::ServiceInterface do
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
       expect(RSpecTestServiceInterfaceInterfaceA.to_create).to_not be_nil
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(ApiTools::Presenters::Enum)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
       expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['bar'].from).to eq(["baz", "boo"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['hello']).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['world']).to be_a(ApiTools::Presenters::UUID)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['hello']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['world']).to be_a(Hoodoo::Presenters::UUID)
       expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['world'].resource).to eq(:Earth)
       expect(RSpecTestServiceInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
     end
@@ -108,8 +108,8 @@ describe ApiTools::ServiceInterface do
     #
     it 'should be correctly configured (B)' do
       expect(RSpecTestServiceInterfaceInterfaceB.to_update).to_not be_nil
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['one']).to be_a(ApiTools::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['two']).to be_a(ApiTools::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['one']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['two']).to be_a(Hoodoo::Presenters::Text)
     end
   end
 
@@ -118,35 +118,35 @@ describe ApiTools::ServiceInterface do
       expect {
         RSpecTestServiceInterfaceInterfaceB.interface :FooB do
         end
-      }.to raise_error(RuntimeError, "ApiTools::ServiceInterface subclass unexpectedly ran ::interface more than once")
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface subclass unexpectedly ran ::interface more than once")
     end
 
     it 'should complain about no endpoint' do
-      class RSpecTestServiceInterfaceInterfaceC < ApiTools::ServiceInterface
+      class RSpecTestServiceInterfaceInterfaceC < Hoodoo::ServiceInterface
       end
 
       expect {
         RSpecTestServiceInterfaceInterfaceC.interface :FooC do
         end
-      }.to raise_error(RuntimeError, "ApiTools::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions")
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions")
     end
 
     it 'should complain about incorrect implementation classes' do
-      class RSpecTestServiceInterfaceInterfaceD < ApiTools::ServiceInterface
+      class RSpecTestServiceInterfaceInterfaceD < Hoodoo::ServiceInterface
       end
 
       expect {
         RSpecTestServiceInterfaceInterfaceD.interface :FooD do
-          endpoint :an_endpoint, ApiTools::ServiceImplementation # Not a *subclass*, so just as invalid as some other unrelated Class
+          endpoint :an_endpoint, Hoodoo::ServiceImplementation # Not a *subclass*, so just as invalid as some other unrelated Class
         end
-      }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#endpoint must provide ApiTools::ServiceImplementation subclasses, but 'ApiTools::ServiceImplementation' was given instead")
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#endpoint must provide Hoodoo::ServiceImplementation subclasses, but 'Hoodoo::ServiceImplementation' was given instead")
     end
 
     context 'in #action' do
       it 'should complain about incorrect actions' do
-        class RSpecTestServiceInterfaceImplementationE < ApiTools::ServiceImplementation
+        class RSpecTestServiceInterfaceImplementationE < Hoodoo::ServiceImplementation
         end
-        class RSpecTestServiceInterfaceInterfaceE < ApiTools::ServiceInterface
+        class RSpecTestServiceInterfaceInterfaceE < Hoodoo::ServiceInterface
         end
 
         expect {
@@ -154,15 +154,15 @@ describe ApiTools::ServiceInterface do
             endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationE
             actions :create, :made_this_up, :delete, :made_this_up_too
           end
-        }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+        }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
       end
     end
 
     context 'in #public_action' do
       it 'should complain about incorrect actions' do
-        class RSpecTestServiceInterfaceImplementationF < ApiTools::ServiceImplementation
+        class RSpecTestServiceInterfaceImplementationF < Hoodoo::ServiceImplementation
         end
-        class RSpecTestServiceInterfaceInterfaceF < ApiTools::ServiceInterface
+        class RSpecTestServiceInterfaceInterfaceF < Hoodoo::ServiceInterface
         end
 
         expect {
@@ -170,7 +170,7 @@ describe ApiTools::ServiceInterface do
             endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationF
             public_actions :create, :made_this_up, :delete, :made_this_up_too
           end
-        }.to raise_error(RuntimeError, "ApiTools::ServiceInterface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+        }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
       end
     end
 
@@ -178,38 +178,38 @@ describe ApiTools::ServiceInterface do
     #
     it 'should complain about incorrect instantiation' do
       expect {
-        ApiTools::ServiceInterface::ToListDSL.new( Array.new ) do
+        Hoodoo::ServiceInterface::ToListDSL.new( Array.new ) do
         end
-      }.to raise_error(RuntimeError, "ApiTools::ServiceInstance::ToListDSL\#initialize requires an ApiTools::ServiceInstance::ToList instance - got 'Array'")
+      }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::ServiceInstance::ToList instance - got 'Array'")
     end
 
     context 'in #limit' do
       it 'should complain about incorrect types' do
         expect {
-          ApiTools::ServiceInterface::ToListDSL.new( ApiTools::ServiceInterface::ToList.new ) do
+          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
             limit "hello"
           end
-        }.to raise_error(RuntimeError, "ApiTools::ServiceInstance::ToListDSL\#limit requires an Integer - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#limit requires an Integer - got 'String'")
       end
     end
 
     context 'in #sort' do
       it 'should complain about incorrect types' do
         expect {
-          ApiTools::ServiceInterface::ToListDSL.new( ApiTools::ServiceInterface::ToList.new ) do
+          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
             sort "hello"
           end
-        }.to raise_error(RuntimeError, "ApiTools::ServiceInstance::ToListDSL\#sort requires a Hash - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#sort requires a Hash - got 'String'")
       end
     end
 
     context 'in #default' do
       it 'should complain about incorrect types' do
         expect {
-          ApiTools::ServiceInterface::ToListDSL.new( ApiTools::ServiceInterface::ToList.new ) do
+          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
             default 42
           end
-        }.to raise_error(RuntimeError, "ApiTools::ServiceInstance::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
+        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
       end
     end
   end

@@ -1,6 +1,6 @@
 require 'spec_helper.rb'
 
-describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
+describe Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer do
 
   # When running tests we can't assume any particular static port is free
   # on the test machine, so we must get a port dynamically. Since it might
@@ -10,7 +10,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
   # test that runs.
   #
   before :each do
-    @drb_uri = "druby://127.0.0.1:#{ ApiTools::Utilities.spare_port() }"
+    @drb_uri = "druby://127.0.0.1:#{ Hoodoo::Utilities.spare_port() }"
   end
 
   context "class instance" do
@@ -53,7 +53,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
 
   context "via DRb" do
     it 'starts as a server' do
-      DRb.start_service( @drb_uri, ApiTools::ServiceMiddleware::FRONT_OBJECT )
+      DRb.start_service( @drb_uri, Hoodoo::ServiceMiddleware::FRONT_OBJECT )
       @drb_server = DRbObject.new_with_uri( @drb_uri )
 
       expect do
@@ -65,7 +65,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
 
     it 'runs in a thread, can be pinged and shuts down' do
       expect {
-        port = ApiTools::Utilities.spare_port().to_s
+        port = Hoodoo::Utilities.spare_port().to_s
 
         thread = Thread.new do
           ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
@@ -101,7 +101,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
 
     it 'starts as a client' do
       expect {
-        DRb.start_service( @drb_uri, ApiTools::ServiceMiddleware::FRONT_OBJECT )
+        DRb.start_service( @drb_uri, Hoodoo::ServiceMiddleware::FRONT_OBJECT )
         @drb_server = DRbObject.new_with_uri( @drb_uri )
         @drb_server.add( :FooS2, 2, 'http://localhost:3030/v2/foo_s2' )
 
@@ -117,7 +117,7 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
     end
 
     it 'synchronises data' do
-      DRb.start_service( @drb_uri, ApiTools::ServiceMiddleware::FRONT_OBJECT )
+      DRb.start_service( @drb_uri, Hoodoo::ServiceMiddleware::FRONT_OBJECT )
       @drb_server = DRbObject.new_with_uri( @drb_uri )
 
       @drb_server.add( :Foo1, 2, 'http://localhost:3030/v2/foo_1' )
@@ -148,31 +148,31 @@ describe ApiTools::ServiceMiddleware::ServiceRegistryDRbServer do
 
   @time_now = Time.now.to_s
 
-  class RSpecTestTimeImplementation < ApiTools::ServiceImplementation
+  class RSpecTestTimeImplementation < Hoodoo::ServiceImplementation
     def list( context )
       context.response.set_resources( [ { 'time' => @time_now } ] )
     end
   end
 
-  class RSpecTestTimeInterface < ApiTools::ServiceInterface
+  class RSpecTestTimeInterface < Hoodoo::ServiceInterface
     interface( :Time ) { endpoint :time, RSpecTestTimeImplementation }
   end
 
-  class RSpecTestTime < ApiTools::ServiceApplication
+  class RSpecTestTime < Hoodoo::ServiceApplication
     comprised_of RSpecTestTimeInterface
   end
 
-  class RSpecTestClockImplementation < ApiTools::ServiceImplementation
+  class RSpecTestClockImplementation < Hoodoo::ServiceImplementation
     def list( context )
       context.response.set_resources( context.resource( :Time ).list() + [ { 'clock' => 'responded' } ] )
     end
   end
 
-  class RSpecTestClockInterface < ApiTools::ServiceInterface
+  class RSpecTestClockInterface < Hoodoo::ServiceInterface
     interface( :Clock ) { endpoint :clock, RSpecTestClockImplementation }
   end
 
-  class RSpecTestClock < ApiTools::ServiceApplication
+  class RSpecTestClock < Hoodoo::ServiceApplication
     comprised_of RSpecTestClockInterface
   end
 

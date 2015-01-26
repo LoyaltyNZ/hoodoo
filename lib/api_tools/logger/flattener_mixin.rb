@@ -9,11 +9,11 @@
 
 require 'time'
 
-module ApiTools
+module Hoodoo
   class Logger
 
     # This mixin is used by custom logger subclasses and defines a single
-    # method, ApiTools::Logger::FlattenerMixin#flatten, which takes
+    # method, Hoodoo::Logger::FlattenerMixin#flatten, which takes
     # structured log data and turns it into a single line of output
     # including ISO 8601 time and date in local server time zone (since
     # that makes log analysis easier for humans working in non-UTC time
@@ -25,7 +25,7 @@ module ApiTools
     #
     module FlattenerMixin
 
-      # Take the parameters from ApiTools::Logger::WriterMixin#report and
+      # Take the parameters from Hoodoo::Logger::WriterMixin#report and
       # return a single line string representing the "flattened" log data.
       #
       def flatten( log_level, component, code, data )

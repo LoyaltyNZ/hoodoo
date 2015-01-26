@@ -5,21 +5,21 @@
 # Purpose:: A high level description of a client's request, with all of
 #           the "raw" Rack request data parsed, verified as far as
 #           possible and generally cleaned up. Instances of this class
-#           are given to ApiTools::ServiceImplementation methods for
+#           are given to Hoodoo::ServiceImplementation methods for
 #           each new request.
 # ----------------------------------------------------------------------
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
-  # Instances of the ApiTools::ServiceRequest class are passed to service
+  # Instances of the Hoodoo::ServiceRequest class are passed to service
   # interface implementations when requests come in via Rack, after basic
   # checks have been passed and a particular interface implementation has
   # been identified by endpoint.
   #
   # Descriptions of default values expected out of accessors herein refer
-  # to the use case when driven through ApiTools::ServiceMiddleware. If the
+  # to the use case when driven through Hoodoo::ServiceMiddleware. If the
   # class is instantiated "bare" it gains no default values at all (all
   # read accessors would report +nil+).
   #
@@ -128,7 +128,7 @@ module ApiTools
     #
     attr_accessor :uri_path_extension
 
-    # The ApiTools::ServiceRequest::ListParameters instance
+    # The Hoodoo::ServiceRequest::ListParameters instance
     # associated with this request.
     #
     attr_accessor :list
@@ -169,7 +169,7 @@ module ApiTools
       self.locale              = 'en-nz'
       self.uri_path_components = []
       self.uri_path_extension  = ''
-      self.list                = ApiTools::ServiceRequest::ListParameters.new
+      self.list                = Hoodoo::ServiceRequest::ListParameters.new
       self.embeds              = []
       self.references          = []
     end

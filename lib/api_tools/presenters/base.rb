@@ -8,7 +8,7 @@
 #                              BasePresenter.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Presenters
 
     # Base functionality for JSON validation and presenter (rendering) layers.
@@ -21,10 +21,10 @@ module ApiTools
       # Define the JSON schema for validation.
       #
       # &block:: Block that makes calls to the DSL defined in
-      #          ApiTools::Presenters::BaseDSL in order to define the schema.
+      #          Hoodoo::Presenters::BaseDSL in order to define the schema.
       #
       def self.schema(&block)
-        @schema = ApiTools::Presenters::Object.new
+        @schema = Hoodoo::Presenters::Object.new
         @schema.instance_eval( &block )
         @schema_definition = block
       end
@@ -84,7 +84,7 @@ module ApiTools
           raise "Can't render a Resource with a nil 'created_at'" if created_at.nil?
 
           # Field "kind" is taken from the class name; this is a class method
-          # so "self.name" yields "ApiTools::Data::Resources::..." or similar.
+          # so "self.name" yields "Hoodoo::Data::Resources::..." or similar.
           # Split on "::" and take the last part as the Resource kind.
 
           target.merge!( {
@@ -124,12 +124,12 @@ module ApiTools
 
           if self.is_internationalised?
             common_fields[ 'internationalised' ] = data[ 'internationalised' ]
-            ApiTools::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = true
+            Hoodoo::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = true
           end
 
-          errors.merge!( ApiTools::Presenters::CommonResourceFields.validate( data, false ) )
+          errors.merge!( Hoodoo::Presenters::CommonResourceFields.validate( data, false ) )
 
-          ApiTools::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = false
+          Hoodoo::Presenters::CommonResourceFields.get_schema.properties[ 'language' ].required = false
         end
 
         return errors

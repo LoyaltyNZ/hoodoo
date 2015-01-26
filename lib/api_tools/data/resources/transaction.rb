@@ -9,13 +9,13 @@
 #           13-Nov-2014 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Transaction'.
       #
-      class Transaction < ApiTools::Presenters::Base
+      class Transaction < Hoodoo::Presenters::Base
 
         # Defined values for the +business_operation+ enumeration in the
         # schema.

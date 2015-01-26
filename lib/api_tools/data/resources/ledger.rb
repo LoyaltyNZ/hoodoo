@@ -7,13 +7,13 @@
 #           08-Jan-2015 (DAM): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Ledger'.
       #
-      class Ledger < ApiTools::Presenters::Base
+      class Ledger < Hoodoo::Presenters::Base
 
         # Defined values for the +reason+ enumeration in the schema.
         #

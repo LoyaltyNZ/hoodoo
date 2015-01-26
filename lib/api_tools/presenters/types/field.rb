@@ -1,4 +1,4 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON schema member
     class Field
@@ -20,7 +20,7 @@ module ApiTools
 
         if options.has_key?( :default )
           @has_default = true
-          @default     = ApiTools::Utilities.stringify( options[ :default ] )
+          @default     = Hoodoo::Utilities.stringify( options[ :default ] )
         else
           @has_default = false
           @default     = nil
@@ -35,9 +35,9 @@ module ApiTools
         !! @has_default
       end
 
-      # Check if data is required and return an ApiTools::Errors instance
+      # Check if data is required and return an Hoodoo::Errors instance
       def validate(data, path = '')
-        errors = ApiTools::Errors.new
+        errors = Hoodoo::Errors.new
 
         if data.nil? and @required
           errors.add_error(

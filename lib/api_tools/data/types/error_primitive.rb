@@ -7,19 +7,19 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
 
     # Module used as a namespace to collect classes that represent Types
     # documented by your platform's API. Each is an
-    # ApiTools::Presenters::Base subclass, so can be used to render
+    # Hoodoo::Presenters::Base subclass, so can be used to render
     # and validate JSON data.
     #
     module Types
 
       # Documented Platform API Type 'ErrorPrimitive'.
       #
-      class ErrorPrimitive < ApiTools::Presenters::Base
+      class ErrorPrimitive < Hoodoo::Presenters::Base
 
         schema do
           text :code,     :required => true

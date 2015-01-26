@@ -13,7 +13,7 @@
 #           20-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   class ServiceMiddleware
 
     begin
@@ -21,52 +21,52 @@ module ApiTools
 
       # For AMQEndpoint gem users, the AMQPLogMessage class provides an
       # AMQEndpoint::Message subclass used for sending structured log data to
-      # the queue. ApiTools::ServiceMiddleware::StructuredLogger uses this.
+      # the queue. Hoodoo::ServiceMiddleware::StructuredLogger uses this.
       #
       # See the AMQEndpoint gem for more details.
       #
       class AMQPLogMessage < ::AMQEndpoint::Message
 
-        TYPE = 'api_tools_service_middleware_amqp_log_message'
+        TYPE = 'hoodoo_service_middleware_amqp_log_message'
         ::AMQEndpoint::Message.register_type( TYPE, self )
 
-        # A UUID to assign to this log message. See ApiTools::UUID::generate.
+        # A UUID to assign to this log message. See Hoodoo::UUID::generate.
         #
         attr_accessor :id
 
-        # Logging level. See ApiTools::ServiceMiddleware::StructuredLogger.
+        # Logging level. See Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :level
 
-        # Logging component. See ApiTools::ServiceMiddleware::StructuredLogger.
+        # Logging component. See Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :component
 
-        # Component log code. See ApiTools::ServiceMiddleware::StructuredLogger.
+        # Component log code. See Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :code
 
-        # Log payload. See ApiTools::ServiceMiddleware::StructuredLogger.
+        # Log payload. See Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :data
 
         # Optional calling client ID, via session data inside the payload - see
-        # ApiTools::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :client_id
 
         # Optional interaction UUID, via session data inside the payload - see
-        # ApiTools::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :interaction_id
 
         # Optional participant UUID, via session data inside the payload - see
-        # ApiTools::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :participant_id
 
         # Optional outlet UUID, via session data inside the payload - see
-        # ApiTools::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::ServiceMiddleware::StructuredLogger.
         #
         attr_accessor :outlet_id
 

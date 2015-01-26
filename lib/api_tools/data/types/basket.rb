@@ -7,13 +7,13 @@
 #           22-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Types
 
       # Documented Platform API Type 'Basket'.
       #
-      class Basket < ApiTools::Presenters::Base
+      class Basket < Hoodoo::Presenters::Base
 
         schema do
           array :items do

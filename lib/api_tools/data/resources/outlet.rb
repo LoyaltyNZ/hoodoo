@@ -7,13 +7,13 @@
 #           29-Oct-2014 (JML): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Outlet'.
       #
-      class Outlet < ApiTools::Presenters::Base
+      class Outlet < Hoodoo::Presenters::Base
 
         schema do
           internationalised

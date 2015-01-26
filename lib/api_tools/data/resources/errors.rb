@@ -7,13 +7,13 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Data
     module Resources
 
       # Documented Platform API Resource 'Errors'.
       #
-      class Errors < ApiTools::Presenters::Base
+      class Errors < Hoodoo::Presenters::Base
 
         schema do
           uuid :interaction_id

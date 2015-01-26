@@ -1,26 +1,26 @@
 require 'spec_helper'
 
-class RSpecTestServiceContextImplementation < ApiTools::ServiceImplementation
+class RSpecTestServiceContextImplementation < Hoodoo::ServiceImplementation
 end
 
-class RSpecTestServiceContextInterface < ApiTools::ServiceInterface
+class RSpecTestServiceContextInterface < Hoodoo::ServiceInterface
   interface :RSpecTestResource do
     endpoint :rspec_test_service_stub, RSpecTestServiceContextImplementation
   end
 end
 
-class RSpecTestServiceContext < ApiTools::ServiceApplication
+class RSpecTestServiceContext < Hoodoo::ServiceApplication
   comprised_of RSpecTestServiceContextInterface
 end
 
-describe ApiTools::ServiceContext do
+describe Hoodoo::ServiceContext do
 
   it 'should initialise correctly' do
-    ses = ApiTools::ServiceSession.new
-    req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
-    mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceContext.new )
-    con = ApiTools::ServiceContext.new( ses, req, res, mid )
+    ses = Hoodoo::ServiceSession.new
+    req = Hoodoo::ServiceRequest.new
+    res = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
+    mid = Hoodoo::ServiceMiddleware.new( RSpecTestServiceContext.new )
+    con = Hoodoo::ServiceContext.new( ses, req, res, mid )
 
     expect(con.session).to eq(ses)
     expect(con.request).to eq(req)
@@ -28,15 +28,15 @@ describe ApiTools::ServiceContext do
   end
 
   it 'should report endpoints' do
-    ses = ApiTools::ServiceSession.new
-    req = ApiTools::ServiceRequest.new
-    res = ApiTools::ServiceResponse.new( ApiTools::UUID.generate() )
-    mid = ApiTools::ServiceMiddleware.new( RSpecTestServiceContext.new )
-    con = ApiTools::ServiceContext.new( ses, req, res, mid )
+    ses = Hoodoo::ServiceSession.new
+    req = Hoodoo::ServiceRequest.new
+    res = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
+    mid = Hoodoo::ServiceMiddleware.new( RSpecTestServiceContext.new )
+    con = Hoodoo::ServiceContext.new( ses, req, res, mid )
 
-    expect(con.resource(:RSpecTestResource)).to be_a( ApiTools::ServiceMiddleware::ServiceEndpoint )
+    expect(con.resource(:RSpecTestResource)).to be_a( Hoodoo::ServiceMiddleware::ServiceEndpoint )
     expect(con.resource(:RSpecTestResource).interface).to eq( RSpecTestServiceContextInterface )
-    expect(con.resource(:AnotherResource)).to be_a( ApiTools::ServiceMiddleware::ServiceEndpoint )
+    expect(con.resource(:AnotherResource)).to be_a( Hoodoo::ServiceMiddleware::ServiceEndpoint )
     expect(con.resource(:AnotherResource).interface).to be_nil
   end
 end

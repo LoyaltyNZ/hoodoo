@@ -9,7 +9,7 @@
 #           17-Nov-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
 
   # Support mixins for models subclassed from ActiveRecord::Base. See:
   #
@@ -19,19 +19,19 @@ module ApiTools
 
     # Support mixin for models subclassed from ActiveRecord::Base providing
     # a mapping between ActiveRecord validation errors and platform errors
-    # via ApiTools::ErrorDescriptions and ApiTools::Errors. See individual
+    # via Hoodoo::ErrorDescriptions and Hoodoo::Errors. See individual
     # module methods for examples, along with:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
     # The error handling mechanism this mixin provides is intentionally
     # analogous to that used for resource-to-resource calls through
-    # ApiTools::ServiceMiddleware::ServiceEndpoint::AugmentedBase.
+    # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase.
     #
     module ErrorMapping
 
       # Validates the model instance and adds mapped-to-platform errors to
-      # a given ApiTools::Errors instance, if any validation errors occur.
+      # a given Hoodoo::Errors instance, if any validation errors occur.
       # For ActiveRecord validation documentation, see:
       #
       # * http://guides.rubyonrails.org/active_record_validations.html
@@ -48,7 +48,7 @@ module ApiTools
       # Otherwise, given this example model:
       #
       #     class SomeModel < ActiveRecord::Base
-      #       include ApiTools::ActiveRecord::ErrorMapping
+      #       include Hoodoo::ActiveRecord::ErrorMapping
       #       # ...
       #     end
       #
@@ -57,8 +57,8 @@ module ApiTools
       #     def create( context )
       #
       #       # Validate inbound creation data by e.g. schema through the
-      #       # presenter layer - ApiTools::Presenters::Base and
-      #       # ApiTools::Presenters::Base - then...
+      #       # presenter layer - Hoodoo::Presenters::Base and
+      #       # Hoodoo::Presenters::Base - then...
       #
       #       model         = SomeModel.new
       #       model.param_1 = 'something based on inbound creation data'
@@ -80,14 +80,14 @@ module ApiTools
       #
       #     end
       #
-      # +collection+:: An ApiTools::Errors instance, typically obtained
-      #                from the ApiTools::ServiceContext instance passed to
+      # +collection+:: An Hoodoo::Errors instance, typically obtained
+      #                from the Hoodoo::ServiceContext instance passed to
       #                a service implementation in calls like
-      #                ApiTools::ServiceImplementation#list or
-      #                ApiTools::ServiceImplementation#show, via
+      #                Hoodoo::ServiceImplementation#list or
+      #                Hoodoo::ServiceImplementation#show, via
       #                +context.response.errors+
-      #                (i.e. ApiTools::ServiceContext#response /
-      #                ApiTools::ServiceResponse#errors). The collection you
+      #                (i.e. Hoodoo::ServiceContext#response /
+      #                Hoodoo::ServiceResponse#errors). The collection you
       #                pass is updated if there are any errors recorded in
       #                the model, by adding equivalent structured errors to
       #                the collection.
@@ -136,7 +136,7 @@ module ApiTools
         return added
       end
 
-      # Validate the model instance and return an ApiTools::Errors instance
+      # Validate the model instance and return an Hoodoo::Errors instance
       # which contains no platform errors if there are no model validation
       # errors, else mapped-to-platform errors if validation errors are
       # encountered. For ActiveRecord validation documentation, see:
@@ -160,7 +160,7 @@ module ApiTools
       #     return if context.response.halt_processing?
       #
       # It is a little more verbose and in this example will run a little
-      # slower due to the construction of the internal ApiTools::Errors
+      # slower due to the construction of the internal Hoodoo::Errors
       # instance followed by the addition to the +context.response+
       # collection, but you may prefer the conceptually cleaner code.
       #
@@ -168,7 +168,7 @@ module ApiTools
       #              name parameter in #adds_errors_to?.
       #
       def platform_errors( validate = true )
-        collection = ApiTools::Errors.new
+        collection = Hoodoo::Errors.new
         self.adds_errors_to?( collection, validate )
 
         return collection

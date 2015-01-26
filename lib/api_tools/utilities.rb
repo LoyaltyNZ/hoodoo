@@ -9,7 +9,7 @@
 
 require 'socket'
 
-module ApiTools
+module Hoodoo
 
   # Useful tools, especially for those working without Rails components.
   #

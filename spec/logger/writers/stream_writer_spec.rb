@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'time'
 
-describe ApiTools::Logger::StreamWriter do
+describe Hoodoo::Logger::StreamWriter do
   before :all do
-    temp_name = Dir::Tmpname.make_tmpname( 'api_tools_rspec_', nil )
+    temp_name = Dir::Tmpname.make_tmpname( 'hoodoo_rspec_', nil )
     @temp_path = File.join( Dir::Tmpname.tmpdir, temp_name )
     @stream = File.open( @temp_path, 'ab' )
   end

@@ -1,12 +1,12 @@
-module ApiTools
+module Hoodoo
   module Presenters
     # A JSON hash schema member
-    class Hash < ApiTools::Presenters::Field
+    class Hash < Hoodoo::Presenters::Field
 
-      include ApiTools::Presenters::BaseDSL
+      include Hoodoo::Presenters::BaseDSL
 
       # Hash DSL: Define a specific named key that is allowed (or even required)
-      # in the hash. The optional block uses ApiTools::Presenters::BaseDSL to
+      # in the hash. The optional block uses Hoodoo::Presenters::BaseDSL to
       # describe the required form of the key's value. If the block is omitted,
       # any value is permitted.
       #
@@ -14,7 +14,7 @@ module ApiTools
       # which has known permitted keys yielding to required value types. For
       # example, you may have a Hash which defines configuration data for a
       # variety of fixed, known types, with the Hash keys being the type name.
-      # See ApiTools::Data::Types::CalculatorConfiguration for an example.
+      # See Hoodoo::Data::Types::CalculatorConfiguration for an example.
       #
       # Example:
       #
@@ -66,12 +66,12 @@ module ApiTools
         if options.has_key?( :default )
           @has_default  = true
           @default    ||= {}
-          @default.merge!( ApiTools::Utilities.stringify( options[ :default ] ) )
+          @default.merge!( Hoodoo::Utilities.stringify( options[ :default ] ) )
         end
 
         @specific = true
 
-        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
+        klass = block_given? ? Hoodoo::Presenters::Object : Hoodoo::Presenters::Field
         prop  = property( name, klass, options, &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
@@ -80,7 +80,7 @@ module ApiTools
       end
 
       # Hash DSL: Define general parameters allowed for keys in a Hash and, if
-      # a block is given, use ApiTools::Presenters::BaseDSL to describe how any
+      # a block is given, use Hoodoo::Presenters::BaseDSL to describe how any
       # of the values in the Hash must look.
       #
       # +options+:: A +Hash+ of options - currently only +:length => [n]+ is
@@ -148,10 +148,10 @@ module ApiTools
 
         @specific = false
 
-        klass = options.has_key?( :length ) ? ApiTools::Presenters::String : ApiTools::Presenters::Text
+        klass = options.has_key?( :length ) ? Hoodoo::Presenters::String : Hoodoo::Presenters::Text
         property('keys', klass, options)
 
-        klass = block_given? ? ApiTools::Presenters::Object : ApiTools::Presenters::Field
+        klass = block_given? ? Hoodoo::Presenters::Object : Hoodoo::Presenters::Field
         prop  = property( 'values', klass, {}, &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
@@ -162,7 +162,7 @@ module ApiTools
       # The properties of this object, a +hash+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Hash and return an ApiTools::Errors instance
+      # Check if data is a valid Hash and return an Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

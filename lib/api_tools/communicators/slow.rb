@@ -3,18 +3,18 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A slow communication-orientated object intended to be called
-#           asynchronously via ApiTools::Communicators::Pool.
+#           asynchronously via Hoodoo::Communicators::Pool.
 # ----------------------------------------------------------------------
 #           15-Dec-2014 (ADH): Created.
 ########################################################################
 
-module ApiTools
+module Hoodoo
   module Communicators
 
-    # See ApiTools::Communicators::Pool for details.
+    # See Hoodoo::Communicators::Pool for details.
     #
     # A "slow communicator". Subclass this to create a class where instances
-    # are invoked via ApiTools::Communicators::Slow#communicate with some
+    # are invoked via Hoodoo::Communicators::Slow#communicate with some
     # parameter and, in response, they talk to some other piece of software to
     # communicate information related to that parameter. The communication is
     # expected to be slow and might involve blocking I/O network calls. An
@@ -23,7 +23,7 @@ module ApiTools
     # If you expect your communicator subclass to always perform very quickly,
     # the Thread will introduce overhead that may actually slow down overall
     # system performance. Avoid this by creating a subclass of
-    # ApiTools::Communicators::Fast instead.
+    # Hoodoo::Communicators::Fast instead.
     #
     # Example: A communicator might be part of a logging scheme which talks to
     # a network-based third party logging service. The parameter it expects
@@ -57,7 +57,7 @@ module ApiTools
       # condition.
       #
       # +object+:: Parameter sent by the communication pool, in response to
-      #            someone calling ApiTools::Communicators::Pool#communicate
+      #            someone calling Hoodoo::Communicators::Pool#communicate
       #            with that value.
       #
       def communicate( object )

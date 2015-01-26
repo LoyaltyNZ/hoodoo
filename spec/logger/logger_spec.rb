@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Logger do
+describe Hoodoo::Logger do
 
   # ===========================================================================
 
@@ -32,9 +32,9 @@ describe ApiTools::Logger do
   context 'pool operation' do
     before :each do
       @logger   = described_class.new
-      @stderr_1 = ApiTools::Logger::StreamWriter.new( $stderr )
-      @stderr_2 = ApiTools::Logger::StreamWriter.new( $stderr )
-      @stderr_3 = ApiTools::Logger::StreamWriter.new( $stderr )
+      @stderr_1 = Hoodoo::Logger::StreamWriter.new( $stderr )
+      @stderr_2 = Hoodoo::Logger::StreamWriter.new( $stderr )
+      @stderr_3 = Hoodoo::Logger::StreamWriter.new( $stderr )
 
       # Test single & multiple additions in passing.
       #
@@ -83,7 +83,7 @@ describe ApiTools::Logger do
   context 'structured logging' do
     before :each do
       @logger = described_class.new
-      @writer = ApiTools::Logger::StreamWriter.new( $stderr )
+      @writer = Hoodoo::Logger::StreamWriter.new( $stderr )
       @logger.add( @writer )
     end
 
@@ -164,7 +164,7 @@ describe ApiTools::Logger do
   context 'legacy logging' do
     before :each do
       @logger = described_class.new
-      @writer = ApiTools::Logger::StreamWriter.new( $stderr )
+      @writer = Hoodoo::Logger::StreamWriter.new( $stderr )
       @logger.add( @writer )
     end
 

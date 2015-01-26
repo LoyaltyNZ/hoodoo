@@ -3,73 +3,73 @@
 
 require 'spec_helper'
 
-class TestLogServiceImplementation < ApiTools::ServiceImplementation
+class TestLogServiceImplementation < Hoodoo::ServiceImplementation
   def show( context )
     context.response.body = { 'show' => 'the thing', 'the_thing' => context.request.ident }
   end
 end
 
-class TestLogServiceInterface < ApiTools::ServiceInterface
+class TestLogServiceInterface < Hoodoo::ServiceInterface
   interface :TestLog do
     endpoint :test_log, TestLogServiceImplementation
     actions :show
   end
 end
 
-class TestLogServiceApplication < ApiTools::ServiceApplication
+class TestLogServiceApplication < Hoodoo::ServiceApplication
   comprised_of TestLogServiceInterface
 end
 
 # Force the middleware logging mode to that passed as a string in 'test_env'.
 # You must have an 'after' block which restores normal test logging if you
 # use this, else other tests may subsequently fail. Returns the log writer
-# instances now in use as an array (ApiTools::Logger#instances).
+# instances now in use as an array (Hoodoo::Logger#instances).
 #
 def force_logging_to( test_env )
-  ApiTools::ServiceMiddleware.class_variable_set( '@@_env', ApiTools::StringInquirer.new( test_env ) )
-  ApiTools::ServiceMiddleware.class_variable_set( '@@external_logger', false )
-  ApiTools::ServiceMiddleware.send( :set_up_basic_logging )
-  ApiTools::ServiceMiddleware.send( :add_file_logging, File.join( File.dirname( __FILE__), '..', '..', 'log' ) )
-  return ApiTools::ServiceMiddleware.logger.instances
+  Hoodoo::ServiceMiddleware.class_variable_set( '@@_env', Hoodoo::StringInquirer.new( test_env ) )
+  Hoodoo::ServiceMiddleware.class_variable_set( '@@external_logger', false )
+  Hoodoo::ServiceMiddleware.send( :set_up_basic_logging )
+  Hoodoo::ServiceMiddleware.send( :add_file_logging, File.join( File.dirname( __FILE__), '..', '..', 'log' ) )
+  return Hoodoo::ServiceMiddleware.logger.instances
 end
 
-describe ApiTools::ServiceMiddleware do
+describe Hoodoo::ServiceMiddleware do
 
   before :each do
-    @old_env = ApiTools::ServiceMiddleware::class_variable_get( '@@_env' )
-    @old_logger = ApiTools::ServiceMiddleware::logger
+    @old_env = Hoodoo::ServiceMiddleware::class_variable_get( '@@_env' )
+    @old_logger = Hoodoo::ServiceMiddleware::logger
   end
 
   after :each do
-    ApiTools::ServiceMiddleware::logger.wait()
+    Hoodoo::ServiceMiddleware::logger.wait()
     force_logging_to( 'test' )
-    ApiTools::ServiceMiddleware.class_variable_set( '@@_env', @old_env )
-    ApiTools::ServiceMiddleware.class_variable_set( '@@logger', @old_logger )
+    Hoodoo::ServiceMiddleware.class_variable_set( '@@_env', @old_env )
+    Hoodoo::ServiceMiddleware.class_variable_set( '@@logger', @old_logger )
     begin
-      ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+      Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
     rescue
     end
   end
 
   context 'custom loggers' do
     before :each do
-      @custom = ApiTools::Logger.new
-      ApiTools::ServiceMiddleware.set_logger( @custom )
+      @custom = Hoodoo::Logger.new
+      Hoodoo::ServiceMiddleware.set_logger( @custom )
     end
 
     it 'sets a custom logger' do
-      expect( ApiTools::ServiceMiddleware.logger ).to eq( @custom )
+      expect( Hoodoo::ServiceMiddleware.logger ).to eq( @custom )
     end
 
     it 'complains about bad custom loggers' do
       expect {
-        ApiTools::ServiceMiddleware.set_logger( Object )
-      }.to raise_error( RuntimeError, "ApiTools::Communicators::set_logger must be called with an instance of ApiTools::Logger only" )
+        Hoodoo::ServiceMiddleware.set_logger( Object )
+      }.to raise_error( RuntimeError, "Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only" )
     end
 
     it 'does not add other writers' do
-      ApiTools::ServiceMiddleware.set_log_folder( '/foo' )
-      ApiTools::ServiceMiddleware.set_log_folder( '/bar' )
+      Hoodoo::ServiceMiddleware.set_log_folder( '/foo' )
+      Hoodoo::ServiceMiddleware.set_log_folder( '/bar' )
       expect( @custom.instances ).to be_empty
     end
   end
@@ -80,27 +80,27 @@ describe ApiTools::ServiceMiddleware do
       ENV[ 'AMQ_ENDPOINT' ] = nil
 
       @cvar = false
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         @cvar = true
-        @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
+        @cvar_val = Hoodoo::ServiceMiddleware.class_variable_get( '@@alchemy' )
       end
     end
 
     after :each do
       ENV[ 'AMQ_ENDPOINT' ] = @old_queue
 
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
-          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+          Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
         else
-          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+          Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
         end
       end
     end
 
     def app
       Rack::Builder.new do
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestLogServiceApplication.new
       end
     end
@@ -108,23 +108,23 @@ describe ApiTools::ServiceMiddleware do
     it 'has the expected "test" mode loggers' do
       instances = force_logging_to( 'test' )
 
-      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+      expect( instances[ 0 ] ).to be_a( Hoodoo::Logger::FileWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :debug )
     end
 
     it 'has the expected "development" mode loggers' do
       instances = force_logging_to( 'development' )
 
-      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::StreamWriter )
-      expect( instances[ 1 ] ).to be_a( ApiTools::Logger::FileWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+      expect( instances[ 0 ] ).to be_a( Hoodoo::Logger::StreamWriter )
+      expect( instances[ 1 ] ).to be_a( Hoodoo::Logger::FileWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :debug )
     end
 
     it 'has the expected "production" mode loggers' do
       instances = force_logging_to( 'production' )
 
-      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :info )
+      expect( instances[ 0 ] ).to be_a( Hoodoo::Logger::FileWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :info )
     end
   end
 
@@ -134,20 +134,20 @@ describe ApiTools::ServiceMiddleware do
       ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
 
       @cvar = false
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         @cvar = true
-        @cvar_val = ApiTools::ServiceMiddleware.class_variable_get( '@@alchemy' )
+        @cvar_val = Hoodoo::ServiceMiddleware.class_variable_get( '@@alchemy' )
       end
     end
 
     after :each do
       ENV[ 'AMQ_ENDPOINT' ] = @old_queue
 
-      if ApiTools::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
-          ApiTools::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+          Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
         else
-          ApiTools::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+          Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
         end
       end
     end
@@ -167,7 +167,7 @@ describe ApiTools::ServiceMiddleware do
     def app
       Rack::Builder.new do
         use FakeAlchemy
-        use ApiTools::ServiceMiddleware
+        use Hoodoo::ServiceMiddleware
         run TestLogServiceApplication.new
       end
     end
@@ -181,9 +181,9 @@ describe ApiTools::ServiceMiddleware do
 
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      instances = ApiTools::ServiceMiddleware.logger.instances
-      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::FileWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+      instances = Hoodoo::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( Hoodoo::Logger::FileWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :debug )
     end
 
     it 'has the expected "development" mode loggers' do
@@ -194,10 +194,10 @@ describe ApiTools::ServiceMiddleware do
         get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       end
 
-      instances = ApiTools::ServiceMiddleware.logger.instances
-      expect( instances[ 0 ] ).to be_a( ApiTools::Logger::StreamWriter )
-      expect( instances[ 1 ] ).to be_a( ApiTools::ServiceMiddleware::AMQPLogWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :debug )
+      instances = Hoodoo::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( Hoodoo::Logger::StreamWriter )
+      expect( instances[ 1 ] ).to be_a( Hoodoo::ServiceMiddleware::AMQPLogWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :debug )
     end
 
     it 'has the expected "production" mode loggers' do
@@ -206,9 +206,9 @@ describe ApiTools::ServiceMiddleware do
       expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      instances = ApiTools::ServiceMiddleware.logger.instances
-      expect( instances[ 0 ] ).to be_a( ApiTools::ServiceMiddleware::AMQPLogWriter )
-      expect( ApiTools::ServiceMiddleware.logger.level ).to eq( :info )
+      instances = Hoodoo::ServiceMiddleware.logger.instances
+      expect( instances[ 0 ] ).to be_a( Hoodoo::ServiceMiddleware::AMQPLogWriter )
+      expect( Hoodoo::ServiceMiddleware.logger.level ).to eq( :info )
     end
   end
 end

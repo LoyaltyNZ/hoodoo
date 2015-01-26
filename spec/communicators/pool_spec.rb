@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::Communicators::Pool do
+describe Hoodoo::Communicators::Pool do
 
   before :each do
-    @pool = ApiTools::Communicators::Pool.new
+    @pool = Hoodoo::Communicators::Pool.new
   end
 
   context 'general operation' do
@@ -11,25 +11,25 @@ describe ApiTools::Communicators::Pool do
       @pool.wait()
     end
 
-    class TestFastCommunicatorA < ApiTools::Communicators::Fast
+    class TestFastCommunicatorA < Hoodoo::Communicators::Fast
       def communicate( obj )
         expectable_hook_fast_a( obj )
       end
     end
 
-    class TestFastCommunicatorB < ApiTools::Communicators::Fast
+    class TestFastCommunicatorB < Hoodoo::Communicators::Fast
       def communicate( obj )
         expectable_hook_fast_b( obj )
       end
     end
 
-    class TestFastCommunicatorC < ApiTools::Communicators::Fast
+    class TestFastCommunicatorC < Hoodoo::Communicators::Fast
       def communicate( obj )
         raise 'I am broken (Fast C)'
       end
     end
 
-    class TestSlowCommunicatorA < ApiTools::Communicators::Slow
+    class TestSlowCommunicatorA < Hoodoo::Communicators::Slow
       def communicate( obj )
         expectable_hook_slow_a( obj )
         sleep 0.2 # Deliberate delay to make sure #wait() works;
@@ -37,13 +37,13 @@ describe ApiTools::Communicators::Pool do
       end
     end
 
-    class TestSlowCommunicatorB < ApiTools::Communicators::Slow
+    class TestSlowCommunicatorB < Hoodoo::Communicators::Slow
       def communicate( obj )
         expectable_hook_slow_b( obj )
       end
     end
 
-    class TestSlowCommunicatorC < ApiTools::Communicators::Slow
+    class TestSlowCommunicatorC < Hoodoo::Communicators::Slow
       def communicate( obj )
         raise 'I am broken (Slow C)'
       end
@@ -173,7 +173,7 @@ describe ApiTools::Communicators::Pool do
 
     end
 
-    class TestSlowCommunicatorDrops < ApiTools::Communicators::Slow
+    class TestSlowCommunicatorDrops < Hoodoo::Communicators::Slow
       def initialize
         @count = 0
       end
@@ -210,7 +210,7 @@ describe ApiTools::Communicators::Pool do
       # Now send a full queue of messages. That'll send "limit", none of which
       # will be processed yet, then queue "additional".
 
-      limit      = ApiTools::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
+      limit      = Hoodoo::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
       additional = 10
 
       1.upto( limit + additional ) do | i |
@@ -263,7 +263,7 @@ describe ApiTools::Communicators::Pool do
 
     end
 
-    class TestSlowCommunicatorSleeps < ApiTools::Communicators::Slow
+    class TestSlowCommunicatorSleeps < Hoodoo::Communicators::Slow
       def communicate( obj )
         $sync_queue << :sync
         sleep( obj )
