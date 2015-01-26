@@ -17,7 +17,6 @@ require 'hoodoo/logger'
 # Middleware
 
 require 'hoodoo/services/middleware/rack_monkey_patch'
-require 'hoodoo/services/middleware/string_inquirer'
 require 'hoodoo/services/middleware/amqp_log_message'
 require 'hoodoo/services/middleware/amqp_log_writer'
 require 'hoodoo/services/middleware/endpoint/augmented_base'

@@ -1,74 +1,74 @@
 require 'spec_helper'
 
-class RSpecTestServiceApplicationImplementationA < Hoodoo::ServiceImplementation
+class RSpecTestImplementationA < Hoodoo::Services::Implementation
 end
 
-class RSpecTestServiceApplicationImplementationB < Hoodoo::ServiceImplementation
+class RSpecTestImplementationB < Hoodoo::Services::Implementation
 end
 
-class RSpecTestServiceApplicationInterfaceA < Hoodoo::ServiceInterface
+class RSpecTestInterfaceA < Hoodoo::Services::Interface
   interface :RSpecTestResource do
-    endpoint :rspec_test_service_application_a, RSpecTestServiceApplicationImplementationA
+    endpoint :rspec_test_application_a, RSpecTestImplementationA
   end
 end
 
-class RSpecTestServiceApplicationInterfaceB < Hoodoo::ServiceInterface
+class RSpecTestInterfaceB < Hoodoo::Services::Interface
   interface :RSpecTestResource do
-    endpoint :rspec_test_service_application_b, RSpecTestServiceApplicationImplementationA
+    endpoint :rspec_test_application_b, RSpecTestImplementationA
   end
 end
 
-class RSpecTestServiceApplication < Hoodoo::ServiceApplication
+class RSpecTestService < Hoodoo::Services::Service
 end
 
-class RSpecTestServiceApplication2 < Hoodoo::ServiceApplication
+class RSpecTestService2 < Hoodoo::Services::Service
 end
 
-describe Hoodoo::ServiceApplication do
+describe Hoodoo::Services::Service do
   it 'should complain about incorrect interface classes' do
     expect {
-      RSpecTestServiceApplication.comprised_of( Hash )
-    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got 'Hash'")
+      RSpecTestService.comprised_of( Hash )
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hash'")
 
     expect {
-      RSpecTestServiceApplication.comprised_of( Hoodoo::ServiceInterface )
-    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got 'Hoodoo::ServiceInterface'")
+      RSpecTestService.comprised_of( Hoodoo::Services::Interface )
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hoodoo::Services::Interface'")
   end
 
   it 'should complain if called directly' do
     expect {
-      RSpecTestServiceApplication.new.call( nil )
-    }.to raise_error(RuntimeError, "Hoodoo::ServiceImplementation subclasses should only be called through the middleware - add 'use Hoodoo::ServiceMiddleware' to (e.g.) config.ru")
+      RSpecTestService.new.call( nil )
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru")
   end
 
   it 'should correctly report its component classes' do
-    RSpecTestServiceApplication.comprised_of( RSpecTestServiceApplicationInterfaceA,
-                                              RSpecTestServiceApplicationInterfaceB )
+    RSpecTestService.comprised_of( RSpecTestInterfaceA,
+                                              RSpecTestInterfaceB )
 
-    expect(RSpecTestServiceApplication.component_interfaces).to eq([
-      RSpecTestServiceApplicationInterfaceA,
-      RSpecTestServiceApplicationInterfaceB
+    expect(RSpecTestService.component_interfaces).to eq([
+      RSpecTestInterfaceA,
+      RSpecTestInterfaceB
     ])
 
-    expect(RSpecTestServiceApplication.new.component_interfaces).to eq([
-      RSpecTestServiceApplicationInterfaceA,
-      RSpecTestServiceApplicationInterfaceB
+    expect(RSpecTestService.new.component_interfaces).to eq([
+      RSpecTestInterfaceA,
+      RSpecTestInterfaceB
     ])
   end
 
   it 'allows multiple calls to declare component classes and removes duplicates' do
-    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceB )
-    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceA )
-    RSpecTestServiceApplication2.comprised_of( RSpecTestServiceApplicationInterfaceB )
+    RSpecTestService2.comprised_of( RSpecTestInterfaceB )
+    RSpecTestService2.comprised_of( RSpecTestInterfaceA )
+    RSpecTestService2.comprised_of( RSpecTestInterfaceB )
 
-    expect(RSpecTestServiceApplication2.component_interfaces).to eq([
-      RSpecTestServiceApplicationInterfaceB,
-      RSpecTestServiceApplicationInterfaceA
+    expect(RSpecTestService2.component_interfaces).to eq([
+      RSpecTestInterfaceB,
+      RSpecTestInterfaceA
     ])
 
-    expect(RSpecTestServiceApplication2.new.component_interfaces).to eq([
-      RSpecTestServiceApplicationInterfaceB,
-      RSpecTestServiceApplicationInterfaceA
+    expect(RSpecTestService2.new.component_interfaces).to eq([
+      RSpecTestInterfaceB,
+      RSpecTestInterfaceA
     ])
   end
 end

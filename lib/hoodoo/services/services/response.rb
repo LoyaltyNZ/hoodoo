@@ -1,19 +1,19 @@
 ########################################################################
-# File::    service_response.rb
+# File::    response.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A high level description of a service's response to a
 #           client's request. The middleware constructs instances and
 #           fills in some of the data for every client request, then
-#           passes it to Hoodoo::ServiceImplementation methods so
+#           passes it to Hoodoo::Services::Implementation methods so
 #           the service can fill in the rest of the data.
 # ----------------------------------------------------------------------
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
+module Hoodoo; module Services
 
-  # The service middleware creates an Hoodoo::ServiceResponse instance for
+  # The service middleware creates an Hoodoo::Services::Response instance for
   # each request it handles, populating it with some data before and after the
   # service implementation runs as part of standard pre- and post-processing.
   # In the middle, the service implementation is given the instance and adds
@@ -27,7 +27,7 @@ module Hoodoo
   # HTTP status code or response body data previously set by the service will
   # be ignored.
   #
-  class ServiceResponse
+  class Response
 
     # Obtain a reference to the Hoodoo::Errors instance for this response;
     # use Hoodoo::Errors#add_error to add to the collection directly. For
@@ -75,7 +75,7 @@ module Hoodoo
     def initialize( interaction_id )
 
       unless Hoodoo::UUID.valid?( interaction_id )
-        raise "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
+        raise "Hoodoo::Services::Response.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
       end
 
       @interaction_id   = interaction_id
@@ -120,7 +120,7 @@ module Hoodoo
         hash  = @headers[ dname ]
         name  = hash.keys[ 0 ]
         value = hash.values[ 0 ]
-        raise "Hoodoo::ServiceResponse\#add_header: Value '#{ value }' already defined for header '#{ name }'"
+        raise "Hoodoo::Services::Response\#add_header: Value '#{ value }' already defined for header '#{ name }'"
       else
         @headers[ dname ] = { name => value }
       end
@@ -226,7 +226,7 @@ module Hoodoo
     # Convert the internal response data into something that Rack expects.
     # The return value of this method can be passed back to Rack from Rack
     # middleware or applications. Usually, this is only called directly by
-    # Hoodoo::ServiceMiddleware.
+    # Hoodoo::Services::Middleware.
     #
     def for_rack
 
@@ -266,4 +266,5 @@ module Hoodoo
       return rack_response.finish
     end
   end
-end
+
+end; end

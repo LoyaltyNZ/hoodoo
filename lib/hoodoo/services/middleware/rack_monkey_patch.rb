@@ -34,7 +34,7 @@ if defined?( Rack ) && defined?( Rack::Server )
 
       class << self
         def start_and_record_host_and_port( options = nil )
-          Hoodoo::ServiceMiddleware.record_host_and_port( options )
+          Hoodoo::Services::Middleware.record_host_and_port( options )
           racks_original_start( options )
         end
 

@@ -9,8 +9,9 @@
 
 require 'singleton'
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
+
     class ExceptionReporting
 
       # Subclass this method to create a custom class used to contact external
@@ -33,7 +34,7 @@ module Hoodoo
       # are descendants of Hoodoo::Communicators::Slow.
       #
       # Add a reporter class to the middleware from any service application by
-      # calling Hoodoo::ServiceMiddleware::ExceptionReporting.add.
+      # calling Hoodoo::Services::Middleware::ExceptionReporting.add.
       #
       class BaseReporter < Hoodoo::Communicators::Slow
 
@@ -48,7 +49,7 @@ module Hoodoo
         # The middleware wraps calls to your subclass in a nested exception
         # handler. If you raise an exception, the middleware logs details with
         # a +:debug+ level through its logger instance if possible (see
-        # Hoodoo::ServiceMiddleware::logger) along with printing details to
+        # Hoodoo::Services::Middleware::logger) along with printing details to
         # $stderr, then continues processing.
         #
         # If service applications are expecting potential exceptions to occur
@@ -90,7 +91,7 @@ module Hoodoo
         # used for the internal communicators into the parameters that
         # #report expects.
         #
-        # +object+:: Hoodoo::ServiceMiddleware::ExceptionReporting::Payload
+        # +object+:: Hoodoo::Services::Middleware::ExceptionReporting::Payload
         #            instance.
         #
         def communicate( object )
@@ -99,5 +100,6 @@ module Hoodoo
       end
 
     end
+
   end
-end
+end; end

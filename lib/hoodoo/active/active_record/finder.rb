@@ -157,8 +157,8 @@ module Hoodoo
         # database.
         #
         # The returned relation is generated via a given instance of
-        # Hoodoo::ServiceContext. It takes into account the context's
-        # Hoodoo::ServiceRequest and the list offset, list limit, list sort
+        # Hoodoo::Services::Context. It takes into account the context's
+        # Hoodoo::Services::Request and the list offset, list limit, list sort
         # key and list sort direction automatically. In addition, it can do
         # simple search and filter operations if search and filter mappings
         # are set up via #list_search_map and #list_filter_map.
@@ -211,14 +211,14 @@ module Hoodoo
         #
         # http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
         #
-        # +list_parameters+:: Hoodoo::ServiceRequest::ListParameters
+        # +list_parameters+:: Hoodoo::Services::Request::ListParameters
         #                     instance, typically obtained from the
-        #                     Hoodoo::ServiceContext instance passed to
+        #                     Hoodoo::Services::Context instance passed to
         #                     a service implementation in
-        #                     Hoodoo::ServiceImplementation#list, via
+        #                     Hoodoo::Services::Implementation#list, via
         #                     +context.request.list+ (i.e.
-        #                     Hoodoo::ServiceContext#request
-        #                     / Hoodoo::ServiceRequest#list).
+        #                     Hoodoo::Services::Context#request
+        #                     / Hoodoo::Services::Request#list).
         #
         def list_finder( list_parameters )
 

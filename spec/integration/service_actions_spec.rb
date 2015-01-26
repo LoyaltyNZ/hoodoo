@@ -5,7 +5,7 @@
 
 require 'spec_helper'
 
-class RSpecTestServiceAImplementation < Hoodoo::ServiceImplementation
+class RSpecTestServiceAImplementation < Hoodoo::Services::Implementation
   def list( context )
     raise self.class.name + ' list'
   end
@@ -27,13 +27,13 @@ class RSpecTestServiceAImplementation < Hoodoo::ServiceImplementation
   end
 end
 
-class RSpecTestServiceAInterface < Hoodoo::ServiceInterface
+class RSpecTestServiceAInterface < Hoodoo::Services::Interface
   interface :RSpecTestService do
     endpoint :rspec_test_service_a, RSpecTestServiceAImplementation
   end
 end
 
-class RSpecTestServiceA < Hoodoo::ServiceApplication
+class RSpecTestServiceA < Hoodoo::Services::Service
   comprised_of RSpecTestServiceAInterface
 end
 
@@ -59,7 +59,7 @@ describe RSpecTestServiceA do
   describe 'when well configured' do
     def app
       Rack::Builder.new do
-        use Hoodoo::ServiceMiddleware
+        use Hoodoo::Services::Middleware
         run RSpecTestServiceA.new
       end
     end

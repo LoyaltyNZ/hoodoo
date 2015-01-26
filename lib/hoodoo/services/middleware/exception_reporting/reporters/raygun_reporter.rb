@@ -7,12 +7,13 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
+
     class ExceptionReporting
 
-      # Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
-      # giving Hoodoo::ServiceMiddleware::ExceptionReporting access to
+      # Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass
+      # giving Hoodoo::Services::Middleware::ExceptionReporting access to
       # Raygun for error reporting. See https://raygun.io.
       #
       # Your application must include the Raygun gem 'raygun4ruby' via Gemfile
@@ -29,8 +30,8 @@ module Hoodoo
       #       config.api_key = 'YOUR_RAYGUN_API_KEY'
       #     end
       #
-      #     Hoodoo::ServiceMiddleware::ExceptionReporting.add(
-      #       Hoodoo::ServiceMiddleware::ExceptionReporting::RaygunReporter
+      #     Hoodoo::Services::Middleware::ExceptionReporting.add(
+      #       Hoodoo::Services::Middleware::ExceptionReporting::RaygunReporter
       #     )
       #
       # Services and the Hoodoo middleware do not pass Rails-like params
@@ -41,7 +42,7 @@ module Hoodoo
       #
       #   https://github.com/MindscapeHQ/raygun4ruby
       #
-      class RaygunReporter < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+      class RaygunReporter < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
 
         # Report an exception to Raygun.
         #
@@ -57,5 +58,6 @@ module Hoodoo
       end
 
     end
+
   end
-end
+end; end

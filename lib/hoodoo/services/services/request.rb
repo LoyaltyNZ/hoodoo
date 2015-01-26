@@ -1,29 +1,29 @@
 ########################################################################
-# File::    service_request.rb
+# File::    request.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A high level description of a client's request, with all of
 #           the "raw" Rack request data parsed, verified as far as
 #           possible and generally cleaned up. Instances of this class
-#           are given to Hoodoo::ServiceImplementation methods for
+#           are given to Hoodoo::Services::Implementation methods for
 #           each new request.
 # ----------------------------------------------------------------------
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
+module Hoodoo; module Services
 
-  # Instances of the Hoodoo::ServiceRequest class are passed to service
+  # Instances of the Hoodoo::Services::Request class are passed to service
   # interface implementations when requests come in via Rack, after basic
   # checks have been passed and a particular interface implementation has
   # been identified by endpoint.
   #
   # Descriptions of default values expected out of accessors herein refer
-  # to the use case when driven through Hoodoo::ServiceMiddleware. If the
+  # to the use case when driven through Hoodoo::Services::Middleware. If the
   # class is instantiated "bare" it gains no default values at all (all
   # read accessors would report +nil+).
   #
-  class ServiceRequest
+  class Request
 
     # Encapsulation of all parameters related only to modifying a
     # list of results. Other parameters may modify lists too, but they
@@ -128,7 +128,7 @@ module Hoodoo
     #
     attr_accessor :uri_path_extension
 
-    # The Hoodoo::ServiceRequest::ListParameters instance
+    # The Hoodoo::Services::Request::ListParameters instance
     # associated with this request.
     #
     attr_accessor :list
@@ -169,9 +169,10 @@ module Hoodoo
       self.locale              = 'en-nz'
       self.uri_path_components = []
       self.uri_path_extension  = ''
-      self.list                = Hoodoo::ServiceRequest::ListParameters.new
+      self.list                = Hoodoo::Services::Request::ListParameters.new
       self.embeds              = []
       self.references          = []
     end
   end
-end
+
+end; end

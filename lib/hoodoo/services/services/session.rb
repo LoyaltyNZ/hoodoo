@@ -1,5 +1,5 @@
 ########################################################################
-# File::    service_session.rb
+# File::    session.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Container for information about the context in which a
@@ -11,11 +11,11 @@
 
 require 'dalli'
 
-module Hoodoo
+module Hoodoo; module Services
 
-  # +ServiceSession+ contains all functionality related to a context session.
+  # +Session+ contains all functionality related to a context session.
   #
-  class ServiceSession
+  class Session
 
     # Session ID, matching a value that would appear in an X-Session-ID
     # header.
@@ -73,21 +73,21 @@ module Hoodoo
 
     # TODO: Loyalty NZ derived, needs better specification.
     #
-    # Create a ServiceSession instance by loading session data from Memcached,
+    # Create a Session instance by loading session data from Memcached,
     # or a test mock session if in test mode (see ::testing).
     #
     # +memcache_url+:: Connection URL for Memcached.
     # +session_id+::   ID of the session to load.
     #
-    # Returns either a valid ServiceSession instance, or +nil+ if the session
+    # Returns either a valid Session instance, or +nil+ if the session
     # does not exist or is invalid.
     #
     def self.load_session( memcache_url, session_id )
 
-      return Hoodoo::ServiceSession.new( @@test_session ) if @@test_mode
+      return Hoodoo::Services::Session.new( @@test_session ) if @@test_mode
 
       if memcache_url.nil? || memcache_url.empty?
-        raise "Hoodoo::ServiceMiddleware memcache server URL is nil or empty"
+        raise "Hoodoo::Services::Middleware memcache server URL is nil or empty"
       end
 
       if session_id.nil? || session_id.empty? || session_id.length < 32
@@ -97,7 +97,7 @@ module Hoodoo
       memcache = connect_memcache( memcache_url )
 
       if memcache.nil?
-        raise "Hoodoo::ServiceMiddleware cannot connect to memcache server '#{memcache_url}'"
+        raise "Hoodoo::Services::Middleware cannot connect to memcache server '#{memcache_url}'"
       end
 
       begin
@@ -109,7 +109,7 @@ module Hoodoo
 
         # Log error and return nil if the session can't be parsed
         #
-        Hoodoo::ServiceMiddleware.logger.warn(
+        Hoodoo::Services::Middleware.logger.warn(
           "Session Loading failed, connection fault or session corrupt",
           exception
         )
@@ -120,7 +120,7 @@ module Hoodoo
 
       # Create and return the new session.
       #
-      return Hoodoo::ServiceSession.new( {
+      return Hoodoo::Services::Session.new( {
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],
@@ -129,7 +129,7 @@ module Hoodoo
       } )
     end
 
-    # Instantiate a new ServiceSession instance with the optional supplied
+    # Instantiate a new Session instance with the optional supplied
     # parameters.
     #
     # +options+:: Optional hash of parameters.
@@ -214,4 +214,5 @@ module Hoodoo
       stats.nil? ? nil : memcache
     end
   end
-end
+
+end; end

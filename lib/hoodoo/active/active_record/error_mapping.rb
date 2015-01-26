@@ -26,7 +26,7 @@ module Hoodoo
     #
     # The error handling mechanism this mixin provides is intentionally
     # analogous to that used for resource-to-resource calls through
-    # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedBase.
+    # Hoodoo::Services::Middleware::Endpoint::AugmentedBase.
     #
     module ErrorMapping
 
@@ -81,13 +81,13 @@ module Hoodoo
       #     end
       #
       # +collection+:: An Hoodoo::Errors instance, typically obtained
-      #                from the Hoodoo::ServiceContext instance passed to
+      #                from the Hoodoo::Services::Context instance passed to
       #                a service implementation in calls like
-      #                Hoodoo::ServiceImplementation#list or
-      #                Hoodoo::ServiceImplementation#show, via
+      #                Hoodoo::Services::Implementation#list or
+      #                Hoodoo::Services::Implementation#show, via
       #                +context.response.errors+
-      #                (i.e. Hoodoo::ServiceContext#response /
-      #                Hoodoo::ServiceResponse#errors). The collection you
+      #                (i.e. Hoodoo::Services::Context#response /
+      #                Hoodoo::Services::Response#errors). The collection you
       #                pass is updated if there are any errors recorded in
       #                the model, by adding equivalent structured errors to
       #                the collection.

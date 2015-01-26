@@ -22,11 +22,11 @@ module Hoodoo
   # conditions, the service's _interface_ class uses the interface description
   # DSL to call through to here behind the scenes; for example:
   #
-  #     class TransactionImplementation < Hoodoo::ServiceImplementation
+  #     class TransactionImplementation < Hoodoo::Services::Implementation
   #       # ...
   #     end
   #
-  #     class TransactionInterface < Hoodoo::ServiceInterface
+  #     class TransactionInterface < Hoodoo::Services::Interface
   #       interface :Transaction do
   #         endpoint :transactions, TransactionImplementation
   #         errors_for 'transaction' do
@@ -43,10 +43,10 @@ module Hoodoo
   # An instance of the Hoodoo::ErrorDescriptions class gets built behind
   # the scenes as part of the service interface description. This is found by
   # the middleware and passed to an Hoodoo::Errors constructor. The result
-  # is stored in an Hoodoo::ServiceResponse instance and passed to handler
-  # methods in the service's Hoodoo::ServiceImplementation subclass for each
+  # is stored in an Hoodoo::Services::Response instance and passed to handler
+  # methods in the service's Hoodoo::Services::Implementation subclass for each
   # request. Service implementations access the errors collection through
-  # Hoodoo::ServiceResponse#errors and can then add errors using the generic
+  # Hoodoo::Services::Response#errors and can then add errors using the generic
   # or platform domains, or whatever additional custom domain(s) they defined
   # in the service interface subclass.
   #

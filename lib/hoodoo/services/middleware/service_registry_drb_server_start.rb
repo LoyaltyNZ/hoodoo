@@ -16,4 +16,4 @@
 require 'hoodoo'
 
 Process.setsid()
-Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.start()
+Hoodoo::Services::Middleware::ServiceRegistryDRbServer.start()

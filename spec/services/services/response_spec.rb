@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Hoodoo::ServiceResponse do
+describe Hoodoo::Services::Response do
   before :each do
-    @r = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
+    @r = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
   end
 
   it 'should acquire the expected default values when instantiated' do
@@ -16,20 +16,20 @@ describe Hoodoo::ServiceResponse do
   context 'instantiation' do
     it 'rejects a nil interaction ID' do
       expect {
-        Hoodoo::ServiceResponse.new( nil )
-      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got 'nil')" )
+        Hoodoo::Services::Response.new( nil )
+      }.to raise_error( RuntimeError, "Hoodoo::Services::Response.new must be given a valid Interaction ID (got 'nil')" )
     end
 
     it 'rejects a non-string interaction ID' do
       expect {
-        Hoodoo::ServiceResponse.new( 12345 )
-      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '12345')" )
+        Hoodoo::Services::Response.new( 12345 )
+      }.to raise_error( RuntimeError, "Hoodoo::Services::Response.new must be given a valid Interaction ID (got '12345')" )
     end
 
     it 'rejects an invalid string interaction ID' do
       expect {
-        Hoodoo::ServiceResponse.new( 'hello' )
-      }.to raise_error( RuntimeError, "Hoodoo::ServiceResponse.new must be given a valid Interaction ID (got '\"hello\"')" )
+        Hoodoo::Services::Response.new( 'hello' )
+      }.to raise_error( RuntimeError, "Hoodoo::Services::Response.new must be given a valid Interaction ID (got '\"hello\"')" )
     end
   end
 
@@ -126,7 +126,7 @@ describe Hoodoo::ServiceResponse do
       @r.add_header( 'X-Foo', 'baz' )
       expect {
         @r.add_header( 'x-fOO', 'thing' )
-      }.to raise_error(RuntimeError, "Hoodoo::ServiceResponse\#add_header: Value 'baz' already defined for header 'X-Foo'")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Response\#add_header: Value 'baz' already defined for header 'X-Foo'")
     end
 
     it 'should allow me to overwrite a header value' do

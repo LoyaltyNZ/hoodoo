@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-class RSpecTestServiceInterfaceImplementationA < Hoodoo::ServiceImplementation
+class RSpecTestInterfaceImplementationA < Hoodoo::Services::Implementation
 end
 
-class RSpecTestServiceInterfaceImplementationB < Hoodoo::ServiceImplementation
+class RSpecTestInterfaceImplementationB < Hoodoo::Services::Implementation
 end
 
-class RSpecTestServiceInterfaceInterfaceA < Hoodoo::ServiceInterface
-  interface "RSpecTestServiceInterfaceAResource" do
+class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
+  interface "RSpecTestInterfaceAResource" do
     version 42
-    endpoint :rspec_test_service_interface_a, RSpecTestServiceInterfaceImplementationA
+    endpoint :rspec_test_interface_a, RSpecTestInterfaceImplementationA
     actions :show, :create, :delete
     embeds :embed_one, :embed_two, :embed_three
 
@@ -36,9 +36,9 @@ class RSpecTestServiceInterfaceInterfaceA < Hoodoo::ServiceInterface
   end
 end
 
-class RSpecTestServiceInterfaceInterfaceB < Hoodoo::ServiceInterface
-  interface :RSpecTestServiceInterfaceBResource do
-    endpoint :rspec_test_service_interface_b, RSpecTestServiceInterfaceImplementationB
+class RSpecTestInterfaceInterfaceB < Hoodoo::Services::Interface
+  interface :RSpecTestInterfaceBResource do
+    endpoint :rspec_test_interface_b, RSpecTestInterfaceImplementationB
 
     to_create do
       text :one
@@ -49,128 +49,128 @@ class RSpecTestServiceInterfaceInterfaceB < Hoodoo::ServiceInterface
   end
 end
 
-class RSpecTestServiceInterfaceInterfaceDefault < Hoodoo::ServiceInterface
-  interface :RSpecTestServiceInterfaceDefaultResource do
-    endpoint :rspec_test_service_interface_default, RSpecTestServiceInterfaceImplementationA # (sic.)
+class RSpecTestInterfaceInterfaceDefault < Hoodoo::Services::Interface
+  interface :RSpecTestInterfaceDefaultResource do
+    endpoint :rspec_test_interface_default, RSpecTestInterfaceImplementationA # (sic.)
   end
 end
 
-describe Hoodoo::ServiceInterface do
+describe Hoodoo::Services::Interface do
 
   context 'DSL test classes' do
 
     it 'acquires defaults' do
-      expect(RSpecTestServiceInterfaceInterfaceDefault.version).to eq(1)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.endpoint).to eq(:rspec_test_service_interface_default)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.resource).to be_a(Symbol)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.resource).to eq(:RSpecTestServiceInterfaceDefaultResource)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.actions).to eq(Set.new([:list, :show, :create, :update, :delete]))
-      expect(RSpecTestServiceInterfaceInterfaceDefault.public_actions).to be_empty
-      expect(RSpecTestServiceInterfaceInterfaceDefault.embeds).to be_empty
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.limit).to eq(50)
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.sort).to eq({"created_at" => [ "desc", "asc" ]})
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.default_sort_key).to eq("created_at")
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.default_sort_direction).to eq("desc")
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.search).to be_empty
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_list.filter).to be_empty
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_create).to be_nil
-      expect(RSpecTestServiceInterfaceInterfaceDefault.to_update).to be_nil
+      expect(RSpecTestInterfaceInterfaceDefault.version).to eq(1)
+      expect(RSpecTestInterfaceInterfaceDefault.endpoint).to eq(:rspec_test_interface_default)
+      expect(RSpecTestInterfaceInterfaceDefault.resource).to be_a(Symbol)
+      expect(RSpecTestInterfaceInterfaceDefault.resource).to eq(:RSpecTestInterfaceDefaultResource)
+      expect(RSpecTestInterfaceInterfaceDefault.implementation).to eq(RSpecTestInterfaceImplementationA)
+      expect(RSpecTestInterfaceInterfaceDefault.actions).to eq(Set.new([:list, :show, :create, :update, :delete]))
+      expect(RSpecTestInterfaceInterfaceDefault.public_actions).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.embeds).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.limit).to eq(50)
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.sort).to eq({"created_at" => [ "desc", "asc" ]})
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_key).to eq("created_at")
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_direction).to eq("desc")
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.search).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.filter).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_create).to be_nil
+      expect(RSpecTestInterfaceInterfaceDefault.to_update).to be_nil
     end
 
     # This is checking most of the DSL in non-error call cases
     #
     it 'should be correctly configured (A)' do
-      expect(RSpecTestServiceInterfaceInterfaceA.version).to eq(42)
-      expect(RSpecTestServiceInterfaceInterfaceA.endpoint).to eq(:rspec_test_service_interface_a)
-      expect(RSpecTestServiceInterfaceInterfaceA.resource).to be_a(Symbol)
-      expect(RSpecTestServiceInterfaceInterfaceA.resource).to eq(:RSpecTestServiceInterfaceAResource)
-      expect(RSpecTestServiceInterfaceInterfaceA.implementation).to eq(RSpecTestServiceInterfaceImplementationA)
-      expect(RSpecTestServiceInterfaceInterfaceA.actions).to eq(Set.new([:show, :create, :delete]))
-      expect(RSpecTestServiceInterfaceInterfaceA.embeds).to eq(["embed_one", "embed_two", "embed_three"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.limit).to eq(25)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.sort).to eq({"created_at" => [ "desc", "asc" ], "sort_one" => [ "left", "right" ], "sort_two" => [ "up", "down" ]})
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.default_sort_key).to eq("sort_two")
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.default_sort_direction).to eq("up")
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create).to_not be_nil
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_create.get_schema().properties['bar'].from).to eq(["baz", "boo"])
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['hello']).to be_a(Hoodoo::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['world']).to be_a(Hoodoo::Presenters::UUID)
-      expect(RSpecTestServiceInterfaceInterfaceA.to_update.get_schema().properties['world'].resource).to eq(:Earth)
-      expect(RSpecTestServiceInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
+      expect(RSpecTestInterfaceInterfaceA.version).to eq(42)
+      expect(RSpecTestInterfaceInterfaceA.endpoint).to eq(:rspec_test_interface_a)
+      expect(RSpecTestInterfaceInterfaceA.resource).to be_a(Symbol)
+      expect(RSpecTestInterfaceInterfaceA.resource).to eq(:RSpecTestInterfaceAResource)
+      expect(RSpecTestInterfaceInterfaceA.implementation).to eq(RSpecTestInterfaceImplementationA)
+      expect(RSpecTestInterfaceInterfaceA.actions).to eq(Set.new([:show, :create, :delete]))
+      expect(RSpecTestInterfaceInterfaceA.embeds).to eq(["embed_one", "embed_two", "embed_three"])
+      expect(RSpecTestInterfaceInterfaceA.to_list.limit).to eq(25)
+      expect(RSpecTestInterfaceInterfaceA.to_list.sort).to eq({"created_at" => [ "desc", "asc" ], "sort_one" => [ "left", "right" ], "sort_two" => [ "up", "down" ]})
+      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_key).to eq("sort_two")
+      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_direction).to eq("up")
+      expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
+      expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
+      expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
+      expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
+      expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar'].from).to eq(["baz", "boo"])
+      expect(RSpecTestInterfaceInterfaceA.to_update.get_schema().properties['hello']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestInterfaceInterfaceA.to_update.get_schema().properties['world']).to be_a(Hoodoo::Presenters::UUID)
+      expect(RSpecTestInterfaceInterfaceA.to_update.get_schema().properties['world'].resource).to eq(:Earth)
+      expect(RSpecTestInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
     end
 
     # This is just testing #update_same_as_create
     #
     it 'should be correctly configured (B)' do
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update).to_not be_nil
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['one']).to be_a(Hoodoo::Presenters::Text)
-      expect(RSpecTestServiceInterfaceInterfaceB.to_update.get_schema().properties['two']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestInterfaceInterfaceB.to_update).to_not be_nil
+      expect(RSpecTestInterfaceInterfaceB.to_update.get_schema().properties['one']).to be_a(Hoodoo::Presenters::Text)
+      expect(RSpecTestInterfaceInterfaceB.to_update.get_schema().properties['two']).to be_a(Hoodoo::Presenters::Text)
     end
   end
 
   context 'DSL errors' do
     it 'should complain about interface redefinition' do
       expect {
-        RSpecTestServiceInterfaceInterfaceB.interface :FooB do
+        RSpecTestInterfaceInterfaceB.interface :FooB do
         end
-      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface subclass unexpectedly ran ::interface more than once")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Interface subclass unexpectedly ran ::interface more than once")
     end
 
     it 'should complain about no endpoint' do
-      class RSpecTestServiceInterfaceInterfaceC < Hoodoo::ServiceInterface
+      class RSpecTestInterfaceInterfaceC < Hoodoo::Services::Interface
       end
 
       expect {
-        RSpecTestServiceInterfaceInterfaceC.interface :FooC do
+        RSpecTestInterfaceInterfaceC.interface :FooC do
         end
-      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Interface subclasses must always call the 'endpoint' DSL method in their interface descriptions")
     end
 
     it 'should complain about incorrect implementation classes' do
-      class RSpecTestServiceInterfaceInterfaceD < Hoodoo::ServiceInterface
+      class RSpecTestInterfaceInterfaceD < Hoodoo::Services::Interface
       end
 
       expect {
-        RSpecTestServiceInterfaceInterfaceD.interface :FooD do
-          endpoint :an_endpoint, Hoodoo::ServiceImplementation # Not a *subclass*, so just as invalid as some other unrelated Class
+        RSpecTestInterfaceInterfaceD.interface :FooD do
+          endpoint :an_endpoint, Hoodoo::Services::Implementation # Not a *subclass*, so just as invalid as some other unrelated Class
         end
-      }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#endpoint must provide Hoodoo::ServiceImplementation subclasses, but 'Hoodoo::ServiceImplementation' was given instead")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Interface#endpoint must provide Hoodoo::Services::Implementation subclasses, but 'Hoodoo::Services::Implementation' was given instead")
     end
 
     context 'in #action' do
       it 'should complain about incorrect actions' do
-        class RSpecTestServiceInterfaceImplementationE < Hoodoo::ServiceImplementation
+        class RSpecTestInterfaceImplementationE < Hoodoo::Services::Implementation
         end
-        class RSpecTestServiceInterfaceInterfaceE < Hoodoo::ServiceInterface
+        class RSpecTestInterfaceInterfaceE < Hoodoo::Services::Interface
         end
 
         expect {
-          RSpecTestServiceInterfaceInterfaceE.interface :FooE do
-            endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationE
+          RSpecTestInterfaceInterfaceE.interface :FooE do
+            endpoint :an_endpoint, RSpecTestInterfaceImplementationE
             actions :create, :made_this_up, :delete, :made_this_up_too
           end
-        }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface#actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
       end
     end
 
     context 'in #public_action' do
       it 'should complain about incorrect actions' do
-        class RSpecTestServiceInterfaceImplementationF < Hoodoo::ServiceImplementation
+        class RSpecTestInterfaceImplementationF < Hoodoo::Services::Implementation
         end
-        class RSpecTestServiceInterfaceInterfaceF < Hoodoo::ServiceInterface
+        class RSpecTestInterfaceInterfaceF < Hoodoo::Services::Interface
         end
 
         expect {
-          RSpecTestServiceInterfaceInterfaceF.interface :FooF do
-            endpoint :an_endpoint, RSpecTestServiceInterfaceImplementationF
+          RSpecTestInterfaceInterfaceF.interface :FooF do
+            endpoint :an_endpoint, RSpecTestInterfaceImplementationF
             public_actions :create, :made_this_up, :delete, :made_this_up_too
           end
-        }.to raise_error(RuntimeError, "Hoodoo::ServiceInterface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface#public_actions does not recognise one or more actions: 'made_this_up, made_this_up_too'")
       end
     end
 
@@ -178,38 +178,38 @@ describe Hoodoo::ServiceInterface do
     #
     it 'should complain about incorrect instantiation' do
       expect {
-        Hoodoo::ServiceInterface::ToListDSL.new( Array.new ) do
+        Hoodoo::Services::Interface::ToListDSL.new( Array.new ) do
         end
-      }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::ServiceInstance::ToList instance - got 'Array'")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::Services::ServiceInstance::ToList instance - got 'Array'")
     end
 
     context 'in #limit' do
       it 'should complain about incorrect types' do
         expect {
-          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             limit "hello"
           end
-        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#limit requires an Integer - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#limit requires an Integer - got 'String'")
       end
     end
 
     context 'in #sort' do
       it 'should complain about incorrect types' do
         expect {
-          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             sort "hello"
           end
-        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#sort requires a Hash - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#sort requires a Hash - got 'String'")
       end
     end
 
     context 'in #default' do
       it 'should complain about incorrect types' do
         expect {
-          Hoodoo::ServiceInterface::ToListDSL.new( Hoodoo::ServiceInterface::ToList.new ) do
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             default 42
           end
-        }.to raise_error(RuntimeError, "Hoodoo::ServiceInstance::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
       end
     end
   end

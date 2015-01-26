@@ -1,5 +1,5 @@
 ########################################################################
-# File::    service_application.rb
+# File::    service.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Define a class that service authors subclass and use to
@@ -9,7 +9,7 @@
 #           This class is passed to Rack and treated like an endpoint
 #           Rack application, though the service middleware in practice
 #           does not pass on calls using the Rack interface; it uses the
-#           custom calls exposed by Hoodoo::ServiceImplementation.
+#           custom calls exposed by Hoodoo::Services::Implementation.
 #           Rack's involvement between the two is really limited to just
 #           passing an instance of the service application subclass to
 #           the middleware so it knows who to "talk to".
@@ -17,14 +17,14 @@
 #           23-Sep-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
+module Hoodoo; module Services
 
-  # Hoodoo::ServiceApplication is subclassed by people writing service
+  # Hoodoo::Services::Service is subclassed by people writing service
   # implementations; the subclasses are the entrypoint for platform services.
   #
   # It's really just a container of one or more interface classes, which are
-  # all Hoodoo::ServiceInterface subclasses. The Rack middleware in
-  # Hoodoo::ServiceMiddleware uses the Hoodoo::ServiceApplication to find
+  # all Hoodoo::Services::Interface subclasses. The Rack middleware in
+  # Hoodoo::Services::Middleware uses the Hoodoo::Services::Service to find
   # out what interfaces it implements. Those interface classes nominate a Ruby
   # class of the author's choice in which they've written the implementation
   # for that interface. Interfaces also declare themselves to be available at
@@ -34,32 +34,32 @@ module Hoodoo
   # Suppose we defined a PurchaseInterface and RefundInterface which we wanted
   # both to be available as a Shopping Service:
   #
-  #     class PurchaseImplementation < Hoodoo::ServiceImplementation
+  #     class PurchaseImplementation < Hoodoo::Services::Implementation
   #       # ...
   #     end
   #
-  #     class PurchaseInterface < Hoodoo::ServiceInterface
+  #     class PurchaseInterface < Hoodoo::Services::Interface
   #       interface :Purchase do
   #         endpoint :purchases, PurchaseImplementation
   #         # ...
   #       end
   #     end
   #
-  #     class RefundImplementation < Hoodoo::ServiceImplementation
+  #     class RefundImplementation < Hoodoo::Services::Implementation
   #       # ...
   #     end
   #
-  #     class RefundInterface < Hoodoo::ServiceInterface
+  #     class RefundInterface < Hoodoo::Services::Interface
   #       interface :Refund do
   #         endpoint :refunds, RefundImplementation
   #         # ...
   #       end
   #     end
   #
-  # ...then the *entire* ServiceApplication subclass for the Shopping Service
+  # ...then the *entire* Service subclass for the Shopping Service
   # could be as small as this:
   #
-  #     class ShoppingService < Hoodoo::ServiceApplication
+  #     class ShoppingService < Hoodoo::Services::Service
   #       comprised_of PurchaseInterface,
   #                    RefundInterface
   #     end
@@ -77,10 +77,10 @@ module Hoodoo
   # application, sacrificing full decoupling. As a service author, the choice
   # is yours.
   #
-  class ServiceApplication
+  class Service
 
     # Return an array of the classes that make up the interfaces for this
-    # service. Each is an Hoodoo::ServiceInterface subclass that was
+    # service. Each is an Hoodoo::Services::Interface subclass that was
     # registered by the subclass through a call to #comprised_of.
     #
     def self.component_interfaces
@@ -102,22 +102,22 @@ module Hoodoo
     # +env+:: Rack environment (ignored).
     #
     def call( env )
-      raise "Hoodoo::ServiceImplementation subclasses should only be called through the middleware - add 'use Hoodoo::ServiceMiddleware' to (e.g.) config.ru"
+      raise "Hoodoo::Services::Implementation subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru"
     end
 
   protected
 
-    # Called by subclasses listing one or more Hoodoo::ServiceInterface
+    # Called by subclasses listing one or more Hoodoo::Services::Interface
     # subclasses that make up the service implementation as a whole.
     #
     # Example:
     #
-    #     class ShoppingService < Hoodoo::ServiceApplication
+    #     class ShoppingService < Hoodoo::Services::Service
     #       comprised_of PurchaseInterface,
     #                    RefundInterface
     #     end
     #
-    # See this class's general Hoodoo::ServiceApplication documentation for
+    # See this class's general Hoodoo::Services::Service documentation for
     # more details.
     #
     def self.comprised_of( *classes )
@@ -125,8 +125,8 @@ module Hoodoo
       # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
       classes.each do | klass |
-        unless klass < Hoodoo::ServiceInterface
-          raise "Hoodoo::ServiceImplementation::comprised_of expects Hoodoo::ServiceInterface subclasses only - got '#{ klass }'"
+        unless klass < Hoodoo::Services::Interface
+          raise "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got '#{ klass }'"
         end
       end
 
@@ -137,4 +137,5 @@ module Hoodoo
       @component_interfaces.uniq!
     end
   end
-end
+
+end; end

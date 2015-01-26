@@ -4,22 +4,22 @@
 
 require 'spec_helper'
 
-describe Hoodoo::ServiceMiddleware do
+describe Hoodoo::Services::Middleware do
 
-  class RSpecTestServiceExoticStubImplementation < Hoodoo::ServiceImplementation
+  class RSpecTestServiceExoticStubImplementation < Hoodoo::Services::Implementation
     def list( context )
       context.response.set_resources( [] )
     end
   end
 
-  class RSpecTestServiceExoticStubInterface < Hoodoo::ServiceInterface
+  class RSpecTestServiceExoticStubInterface < Hoodoo::Services::Interface
     interface :Version do
       endpoint :version, RSpecTestServiceExoticStubImplementation
       version 2
     end
   end
 
-  class RSpecTestServiceExoticStub < Hoodoo::ServiceApplication
+  class RSpecTestServiceExoticStub < Hoodoo::Services::Service
     comprised_of RSpecTestServiceExoticStubInterface
   end
 
@@ -27,29 +27,29 @@ describe Hoodoo::ServiceMiddleware do
     before :each do
       @old_queue = ENV[ 'AMQ_ENDPOINT' ]
       ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
-      @mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+      @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
 
       @cvar = false
-      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         @cvar = true
-        @cvar_val = Hoodoo::ServiceMiddleware.class_variable_get( '@@alchemy' )
+        @cvar_val = Hoodoo::Services::Middleware.class_variable_get( '@@alchemy' )
       end
     end
 
     after :each do
       ENV[ 'AMQ_ENDPOINT' ] = @old_queue
 
-      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
+      if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
-          Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', @cvar_val )
+          Hoodoo::Services::Middleware.class_variable_set( '@@alchemy', @cvar_val )
         else
-          Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+          Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
         end
       end
     end
 
     it 'knows it is on-queue' do
-      expect( Hoodoo::ServiceMiddleware.on_queue? ).to eq( true )
+      expect( Hoodoo::Services::Middleware.on_queue? ).to eq( true )
     end
 
     # TODO: Weak test! Assumes static mappings. Will need modification
@@ -76,8 +76,8 @@ describe Hoodoo::ServiceMiddleware do
       @mw.instance_variable_set( '@interaction_id', interaction_id )
       @mw.instance_variable_set( '@session_id', session_id )
 
-      if Hoodoo::ServiceMiddleware.class_variable_defined?( '@@alchemy' )
-        Hoodoo::ServiceMiddleware.remove_class_variable( '@@alchemy' )
+      if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
+        Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
       end
 
       expect {
@@ -102,7 +102,7 @@ describe Hoodoo::ServiceMiddleware do
       @mw.instance_variable_set( '@session_id', session_id )
 
       mock_alchemy = OpenStruct.new
-      Hoodoo::ServiceMiddleware.class_variable_set( '@@alchemy', mock_alchemy )
+      Hoodoo::Services::Middleware.class_variable_set( '@@alchemy', mock_alchemy )
 
       mock_queue  = 'service.utility'
       mock_path   = '/v2/version'
@@ -143,7 +143,7 @@ describe Hoodoo::ServiceMiddleware do
         }
       )
 
-      expect( mock_result ).to eq( Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash.new )
+      expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new )
     end
   end
 
@@ -177,7 +177,7 @@ describe Hoodoo::ServiceMiddleware do
     # at all from that same chunk of code here.
     #
     it 'attempts HTTPS communication' do
-      mw = Hoodoo::ServiceMiddleware.new( RSpecTestServiceExoticStub.new )
+      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
 
       interaction_id = Hoodoo::UUID.generate()
       session_id = Hoodoo::UUID.generate()
@@ -197,7 +197,7 @@ describe Hoodoo::ServiceMiddleware do
 
       # Expect an empty *array* back. A Hash implies an error.
 
-      expect( mock_result ).to eq( Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray.new )
+      expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new )
     end
   end
 end

@@ -7,12 +7,13 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
+
     class ExceptionReporting
 
-      # Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass
-      # giving Hoodoo::ServiceMiddleware::ExceptionReporting access to
+      # Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass
+      # giving Hoodoo::Services::Middleware::ExceptionReporting access to
       # Airbrake for error reporting. See https://airbrake.io.
       #
       # Your application must include the Airbrake gem 'airbrake' via Gemfile
@@ -29,8 +30,8 @@ module Hoodoo
       #       config.api_key = 'YOUR_AIRBRAKE_API_KEY'
       #     end
       #
-      #     Hoodoo::ServiceMiddleware::ExceptionReporting.add(
-      #       Hoodoo::ServiceMiddleware::ExceptionReporting::AirbrakeReporter
+      #     Hoodoo::Services::Middleware::ExceptionReporting.add(
+      #       Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter
       #     )
       #
       # Services and the Hoodoo middleware do not pass Rails-like params
@@ -41,7 +42,7 @@ module Hoodoo
       #
       #   https://github.com/airbrake/airbrake/wiki/Customizing-your-airbrake.rb
       #
-      class AirbrakeReporter < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+      class AirbrakeReporter < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
 
         # Report an exception to Airbrake.
         #
@@ -58,5 +59,6 @@ module Hoodoo
       end
 
     end
+
   end
-end
+end; end

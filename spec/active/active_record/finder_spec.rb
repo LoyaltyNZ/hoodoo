@@ -74,7 +74,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.save!
     @code = @c.code
 
-    @list_params = Hoodoo::ServiceRequest::ListParameters.new
+    @list_params = Hoodoo::Services::Request::ListParameters.new
   end
 
   # ==========================================================================

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Hoodoo::ServiceRequest do
+describe Hoodoo::Services::Request do
   context 'uri_path_components' do
     before do
-      @r = Hoodoo::ServiceRequest.new
+      @r = Hoodoo::Services::Request.new
     end
 
     it 'should record path components properly' do

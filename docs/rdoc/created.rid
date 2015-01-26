@@ -69,7 +69,7 @@ lib/api_tools/presenters/types/string.rb	Fri, 07 Nov 2014 15:10:51 +1300
 lib/api_tools/presenters/types/tags.rb	Fri, 31 Oct 2014 10:00:31 +1300
 lib/api_tools/presenters/types/text.rb	Fri, 07 Nov 2014 15:10:51 +1300
 lib/api_tools/presenters/types/uuid.rb	Thu, 13 Nov 2014 11:21:12 +1300
-lib/api_tools/service_implementations/service_application.rb	Wed, 12 Nov 2014 17:13:46 +1300
+lib/api_tools/service_implementations/service_service.rb	Wed, 12 Nov 2014 17:13:46 +1300
 lib/api_tools/service_implementations/service_context.rb	Fri, 12 Dec 2014 11:35:55 +1300
 lib/api_tools/service_implementations/service_implementation.rb	Fri, 03 Oct 2014 13:46:40 +1300
 lib/api_tools/service_implementations/service_interface.rb	Thu, 04 Dec 2014 10:41:29 +1300

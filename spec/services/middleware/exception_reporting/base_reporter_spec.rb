@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter do
+describe Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter do
   class TestERBase < described_class
   end
 

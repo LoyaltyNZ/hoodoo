@@ -3,26 +3,27 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A subclass of Ruby standard library Array used by the
-#           Hoodoo::ServiceMiddleware::ServiceEndpoint family of
+#           Hoodoo::Services::Middleware::Endpoint family of
 #           inter-resource calls.
 # ----------------------------------------------------------------------
 #           11-Dec-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
-    class ServiceEndpoint < Hoodoo::ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
+
+    class Endpoint < Hoodoo::Services::Middleware
 
       # Base mixin for
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedHash and
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint::AugmentedArray,
-      # used by Hoodoo::ServiceMiddleware::ServiceEndpoint for return
+      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash and
+      # Hoodoo::Services::Middleware::Endpoint::AugmentedArray,
+      # used by Hoodoo::Services::Middleware::Endpoint for return
       # values in its resource calling API - see
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint#list,
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint#show,
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint#create,
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint#update and
-      # Hoodoo::ServiceMiddleware::ServiceEndpoint#delete.
+      # Hoodoo::Services::Middleware::Endpoint#list,
+      # Hoodoo::Services::Middleware::Endpoint#show,
+      # Hoodoo::Services::Middleware::Endpoint#create,
+      # Hoodoo::Services::Middleware::Endpoint#update and
+      # Hoodoo::Services::Middleware::Endpoint#delete.
       #
       # The error handling mechanism this mixin provides is intentionally
       # analogous to that used for mapping ActiveRecord model validation
@@ -33,8 +34,8 @@ module Hoodoo
         # Adds errors set via #set_platform_errors to the
         # given Hoodoo::Errors instance. Generally, #set_platform_errors is
         # only ever called by the middleware when one resource calls another
-        # resource via Hoodoo::ServiceContext#resource and the methods in
-        # the Hoodoo::ServiceMiddleware::ServiceEndpoint instance it
+        # resource via Hoodoo::Services::Context#resource and the methods in
+        # the Hoodoo::Services::Middleware::Endpoint instance it
         # returns.
         #
         # Returns +true+ if any errors were added else +false+ if everything
@@ -57,13 +58,13 @@ module Hoodoo
         #     end
         #
         # +collection+:: An Hoodoo::Errors instance, typically obtained
-        #                from the Hoodoo::ServiceContext instance passed to
+        #                from the Hoodoo::Services::Context instance passed to
         #                a service implementation in calls like
-        #                Hoodoo::ServiceImplementation#list or
-        #                Hoodoo::ServiceImplementation#show, via
+        #                Hoodoo::Services::Implementation#list or
+        #                Hoodoo::Services::Implementation#show, via
         #                +context.response.errors+
-        #                (i.e. Hoodoo::ServiceContext#response /
-        #                Hoodoo::ServiceResponse#errors). The collection you
+        #                (i.e. Hoodoo::Services::Context#response /
+        #                Hoodoo::Services::Response#errors). The collection you
         #                pass is updated with any errors noted internally via
         #                (usually-middleware-automatically-called) method
         #                #set_platform_errors.
@@ -119,5 +120,6 @@ module Hoodoo
         end
       end
     end
+
   end
-end
+end; end

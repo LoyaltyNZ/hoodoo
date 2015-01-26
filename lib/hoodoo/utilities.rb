@@ -8,4 +8,5 @@
 ########################################################################
 
 require 'hoodoo/utilities/utilities'
+require 'hoodoo/utilities/string_inquirer'
 require 'hoodoo/utilities/uuid'

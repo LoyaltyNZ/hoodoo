@@ -1,26 +1,26 @@
 require 'spec_helper'
 
-class RSpecTestServiceContextImplementation < Hoodoo::ServiceImplementation
+class RSpecTestContextImplementation < Hoodoo::Services::Implementation
 end
 
-class RSpecTestServiceContextInterface < Hoodoo::ServiceInterface
+class RSpecTestContextInterface < Hoodoo::Services::Interface
   interface :RSpecTestResource do
-    endpoint :rspec_test_service_stub, RSpecTestServiceContextImplementation
+    endpoint :rspec_test_service_stub, RSpecTestContextImplementation
   end
 end
 
-class RSpecTestServiceContext < Hoodoo::ServiceApplication
-  comprised_of RSpecTestServiceContextInterface
+class RSpecTestContext < Hoodoo::Services::Service
+  comprised_of RSpecTestContextInterface
 end
 
-describe Hoodoo::ServiceContext do
+describe Hoodoo::Services::Context do
 
   it 'should initialise correctly' do
-    ses = Hoodoo::ServiceSession.new
-    req = Hoodoo::ServiceRequest.new
-    res = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
-    mid = Hoodoo::ServiceMiddleware.new( RSpecTestServiceContext.new )
-    con = Hoodoo::ServiceContext.new( ses, req, res, mid )
+    ses = Hoodoo::Services::Session.new
+    req = Hoodoo::Services::Request.new
+    res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
+    mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
+    con = Hoodoo::Services::Context.new( ses, req, res, mid )
 
     expect(con.session).to eq(ses)
     expect(con.request).to eq(req)
@@ -28,15 +28,15 @@ describe Hoodoo::ServiceContext do
   end
 
   it 'should report endpoints' do
-    ses = Hoodoo::ServiceSession.new
-    req = Hoodoo::ServiceRequest.new
-    res = Hoodoo::ServiceResponse.new( Hoodoo::UUID.generate() )
-    mid = Hoodoo::ServiceMiddleware.new( RSpecTestServiceContext.new )
-    con = Hoodoo::ServiceContext.new( ses, req, res, mid )
+    ses = Hoodoo::Services::Session.new
+    req = Hoodoo::Services::Request.new
+    res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
+    mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
+    con = Hoodoo::Services::Context.new( ses, req, res, mid )
 
-    expect(con.resource(:RSpecTestResource)).to be_a( Hoodoo::ServiceMiddleware::ServiceEndpoint )
-    expect(con.resource(:RSpecTestResource).interface).to eq( RSpecTestServiceContextInterface )
-    expect(con.resource(:AnotherResource)).to be_a( Hoodoo::ServiceMiddleware::ServiceEndpoint )
+    expect(con.resource(:RSpecTestResource)).to be_a( Hoodoo::Services::Middleware::Endpoint )
+    expect(con.resource(:RSpecTestResource).interface).to eq( RSpecTestContextInterface )
+    expect(con.resource(:AnotherResource)).to be_a( Hoodoo::Services::Middleware::Endpoint )
     expect(con.resource(:AnotherResource).interface).to be_nil
   end
 end

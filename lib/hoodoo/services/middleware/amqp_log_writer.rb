@@ -9,8 +9,8 @@
 #                              instantiable log writer.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
 
     # Log writer which sends structured messages to an AMQP-based queue via the
     # Alchemy and AMQEndpoint gems. An Hoodoo::Logger::FastWriter subclass,
@@ -18,7 +18,7 @@ module Hoodoo
     # itself uses an asynchronous Thread for this so there's no need to add
     # another one for this logger.
     #
-    # See also Hoodoo::Logger and Hoodoo::ServiceMiddleware::AMQPLogMessage.
+    # See also Hoodoo::Logger and Hoodoo::Services::Middleware::AMQPLogMessage.
     #
     class AMQPLogWriter < Hoodoo::Logger::FastWriter
 
@@ -53,7 +53,7 @@ module Hoodoo
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an Hoodoo::ServiceSession instance. The client ID,
+      #              an Hoodoo::Services::Session instance. The client ID,
       #              participant UUID and outlet UUID are sent as independent,
       #              searchable fields in the log payload.
       #
@@ -62,7 +62,7 @@ module Hoodoo
       #                    the log payload.
       #
       def report( level, component, code, data )
-        return if @alchemy.nil? || defined?( Hoodoo::ServiceMiddleware::AMQPLogMessage ).nil?
+        return if @alchemy.nil? || defined?( Hoodoo::Services::Middleware::AMQPLogMessage ).nil?
 
         data[ :id ] ||= Hoodoo::UUID.generate()
 
@@ -72,7 +72,7 @@ module Hoodoo
         participant_id = session[ :participant_id ]
         outlet_id      = session[ :outlet_id      ]
 
-        message = Hoodoo::ServiceMiddleware::AMQPLogMessage.new(
+        message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
           :level          => level,
           :component      => component,
@@ -91,5 +91,6 @@ module Hoodoo
         @alchemy.send_message( message )
       end
     end
+
   end
-end
+end; end

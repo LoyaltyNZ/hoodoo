@@ -377,7 +377,7 @@ module Hoodoo
       #       end
       #     end
       #
-      #     class OutletInterface < Hoodoo::ServiceInterface
+      #     class OutletInterface < Hoodoo::Services::Interface
       #       to_create do
       #         resource :Outlet
       #       end

@@ -89,8 +89,8 @@ RSpec.configure do | config |
     $stderr << Time.now.to_s << "\n"
     $stderr << "*"*80 << "\n\n"
 
-    Hoodoo::ServiceSession.testing( true )
-    Hoodoo::ServiceMiddleware.set_log_folder( base_path )
+    Hoodoo::Services::Session.testing( true )
+    Hoodoo::Services::Middleware.set_log_folder( base_path )
 
     ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
   end
@@ -98,10 +98,10 @@ RSpec.configure do | config |
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :suite ) do
-    Hoodoo::ServiceSession.testing( false )
+    Hoodoo::Services::Session.testing( false )
 
     DRb.start_service
-    drb_uri = Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.uri()
+    drb_uri = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.uri()
     drb_service = DRbObject.new_with_uri( drb_uri )
     drb_service.stop()
     DRb.stop_service
@@ -146,7 +146,7 @@ end
 # Only returns once the server is running and accepting connections. Returns
 # the port number upon which the server is listening.
 #
-# +app_class+:: Hoodoo::ServiceApplication subclass for the service to start.
+# +app_class+:: Hoodoo::Services::Service subclass for the service to start.
 #
 # +use_ssl+::   If +true+, SSL self-signed certificates in +spec/files+ are
 #               used to support SSL testing, provided certificate chain
@@ -162,7 +162,7 @@ def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
   port   = Hoodoo::Utilities.spare_port()
   thread = Thread.start do
     app = Rack::Builder.new do
-      use Hoodoo::ServiceMiddleware
+      use Hoodoo::Services::Middleware
       run app_class.new
     end
 

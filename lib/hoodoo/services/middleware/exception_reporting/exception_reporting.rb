@@ -8,8 +8,8 @@
 #           08-Dec-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
 
     # Exception reporting / monitoring through external services.
     #
@@ -20,7 +20,7 @@ module Hoodoo
       @@reporter_pool = Hoodoo::Communicators::Pool.new
 
       # Add an exception reporter class to the set of reporters. See the
-      # Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter class for an
+      # Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter class for an
       # overview.
       #
       # Whenever the middleware's own exception handler catches an exception,
@@ -37,12 +37,12 @@ module Hoodoo
       # made but processing of other reporters continues uninterrupted. It is
       # up to individual reporter classes to manage thread safety.
       #
-      # +klass+:: Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+      # +klass+:: Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to add.
       #
       def self.add( klass )
-        unless klass < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
-          raise "Hoodoo::ServiceMiddleware.add must be called with an Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
+        unless klass < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
+          raise "Hoodoo::Services::Middleware.add must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.add( klass.instance )
@@ -51,12 +51,12 @@ module Hoodoo
       # Remove an exception reporter class from the set of reporters. See
       # ::add for details.
       #
-      # +klass+:: Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
+      # +klass+:: Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
       #           subclass (class, not instance) to remove.
       #
       def self.remove( klass )
-        unless klass < Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter
-          raise "Hoodoo::ServiceMiddleware.remove must be called with an Hoodoo::ServiceMiddleware::ExceptionReporting::BaseReporter subclass"
+        unless klass < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
+          raise "Hoodoo::Services::Middleware.remove must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.remove( klass.instance )
@@ -85,7 +85,7 @@ module Hoodoo
       end
 
       # Implementation detail of
-      # Hoodoo::ServiceMiddleware::ExceptionReporting used to carry
+      # Hoodoo::Services::Middleware::ExceptionReporting used to carry
       # multiple parameters describing exception related data through the
       # Hoodoo::Communicators::Pool#communicate mechanism.
       #
@@ -110,5 +110,6 @@ module Hoodoo
         end
       end
     end
+
   end
-end
+end; end

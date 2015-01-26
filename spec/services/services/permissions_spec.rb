@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::ServiceSession::Permissions do
+describe Hoodoo::Services::Permissions do
   it 'initialises with a "deny" default fallback' do
     p = described_class.new
 

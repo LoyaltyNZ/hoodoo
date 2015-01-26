@@ -13,15 +13,15 @@
 #           20-Nov-2014 (ADH): Created.
 ########################################################################
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
 
     begin
       require 'amq-endpoint' # Optional
 
       # For AMQEndpoint gem users, the AMQPLogMessage class provides an
       # AMQEndpoint::Message subclass used for sending structured log data to
-      # the queue. Hoodoo::ServiceMiddleware::StructuredLogger uses this.
+      # the queue. Hoodoo::Services::Middleware::StructuredLogger uses this.
       #
       # See the AMQEndpoint gem for more details.
       #
@@ -34,39 +34,39 @@ module Hoodoo
         #
         attr_accessor :id
 
-        # Logging level. See Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Logging level. See Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :level
 
-        # Logging component. See Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Logging component. See Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :component
 
-        # Component log code. See Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Component log code. See Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :code
 
-        # Log payload. See Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Log payload. See Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :data
 
         # Optional calling client ID, via session data inside the payload - see
-        # Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :client_id
 
         # Optional interaction UUID, via session data inside the payload - see
-        # Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :interaction_id
 
         # Optional participant UUID, via session data inside the payload - see
-        # Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :participant_id
 
         # Optional outlet UUID, via session data inside the payload - see
-        # Hoodoo::ServiceMiddleware::StructuredLogger.
+        # Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :outlet_id
 
@@ -131,4 +131,4 @@ module Hoodoo
     end
 
   end
-end
+end; end

@@ -8,7 +8,7 @@ require 'json'
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
 
-class TestEchoServiceImplementation < Hoodoo::ServiceImplementation
+class TestEchoImplementation < Hoodoo::Services::Implementation
 
   public
 
@@ -62,10 +62,10 @@ class TestEchoServiceImplementation < Hoodoo::ServiceImplementation
     end
 end
 
-class TestEchoServiceInterface < Hoodoo::ServiceInterface
+class TestEchoInterface < Hoodoo::Services::Interface
   interface :TestEcho do
     version 2
-    endpoint :test_some_echoes, TestEchoServiceImplementation
+    endpoint :test_some_echoes, TestEchoImplementation
 
     embeds :embed_one, :embed_two
 
@@ -76,7 +76,7 @@ class TestEchoServiceInterface < Hoodoo::ServiceInterface
   end
 end
 
-class TestEchoQuietServiceImplementation < Hoodoo::ServiceImplementation
+class TestEchoQuietImplementation < Hoodoo::Services::Implementation
 
   public
 
@@ -104,20 +104,20 @@ class TestEchoQuietServiceImplementation < Hoodoo::ServiceImplementation
     end
 end
 
-class TestEchoQuietServiceInterface < Hoodoo::ServiceInterface
+class TestEchoQuietInterface < Hoodoo::Services::Interface
   interface :TestEchoQuiet do
-    endpoint :test_echo_quiet, TestEchoQuietServiceImplementation
+    endpoint :test_echo_quiet, TestEchoQuietImplementation
     actions :show
   end
 end
 
-class TestEchoServiceApplication < Hoodoo::ServiceApplication
-  comprised_of TestEchoServiceInterface, TestEchoQuietServiceInterface
+class TestEchoService < Hoodoo::Services::Service
+  comprised_of TestEchoInterface, TestEchoQuietInterface
 end
 
 # Now the calling service that'll call over to the echo services above.
 
-class TestCallServiceImplementation < Hoodoo::ServiceImplementation
+class TestCallImplementation < Hoodoo::Services::Implementation
   def list( context )
     resource = context.resource( :TestEcho, 2 )
     result   = resource.list(
@@ -205,14 +205,14 @@ class TestCallServiceImplementation < Hoodoo::ServiceImplementation
   end
 end
 
-class TestCallServiceInterface < Hoodoo::ServiceInterface
+class TestCallInterface < Hoodoo::Services::Interface
   interface :TestCall do
-    endpoint :test_call, TestCallServiceImplementation
+    endpoint :test_call, TestCallImplementation
   end
 end
 
-class TestCallServiceApplication < Hoodoo::ServiceApplication
-  comprised_of TestCallServiceInterface
+class TestCallService < Hoodoo::Services::Service
+  comprised_of TestCallInterface
 end
 
 # And Finally - the tests.
@@ -224,17 +224,17 @@ describe 'DRb start timeout' do
       expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( Timeout::Error )
 
       spec_helper_http(
-        port: spec_helper_start_svc_app_in_thread_for( TestEchoServiceApplication ),
+        port: spec_helper_start_svc_app_in_thread_for( TestEchoService ),
         path: '/v2/test_some_echoes'
       )
     end
   end
 end
 
-describe Hoodoo::ServiceMiddleware do
+describe Hoodoo::Services::Middleware do
 
   before :all do
-    @port = spec_helper_start_svc_app_in_thread_for( TestEchoServiceApplication )
+    @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
   end
 
   # Although tests can run in random order so we can't force this set to come
@@ -245,13 +245,13 @@ describe Hoodoo::ServiceMiddleware do
   context 'with in-thread HTTP service' do
 
     before :example, :check_callbacks => true do
-      expect_any_instance_of( TestEchoServiceImplementation ).to receive( :before ).once
-      expect_any_instance_of( TestEchoServiceImplementation ).to receive( :after ).once
+      expect_any_instance_of( TestEchoImplementation ).to receive( :before ).once
+      expect_any_instance_of( TestEchoImplementation ).to receive( :after ).once
     end
 
     before :example, :check_quiet_callbacks => true do
-      expect_any_instance_of( TestEchoQuietServiceImplementation ).to receive( :before ).once
-      expect_any_instance_of( TestEchoQuietServiceImplementation ).to receive( :after ).once
+      expect_any_instance_of( TestEchoQuietImplementation ).to receive( :before ).once
+      expect_any_instance_of( TestEchoQuietImplementation ).to receive( :after ).once
     end
 
     def list_things
@@ -490,16 +490,16 @@ describe Hoodoo::ServiceMiddleware do
   context 'remote inter-resource calls' do
     def app
       Rack::Builder.new do
-        use Hoodoo::ServiceMiddleware
-        run TestCallServiceApplication.new
+        use Hoodoo::Services::Middleware
+        run TestCallService.new
       end
     end
 
     before :example, :check_callbacks => true do
-      expect_any_instance_of( TestCallServiceImplementation ).to receive( :before ).once
-        expect_any_instance_of( TestEchoServiceImplementation ).to receive( :before ).once
-        expect_any_instance_of( TestEchoServiceImplementation ).to receive( :after ).once
-      expect_any_instance_of( TestCallServiceImplementation ).to receive( :after ).once
+      expect_any_instance_of( TestCallImplementation ).to receive( :before ).once
+        expect_any_instance_of( TestEchoImplementation ).to receive( :before ).once
+        expect_any_instance_of( TestEchoImplementation ).to receive( :after ).once
+      expect_any_instance_of( TestCallImplementation ).to receive( :after ).once
     end
 
     def list_things
@@ -577,7 +577,7 @@ describe Hoodoo::ServiceMiddleware do
       expect( last_response.status ).to eq( 500 )
       parsed = JSON.parse( last_response.body )
 
-      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "Hoodoo::ServiceMiddleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
+      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
     end
 
     def show_things

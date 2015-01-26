@@ -9,7 +9,7 @@
 #           to the existing DRb server started by the first.
 #
 #           This class is almost a private implementation detail of
-#           Hoodoo::ServiceMiddleware and is namespaced inside it.
+#           Hoodoo::Services::Middleware and is namespaced inside it.
 #           File "service_middleware.rb" must be "require"'d first.
 # ----------------------------------------------------------------------
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
@@ -20,11 +20,11 @@ require 'hoodoo'
 require 'drb/drb'
 require 'drb/acl'
 
-module Hoodoo
-  class ServiceMiddleware
+module Hoodoo; module Services
+  class Middleware
 
     # A registry of service endpoints, implenented as a DRB server class. An
-    # internal implementation detail of Hoodoo::ServiceMiddleware, in most
+    # internal implementation detail of Hoodoo::Services::Middleware, in most
     # respects.
     #
     class ServiceRegistryDRbServer
@@ -109,11 +109,11 @@ module Hoodoo
 
     # Singleton "Front object" for the DRB service used in local development.
     #
-    FRONT_OBJECT = Hoodoo::ServiceMiddleware::ServiceRegistryDRbServer.new
+    FRONT_OBJECT = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.new
 
     # Only allow connections from 127.0.0.1.
     #
     LOCAL_ACL = ACL.new( [ 'deny', 'all', 'allow', '127.0.0.1' ] )
 
   end
-end
+end; end

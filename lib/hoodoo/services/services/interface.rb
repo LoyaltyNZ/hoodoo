@@ -1,5 +1,5 @@
 ########################################################################
-# File::    service_interface.rb
+# File::    interface.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Define a class (and some namespace-nested related support
@@ -12,7 +12,7 @@
 
 require 'set'
 
-module Hoodoo
+module Hoodoo; module Services
 
   # Service implementation authors subclass this to describe the interface that
   # they implement for a particular Resource, as documented in the Loyalty
@@ -20,7 +20,7 @@ module Hoodoo
   #
   # See class method ::interface for details.
   #
-  class ServiceInterface
+  class Interface
 
     ###########################################################################
 
@@ -29,7 +29,7 @@ module Hoodoo
     # validate incoming query strings for lists and reject requests that ask
     # for unsupported things. When instantiated the class sets itself up with
     # defaults that match those described by the your platform's API. When
-    # passed to an Hoodoo::ServiceInterface::ToListDSL instance, the DSL
+    # passed to an Hoodoo::Services::Interface::ToListDSL instance, the DSL
     # methods, if called, update the values stored herein.
     #
     class ToList
@@ -68,7 +68,7 @@ module Hoodoo
 
         # Remember, these are defaults for the "to_list" object of an
         # interface only. For interface-wide top level defaults, use the
-        # embedded calls to the DSL in ServiceInterface::interface.
+        # embedded calls to the DSL in Interface::interface.
 
         @limit            = 50
         @sort             = { 'created_at' => [ 'desc', 'asc' ] }
@@ -80,31 +80,31 @@ module Hoodoo
       private
 
         # Private writer - see #limit - but there's a special contract with
-        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::Services::Interface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :limit
 
         # Private writer - see #sort - but there's a special contract with
-        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::Services::Interface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :sort
 
         # Private writer - see #default_sort_key - but there's a special
-        # contract with Hoodoo::ServiceInterface::ToListDSL which permits it
+        # contract with Hoodoo::Services::Interface::ToListDSL which permits it
         # to call here bypassing +private+ via +send()+.
         #
         attr_writer :default_sort_key
 
         # Private writer - see #search - but there's a special contract with
-        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::Services::Interface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :search
 
         # Private writer - see #filter - but there's a special contract with
-        # Hoodoo::ServiceInterface::ToListDSL which permits it to call here
+        # Hoodoo::Services::Interface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :filter
@@ -114,29 +114,29 @@ module Hoodoo
     ###########################################################################
 
     # Implementation of the DSL that's written inside a block passed to
-    # Hoodoo::ServiceInterface#to_list. This is an internal implementation
-    # class. Instantiate with an Hoodoo::ServiceInterface::ToList instance,
+    # Hoodoo::Services::Interface#to_list. This is an internal implementation
+    # class. Instantiate with an Hoodoo::Services::Interface::ToList instance,
     # the data in which is updated as the DSL methods run.
     #
     class ToListDSL
 
       # Initialize an instance and run the DSL methods.
       #
-      # +hoodoo_service_interface_to_list_instance+:: Instance of
-      #                                                  Hoodoo::ServiceInterface::ToList
+      # +hoodoo_interface_to_list_instance+:: Instance of
+      #                                                  Hoodoo::Services::Interface::ToList
       #                                                  to update with data
       #                                                  from DSL method calls.
       #
       # &block:: Block of code that makes calls to the DSL herein.
       #
-      # On exit, the DSL is run and the Hoodoo::ServiceInterface::ToList has
+      # On exit, the DSL is run and the Hoodoo::Services::Interface::ToList has
       # been updated.
       #
-      def initialize( hoodoo_service_interface_to_list_instance, &block )
-        @tl = hoodoo_service_interface_to_list_instance # Shorthand!
+      def initialize( hoodoo_interface_to_list_instance, &block )
+        @tl = hoodoo_interface_to_list_instance # Shorthand!
 
-        unless @tl.instance_of?( Hoodoo::ServiceInterface::ToList )
-          raise "Hoodoo::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::ServiceInstance::ToList instance - got '#{ @tl.class }'"
+        unless @tl.instance_of?( Hoodoo::Services::Interface::ToList )
+          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::Services::ServiceInstance::ToList instance - got '#{ @tl.class }'"
         end
 
         self.instance_eval( &block )
@@ -152,7 +152,7 @@ module Hoodoo
       #
       def limit( limit )
         unless limit.is_a?( ::Integer )
-          raise "Hoodoo::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
+          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
         end
 
         @tl.send( :limit=, limit )
@@ -178,7 +178,7 @@ module Hoodoo
       #
       def sort( sort )
         unless sort.is_a?( ::Hash )
-          raise "Hoodoo::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
+          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
         # Convert hash keys to strings and values in arrays to strings too.
@@ -206,7 +206,7 @@ module Hoodoo
       #
       def default( sort_key )
         unless sort_key.is_a?( ::String ) || sort_key.is_a?( ::Symbol )
-          raise "Hoodoo::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
+          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 
         @tl.send( :default_sort_key=, sort_key.to_s )
@@ -247,7 +247,7 @@ module Hoodoo
     ###########################################################################
 
     # Mandatory part of the interface DSL. Declare the interface's URL endpoint
-    # and the Hoodoo::ServiceImplementation subclass to be invoked when
+    # and the Hoodoo::Services::Implementation subclass to be invoked when
     # client requests are sent to a URL matching the endpoint.
     #
     # No two interfaces can use the same endpoint within a service application,
@@ -255,7 +255,7 @@ module Hoodoo
     #
     # Example:
     #
-    #     endpoint :estimations, PurchaseServiceImplementation
+    #     endpoint :estimations, PurchaseImplementation
     #
     # +uri_path_fragment+:: Path fragment to match at the start of a URL path,
     #                       as a symbol or string, excluding leading "/". The
@@ -267,7 +267,7 @@ module Hoodoo
     #                       +/products.json+ or +/products/22+, but does not
     #                       match +/products_and_things+.
     #
-    # +implementation_class+:: The Hoodoo::ServiceImplementation subclass
+    # +implementation_class+:: The Hoodoo::Services::Implementation subclass
     #                          (the class itself, not an instance of it) that
     #                          should be used when a request matching the
     #                          path fragment is received.
@@ -276,8 +276,8 @@ module Hoodoo
 
       # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
       #
-      unless implementation_class < Hoodoo::ServiceImplementation
-        raise "Hoodoo::ServiceInterface#endpoint must provide Hoodoo::ServiceImplementation subclasses, but '#{ implementation_class }' was given instead"
+      unless implementation_class < Hoodoo::Services::Implementation
+        raise "Hoodoo::Services::Interface#endpoint must provide Hoodoo::Services::Implementation subclasses, but '#{ implementation_class }' was given instead"
       end
 
       self.class.send( :endpoint=,       uri_path_fragment    )
@@ -314,10 +314,10 @@ module Hoodoo
     #
     def actions( *supported_actions )
       supported_actions.map! { | item | item.to_sym }
-      invalid = supported_actions - Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
+      invalid = supported_actions - Hoodoo::Services::Middleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "Hoodoo::ServiceInterface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+        raise "Hoodoo::Services::Interface#actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :actions=, Set.new( supported_actions ) )
@@ -326,7 +326,7 @@ module Hoodoo
     # List any actions which are public - NOT PROTECTED BY SESSIONS. For
     # public actions, no X-Session-ID or similar header is consulted and
     # no session data will be associated with your
-    # Hoodoo::ServiceContext instance when action methods are called.
+    # Hoodoo::Services::Context instance when action methods are called.
     # Use with great care!
     #
     # *public_actions:: One or more from +:list+, +:show+, +:create+,
@@ -336,10 +336,10 @@ module Hoodoo
     #
     def public_actions( *public_actions )
       public_actions.map! { | item | item.to_sym }
-      invalid = public_actions - Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
+      invalid = public_actions - Hoodoo::Services::Middleware::ALLOWED_ACTIONS
 
       unless invalid.empty?
-        raise "Hoodoo::ServiceInterface#public_actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+        raise "Hoodoo::Services::Interface#public_actions does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
       end
 
       self.class.send( :public_actions=, Set.new( public_actions ) )
@@ -373,7 +373,7 @@ module Hoodoo
     end
 
     # Specify parameters related to common index parameters. The block contains
-    # calls to the DSL described by Hoodoo::ServiceInterface::ToListDSL. The
+    # calls to the DSL described by Hoodoo::Services::Interface::ToListDSL. The
     # default values should be described by your platform's API - hard-coded at
     # the time of writing as:
     #
@@ -383,7 +383,7 @@ module Hoodoo
     #     filter   nil
     #
     def to_list( &block )
-      Hoodoo::ServiceInterface::ToListDSL.new(
+      Hoodoo::Services::Interface::ToListDSL.new(
         self.class.instance_variable_get( '@to_list' ),
         &block
       )
@@ -488,25 +488,25 @@ module Hoodoo
   protected
 
     # Define the subclass service's interface. A DSL is used with methods
-    # documented in the Hoodoo::ServiceInterfaceDSL class.
+    # documented in the Hoodoo::Services::InterfaceDSL class.
     #
     # The absolute bare minimum interface description just states that a
     # particular implementation class is used when requests are made to a
     # particular URL endpoint, which is implementing an interface for a
     # particular given resource. For a hypothetical Magic resource interface:
     #
-    #     class MagicServiceImplementation < Hoodoo::ServiceImplementation
+    #     class MagicImplementation < Hoodoo::Services::Implementation
     #       # ...implementation code goes here...
     #     end
     #
-    #     class MagicServiceInterface < Hoodoo::ServiceInterface
+    #     class MagicInterface < Hoodoo::Services::Interface
     #       interface :Magic do
-    #         endpoint :paul_daniels, MagicServiceImplementation
+    #         endpoint :paul_daniels, MagicImplementation
     #       end
     #     end
     #
     # This would cause all calls to URLs at '/paul_daniels[...]' to be routed to
-    # an instance of the MagicServiceImplementation class.
+    # an instance of the MagicImplementation class.
     #
     # Addtional DSL facilities allow the interface to say what HTTP methods
     # it supports (in terms of the action methods that it supports inside its
@@ -519,15 +519,15 @@ module Hoodoo
     #
     # +resource+:: Name of the resource that the interface is for, as a symbol;
     #              for example, ':Purchase'.
-    # &block::     Block that calls the Hoodoo::ServiceInterfaceDSL methods;
+    # &block::     Block that calls the Hoodoo::Services::InterfaceDSL methods;
     #              #endpoint is the only mandatory call.
     #
     def self.interface( resource, &block )
 
       if @to_list.nil?
-        @to_list = Hoodoo::ServiceInterface::ToList.new
+        @to_list = Hoodoo::Services::Interface::ToList.new
       else
-        raise "Hoodoo::ServiceInterface subclass unexpectedly ran ::interface more than once"
+        raise "Hoodoo::Services::Interface subclass unexpectedly ran ::interface more than once"
       end
 
       self.resource = resource.to_sym
@@ -536,14 +536,14 @@ module Hoodoo
       interface.instance_eval do
         version 1
         embeds # Nothing
-        actions *Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
+        actions *Hoodoo::Services::Middleware::ALLOWED_ACTIONS
         public_actions # None
       end
 
       interface.instance_eval( &block )
 
       if self.endpoint.nil?
-        raise "Hoodoo::ServiceInterface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
+        raise "Hoodoo::Services::Interface subclasses must always call the 'endpoint' DSL method in their interface descriptions"
       end
 
     end
@@ -575,7 +575,7 @@ module Hoodoo
         attr_reader :resource
 
         # Implementation class for the service. An
-        # Hoodoo::ServiceImplementation subclass - the class, not an
+        # Hoodoo::Services::Implementation subclass - the class, not an
         # instance of it.
         #
         attr_reader :implementation
@@ -612,12 +612,12 @@ module Hoodoo
         #
         attr_reader :embeds
 
-        # An Hoodoo::ServiceInterface::ToList instance describing the list
+        # An Hoodoo::Services::Interface::ToList instance describing the list
         # parameters for the interface as a Set of Strings. See also
-        # Hoodoo::ServiceInterface::ToListDSL.
+        # Hoodoo::Services::Interface::ToListDSL.
         #
         def to_list
-          @to_list ||= Hoodoo::ServiceInterface::ToList.new
+          @to_list ||= Hoodoo::Services::Interface::ToList.new
           @to_list
         end
 
@@ -706,6 +706,7 @@ module Hoodoo
         #
         attr_writer :errors_for
 
-    end # 'class << self'
-  end   # 'class ServiceInterface'
-end     # 'module Hoodoo'
+    end  # 'class << self'
+  end    # 'class Interface'
+
+end; end # 'module Hoodoo; module Services'
