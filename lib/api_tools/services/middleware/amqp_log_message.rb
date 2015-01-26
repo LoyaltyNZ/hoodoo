@@ -77,7 +77,7 @@ module Hoodoo
           update( options )
           super( options )
 
-          @type = AMQPLogMessage::TYPE
+          @type = ::AMQPLogMessage::TYPE
         end
 
         # Seralize this instance. See the AMQEndpoint gem and
