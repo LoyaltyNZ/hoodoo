@@ -92,7 +92,7 @@ RSpec.configure do | config |
     Hoodoo::Services::Session.testing( true )
     Hoodoo::Services::Middleware.set_log_folder( base_path )
 
-    ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
+    ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
   end
 
   # Session test mode - test mode disabled explicitly for session tests.

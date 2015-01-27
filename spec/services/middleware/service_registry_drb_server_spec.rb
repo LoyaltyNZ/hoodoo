@@ -68,9 +68,9 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
         port = Hoodoo::Utilities.spare_port().to_s
 
         thread = Thread.new do
-          ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
+          ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
           described_class.start()
-          ENV.delete( 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' )
+          ENV.delete( 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' )
         end
 
         client = nil
@@ -94,7 +94,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
         # For good measure...
         #
-        ENV.delete( 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' )
+        ENV.delete( 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' )
 
       }.to_not raise_error
     end

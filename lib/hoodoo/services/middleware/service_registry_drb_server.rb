@@ -41,7 +41,7 @@ module Hoodoo; module Services
         #
         #   https://bugs.ruby-lang.org/issues/3052
         #
-        "druby://127.0.0.1:#{ ENV[ 'APITOOLS_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
+        "druby://127.0.0.1:#{ ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
 
       end
 

@@ -49,7 +49,7 @@ module Hoodoo; module Services
       :client_id      => 'ABCDEF0123456789',
       :participant_id => 'e9421091be4d45419ed67326392ee641',
       :outlet_id      => '30c13f64e1044026b350b77c9b4aa6aa',
-      :roles          => ENV[ 'API_TOOLS_TEST_SESSION_ROLES' ] || '',
+      :roles          => ENV[ 'HOODOO_TEST_SESSION_ROLES' ] || '',
     }
 
     # TODO: Loyalty NZ derived, needs better specification.
@@ -64,7 +64,7 @@ module Hoodoo; module Services
     #                  mock session. The internal static test session has no
     #                  roles assigned, but will read a string of
     #                  comma-separated roles from
-    #                  +ENV[ 'API_TOOLS_TEST_SESSION_ROLES' ]+ if defined.
+    #                  +ENV[ 'HOODOO_TEST_SESSION_ROLES' ]+ if defined.
     #
     def self.testing(test_mode, mock_session = nil)
       @@test_mode = test_mode
