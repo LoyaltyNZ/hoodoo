@@ -31,7 +31,7 @@ rescue LoadError
   raise 'Cannot load amq-endpoint; did you run me with "bundle exec..." ?'
 end
 
-# Now it's safe to require Rack test code and APITools itself.
+# Now it's safe to require Rack test code and Hoodoo itself.
 
 require 'rack/test'
 require 'hoodoo'
