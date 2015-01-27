@@ -24,7 +24,7 @@
             
                 <span class="parent">&lt; 
                     
-                    <a href="../../Object.html">Object</a>
+                    Object
                     
                 </span>
             
@@ -58,11 +58,13 @@ href="Fast.html">Hoodoo::Communicators::Fast</a> instead.</p>
 network-based third party logging service. The parameter it expects would
 be a log message string.</p>
 
-<p><strong>IMPORTANT</strong>: If you use ActiveRecord in a slow communicator
-class, beware that your writer runs in a ruby Thread. Unless you take steps
-to prevent it, ActiveRecord will implicitly check out a connection which
-stays with your Thread forever. This steals a connection from the pool. To
-prevent this issue, you must use the following pattern:</p>
+<p><strong>IMPORTANT</strong>: If you use <a
+href="../ActiveRecord.html">ActiveRecord</a> in a slow communicator class,
+beware that your writer runs in a ruby Thread. Unless you take steps to
+prevent it, <a href="../ActiveRecord.html">ActiveRecord</a> will implicitly
+check out a connection which stays with your Thread forever. This steals a
+connection from the pool. To prevent this issue, you must use the following
+pattern:</p>
 
 <pre><code>def communicate( object )
   ActiveRecord::Base.connection_pool.with_connection do
@@ -73,9 +75,9 @@ end
 
 <p>Code within the <code>with_connection</code> block uses a temporary
 connection from the pool which is returned once the block has finished
-processing. Even if exceptions occur within your ActiveRecord code, the
-connection is still correctly returned to the pool using the above
-approach.</p>
+processing. Even if exceptions occur within your <a
+href="../ActiveRecord.html">ActiveRecord</a> code, the connection is still
+correctly returned to the pool using the above approach.</p>
 
     </div>
   

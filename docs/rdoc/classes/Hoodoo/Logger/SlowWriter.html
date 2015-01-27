@@ -24,7 +24,7 @@
             
                 <span class="parent">&lt; 
                     
-                    <a href="../../Object.html">Object</a>
+                    Object
                     
                 </span>
             
@@ -57,11 +57,13 @@ be dropped. A <code>:warn</code> level message is reported automatically
 for such cases, describing the number of dropped messages, once the slow
 writer has caught up.</p>
 
-<p><strong>IMPORTANT</strong>: If you use ActiveRecord in a slow writer class,
-beware that your writer runs in a ruby Thread. Unless you take steps to
-prevent it, ActiveRecord will implicitly check out a connection which stays
-with your Thread forever. This steals a connection from the pool. To
-prevent this issue, you must use the following pattern:</p>
+<p><strong>IMPORTANT</strong>: If you use <a
+href="../ActiveRecord.html">ActiveRecord</a> in a slow writer class, beware
+that your writer runs in a ruby Thread. Unless you take steps to prevent
+it, <a href="../ActiveRecord.html">ActiveRecord</a> will implicitly check
+out a connection which stays with your Thread forever. This steals a
+connection from the pool. To prevent this issue, you must use the following
+pattern:</p>
 
 <pre><code>def report( log_level, component, code, data )
   ActiveRecord::Base.connection_pool.with_connection do
@@ -72,9 +74,9 @@ end
 
 <p>Code within the <code>with_connection</code> block uses a temporary
 connection from the pool which is returned once the block has finished
-processing. Even if exceptions occur within your ActiveRecord code, the
-connection is still correctly returned to the pool using the above
-approach.</p>
+processing. Even if exceptions occur within your <a
+href="../ActiveRecord.html">ActiveRecord</a> code, the connection is still
+correctly returned to the pool using the above approach.</p>
 
     </div>
   

@@ -109,8 +109,6 @@
             
             <li><a href="../files/lib/hoodoo/generator_rb.html">lib/hoodoo/generator.rb</a></li>
             
-            <li><a href="../files/lib/hoodoo/legacy_rb.html">lib/hoodoo/legacy.rb</a></li>
-            
             <li><a href="../files/lib/hoodoo/logger/fast_writer_rb.html">lib/hoodoo/logger/fast_writer.rb</a></li>
             
             <li><a href="../files/lib/hoodoo/logger/flattener_mixin_rb.html">lib/hoodoo/logger/flattener_mixin.rb</a></li>
@@ -229,7 +227,7 @@
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>UUID validator for models.</p>
+<p><a href="Hoodoo/UUID.html">UUID</a> validator for models.</p>
 </dd></dl>
 <hr>
 
@@ -255,7 +253,8 @@
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>Support mixin for models subclassed from ActiveRecord::Base providing a
+<p>Support mixin for models subclassed from <a
+href="Hoodoo/ActiveRecord/Base.html">ActiveRecord::Base</a> providing a
 mapping between API level errors and model validation errors.</p>
 </dd></dl>
 <hr>
@@ -269,7 +268,8 @@ mapping between API level errors and model validation errors.</p>
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>Support mixin for models subclassed from ActiveRecord::Base providing
+<p>Support mixin for models subclassed from <a
+href="Hoodoo/ActiveRecord/Base.html">ActiveRecord::Base</a> providing
 enhanced find mechanisms for <code>show</code> and <code>list</code> action
 handling.</p>
 </dd></dl>
@@ -284,8 +284,9 @@ handling.</p>
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>Support mixin for models subclassed from ActiveRecord::Base providing UUID
-management.</p>
+<p>Support mixin for models subclassed from <a
+href="Hoodoo/ActiveRecord/Base.html">ActiveRecord::Base</a> providing <a
+href="Hoodoo/UUID.html">UUID</a> management.</p>
 </dd></dl>
 <hr>
 
@@ -755,8 +756,8 @@ holder until (if ever) we decide on something better</code></pre>
 <dd>
 <p>Error descriptions - provide a DSL and a container for a list of known
 error codes and associated data. Defines a platform API&#39;s
-<code>platform</code> and <code>generic</code> domain codes by default.
-Services can declare additional errors.</p>
+<code>platform</code> and <code>generic</code> domain codes by default. <a
+href="Hoodoo/Services.html">Services</a> can declare additional errors.</p>
 </dd></dl>
 <hr>
 
@@ -772,9 +773,9 @@ Services can declare additional errors.</p>
 </dd><dt>Purpose
 <dd>
 <p>A collection of error messages, starting empty, with one or more messages
-added to it as errors are encountered by some processing task. Errors are
-added according to codes described by <a
-href="Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
+added to it as errors are encountered by some processing task. <a
+href="Hoodoo/Errors.html">Errors</a> are added according to codes described
+by <a href="Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
 instances.</p>
 </dd></dl>
 <hr>
@@ -938,8 +939,9 @@ comma separated tags.</p>
 </dd><dt>Purpose
 <dd>
 <p><a href="Hoodoo/Presenters/BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>
-field implementation which supports a field defined to contain a UUID that
-(optionally) can be verified as referring to a specific other Resource.</p>
+field implementation which supports a field defined to contain a <a
+href="Hoodoo/UUID.html">UUID</a> that (optionally) can be verified as
+referring to a specific other Resource.</p>
 </dd></dl>
 <hr>
 
@@ -1185,8 +1187,9 @@ who to “talk to”.</p>
 <p>string_inquirer.rb</p>
 </dd><dt>Purpose
 <dd>
-<p>StringInquirer class copied from ActiveSupport 4.1.6, to avoid dragging in
-that huge dependency for this one thing.</p>
+<p><a href="Hoodoo/StringInquirer.html">StringInquirer</a> class copied from
+ActiveSupport 4.1.6, to avoid dragging in that huge dependency for this one
+thing.</p>
 </dd></dl>
 <hr>
 
@@ -1203,6 +1206,72 @@ that huge dependency for this one thing.</p>
   
 
 
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/ActiveRecord.html">Hoodoo::ActiveRecord</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/Communicators.html">Hoodoo::Communicators</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/Data.html">Hoodoo::Data</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/Presenters.html">Hoodoo::Presenters</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/Services.html">Hoodoo::Services</a>
+        </li>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Hoodoo/Utilities.html">Hoodoo::Utilities</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/Errors.html">Hoodoo::Errors</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/Generator.html">Hoodoo::Generator</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/Logger.html">Hoodoo::Logger</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/StringInquirer.html">Hoodoo::StringInquirer</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Hoodoo/UUID.html">Hoodoo::UUID</a>
+        </li>
+      
+    </ul>
   
 
 
@@ -1222,102 +1291,6 @@ that huge dependency for this one thing.</p>
       <!-- Section constants -->
       <div class="sectiontitle">Constants</div>
       <table border='0' cellpadding='5'>
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceMiddleware</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Middleware</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceApplication</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Service</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceContext</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Context</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceImplementation</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Implementation</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceInterface</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Interface</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceRequest</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Request</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceResponse</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Response</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ServiceSession</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Session</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
-            </tr>
-          
         
           <tr valign='top'>
             <td class="attr-name">VERSION</td>

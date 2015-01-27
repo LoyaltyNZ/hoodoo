@@ -8,6 +8,7 @@ end
 
 Rake::RDocTask.new do | rd |
  rd.rdoc_files.include( 'README.md', 'lib/**/*.rb' )
+ rd.rdoc_files.exclude( 'lib/hoodoo/legacy.rb' )
  rd.rdoc_dir = 'docs/rdoc'
  rd.title = 'Hoodoo'
  rd.main = 'README.md'

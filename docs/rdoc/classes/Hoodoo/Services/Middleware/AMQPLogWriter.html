@@ -192,15 +192,16 @@ expects these optional but recommended (where the information is available
 / has been generated) keys/values:</p>
 <dl class="rdoc-list note-list"><dt><code>:id</code>
 <dd>
-<p>A UUID (via <a
+<p>A <a href="../../UUID.html">UUID</a> (via <a
 href="../../UUID.html#method-c-generate">Hoodoo::UUID.generate</a>) to use
 for this log message - if absent, one is generated automatically.</p>
 </dd><dt><code>:session</code>
 <dd>
 <p>Description of the current request session when available; an <a
 href="../Session.html">Hoodoo::Services::Session</a> instance. The client
-ID, participant UUID and outlet UUID are sent as independent, searchable
-fields in the log payload.</p>
+ID, participant <a href="../../UUID.html">UUID</a> and outlet <a
+href="../../UUID.html">UUID</a> are sent as independent, searchable fields
+in the log payload.</p>
 </dd><dt><code>interaction_id</code>
 <dd>
 <p>The interaction ID for this client&#39;s call. This is also sent as an

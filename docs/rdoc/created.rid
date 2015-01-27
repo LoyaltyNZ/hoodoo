@@ -1,4 +1,4 @@
-Tue, 27 Jan 2015 13:36:55 +1300
+Tue, 27 Jan 2015 15:51:31 +1300
 README.md	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/active.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -47,7 +47,6 @@ lib/hoodoo/errors.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/errors/error_descriptions.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/errors/errors.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/generator.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/legacy.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/fast_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/flattener_mixin.rb	Tue, 27 Jan 2015 13:33:38 +1300
