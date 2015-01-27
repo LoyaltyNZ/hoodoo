@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Logger::WriterMixin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Module</span> 
+            Hoodoo::Logger::WriterMixin 
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/hoodoo/logger/writer_mixin_rb.html">lib/hoodoo/logger/writer_mixin.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>This mixin is used by <a
+href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
+href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a>. See those two
+classes for details.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-report">report</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-report">
+            
+              <b>report</b>( log_level, component, code, data )
+            
+            <a href="../../../classes/Hoodoo/Logger/WriterMixin.html#method-i-report" name="method-i-report" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
+href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a> subclasses implement
+this method.</p>
+
+<p>Write a structured log message. Writers sending data somewhere with no
+structure support will need to serialize/flatten the message; others should
+retain data structures like hashes or arrays.</p>
+
+<p>The <a href="WriterMixin.html#method-i-report">report</a> method is only
+invoked if the logging threshold level of the owning logger is set to an
+equal or lower level. Implementations do not, therefore, need to check this
+themselves.</p>
+<dl class="rdoc-list note-list"><dt><code>log_level</code>
+<dd>
+<p>Log level as a symbol - one of, from most trivial to most severe,
+<code>:debug</code>, <code>:info</code>, <code>:warn</code> or
+<code>:error</code>.</p>
+</dd><dt><code>component</code>
+<dd>
+<p>Component - for example, a resource name for a specific service
+implementation, &#39;Middleware&#39; for <a
+href="../../Hoodoo.html">Hoodoo</a> itself, or some other name you think is
+useful. String or Symbol.</p>
+</dd><dt><code>code</code>
+<dd>
+<p>Component-defined code. Think of this in a manner similar to platform error
+codes, appearing after the “.”; messages related to the same thing should
+share the same code. The intent is to produce log data that someone can
+filter on code to get useful information about that specific aspect of a
+service implementation&#39;s behaviour.</p>
+</dd><dt>data
+<dd>
+<p>A Hash containing the level, component and code-dependent payload data to
+be logged. Converted to a string with <code>inspect</code> for flat output
+use in an unstructured context.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
+                
+              </p>
+              <div id="method-i-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/writer_mixin.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

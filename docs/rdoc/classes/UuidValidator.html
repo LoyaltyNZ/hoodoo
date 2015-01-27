@@ -31,7 +31,7 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../files/lib/api_tools/active_model/uuid_validator_rb.html">lib/api_tools/active_model/uuid_validator.rb</a></li>
+            <li><a href="../files/lib/hoodoo/active/active_model/uuid_validator_rb.html">lib/hoodoo/active/active_model/uuid_validator.rb</a></li>
             
         </ul>
     </div>
@@ -136,11 +136,11 @@ end
                 
               </p>
               <div id="method-i-validate_each_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/active_model/uuid_validator.rb, line 33</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_model/uuid_validator.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate_each</span>( <span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span> )
 
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ApiTools</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">value</span> )
-    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>[<span class="ruby-identifier">attribute</span>] <span class="ruby-operator">&lt;&lt;</span> ( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:message</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&quot;is invalid&quot;</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">value</span> )
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">errors</span>[ <span class="ruby-identifier">attribute</span> ] <span class="ruby-operator">&lt;&lt;</span> ( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:message</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;is invalid&#39;</span> )
   <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">end</span></pre>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Logger::SlowWriter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Logger::SlowWriter 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="../../Object.html">Object</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/hoodoo/logger/slow_writer_rb.html">lib/hoodoo/logger/slow_writer.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Log writer classes are used through the <a
+href="../Logger.html">Hoodoo::Logger</a> class.</p>
+
+<p>Subclass <a href="SlowWriter.html">SlowWriter</a> if you are writing a log
+data output mechanism which does not respond very quickly. File output
+might fall into this category depending upon target deployment
+infrastructure; exporting logs to a remote logging service over the network
+would certainly qualify.</p>
+
+<p>The subclass only needs to implement <a
+href="WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>.</p>
+
+<p>If a slow writer cannot keep up with a high rate of log messages, some may
+be dropped. A <code>:warn</code> level message is reported automatically
+for such cases, describing the number of dropped messages, once the slow
+writer has caught up.</p>
+
+<p><strong>IMPORTANT</strong>: If you use ActiveRecord in a slow writer class,
+beware that your writer runs in a ruby Thread. Unless you take steps to
+prevent it, ActiveRecord will implicitly check out a connection which stays
+with your Thread forever. This steals a connection from the pool. To
+prevent this issue, you must use the following pattern:</p>
+
+<pre><code>def report( log_level, component, code, data )
+  ActiveRecord::Base.connection_pool.with_connection do
+    # ...Any AciveRecord code goes here...
+  end
+end
+</code></pre>
+
+<p>Code within the <code>with_connection</code> block uses a temporary
+connection from the pool which is returned once the block has finished
+processing. Even if exceptions occur within your ActiveRecord code, the
+connection is still correctly returned to the pool using the above
+approach.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+      
+        <li>
+          
+            <a href="WriterMixin.html">
+              Hoodoo::Logger::WriterMixin
+            </a>
+          
+        </li>
+      
+    </ul>
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+              </div>
+
+    </div>
+  </body>
+</html>    

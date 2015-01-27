@@ -23,7 +23,7 @@
         </h1>
         <ul class="files">
             <li>README.md</li>
-            <li>Last modified: 2014-12-03 12:29:18 +1300</li>
+            <li>Last modified: 2015-01-27 13:33:38 +1300</li>
         </ul>
     </div>
 
@@ -32,10 +32,10 @@
   
     <div class="description">
       
-<h1 id="label-ApiTools"><a href="../classes/ApiTools.html">ApiTools</a></h1>
+<h1 id="label-Hoodoo"><a href="../classes/Hoodoo.html">Hoodoo</a></h1>
 
-<p><a href="https://magnum.travis-ci.com/LoyaltyNZ/api_tools"><img
-src="https://magnum.travis-ci.com/LoyaltyNZ/api_tools.svg?token=qenLSjTyBsExZFCraVut&branch=master"></a></p>
+<p><a href="https://magnum.travis-ci.com/LoyaltyNZ/hoodoo"><img
+src="https://magnum.travis-ci.com/LoyaltyNZ/hoodoo.svg?token=qenLSjTyBsExZFCraVut&branch=master"></a></p>
 
 <p>Simplify the implementation of services within an API-based software
 platform.</p>
@@ -44,59 +44,59 @@ platform.</p>
 
 <p>Add the gem to your <code>Gemfile</code>:</p>
 
-<pre><code>gem &#39;api_tools&#39;, :git =&gt; &#39;git@github.com:LoyaltyNZ/api_tools.git&#39;
+<pre><code>gem &#39;hoodoo&#39;, :git =&gt; &#39;git@github.com:LoyaltyNZ/hoodoo.git&#39;
 </code></pre>
 
-<p>Require api_tools when needed:</p>
+<p>Require hoodoo when needed:</p>
 
-<pre><code>require &#39;api_tools&#39;
+<pre><code>require &#39;hoodoo&#39;
 </code></pre>
 
 <p>Functionality includes:</p>
 <ul><li>
 <p><em>Middleware:</em> The heart of services; Rake-based service applications
 (think Sinatra, Grape, Rails…) – <a
-href="../classes/ApiTools/ServiceMiddleware.html">ApiTools::ServiceMiddleware</a>;
+href="../classes/Hoodoo/Services/Middleware.html">Hoodoo::Services::Middleware</a>;
 but start at <a
-href="../classes/ApiTools/ServiceApplication.html">ApiTools::ServiceApplication</a>
+href="../classes/Hoodoo/Services/Service.html">Hoodoo::Services::Service</a>
 and see also <a
-href="../classes/ApiTools/ServiceInterface.html">ApiTools::ServiceInterface</a>,
+href="../classes/Hoodoo/Services/Interface.html">Hoodoo::Services::Interface</a>,
 <a
-href="../classes/ApiTools/ServiceImplementation.html">ApiTools::ServiceImplementation</a>
+href="../classes/Hoodoo/Services/Implementation.html">Hoodoo::Services::Implementation</a>
 and related classes <a
-href="../classes/ApiTools/ServiceRequest.html">ApiTools::ServiceRequest</a>,
+href="../classes/Hoodoo/Services/Request.html">Hoodoo::Services::Request</a>,
 <a
-href="../classes/ApiTools/ServiceResponse.html">ApiTools::ServiceResponse</a>,
+href="../classes/Hoodoo/Services/Response.html">Hoodoo::Services::Response</a>,
 <a
-href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a>,
+href="../classes/Hoodoo/Services/Session.html">Hoodoo::Services::Session</a>,
 <a
-href="../classes/ApiTools/ServiceContext.html">ApiTools::ServiceContext</a></p>
+href="../classes/Hoodoo/Services/Context.html">Hoodoo::Services::Context</a></p>
 </li><li>
 <p><em>Generic Presenter Layer:</em> Input and output validation and rendering
 – <a
-href="../classes/ApiTools/Presenters/Base.html">ApiTools::Presenters::Base</a>,
+href="../classes/Hoodoo/Presenters/Base.html">Hoodoo::Presenters::Base</a>,
 <a
-href="../classes/ApiTools/Presenters/BaseDSL.html">ApiTools::Presenters::BaseDSL</a></p>
+href="../classes/Hoodoo/Presenters/BaseDSL.html">Hoodoo::Presenters::BaseDSL</a></p>
 </li><li>
 <p><em>Unified Error Helpers:</em> Adds standard platform error capability to
 any API/class – <a
-href="../classes/ApiTools/ErrorDescriptions.html">ApiTools::ErrorDescriptions</a>,
-<a href="../classes/ApiTools/Errors.html">ApiTools::Errors</a></p>
+href="../classes/Hoodoo/ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>,
+<a href="../classes/Hoodoo/Errors.html">Hoodoo::Errors</a></p>
 </li><li>
 <p><em>Unified Logger:</em> A single logger for use with platform or local
-logs – <a href="../classes/ApiTools/Logger.html">ApiTools::Logger</a></p>
+logs – <a href="../classes/Hoodoo/Logger.html">Hoodoo::Logger</a></p>
 </li><li>
 <p><em>Platform Sessions:</em> Authentication of sessions, session context –
 <a
-href="../classes/ApiTools/ServiceSession.html">ApiTools::ServiceSession</a></p>
+href="../classes/Hoodoo/Services/Session.html">Hoodoo::Services::Session</a></p>
 </li><li>
 <p><em>Platform Events:</em> Publishes Platform Events when running on a
-queue-based infrastructure – ApiTools::Events::PlatformEvent</p>
+queue-based infrastructure – Hoodoo::Events::PlatformEvent</p>
 </li><li>
 <p><em>ActiveRecord Assistance</em>: If using ActiveRecord (optional),
 provides support methods/mixins for models to help bridge the gap between
 API resources and persistence – <a
-href="../classes/ApiTools/ActiveRecord.html">ApiTools::ActiveRecord</a></p>
+href="../classes/Hoodoo/ActiveRecord.html">Hoodoo::ActiveRecord</a></p>
 </li></ul>
 
 <p>Master documentation is through RDoc (see below).</p>
@@ -115,12 +115,12 @@ href="../classes/ApiTools/ActiveRecord.html">ApiTools::ActiveRecord</a></p>
 
 <h2 id="label-Documentation+-28RDoc-29">Documentation (RDoc)</h2>
 
-<p>The <a href="../classes/ApiTools.html">ApiTools</a> public API is
-documented through source code comments that are designed to produce
-non-trivially useful output, with examples and workflow indications, when
-RDoc turns them into HTML. See earlier for some pointers to classes of
-interest that will be linked to the relevant class documentation if you
-read all of this through the RDoc output.</p>
+<p>The <a href="../classes/Hoodoo.html">Hoodoo</a> public API is documented
+through source code comments that are designed to produce non-trivially
+useful output, with examples and workflow indications, when RDoc turns them
+into HTML. See earlier for some pointers to classes of interest that will
+be linked to the relevant class documentation if you read all of this
+through the RDoc output.</p>
 
 <p>If working on an installed copy of the gem through normal channels, you
 should be able to issue this command:</p>
@@ -130,10 +130,10 @@ should be able to issue this command:</p>
 
 <p>…and browse to port 8808 on <code>localhost</code> to get an index of all
 gem documentation, including that for <a
-href="../classes/ApiTools.html">ApiTools</a>. Out of the box from GitHub,
-RDoc precompiled documentation is available but there is a risk it might be
-out of date. If working on development of the gem in a GitHub repository
-clone, you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
+href="../classes/Hoodoo.html">Hoodoo</a>. Out of the box from GitHub, RDoc
+precompiled documentation is available but there is a risk it might be out
+of date. If working on development of the gem in a GitHub repository clone,
+you can generate or entirely regenerate RDoc files (re-RDoc) with:</p>
 
 <pre><code>rake rerdoc
 </code></pre>

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Service</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Service 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="../../Object.html">Object</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/hoodoo/services/services/service_rb.html">lib/hoodoo/services/services/service.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p><a href="Service.html">Hoodoo::Services::Service</a> is subclassed by
+people writing service implementations; the subclasses are the entrypoint
+for platform services.</p>
+
+<p>It&#39;s really just a container of one or more interface classes, which
+are all <a href="Interface.html">Hoodoo::Services::Interface</a>
+subclasses. The <a href="../../Rack.html">Rack</a> middleware in <a
+href="Middleware.html">Hoodoo::Services::Middleware</a> uses the <a
+href="Service.html">Hoodoo::Services::Service</a> to find out what
+interfaces it implements. Those interface classes nominate a Ruby class of
+the author&#39;s choice in which they&#39;ve written the implementation for
+that interface. Interfaces also declare themselves to be available at a
+particular URL endpoint (as a path fragment); this is used by the
+middleware to route inbound requests to the correct implementation class.</p>
+
+<p>Suppose we defined a PurchaseInterface and RefundInterface which we wanted
+both to be available as a Shopping Service:</p>
+
+<pre><code>class PurchaseImplementation &lt; Hoodoo::Services::Implementation
+  # ...
+end
+
+class PurchaseInterface &lt; Hoodoo::Services::Interface
+  interface :Purchase do
+    endpoint :purchases, PurchaseImplementation
+    # ...
+  end
+end
+
+class RefundImplementation &lt; Hoodoo::Services::Implementation
+  # ...
+end
+
+class RefundInterface &lt; Hoodoo::Services::Interface
+  interface :Refund do
+    endpoint :refunds, RefundImplementation
+    # ...
+  end
+end
+</code></pre>
+
+<p>…then the <strong>entire</strong> <a href="Service.html">Service</a>
+subclass for the Shopping <a href="Service.html">Service</a> could be as
+small as this:</p>
+
+<pre><code>class ShoppingService &lt; Hoodoo::Services::Service
+  comprised_of PurchaseInterface,
+               RefundInterface
+end
+</code></pre>
+
+<p>Names of subclasses in the above examples are chosen for clarity and the
+naming approach indicated is recommended, but it&#39;s not mandatory.
+Choose choose whatever you feel best fits your code and style.</p>
+
+<p>Conceptually, one might just have a single interface per application for
+very small services, but you may want to logically group more interfaces in
+one service for code clarity/locality. More realistically, efficiency may
+dictate that certain interfaces have such heavy reliance and relationships
+between database contents that sharing the data models between those
+interface classes makes sense; you would group them under the same service
+application, sacrificing full decoupling. As a service author, the choice
+is yours.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-call">call</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-component_interfaces">component_interfaces</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-component_interfaces">component_interfaces</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-comprised_of">comprised_of</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-component_interfaces">
+            
+              <b>component_interfaces</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Service.html#method-c-component_interfaces" name="method-c-component_interfaces" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Return an array of the classes that make up the interfaces for this
+service. Each is an <a
+href="Interface.html">Hoodoo::Services::Interface</a> subclass that was
+registered by the subclass through a call to comprised_of.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-component_interfaces_source')" id="l_method-c-component_interfaces_source">show</a>
+                
+              </p>
+              <div id="method-c-component_interfaces_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">component_interfaces</span>
+  <span class="ruby-ivar">@component_interfaces</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+              
+      <div class="sectiontitle">Class Protected methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-comprised_of">
+            
+              <b>comprised_of</b>( *classes )
+            
+            <a href="../../../classes/Hoodoo/Services/Service.html#method-c-comprised_of" name="method-c-comprised_of" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Called by subclasses listing one or more <a
+href="Interface.html">Hoodoo::Services::Interface</a> subclasses that make
+up the service implementation as a whole.</p>
+
+<p>Example:</p>
+
+<pre><code>class ShoppingService &lt; Hoodoo::Services::Service
+  comprised_of PurchaseInterface,
+               RefundInterface
+end
+</code></pre>
+
+<p>See this class&#39;s general <a
+href="Service.html">Hoodoo::Services::Service</a> documentation for more
+details.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-comprised_of_source')" id="l_method-c-comprised_of_source">show</a>
+                
+              </p>
+              <div id="method-c-comprised_of_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">comprised_of</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span> )
+
+  <span class="ruby-comment"># http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">classes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got &#39;#{ klass }&#39;&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Add the classes from this call to any given in a previous call.</span>
+
+  <span class="ruby-ivar">@component_interfaces</span> <span class="ruby-operator">||=</span> []
+  <span class="ruby-ivar">@component_interfaces</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">classes</span>
+  <span class="ruby-ivar">@component_interfaces</span>.<span class="ruby-identifier">uniq!</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-call">
+            
+              <b>call</b>( env )
+            
+            <a href="../../../classes/Hoodoo/Services/Service.html#method-i-call" name="method-i-call" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Since service implementations are not pure <a
+href="../../Rack.html">Rack</a> apps but really service middleware clients,
+they shouldn&#39;t ever have “call” invoked directly. This method is not
+intended to be overridden and just complains if <a
+href="../../Rack.html">Rack</a> ends up calling here directly by accident.</p>
+<dl class="rdoc-list note-list"><dt><code>env</code>
+<dd>
+<p><a href="../../Rack.html">Rack</a> environment (ignored).</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-call_source')" id="l_method-i-call_source">show</a>
+                
+              </p>
+              <div id="method-i-call_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses should only be called through the middleware - add &#39;use Hoodoo::Services::Middleware&#39; to (e.g.) config.ru&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-component_interfaces">
+            
+              <b>component_interfaces</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Service.html#method-i-component_interfaces" name="method-i-component_interfaces" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Instance method which calls through to <a
+href="Service.html#method-c-component_interfaces">::component_interfaces</a>
+and returns its result.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-component_interfaces_source')" id="l_method-i-component_interfaces_source">show</a>
+                
+              </p>
+              <div id="method-i-component_interfaces_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 93</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">component_interfaces</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">component_interfaces</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

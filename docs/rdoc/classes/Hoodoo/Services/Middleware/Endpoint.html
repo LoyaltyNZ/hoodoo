@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Middleware::Endpoint</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Middleware::Endpoint 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="../Middleware.html">Hoodoo::Services::Middleware</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/services/middleware/endpoint/augmented_array_rb.html">lib/hoodoo/services/middleware/endpoint/augmented_array.rb</a></li>
+            
+            <li><a href="../../../../files/lib/hoodoo/services/middleware/endpoint/augmented_base_rb.html">lib/hoodoo/services/middleware/endpoint/augmented_base.rb</a></li>
+            
+            <li><a href="../../../../files/lib/hoodoo/services/middleware/endpoint/augmented_hash_rb.html">lib/hoodoo/services/middleware/endpoint/augmented_hash.rb</a></li>
+            
+            <li><a href="../../../../files/lib/hoodoo/services/middleware/endpoint/endpoint_rb.html">lib/hoodoo/services/middleware/endpoint/endpoint.rb</a></li>
+            
+            <li><a href="../../../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Representation of a callable service endpoint for a specific resource. When
+the implementation of one resource endpoint wants to perform an operation
+on another resource, it should obtain an endpoint instance via <a
+href="../Context.html#method-i-resource">Hoodoo::Services::Context#resource</a>
+then use the instance methods described for this class to communicate with
+the other resource.</p>
+
+<p>In the case where the resource implementations exist in different service
+applications, this is the only high level way for one resource to talk to
+another.</p>
+
+<p>In the case where both resource implementations are held in the same
+service application, this isn&#39;t strictly necessary. The implementation
+code most likely has access to the same database tables so one could
+directly look up data for another. That is however not recommended unless
+profiling shows that it&#39;s required for performance reasons; ideally you
+should <strong>only</strong> use the defined resource&#39;s API and thus
+keep your resource implementation data layers decoupled from one another.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Endpoint/AugmentedBase.html">Hoodoo::Services::Middleware::Endpoint::AugmentedBase</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Endpoint/AugmentedArray.html">Hoodoo::Services::Middleware::Endpoint::AugmentedArray</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
+        </li>
+      
+    </ul>
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-create">create</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-delete">delete</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>I</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-interface">interface</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>L</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-list">list</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-show">show</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update">update</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( middleware_instance, resource, version = 1 )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create an endpoint instance on behalf of the given <a
+href="../Middleware.html">Hoodoo::Services::Middleware</a> instance,
+directed at the given resource.</p>
+<dl class="rdoc-list note-list"><dt><code>middleware_instance</code>
+<dd>
+<p><a href="../Middleware.html">Hoodoo::Services::Middleware</a> used to
+handle onward requests.</p>
+</dd><dt><code>resource</code>
+<dd>
+<p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or
+symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required interface (API) version for that endpoint. Integer.
+Default is 1.</p>
+</dd></dl>
+
+<p>The instance is then used with the <a
+href="Endpoint.html#method-i-list">list</a>, <a
+href="Endpoint.html#method-i-show">show</a>, <a
+href="Endpoint.html#method-i-create">create</a>, <a
+href="Endpoint.html#method-i-update">update</a> or <a
+href="Endpoint.html#method-i-delete">delete</a> methods to perform
+operations on the target resource. See each of those methods for details of
+their specific requirements; however all have common parameters some or all
+of which are used across the method &#39;family&#39;:</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>An identifier. This is usually a UUID but some resources support e.g. a
+“show” action based on either a UUID or some other unique identifier.
+Currency, for example, can look up on a UUID or a currency code.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>A hash of unencoded data that could be encoded to form a query string.
+Search and filter data is represented with nested hashes. Embed and
+reference data uses an array. Example:</p>
+
+<pre><code>{
+  offset: 75,
+  limit:  50,
+  search: {
+    member_id: &quot;...some UUDI...&quot;
+  },
+  _embed: [
+    &#39;vouchers&#39;,
+    &#39;balances&#39;
+  ]
+}
+</code></pre>
+
+<p>This parameter is always optional.</p>
+</dd><dt><code>body_hash</code>
+<dd>
+<p>The Hash representation of the body data that might be sent in an HTTP
+request (i.e. JSON, as a Hash).</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 96</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">middleware_instance</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+
+  <span class="ruby-ivar">@middleware</span>    = <span class="ruby-identifier">middleware_instance</span>
+  <span class="ruby-ivar">@resource</span>      = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-ivar">@version</span>       = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+
+  <span class="ruby-ivar">@local_service</span> = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@remote_info</span>   = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+
+  <span class="ruby-comment"># ...noting that @remote_info may now contain either a URI for local</span>
+  <span class="ruby-comment"># development / real HTTP environments, or a Hash with &quot;:queue&quot; and</span>
+  <span class="ruby-comment"># &quot;:path&quot; values - see the middleware&#39;s #remote_service_for.</span>
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-create">
+            
+              <b>create</b>( body_hash, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-create" name="method-i-create" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create a resource instance.</p>
+<dl class="rdoc-list note-list"><dt>body_hash
+<dd>
+<p>See initialize.</p>
+</dd><dt>query_hash
+<dd>
+<p>See initialize.</p>
+</dd></dl>
+
+<p>Returns an <a
+href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
+representation of the new resource instance. Call <a
+href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="Endpoint/AugmentedBase.html#method-i-platform_errors">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
+                
+              </p>
+              <div id="method-i-create_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 178</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
+    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;POST&#39;</span>,
+    <span class="ruby-value">:body_hash</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-delete">
+            
+              <b>delete</b>( ident, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Delete a resource instance.</p>
+<dl class="rdoc-list note-list"><dt>ident
+<dd>
+<p>See initialize.</p>
+</dd><dt>query_hash
+<dd>
+<p>See initialize.</p>
+</dd></dl>
+
+<p>Returns an <a
+href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
+representation of the now-deleted resource instance. Call <a
+href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="Endpoint/AugmentedBase.html#method-i-platform_errors">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
+                
+              </p>
+              <div id="method-i-delete_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 232</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
+    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;DELETE&#39;</span>,
+    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-interface">
+            
+              <b>interface</b>()
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-interface" name="method-i-interface" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Find out the service interface class being used by this instance. If
+<code>nil</code>, the interface is remote - it isn&#39;t part of the
+middleware instance that owns the endpoint instance. The endpoint may not
+be available, but you won&#39;t know until you try to talk to it over the
+network.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-interface_source')" id="l_method-i-interface_source">show</a>
+                
+              </p>
+              <div id="method-i-interface_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">interface</span>
+  <span class="ruby-ivar">@local_service</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@local_service</span>[ <span class="ruby-value">:interface</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-list">
+            
+              <b>list</b>( query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-list" name="method-i-list" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Obtain a list of resource instance representations.</p>
+<dl class="rdoc-list note-list"><dt>query_hash
+<dd>
+<p>See initialize. This is the only way to search/filter the list, according
+to the targer Resource&#39;s documented supported search/filter parameters
+and the platform&#39;s common all-resource behaviour.</p>
+</dd></dl>
+
+<p>Returns an <a
+href="Endpoint/AugmentedArray.html">Hoodoo::Services::Middleware::Endpoint::AugmentedArray</a>
+representation of the requested list of resource instances. Call <a
+href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="Endpoint/AugmentedBase.html#method-i-platform_errors">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Array-derived contents. The contents will be
+empty in non-error cases if no items satisfying the list conditions were
+found.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
+                
+              </p>
+              <div id="method-i-list_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 127</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
+    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
+    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-show">
+            
+              <b>show</b>( ident, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-show" name="method-i-show" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Obtain a resource instance representation.</p>
+<dl class="rdoc-list note-list"><dt>ident
+<dd>
+<p>See initialize.</p>
+</dd><dt>query_hash
+<dd>
+<p>See initialize.</p>
+</dd></dl>
+
+<p>Returns an <a
+href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
+representation of the requested resource instance. Call <a
+href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="Endpoint/AugmentedBase.html#method-i-platform_errors">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
+                
+              </p>
+              <div id="method-i-show_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 152</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
+    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
+    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update">
+            
+              <b>update</b>( ident, body_hash, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-i-update" name="method-i-update" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Update a resource instance.</p>
+<dl class="rdoc-list note-list"><dt>ident
+<dd>
+<p>See initialize.</p>
+</dd><dt>body_hash
+<dd>
+<p>See initialize.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>See initialize.</p>
+</dd></dl>
+
+<p>Returns an <a
+href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
+representation of the updated resource instance. Call <a
+href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
+or <a
+href="Endpoint/AugmentedBase.html#method-i-platform_errors">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#platform_errors</a>
+on the returned instance to detect and resolve error conditions
+<em>before</em> examining its Hash-derived fields.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
+                
+              </p>
+              <div id="method-i-update_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 205</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
+    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;PATCH&#39;</span>,
+    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:body_hash</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    
