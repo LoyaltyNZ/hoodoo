@@ -1,9 +1,9 @@
 GIT
-  remote: git@github.com:LoyaltyNZ/api_tools.git
+  remote: git@github.com:LoyaltyNZ/hoodoo.git
   revision: e3c2882baff95c1ecf32c6815319145797793877
   branch: master
   specs:
-    api_tools (0.6.0)
+    hoodoo (0.6.0)
       dalli (~> 2.7)
       json_builder (~> 3.1)
       uuidtools (~> 2.1)
@@ -37,5 +37,5 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 4.1)
-  api_tools!
+  hoodoo!
   json-schema (~> 2.4)

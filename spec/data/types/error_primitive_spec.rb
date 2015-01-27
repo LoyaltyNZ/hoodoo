@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Data::Types::ErrorPrimitive do
+describe Hoodoo::Data::Types::ErrorPrimitive do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
@@ -8,8 +8,8 @@ describe ApiTools::Data::Types::ErrorPrimitive do
 
     expect(schema.properties.count).to eq(3)
 
-    expect(schema.properties['code']).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties['message']).to be_a(ApiTools::Presenters::Text)
-    expect(schema.properties['reference']).to be_a(ApiTools::Presenters::Text)
+    expect(schema.properties['code']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['message']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['reference']).to be_a(Hoodoo::Presenters::Text)
   end
 end

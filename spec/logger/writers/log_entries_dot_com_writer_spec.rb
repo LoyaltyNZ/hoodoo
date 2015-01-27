@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Logger::LogEntriesDotComWriter do
+describe Hoodoo::Logger::LogEntriesDotComWriter do
 
   let( :example_token ) do
     # https://logentries.com/doc/input-token/

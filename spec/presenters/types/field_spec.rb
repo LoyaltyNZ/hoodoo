@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Field do
+describe Hoodoo::Presenters::Field do
 
   before do
-    @inst = ApiTools::Presenters::Field.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Field.new('one',:required => false)
   end
 
   describe '#initialise' do
 
     it 'should initialize correctly' do
-      inst = ApiTools::Presenters::Field.new('one',:required => true)
+      inst = Hoodoo::Presenters::Field.new('one',:required => true)
       expect(inst.name).to eq('one')
       expect(inst.required).to eq(true)
     end
 
     it 'should default required false' do
-      inst = ApiTools::Presenters::Field.new('two')
+      inst = Hoodoo::Presenters::Field.new('two')
       expect(inst.name).to eq('two')
       expect(inst.required).to eq(false)
     end

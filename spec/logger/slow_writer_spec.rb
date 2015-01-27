@@ -1,28 +1,28 @@
 require 'spec_helper'
 
-describe ApiTools::Logger::SlowWriter do
+describe Hoodoo::Logger::SlowWriter do
 
   # See fast_writer_spec.rb comments.
   #
   it 'is used by the expected writer' do
-    expect( ApiTools::Logger::FileWriter < described_class ).to eq( true )
+    expect( Hoodoo::Logger::FileWriter < described_class ).to eq( true )
   end
 
-  class RSpecTestSlowWriter < ApiTools::Logger::SlowWriter
+  class RSpecTestSlowWriter < Hoodoo::Logger::SlowWriter
     def report( a, b, c, d )
       expectable_hook( a, b, c, d )
     end
   end
 
   context 'with exceptions' do
-    class RSpecTestErrantSlowWriter < ApiTools::Logger::SlowWriter
+    class RSpecTestErrantSlowWriter < Hoodoo::Logger::SlowWriter
       def report( a, b, c, d )
         raise 'I am broken'
       end
     end
 
     before :each do
-      @logger = ApiTools::Logger.new
+      @logger = Hoodoo::Logger.new
       @logger.add( RSpecTestErrantSlowWriter.new )
     end
 
@@ -42,10 +42,10 @@ describe ApiTools::Logger::SlowWriter do
     end
 
     before :each do
-      @logger = ApiTools::Logger.new
+      @logger = Hoodoo::Logger.new
     end
 
-    class RSpecTestDroppingSlowWriter < ApiTools::Logger::SlowWriter
+    class RSpecTestDroppingSlowWriter < Hoodoo::Logger::SlowWriter
       def initialize
         @count = 0
       end
@@ -87,7 +87,7 @@ describe ApiTools::Logger::SlowWriter do
       # here that the logger is running on a communicator pool, so the queue
       # size there is applicable here. This makes the test potentially fragile.
 
-      limit      = ApiTools::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
+      limit      = Hoodoo::Communicators::Pool::MAX_SLOW_QUEUE_SIZE
       additional = 10
 
       # See communicators/pool_spec.rb for rationale.
@@ -117,7 +117,7 @@ describe ApiTools::Logger::SlowWriter do
 
       expect(writer).to receive(:report).once.with(
         :warn,
-        'ApiTools::Logger::SlowCommunicator',
+        'Hoodoo::Logger::SlowCommunicator',
         'dropped.messages',
         "Logging flooded - #{ additional } messages dropped"
       ).and_call_original

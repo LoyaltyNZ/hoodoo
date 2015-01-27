@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Enum do
+describe Hoodoo::Presenters::Enum do
 
   before do
-    class TestPresenter4 < ApiTools::Presenters::Base
+    class TestPresenter4 < Hoodoo::Presenters::Base
 
       schema do
         array :an_array, :required => true do
@@ -20,7 +20,7 @@ describe ApiTools::Presenters::Enum do
   describe '::schema' do
     it 'should raise an error if we use :from incorrectly' do
       expect {
-        class ErroneousEnumTest < ApiTools::Presenters::Base
+        class ErroneousEnumTest < Hoodoo::Presenters::Base
           schema do
             enum :from => "wrong!"
           end
@@ -36,7 +36,7 @@ describe ApiTools::Presenters::Enum do
         :an_enum => :one
       }
 
-      data = ApiTools::Utilities.stringify(data)
+      data = Hoodoo::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors.errors).to eq([
         {'code'=>"generic.invalid_enum", 'message'=>"Field `an_enum` does not contain an allowed reference value from this list: `[\"one\", \"two\", \"3\"]`", 'reference'=>"an_enum"}
@@ -49,7 +49,7 @@ describe ApiTools::Presenters::Enum do
         :an_enum => 'hello'
       }
 
-      data = ApiTools::Utilities.stringify(data)
+      data = Hoodoo::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors.errors).to eq([
         {'code'=>"generic.invalid_enum", 'message'=>"Field `an_enum` does not contain an allowed reference value from this list: `[\"one\", \"two\", \"3\"]`", 'reference'=>"an_enum"}
@@ -62,7 +62,7 @@ describe ApiTools::Presenters::Enum do
         :an_enum => '3'
       }
 
-      data = ApiTools::Utilities.stringify(data)
+      data = Hoodoo::Utilities.stringify(data)
       errors = TestPresenter4.validate(data)
       expect(errors.errors).to eq([])
     end

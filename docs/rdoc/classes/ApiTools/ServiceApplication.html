@@ -31,7 +31,7 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../../files/lib/api_tools/service_implementations/service_application_rb.html">lib/api_tools/service_implementations/service_application.rb</a></li>
+            <li><a href="../../files/lib/api_tools/service_implementations/service_application_rb.html">lib/api_tools/service_implementations/service_service.rb</a></li>
             
         </ul>
     </div>
@@ -205,7 +205,7 @@ was registered by the subclass through a call to comprised_of.</p>
                 
               </p>
               <div id="method-c-component_interfaces_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_application.rb, line 86</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_service.rb, line 86</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">component_interfaces</span>
   <span class="ruby-ivar">@component_interfaces</span>
 <span class="ruby-keyword">end</span></pre>
@@ -258,7 +258,7 @@ documentation for more details.</p>
                 
               </p>
               <div id="method-c-comprised_of_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_application.rb, line 123</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_service.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">comprised_of</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C</span>
@@ -318,7 +318,7 @@ directly by accident.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_application.rb, line 104</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_service.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;ApiTools::ServiceImplementation subclasses should only be called through the middleware - add &#39;use ApiTools::ServiceMiddleware&#39; to (e.g.) config.ru&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -357,7 +357,7 @@ and returns its result.</p>
                 
               </p>
               <div id="method-i-component_interfaces_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_application.rb, line 93</span>
+                <pre><span class="ruby-comment"># File lib/api_tools/service_implementations/service_service.rb, line 93</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">component_interfaces</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">component_interfaces</span>
 <span class="ruby-keyword">end</span></pre>

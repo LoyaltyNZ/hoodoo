@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'tempfile'
 
-describe ApiTools::Logger::FileWriter do
+describe Hoodoo::Logger::FileWriter do
 
   before :all do
-    temp_name = Dir::Tmpname.make_tmpname( 'api_tools_rspec_', nil )
+    temp_name = Dir::Tmpname.make_tmpname( 'hoodoo_rspec_', nil )
     @temp_path = File.join( Dir::Tmpname.tmpdir, temp_name )
   end
 

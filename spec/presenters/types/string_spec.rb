@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::String do
+describe Hoodoo::Presenters::String do
 
   before do
-    @inst = ApiTools::Presenters::String.new('one',:required => false, :length => 10)
+    @inst = Hoodoo::Presenters::String.new('one',:required => false, :length => 10)
   end
 
   describe '#initialize' do
     it 'should raise an error if length is not defined' do
       expect {
-        ApiTools::Presenters::String.new('one',:required => false)
+        Hoodoo::Presenters::String.new('one',:required => false)
       }.to raise_error(ArgumentError)
     end
   end

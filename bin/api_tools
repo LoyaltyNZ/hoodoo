@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'api_tools/generator'
-
-exit ApiTools::Generator.instance.run!(ARGV)

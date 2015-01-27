@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe ApiTools::Errors do
+describe Hoodoo::Errors do
   before do
-    @desc = ApiTools::ErrorDescriptions.new( :test_domain ) do
+    @desc = Hoodoo::ErrorDescriptions.new( :test_domain ) do
       error 'http_345_no_references',  status: 345, 'message' => '345 message'
       error 'http_456_has_reference',  status: 456, 'message' => '456 message', 'reference' => [ :ref1 ]
       error 'http_567_has_references', status: 567, 'message' => '567 message', 'reference' => [ :ref2, :ref3, :ref4 ]
     end
 
-    @errors = ApiTools::Errors.new(@desc)
+    @errors = Hoodoo::Errors.new(@desc)
   end
 
   describe '#initialize' do
@@ -19,8 +19,8 @@ describe ApiTools::Errors do
       # so the chained "instance_variable_get" call in the second and third
       # test is correct.
 
-      expect(ApiTools::Errors::DEFAULT_ERROR_DESCRIPTIONS.instance_variable_get('@descriptions')).to eq(ApiTools::ErrorDescriptions.new().instance_variable_get('@descriptions'))
-      expect(ApiTools::Errors.new().instance_variable_get('@descriptions').instance_variable_get('@descriptions')).to eq(ApiTools::ErrorDescriptions.new().instance_variable_get('@descriptions'))
+      expect(Hoodoo::Errors::DEFAULT_ERROR_DESCRIPTIONS.instance_variable_get('@descriptions')).to eq(Hoodoo::ErrorDescriptions.new().instance_variable_get('@descriptions'))
+      expect(Hoodoo::Errors.new().instance_variable_get('@descriptions').instance_variable_get('@descriptions')).to eq(Hoodoo::ErrorDescriptions.new().instance_variable_get('@descriptions'))
       expect(@errors.instance_variable_get('@descriptions').instance_variable_get('@descriptions')).to eq(@desc.instance_variable_get('@descriptions'))
     end
 
@@ -42,7 +42,7 @@ describe ApiTools::Errors do
     it 'should complain about unknown error codes' do
       expect {
         @errors.add_error('imaginary')
-      }.to raise_error(ApiTools::Errors::UnknownCode, "In \#add_error: Unknown error code 'imaginary'")
+      }.to raise_error(Hoodoo::Errors::UnknownCode, "In \#add_error: Unknown error code 'imaginary'")
     end
 
     it 'should let me add simple custom errors' do
@@ -60,15 +60,15 @@ describe ApiTools::Errors do
     it 'should complain about missing fields' do
       expect {
         @errors.add_error('test_domain.http_456_has_reference')
-      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref1'")
+      }.to raise_error(Hoodoo::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref1'")
 
       expect {
         @errors.add_error('test_domain.http_567_has_references')
-      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref3, ref4'")
+      }.to raise_error(Hoodoo::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref3, ref4'")
 
       expect {
         @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref3 => "hello"})
-      }.to raise_error(ApiTools::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref4'")
+      }.to raise_error(Hoodoo::Errors::MissingReferenceData, "In \#add_error: Reference hash missing required keys: 'ref2, ref4'")
     end
 
     it 'should let me specify mandatory reference data' do
@@ -134,22 +134,22 @@ describe ApiTools::Errors do
     it 'complains about invalid Interaction IDs' do
       expect {
         @errors.render( nil )
-      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got 'nil')" )
+      }.to raise_error( RuntimeError, "Hoodoo::Errors\#render must be given a valid Interaction ID (got 'nil')" )
 
       expect {
         @errors.render( 12345 )
-      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got '12345')" )
+      }.to raise_error( RuntimeError, "Hoodoo::Errors\#render must be given a valid Interaction ID (got '12345')" )
 
       expect {
         @errors.render( 'hello' )
-      }.to raise_error( RuntimeError, "ApiTools::Errors\#render must be given a valid Interaction ID (got '\"hello\"')" )
+      }.to raise_error( RuntimeError, "Hoodoo::Errors\#render must be given a valid Interaction ID (got '\"hello\"')" )
     end
 
     it 'renders' do
       @errors.clear_errors
       @errors.add_error('platform.malformed')
 
-      data = @errors.render(ApiTools::UUID.generate())
+      data = @errors.render(Hoodoo::UUID.generate())
       expect(data['errors']).to be_a(Array)
       expect(data['errors'].count).to eq(1)
       expect(data['errors'][0]['code']).to eq('platform.malformed')
@@ -205,14 +205,14 @@ describe ApiTools::Errors do
   describe '#merge' do
     it 'should merge when neither have errors' do
       @errors.clear_errors
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       @errors.merge!( source )
       expect(@errors.errors).to eq([])
     end
 
     it 'should merge when only the source has errors' do
       @errors.clear_errors
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 1', 'reference' => { :data => '1' })
       source.add_error('platform.malformed', 'message' => 'Malformed request 1', 'reference' => { :data => '1' })
       @errors.merge!( source )
@@ -233,7 +233,7 @@ describe ApiTools::Errors do
 
     it 'should merge when only the destination has errors' do
       @errors.clear_errors
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       @errors.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 2', 'reference' => { :data => '2' })
       @errors.add_error('platform.malformed', 'message' => 'Malformed request 2', 'reference' => { :data => '2' })
       @errors.merge!( source )
@@ -254,7 +254,7 @@ describe ApiTools::Errors do
 
     it 'should merge when both have errors' do
       @errors.clear_errors
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 1', 'reference' => { :data => '1' })
       source.add_error('platform.malformed', 'message' => 'Malformed request 1', 'reference' => { :data => '1' })
       @errors.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 2', 'reference' => { :data => '2' })
@@ -287,7 +287,7 @@ describe ApiTools::Errors do
 
     it 'should acquire the source status code when it has none itself' do
       @errors.clear_errors
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed')
       expect(@errors.http_status_code).to eq(500) # Default; collection is empty
       expect(source.http_status_code).to eq(405)
@@ -298,7 +298,7 @@ describe ApiTools::Errors do
     it 'should keep its original status code when it has one' do
       @errors.clear_errors
       @errors.add_error( 'platform.not_found', 'reference' => { :entity_name => 'something' } )
-      source = ApiTools::Errors.new
+      source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed')
       expect(@errors.http_status_code).to eq(404) # Non-default; collection has an error recorded
       expect(source.http_status_code).to eq(405)
@@ -330,7 +330,7 @@ describe ApiTools::Errors do
       @errors.clear_errors
       @errors.add_error('test_domain.http_567_has_references', 'reference' => {:ref2 => 'ref \\ 2 data', :ref3 => 'ref, 3, data', :ref4 => 'ref4-data'})
 
-      rendered = @errors.render(ApiTools::UUID.generate())
+      rendered = @errors.render(Hoodoo::UUID.generate())
       ary = @errors.unjoin_and_unescape_commas(rendered['errors'][0]['reference'])
       expect(ary).to eq(['ref \\ 2 data', 'ref, 3, data', 'ref4-data'])
     end

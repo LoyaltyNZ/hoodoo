@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ApiTools::Data::Resources::Account do
+describe Hoodoo::Data::Resources::Account do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
@@ -8,7 +8,7 @@ describe ApiTools::Data::Resources::Account do
 
     expect(schema.properties.count).to eq(1)
 
-    expect(schema.properties['owner_id']).to be_a(ApiTools::Presenters::UUID)
+    expect(schema.properties['owner_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['owner_id'].resource).to eq(:Member)
     expect(schema.properties['owner_id'].required).to eq(false)
   end

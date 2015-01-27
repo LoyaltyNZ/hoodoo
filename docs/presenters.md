@@ -1,4 +1,4 @@
-# ApiTools::Presenters::Base
+# Hoodoo::Presenters::Base
 
 ## Purpose
 
@@ -8,12 +8,12 @@ A class intended as base functionality for presenter layers. It is concerned wit
 
 In the your presenter classes:
 
-        require 'api_tools'
+        require 'hoodoo'
 
 Then extend the base class:
 
         module YourService
-          class SomePresenter < ApiTools::Presenters::Base
+          class SomePresenter < Hoodoo::Presenters::Base
             schema do
               ...
             end
@@ -68,7 +68,7 @@ The rules are:
 * Explicit `nil` means `nil`. If you provide a nil value on input for any field, then it'll be a nil value in the outbound representation. No defaults can override it or appear here. The only exception is attempting to render `nil` overall - this is basically meaningless, so treated as if you'd tried to render an empty Hash.
 * Fields in the input data which are not described in the schema will be stripped out. This includes unrecognised hash keys for hashes which use the `key` DSL method to list one or more specific expected named keys.
 
-        class PresenterClass < ApiTools::Presenters::Base
+        class PresenterClass < Hoodoo::Presenters::Base
           schema do
             object :address do
               text :town
@@ -98,16 +98,16 @@ The rules are:
 
 ## Dependencies
 
-`ApiTools::Presenters::Base` requires the contents of the **presenters/types** directory.
+`Hoodoo::Presenters::Base` requires the contents of the **presenters/types** directory.
 
 ## Example & Schema DSL
 
-    require "api_tools"
+    require "hoodoo"
     require 'json_builder'
 
     module Fulfilment
       module Presenters
-        class FulfilmentPresenter < ApiTools::Presenters::Base
+        class FulfilmentPresenter < Hoodoo::Presenters::Base
 
           attr_accessor :errors
 

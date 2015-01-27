@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Float do
+describe Hoodoo::Presenters::Float do
 
   before do
-    @inst = ApiTools::Presenters::Float.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Float.new('one',:required => false)
   end
 
   describe '#validate' do

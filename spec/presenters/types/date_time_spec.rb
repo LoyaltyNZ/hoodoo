@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::DateTime do
+describe Hoodoo::Presenters::DateTime do
 
   before do
-    @inst = ApiTools::Presenters::DateTime.new('one',:required => false)
+    @inst = Hoodoo::Presenters::DateTime.new('one',:required => false)
   end
 
   describe '#validate' do

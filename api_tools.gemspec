@@ -1,10 +1,10 @@
 $:.push File.expand_path('../lib', __FILE__)
-require 'api_tools/version'
+require 'hoodoo/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'api_tools'
-  s.version     = ApiTools::VERSION
-  s.date        = '2014-12-02'
+  s.name        = 'hoodoo'
+  s.version     = Hoodoo::VERSION
+  s.date        = '2015-01-26'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]
@@ -13,11 +13,11 @@ Gem::Specification.new do |s|
 
   s.files       = Dir.glob('lib/**/*.rb')
   s.bindir      = 'bin'
-  s.executables = ['api_tools']
+  s.executables = ['hoodoo']
   s.test_files  = Dir.glob('spec/**/*.rb')
-  s.homepage    = 'http://github.com/LoyaltyNZ/api_tools'
+  s.homepage    = 'http://github.com/LoyaltyNZ/hoodoo'
 
-  s.required_ruby_version = '>= 2.1.2'
+  s.required_ruby_version = '>= 2.1.5'
 
   s.add_runtime_dependency     'json_builder',     '~> 3.1'
   s.add_runtime_dependency     'uuidtools',        '~> 2.1'

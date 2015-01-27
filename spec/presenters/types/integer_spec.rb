@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Integer do
+describe Hoodoo::Presenters::Integer do
 
   before do
-    @inst = ApiTools::Presenters::Integer.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Integer.new('one',:required => false)
   end
 
   describe '#validate' do

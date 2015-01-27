@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe ApiTools::Presenters::Tags do
+describe Hoodoo::Presenters::Tags do
 
-  # This is just a copy of the ApiTools::Presenters::Text tests, which is in
-  # turn a copy of ApiTools::Presenters::String with minor changes (at the
+  # This is just a copy of the Hoodoo::Presenters::Text tests, which is in
+  # turn a copy of Hoodoo::Presenters::String with minor changes (at the
   # time of writing). The intent is to provide coverage for potential changes
   # to the tag implementation in future, even though right now it's just a
   # direct inheritance from Text with no changes.
 
   before do
-    @inst = ApiTools::Presenters::Tags.new('one',:required => false)
+    @inst = Hoodoo::Presenters::Tags.new('one',:required => false)
   end
 
   describe '#validate' do
