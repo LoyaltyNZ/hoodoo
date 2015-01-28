@@ -316,6 +316,18 @@ module Hoodoo
     # wrappers that hide implementation complexity from log writer subclasses.
     #
     module Communicator
+
+      # Create an instance of a logging communicator, based on the given
+      # log writer and owning logger instance.
+      #
+      # +writer_instance+:: Hoodoo::Logger::FastWriter or
+      #                     Hoodoo::Logger::SlowWriter subclass instance
+      #                     that will log things when this Communicator
+      #                     asks it to do so.
+      #
+      # +owning_logger+::   Hoodoo::Logger instance that will be using
+      #                     this communicator instance.
+      #
       def initialize( writer_instance, owning_logger )
         @writer_instance = writer_instance
         @owning_logger   = owning_logger

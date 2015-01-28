@@ -7,6 +7,38 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
+module Hoodoo
+
+  # This module provides a namespace for definitions of data types and
+  # formal resources which an API uses and implements through its various
+  # supporting services.
+  #
+  module Data
+
+    # Module used as a namespace to collect classes that represent
+    # Resources documented by the your platform's API. Each is an
+    # Hoodoo::Presenters::Base subclass, so can be used to render
+    # and validate JSON data.
+    #
+    # Hoodoo::Data::Resources::Version is defined as an example
+    # class. The Hoodoo::Data::Resources::* namespace is otherwise
+    # free for use by Hoodoo clients (indeed, types or resources
+    # that wish to reference one another through the DSL *must*
+    # use this namespace).
+    #
+    module Resources
+    end
+
+    # Module used as a namespace to collect classes that represent Types
+    # documented by your platform's API. Each is an
+    # Hoodoo::Presenters::Base subclass, so can be used to render
+    # and validate JSON data.
+    #
+    module Types
+    end
+  end
+end
+
 # Dependencies
 
 require 'hoodoo/presenters'

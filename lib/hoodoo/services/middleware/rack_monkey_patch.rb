@@ -29,10 +29,29 @@
 ########################################################################
 
 if defined?( Rack ) && defined?( Rack::Server )
+
+  # Part of the Rack monkey patch. See file
+  # "rack_monkey_path.rb"'s documentation for details.
+  #
   module Rack
+
+    # Part of the Rack monkey patch. See file
+    # "rack_monkey_path.rb"'s documentation for details.
+    #
     class Server
 
       class << self
+
+        # Part of the Rack monkey patch. See file
+        # "rack_monkey_path.rb"'s documentation for details.
+        #
+        # This method is aliased in place of Rack::Server#start and reads
+        # the passed-in options hash to attempt to determine the host name
+        # and port number under which a Rack based service is running. It
+        # then calls through to Rack's original #start implementation.
+        #
+        # +options+:: Options (see original Rack::Server documentation).
+        #
         def start_and_record_host_and_port( options = nil )
           Hoodoo::Services::Middleware.record_host_and_port( options )
           racks_original_start( options )

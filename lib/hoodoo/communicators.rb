@@ -8,6 +8,16 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
+module Hoodoo
+
+  # The Communicators module is used as a namespace for
+  # Hoodoo::Communicators::Pool and its related utility classes,
+  # Hoodoo::Communicators::Fast and Hoodoo::Communicators::Fast.
+  #
+  module Communicators
+  end
+end
+
 require 'hoodoo/communicators/pool'
 require 'hoodoo/communicators/fast'
 require 'hoodoo/communicators/slow'

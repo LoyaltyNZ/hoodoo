@@ -7,6 +7,15 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
+module Hoodoo
+
+  # Module providing a namespace for schema-based data rendering and
+  # validation code.
+  #
+  module Presenters
+  end
+end
+
 # Dependencies
 
 require 'hoodoo/utilities'

@@ -11,6 +11,17 @@
 
 module Hoodoo
   module Communicators
+
+    # Maintains a pool of object instances which are expected to be
+    # communicating with "the outside world" in some way. A message
+    # sent to the pool is replicated to all the communicators in
+    # that pool. Some communicators are fast, which means they are
+    # called synchronously and expected to return very quickly. Some
+    # communicators are slow, which means they are called
+    # asynchronously through a work queue.
+    #
+    # See #add for more information.
+    #
     class Pool
 
       # Hoodoo::Communicators::Slow subclass communicators are called in

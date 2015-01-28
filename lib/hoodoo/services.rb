@@ -7,6 +7,15 @@
 #           26-Jan-2015 (ADH): Split from top-level inclusion file.
 ########################################################################
 
+module Hoodoo
+
+  # Module providing a namespace for code useful to client service
+  # applications and the supporting middleware.
+  #
+  module Services
+  end
+end
+
 # Dependencies
 
 require 'hoodoo/logger'
