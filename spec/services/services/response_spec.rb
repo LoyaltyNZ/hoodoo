@@ -192,7 +192,7 @@ describe Hoodoo::Services::Response do
 
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate({'_data' => response_array})
+      expected = JSON.pretty_generate({'_data' => response_array, '_count' => 2})
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])

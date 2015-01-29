@@ -248,7 +248,7 @@ module Hoodoo; module Services
       # are wrapped with a top-level object key "_data".
 
       if body_data.is_a?( ::Array )
-        response_hash = { '_data' => body_data }
+        response_hash = { '_data' => body_data, '_count' => body_data.length}
       else
         response_hash = body_data
       end
