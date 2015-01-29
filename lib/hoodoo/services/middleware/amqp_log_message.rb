@@ -27,8 +27,27 @@ module Hoodoo; module Services
       #
       class AMQPLogMessage < ::AMQEndpoint::Message
 
+        # The named "type" of this message, to be registered with AMQEndpoint.
+        #
         TYPE = 'hoodoo_service_middleware_amqp_log_message'
+
+        # This line of code registers wth AMQEndpoint, but also makes RDoc
+        # screw up. RDoc decides that we have a new module,
+        # Hoodoo::Services::Middleware::AMQPLogMessage::AMQEndpoint. Very
+        # strange...
+        #
         ::AMQEndpoint::Message.register_type( TYPE, self )
+
+        # ...so do _this_ purely so that we can get 100% real documentation
+        # coverage without it being clouded by RDoc's hiccups.
+
+        # This documentation exists purely to work around an RDoc hiccup where
+        # it thinks such a module exists.
+        #
+        # See file "services/middleware/amqp_log_message.rb" for details.
+        #
+        module AMQEndpoint
+        end
 
         # A UUID to assign to this log message. See Hoodoo::UUID::generate.
         #

@@ -45,10 +45,10 @@ if defined?( Rack ) && defined?( Rack::Server )
         # Part of the Rack monkey patch. See file
         # "rack_monkey_path.rb"'s documentation for details.
         #
-        # This method is aliased in place of Rack::Server#start and reads
+        # This method is aliased in place of Rack::Server::start and reads
         # the passed-in options hash to attempt to determine the host name
         # and port number under which a Rack based service is running. It
-        # then calls through to Rack's original #start implementation.
+        # then calls through to Rack's original ::start implementation.
         #
         # +options+:: Options (see original Rack::Server documentation).
         #
@@ -57,7 +57,15 @@ if defined?( Rack ) && defined?( Rack::Server )
           racks_original_start( options )
         end
 
+        # Part of the Rack monkey patch. Alias for the original
+        # Rack::Server::start.
+        #
         alias racks_original_start start
+
+        # Part of the Rack monkey patch. See ::start_and_record_host_and_port.
+        #
+        # +options+:: See ::start_and_record_host_and_port.
+        #
         alias start start_and_record_host_and_port
       end
     end
