@@ -152,7 +152,8 @@ more details.</p>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>The named “type” of this message, to be registered with <a
+href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a>.</p></td>
             </tr>
           
         
@@ -279,7 +280,7 @@ class.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 76</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
@@ -323,7 +324,7 @@ AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 107</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 126</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
@@ -363,7 +364,7 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 86</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
@@ -415,7 +416,7 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 115</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 134</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
   <span class="ruby-ivar">@level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]

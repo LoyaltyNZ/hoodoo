@@ -38,6 +38,13 @@
     <div id="bodyContent">
         <div id="content">
   
+    <div class="description">
+      
+<p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See file
+“rack_monkey_path.rb”&#39;s documentation for details.</p>
+
+    </div>
+  
 
 
   
@@ -117,7 +124,8 @@
           
           
             <div class="description">
-              
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. Alias for the
+original <a href="Server.html#method-c-start">::start</a>.</p>
             </div>
           
           
@@ -142,7 +150,13 @@
           
           
             <div class="description">
-              
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See <a
+href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
+<dl class="rdoc-list note-list"><dt>options
+<dd>
+<p>See <a
+href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
+</dd></dl>
             </div>
           
           
@@ -171,7 +185,20 @@
           
           
             <div class="description">
-              
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See file
+“rack_monkey_path.rb”&#39;s documentation for details.</p>
+
+<p>This method is aliased in place of <a
+href="Server.html#method-c-start">::start</a> and reads the passed-in
+options hash to attempt to determine the host name and port number under
+which a <a href="../Rack.html">Rack</a> based service is running. It then
+calls through to Rack&#39;s original <a
+href="Server.html#method-c-start">::start</a> implementation.</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>Options (see original <a href="Server.html">Rack::Server</a>
+documentation).</p>
+</dd></dl>
             </div>
           
           
@@ -193,7 +220,7 @@
                 
               </p>
               <div id="method-c-start_and_record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/rack_monkey_patch.rb, line 36</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/rack_monkey_patch.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">racks_original_start</span>( <span class="ruby-identifier">options</span> )

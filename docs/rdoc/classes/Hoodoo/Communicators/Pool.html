@@ -38,6 +38,19 @@
     <div id="bodyContent">
         <div id="content">
   
+    <div class="description">
+      
+<p>Maintains a pool of object instances which are expected to be communicating
+with “the outside world” in some way. A message sent to the pool is
+replicated to all the communicators in that pool. Some communicators are
+fast, which means they are called synchronously and expected to return very
+quickly. Some communicators are slow, which means they are called
+asynchronously through a work queue.</p>
+
+<p>See <a href="Pool.html#method-i-add">add</a> for more information.</p>
+
+    </div>
+  
 
 
   
@@ -264,7 +277,7 @@ href="Pool.html#method-i-communicate">communicate</a>.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 46</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-ivar">@pool</span>  = {}
   <span class="ruby-ivar">@group</span> = <span class="ruby-operator">::</span><span class="ruby-constant">ThreadGroup</span>.<span class="ruby-identifier">new</span>
@@ -333,7 +346,7 @@ href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
                 
               </p>
               <div id="method-i-add_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 77</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-identifier">communicator</span> )
   <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> <span class="ruby-operator">||</span>
            <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Slow</span> )
@@ -394,7 +407,7 @@ href="Pool.html#method-i-communicate">communicate</a> methods.</p>
                 
               </p>
               <div id="method-i-communicate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 136</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
   <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">communicator</span>, <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
 
@@ -491,7 +504,7 @@ href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
                 
               </p>
               <div id="method-i-remove_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 110</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 121</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remove</span>( <span class="ruby-identifier">communicator</span> )
   <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> <span class="ruby-operator">||</span>
            <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Slow</span> )
@@ -568,7 +581,7 @@ timeout).</p>
                 
               </p>
               <div id="method-i-terminate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 264</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">terminate</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-constant">THREAD_EXIT_TIMEOUT</span> )
   <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">shift</span>() <span class="ruby-comment"># Hash#shift -&gt; remove a key/value pair.</span>
@@ -638,7 +651,7 @@ error raised. The method simply returns immediately.</p>
                 
               </p>
               <div id="method-i-wait_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">wait</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-constant">THREAD_WAIT_TIMEOUT</span>,
           <span class="ruby-identifier">communicator</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span> )
 

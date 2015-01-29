@@ -227,7 +227,7 @@ read from the Queue.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 560</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 571</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">terminate</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>, <span class="ruby-identifier">sync</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> )
   <span class="ruby-ivar">@payload</span>   = <span class="ruby-identifier">payload</span>
   <span class="ruby-ivar">@dropped</span>   = <span class="ruby-identifier">dropped</span>
@@ -272,7 +272,7 @@ then <a href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
                 
               </p>
               <div id="method-i-dropped-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 584</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 595</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped?</span>
   <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -310,7 +310,7 @@ a message onto the processing Thread&#39;s sync Queue.</p>
                 
               </p>
               <div id="method-i-sync-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 577</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 588</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">sync?</span>
   <span class="ruby-ivar">@sync</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -350,7 +350,7 @@ href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
                 
               </p>
               <div id="method-i-terminate-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 570</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 581</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">terminate?</span>
   <span class="ruby-ivar">@terminate</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>

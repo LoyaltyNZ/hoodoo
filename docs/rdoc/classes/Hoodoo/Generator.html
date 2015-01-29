@@ -38,6 +38,12 @@
     <div id="bodyContent">
         <div id="content">
   
+    <div class="description">
+      
+<p>Implement the <code>hoodoo</code> command line interface.</p>
+
+    </div>
+  
 
 
   
@@ -98,26 +104,30 @@
       <table border='0' cellpadding='5'>
         
           <tr valign='top'>
-            <td class="attr-name">SUCCESS_EXIT_CODE</td>
+            <td class="attr-name">KERNEL_EXIT_SUCCESS</td>
             <td>=</td>
-            <td class="attr-value">0</td>
+            <td class="attr-value">true</td>
           </tr>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>Kernel::exit takes a boolean but defines no constants to describe what it
+means; very bad form. This constant equates to the &#39;success&#39;
+boolean value.</p></td>
             </tr>
           
         
           <tr valign='top'>
-            <td class="attr-name">ERROR_EXIT_CODE</td>
+            <td class="attr-name">KERNEL_EXIT_FAILURE</td>
             <td>=</td>
-            <td class="attr-value">1</td>
+            <td class="attr-value">false</td>
           </tr>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>Kernel::exit takes a boolean but defines no constants to describe what it
+means; very bad form. This constant equates to the &#39;failed&#39; boolean
+value.</p></td>
             </tr>
           
         
@@ -129,7 +139,8 @@
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>Regular expression describing allowed names of services (A-Z, a-z, 0-9,
+underscore or hyphen; between 2 and 30 characters).</p></td>
             </tr>
           
         
@@ -147,14 +158,19 @@
         <div class="method">
           <div class="title method-title" id="method-i-run-21">
             
-              <b>run!</b>(args)
+              <b>run!</b>( args )
             
             <a href="../../classes/Hoodoo/Generator.html#method-i-run-21" name="method-i-run-21" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Run the <code>hoodoo</code> command implementation.</p>
+<dl class="rdoc-list note-list"><dt>args
+<dd>
+<p>Array of command line arguments, excluding the <code>hoodoo</code> command
+itself (so, just any extra arguments passed in).</p>
+</dd></dl>
             </div>
           
           
@@ -172,16 +188,16 @@
                 
               </p>
               <div id="method-i-run-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 12</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">run!</span>(<span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">run!</span>( <span class="ruby-identifier">args</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args_empty?</span>(<span class="ruby-identifier">args</span>)
 
   <span class="ruby-identifier">name</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>(<span class="ruby-node">&quot;SERVICE_NAME must match #{NAME_REGEX.inspect}&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">naughty_name?</span>(<span class="ruby-identifier">name</span>)
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>(<span class="ruby-node">&quot;&#39;#{name}&#39; already exists&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>(<span class="ruby-node">&quot;./#{name}&quot;</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;SERVICE_NAME must match #{ NAME_REGEX.inspect }&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">naughty_name?</span>( <span class="ruby-identifier">name</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;&#39;#{ name }&#39; already exists&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>( <span class="ruby-node">&quot;./#{ name }&quot;</span> )
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">create_service</span>(<span class="ruby-identifier">name</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">create_service</span>( <span class="ruby-identifier">name</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
