@@ -1,4 +1,4 @@
-Mon, 02 Feb 2015 10:44:15 +1300
+Mon, 02 Feb 2015 10:45:55 +1300
 README.md	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo.rb	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo/active.rb	Mon, 02 Feb 2015 10:44:10 +1300
@@ -94,7 +94,7 @@ lib/hoodoo/services/middleware/service_registry_drb_server_start.rb	Mon, 02 Feb 
 lib/hoodoo/services/services/context.rb	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo/services/services/implementation.rb	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo/services/services/interface.rb	Mon, 02 Feb 2015 10:44:10 +1300
-lib/hoodoo/services/services/permissions.rb	Mon, 02 Feb 2015 10:44:10 +1300
+lib/hoodoo/services/services/permissions.rb	Mon, 02 Feb 2015 10:45:40 +1300
 lib/hoodoo/services/services/request.rb	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo/services/services/response.rb	Mon, 02 Feb 2015 10:44:10 +1300
 lib/hoodoo/services/services/service.rb	Mon, 02 Feb 2015 10:44:10 +1300

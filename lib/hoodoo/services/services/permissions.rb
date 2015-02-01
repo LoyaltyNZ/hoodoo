@@ -81,9 +81,9 @@ module Hoodoo; module Services
     #
     ASK   = 'ask'
 
-    # All currently supported permissions.
+    # All currently known (allowed/supported) permission policies.
     #
-    SUPPORTED_PERMISSIONS = [
+    ALLOWED_POLICIES = [
       DENY,
       ALLOW,
       ASK
