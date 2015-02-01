@@ -13,6 +13,6 @@ describe Hoodoo::Data::Resources::Refund do
     expect(schema.properties['pos_reference']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['purchase_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['purchase_id'].resource).to eq(:Purchase)
-    expect(schema.properties['calculations']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['calculation_ids']).to be_a(Hoodoo::Presenters::Array)
   end
 end

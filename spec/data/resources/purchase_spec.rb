@@ -13,6 +13,6 @@ describe Hoodoo::Data::Resources::Purchase do
     expect(schema.properties['pos_reference']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['estimation_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['estimation_id'].resource).to eq(:Estimation)
-    expect(schema.properties['calculations']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['calculation_ids']).to be_a(Hoodoo::Presenters::Array)
   end
 end

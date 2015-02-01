@@ -25,7 +25,7 @@ module Hoodoo
           text   :pos_reference
           uuid   :purchase_id, :resource => :Purchase
 
-          array  :calculations
+          array  :calculation_ids
         end
 
       end
