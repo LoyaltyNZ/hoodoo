@@ -81,6 +81,14 @@ module Hoodoo; module Services
     #
     ASK   = 'ask'
 
+    # All currently supported permissions.
+    #
+    SUPPORTED_PERMISSIONS = [
+      DENY,
+      ALLOW,
+      ASK
+    ]
+
     # Create a new Permissions instance, optionally from a Hash of the format
     # returned by #to_h.
     #
