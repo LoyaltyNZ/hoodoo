@@ -24,14 +24,14 @@ describe Hoodoo::Data::Types::ResourcePermissions do
     expect(schema.properties['resources'].properties['delete']).to be_a(Hoodoo::Presenters::Enum)
 
 
-    expect(schema.properties['resources'].properties['show'].from).to eq(policies)
-    expect(schema.properties['resources'].properties['list'].from).to eq(policies)
-    expect(schema.properties['resources'].properties['create'].from).to eq(policies)
-    expect(schema.properties['resources'].properties['update'].from).to eq(policies)
-    expect(schema.properties['resources'].properties['delete'].from).to eq(policies)
+    expect(schema.properties['resources'].properties['show'].from).to match_array(policies)
+    expect(schema.properties['resources'].properties['list'].from).to match_array(policies)
+    expect(schema.properties['resources'].properties['create'].from).to match_array(policies)
+    expect(schema.properties['resources'].properties['update'].from).to match_array(policies)
+    expect(schema.properties['resources'].properties['delete'].from).to match_array(policies)
 
     # Else enum
     expect(schema.properties['else']).to be_a(Hoodoo::Presenters::Enum)
-    expect(schema.properties['else'].from).to eq(policies)
+    expect(schema.properties['else'].from).to match_array(policies)
   end
 end
