@@ -6,7 +6,7 @@ ENV[ 'RACK_ENV' ] = 'test'
 
 require 'simplecov'
 require 'simplecov-rcov'
-
+require 'byebug'
 SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
 SimpleCov.start do
   add_filter '_spec'
