@@ -10,7 +10,7 @@ describe Hoodoo::Data::Resources::Session do
 
     expect(schema.properties['caller_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['caller_id'].resource).to eq(:Caller)
-    expect(schema.properties['expired_at']).to be_a(Hoodoo::Presenters::DateTime)
+    expect(schema.properties['expires_at']).to be_a(Hoodoo::Presenters::DateTime)
     expect(schema.properties['identifier']).to be_a(Hoodoo::Presenters::Text)
   end
 end
