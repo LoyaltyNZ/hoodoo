@@ -196,8 +196,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
         '_data' => [
           { 'time'  => @time_now   },
           { 'clock' => 'responded' }
-        ],
-        '_count' => 2
+        ]
       } )
     end
   end

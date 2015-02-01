@@ -192,11 +192,26 @@ describe Hoodoo::Services::Response do
 
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate({'_data' => response_array, '_count' => 2})
+      expected = JSON.pretty_generate({'_data' => response_array})
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
     end
+
+    it 'should return non-error condition Rack data correctly with an Slice body' do
+      data = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
+      slice = Hoodoo::ActiveRecord::Finder::Slice.new(data, 2)
+      
+      @r.body = slice
+
+      status, headers, body = @r.for_rack
+      
+      expected = JSON.pretty_generate({'_data' => data, '_count' => 2})
+      expect(status).to eq(200) # From the first error we stored, not the second
+      expect(headers).to eq({'Content-Length' => expected.length.to_s})
+      expect(body.body).to eq([expected])
+    end
+
   end
 
   context "#not_found" do

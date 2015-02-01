@@ -272,4 +272,22 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder.all.to_a ).to eq([])
     end
   end
+
+  context 'slice' do
+    it 'filters ' do
+      @list_params.filter_data = {
+        'field_two' => 'two a'
+      }
+
+      slice = RSpecModelFinderTest.where( :field_one => 'group 2' ).slice(@list_params)
+
+      slice.render_with { |model|
+        model.uuid
+      }
+      
+      expect( slice.data.to_a ).to eq([@c])
+      expect( slice.count ).to eq(1)
+      expect( slice.rendered_data ).to eq([@c.uuid])
+    end
+  end
 end

@@ -248,7 +248,15 @@ module Hoodoo; module Services
       # are wrapped with a top-level object key "_data".
 
       if body_data.is_a?( ::Array )
-        response_hash = { '_data' => body_data, '_count' => body_data.length}
+        response_hash = {
+          '_data' => body_data
+        }
+
+      elsif body_data.is_a?( ::Hoodoo::ActiveRecord::Finder::Slice )
+        response_hash = { 
+          '_data' => body_data.rendered_data, 
+          '_count' => body_data.count
+        }
       else
         response_hash = body_data
       end
