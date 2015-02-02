@@ -2,7 +2,9 @@
 # File::    default_permissions.rb
 # (C)::     Loyalty New Zealand 2015
 #
-# Purpose:: Define documented Platform API Type 'DefaultPermissions'.
+# Purpose:: Define undocumented Platform API Type 'DefaultPermissions'.
+#           This type is currently for internal use but may be exposed
+#           to external callers in the future.
 # ----------------------------------------------------------------------
 #           2-Feb-2015 (RJS): Created.
 ########################################################################
