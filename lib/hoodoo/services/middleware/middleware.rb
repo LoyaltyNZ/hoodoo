@@ -744,6 +744,7 @@ module Hoodoo; module Services
       @session = Hoodoo::Services::Session.load_session(
         ENV[ 'MEMCACHE_URL' ],
         @session_id,
+        @rack_request
       )
 
       if @session.nil? && interfaces_have_public_methods? == false
