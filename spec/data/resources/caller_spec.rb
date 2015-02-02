@@ -6,7 +6,7 @@ describe Hoodoo::Data::Resources::Caller do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(7)
+    expect(schema.properties.count).to eq(6)
 
     expect(schema.properties['participant_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['participant_id'].resource).to eq(:Participant)

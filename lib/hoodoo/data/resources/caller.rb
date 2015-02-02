@@ -18,7 +18,7 @@ module Hoodoo
         schema do
           uuid :participant_id,              :required => true, :resource => :Participant
           uuid :outlet_id,                   :required => true, :resource => :Outlet
-          text :authentication_secret,       :required => true
+          text :authentication_secret
           array :authorised_participant_ids, :required => true do
             uuid :participant_id, :required => true, :resource => :Participant
           end
