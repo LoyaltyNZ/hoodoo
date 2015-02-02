@@ -20,10 +20,10 @@ module Hoodoo
           uuid :outlet_id,                   :required => true, :resource => :Outlet
           text :authentication_secret
           array :authorised_participant_ids, :required => true do
-            uuid :participant_id, :required => true, :resource => :Participant
+            uuid :participant_id, :resource => :Participant
           end
           array :authorised_programme_codes, :required => true do
-            text :authorised_programme_code, :required => true
+            text :authorised_programme_code
           end
           type :ResourcePermissions,         :required => true
         end
