@@ -124,21 +124,23 @@ module Hoodoo; module Services
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],
-        :outlet_id      => session_hash['outlet_id'],
-        :roles          => session_hash['roles'],
+        :outlet_id      => session_hash['outlet_id'       ],
+        :roles          => session_hash['roles'           ],
       } )
-      # outlet id override temp solution TODO refactor out into loyalty specific gem
+
+      # Temporary solution for outlet_id override temp
+      # TODO: LoyaltyNZ specific
       if session.has_role?('allow_outlet_id_override')
-        session.outlet_id_override = request.env['HTTP_X_OUTLET_ID']
+        session.outlet_id = request.env['HTTP_X_OUTLET_ID']
       end
 
       return session
     end
 
-    # Set the internal outlet_id
+    # Set the outlet_id
     # +outlet_id+::
     #
-    def outlet_id_override=(outlet_id)
+    def outlet_id=(outlet_id)
       @outlet_id = outlet_id
     end
 

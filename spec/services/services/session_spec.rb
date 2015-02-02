@@ -269,7 +269,7 @@ describe Hoodoo::Services::Session do
         double(:env => {'HTTP_X_OUTLET_ID' => 'TESTOUTLET2'})
       end
 
-      it 'should set the outlet id to passed if they have the role allow_outlet_id_override' do
+      it 'sets the outlet id to the header X_OUTLET_ID if they have the role allow_outlet_id_override' do
         expect(session.outlet_id).to eq 'TESTOUTLET2'
       end
     end
@@ -286,7 +286,7 @@ describe Hoodoo::Services::Session do
         double(:env => {'HTTP_X_OUTLET_ID' => 'HACKED_OUTLET_ID'})
       end
 
-      it 'should NOT set the outlet id to passed if they DONT have the role allow_outlet_id_override' do
+      it "does not set the outlet id to the override value id they do not have the allow_outlet_id_override role" do
         expect(session.outlet_id).to eq 'TESTOUTLET1'
       end
 
