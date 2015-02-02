@@ -10,39 +10,43 @@ describe Hoodoo::Services::Session do
     Hoodoo::Services::Session.testing(true)
   end
 
+  let :request do
+    double(env: {})
+  end
+
   describe '#self.load_session' do
 
     it 'should raise an error if memcache_url is nil' do
       expect {
-        Hoodoo::Services::Session.load_session(nil, '0123456789ABCDEF')
+        Hoodoo::Services::Session.load_session(nil, '0123456789ABCDEF', request)
       }.to raise_error "Hoodoo::Services::Middleware memcache server URL is nil or empty"
     end
 
     it 'should raise an error if memcache_url is empty' do
       expect {
-        Hoodoo::Services::Session.load_session('', '0123456789ABCDEF')
+        Hoodoo::Services::Session.load_session('', '0123456789ABCDEF', request)
       }.to raise_error "Hoodoo::Services::Middleware memcache server URL is nil or empty"
     end
 
     it 'should return nil if session_id is nil' do
-      session = Hoodoo::Services::Session.load_session('url', nil)
+      session = Hoodoo::Services::Session.load_session('url', nil, request)
       expect(session).to be_nil
     end
 
     it 'should return nil if session_id is empty' do
-      session = Hoodoo::Services::Session.load_session('url', '')
+      session = Hoodoo::Services::Session.load_session('url', '', request)
       expect(session).to be_nil
     end
 
     it 'should return nil if session_id is less than 32 chars' do
-      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDE')
+      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDE', request)
       expect(session).to be_nil
     end
 
     it 'should call connect_memcache and raise error if return is nil' do
       expect(Hoodoo::Services::Session).to receive(:connect_memcache).with('url').and_return(nil)
       expect {
-        Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+        Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF', request)
       }.to raise_error "Hoodoo::Services::Middleware cannot connect to memcache server 'url'"
     end
 
@@ -51,7 +55,7 @@ describe Hoodoo::Services::Session do
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(nil)
       expect(Hoodoo::Services::Session).to receive(:connect_memcache).and_return(mock_memcache)
 
-      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF', request)
       expect(session).to be_nil
     end
 
@@ -64,7 +68,7 @@ describe Hoodoo::Services::Session do
 
       expect(Hoodoo::Services::Middleware.logger).to receive(:warn)
 
-      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF', request)
       expect(session).to be_nil
     end
 
@@ -80,7 +84,7 @@ describe Hoodoo::Services::Session do
       expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(session_hash)
       expect(Hoodoo::Services::Session).to receive(:connect_memcache).and_return(mock_memcache)
 
-      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF')
+      session = Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF', request)
       expect(session.id).to eq('0123456789ABCDEF0123456789ABCDEF')
       expect(session.participant_id).to eq(session_hash["participant_id"])
       expect(session.outlet_id).to eq(session_hash["outlet_id"])
@@ -241,6 +245,51 @@ describe Hoodoo::Services::Session do
       })
 
       expect(s.has_any_roles?(['one','two','three'])).to be_falsy
+    end
+  end
+
+  describe 'outlet_id_override' do
+
+    let :session do
+      mock_memcache = double('memcache')
+      expect(mock_memcache).to receive(:get).with("session_0123456789ABCDEF0123456789ABCDEF").and_return(session_hash)
+      expect(Hoodoo::Services::Session).to receive(:connect_memcache).and_return(mock_memcache)
+      Hoodoo::Services::Session.load_session('url', '0123456789ABCDEF0123456789ABCDEF', request)
+    end
+
+    context 'with allow_outlet_id_override role' do
+      let :session_hash do
+        {
+          "outlet_id" => "TESTOUTLET1",
+          "roles" => "TESTROLE1,TESTROLE2,allow_outlet_id_override",
+        }
+      end
+
+      let :request do
+        double(:env => {'HTTP_X_OUTLET_ID' => 'TESTOUTLET2'})
+      end
+
+      it 'sets the outlet id to the header X_OUTLET_ID if they have the role allow_outlet_id_override' do
+        expect(session.outlet_id).to eq 'TESTOUTLET2'
+      end
+    end
+
+    context 'without allow_outlet_id_override role' do
+      let :session_hash do
+        {
+          "outlet_id" => "TESTOUTLET1",
+          "roles" => "TESTROLE1,TESTROLE2",
+        }
+      end
+
+      let :request do
+        double(:env => {'HTTP_X_OUTLET_ID' => 'HACKED_OUTLET_ID'})
+      end
+
+      it "does not set the outlet id to the override value id they do not have the allow_outlet_id_override role" do
+        expect(session.outlet_id).to eq 'TESTOUTLET1'
+      end
+
     end
   end
 end

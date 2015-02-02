@@ -82,7 +82,7 @@ module Hoodoo; module Services
     # Returns either a valid Session instance, or +nil+ if the session
     # does not exist or is invalid.
     #
-    def self.load_session( memcache_url, session_id )
+    def self.load_session( memcache_url, session_id, request )
 
       return Hoodoo::Services::Session.new( @@test_session ) if @@test_mode
 
@@ -120,13 +120,28 @@ module Hoodoo; module Services
 
       # Create and return the new session.
       #
-      return Hoodoo::Services::Session.new( {
+      session = Hoodoo::Services::Session.new( {
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],
         :outlet_id      => session_hash[ 'outlet_id'      ],
         :roles          => session_hash[ 'roles'          ],
       } )
+
+      # Temporary solution for outlet_id override temp
+      # TODO: LoyaltyNZ specific
+      if session.has_role?('allow_outlet_id_override')
+        session.outlet_id = request.env[ 'HTTP_X_OUTLET_ID' ]
+      end
+
+      return session
+    end
+
+    # Set the outlet_id
+    # +outlet_id+::
+    #
+    def outlet_id=(outlet_id)
+      @outlet_id = outlet_id
     end
 
     # Instantiate a new Session instance with the optional supplied
