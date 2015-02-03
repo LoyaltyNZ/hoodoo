@@ -22,7 +22,7 @@ module Hoodoo
         schema do
 
           object :default,
-                 default => { 'else' => Hoodoo::Services::Permissions::DENY } do
+                 :default => { 'else' => Hoodoo::Services::Permissions::DENY } do
             type :Permissions
           end
 

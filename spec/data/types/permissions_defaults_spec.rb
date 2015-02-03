@@ -15,6 +15,7 @@ describe Hoodoo::Data::Types::PermissionsDefaults do
     # Resources hash
 
     expect(schema.properties['default']).to be_a(Hoodoo::Presenters::Object)
+    expect(schema.properties['default'].default).to eq({'else'=>'deny'})
     expect(schema.properties['default'].properties.count).to eq(2)
 
     expect(schema.properties['default'].properties['actions']).to be_a(Hoodoo::Presenters::Object)
