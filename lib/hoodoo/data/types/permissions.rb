@@ -4,7 +4,7 @@
 #
 # Purpose:: Define documented Platform API Type 'Permissions'.
 # ----------------------------------------------------------------------
-#           2-Feb-2015 (RJS): Created.
+#           02-Feb-2015 (RJS): Created.
 ########################################################################
 
 require 'hoodoo/services/middleware/middleware'

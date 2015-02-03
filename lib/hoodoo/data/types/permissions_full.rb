@@ -1,26 +1,26 @@
 ########################################################################
-# File::    full_permissions.rb
+# File::    permissions_full.rb
 # (C)::     Loyalty New Zealand 2015
 #
-# Purpose:: Define undocumented Platform API Type 'FullPermissions'.
+# Purpose:: Define undocumented Platform API Type 'PermissionsFull'.
 #           This is currently for internal use but may be made available
 #           to external callers in the future.
 # ----------------------------------------------------------------------
-#           2-Feb-2015 (RJS): Created.
+#           02-Feb-2015 (RJS): Created.
 ########################################################################
 
 module Hoodoo
   module Data
     module Types
 
-      # Documented Platform API Type 'FullPermissions'.
+      # Documented Platform API Type 'PermissionsFull'.
       #
-      class FullPermissions < Hoodoo::Presenters::Base
+      class PermissionsFull < Hoodoo::Presenters::Base
 
         schema do
 
-          type :ResourcePermissions
-          type :DefaultPermissions
+          type :PermissionsResources
+          type :PermissionsDefaults
 
         end
 

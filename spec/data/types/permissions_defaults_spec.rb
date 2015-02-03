@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::Data::Types::DefaultPermissions do
+describe Hoodoo::Data::Types::PermissionsDefaults do
   it 'should match schema expectations' do
 
     # List of permitted policies
