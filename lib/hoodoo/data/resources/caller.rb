@@ -19,13 +19,16 @@ module Hoodoo
           uuid :participant_id,              :required => true, :resource => :Participant
           uuid :outlet_id,                   :required => true, :resource => :Outlet
           text :authentication_secret
+
+          type :ResourcePermissions,         :required => true
+
           array :authorised_participant_ids, :required => true do
             uuid :participant_id, :resource => :Participant
           end
+
           array :authorised_programme_codes, :required => true do
             text :authorised_programme_code
           end
-          type :ResourcePermissions,         :required => true
         end
 
       end

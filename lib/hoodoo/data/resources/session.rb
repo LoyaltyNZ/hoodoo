@@ -16,9 +16,9 @@ module Hoodoo
       class Session < Hoodoo::Presenters::Base
 
         schema do
-          uuid :caller_id,      :required => true, :resource => :Caller
+          uuid     :caller_id,  :required => true, :resource => :Caller
           datetime :expires_at, :required => true
-          text :identifier,     :required => true
+          text     :identifier, :required => true
         end
 
       end
