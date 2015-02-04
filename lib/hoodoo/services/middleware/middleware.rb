@@ -739,9 +739,9 @@ module Hoodoo; module Services
       # no configured MemCache available (assume local development).
 
       environment = self.class.environment()
-      Hoodoo::Services::Session.testing( environment.test? || ! self.class.has_memcache? )
+      Hoodoo::Services::LegacySession.testing( environment.test? || ! self.class.has_memcache? )
 
-      @session = Hoodoo::Services::Session.load_session(
+      @session = Hoodoo::Services::LegacySession.load_session(
         ENV[ 'MEMCACHE_URL' ],
         @session_id,
       )

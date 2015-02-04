@@ -16,8 +16,8 @@ module Hoodoo; module Services
   #
   class Context
 
-    # The Hoodoo::Services::Session instance describing the authorised call
-    # context.
+    # The Hoodoo::Services::Session or Hoodoo::Services::LegacySession instance
+    # describing the authorised call context.
     #
     attr_reader :session
 

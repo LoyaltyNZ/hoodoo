@@ -90,7 +90,7 @@ module Hoodoo; module Services
     #
     def self.load_session( memcache_url, session_id )
 
-      return Hoodoo::Services::Session.new( @@test_session ) if @@test_mode
+      return Hoodoo::Services::LegacySession.new( @@test_session ) if @@test_mode
 
       if memcache_url.nil? || memcache_url.empty?
         raise "Hoodoo::Services::Middleware memcache server URL is nil or empty"
@@ -126,7 +126,7 @@ module Hoodoo; module Services
 
       # Create and return the new session.
       #
-      return Hoodoo::Services::Session.new( {
+      return Hoodoo::Services::LegacySession.new( {
         :id             => session_id,
         :client_id      => session_hash[ 'client_id'      ],
         :participant_id => session_hash[ 'participant_id' ],

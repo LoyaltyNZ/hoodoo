@@ -53,7 +53,7 @@ module Hoodoo; module Services
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an Hoodoo::Services::Session instance. The client ID,
+      #              an Hoodoo::Services::LegacySession instance. The client ID,
       #              participant UUID and outlet UUID are sent as independent,
       #              searchable fields in the log payload.
       #

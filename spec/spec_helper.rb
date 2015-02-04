@@ -89,7 +89,7 @@ RSpec.configure do | config |
     $stderr << Time.now.to_s << "\n"
     $stderr << "*"*80 << "\n\n"
 
-    Hoodoo::Services::Session.testing( true )
+    Hoodoo::Services::LegacySession.testing( true )
     Hoodoo::Services::Middleware.set_log_folder( base_path )
 
     ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
@@ -98,7 +98,7 @@ RSpec.configure do | config |
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :suite ) do
-    Hoodoo::Services::Session.testing( false )
+    Hoodoo::Services::LegacySession.testing( false )
 
     DRb.start_service
     drb_uri = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.uri()

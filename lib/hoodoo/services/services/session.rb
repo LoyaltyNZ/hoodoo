@@ -19,7 +19,7 @@ module Hoodoo
       # after being saved. Only applicable from the save time onwards in
       # stores that support TTL such as memcached - see #save_to_memcached.
       #
-      TTL = 48.hours
+      TTL = 172800 # 48 hours
 
       # A Session must have its own UUID. This is that ID.
       #

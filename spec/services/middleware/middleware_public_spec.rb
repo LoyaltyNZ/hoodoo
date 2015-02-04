@@ -68,7 +68,7 @@ describe Hoodoo::Services::Middleware do
   end
 
   before :example, :without_session => true do
-    expect( Hoodoo::Services::Session ).to receive( :load_session ).once.and_return( nil )
+    expect( Hoodoo::Services::LegacySession ).to receive( :load_session ).once.and_return( nil )
   end
 
   # -------------------------------------------------------------------------
