@@ -18,6 +18,7 @@ end
 
 # Dependencies
 
+require 'hoodoo/utilities'
 require 'hoodoo/logger'
 
 # Services
