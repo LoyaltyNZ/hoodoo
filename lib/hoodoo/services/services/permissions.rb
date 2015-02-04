@@ -211,7 +211,7 @@ module Hoodoo; module Services
     #          a #to_h call.
     #
     def from_h( hash )
-      @permissions = hash
+      @permissions = Hoodoo::Utilities.stringify( hash )
     end
 
   end
