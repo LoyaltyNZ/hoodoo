@@ -1,21 +1,27 @@
 ########################################################################
-# File::    session.rb
+# File::    legacy_session.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Container for information about the context in which a
 #           service is called.
 # ----------------------------------------------------------------------
 #           03-Oct-2014 (ADH): Created.
-#           16-Oct-2014 (TC): Implemented Basic Functionality.
+#           16-Oct-2014 (TC):  Implemented basic functionality.
+#           04-Feb-2015 (ADH): Renamed to "legacy_session.rb".
 ########################################################################
 
 require 'dalli'
 
 module Hoodoo; module Services
 
-  # +Session+ contains all functionality related to a context session.
+  # A container for functionality related to a context session. This is
+  # legacy code for backwards compatibility with services that predate
+  # the formalised platform Session and Caller model.
   #
-  class Session
+  # This class will eventually be deleted. New services must not use it.
+  # Use Hoodoo::Services::Session instead.
+  #
+  class LegacySession
 
     # Session ID, matching a value that would appear in an X-Session-ID
     # header.
