@@ -192,6 +192,19 @@ module Hoodoo
         end
       end
 
+      # Has this session expired? Only valid if an expiry date is set;
+      # see #expires_at.
+      #
+      # Returns +true+ if the session has expired, or +false+ if it has
+      # either not expired, or has no expiry date set yet.
+      #
+      def expired?
+        exp = self.expires_at()
+        now = Time.now.utc
+
+        return exp.nil? || now < exp
+      end
+
       # Represent this session's data as a Hash, for uses such as
       # storage in Memcached or loading into another session instance.
       # See also #from_h.

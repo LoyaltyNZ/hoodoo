@@ -61,6 +61,18 @@
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
+        <dt>E</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-expired-3F">expired?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>F</dt>
         <dd>
           <ul>
@@ -330,6 +342,50 @@ methods.</p>
       <div class="sectiontitle">Instance Public methods</div>
       
         <div class="method">
+          <div class="title method-title" id="method-i-expired-3F">
+            
+              <b>expired?</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-expired-3F" name="method-i-expired-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Has this session expired? Only valid if an expiry date is set; see <a
+href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
+
+<p>Returns <code>true</code> if the session has expired, or <code>false</code>
+if it has either not expired, or has no expiry date set yet.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-expired-3F_source')" id="l_method-i-expired-3F_source">show</a>
+                
+              </p>
+              <div id="method-i-expired-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 201</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
+  <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
+  <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">exp</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">exp</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-from_h">
             
               <b>from_h</b>( hash )
@@ -364,7 +420,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
                 
               </p>
               <div id="method-i-from_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 215</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
@@ -644,7 +700,7 @@ href="Session.html#method-i-from_h">from_h</a>.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 199</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   {
     <span class="ruby-string">&#39;session_id&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
