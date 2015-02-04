@@ -14,11 +14,13 @@ require 'dalli'
 module Hoodoo
   module Services
 
+    # A container for functionality related to a context session.
+    #
     class Session
 
       # Time To Live: Number of seconds for which a session remains valid
       # after being saved. Only applicable from the save time onwards in
-      # stores that support TTL such as memcached - see #save_to_memcached.
+      # stores that support TTL such as Memcached - see #save_to_memcached.
       #
       TTL = 172800 # 48 hours
 
@@ -67,10 +69,10 @@ module Hoodoo
         @scoping = OpenStruct.new( hash )
       end
 
-      # Connection URL for memcached.
+      # Connection URL for Memcached.
       #
-      # If you are using memcached for a session store, you can set the
-      # memcached connection URL either through this accessor, or via the
+      # If you are using Memcached for a session store, you can set the
+      # Memcached connection URL either through this accessor, or via the
       # object's constructor.
       #
       attr_accessor :memcached_url
@@ -85,7 +87,7 @@ module Hoodoo
       #                   generated for you. You can read the UUID with the
       #                   #session_id accessor method.
       #
-      # +memcached_url+:: URL for memcached connections; required if you want
+      # +memcached_url+:: URL for Memcached connections; required if you want
       #                   to use the #load_from_memcached! or #save_to_memcached
       #                   methods.
       #
@@ -94,15 +96,15 @@ module Hoodoo
         self.memcached_url = options[ :memcached_url ]
       end
 
-      # Save this session to memcached, in a manner that will allow it to
+      # Save this session to Memcached, in a manner that will allow it to
       # be loaded by #load_from_memcached! later.
       #
       # The Hoodoo::Services::Session::TTL constant determines how long the
-      # key lives in memcached.
+      # key lives in Memcached.
       #
       # If successful, returns a Time instance that describes a time which
       # is (within code execution speed tolerances) equal to or (more
-      # likely) just after the time at which memcached would expire the
+      # likely) just after the time at which Memcached would expire the
       # session record.
       #
       # If unsuccessful, the method raises an exception or returns +nil+.
@@ -112,9 +114,9 @@ module Hoodoo
 
         begin
 
-          # Set in memcached first. This starts the "expiry counter running".
+          # Set in Memcached first. This starts the "expiry counter running".
           # Then calculate the local 'expires at' time. This guarantees that
-          # the 'expires at' time will be on *or after* the actual memcached
+          # the 'expires at' time will be on *or after* the actual Memcached
           # expiry, which is what we want.
           #
           success = memcache.set( self.key_for_memcached( session_id ),
@@ -142,11 +144,11 @@ module Hoodoo
 
       # Load session data into this instance, overwriting instance values
       # if the session is found. Raises an exception if there is a problem
-      # connecting to memcached. A memcached connection URL must have been
+      # connecting to Memcached. A Memcached connection URL must have been
       # set through the constructor or #memcached_url accessor first.
       #
       # Returns 'this instance' for convenience on success, or +nil+ if
-      # the session cannot be loaded from memcached (session not found).
+      # the session cannot be loaded from Memcached (session not found).
       #
       def load_from_memcached!( session_id )
         client = self.class.connect_to_memcached( self.memcached_url() )
@@ -176,7 +178,7 @@ module Hoodoo
       end
 
       # Represent this session's data as a Hash, for uses such as
-      # storage in memcached or loading into another session instance.
+      # storage in Memcached or loading into another session instance.
       # See also #from_h.
       #
       def to_h
@@ -208,14 +210,14 @@ module Hoodoo
 
     private
 
-      # Connect to the memcached server. Returns a new Dalli client
+      # Connect to the Memcached server. Returns a new Dalli client
       # instance. Raises an exception if no connection can be established.
       #
-      # +url+:: Connection URL for memcached.
+      # +url+:: Connection URL for Memcached.
       #
       def self.connect_to_memcached( url )
         if url.nil? || url.empty?
-          raise 'Hoodoo::Services::Session.connect_to_memcached: The memcached connection URL is nil or empty'
+          raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection URL is nil or empty'
         end
 
         stats = nil
@@ -234,14 +236,14 @@ module Hoodoo
         end
 
         if stats.nil?
-          raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to memcached on URL '#{ url }'"
+          raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached on URL '#{ url }'"
         else
           return client
         end
       end
 
       # For a given session ID, return the key (String) that must be
-      # used for saving to or loading from memcached.
+      # used for saving to or loading from Memcached.
       #
       def key_for_memcached( session_id )
         "platform_session_#{ session_id }"
