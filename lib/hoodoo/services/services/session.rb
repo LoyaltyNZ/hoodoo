@@ -24,9 +24,24 @@ module Hoodoo
       #
       TTL = 172800 # 48 hours
 
-      # A Session must have its own UUID. This is that ID.
+      # A Session must have its own UUID.
       #
       attr_accessor :session_id
+
+      # A Session must always refer to a Client instance by UUID.
+      #
+      attr_accessor :client_id
+
+      # Clients can change; if so, related sessions must be invalidated.
+      # This must be achieved by keeping a version count on the client. A
+      # session is associated with a particular client version and if the
+      # version changes, associated sessions are flushed.
+      #
+      # If you _change_ a client version in a Session, you _really_ should
+      # call #save_to_memcached as soon as possible afterwards so that the
+      # change gets recognised in Memcached.
+      #
+      attr_accessor :client_version
 
       # An OpenStruct instance with session-creator defined key/value pairs
       # that define the _identity_ of the session holder. This is usually
@@ -99,21 +114,32 @@ module Hoodoo
       #
       # Options are:
       #
-      # +session_id+::    UUID of this session. If unset, a new UUID is
-      #                   generated for you. You can read the UUID with the
-      #                   #session_id accessor method.
+      # +session_id+::     UUID of this session. If unset, a new UUID is
+      #                    generated for you. You can read the UUID with
+      #                    the #session_id accessor method.
       #
-      # +memcached_url+:: URL for Memcached connections; required if you want
-      #                   to use the #load_from_memcached! or #save_to_memcached
-      #                   methods.
+      # +client_id+::      UUID of the Client instance associated with this
+      #                    session. This can be set either now or later, but
+      #                    the session cannot be saved without it.
+      #
+      # +client_version+:: Version of the Client instance; defaults to zero.
+      #
+      # +memcached_url+::  URL for Memcached connections; required if you
+      #                    want to use the #load_from_memcached! or
+      #                    #save_to_memcached methods.
       #
       def initialize( options = {} )
-        self.session_id    = options[ :session_id    ] || Hoodoo::UUID.generate()
-        self.memcached_url = options[ :memcached_url ]
+        self.session_id     = options[ :session_id     ] || Hoodoo::UUID.generate()
+        self.memcached_url  = options[ :memcached_url  ]
+        self.client_id      = options[ :client_id      ]
+        self.client_version = options[ :client_version ] || 0
       end
 
       # Save this session to Memcached, in a manner that will allow it to
       # be loaded by #load_from_memcached! later.
+      #
+      # A session can only be saved if it has a Client ID - see #client_id=
+      # or the options hash passed to the constructor.
       #
       # The Hoodoo::Services::Session::TTL constant determines how long the
       # key lives in Memcached.
@@ -123,9 +149,29 @@ module Hoodoo
       # If unsuccessful, the method raises an exception or returns +nil+.
       #
       def save_to_memcached
-        client = self.class.connect_to_memcached( self.memcached_url() )
+        if self.client_id.nil?
+          raise 'Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Client UUID'
+        end
+
+        memcached = self.class.connect_to_memcached( self.memcached_url() )
 
         begin
+
+          # (1) Get the current version from Memcached.
+          #
+          # (2) If it is missing or less than our version that's OK, just
+          #     set the version data.
+          #
+          # (3) If it is greater than our version we are already stale!
+          #     Race condition - make the decision to update 'self' to
+          #     the newer version and go with that since the session is
+          #     assumed not under use before saving.
+
+          cached_version = load_client_version_from_memcached( memcached, self.client_id )
+          self.client_version = cached_version if cached_version != nil && cached_version > self.client_version
+
+          success = save_client_version_to_memcached( memcached, self.client_id, self.client_version )
+          return nil unless success
 
           # Must set this before saving, even though the delay between
           # setting this value and Memcached actually saving the value
@@ -134,15 +180,12 @@ module Hoodoo
 
           @expires_at = ( ::Time.now + TTL ).utc()
 
-          success = memcache.set( session_id,
-                                  self.to_h(),
-                                  Hooodoo::Services::Session::TTL )
+          success = memcached.set( session_id,
+                                   self.to_h(),
+                                   Hooodoo::Services::Session::TTL )
 
-          if ( ! success )
-            return nil
-          else
-            return @expires_at
-          end
+          return nil unless success
+          return @expires_at
 
         rescue Exception => exception
 
@@ -162,21 +205,31 @@ module Hoodoo
       # connecting to Memcached. A Memcached connection URL must have been
       # set through the constructor or #memcached_url accessor first.
       #
-      # Returns 'this instance' for convenience on success, or +nil+ if
-      # the session cannot be loaded from Memcached (session not found).
+      # Returns:
+      #
+      # * +true+: The session data was loaded OK and is valid.
+      # * +false+: The session data was loaded, but is not valid; either
+      #   the session has expired, or its client version mismatches the
+      #   associated stored client version in Memcached.
+      # * +nil+: The session data could not be loaded (Memcached problem).
       #
       def load_from_memcached!( session_id )
-        client = self.class.connect_to_memcached( self.memcached_url() )
+        memcached = self.class.connect_to_memcached( self.memcached_url() )
 
         begin
 
-          session_hash = client.get( session_id )
+          session_hash = memcached.get( session_id )
 
           if session_hash.nil?
             return nil
           else
             self.from_h( session_hash )
-            return self
+            return false if self.expired?
+
+            cv = self.load_client_version_from_memcached( memcached, self.client_id )
+            return false if cv.nil? || cv > self.client_version
+
+            return true
           end
 
         rescue Exception => exception
@@ -211,11 +264,14 @@ module Hoodoo
       #
       def to_h
         {
-          'session_id'  => self.session_id,
-          'identity'    => self.identity.to_h(),
-          'scoping'     => self.scoping.to_h(),
-          'permissions' => self.permissions.to_h(),
-          'exipres_at'  => self.expires_at.iso8601
+          'session_id'     => self.session_id,
+          'client_id'      => self.client_id,
+          'client_version' => self.client_version,
+          'expires_at'     => self.expires_at.iso8601,
+
+          'identity'       => self.identity.to_h(),
+          'scoping'        => self.scoping.to_h(),
+          'permissions'    => self.permissions.to_h(),
         }
       end
 
@@ -228,13 +284,9 @@ module Hoodoo
       def from_h( hash )
         hash = Hoodoo::Utilities.stringify( hash )
 
-        self.session_id = hash[ 'session_id' ] if hash.has_key?( 'session_id' )
-        self.identity   = hash[ 'identity'   ] if hash.has_key?( 'identity'   )
-        self.scoping    = hash[ 'scoping'    ] if hash.has_key?( 'scoping'    )
-
-        if hash.has_key?( 'permissions' )
-          self.permissions = Hoodoo::Services::Permissions.new( hash[ 'permissions' ] )
-        end
+        self.session_id     = hash[ 'session_id'      ] if hash.has_key?( 'session_id'      )
+        self.client_id      = hash[ 'client_id'       ] if hash.has_key?( 'client_id'       )
+        self.client_version = hash[ 'client_version'  ] if hash.has_key?( 'client_version'  )
 
         if hash.has_key?( 'expires_at' )
           begin
@@ -242,6 +294,13 @@ module Hoodoo
           rescue
             @expires_at = nil
           end
+        end
+
+        self.identity = hash[ 'identity' ] if hash.has_key?( 'identity' )
+        self.scoping  = hash[ 'scoping'  ] if hash.has_key?( 'scoping'  )
+
+        if hash.has_key?( 'permissions' )
+          self.permissions = Hoodoo::Services::Permissions.new( hash[ 'permissions' ] )
         end
       end
 
@@ -282,6 +341,52 @@ module Hoodoo
           return client
         end
       end
+
+      # Load the client version for a given client ID from Memcached.
+      # Returns nil if there are any errors or no version is stored.
+      #
+      # +memcached+:: A Dalli::Client instance to use for talking to
+      #               Memcached.
+      #
+      # +client_id+:: Client UUID of interest.
+      #
+      def load_client_version_from_memcached( memcached, client_id )
+        cv = begin
+          verison_hash = memcached.get( self.client_id )
+          version_hash[ 'version' ] # Exception if version_hash is nil => will be rescued
+        rescue
+          nil
+        end
+
+        return cv
+      end
+
+      # Save the client version for a given client ID to Memcached.
+      # Returns +true+ if successful, else +false+.
+      #
+      # Note that any existing record for the given client, if there
+      # is one, is unconditionally overwritten.
+      #
+      # +memcached+:: A Dalli::Client instance to use for talking
+      #               to Memcached.
+      #
+      # +client_id+:: Client UUID of interest.
+      #
+      # +cv+::        Version to save for that client UUID.
+      #
+      def save_client_version_to_memcached( memcached, client_id, cv )
+        success = begin
+          memcached.set(
+            client_id,
+            { 'version' => cv }
+          )
+        rescue
+          false
+        end
+
+        return success
+      end
+
     end
   end
 end
