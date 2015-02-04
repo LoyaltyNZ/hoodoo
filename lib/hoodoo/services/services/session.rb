@@ -8,6 +8,7 @@
 #           04-Feb-2015 (ADH): Created.
 ########################################################################
 
+require 'ostruct'
 require 'dalli'
 
 module Hoodoo
@@ -25,17 +26,22 @@ module Hoodoo
       #
       attr_accessor :session_id
 
-      # A Hash with session-creator defined key/value pairs that define
-      # the _identity_ of the session holder. This is usually related to
-      # a Caller resource instance - see also
-      # Hoodoo::Data::Resources::Caller - and will often contain a
-      # Caller resource instance's UUID, amongst other data.
+      # An OpenStruct instance with session-creator defined key/value pairs
+      # that define the _identity_ of the session holder. This is usually
+      # related to a Caller resource instance - see also
+      # Hoodoo::Data::Resources::Caller - and will often contain a Caller
+      # resource instance's UUID, amongst other data.
       #
-      # The Hash describes "who the session's owner is".
+      # The object describes "who the session's owner is".
       #
-      # All Hash keys _must_ be Strings.
+      attr_reader :identity
+
+      # Set the identity data via a Hash of key/value pairs - see also
+      # #identity.
       #
-      attr_accessor :identity
+      def identity=( hash )
+        @identity = OpenStruct.new( hash )
+      end
 
       # A Hoodoo::Services::Permissions instance.
       #
@@ -43,18 +49,23 @@ module Hoodoo
       #
       attr_accessor :permissions
 
-      # A Hash with session-creator defined values that describe the
-      # _scoping_, that is, visbility of data, for the session. Its
-      # contents relate to service resource interface descriptions (see
+      # An OpenStruct instance with session-creator defined values that
+      # describe the _scoping_, that is, visbility of data, for the session.
+      # Its contents relate to service resource interface descriptions (see
       # the DSL for Hoodoo::Services::Interface) and may be partially or
       # entirely supported by the ActiveRecord finder extensions in
       # Hoodoo::ActiveRecord::Finder.
       #
-      # The Hash describes the "data that the session can 'see'".
-      #
-      # All Hash keys _must_ be Strings.
+      # The object describes the "data that the session can 'see'".
       #
       attr_accessor :scoping
+
+      # Set the scoping data via a Hash of key/value pairs - see also
+      # #scoping.
+      #
+      def scoping=( hash )
+        @scoping = OpenStruct.new( hash )
+      end
 
       # Connection URL for memcached.
       #
@@ -170,9 +181,9 @@ module Hoodoo
       #
       def to_h
         {
-          'session_id'  => self.session_id(),
-          'identity'    => Hoodoo::Utilities.stringify( self.identity() ),
-          'scoping'     => Hoodoo::Utilities.stringify( self.scoping()  ),
+          'session_id'  => self.session_id,
+          'identity'    => self.identity.to_h(),
+          'scoping'     => self.scoping.to_h(),
           'permissions' => self.permissions.to_h()
         }
       end
