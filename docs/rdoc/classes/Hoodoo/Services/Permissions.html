@@ -31,6 +31,10 @@
         </h1>
         <ul class="files">
             
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_defaults_rb.html">lib/hoodoo/data/types/permissions_defaults.rb</a></li>
+            
             <li><a href="../../../files/lib/hoodoo/services/services/permissions_rb.html">lib/hoodoo/services/services/permissions.rb</a></li>
             
         </ul>
@@ -217,65 +221,6 @@ puts JSON.pretty_generate( p.to_h() )
     
 
     
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-        
-          <tr valign='top'>
-            <td class="attr-name">DENY</td>
-            <td>=</td>
-            <td class="attr-value">&#39;deny&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Permission is denied; the action should not be permitted.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOW</td>
-            <td>=</td>
-            <td class="attr-value">&#39;allow&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Permission is granted; the action should be permitted.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ASK</td>
-            <td>=</td>
-            <td class="attr-value">&#39;ask&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Something else (e.g. a service application) needs to be asked to see if it
-permits the action.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOWED_POLICIES</td>
-            <td>=</td>
-            <td class="attr-value">[
-DENY,
-ALLOW,
-ASK
-]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>All currently known (allowed/supported) permission policies.</p></td>
-            </tr>
-          
-        
-      </table>
-    
 
 
     
@@ -370,7 +315,7 @@ call.</p>
               <div id="method-i-from_h_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
-  <span class="ruby-ivar">@permissions</span> = <span class="ruby-identifier">hash</span>
+  <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

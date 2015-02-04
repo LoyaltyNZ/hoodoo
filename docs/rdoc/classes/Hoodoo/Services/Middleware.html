@@ -31,6 +31,8 @@
         </h1>
         <ul class="files">
             
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            
             <li><a href="../../../files/lib/hoodoo/services/middleware/amqp_log_message_rb.html">lib/hoodoo/services/middleware/amqp_log_message.rb</a></li>
             
             <li><a href="../../../files/lib/hoodoo/services/middleware/amqp_log_writer_rb.html">lib/hoodoo/services/middleware/amqp_log_writer.rb</a></li>
@@ -330,149 +332,6 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
 
     
 
-    
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOWED_ACTIONS</td>
-            <td>=</td>
-            <td class="attr-value">[
-:list,
-:show,
-:create,
-:update,
-:delete,
-]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>All allowed action names in implementations, used for internal checks. This
-is also the default supported set of actions. Symbols.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOWED_QUERIES_LIST</td>
-            <td>=</td>
-            <td class="attr-value">[
-&#39;offset&#39;,
-&#39;limit&#39;,
-&#39;sort&#39;,
-&#39;direction&#39;,
-&#39;search&#39;,
-&#39;filter&#39;
-]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (list actions only). Strings.</p>
-
-<p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
-clients will be calling with previously documented query strings and
-removing any entries from the list below could cause their requests to be
-rejected with a &#39;platform.malformed&#39; error.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOWED_QUERIES_ALL</td>
-            <td>=</td>
-            <td class="attr-value">[
-&#39;_embed&#39;,
-&#39;_reference&#39;
-]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (all actions). Strings. Adds to the
-::ALLOWED_QUERIES_LIST for list actions.</p>
-
-<p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
-clients will be calling with previously documented query strings and
-removing any entries from the list below could cause their requests to be
-rejected with a &#39;platform.malformed&#39; error.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">SUPPORTED_MEDIA_TYPES</td>
-            <td>=</td>
-            <td class="attr-value">[ &#39;application/json&#39; ]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed media types in Content-Type headers.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">SUPPORTED_ENCODINGS</td>
-            <td>=</td>
-            <td class="attr-value">[ &#39;utf-8&#39; ]</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed (required) charsets in Content-Type headers.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">MAXIMUM_PAYLOAD_SIZE</td>
-            <td>=</td>
-            <td class="attr-value">1048576</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Somewhat arbitrary maximum incoming payload size to prevent ham-fisted DOS
-attempts to consume RAM.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">MAXIMUM_LOGGED_PAYLOAD_SIZE</td>
-            <td>=</td>
-            <td class="attr-value">1024</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload size.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">FRONT_OBJECT</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Middleware::ServiceRegistryDRbServer.new</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Singleton “Front object” for the DRB service used in local development.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">LOCAL_ACL</td>
-            <td>=</td>
-            <td class="attr-value">ACL.new( [ &#39;deny&#39;, &#39;all&#39;, &#39;allow&#39;, &#39;127.0.0.1&#39; ] )</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Only allow connections from 127.0.0.1.</p></td>
-            </tr>
-          
-        
-      </table>
     
 
 
