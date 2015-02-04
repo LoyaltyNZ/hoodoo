@@ -20,7 +20,7 @@ module Hoodoo
           uuid :outlet_id,                   :required => true, :resource => :Outlet
           text :authentication_secret
 
-          type :PermissionsResources,         :required => true
+          type :PermissionsResources,        :required => true
 
           array :authorised_participant_ids, :required => true do
             uuid :participant_id, :resource => :Participant

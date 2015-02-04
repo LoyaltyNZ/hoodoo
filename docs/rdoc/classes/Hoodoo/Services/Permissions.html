@@ -502,6 +502,10 @@ href="Permissions.html#ASK">ASK</a>.</p>
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
 <code>:Member</code>.</p>
+</dd><dt><code>action_name</code>
+<dd>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
+<code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
 <p><a href="Permissions.html#DENY">DENY</a>, <a
@@ -558,10 +562,6 @@ permission is used.</p>
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
 <code>:Member</code>.</p>
-</dd><dt><code>action_name</code>
-<dd>
-<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
-<code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
 <p><a href="Permissions.html#DENY">DENY</a>, <a
@@ -585,7 +585,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
                 
               </p>
               <div id="method-i-set_resource_fallback_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 149</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
 

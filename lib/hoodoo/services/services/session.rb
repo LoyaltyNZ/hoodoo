@@ -69,6 +69,22 @@ module Hoodoo
         @scoping = OpenStruct.new( hash )
       end
 
+      # The expiry date for this session - the session should be considered
+      # expired at or after this date. Some session stores may support
+      # automatic expiry of session data, but there may be a small window
+      # between the expiry date passing and the store expiring the data; so
+      # always check the expiry.
+      #
+      # Only set when the session is saved (or loaded from a representation
+      # that includes an existing expiry date). See e.g.:
+      #
+      # * #save_to_memcached
+      #
+      # The value is a Time instance in UTC. If +nil+, the session has not
+      # yet been saved.
+      #
+      attr_reader :expires_at
+
       # Connection URL for Memcached.
       #
       # If you are using Memcached for a session store, you can set the
@@ -102,10 +118,7 @@ module Hoodoo
       # The Hoodoo::Services::Session::TTL constant determines how long the
       # key lives in Memcached.
       #
-      # If successful, returns a Time instance that describes a time which
-      # is (within code execution speed tolerances) equal to or (more
-      # likely) just after the time at which Memcached would expire the
-      # session record.
+      # If successful, returns the now-set/now-updated value of #expires_at.
       #
       # If unsuccessful, the method raises an exception or returns +nil+.
       #
@@ -114,19 +127,21 @@ module Hoodoo
 
         begin
 
-          # Set in Memcached first. This starts the "expiry counter running".
-          # Then calculate the local 'expires at' time. This guarantees that
-          # the 'expires at' time will be on *or after* the actual Memcached
-          # expiry, which is what we want.
-          #
-          success = memcache.set( self.key_for_memcached( session_id ),
+          # Must set this before saving, even though the delay between
+          # setting this value and Memcached actually saving the value
+          # with a TTL will mean that Memcached expires the key slightly
+          # *after* the time we record.
+
+          @expires_at = ( ::Time.now + TTL ).utc()
+
+          success = memcache.set( session_id,
                                   self.to_h(),
                                   Hooodoo::Services::Session::TTL )
 
           if ( ! success )
             return nil
           else
-            return ::Time.now + TTL
+            return @expires_at
           end
 
         rescue Exception => exception
@@ -155,7 +170,7 @@ module Hoodoo
 
         begin
 
-          session_hash = client.get( self.key_for_memcached( session_id ) )
+          session_hash = client.get( session_id )
 
           if session_hash.nil?
             return nil
@@ -186,7 +201,8 @@ module Hoodoo
           'session_id'  => self.session_id,
           'identity'    => self.identity.to_h(),
           'scoping'     => self.scoping.to_h(),
-          'permissions' => self.permissions.to_h()
+          'permissions' => self.permissions.to_h(),
+          'exipres_at'  => self.expires_at.iso8601
         }
       end
 
@@ -205,6 +221,14 @@ module Hoodoo
 
         if hash.has_key?( 'permissions' )
           self.permissions = Hoodoo::Services::Permissions.new( hash[ 'permissions' ] )
+        end
+
+        if hash.has_key?( 'expires_at' )
+          begin
+            @expires_at = Time.parse( hash[ 'expires_at' ] ).utc()
+          rescue
+            @expires_at = nil
+          end
         end
       end
 
@@ -225,7 +249,11 @@ module Hoodoo
         begin
           client = ::Dalli::Client.new(
             url,
-            { :compress => false, :serializer => JSON }
+            {
+              :compress   => false,
+              :serializer => JSON,
+              :namespace  => :nz_co_loyalty_hoodoo_session_
+            }
           )
 
           stats = client.stats()
@@ -240,13 +268,6 @@ module Hoodoo
         else
           return client
         end
-      end
-
-      # For a given session ID, return the key (String) that must be
-      # used for saving to or loading from Memcached.
-      #
-      def key_for_memcached( session_id )
-        "platform_session_#{ session_id }"
       end
     end
   end

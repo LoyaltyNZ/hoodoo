@@ -141,9 +141,6 @@ module Hoodoo; module Services
     # +resource_name+:: Resource name as a Symbol or String, e.g. "+Purchase+"
     #                   or +:Member+.
     #
-    # +action_name+::   Action as a String or Symbol, from: +list+, +show+,
-    #                   +create+, +update+ or +delete+.
-    #
     # +permission+::    DENY, ALLOW or ASK.
     #
     def set_resource_fallback( resource_name, permission )
@@ -159,7 +156,10 @@ module Hoodoo; module Services
     # +resource_name+:: Resource name as a Symbol or String, e.g. "+Purchase+"
     #                   or +:Member+.
     #
-    # +permission+::   DENY, ALLOW or ASK.
+    # +action_name+::   Action as a String or Symbol, from: +list+, +show+,
+    #                   +create+, +update+ or +delete+.
+    #
+    # +permission+::    DENY, ALLOW or ASK.
     #
     def set_resource( resource_name, action_name, permission )
       resource_name = resource_name.to_s
