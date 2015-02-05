@@ -204,7 +204,7 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
             
               
               <li>
-                <a href="#method-c-has_memcache-3F">has_memcache?</a>
+                <a href="#method-c-has_memcache-3F">has_memcached?</a>
               </li>
             
           </ul>
@@ -392,7 +392,7 @@ end
         <div class="method">
           <div class="title method-title" id="method-c-has_memcache-3F">
             
-              <b>has_memcache?</b>()
+              <b>has_memcached?</b>()
             
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-has_memcache-3F" name="method-c-has_memcache-3F" class="permalink">Link</a>
           </div>
@@ -420,8 +420,8 @@ need to check this.</p>
               </p>
               <div id="method-c-has_memcache-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 131</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcache?</span>
-  <span class="ruby-identifier">m</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcached?</span>
+  <span class="ruby-identifier">m</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ]
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
               </div>

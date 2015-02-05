@@ -161,13 +161,22 @@ describe Hoodoo::Services::Middleware do
   end
 
   context 'utility methods' do
-    it 'should know about MemCache' do
-      old = ENV[ 'MEMCACHE_URL' ]
-      ENV[ 'MEMCACHE_URL' ] = nil
-      expect(Hoodoo::Services::Middleware.has_memcache?).to eq(false)
-      ENV[ 'MEMCACHE_URL' ] = 'foo'
-      expect(Hoodoo::Services::Middleware.has_memcache?).to eq(true)
-      ENV[ 'MEMCACHE_URL' ] = old
+    it 'should know about Memcached via environment variable' do
+      old = ENV[ 'MEMCACHE_HOST' ]
+      ENV[ 'MEMCACHE_HOST' ] = nil
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      ENV[ 'MEMCACHE_HOST' ] = 'foo'
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      ENV[ 'MEMCACHE_HOST' ] = old
+    end
+
+    it 'should know about Memcached via legacy environment variable' do
+      old = ENV[ 'MEMCACHED_HOST' ]
+      ENV[ 'MEMCACHED_HOST' ] = nil
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      ENV[ 'MEMCACHED_HOST' ] = 'foo'
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      ENV[ 'MEMCACHED_HOST' ] = old
     end
 
     it 'should know about a queue' do

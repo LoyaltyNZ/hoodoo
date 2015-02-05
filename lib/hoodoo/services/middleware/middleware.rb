@@ -124,13 +124,24 @@ module Hoodoo; module Services
       @@_env ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
-    # Do we have Memcache available? If not, assume local development with
+    # Do we have Memcached available? If not, assume local development with
     # higher level queue services not available. Most service authors should
     # not ever need to check this.
     #
-    def self.has_memcache?
-      m = ENV[ 'MEMCACHE_URL' ]
+    def self.has_memcached?
+      m = self.memcached_host()
       m.nil? == false && m.empty? == false
+    end
+
+    # Return a Memcached host (IP address/port combination) as a String if
+    # defined in environment variable MEMCACHE_HOST (with MEMCACHED_HOST also
+    # accepted as a legacy fallback).
+    #
+    # If this returns +nil+ or an empty string, there's no defined Memcached
+    # host available.
+    #
+    def self.memcached_host
+      ENV[ 'MEMCACHE_HOST' ] || ENV[ 'MEMCACHED_HOST' ]
     end
 
     # Are we running on the queue, else (implied) a local HTTP server?
@@ -726,7 +737,7 @@ module Hoodoo; module Services
       end
     end
 
-    # Load Session from memcache and decode it.
+    # Load Session from Memcached and decode it.
     #
     # On exit, +@session+ and +@session_id+ will have been updated. Be
     # sure to check +@response.halt_processing?+ to see if processing
@@ -739,11 +750,11 @@ module Hoodoo; module Services
       # no configured MemCache available (assume local development).
 
       environment = self.class.environment()
-      Hoodoo::Services::LegacySession.testing( environment.test? || ! self.class.has_memcache? )
+      Hoodoo::Services::LegacySession.testing( environment.test? || ! self.class.has_memcached? )
 
       @session = Hoodoo::Services::LegacySession.load_session(
-        ENV[ 'MEMCACHE_URL' ],
-        @session_id,
+        self.class.memcached_host(),
+        @session_id
       )
 
       if @session.nil? && interfaces_have_public_methods? == false
