@@ -204,7 +204,7 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
             
               
               <li>
-                <a href="#method-c-has_memcache-3F">has_memcached?</a>
+                <a href="#method-c-has_memcached-3F">has_memcached?</a>
               </li>
             
           </ul>
@@ -244,6 +244,18 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
               
               <li>
                 <a href="#method-c-logger">logger</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>M</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-memcached_host">memcached_host</a>
               </li>
             
           </ul>
@@ -390,18 +402,18 @@ end
           </div>
         
         <div class="method">
-          <div class="title method-title" id="method-c-has_memcache-3F">
+          <div class="title method-title" id="method-c-has_memcached-3F">
             
               <b>has_memcached?</b>()
             
-            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-has_memcache-3F" name="method-c-has_memcache-3F" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-has_memcached-3F" name="method-c-has_memcached-3F" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Do we have Memcache available? If not, assume local development with higher
-level queue services not available. Most service authors should not ever
-need to check this.</p>
+              <p>Do we have Memcached available? If not, assume local development with
+higher level queue services not available. Most service authors should not
+ever need to check this.</p>
             </div>
           
           
@@ -415,13 +427,13 @@ need to check this.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-c-has_memcache-3F_source')" id="l_method-c-has_memcache-3F_source">show</a>
+                <a href="javascript:toggleSource('method-c-has_memcached-3F_source')" id="l_method-c-has_memcached-3F_source">show</a>
                 
               </p>
-              <div id="method-c-has_memcache-3F_source" class="dyn-source">
+              <div id="method-c-has_memcached-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcached?</span>
-  <span class="ruby-identifier">m</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ]
+  <span class="ruby-identifier">m</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -510,9 +522,51 @@ file-based logger depending on whether or not a queue is available.</p>
                 
               </p>
               <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 176</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-memcached_host">
+            
+              <b>memcached_host</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-memcached_host" name="method-c-memcached_host" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Return a Memcached host (IP address/port combination) as a String if
+defined in environment variable MEMCACHE_HOST (with MEMCACHED_HOST also
+accepted as a legacy fallback).</p>
+
+<p>If this returns <code>nil</code> or an empty string, there&#39;s no defined
+Memcached host available.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-memcached_host_source')" id="l_method-c-memcached_host_source">show</a>
+                
+              </p>
+              <div id="method-c-memcached_host_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 143</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">memcached_host</span>
+  <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -550,7 +604,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 230</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -647,7 +701,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-on_queue-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 138</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 149</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ENDPOINT&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -691,7 +745,7 @@ recorded.</p>
                 
               </p>
               <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 221</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
@@ -743,7 +797,7 @@ href="Middleware.html#method-c-environment">::environment</a>).</p>
                 
               </p>
               <div id="method-c-set_log_folder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 210</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -792,7 +846,7 @@ class method.</p>
                 
               </p>
               <div id="method-c-set_logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 190</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
@@ -842,7 +896,7 @@ thread safety.</p>
                 
               </p>
               <div id="method-i-_call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 311</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 322</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">_call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -939,7 +993,7 @@ protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 301</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 312</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-identifier">dup</span>.<span class="ruby-identifier">_call</span>( <span class="ruby-identifier">env</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1032,7 +1086,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1737</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1748</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -1102,7 +1156,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1950</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1961</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1258,7 +1312,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1773</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1784</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_info</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1473,7 +1527,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1624</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1635</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1540,7 +1594,7 @@ HTTP request).</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1655</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1666</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
@@ -1633,7 +1687,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2079</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2090</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>
