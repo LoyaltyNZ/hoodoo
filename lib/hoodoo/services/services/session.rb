@@ -187,9 +187,9 @@ module Hoodoo
 
           @expires_at = ( ::Time.now + TTL ).utc()
 
-          success = mclient.set( session_id,
+          success = mclient.set( self.session_id,
                                  self.to_h(),
-                                 Hooodoo::Services::Session::TTL )
+                                 TTL )
 
           return nil unless success
           return @expires_at
@@ -212,6 +212,8 @@ module Hoodoo
       # connecting to Memcached. A Memcached connection host must have been
       # set through the constructor or #memcached_host accessor first.
       #
+      # +sid+:: The Session UUID to look up.
+      #
       # Returns:
       #
       # * +true+: The session data was loaded OK and is valid.
@@ -222,12 +224,12 @@ module Hoodoo
       #
       # * +nil+: The session data could not be loaded (Memcached problem).
       #
-      def load_from_memcached!( session_id )
+      def load_from_memcached!( sid )
         mclient = self.class.connect_to_memcached( self.memcached_host() )
 
         begin
 
-          session_hash = memcached.get( session_id )
+          session_hash = mclient.get( sid )
 
           if session_hash.nil?
             return nil
@@ -235,7 +237,7 @@ module Hoodoo
             self.from_h( session_hash )
             return false if self.expired?
 
-            cv = self.load_caller_version_from_memcached( mclient, self.caller_id )
+            cv = load_caller_version_from_memcached( mclient, self.caller_id )
             return false if cv.nil? || cv > self.caller_version
 
             return true
@@ -264,7 +266,7 @@ module Hoodoo
         exp = self.expires_at()
         now = Time.now.utc
 
-        return exp.nil? || now < exp
+        return ! ( exp.nil? || now < exp )
       end
 
       # Represent this session's data as a Hash, for uses such as
@@ -272,18 +274,41 @@ module Hoodoo
       # See also #from_h.
       #
       def to_h
-        {
-          'session_id'     => self.session_id,
-          'caller_id'      => self.caller_id,
-          'caller_version' => self.caller_version,
+        hash = {}
 
-          'created_at'     => self.created_at.iso8601,
-          'expires_at'     => self.expires_at.iso8601,
+        %w(
 
-          'identity'       => self.identity.to_h(),
-          'scoping'        => self.scoping.to_h(),
-          'permissions'    => self.permissions.to_h(),
-        }
+          session_id
+          caller_id
+          caller_version
+
+        ).each do | property |
+          value = self.send( property )
+          hash[ property ] = value unless value.nil?
+        end
+
+        %w(
+
+          created_at
+          expires_at
+
+        ).each do | property |
+          value = self.send( property )
+          hash[ property ] = value.iso8601() unless value.nil?
+        end
+
+        %w(
+
+          identity
+          scoping
+          permissions
+
+        ).each do | property |
+          value = self.send( property )
+          hash[ property ] = Hoodoo::Utilities.stringify( value.to_h() ) unless value.nil?
+        end
+
+        return hash
       end
 
       # Load session parameters from a given Hash, of the form set by
@@ -295,32 +320,44 @@ module Hoodoo
       def from_h( hash )
         hash = Hoodoo::Utilities.stringify( hash )
 
-        self.session_id     = hash[ 'session_id'      ] if hash.has_key?( 'session_id'      )
-        self.caller_id      = hash[ 'caller_id'       ] if hash.has_key?( 'caller_id'       )
-        self.caller_version = hash[ 'caller_version'  ] if hash.has_key?( 'caller_version'  )
+        %w(
 
-        if hash.has_key?( 'created_at' )
-          begin
-            @created_at = Time.parse( hash[ 'created_at' ] ).utc()
-          rescue
-            # Invalid time given; keep existing created_at date
+          session_id
+          caller_id
+          caller_version
+
+        ).each do | property |
+          value = hash[ property ]
+          self.send( "#{ property }=", value ) unless value.nil?
+        end
+
+        %w(
+
+          created_at
+          expires_at
+
+        ).each do | property |
+          if hash.has_key?( property )
+            begin
+              instance_variable_set( "@#{ property }", Time.parse( hash[ property ] ).utc() )
+            rescue => e
+              # Invalid time given; keep existing date
+            end
           end
         end
 
-        if hash.has_key?( 'expires_at' )
-          begin
-            @expires_at = Time.parse( hash[ 'expires_at' ] ).utc()
-          rescue
-            # Invalid time given; keep existing expired_at date
-          end
+        %w(
+
+          identity
+          scoping
+
+        ).each do | property |
+          value = hash[ property ]
+          self.send( "#{ property }=", OpenStruct.new( value ) ) unless value.nil?
         end
 
-        self.identity = hash[ 'identity' ] if hash.has_key?( 'identity' )
-        self.scoping  = hash[ 'scoping'  ] if hash.has_key?( 'scoping'  )
-
-        if hash.has_key?( 'permissions' )
-          self.permissions = Hoodoo::Services::Permissions.new( hash[ 'permissions' ] )
-        end
+        value = hash[ 'permissions' ]
+        self.permissions = Hoodoo::Services::Permissions.new( value ) unless value.nil?
       end
 
     private
@@ -364,14 +401,14 @@ module Hoodoo
       # Return the Caller version for a given Caller ID via Memcached.
       # Returns "nil" if there are any errors or no version is stored.
       #
-      # +mclient+::   A Dalli::Client instance to use for talking to
-      #               Memcached.
+      # +mclient+:: A Dalli::Client instance to use for talking to
+      #             Memcached.
       #
-      # +caller_id+:: Caller UUID of interest.
+      # +cid+::     Caller UUID of interest.
       #
-      def load_caller_version_from_memcached( mclient, caller_id )
+      def load_caller_version_from_memcached( mclient, cid )
         cv = begin
-          verison_hash = mclient.get( self.caller_id )
+          version_hash = mclient.get( cid )
           version_hash[ 'version' ] # Exception if version_hash is nil => will be rescued
         rescue
           nil
@@ -386,19 +423,20 @@ module Hoodoo
       # Note that any existing record for the given Caller, if there
       # is one, is unconditionally overwritten.
       #
-      # +mclient+::   A Dalli::Client instance to use for talking to
-      #               Memcached.
+      # +mclient+:: A Dalli::Client instance to use for talking to
+      #             Memcached.
       #
-      # +caller_id+:: Caller UUID of interest.
+      # +cid+::     Caller UUID of interest.
       #
-      # +cv+::        Version to save for that Caller UUID.
+      # +cv+::      Version to save for that Caller UUID.
       #
-      def save_caller_version_to_memcached( mclient, caller_id, cv )
+      def save_caller_version_to_memcached( mclient, cid, cv )
         success = begin
           mclient.set(
-            caller_id,
+            cid,
             { 'version' => cv }
           )
+          true
         rescue
           false
         end
