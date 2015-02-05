@@ -231,7 +231,7 @@ href="../UUID.html">UUID</a>, amongst other data.</p>
             <td class='attr-rw'>
               [RW]
             </td>
-            <td class='attr-name'>memcached_url</td>
+            <td class='attr-name'>memcached_host</td>
             <td class='attr-desc'><p>Connection URL for Memcached.</p>
 
 <p>If you are using Memcached for a session store, you can set the Memcached
@@ -305,7 +305,7 @@ href="../UUID.html">UUID</a>. This is that ID.</p></td>
 href="../UUID.html">UUID</a> is generated for you. You can read the <a
 href="../UUID.html">UUID</a> with the <a
 href="Session.html#attribute-i-session_id">session_id</a> accessor method.</p>
-</dd><dt><code>memcached_url</code>
+</dd><dt><code>memcached_host</code>
 <dd>
 <p>URL for Memcached connections; required if you want to use the <a
 href="Session.html#method-i-load_from_memcached-21">load_from_memcached!</a>
@@ -332,7 +332,7 @@ methods.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 110</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>    ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_url</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_url</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span> ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -497,7 +497,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
 session is found. Raises an exception if there is a problem connecting to
 Memcached. A Memcached connection URL must have been set through the
 constructor or <a
-href="Session.html#attribute-i-memcached_url">memcached_url</a> accessor
+href="Session.html#attribute-i-memcached_host">memcached_host</a> accessor
 first.</p>
 
 <p>Returns &#39;this instance&#39; for convenience on success, or
@@ -522,7 +522,7 @@ not found).</p>
               <div id="method-i-load_from_memcached-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">session_id</span> )
-  <span class="ruby-identifier">client</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_url</span>() )
+  <span class="ruby-identifier">client</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
 
   <span class="ruby-keyword">begin</span>
 
@@ -594,7 +594,7 @@ href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
               <div id="method-i-save_to_memcached_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_memcached</span>
-  <span class="ruby-identifier">client</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_url</span>() )
+  <span class="ruby-identifier">client</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
 
   <span class="ruby-keyword">begin</span>
 

@@ -105,13 +105,13 @@ module Hoodoo
       #
       attr_reader :expires_at
 
-      # Connection URL for Memcached.
+      # Connection IP address/port String for Memcached.
       #
       # If you are using Memcached for a session store, you can set the
-      # Memcached connection URL either through this accessor, or via the
+      # Memcached connection host either through this accessor, or via the
       # object's constructor.
       #
-      attr_accessor :memcached_url
+      attr_accessor :memcached_host
 
       # Create a new instance.
       #
@@ -129,7 +129,7 @@ module Hoodoo
       #
       # +caller_version+:: Version of the Caller instance; defaults to zero.
       #
-      # +memcached_url+::  URL for Memcached connections; required if you
+      # +memcached_host+:: Host for Memcached connections; required if you
       #                    want to use the #load_from_memcached! or
       #                    #save_to_memcached methods.
       #
@@ -137,7 +137,7 @@ module Hoodoo
         @created_at = Time.now.utc
 
         self.session_id     = options[ :session_id     ] || Hoodoo::UUID.generate()
-        self.memcached_url  = options[ :memcached_url  ]
+        self.memcached_host = options[ :memcached_host ]
         self.caller_id      = options[ :caller_id      ]
         self.caller_version = options[ :caller_version ] || 0
       end
@@ -160,7 +160,7 @@ module Hoodoo
           raise 'Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID'
         end
 
-        mclient = self.class.connect_to_memcached( self.memcached_url() )
+        mclient = self.class.connect_to_memcached( self.memcached_host() )
 
         begin
 
@@ -210,7 +210,7 @@ module Hoodoo
       # Load session data into this instance, overwriting instance values
       # if the session is found. Raises an exception if there is a problem
       # connecting to Memcached. A Memcached connection URL must have been
-      # set through the constructor or #memcached_url accessor first.
+      # set through the constructor or #memcached_host accessor first.
       #
       # Returns:
       #
@@ -223,7 +223,7 @@ module Hoodoo
       # * +nil+: The session data could not be loaded (Memcached problem).
       #
       def load_from_memcached!( session_id )
-        mclient = self.class.connect_to_memcached( self.memcached_url() )
+        mclient = self.class.connect_to_memcached( self.memcached_host() )
 
         begin
 
