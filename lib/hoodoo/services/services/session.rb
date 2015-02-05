@@ -209,7 +209,7 @@ module Hoodoo
 
       # Load session data into this instance, overwriting instance values
       # if the session is found. Raises an exception if there is a problem
-      # connecting to Memcached. A Memcached connection URL must have been
+      # connecting to Memcached. A Memcached connection host must have been
       # set through the constructor or #memcached_host accessor first.
       #
       # Returns:
@@ -328,18 +328,18 @@ module Hoodoo
       # Connect to the Memcached server. Returns a new Dalli client
       # instance. Raises an exception if no connection can be established.
       #
-      # +url+:: Connection URL for Memcached.
+      # +host+:: Connection host (IP "address:port" String) for Memcached.
       #
-      def self.connect_to_memcached( url )
-        if url.nil? || url.empty?
-          raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection URL is nil or empty'
+      def self.connect_to_memcached( host )
+        if host.nil? || host.empty?
+          raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection host data is nil or empty'
         end
 
         stats = nil
 
         begin
           mclient = ::Dalli::Client.new(
-            url,
+            host,
             {
               :compress   => false,
               :serializer => JSON,
@@ -355,7 +355,7 @@ module Hoodoo
         end
 
         if stats.nil?
-          raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached on URL '#{ url }'"
+          raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached at '#{ host }'"
         else
           return mclient
         end
