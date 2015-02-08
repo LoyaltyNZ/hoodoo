@@ -16,16 +16,7 @@ module Hoodoo
       class Credit < Hoodoo::Presenters::Base
 
         schema do
-          internationalised
-
-          uuid     :client_id,                    :required => true
-          text     :description,                  :required => false
-
-          text     :token_identifier,             :required => true
-          object   :currency_amount,             :required => true do
-            type   :CurrencyAmount
-          end
-
+          type   :FinancialManipulation
         end
       end
     end
