@@ -18,7 +18,7 @@ module Hoodoo
         schema do
           internationalised
 
-          uuid     :client_id,                    :required => true
+          text     :client_id,                    :required => true
           text     :description,                  :required => false
 
           text     :token_identifier,             :required => true
