@@ -9,6 +9,7 @@ describe Hoodoo::Data::Resources::Refund do
     expect(schema.properties.count).to eq(4)
 
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['token_identifier'].required).to eq(true)
     expect(schema.properties['basket']).to be_a(Hoodoo::Presenters::Object)
     expect(schema.properties['pos_reference']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['purchase_id']).to be_a(Hoodoo::Presenters::UUID)
