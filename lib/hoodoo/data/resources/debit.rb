@@ -14,9 +14,8 @@ module Hoodoo
       # Documented Platform API Resource 'Debit'.
       #
       class Debit < Hoodoo::Presenters::Base
-
         schema do
-          type   :FinancialManipulation
+          type :FinancialManipulation
         end
       end
     end

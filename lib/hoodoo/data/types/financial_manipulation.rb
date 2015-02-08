@@ -18,12 +18,12 @@ module Hoodoo
         schema do
           internationalised
 
-          text     :client_id,                    :required => true
-          text     :description,                  :required => false
+          text   :caller_reference, :required => true
+          text   :description,      :required => false
 
-          text     :token_identifier,             :required => true
-          object   :currency_amount,              :required => true do
-            type   :CurrencyAmount
+          text   :token_identifier, :required => true
+          object :currency_amount,  :required => true do
+            type :CurrencyAmount
           end
         end
 
