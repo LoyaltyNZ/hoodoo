@@ -26,8 +26,6 @@ module Hoodoo
 
           text   :pos_reference
           uuid   :estimation_id, :resource => :Estimation
-
-          array  :calculations
         end
 
       end
