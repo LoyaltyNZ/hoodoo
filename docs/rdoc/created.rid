@@ -1,4 +1,4 @@
-Thu, 05 Feb 2015 14:24:53 +1300
+Mon, 09 Feb 2015 13:46:37 +1300
 README.md	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo.rb	Thu, 29 Jan 2015 12:57:24 +1300
 lib/hoodoo/active.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -11,13 +11,15 @@ lib/hoodoo/communicators.rb	Thu, 29 Jan 2015 10:28:10 +1300
 lib/hoodoo/communicators/fast.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/communicators/pool.rb	Thu, 29 Jan 2015 10:28:15 +1300
 lib/hoodoo/communicators/slow.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/data.rb	Wed, 04 Feb 2015 09:58:09 +1300
+lib/hoodoo/data.rb	Mon, 09 Feb 2015 13:37:53 +1300
 lib/hoodoo/data/resources/account.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/balance.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/calculation.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/calculator.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/caller.rb	Wed, 04 Feb 2015 15:49:41 +1300
+lib/hoodoo/data/resources/credit.rb	Mon, 09 Feb 2015 13:37:53 +1300
 lib/hoodoo/data/resources/currency.rb	Tue, 27 Jan 2015 13:33:38 +1300
+lib/hoodoo/data/resources/debit.rb	Mon, 09 Feb 2015 13:37:53 +1300
 lib/hoodoo/data/resources/errors.rb	Thu, 29 Jan 2015 10:25:41 +1300
 lib/hoodoo/data/resources/involvement.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/ledger.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -28,10 +30,10 @@ lib/hoodoo/data/resources/outlet.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/participant.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/product.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/programme.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/data/resources/purchase.rb	Tue, 27 Jan 2015 13:33:38 +1300
+lib/hoodoo/data/resources/purchase.rb	Mon, 09 Feb 2015 13:37:53 +1300
+lib/hoodoo/data/resources/refund.rb	Mon, 09 Feb 2015 13:37:53 +1300
 lib/hoodoo/data/resources/session.rb	Wed, 04 Feb 2015 09:54:02 +1300
 lib/hoodoo/data/resources/token.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/data/resources/transaction.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/version.rb	Thu, 29 Jan 2015 10:26:11 +1300
 lib/hoodoo/data/resources/voucher.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/basket.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -43,6 +45,7 @@ lib/hoodoo/data/types/currency.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/currency_amount.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/currency_earner.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/error_primitive.rb	Thu, 29 Jan 2015 10:26:40 +1300
+lib/hoodoo/data/types/financial_manipulation.rb	Mon, 09 Feb 2015 13:37:53 +1300
 lib/hoodoo/data/types/permissions.rb	Wed, 04 Feb 2015 10:24:33 +1300
 lib/hoodoo/data/types/permissions_defaults.rb	Wed, 04 Feb 2015 10:25:51 +1300
 lib/hoodoo/data/types/permissions_full.rb	Wed, 04 Feb 2015 09:58:35 +1300
@@ -105,7 +108,7 @@ lib/hoodoo/services/services/permissions.rb	Wed, 04 Feb 2015 15:31:01 +1300
 lib/hoodoo/services/services/request.rb	Thu, 05 Feb 2015 13:21:13 +1300
 lib/hoodoo/services/services/response.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/services/service.rb	Thu, 29 Jan 2015 10:21:53 +1300
-lib/hoodoo/services/services/session.rb	Thu, 05 Feb 2015 14:24:06 +1300
+lib/hoodoo/services/services/session.rb	Mon, 09 Feb 2015 12:15:22 +1300
 lib/hoodoo/utilities.rb	Thu, 29 Jan 2015 10:40:15 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/utilities/utilities.rb	Tue, 27 Jan 2015 13:33:38 +1300

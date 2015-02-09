@@ -419,12 +419,12 @@ if it has either not expired, or has no expiry date set yet.</p>
                 
               </p>
               <div id="method-i-expired-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 263</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 276</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">exp</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">exp</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span> ( <span class="ruby-identifier">exp</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">exp</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -466,36 +466,48 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
                 
               </p>
               <div id="method-i-from_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 295</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 331</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>     = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;session_id&#39;</span>      ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;session_id&#39;</span>      )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;caller_id&#39;</span>       ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;caller_id&#39;</span>       )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;caller_version&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;caller_version&#39;</span>  )
+  <span class="ruby-node">%w(
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;created_at&#39;</span> )
-    <span class="ruby-keyword">begin</span>
-      <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;created_at&#39;</span> ] ).<span class="ruby-identifier">utc</span>()
-    <span class="ruby-keyword">rescue</span>
-      <span class="ruby-comment"># Invalid time given; keep existing created_at date</span>
+    session_id
+    caller_id
+    caller_version
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ]
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-node">&quot;#{ property }=&quot;</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-node">%w(
+
+    created_at
+    expires_at
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-identifier">instance_variable_set</span>( <span class="ruby-node">&quot;@#{ property }&quot;</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] ).<span class="ruby-identifier">utc</span>() )
+      <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-comment"># Invalid time given; keep existing date</span>
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;expires_at&#39;</span> )
-    <span class="ruby-keyword">begin</span>
-      <span class="ruby-ivar">@expires_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;expires_at&#39;</span> ] ).<span class="ruby-identifier">utc</span>()
-    <span class="ruby-keyword">rescue</span>
-      <span class="ruby-comment"># Invalid time given; keep existing expired_at date</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-node">%w(
+
+    identity
+    scoping
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ]
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-node">&quot;#{ property }=&quot;</span>, <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">value</span> ) ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;identity&#39;</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">scoping</span>  = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;scoping&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;scoping&#39;</span>  )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;permissions&#39;</span> )
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;permissions&#39;</span> ] )
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;permissions&#39;</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -543,7 +555,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
         <div class="method">
           <div class="title method-title" id="method-i-load_from_memcached-21">
             
-              <b>load_from_memcached!</b>( session_id )
+              <b>load_from_memcached!</b>( sid )
             
             <a href="../../../classes/Hoodoo/Services/Session.html#method-i-load_from_memcached-21" name="method-i-load_from_memcached-21" class="permalink">Link</a>
           </div>
@@ -552,10 +564,15 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
             <div class="description">
               <p>Load session data into this instance, overwriting instance values if the
 session is found. Raises an exception if there is a problem connecting to
-Memcached. A Memcached connection URL must have been set through the
+Memcached. A Memcached connection host must have been set through the
 constructor or <a
 href="Session.html#attribute-i-memcached_host">memcached_host</a> accessor
 first.</p>
+<dl class="rdoc-list note-list"><dt><code>sid</code>
+<dd>
+<p>The <a href="Session.html">Session</a> <a href="../UUID.html">UUID</a> to
+look up.</p>
+</dd></dl>
 
 <p>Returns:</p>
 <ul><li>
@@ -565,7 +582,8 @@ first.</p>
 the session has expired, or its Caller version mismatches the associated
 stored Caller version in Memcached.</p>
 </li><li>
-<p><code>nil</code>: The session data could not be loaded (Memcached problem).</p>
+<p><code>nil</code>: The session data could not be loaded (session not found
+or Memcached problem).</p>
 </li></ul>
             </div>
           
@@ -584,13 +602,13 @@ stored Caller version in Memcached.</p>
                 
               </p>
               <div id="method-i-load_from_memcached-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 225</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">session_id</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 238</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">sid</span> )
   <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
 
   <span class="ruby-keyword">begin</span>
 
-    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcached</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">session_id</span> )
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">sid</span> )
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
@@ -598,7 +616,7 @@ stored Caller version in Memcached.</p>
       <span class="ruby-keyword">self</span>.<span class="ruby-identifier">from_h</span>( <span class="ruby-identifier">session_hash</span> )
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expired?</span>
 
-      <span class="ruby-identifier">cv</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
+      <span class="ruby-identifier">cv</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cv</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">cv</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
 
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
@@ -643,11 +661,19 @@ hash passed to the constructor.</p>
 <p>The Hoodoo::Services::Session::TTL constant determines how long the key
 lives in Memcached.</p>
 
-<p>If successful, returns the now-set/now-updated value of <a
-href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
-
-<p>If unsuccessful, the method raises an exception or returns
-<code>nil</code>.</p>
+<p>Memcached communication failures may result in an exception; if not, return
+values are:</p>
+<ul><li>
+<p><code>true</code>: The session data was saved OK and is valid. There was
+either a Caller record with an earlier or matching value in Memcached, or
+no preexisting record of the Caller.</p>
+</li><li>
+<p><code>false</code>: The session data could not be saved because an existing
+Caller record was found in Memcached with a <em>newer</em> version than
+&#39;this&#39; session, implying that the session is already outdated.</p>
+</li><li>
+<p><code>nil</code>: The session data could not be saved (Memcached problem).</p>
+</li></ul>
             </div>
           
           
@@ -665,7 +691,7 @@ href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
                 
               </p>
               <div id="method-i-save_to_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 158</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_memcached</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID&#39;</span>
@@ -681,15 +707,17 @@ href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
     <span class="ruby-comment">#     set the version data.</span>
     <span class="ruby-comment">#</span>
     <span class="ruby-comment"># (3) If it is greater than our version we are already stale!</span>
-    <span class="ruby-comment">#     Race condition - make the decision to update &#39;self&#39; to</span>
-    <span class="ruby-comment">#     the newer version and go with that since the session is</span>
-    <span class="ruby-comment">#     assumed not under use before saving.</span>
+    <span class="ruby-comment">#     We don&#39;t know what the user of this session stored inside;</span>
+    <span class="ruby-comment">#     it could well be data about the Caller which would be out</span>
+    <span class="ruby-comment">#     of date if Memcached has a newer version available.</span>
 
     <span class="ruby-identifier">cached_version</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">cached_version</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
 
-    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">save_caller_version_to_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> )
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
+      <span class="ruby-identifier">success</span> = <span class="ruby-identifier">save_caller_version_to_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> )
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
+    <span class="ruby-keyword">end</span>
 
     <span class="ruby-comment"># Must set this before saving, even though the delay between</span>
     <span class="ruby-comment"># setting this value and Memcached actually saving the value</span>
@@ -698,12 +726,11 @@ href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
 
     <span class="ruby-ivar">@expires_at</span> = ( <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> <span class="ruby-constant">TTL</span> ).<span class="ruby-identifier">utc</span>()
 
-    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">session_id</span>,
+    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">set</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
                            <span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_h</span>(),
-                           <span class="ruby-constant">Hooodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span><span class="ruby-operator">::</span><span class="ruby-constant">TTL</span> )
+                           <span class="ruby-constant">TTL</span> )
 
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-ivar">@expires_at</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">success</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
 
   <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
 
@@ -790,20 +817,43 @@ href="Session.html#method-i-from_h">from_h</a>.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 274</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 287</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
-  {
-    <span class="ruby-string">&#39;session_id&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
-    <span class="ruby-string">&#39;caller_id&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>,
-    <span class="ruby-string">&#39;caller_version&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>,
+  <span class="ruby-identifier">hash</span> = {}
 
-    <span class="ruby-string">&#39;created_at&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">iso8601</span>,
-    <span class="ruby-string">&#39;expires_at&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>.<span class="ruby-identifier">iso8601</span>,
+  <span class="ruby-node">%w(
 
-    <span class="ruby-string">&#39;identity&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span>.<span class="ruby-identifier">to_h</span>(),
-    <span class="ruby-string">&#39;scoping&#39;</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">to_h</span>(),
-    <span class="ruby-string">&#39;permissions&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span>.<span class="ruby-identifier">to_h</span>(),
-  }
+    session_id
+    caller_id
+    caller_version
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">value</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-node">%w(
+
+    created_at
+    expires_at
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">iso8601</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-node">%w(
+
+    identity
+    scoping
+    permissions
+
+  )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_h</span>() ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
