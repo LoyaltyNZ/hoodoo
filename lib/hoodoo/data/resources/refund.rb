@@ -16,8 +16,6 @@ module Hoodoo
       class Refund < Hoodoo::Presenters::Base
 
         schema do
-          text   :token_identifier, :required => true
-
           object :basket, :required => true do
             type :Basket
           end
