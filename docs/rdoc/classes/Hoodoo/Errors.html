@@ -125,6 +125,18 @@ request.</p>
           </ul>
         </dd>
       
+        <dt>I</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-inspect">inspect</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>M</dt>
         <dd>
           <ul>
@@ -576,6 +588,44 @@ else <code>false</code>.</p>
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-i-inspect">
+            
+              <b>inspect</b>()
+            
+            <a href="../../classes/Hoodoo/Errors.html#method-i-inspect" name="method-i-inspect" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Make life easier for debugging on the console by having the object
+represent itself more concisely.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-inspect_source')" id="l_method-i-inspect_source">show</a>
+                
+              </p>
+              <div id="method-i-inspect_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 247</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inspect</span>
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">to_s</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-merge-21">
             
               <b>merge!</b>( source )
@@ -718,7 +768,7 @@ separate individual values.</p>
                 
               </p>
               <div id="method-i-unjoin_and_unescape_commas_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 260</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 267</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>

@@ -241,6 +241,13 @@ module Hoodoo
       )
     end
 
+    # Make life easier for debugging on the console by having the object
+    # represent itself more concisely.
+    #
+    def inspect
+      @errors.to_s
+    end
+
 
     # DEVELOPER: In the function comment below, RDoc escaping has to be done
     # for RDocs to make sense. Read every "\\" as a single "\" (or read the

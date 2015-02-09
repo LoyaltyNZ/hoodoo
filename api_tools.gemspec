@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do |s|
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2015-01-26'
+  s.date        = '2015-02-04'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]
@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency     'json_builder',     '~> 3.1'
   s.add_runtime_dependency     'uuidtools',        '~> 2.1'
-  s.add_runtime_dependency     'dalli',            '~> 2.7'
+  s.add_runtime_dependency     'kgio',             '~> 2.9' # Speeds up Dalli
+  s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
 
   s.add_development_dependency 'rake',             '~> 10.4'
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'

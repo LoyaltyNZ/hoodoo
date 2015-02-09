@@ -81,6 +81,14 @@ module Hoodoo; module Services
     #
     ASK   = 'ask'
 
+    # All currently known (allowed/supported) permission policies.
+    #
+    ALLOWED_POLICIES = [
+      DENY,
+      ALLOW,
+      ASK
+    ]
+
     # Create a new Permissions instance, optionally from a Hash of the format
     # returned by #to_h.
     #
@@ -133,9 +141,6 @@ module Hoodoo; module Services
     # +resource_name+:: Resource name as a Symbol or String, e.g. "+Purchase+"
     #                   or +:Member+.
     #
-    # +action_name+::   Action as a String or Symbol, from: +list+, +show+,
-    #                   +create+, +update+ or +delete+.
-    #
     # +permission+::    DENY, ALLOW or ASK.
     #
     def set_resource_fallback( resource_name, permission )
@@ -151,7 +156,10 @@ module Hoodoo; module Services
     # +resource_name+:: Resource name as a Symbol or String, e.g. "+Purchase+"
     #                   or +:Member+.
     #
-    # +permission+::   DENY, ALLOW or ASK.
+    # +action_name+::   Action as a String or Symbol, from: +list+, +show+,
+    #                   +create+, +update+ or +delete+.
+    #
+    # +permission+::    DENY, ALLOW or ASK.
     #
     def set_resource( resource_name, action_name, permission )
       resource_name = resource_name.to_s
@@ -203,7 +211,7 @@ module Hoodoo; module Services
     #          a #to_h call.
     #
     def from_h( hash )
-      @permissions = hash
+      @permissions = Hoodoo::Utilities.stringify( hash )
     end
 
   end

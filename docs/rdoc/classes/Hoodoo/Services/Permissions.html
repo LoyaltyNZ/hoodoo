@@ -31,6 +31,10 @@
         </h1>
         <ul class="files">
             
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            
+            <li><a href="../../../files/lib/hoodoo/data/types/permissions_defaults_rb.html">lib/hoodoo/data/types/permissions_defaults.rb</a></li>
+            
             <li><a href="../../../files/lib/hoodoo/services/services/permissions_rb.html">lib/hoodoo/services/services/permissions.rb</a></li>
             
         </ul>
@@ -217,49 +221,6 @@ puts JSON.pretty_generate( p.to_h() )
     
 
     
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-        
-          <tr valign='top'>
-            <td class="attr-name">DENY</td>
-            <td>=</td>
-            <td class="attr-value">&#39;deny&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Permission is denied; the action should not be permitted.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ALLOW</td>
-            <td>=</td>
-            <td class="attr-value">&#39;allow&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Permission is granted; the action should be permitted.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">ASK</td>
-            <td>=</td>
-            <td class="attr-value">&#39;ask&#39;</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Something else (e.g. a service application) needs to be asked to see if it
-permits the action.</p></td>
-            </tr>
-          
-        
-      </table>
-    
 
 
     
@@ -302,7 +263,7 @@ all actions for all resources.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 90</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@permissions</span> = {}
@@ -352,9 +313,9 @@ call.</p>
                 
               </p>
               <div id="method-i-from_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
-  <span class="ruby-ivar">@permissions</span> = <span class="ruby-identifier">hash</span>
+  <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -401,7 +362,7 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
                 
               </p>
               <div id="method-i-permitted-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 175</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 183</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
@@ -464,7 +425,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
                 
               </p>
               <div id="method-i-set_default_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 121</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -514,7 +475,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
                 
               </p>
               <div id="method-i-set_default_fallback_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 105</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 113</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -541,6 +502,10 @@ href="Permissions.html#ASK">ASK</a>.</p>
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
 <code>:Member</code>.</p>
+</dd><dt><code>action_name</code>
+<dd>
+<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
+<code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
 <p><a href="Permissions.html#DENY">DENY</a>, <a
@@ -564,7 +529,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
                 
               </p>
               <div id="method-i-set_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 156</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
@@ -597,10 +562,6 @@ permission is used.</p>
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
 <code>:Member</code>.</p>
-</dd><dt><code>action_name</code>
-<dd>
-<p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
-<code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd><dt><code>permission</code>
 <dd>
 <p><a href="Permissions.html#DENY">DENY</a>, <a
@@ -624,7 +585,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
                 
               </p>
               <div id="method-i-set_resource_fallback_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 141</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -668,7 +629,7 @@ href="Permissions.html#method-i-from_h">from_h</a>.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 196</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 204</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-ivar">@permissions</span>
 <span class="ruby-keyword">end</span></pre>

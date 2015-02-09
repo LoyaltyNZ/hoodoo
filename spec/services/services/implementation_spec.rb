@@ -15,7 +15,7 @@ end
 
 describe Hoodoo::Services::Implementation do
   it 'should raise base class exceptions' do
-    ses = Hoodoo::Services::Session.new
+    ses = Hoodoo::Services::LegacySession.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestImplementation.new )

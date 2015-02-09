@@ -161,13 +161,22 @@ describe Hoodoo::Services::Middleware do
   end
 
   context 'utility methods' do
-    it 'should know about MemCache' do
-      old = ENV[ 'MEMCACHE_URL' ]
-      ENV[ 'MEMCACHE_URL' ] = nil
-      expect(Hoodoo::Services::Middleware.has_memcache?).to eq(false)
-      ENV[ 'MEMCACHE_URL' ] = 'foo'
-      expect(Hoodoo::Services::Middleware.has_memcache?).to eq(true)
-      ENV[ 'MEMCACHE_URL' ] = old
+    it 'should know about Memcached via environment variable' do
+      old = ENV[ 'MEMCACHE_HOST' ]
+      ENV[ 'MEMCACHE_HOST' ] = nil
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      ENV[ 'MEMCACHE_HOST' ] = 'foo'
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      ENV[ 'MEMCACHE_HOST' ] = old
+    end
+
+    it 'should know about Memcached via legacy environment variable' do
+      old = ENV[ 'MEMCACHED_HOST' ]
+      ENV[ 'MEMCACHED_HOST' ] = nil
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      ENV[ 'MEMCACHED_HOST' ] = 'foo'
+      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      ENV[ 'MEMCACHED_HOST' ] = old
     end
 
     it 'should know about a queue' do
@@ -250,14 +259,14 @@ describe Hoodoo::Services::Middleware do
   context 'sessions' do
 
     it 'should check for session data' do
-      expect(Hoodoo::Services::Session).to receive(:load_session).and_call_original
+      expect(Hoodoo::Services::LegacySession).to receive(:load_session).and_call_original
       expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(200)
     end
 
     it 'should check for missing session data' do
-      expect(Hoodoo::Services::Session).to receive(:load_session).and_return(nil)
+      expect(Hoodoo::Services::LegacySession).to receive(:load_session).and_return(nil)
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(401)
       result = JSON.parse(last_response.body)
@@ -358,7 +367,7 @@ describe Hoodoo::Services::Middleware do
           request = context.request
           response = context.response
 
-          expect(session).to be_a(Hoodoo::Services::Session)
+          expect(session).to be_a(Hoodoo::Services::LegacySession)
           expect(request).to be_a(Hoodoo::Services::Request)
           expect(response).to be_a(Hoodoo::Services::Response)
 
@@ -1745,7 +1754,7 @@ describe Hoodoo::Services::Middleware::Endpoint do
 
   context 'with no session' do
     before :each do
-      expect( Hoodoo::Services::Session ).to receive( :load_session ).once.and_return( nil )
+      expect( Hoodoo::Services::LegacySession ).to receive( :load_session ).once.and_return( nil )
     end
 
     it 'can call public-to-public actions successfully' do

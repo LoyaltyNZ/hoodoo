@@ -40,8 +40,7 @@
   
     <div class="description">
       
-<p><code>Session</code> contains all functionality related to a context
-session.</p>
+<p>A container for functionality related to a context session.</p>
 
     </div>
   
@@ -62,23 +61,37 @@ session.</p>
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
-        <dt>H</dt>
+        <dt>E</dt>
         <dd>
           <ul>
             
               
               <li>
-                <a href="#method-i-has_all_roles-3F">has_all_roles?</a>,
+                <a href="#method-i-expired-3F">expired?</a>
               </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>F</dt>
+        <dd>
+          <ul>
             
               
               <li>
-                <a href="#method-i-has_any_roles-3F">has_any_roles?</a>,
+                <a href="#method-i-from_h">from_h</a>
               </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>I</dt>
+        <dd>
+          <ul>
             
               
               <li>
-                <a href="#method-i-has_role-3F">has_role?</a>
+                <a href="#method-i-identity-3D">identity=</a>
               </li>
             
           </ul>
@@ -90,7 +103,7 @@ session.</p>
             
               
               <li>
-                <a href="#method-c-load_session">load_session</a>
+                <a href="#method-i-load_from_memcached-21">load_from_memcached!</a>
               </li>
             
           </ul>
@@ -108,14 +121,26 @@ session.</p>
           </ul>
         </dd>
       
-        <dt>T</dt>
+        <dt>S</dt>
         <dd>
           <ul>
             
               
               <li>
-                <a href="#method-c-testing">testing</a>,
+                <a href="#method-i-save_to_memcached">save_to_memcached</a>,
               </li>
+            
+              
+              <li>
+                <a href="#method-i-scoping-3D">scoping=</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>T</dt>
+        <dd>
+          <ul>
             
               
               <li>
@@ -139,6 +164,27 @@ session.</p>
     
 
     
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">TTL</td>
+            <td>=</td>
+            <td class="attr-value">172800</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Time To Live: Number of seconds for which a session remains valid after
+being saved. Only applicable from the save time onwards in stores that
+support <a href="Session.html#TTL">TTL</a> such as Memcached - see <a
+href="Session.html#method-i-save_to_memcached">save_to_memcached</a>.</p></td>
+            </tr>
+          
+        
+      </table>
+    
 
 
     
@@ -148,48 +194,118 @@ session.</p>
         
           <tr valign='top'>
             <td class='attr-rw'>
-              [R]
+              [RW]
             </td>
-            <td class='attr-name'>client_id</td>
-            <td class='attr-desc'><p>TODO: Loyalty NZ specific. The ID of the calling client, as defined in the
-authorisation application.</p></td>
+            <td class='attr-name'>caller_id</td>
+            <td class='attr-desc'><p>A <a href="Session.html">Session</a> must always refer to a Caller instance
+by <a href="../UUID.html">UUID</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>caller_version</td>
+            <td class='attr-desc'><p>Callers can change; if so, related sessions must be invalidated. This must
+be achieved by keeping a version count on the Caller. A session is
+associated with a particular Caller version and if the version changes,
+associated sessions are flushed.</p>
+
+<p>If you <em>change</em> a Caller version in a <a
+href="Session.html">Session</a>, you <em>really</em> should call <a
+href="Session.html#method-i-save_to_memcached">save_to_memcached</a> as
+soon as possible afterwards so that the change gets recognised in
+Memcached.</p></td>
           </tr>
         
           <tr valign='top'>
             <td class='attr-rw'>
               [R]
             </td>
-            <td class='attr-name'>id</td>
-            <td class='attr-desc'><p><a href="Session.html">Session</a> ID, matching a value that would appear
-in an X-Session-ID header.</p></td>
+            <td class='attr-name'>created_at</td>
+            <td class='attr-desc'><p>The creation date of this session instance as a Time instance in UTC.</p></td>
           </tr>
         
           <tr valign='top'>
             <td class='attr-rw'>
               [R]
             </td>
-            <td class='attr-name'>outlet_id</td>
-            <td class='attr-desc'><p>TODO: Loyalty NZ specific. The <a href="../UUID.html">UUID</a> of the
-Outlet instance associated with the authorised caller, related to <a
-href="Session.html#attribute-i-participant_id">participant_id</a>.</p></td>
+            <td class='attr-name'>expires_at</td>
+            <td class='attr-desc'><p>The expiry date for this session - the session should be considered expired
+at or after this date. Some session stores may support automatic expiry of
+session data, but there may be a small window between the expiry date
+passing and the store expiring the data; so always check the expiry.</p>
+
+<p>Only set when the session is saved (or loaded from a representation that
+includes an existing expiry date). See e.g.:</p>
+<ul><li>
+<p><a href="Session.html#method-i-save_to_memcached">save_to_memcached</a></p>
+</li></ul>
+
+<p>The value is a Time instance in UTC. If <code>nil</code>, the session has
+not yet been saved.</p></td>
           </tr>
         
           <tr valign='top'>
             <td class='attr-rw'>
               [R]
             </td>
-            <td class='attr-name'>participant_id</td>
-            <td class='attr-desc'><p>TODO: Loyalty NZ specific. The <a href="../UUID.html">UUID</a> of the
-Participant instance associated with the authorised caller.</p></td>
+            <td class='attr-name'>identity</td>
+            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined key/value pairs that
+define the <em>identity</em> of the session holder. This is usually related
+to a Caller resource instance - see also <a
+href="../Data/Resources/Caller.html">Hoodoo::Data::Resources::Caller</a> -
+and will often contain a Caller resource instance&#39;s <a
+href="../UUID.html">UUID</a>, amongst other data.</p>
+
+<p>The object describes “who the session&#39;s owner is”.</p></td>
           </tr>
         
           <tr valign='top'>
             <td class='attr-rw'>
-              [R]
+              [RW]
             </td>
-            <td class='attr-name'>roles</td>
-            <td class='attr-desc'><p>TODO: Loyalty NZ derived, needs better specification. Array of strings
-describing roles. Role meanings are defined by role usage within services.</p></td>
+            <td class='attr-name'>memcached_host</td>
+            <td class='attr-desc'><p>Connection IP address/port String for Memcached.</p>
+
+<p>If you are using Memcached for a session store, you can set the Memcached
+connection host either through this accessor, or via the object&#39;s
+constructor.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>permissions</td>
+            <td class='attr-desc'><p>A <a href="Permissions.html">Hoodoo::Services::Permissions</a> instance.</p>
+
+<p>The instance describes “what the session session is allowed to do”.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>scoping</td>
+            <td class='attr-desc'><p>An OpenStruct instance with session-creator defined values that describe
+the <em>scoping</em>, that is, visbility of data, for the session. Its
+contents relate to service resource interface descriptions (see the DSL for
+<a href="Interface.html">Hoodoo::Services::Interface</a>) and may be
+partially or entirely supported by the <a
+href="../ActiveRecord.html">ActiveRecord</a> finder extensions in <a
+href="../ActiveRecord/Finder.html">Hoodoo::ActiveRecord::Finder</a>.</p>
+
+<p>The object describes the “data that the session can &#39;see&#39;”.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>session_id</td>
+            <td class='attr-desc'><p>A <a href="Session.html">Session</a> must have its own <a
+href="../UUID.html">UUID</a>.</p></td>
           </tr>
         
       </table>
@@ -201,136 +317,42 @@ describing roles. Role meanings are defined by role usage within services.</p></
       <div class="sectiontitle">Class Public methods</div>
       
         <div class="method">
-          <div class="title method-title" id="method-c-load_session">
-            
-              <b>load_session</b>( memcache_url, session_id )
-            
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-c-load_session" name="method-c-load_session" class="permalink">Link</a>
-          </div>
-          
-          
-            <div class="description">
-              <p>TODO: Loyalty NZ derived, needs better specification.</p>
-
-<p>Create a <a href="Session.html">Session</a> instance by loading session
-data from Memcached, or a test mock session if in test mode (see <a
-href="Session.html#method-c-testing">::testing</a>).</p>
-<dl class="rdoc-list note-list"><dt><code>memcache_url</code>
-<dd>
-<p>Connection URL for Memcached.</p>
-</dd><dt><code>session_id</code>
-<dd>
-<p>ID of the session to load.</p>
-</dd></dl>
-
-<p>Returns either a valid <a href="Session.html">Session</a> instance, or
-<code>nil</code> if the session does not exist or is invalid.</p>
-            </div>
-          
-          
-          
-
-          
-          
-          
-            
-            <div class="sourcecode">
-              
-              <p class="source-link">
-                Source: 
-                <a href="javascript:toggleSource('method-c-load_session_source')" id="l_method-c-load_session_source">show</a>
-                
-              </p>
-              <div id="method-c-load_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 85</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">load_session</span>( <span class="ruby-identifier">memcache_url</span>, <span class="ruby-identifier">session_id</span> )
-
-  <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">@@test_session</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@test_mode</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">memcache_url</span>.<span class="ruby-identifier">empty?</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware memcache server URL is nil or empty&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-number">32</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">memcache</span> = <span class="ruby-identifier">connect_memcache</span>( <span class="ruby-identifier">memcache_url</span> )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Middleware cannot connect to memcache server &#39;#{memcache_url}&#39;&quot;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">begin</span>
-
-    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcache</span>.<span class="ruby-identifier">get</span>( <span class="ruby-node">&quot;session_#{ session_id }&quot;</span> )
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
-
-    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
-    <span class="ruby-comment">#</span>
-    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
-      <span class="ruby-string">&quot;Session Loading failed, connection fault or session corrupt&quot;</span>,
-      <span class="ruby-identifier">exception</span>
-    )
-
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
-
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># Create and return the new session.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span>.<span class="ruby-identifier">new</span>( {
-    <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_id</span>,
-    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;client_id&#39;</span>      ],
-    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;participant_id&#39;</span> ],
-    <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;outlet_id&#39;</span>      ],
-    <span class="ruby-value">:roles</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session_hash</span>[ <span class="ruby-string">&#39;roles&#39;</span>          ],
-  } )
-<span class="ruby-keyword">end</span></pre>
-              </div>
-            </div>
-            
-          </div>
-        
-        <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>(options = {})
+              <b>new</b>( options = {} )
             
             <a href="../../../classes/Hoodoo/Services/Session.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Instantiate a new <a href="Session.html">Session</a> instance with the
-optional supplied parameters.</p>
+              <p>Create a new instance.</p>
 <dl class="rdoc-list note-list"><dt>options
 <dd>
-<p>Optional hash of parameters.</p>
+<p>Optional Hash of options, described below.</p>
 </dd></dl>
 
-<p>Key/value meanings for options are:</p>
-<dl class="rdoc-list note-list"><dt><code>id</code>
+<p>Options are:</p>
+<dl class="rdoc-list note-list"><dt><code>session_id</code>
 <dd>
-<p><a href="Session.html">Session</a> ID, e.g. from an X-Session-ID header.</p>
-</dd><dt><code>client_id</code>
+<p><a href="../UUID.html">UUID</a> of this session. If unset, a new <a
+href="../UUID.html">UUID</a> is generated for you. You can read the <a
+href="../UUID.html">UUID</a> with the <a
+href="Session.html#attribute-i-session_id">session_id</a> accessor method.</p>
+</dd><dt><code>caller_id</code>
 <dd>
-<p>TODO: LoyaltyNZ specific. ID of API-calling client, according to OAuth
-authorisation application.</p>
-</dd><dt><code>participant_id</code>
+<p><a href="../UUID.html">UUID</a> of the Caller instance associated with this
+session. This can be set either now or later, but the session cannot be
+saved without it.</p>
+</dd><dt><code>caller_version</code>
 <dd>
-<p>TODO: LoyaltyNZ specific. Participant <a href="../UUID.html">UUID</a>
-associated with this session.</p>
-</dd><dt><code>outlet_id</code>
+<p>Version of the Caller instance; defaults to zero.</p>
+</dd><dt><code>memcached_host</code>
 <dd>
-<p>TODO: LoyaltyNZ specific. Outlet <a href="../UUID.html">UUID</a> associated
-with the participant.</p>
-</dd><dt><code>roles</code>
-<dd>
-<p>TODO: Role string, containing comma-separated roles that get split into an
-Array. Role meanings are defined by role usage within services.</p>
+<p>Host for Memcached connections; required if you want to use the <a
+href="Session.html#method-i-load_from_memcached-21">load_from_memcached!</a>
+or <a href="Session.html#method-i-save_to_memcached">save_to_memcached</a>
+methods.</p>
 </dd></dl>
             </div>
           
@@ -349,75 +371,14 @@ Array. Role meanings are defined by role usage within services.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 150</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 136</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
-  <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
-  <span class="ruby-ivar">@client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
-  <span class="ruby-ivar">@participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
-  <span class="ruby-ivar">@outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]
-  <span class="ruby-ivar">@roles</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:roles</span>          ].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> )
-
-  <span class="ruby-ivar">@to_h</span> = {
-    <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
-    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@client_id</span>,
-    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@participant_id</span>,
-    <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@outlet_id</span>,
-    <span class="ruby-value">:roles</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@roles</span>
-  }
-
-<span class="ruby-keyword">end</span></pre>
-              </div>
-            </div>
-            
-          </div>
-        
-        <div class="method">
-          <div class="title method-title" id="method-c-testing">
-            
-              <b>testing</b>(test_mode, mock_session = nil)
-            
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-c-testing" name="method-c-testing" class="permalink">Link</a>
-          </div>
-          
-          
-            <div class="description">
-              <p>TODO: Loyalty NZ derived, needs better specification.</p>
-
-<p>Set testing mode.</p>
-<dl class="rdoc-list note-list"><dt>test_mode
-<dd>
-<p><code>true</code> to use a static mock test session, <code>false</code> to
-read real session data from Memcached based on inbound requests&#39;
-X-Session-ID header values.</p>
-</dd><dt><code>mock_session</code>
-<dd>
-<p>Optional mock session to use, overriding internal test mock session. The
-internal static test session has no roles assigned, but will read a string
-of comma-separated roles from +ENV[ &#39;HOODOO_TEST_SESSION_ROLES&#39; ]+
-if defined.</p>
-</dd></dl>
-            </div>
-          
-          
-          
-
-          
-          
-          
-            
-            <div class="sourcecode">
-              
-              <p class="source-link">
-                Source: 
-                <a href="javascript:toggleSource('method-c-testing_source')" id="l_method-c-testing_source">show</a>
-                
-              </p>
-              <div id="method-c-testing_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 69</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">testing</span>(<span class="ruby-identifier">test_mode</span>, <span class="ruby-identifier">mock_session</span> = <span class="ruby-keyword">nil</span>)
-  <span class="ruby-identifier">@@test_mode</span> = <span class="ruby-identifier">test_mode</span>
-  <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">mock_session</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">mock_session</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>     ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_version</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">0</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -427,16 +388,20 @@ if defined.</p>
       <div class="sectiontitle">Instance Public methods</div>
       
         <div class="method">
-          <div class="title method-title" id="method-i-has_all_roles-3F">
+          <div class="title method-title" id="method-i-expired-3F">
             
-              <b>has_all_roles?</b>(roles)
+              <b>expired?</b>()
             
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-has_all_roles-3F" name="method-i-has_all_roles-3F" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-expired-3F" name="method-i-expired-3F" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Returns true if this session has all specified roles</p>
+              <p>Has this session expired? Only valid if an expiry date is set; see <a
+href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
+
+<p>Returns <code>true</code> if the session has expired, or <code>false</code>
+if it has either not expired, or has no expiry date set yet.</p>
             </div>
           
           
@@ -450,13 +415,16 @@ if defined.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-has_all_roles-3F_source')" id="l_method-i-has_all_roles-3F_source">show</a>
+                <a href="javascript:toggleSource('method-i-expired-3F_source')" id="l_method-i-expired-3F_source">show</a>
                 
               </p>
-              <div id="method-i-has_all_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 174</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_all_roles?</span>(<span class="ruby-identifier">roles</span>)
-  (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">length</span>
+              <div id="method-i-expired-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 263</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
+  <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
+  <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">exp</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">exp</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -464,16 +432,23 @@ if defined.</p>
           </div>
         
         <div class="method">
-          <div class="title method-title" id="method-i-has_any_roles-3F">
+          <div class="title method-title" id="method-i-from_h">
             
-              <b>has_any_roles?</b>(roles)
+              <b>from_h</b>( hash )
             
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-has_any_roles-3F" name="method-i-has_any_roles-3F" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-from_h" name="method-i-from_h" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Returns true if this session has any of the specified roles</p>
+              <p>Load session parameters from a given Hash, of the form set by <a
+href="Session.html#method-i-to_h">to_h</a>.</p>
+
+<p>If appropriate Hash keys are present, will set any or all of <a
+href="Session.html#attribute-i-session_id">session_id</a>, <a
+href="Session.html#attribute-i-identity">identity</a>, <a
+href="Session.html#attribute-i-scoping">scoping</a> and <a
+href="Session.html#attribute-i-permissions">permissions</a>.</p>
             </div>
           
           
@@ -487,13 +462,40 @@ if defined.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-has_any_roles-3F_source')" id="l_method-i-has_any_roles-3F_source">show</a>
+                <a href="javascript:toggleSource('method-i-from_h_source')" id="l_method-i-from_h_source">show</a>
                 
               </p>
-              <div id="method-i-has_any_roles-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 179</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_any_roles?</span>(<span class="ruby-identifier">roles</span>)
-  (<span class="ruby-ivar">@roles</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">roles</span>).<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
+              <div id="method-i-from_h_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 295</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>     = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;session_id&#39;</span>      ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;session_id&#39;</span>      )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;caller_id&#39;</span>       ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;caller_id&#39;</span>       )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;caller_version&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;caller_version&#39;</span>  )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;created_at&#39;</span> )
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;created_at&#39;</span> ] ).<span class="ruby-identifier">utc</span>()
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-comment"># Invalid time given; keep existing created_at date</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;expires_at&#39;</span> )
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-ivar">@expires_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;expires_at&#39;</span> ] ).<span class="ruby-identifier">utc</span>()
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-comment"># Invalid time given; keep existing expired_at date</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;identity&#39;</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">scoping</span>  = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;scoping&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;scoping&#39;</span>  )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;permissions&#39;</span> )
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;permissions&#39;</span> ] )
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -501,16 +503,17 @@ if defined.</p>
           </div>
         
         <div class="method">
-          <div class="title method-title" id="method-i-has_role-3F">
+          <div class="title method-title" id="method-i-identity-3D">
             
-              <b>has_role?</b>(role)
+              <b>identity=</b>( hash )
             
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-has_role-3F" name="method-i-has_role-3F" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-identity-3D" name="method-i-identity-3D" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Returns true if this session has the specified role</p>
+              <p>Set the identity data via a Hash of key/value pairs - see also <a
+href="Session.html#attribute-i-identity">identity</a>.</p>
             </div>
           
           
@@ -524,13 +527,233 @@ if defined.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-has_role-3F_source')" id="l_method-i-has_role-3F_source">show</a>
+                <a href="javascript:toggleSource('method-i-identity-3D_source')" id="l_method-i-identity-3D_source">show</a>
                 
               </p>
-              <div id="method-i-has_role-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 169</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_role?</span>(<span class="ruby-identifier">role</span>)
-  <span class="ruby-ivar">@roles</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">to_s</span>
+              <div id="method-i-identity-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">identity=</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-ivar">@identity</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-load_from_memcached-21">
+            
+              <b>load_from_memcached!</b>( session_id )
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-load_from_memcached-21" name="method-i-load_from_memcached-21" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Load session data into this instance, overwriting instance values if the
+session is found. Raises an exception if there is a problem connecting to
+Memcached. A Memcached connection URL must have been set through the
+constructor or <a
+href="Session.html#attribute-i-memcached_host">memcached_host</a> accessor
+first.</p>
+
+<p>Returns:</p>
+<ul><li>
+<p><code>true</code>: The session data was loaded OK and is valid.</p>
+</li><li>
+<p><code>false</code>: The session data was loaded, but is not valid; either
+the session has expired, or its Caller version mismatches the associated
+stored Caller version in Memcached.</p>
+</li><li>
+<p><code>nil</code>: The session data could not be loaded (Memcached problem).</p>
+</li></ul>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-load_from_memcached-21_source')" id="l_method-i-load_from_memcached-21_source">show</a>
+                
+              </p>
+              <div id="method-i-load_from_memcached-21_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 225</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">session_id</span> )
+  <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">memcached</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">session_id</span> )
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">from_h</span>( <span class="ruby-identifier">session_hash</span> )
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expired?</span>
+
+      <span class="ruby-identifier">cv</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cv</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">cv</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
+
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+      <span class="ruby-string">&#39;Hoodoo::Services::Session\#load_from_memcached!: Session loading failed - connection fault or session corrupt&#39;</span>,
+      <span class="ruby-identifier">exception</span>
+    )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-save_to_memcached">
+            
+              <b>save_to_memcached</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-save_to_memcached" name="method-i-save_to_memcached" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Save this session to Memcached, in a manner that will allow it to be loaded
+by <a
+href="Session.html#method-i-load_from_memcached-21">load_from_memcached!</a>
+later.</p>
+
+<p>A session can only be saved if it has a Caller ID - see <a
+href="Session.html#attribute-i-caller_id">caller_id=</a> or the options
+hash passed to the constructor.</p>
+
+<p>The Hoodoo::Services::Session::TTL constant determines how long the key
+lives in Memcached.</p>
+
+<p>If successful, returns the now-set/now-updated value of <a
+href="Session.html#attribute-i-expires_at">expires_at</a>.</p>
+
+<p>If unsuccessful, the method raises an exception or returns
+<code>nil</code>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-save_to_memcached_source')" id="l_method-i-save_to_memcached_source">show</a>
+                
+              </p>
+              <div id="method-i-save_to_memcached_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_memcached</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
+
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-comment"># (1) Get the current version from Memcached.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># (2) If it is missing or less than our version that&#39;s OK, just</span>
+    <span class="ruby-comment">#     set the version data.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># (3) If it is greater than our version we are already stale!</span>
+    <span class="ruby-comment">#     Race condition - make the decision to update &#39;self&#39; to</span>
+    <span class="ruby-comment">#     the newer version and go with that since the session is</span>
+    <span class="ruby-comment">#     assumed not under use before saving.</span>
+
+    <span class="ruby-identifier">cached_version</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">cached_version</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
+
+    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">save_caller_version_to_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> )
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
+
+    <span class="ruby-comment"># Must set this before saving, even though the delay between</span>
+    <span class="ruby-comment"># setting this value and Memcached actually saving the value</span>
+    <span class="ruby-comment"># with a TTL will mean that Memcached expires the key slightly</span>
+    <span class="ruby-comment"># *after* the time we record.</span>
+
+    <span class="ruby-ivar">@expires_at</span> = ( <span class="ruby-operator">::</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> <span class="ruby-constant">TTL</span> ).<span class="ruby-identifier">utc</span>()
+
+    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">session_id</span>,
+                           <span class="ruby-keyword">self</span>.<span class="ruby-identifier">to_h</span>(),
+                           <span class="ruby-constant">Hooodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Session</span><span class="ruby-operator">::</span><span class="ruby-constant">TTL</span> )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-ivar">@expires_at</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+      <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Session saving failed - connection fault or session corrupt&#39;</span>,
+      <span class="ruby-identifier">exception</span>
+    )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-scoping-3D">
+            
+              <b>scoping=</b>( hash )
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-scoping-3D" name="method-i-scoping-3D" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Set the scoping data via a Hash of key/value pairs - see also <a
+href="Session.html#attribute-i-scoping">scoping</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-scoping-3D_source')" id="l_method-i-scoping-3D_source">show</a>
+                
+              </p>
+              <div id="method-i-scoping-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">scoping=</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-ivar">@scoping</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -547,12 +770,9 @@ if defined.</p>
           
           
             <div class="description">
-              <p>Returns a representation of the <a href="Session.html">Session</a> data as
-a Hash.</p>
-
-<p>TODO: LoyaltyNZ specific - hash matches input options in initialize,</p>
-
-<pre><code>but with role string split into an Array.</code></pre>
+              <p>Represent this session&#39;s data as a Hash, for uses such as storage in
+Memcached or loading into another session instance. See also <a
+href="Session.html#method-i-from_h">from_h</a>.</p>
             </div>
           
           
@@ -570,9 +790,20 @@ a Hash.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 188</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
-  <span class="ruby-ivar">@to_h</span>
+  {
+    <span class="ruby-string">&#39;session_id&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>,
+    <span class="ruby-string">&#39;caller_id&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>,
+    <span class="ruby-string">&#39;caller_version&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>,
+
+    <span class="ruby-string">&#39;created_at&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">iso8601</span>,
+    <span class="ruby-string">&#39;expires_at&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>.<span class="ruby-identifier">iso8601</span>,
+
+    <span class="ruby-string">&#39;identity&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span>.<span class="ruby-identifier">to_h</span>(),
+    <span class="ruby-string">&#39;scoping&#39;</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">to_h</span>(),
+    <span class="ruby-string">&#39;permissions&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span>.<span class="ruby-identifier">to_h</span>(),
+  }
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

@@ -16,7 +16,7 @@ end
 describe Hoodoo::Services::Context do
 
   it 'should initialise correctly' do
-    ses = Hoodoo::Services::Session.new
+    ses = Hoodoo::Services::LegacySession.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
@@ -28,7 +28,7 @@ describe Hoodoo::Services::Context do
   end
 
   it 'should report endpoints' do
-    ses = Hoodoo::Services::Session.new
+    ses = Hoodoo::Services::LegacySession.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
