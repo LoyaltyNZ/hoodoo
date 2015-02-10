@@ -1,4 +1,4 @@
-Mon, 09 Feb 2015 13:46:37 +1300
+Tue, 10 Feb 2015 13:20:40 +1300
 README.md	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo.rb	Thu, 29 Jan 2015 12:57:24 +1300
 lib/hoodoo/active.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -31,7 +31,7 @@ lib/hoodoo/data/resources/participant.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/product.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/programme.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/purchase.rb	Mon, 09 Feb 2015 13:37:53 +1300
-lib/hoodoo/data/resources/refund.rb	Mon, 09 Feb 2015 13:37:53 +1300
+lib/hoodoo/data/resources/refund.rb	Mon, 09 Feb 2015 15:18:54 +1300
 lib/hoodoo/data/resources/session.rb	Wed, 04 Feb 2015 09:54:02 +1300
 lib/hoodoo/data/resources/token.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/version.rb	Thu, 29 Jan 2015 10:26:11 +1300
@@ -46,7 +46,7 @@ lib/hoodoo/data/types/currency_amount.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/currency_earner.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/error_primitive.rb	Thu, 29 Jan 2015 10:26:40 +1300
 lib/hoodoo/data/types/financial_manipulation.rb	Mon, 09 Feb 2015 13:37:53 +1300
-lib/hoodoo/data/types/permissions.rb	Wed, 04 Feb 2015 10:24:33 +1300
+lib/hoodoo/data/types/permissions.rb	Mon, 09 Feb 2015 15:24:44 +1300
 lib/hoodoo/data/types/permissions_defaults.rb	Wed, 04 Feb 2015 10:25:51 +1300
 lib/hoodoo/data/types/permissions_full.rb	Wed, 04 Feb 2015 09:58:35 +1300
 lib/hoodoo/data/types/permissions_resources.rb	Wed, 04 Feb 2015 09:58:14 +1300
@@ -65,7 +65,7 @@ lib/hoodoo/logger/writer_mixin.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/writers/file_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/writers/log_entries_dot_com_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/writers/stream_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/middleware.rb	Tue, 27 Jan 2015 13:33:38 +1300
+lib/hoodoo/middleware.rb	Mon, 09 Feb 2015 15:23:51 +1300
 lib/hoodoo/presenters.rb	Thu, 29 Jan 2015 10:27:10 +1300
 lib/hoodoo/presenters/base.rb	Thu, 29 Jan 2015 10:23:36 +1300
 lib/hoodoo/presenters/base_dsl.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -85,7 +85,7 @@ lib/hoodoo/presenters/types/string.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/presenters/types/tags.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/presenters/types/text.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/presenters/types/uuid.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/services.rb	Wed, 04 Feb 2015 13:42:50 +1300
+lib/hoodoo/services.rb	Mon, 09 Feb 2015 15:22:41 +1300
 lib/hoodoo/services/middleware/amqp_log_message.rb	Thu, 29 Jan 2015 13:26:51 +1300
 lib/hoodoo/services/middleware/amqp_log_writer.rb	Wed, 04 Feb 2015 13:48:03 +1300
 lib/hoodoo/services/middleware/endpoint/augmented_array.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -96,7 +96,7 @@ lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Tue, 27 Jan 
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/services/middleware/middleware.rb	Thu, 05 Feb 2015 14:21:44 +1300
+lib/hoodoo/services/middleware/middleware.rb	Tue, 10 Feb 2015 13:12:54 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 29 Jan 2015 10:39:10 +1300
 lib/hoodoo/services/middleware/service_registry_drb_server.rb	Tue, 27 Jan 2015 13:35:41 +1300
 lib/hoodoo/services/middleware/service_registry_drb_server_start.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -108,7 +108,7 @@ lib/hoodoo/services/services/permissions.rb	Wed, 04 Feb 2015 15:31:01 +1300
 lib/hoodoo/services/services/request.rb	Thu, 05 Feb 2015 13:21:13 +1300
 lib/hoodoo/services/services/response.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/services/service.rb	Thu, 29 Jan 2015 10:21:53 +1300
-lib/hoodoo/services/services/session.rb	Mon, 09 Feb 2015 12:15:22 +1300
+lib/hoodoo/services/services/session.rb	Mon, 09 Feb 2015 16:25:13 +1300
 lib/hoodoo/utilities.rb	Thu, 29 Jan 2015 10:40:15 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/utilities/utilities.rb	Tue, 27 Jan 2015 13:33:38 +1300
