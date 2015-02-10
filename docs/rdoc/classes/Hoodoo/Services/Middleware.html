@@ -1196,7 +1196,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1846</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1940</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">remote</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span> ].<span class="ruby-identifier">nil?</span>
@@ -1266,7 +1266,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2059</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2153</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">service</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>       ]
   <span class="ruby-identifier">http_method</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1287,16 +1287,6 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-identifier">set_common_response_headers</span>( <span class="ruby-identifier">local_response</span> )
   <span class="ruby-identifier">update_response_for</span>( <span class="ruby-identifier">local_response</span>, <span class="ruby-identifier">interface</span> )
 
-  <span class="ruby-identifier">upc</span>  = []
-  <span class="ruby-identifier">upc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ident</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">empty?</span>
-
-  <span class="ruby-identifier">action</span> = <span class="ruby-identifier">determine_action</span>(
-    <span class="ruby-identifier">interface</span>,
-    <span class="ruby-identifier">http_method</span>,
-    <span class="ruby-identifier">upc</span>.<span class="ruby-identifier">empty?</span>,
-    <span class="ruby-identifier">local_response</span>
-  )
-
   <span class="ruby-comment"># Add errors from the local service response into an augmented hash</span>
   <span class="ruby-comment"># for responding early (via a Proc for internal reuse later).</span>
 
@@ -1306,7 +1296,18 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-identifier">hash</span>
   }
 
+  <span class="ruby-comment"># Figure out initial action / authorisation results for this request.</span>
+  <span class="ruby-comment"># We may still have to construct a context and ask the service after.</span>
+
+  <span class="ruby-identifier">upc</span>  = []
+  <span class="ruby-identifier">upc</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ident</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">action</span>        = <span class="ruby-identifier">determine_action</span>( <span class="ruby-identifier">http_method</span>, <span class="ruby-identifier">upc</span>.<span class="ruby-identifier">empty?</span> )
+  <span class="ruby-identifier">authorisation</span> = <span class="ruby-identifier">determine_authorisation</span>( <span class="ruby-ivar">@session</span>, <span class="ruby-identifier">interface</span>, <span class="ruby-identifier">action</span>, <span class="ruby-identifier">http_method</span>, <span class="ruby-identifier">local_response</span> )
+
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_local_errors</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">halt_processing?</span>
+
+  <span class="ruby-comment"># Construct the local request details.</span>
 
   <span class="ruby-identifier">local_request</span>                     = <span class="ruby-identifier">new_request_for</span>( <span class="ruby-identifier">interface</span> )
   <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">uri_path_components</span> = <span class="ruby-identifier">upc</span>
@@ -1351,10 +1352,8 @@ ignore resource-to-resource call errors.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_local_errors</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">halt_processing?</span>
 
-  <span class="ruby-comment"># Dispatch the call, merge any errors that might have come back and</span>
-  <span class="ruby-comment"># return the body of the called service&#39;s response.</span>
-
-  <span class="ruby-identifier">debug_log</span>( <span class="ruby-string">&#39;Dispatching local inter-resource call&#39;</span>, <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">body</span> )
+  <span class="ruby-comment"># Build a context for the call. We can now, if necessary, do a final</span>
+  <span class="ruby-comment"># check with the resource endpoint for authorisation.</span>
 
   <span class="ruby-identifier">context</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-ivar">@session</span>,
@@ -1362,6 +1361,16 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-identifier">local_response</span>,
     <span class="ruby-keyword">self</span>
   )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">authorisation</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">ASK</span>
+    <span class="ruby-identifier">ask_for_authorisation</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">implementation</span>, <span class="ruby-identifier">action</span>, <span class="ruby-identifier">local_response</span> )
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_local_errors</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">halt_processing?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Dispatch the call, merge any errors that might have come back and</span>
+  <span class="ruby-comment"># return the body of the called service&#39;s response.</span>
+
+  <span class="ruby-identifier">debug_log</span>( <span class="ruby-string">&#39;Dispatching local inter-resource call&#39;</span>, <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">body</span> )
 
   <span class="ruby-identifier">dispatch_to</span>( <span class="ruby-identifier">interface</span>, <span class="ruby-identifier">implementation</span>, <span class="ruby-identifier">action</span>, <span class="ruby-identifier">context</span> )
 
@@ -1422,7 +1431,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1882</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1976</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">remote_info</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>      ]
   <span class="ruby-identifier">http_method</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_method</span> ]
@@ -1637,7 +1646,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1733</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1827</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1704,7 +1713,7 @@ HTTP request).</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1764</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1858</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
@@ -1797,7 +1806,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2188</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2291</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>

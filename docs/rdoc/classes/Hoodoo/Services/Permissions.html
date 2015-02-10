@@ -37,6 +37,8 @@
             
             <li><a href="../../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
             
+            <li><a href="../../../files/lib/hoodoo/services/services/implementation_rb.html">lib/hoodoo/services/services/implementation.rb</a></li>
+            
             <li><a href="../../../files/lib/hoodoo/services/services/permissions_rb.html">lib/hoodoo/services/services/permissions.rb</a></li>
             
         </ul>
@@ -315,7 +317,7 @@ call.</p>
                 
               </p>
               <div id="method-i-from_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 213</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 214</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -371,15 +373,16 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
 
   <span class="ruby-identifier">tree</span> = <span class="ruby-keyword">if</span> <span class="ruby-ivar">@permissions</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;resources&#39;</span> )
     <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ]
+  <span class="ruby-keyword">end</span> <span class="ruby-operator">||</span> {}
+
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">permitted_in?</span>( <span class="ruby-identifier">tree</span>, <span class="ruby-identifier">action_name</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">tree</span> = <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||</span> {}
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">permitted_in?</span>( <span class="ruby-identifier">tree</span>, <span class="ruby-identifier">action_name</span> )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">tree</span> <span class="ruby-operator">||=</span> <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||</span> {}
-
-  <span class="ruby-identifier">result</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">tree</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;actions&#39;</span> )
-    <span class="ruby-identifier">tree</span>[ <span class="ruby-string">&#39;actions&#39;</span> ][ <span class="ruby-identifier">action_name</span> ]
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">tree</span>[ <span class="ruby-string">&#39;else&#39;</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -631,7 +634,7 @@ href="Permissions.html#method-i-from_h">from_h</a>.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 204</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 205</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-ivar">@permissions</span>
 <span class="ruby-keyword">end</span></pre>

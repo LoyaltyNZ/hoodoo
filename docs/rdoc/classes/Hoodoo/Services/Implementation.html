@@ -134,6 +134,18 @@ by being passed to a call to <code>run</code> in <code>config.ru</code>.</p>
           </ul>
         </dd>
       
+        <dt>V</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-verify">verify</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
     </dl>
   
 
@@ -371,6 +383,83 @@ of this action.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses must implement &#39;update&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-verify">
+            
+              <b>verify</b>( context, action )
+            
+            <a href="../../../classes/Hoodoo/Services/Implementation.html#method-i-verify" name="method-i-verify" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Optional verification to allow or deny authorisation for a particular
+action on a call-by-call basis.</p>
+
+<p>The middleware calls this method if a session (Hoodoo::Services::Session)
+has associated permissions (Hoodoo::Services::Permissions) which say that
+the resource&#39;s implementation should be asked via constant
+(Hoodoo::Services::Permissions::ASK).</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="Context.html">Hoodoo::Services::Context</a> instance as for action
+methods such as <a href="Implementation.html#method-i-show">show</a>, <a
+href="Implementation.html#method-i-list">list</a> and so forth.</p>
+</dd><dt><code>action</code>
+<dd>
+<p>The action that the caller is trying to perform, as a Symbol from the list
+in Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
+</dd></dl>
+
+<p>Your implementation <strong>MUST</strong> return either
+Hoodoo::Services::Permissions::ALLOW, to allow the action, or
+Hoodoo::Services::Permissions::DENY, to block the action.</p>
+<ul><li>
+<p>If a session&#39;s permissions indicate that a resource endpoint should be
+asked, but that interface does not define its own <a
+href="Implementation.html#method-i-verify">verify</a> method, then the
+default implementation herein will <em>deny</em> the request.</p>
+</li><li>
+<p>If a buggy verification method returns an unexpected value, the middleware
+will ignore it and again <em>deny</em> the request.</p>
+</li></ul>
+
+<p>Whether or not any of your implementations ever need to write a custom
+verification method will depend entirely upon your API, whether or not it
+has a meaningful definition of per-request assessment to allow or deny
+access and whether or not any sessions can exist with an &#39;ask&#39;
+permission inside in the first place. If using the <a
+href="../../Hoodoo.html">Hoodoo</a> authorisation and authentication
+mechanism, this would come down to whether or not any <a
+href="../Data/Resources/Caller.html">Hoodoo::Data::Resources::Caller</a>
+instances existed with the relevant permission value defined somewhere
+inside.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-verify_source')" id="l_method-i-verify_source">show</a>
+                
+              </p>
+              <div id="method-i-verify_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/implementation.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">verify</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">action</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span><span class="ruby-operator">::</span><span class="ruby-constant">DENY</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
