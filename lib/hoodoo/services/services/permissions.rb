@@ -186,15 +186,16 @@ module Hoodoo; module Services
 
       tree = if @permissions.has_key?( 'resources' )
         @permissions[ 'resources' ][ resource_name ]
+      end || {}
+
+      result = permitted_in?( tree, action_name )
+
+      if result.nil?
+        tree = @permissions[ 'default' ] || {}
+        result = permitted_in?( tree, action_name )
       end
 
-      tree ||= @permissions[ 'default' ] || {}
-
-      result = if tree.has_key?( 'actions' )
-        tree[ 'actions' ][ action_name ]
-      end
-
-      return result || tree[ 'else' ]
+      return result
     end
 
     # Return a Hash representative of this permissions object, which can be
@@ -214,6 +215,22 @@ module Hoodoo; module Services
       @permissions = Hoodoo::Utilities.stringify( hash )
     end
 
+  private
+
+    # For a given permissions sub-tree at the level of +actions+ / +else+,
+    # return an entry for the given action name. May return +nil+ if the
+    # tree has neither a matching action nor an +else+ case.
+    #
+    # +tree+::        Permissions sub-tree at the +actions+ / +else+ level.
+    # +action_name+:: As for #permitted?
+    #
+    def permitted_in?( tree, action_name )
+      result = if tree.has_key?( 'actions' )
+        tree[ 'actions' ][ action_name ]
+      end || tree[ 'else' ]
+
+      return result
+    end
   end
 
 end; end

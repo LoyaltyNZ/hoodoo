@@ -92,6 +92,46 @@ describe Hoodoo::Services::Permissions do
     })
   end
 
+  context 'with a resource but no resource fallback' do
+    before :each do
+      @p = described_class.new
+
+      @p.set_default_fallback( described_class::ASK )
+
+      @p.set_resource( :Foo, 'create', described_class::ALLOW )
+      @p.set_resource( :Foo, 'update', described_class::ASK   )
+      @p.set_resource( :Foo, 'delete', described_class::DENY  )
+
+      @expected = {
+        'resources' => {
+          'Foo' => {
+            'actions' => {
+              'create' => described_class::ALLOW,
+              'update' => described_class::ASK,
+              'delete' => described_class::DENY
+            }
+          },
+        },
+        'default' => {
+          'else' => described_class::ASK
+        }
+      }
+    end
+
+    it 'can be used to initialise a new instance as a Hash' do
+      p = described_class.new( @p.to_h )
+      expect( p.to_h ).to eq( @expected )
+    end
+
+    it 'behaves correctly' do
+      expect( @p.permitted?( :Foo, :create ) ).to eq( described_class::ALLOW )
+      expect( @p.permitted?( :Foo, :show ) ).to eq( described_class::ASK )
+      expect( @p.permitted?( :Foo, :list ) ).to eq( described_class::ASK )
+      expect( @p.permitted?( :Foo, :update ) ).to eq( described_class::ASK )
+      expect( @p.permitted?( :Foo, :delete ) ).to eq( described_class::DENY )
+    end
+  end
+
   context 'with permissions set' do
     before :each do
       @p = described_class.new

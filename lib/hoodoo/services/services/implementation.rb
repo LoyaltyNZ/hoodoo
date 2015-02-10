@@ -86,7 +86,47 @@ module Hoodoo; module Services
     def delete( context )
       raise "Hoodoo::Services::Implementation subclasses must implement 'delete'"
     end
+
+    # Optional verification to allow or deny authorisation for a particular
+    # action on a call-by-call basis.
+    #
+    # The middleware calls this method if a session
+    # (Hoodoo::Services::Session) has associated permissions
+    # (Hoodoo::Services::Permissions) which say that the resource's
+    # implementation should be asked via constant
+    # (Hoodoo::Services::Permissions::ASK).
+    #
+    # +context+:: Hoodoo::Services::Context instance as for action methods
+    #             such as #show, #list and so forth.
+    #
+    # +action+::  The action that the caller is trying to perform, as a
+    #             Symbol from the list in
+    #             Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+    #
+    # Your implementation *MUST* return either
+    # Hoodoo::Services::Permissions::ALLOW, to allow the action, or
+    # Hoodoo::Services::Permissions::DENY, to block the action.
+    #
+    # * If a session's permissions indicate that a resource endpoint should
+    #   be asked, but that interface does not define its own #verify method,
+    #   then the default implementation herein will _deny_ the request.
+    #
+    # * If a buggy verification method returns an unexpected value, the
+    #   middleware will ignore it and again _deny_ the request.
+    #
+    # Whether or not any of your implementations ever need to write a custom
+    # verification method will depend entirely upon your API, whether or not
+    # it has a meaningful definition of per-request assessment to allow or
+    # deny access and whether or not any sessions can exist with an 'ask'
+    # permission inside in the first place. If using the Hoodoo authorisation
+    # and authentication mechanism, this would come down to whether or not
+    # any Hoodoo::Data::Resources::Caller instances existed with the
+    # relevant permission value defined somewhere inside.
+    #
+    def verify( context, action )
+      return Hoodoo::Services::Permissions::DENY
+    end
+
   end
 
 end; end
-

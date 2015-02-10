@@ -1006,12 +1006,9 @@ module Hoodoo; module Services
 
       # Check for a supported, session-accessible action.
 
-      action = determine_action(
-        interface,
-        @rack_request.request_method,
-        uri_path_components.empty?,
-        @response
-      )
+      http_method   = @rack_request.request_method
+      action        = determine_action( http_method, uri_path_components.empty? )
+      authorisation = determine_authorisation( @session, interface, action, http_method, @response )
 
       return if @response.halt_processing?
 
@@ -1097,7 +1094,8 @@ module Hoodoo; module Services
 
       debug_log( 'Dispatching with parsed body data', request.body )
 
-      # Finally - dispatch to service.
+      # Build a context for the call. We can now, if necessary, do a final
+      # check with the resource endpoint for authorisation.
 
       context = Hoodoo::Services::Context.new(
         @session,
@@ -1105,6 +1103,13 @@ module Hoodoo; module Services
         @response,
         self
       )
+
+      if authorisation == Hoodoo::Services::Permissions::ASK
+        ask_for_authorisation( context, implementation, action, @response )
+        return if @response.halt_processing?
+      end
+
+      # Finally - dispatch to service.
 
       dispatch_to( interface, implementation, action, context )
     end
@@ -1379,27 +1384,23 @@ module Hoodoo; module Services
     end
 
     # Determine the action to call in a service for the given inbound HTTP
-    # method.
+    # method. This doesn't say anything about whether or not a particular
+    # endpoint happens to support that action - it just maps HTTP verb to
+    # action.
     #
-    # +interface+::       Hoodoo::Services::Interface for which the call is
-    #                     being made.
-    # +http_method+::     Inbound method as a string, e.g. +'POST'+
-    # +get_is_list+::     If +true+, treat GET methods as +:list+, else as
-    #                     +:show+. This is often determined on the basis
-    #                     of e.g. path components after the endpoint part
-    #                     of the URI path being absent or present.
-    # +response+::        Hoodoo::Services::Response instance that will be
-    #                     updated with an error if the HTTP method does not
-    #                     map to an allowed action.
+    # See also #determine_authorisation.
     #
-    # Returns the action as a symbol (e.g. +:list+) unless there is an error.
-    # If the Hoodoo::Services::Response#halt_processing? result for the given
-    # +response+ parameter is +true+ then the returned value is undefined.
-    # The service does not support the action; +response+ has already been
-    # updated with an appropriate error.
+    # +http_method+:: Inbound method as a string, e.g. +'POST'+. Upper or
+    #                 lower case.
     #
-    def determine_action( interface, http_method, get_is_list, response )
-
+    # +get_is_list+:: If +true+, treat GET methods as +:list+, else as
+    #                 +:show+. This is often determined on the basis of e.g.
+    #                 path components after the endpoint part of the URI path
+    #                 being absent or present.
+    #
+    # Returns the action as a Symbol - see ALLOWED_ACTIONS.
+    #
+    def determine_action( http_method, get_is_list )
       http_method = ( http_method || '' ).upcase
 
       # Clumsy code because there is no 1:1 map from HTTP method to action
@@ -1416,35 +1417,128 @@ module Hoodoo; module Services
           get_is_list ? :list : :show
       end
 
-      # Only need to check protected actions and session information for
-      # actions that aren't declared public.
+      return action
+    end
 
-      unless interface.public_actions.include?( action )
+    # Determine the authorisation / permission to perform a particular
+    # action.
+    #
+    # Pass the following parameters, all required:
+    #
+    # +session+::     Hoodoo::Services::Session instance describing the
+    #                 prevailing session details, including permissions.
+    #
+    # +interface+::   Hoodoo::Services::Interface for which the call is
+    #                 being made.
+    #
+    # +action+::      The action of interest; a Symbol from
+    #                 ALLOWED_ACTIONS; see also #determine_action.
+    #
+    # +http_method+:: Inbound method as a string, e.g. +'POST'+. Upper
+    #                 or lower case. Used for error reporting only.
+    #
+    # +response+::    Hoodoo::Services::Response instance that will be
+    #                 updated with an error if the HTTP method does not
+    #                 map to an allowed action or if permission is refused.
+    #
+    # Returns:
+    #
+    # * Hoodoo::Services::Permissions::ALLOW - the action is allowed.
+    #
+    # * +nil+ - the action was prohibited. The given +response+ was
+    #   with an appropriate error message (e.g. "invalid session",
+    #   "forbidden" etc.).
+    #
+    # * Hoodoo::Services::Permissions::ASK - the caller MUST check with
+    #   the target endpoint's implementation to see if the action is
+    #   allowed by calling #ask_for_authorisation at some point later in
+    #   processing when the information this needs is available.
+    #
+    def determine_authorisation( session, interface, action, http_method, response )
+      result = nil
 
-        # If we're here, the action isn't public; so unless it is declared
-        # as a protected action, it isn't supported by this endpoint.
+      if interface.public_actions.include?( action )
 
-        unless interface.actions.include?( action )
-          return response.add_error(
+        # Public action; no need to check anything else, it's allowed,
+        # session or no session.
+
+        result = Hoodoo::Services::Permissions::ALLOW
+
+      else
+
+        # The action isn't public; so unless it is declared as a protected
+        # action, it isn't supported by this endpoint. If supported, check
+        # session and permissions.
+
+        if interface.actions.include?( action )
+
+          if session.nil?
+            response.add_error( 'platform.invalid_session' )
+          elsif session.permissions.nil?
+            response.add_error( 'platform.forbidden' )
+          else
+            permission = session.permissions.permitted?( interface.resource, action )
+
+            if permission == Hoodoo::Services::Permissions::DENY
+              response.add_error( 'platform.forbidden' )
+            else
+              result = permission
+            end
+          end
+
+        else
+
+          response.add_error(
             'platform.method_not_allowed',
-            'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
+            'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ ( http_method || '<unknown>' ).upcase }' yielding action '#{ action }'"
           )
+
         end
-
-        # Check session and permissions to see if the request can proceed.
-
-        if @session.nil?
-          return response.add_error( 'platform.invalid_session' )
-        elsif @session.permissions.nil? ||
-              @session.permissions.permitted?( interface.resource, action ) == false
-          return response.add_error( 'platform.forbidden' )
-        end
-
       end
 
-      # All good!
+      return result
+    end
 
-      return action
+    # As a service for authorisation for a particular action given
+    # the request and session context data provided.
+    #
+    # Calls the Hoodoo::Services::Implementation#verify method in the
+    # target implementation. Expects a conforming response; anything
+    # that isn't Hoodoo::Services::Permissions::ALLOW is treated as
+    # Hoodoo::Services::Permissions::DENY.
+    #
+    # Pass the following parameters, all required:
+    #
+    # +context+::        Fully initialised Hoodoo::Services::Context
+    #                    instance as passed to any other service
+    #                    implementation method.
+    #
+    # +implementation+:: The service implementation instance to call.
+    #
+    # +action+::         The action to ask about - one of the values
+    #                    in ALLOWED_ACTIONS.
+    #
+    # +response+::       Hoodoo::Services::Response instance that will
+    #                    be updated with an error if the authorisation
+    #                    is not granted.
+    #
+    # Returns:
+    #
+    # * Hoodoo::Services::Permissions::ALLOW - the action is allowed.
+    #
+    # * +nil+ - the action was prohibited. The given +response+ was
+    #   with an appropriate error message (e.g. "invalid session",
+    #   "forbidden" etc.).
+    #
+    def ask_for_authorisation( context, implementation, action, response )
+      permission = implementation.verify( context, action )
+
+      if permission == Hoodoo::Services::Permissions::ALLOW
+        return permission
+      else
+        response.add_error( 'platform.forbidden' )
+        return nil
+      end
     end
 
     # Update a Hoodoo::Services::Response instance for making a call to
@@ -2076,16 +2170,6 @@ module Hoodoo; module Services
       set_common_response_headers( local_response )
       update_response_for( local_response, interface )
 
-      upc  = []
-      upc << ident unless ident.nil? || ident.empty?
-
-      action = determine_action(
-        interface,
-        http_method,
-        upc.empty?,
-        local_response
-      )
-
       # Add errors from the local service response into an augmented hash
       # for responding early (via a Proc for internal reuse later).
 
@@ -2095,7 +2179,18 @@ module Hoodoo; module Services
         hash
       }
 
+      # Figure out initial action / authorisation results for this request.
+      # We may still have to construct a context and ask the service after.
+
+      upc  = []
+      upc << ident unless ident.nil? || ident.empty?
+
+      action        = determine_action( http_method, upc.empty? )
+      authorisation = determine_authorisation( @session, interface, action, http_method, local_response )
+
       return add_local_errors.call() if local_response.halt_processing?
+
+      # Construct the local request details.
 
       local_request                     = new_request_for( interface )
       local_request.uri_path_components = upc
@@ -2140,10 +2235,8 @@ module Hoodoo; module Services
 
       return add_local_errors.call() if local_response.halt_processing?
 
-      # Dispatch the call, merge any errors that might have come back and
-      # return the body of the called service's response.
-
-      debug_log( 'Dispatching local inter-resource call', local_request.body )
+      # Build a context for the call. We can now, if necessary, do a final
+      # check with the resource endpoint for authorisation.
 
       context = Hoodoo::Services::Context.new(
         @session,
@@ -2151,6 +2244,16 @@ module Hoodoo; module Services
         local_response,
         self
       )
+
+      if authorisation == Hoodoo::Services::Permissions::ASK
+        ask_for_authorisation( context, implementation, action, local_response )
+        return add_local_errors.call() if local_response.halt_processing?
+      end
+
+      # Dispatch the call, merge any errors that might have come back and
+      # return the body of the called service's response.
+
+      debug_log( 'Dispatching local inter-resource call', local_request.body )
 
       dispatch_to( interface, implementation, action, context )
 

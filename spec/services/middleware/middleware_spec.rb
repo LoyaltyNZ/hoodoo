@@ -258,12 +258,50 @@ describe Hoodoo::Services::Middleware do
 
   context 'sessions' do
 
+    # This leans on assumption that Permissions#permitted? has already
+    # got adequate test coverage elsewhere, so we just make sure that
+    # it seems to allow or deny as expected via the session.
+
     context 'present' do
       it 'should check for session permissions' do
         expect_any_instance_of(Hoodoo::Services::Session).to receive(:permissions).at_least( 1 ).times.and_call_original
         expect_any_instance_of(Hoodoo::Services::Permissions).to receive(:permitted?).at_least( 1 ).times.and_call_original
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
         get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+    end
+
+    context 'with restricted permissions' do
+      before :example do
+        @old_test_session = Hoodoo::Services::Middleware.test_session()
+        test_session = @old_test_session.dup
+        permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
+        permissions.set_resource( :RSpecTestResource, :list, Hoodoo::Services::Permissions::ALLOW )
+        permissions.set_resource( :RSpecTestResource, :show, Hoodoo::Services::Permissions::ASK )
+        test_session.permissions = permissions
+        Hoodoo::Services::Middleware.set_test_session( test_session )
+      end
+
+      after :example do
+        Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+      end
+
+      it 'denies' do
+        delete '/v2/rspec_test_service_stub/uuid', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(403)
+      end
+
+      it 'allows' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'asks' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:verify).once.and_return(Hoodoo::Services::Permissions::ALLOW)
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:show).once.and_return({})
+        get '/v2/rspec_test_service_stub/uuid', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
     end
