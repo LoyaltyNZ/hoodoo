@@ -56,6 +56,14 @@ module Hoodoo; module Services
   #
   class Middleware
 
+    # The "category" directive below is required to work around an RDoc
+    # bug where Middleware is viewed as a namespace rather than a class in
+    # its own right, with documentation of constants otherwise entirely
+    # omitted. By putting one constant in its own category, RDoc ends up
+    # making them all visible.
+
+    # :category: Public constants
+    #
     # All allowed action names in implementations, used for internal checks.
     # This is also the default supported set of actions. Symbols.
     #
@@ -116,11 +124,11 @@ module Hoodoo; module Services
     # The default test session; a Hoodoo::Services::Session instance with the
     # following characteristics:
     #
-    # Session ID+::     '01234567890123456789012345678901',
-    # Caller ID::       'c5ea12fb7f414a46850e73ee1bf6d95e',
+    # Session ID::      +01234567890123456789012345678901+
+    # Caller ID::       +c5ea12fb7f414a46850e73ee1bf6d95e+
     # Caller Version::  1
     # Permissions::     Default/else/"allow" to allow all actions
-    # Identity::        Has "caller_id" as its only field
+    # Identity::        Has +caller_id+ as its only field
     # Scoping::         Empty
     # Expires at:       Now plus 2 days
     #
@@ -1411,19 +1419,6 @@ module Hoodoo; module Services
       # Only need to check protected actions and session information for
       # actions that aren't declared public.
 
-      # puts "*"*80
-      # puts "This is resource #{interface.resource}"
-      # puts "The requested action is #{action}"
-      # puts "Public: #{interface.public_actions.include?( action )} protected: #{interface.actions.include?( action )}"
-      # puts "Session? #{!@session.nil?}"
-      # puts "Permissions? #{!@session.permissions.nil?}" unless @session.nil?
-      # puts "Permitted? #{@session.permissions.permitted?( interface.resource, action )}" unless @session.nil? || @session.permissions.nil?
-      # puts "*"*80
-      # @old_test_session = Hoodoo::Services::Middleware.test_session()
-      # default_deny_session = Hoodoo::Services::Middleware::DEFAULT_TEST_SESSION.dup
-      # default_deny_session.permissions = Hoodoo::Services::Permissions.new
-      # Hoodoo::Services::Middleware.set_test_session( default_deny_session )
-
       unless interface.public_actions.include?( action )
 
         # If we're here, the action isn't public; so unless it is declared
@@ -1721,7 +1716,7 @@ module Hoodoo; module Services
       )
     end
 
-  protected
+  protected # :nodoc: all
 
     # Is the given resource available as a local endpoint in this service
     # application?
