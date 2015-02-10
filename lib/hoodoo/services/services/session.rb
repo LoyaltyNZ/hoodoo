@@ -115,7 +115,7 @@ module Hoodoo
 
       # Create a new instance.
       #
-      # +options+::       Optional Hash of options, described below.
+      # +options+:: Optional Hash of options, described below.
       #
       # Options are:
       #

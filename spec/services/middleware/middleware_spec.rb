@@ -258,19 +258,32 @@ describe Hoodoo::Services::Middleware do
 
   context 'sessions' do
 
-    it 'should check for session data' do
-      expect(Hoodoo::Services::LegacySession).to receive(:load_session).and_call_original
-      expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
-      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+    context 'present' do
+      it 'should check for session permissions' do
+        expect_any_instance_of(Hoodoo::Services::Session).to receive(:permissions).at_least( 1 ).times.and_call_original
+        expect_any_instance_of(Hoodoo::Services::Permissions).to receive(:permitted?).at_least( 1 ).times.and_call_original
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once.and_return([])
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
     end
 
-    it 'should check for missing session data' do
-      expect(Hoodoo::Services::LegacySession).to receive(:load_session).and_return(nil)
-      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(401)
-      result = JSON.parse(last_response.body)
-      expect(result['errors'][0]['code']).to eq('platform.invalid_session')
+    context 'absent' do
+      before :example do
+        @old_test_session = Hoodoo::Services::Middleware.test_session()
+        Hoodoo::Services::Middleware.set_test_session( nil )
+      end
+
+      after :example do
+        Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+      end
+
+      it 'should check for missing session data' do
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(401)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.invalid_session')
+      end
     end
 
   end
@@ -367,7 +380,7 @@ describe Hoodoo::Services::Middleware do
           request = context.request
           response = context.response
 
-          expect(session).to be_a(Hoodoo::Services::LegacySession)
+          expect(session).to be_a(Hoodoo::Services::Session)
           expect(request).to be_a(Hoodoo::Services::Request)
           expect(response).to be_a(Hoodoo::Services::Response)
 
@@ -1753,8 +1766,13 @@ describe Hoodoo::Services::Middleware::Endpoint do
   end
 
   context 'with no session' do
-    before :each do
-      expect( Hoodoo::Services::LegacySession ).to receive( :load_session ).once.and_return( nil )
+    before :example do
+      @old_test_session = Hoodoo::Services::Middleware.test_session()
+      Hoodoo::Services::Middleware.set_test_session( nil )
+    end
+
+    after :example do
+      Hoodoo::Services::Middleware.set_test_session( @old_test_session )
     end
 
     it 'can call public-to-public actions successfully' do

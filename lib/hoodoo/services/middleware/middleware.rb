@@ -17,6 +17,9 @@ require 'net/http'
 require 'net/https'
 require 'drb/drb'
 
+require 'hoodoo/services/services/permissions'
+require 'hoodoo/services/services/session'
+
 module Hoodoo; module Services
 
   # Rack middleware, declared in (e.g.) a +config.ru+ file in the usual way:
@@ -110,6 +113,38 @@ module Hoodoo; module Services
     #
     MAXIMUM_LOGGED_PAYLOAD_SIZE = 1024
 
+    # The default test session; a Hoodoo::Services::Session instance with the
+    # following characteristics:
+    #
+    # Session ID+::     '01234567890123456789012345678901',
+    # Caller ID::       'c5ea12fb7f414a46850e73ee1bf6d95e',
+    # Caller Version::  1
+    # Permissions::     Default/else/"allow" to allow all actions
+    # Identity::        Has "caller_id" as its only field
+    # Scoping::         Empty
+    # Expires at:       Now plus 2 days
+    #
+    # See also ::test_session and ::set_test_session.
+    #
+    DEFAULT_TEST_SESSION = Hoodoo::Services::Session.new
+
+    # This is NOT a canonical way to construct a session! Both the Permissions
+    # object and Session object should be put together using defined methods,
+    # not by assuming hash layout. This is done *purely internally* within the
+    # middleware for simplicity/speed at parse time.
+    #
+    DEFAULT_TEST_SESSION.from_h( {
+      'session_id'     => '01234567890123456789012345678901',
+      'expires_at'     => ( Time.now + 172800 ).utc.iso8601,
+      'caller_version' => 1,
+      'caller_id'      =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
+      'identity'       => { 'caller_id' => 'c5ea12fb7f414a46850e73ee1bf6d95e' },
+      'scoping'        => {},
+      'permissions'    => Hoodoo::Services::Permissions.new( {
+        'default' => { 'else' => Hoodoo::Services::Permissions::ALLOW }
+      } ).to_h
+    } )
+
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
     # or +false+ according to the +RACK_ENV+ environment variable setting.
@@ -141,7 +176,7 @@ module Hoodoo; module Services
     # host available.
     #
     def self.memcached_host
-      ENV[ 'MEMCACHE_HOST' ] || ENV[ 'MEMCACHED_HOST' ]
+      ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_HOST' ]
     end
 
     # Are we running on the queue, else (implied) a local HTTP server?
@@ -220,6 +255,30 @@ module Hoodoo; module Services
     #
     def self.set_log_folder( base_path )
       self.send( :add_file_logging, base_path )
+    end
+
+    # A Hoodoo::Services::Session instance to use for tests or when no
+    # local Memcached instance is known about (environment variable
+    # +MEMCACHED_HOST+ is not set). The session is (eventually) read each
+    # time a request is made via Rack (through #call).
+    #
+    # "Out of the box", DEFAULT_TEST_SESSION is used.
+    #
+    def self.test_session
+      @@test_session
+    end
+
+    @@test_session = DEFAULT_TEST_SESSION
+
+    # Set the test session instance. See ::test_session for details.
+    #
+    # +session+:: A Hoodoo::Services::Session instance to use as the test
+    #             session instance for any subsequently-made requests. If
+    #             +nil+, the test session system acts as if an invalid or
+    #             missing session ID had been supplied.
+    #
+    def self.set_test_session( session )
+      @@test_session = session
     end
 
     # Record internally the HTTP host and port during local development via
@@ -750,15 +809,39 @@ module Hoodoo; module Services
       # no configured MemCache available (assume local development).
 
       environment = self.class.environment()
-      Hoodoo::Services::LegacySession.testing( environment.test? || ! self.class.has_memcached? )
 
-      @session = Hoodoo::Services::LegacySession.load_session(
-        self.class.memcached_host(),
-        @session_id
-      )
+      if self.class.environment().test? || ! self.class.has_memcached?
+        @session = self.class.test_session()
+      else
+        @session = Hoodoo::Services::Session.new(
+          :memcached_host => self.class.memcached_host(),
+          :session_id     => @session_id
+        )
+
+        result = @session.load_from_memcached!( @session_id )
+        @session = nil if result != true
+      end
 
       if @session.nil? && interfaces_have_public_methods? == false
-        return @response.add_error( 'platform.invalid_session' )
+        #
+        # TODO: Delete legacy code (start)
+        #
+        unless self.class.environment().test? || ! self.class.has_memcached?
+          @session = Hoodoo::Services::LegacySession.load_session(
+            self.class.memcached_host(),
+            @session_id
+          )
+        end
+        #
+        if @session.nil? && interfaces_have_public_methods? == false
+          return @response.add_error( 'platform.invalid_session' )
+        end
+        #
+        # TODO: Delete legacy code (end)
+        #       Replace with just:
+        #
+        #       return @response.add_error( 'platform.invalid_session' )
+        #
       end
     end
 
@@ -778,14 +861,14 @@ module Hoodoo; module Services
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-resource
-      # local call code.
+      # Additions here may require corresponding additions to the
+      # inter-resource local call code.
       # =======================================================================
 
 
-      @locale           = deal_with_language_header()
-      @interaction_id   = find_or_generate_interaction_id()
-      @response = Hoodoo::Services::Response.new( @interaction_id )
+      @locale         = deal_with_language_header()
+      @interaction_id = find_or_generate_interaction_id()
+      @response       = Hoodoo::Services::Response.new( @interaction_id )
 
       check_content_type_header()
 
@@ -871,8 +954,8 @@ module Hoodoo; module Services
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-resource
-      # local call code.
+      # Additions here may require corresponding additions to the
+      # inter-resource local call code.
       # =======================================================================
 
 
@@ -1078,8 +1161,8 @@ module Hoodoo; module Services
 
 
       # =======================================================================
-      # Additions here may require corresponding additions to the inter-resource
-      # local call code.
+      # Additions here may require corresponding additions to the
+      # inter-resource local call code.
       # =======================================================================
 
 
@@ -1325,23 +1408,43 @@ module Hoodoo; module Services
           get_is_list ? :list : :show
       end
 
-      # If we've no session at this point, then one or more interfaces have
-      # public actions. Need to dig deeper and possibly bail out.
+      # Only need to check protected actions and session information for
+      # actions that aren't declared public.
 
-      if @session.nil?
-        unless interface.public_actions.include?( action )
-          return response.add_error( 'platform.invalid_session' )
+      # puts "*"*80
+      # puts "This is resource #{interface.resource}"
+      # puts "The requested action is #{action}"
+      # puts "Public: #{interface.public_actions.include?( action )} protected: #{interface.actions.include?( action )}"
+      # puts "Session? #{!@session.nil?}"
+      # puts "Permissions? #{!@session.permissions.nil?}" unless @session.nil?
+      # puts "Permitted? #{@session.permissions.permitted?( interface.resource, action )}" unless @session.nil? || @session.permissions.nil?
+      # puts "*"*80
+      # @old_test_session = Hoodoo::Services::Middleware.test_session()
+      # default_deny_session = Hoodoo::Services::Middleware::DEFAULT_TEST_SESSION.dup
+      # default_deny_session.permissions = Hoodoo::Services::Permissions.new
+      # Hoodoo::Services::Middleware.set_test_session( default_deny_session )
+
+      unless interface.public_actions.include?( action )
+
+        # If we're here, the action isn't public; so unless it is declared
+        # as a protected action, it isn't supported by this endpoint.
+
+        unless interface.actions.include?( action )
+          return response.add_error(
+            'platform.method_not_allowed',
+            'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
+          )
         end
-      end
 
-      # At this point the session is present and valid or the action is
-      # public, but does the interfact actually implement it?
+        # Check session and permissions to see if the request can proceed.
 
-      unless interface.actions.include?( action )
-        return response.add_error(
-          'platform.method_not_allowed',
-          'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ http_method }' yielding action '#{ action }'"
-        )
+        if @session.nil?
+          return response.add_error( 'platform.invalid_session' )
+        elsif @session.permissions.nil? ||
+              @session.permissions.permitted?( interface.resource, action ) == false
+          return response.add_error( 'platform.forbidden' )
+        end
+
       end
 
       # All good!

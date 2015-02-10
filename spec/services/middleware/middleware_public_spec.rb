@@ -67,8 +67,18 @@ describe Hoodoo::Services::Middleware do
     )
   end
 
+  before :example do
+    @old_test_session = Hoodoo::Services::Middleware.test_session()
+    Hoodoo::Services::Middleware.set_test_session( Hoodoo::Services::Middleware::DEFAULT_TEST_SESSION )
+  end
+
   before :example, :without_session => true do
-    expect( Hoodoo::Services::LegacySession ).to receive( :load_session ).once.and_return( nil )
+    @old_test_session = Hoodoo::Services::Middleware.test_session()
+    Hoodoo::Services::Middleware.set_test_session( nil )
+  end
+
+  after :example do
+    Hoodoo::Services::Middleware.set_test_session( @old_test_session )
   end
 
   # -------------------------------------------------------------------------
