@@ -58,6 +58,59 @@ module Hoodoo
       return obj
     end
 
+    # Deep merge two hashes.
+    #
+    # Hash#merge/merge! only do a shallow merge. For example, without
+    # a block, when starting with this hash:
+    #
+    #     { :one => { :two => { :three => 3 } } }
+    #
+    # ...and merging in this hash:
+    #
+    #     { :one => { :two => { :and_four => 4 } } }
+    #
+    # ...the possibly unexpected result is this:
+    #
+    #     { :one => { :two => { :and_four => 4 } } }
+    #
+    # Because the value for key ":one" in the original hash is simply
+    # overwritten with the value from the merged-in hash.
+    #
+    # Deep merging takes a target hash, into which an "inbound" source
+    # hash is merged and returns a new hash that is the deep merged
+    # result. Taking the above example:
+    #
+    #     target_hash  = { :one => { :two => { :three => 3 } } }
+    #     inbound_hash = { :one => { :two => { :and_four => 4 } } }
+    #     Hoodoo::Utilities.deep_merge_into( target_hash, inbound_hash )
+    #
+    # ...yields:
+    #
+    #     { :one => { :two => { :three => 3, :and_four => 4 } } }
+    #
+    # For any same-named key with a non-hash value, the value in the
+    # inbound hash will overwrite the value in the target hash.
+    #
+    # Parameters:
+    #
+    # +target_hash+::  The hash into which something will be merged.
+    # +inbound_hash+:: The hash that will be merged into the target.
+    #
+    # Returns the merged result.
+    #
+    def self.deep_merge_into( target_hash, inbound_hash )
+
+      # Based on:
+      #
+      # http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash
+
+      merger = proc { | key, v1, v2 |
+        Hash === v1 && Hash === v2 ? v1.merge( v2, &merger ) : v2.nil? ? v1 : v2
+      }
+
+      return target_hash.merge( inbound_hash, &merger )
+    end
+
     # Is a parameter convertable to an integer cleanly? Returns the integer
     # value if so, else +nil+.
     #
