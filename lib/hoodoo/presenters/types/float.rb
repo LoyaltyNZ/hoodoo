@@ -3,7 +3,7 @@ module Hoodoo
     # A JSON float schema member
     class Float < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Float and return an Hoodoo::Errors instance
+      # Check if data is a valid Float and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

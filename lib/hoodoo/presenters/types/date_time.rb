@@ -3,7 +3,7 @@ module Hoodoo
     # A JSON datetime schema member
     class DateTime < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Datetime and return an Hoodoo::Errors instance
+      # Check if data is a valid Datetime and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

@@ -35,7 +35,7 @@ module Hoodoo
         !! @has_default
       end
 
-      # Check if data is required and return an Hoodoo::Errors instance
+      # Check if data is required and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = Hoodoo::Errors.new
 

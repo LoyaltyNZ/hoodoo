@@ -3,7 +3,7 @@ module Hoodoo
     # A JSON integer schema member
     class Integer < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Integer and return an Hoodoo::Errors instance
+      # Check if data is a valid Integer and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

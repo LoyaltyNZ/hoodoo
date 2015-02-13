@@ -3,7 +3,7 @@ module Hoodoo
     # A JSON date schema member
     class Date < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Date and return an Hoodoo::Errors instance
+      # Check if data is a valid Date and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

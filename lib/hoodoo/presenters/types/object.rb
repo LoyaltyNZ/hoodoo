@@ -20,7 +20,7 @@ module Hoodoo
         @internationalised = false
       end
 
-      # Check if data is a valid Object and return an Hoodoo::Errors instance
+      # Check if data is a valid Object and return a Hoodoo::Errors instance
       # with zero (valid) or more (has validation problems) errors inside.
       #
       # +data+: Data to check (and check nested properties therein). Expected

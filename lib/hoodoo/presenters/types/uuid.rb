@@ -28,7 +28,7 @@ module Hoodoo
         super name, options
       end
 
-      # Check if data is a valid UUID and return an Hoodoo::Errors instance
+      # Check if data is a valid UUID and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

@@ -27,7 +27,7 @@ module Hoodoo
         end
       end
 
-      # Check if data is a valid String and return an Hoodoo::Errors instance
+      # Check if data is a valid String and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

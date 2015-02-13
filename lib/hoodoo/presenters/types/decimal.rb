@@ -18,7 +18,7 @@ module Hoodoo
         @precision = options[:precision]
       end
 
-      # Check if data is a valid Decimal and return an Hoodoo::Errors instance
+      # Check if data is a valid Decimal and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)

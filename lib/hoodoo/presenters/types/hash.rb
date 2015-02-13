@@ -162,7 +162,7 @@ module Hoodoo
       # The properties of this object, a +hash+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Hash and return an Hoodoo::Errors instance
+      # Check if data is a valid Hash and return a Hoodoo::Errors instance
       def validate(data, path = '')
         errors = super data, path
         return errors if errors.has_errors? || (!@required and data.nil?)
