@@ -334,7 +334,7 @@ module Hoodoo
       end
 
       # Implement Hoodoo::Communicators::Base#communicate for both slow and
-      # fast writers. Assumes it will be passed an Hoodoo::Logger::Payload
+      # fast writers. Assumes it will be passed a Hoodoo::Logger::Payload
       # class instance which describes the structured log data to report; also
       # assumes it is only called when the calling logger's configured log
       # level threshold should allow through the level of the log message in
@@ -369,14 +369,14 @@ module Hoodoo
       end
     end
 
-    # Used internally as an Hoodoo::Communicator::Pool communicator wrapping
+    # Used internally as a Hoodoo::Communicator::Pool communicator wrapping
     # fast log writer instances.
     #
     class FastCommunicator < Hoodoo::Communicators::Fast
       include Communicator
     end
 
-    # Used internally as an Hoodoo::Communicator::Pool communicator wrapping
+    # Used internally as a Hoodoo::Communicator::Pool communicator wrapping
     # slow log writer instances.
     #
     class SlowCommunicator < Hoodoo::Communicators::Slow

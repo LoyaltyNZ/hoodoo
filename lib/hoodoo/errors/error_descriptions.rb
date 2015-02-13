@@ -42,8 +42,8 @@ module Hoodoo
   #
   # An instance of the Hoodoo::ErrorDescriptions class gets built behind
   # the scenes as part of the service interface description. This is found by
-  # the middleware and passed to an Hoodoo::Errors constructor. The result
-  # is stored in an Hoodoo::Services::Response instance and passed to handler
+  # the middleware and passed to a Hoodoo::Errors constructor. The result
+  # is stored in a Hoodoo::Services::Response instance and passed to handler
   # methods in the service's Hoodoo::Services::Implementation subclass for each
   # request. Service implementations access the errors collection through
   # Hoodoo::Services::Response#errors and can then add errors using the generic
@@ -62,7 +62,7 @@ module Hoodoo
   #
   # As per the example above, services can share an instance across requests
   # (and threads) via a class's variable if the descriptions don't change. You
-  # would use the descriptions to inform an Hoodoo::Errors instance of the
+  # would use the descriptions to inform a Hoodoo::Errors instance of the
   # available codes and their requirements:
   #
   #    @errors = Hoodoo::Errors.new( ERROR_DESCRIPTIONS )

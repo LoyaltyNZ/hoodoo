@@ -67,7 +67,7 @@ module Hoodoo
         #       found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
         #
         #       # ...map 'found' to whatever resource you're representing,
-        #       # e.g. via an Hoodoo::Presenters::Base subclass with resource
+        #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
         #       # schema and the subclass's Hoodoo::Presenters::Base::render
         #       # call, then...
         #

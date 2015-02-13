@@ -15,7 +15,7 @@ module Hoodoo
 
       # Writes structured messages to logentries.com via the "le" gem,
       # which uses its own asynchronous worker thread for network data.
-      # Thus, an Hoodoo::Logger::FastWriter subclass. See also
+      # Thus, a Hoodoo::Logger::FastWriter subclass. See also
       # Hoodoo::Logger.
       #
       class LogEntriesDotComWriter < Hoodoo::Logger::FastWriter

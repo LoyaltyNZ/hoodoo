@@ -82,7 +82,7 @@ module Hoodoo
       # Returns the passed-in communicator instance parameter, for convenience.
       #
       # +communicator+:: Instance is to be added to the pool. Must be
-      #                  either an Hoodoo::Communicators::Fast or
+      #                  either a Hoodoo::Communicators::Fast or
       #                  Hoodoo::Communicators::Slow subclass instance.
       #
       def add( communicator )
@@ -115,7 +115,7 @@ module Hoodoo
       # Returns the passed-in communicator instance parameter, for convenience.
       #
       # +communicator+:: Instance is to be removed from the pool. Must be
-      #                  either an Hoodoo::Communicators::Fast or
+      #                  either a Hoodoo::Communicators::Fast or
       #                  Hoodoo::Communicators::Slow subclass instance.
       #
       def remove( communicator )

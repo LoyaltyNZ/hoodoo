@@ -80,7 +80,7 @@ module Hoodoo
       #
       #     end
       #
-      # +collection+:: An Hoodoo::Errors instance, typically obtained
+      # +collection+:: A Hoodoo::Errors instance, typically obtained
       #                from the Hoodoo::Services::Context instance passed to
       #                a service implementation in calls like
       #                Hoodoo::Services::Implementation#list or
@@ -136,7 +136,7 @@ module Hoodoo
         return added
       end
 
-      # Validate the model instance and return an Hoodoo::Errors instance
+      # Validate the model instance and return a Hoodoo::Errors instance
       # which contains no platform errors if there are no model validation
       # errors, else mapped-to-platform errors if validation errors are
       # encountered. For ActiveRecord validation documentation, see:

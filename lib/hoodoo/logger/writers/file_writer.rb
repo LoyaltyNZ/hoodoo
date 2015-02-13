@@ -19,7 +19,7 @@ module Hoodoo
 
       # Create a file writer instance. Files are written by opening,
       # adding a log message and closing again, to provide reliability.
-      # For this reason, this is an Hoodoo::Logger::SlowWriter subclass.
+      # For this reason, this is a Hoodoo::Logger::SlowWriter subclass.
       #
       # If you want faster file access at the expense of immediate updates
       # / reliability due to buffering, open a file externally to create an

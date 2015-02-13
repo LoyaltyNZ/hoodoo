@@ -21,7 +21,7 @@ module Hoodoo
 
       # Create a stream writer instance. Although you could initialize this
       # class with a slow output stream, they're expected to be fast (e.g.
-      # terminal output) as this is an Hoodoo::Logger::FastWriter subclass.
+      # terminal output) as this is a Hoodoo::Logger::FastWriter subclass.
       #
       # For reliable file writing, use the Hoodoo::Logger::FileWriter class
       # instead.
