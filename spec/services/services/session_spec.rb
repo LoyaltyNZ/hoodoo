@@ -126,7 +126,7 @@ describe Hoodoo::Services::Session do
       'permissions'    => p.to_h()
     }
 
-    s.from_h( h )
+    s.from_h!( h )
 
     expect( s.session_id ).to eq( '1234' )
     expect( s.caller_id ).to eq( '0987' )

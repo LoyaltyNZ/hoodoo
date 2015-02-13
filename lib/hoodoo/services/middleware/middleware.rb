@@ -141,7 +141,7 @@ module Hoodoo; module Services
     # not by assuming hash layout. This is done *purely internally* within the
     # middleware for simplicity/speed at parse time.
     #
-    DEFAULT_TEST_SESSION.from_h( {
+    DEFAULT_TEST_SESSION.from_h!( {
       'session_id'     => '01234567890123456789012345678901',
       'expires_at'     => ( Time.now + 172800 ).utc.iso8601,
       'caller_version' => 1,
@@ -393,23 +393,19 @@ module Hoodoo; module Services
       #
       begin
 
-        @rack_request = Rack::Request.new( env )
+        enable_alchemy_logging_from( env )
+        interaction = Hoodoo::Services::Middleware::Interaction.new( env, self )
+        debug_log( interaction )
 
-        alchemy = env[ 'rack.alchemy' ]
-        unless alchemy.nil? || defined?( @@alchemy )
-          @@alchemy = alchemy
-          self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?
-        end
-
-        debug_log()
-
-        early_response = preprocess()
+        early_response = preprocess( interaction )
         return early_response unless early_response.nil?
 
-        process()     unless @response.halt_processing?
-        postprocess() unless @response.halt_processing?
+        response = interaction.context.response
 
-        return respond_with( @response.for_rack() )
+        process( interaction )     unless response.halt_processing?
+        postprocess( interaction ) unless response.halt_processing?
+
+        return respond_for( interaction )
 
       rescue => exception
         begin
@@ -418,15 +414,30 @@ module Hoodoo; module Services
             ExceptionReporting.report( exception, env )
           end
 
-          return respond_with( record_exception( @response, exception ) )
+          record_exception( interaction, exception )
 
-        rescue
+          return respond_for( interaction )
 
+        rescue => inner_exception
           begin
+            backtrace       = ''
+            inner_backtrace = ''
+
+            if self.class.environment.test? || self.class.environment.development?
+              backtrace       = exception.backtrace
+              inner_backtrace = inner_exception.backtrace
+            else
+              ''
+            end
+
             @@logger.error(
               'Hoodoo::Services::Middleware#call',
               'Middleware exception in exception handler',
-              exception.to_s
+              inner_exception.to_s,
+              inner_backtrace.to_s,
+              '...while handling...',
+              exception.to_s,
+              backtrace.to_s
             )
           rescue
             # Ignore logger exceptions. Can't do anything about them. Just
@@ -545,26 +556,44 @@ module Hoodoo; module Services
 
     private_class_method( :add_queue_logging )
 
-    # Log that we're responding with the in the given Rack response def array,
-    # returning the same, so that in #call the idiom can be:
+    # Given a Rack environment, find the Alchemy endpoint and if there is one,
+    # use this to initialize queue logging.
     #
-    #     return respond_with( ... )
+    # +env+:: Rack 'env' parameter from e.g. Rack's invocation of #call.
+    #
+    def enable_alchemy_logging_from( env )
+      alchemy = env[ 'rack.alchemy' ]
+      unless alchemy.nil? || defined?( @@alchemy )
+        @@alchemy = alchemy
+        self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?
+      end
+    end
+
+    # Handle responding to Rack for a given interaction. Logs that we're
+    # responding and returns #for_rack data so that in (e.g.) #call the
+    # idiom can be:
+    #
+    #     return respond_for( ... )
     #
     # ...to log the response and return data to Rack all in one go.
     #
-    # +rack_data+:: Rack response array (HTTP status code integer, header
-    #               hash and body data as per Rack specification).
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction, including a
+    #                 valid 'response' object if you're using that for
+    #                 the response data.
     #
-    # Returns the +rack_data+ input parameter value without modifications.
+    # Returns data suitable for giving directly back to Rack.
     #
-    def respond_with( rack_data )
+    def respond_for( interaction )
+
+      rack_data = interaction.context.response.for_rack()
 
       id   = nil
       body = ''
 
       rack_data[ 2 ].each { | thing | body << thing.to_s }
 
-      if @response.halt_processing?
+      if interaction.context.response.halt_processing?
         begin
           # Error cases should be infrequent, so we can "be nice" and re-parse
           # the returned body for structured logging only. We don't do this for
@@ -589,7 +618,7 @@ module Hoodoo; module Services
       end
 
       data = {
-        :interaction_id => @interaction_id,
+        :interaction_id => interaction.interaction_id,
         :payload        => {
           :http_status_code => rack_data[ 0 ],
           :http_headers     => rack_data[ 1 ],
@@ -598,8 +627,8 @@ module Hoodoo; module Services
       }
 
       data[ :id       ] = id unless id.nil?
-      data[ :session  ] = @session.to_h unless @session.nil?
-      data[ :resource ] = @target_resource_for_error_reports.to_s unless @target_resource_for_error_reports.nil?
+      data[ :session  ] = interaction.context.session.to_h unless interaction.context.session.nil?
+      data[ :resource ] = interaction.target_resource_for_error_reports.to_s unless interaction.target_resource_for_error_reports.nil?
 
       @@logger.report(
         level,
@@ -619,29 +648,27 @@ module Hoodoo; module Services
     # the fact* of calling the implementation, using the target interface's
     # resource name for the structured log entry's "component" field.
     #
-    # +interface+::      The Hoodoo::Services::Interface subclass referring to
-    #                    the service implementation that was called.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance for
+    #                 the interaction currently being logged.
     #
-    # +action+::         Name of method that was called in the service instance
-    #                    as a Symbol, e.g. :list, :show.
-    #
-    # +context+::        Hoodoo::Services::Context instance containing request
-    #                    and response details.
-    #
-    def auto_log( interface, action, context )
+    def auto_log( interaction )
 
-      # In #respond_with, error logging is handled. Since we generate a UUID
+      context   = interaction.context
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+
+      # In #respond_for, error logging is handled. Since we generate a UUID
       # up front for errors (since a UUID is returned), we must not log under
       # that UUID twice. So in auto-log, only log success cases. Leave the
-      # last-bastion-of-response that is #respond_with to deal with the rest.
+      # last-bastion-of-response that is #respond_for to deal with the rest.
       #
       return if ( context.response.halt_processing? )
 
       # Data as per Hoodoo::Services::Middleware::StructuredLogger.
 
       data = {
-        :interaction_id => @interaction_id,
-        :session        => ( @session || {} ).to_h
+        :interaction_id => interaction.interaction_id,
+        :session        => ( interaction.context.session || {} ).to_h
       }
 
       # Don't bother logging list responses - they could be huge - instead
@@ -672,9 +699,13 @@ module Hoodoo; module Services
     # Before calling, +@rack_request+ must be set up with the Rack::Request
     # instance for the call environment.
     #
-    # *args:: Optional extra arguments used as strings to add to log message.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance for
+    #                 the interaction currently being logged.
     #
-    def debug_log( *args )
+    # *args::         Optional extra arguments used as strings to add to the
+    #                 log message.
+    #
+    def debug_log( interaction, *args )
 
       # Even though the logger itself would check this itself, check and exit
       # early here to avoid object creation and string composition overheads
@@ -682,13 +713,17 @@ module Hoodoo; module Services
 
       return unless @@logger.report?( :debug )
 
+      scheme         = interaction.rack_request.scheme         || 'unknown_scheme'
+      host_with_port = interaction.rack_request.host_with_port || 'unknown_host'
+      full_path      = interaction.rack_request.fullpath       || '/unknown_path'
+
       data = {
-        :full_uri       => "#{ @rack_request.scheme }://#{ @rack_request.host_with_port }#{ @rack_request.fullpath }",
-        :interaction_id => @interaction_id,
+        :full_uri       => "#{ scheme }://#{ host_with_port }#{ full_path }",
+        :interaction_id => interaction.interaction_id,
         :payload        => { 'args' => args }
       }
 
-      data[ :session  ] = @session.to_h unless @session.nil?
+      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
 
       @@logger.report(
         :debug,
@@ -804,14 +839,18 @@ module Hoodoo; module Services
       end
     end
 
-    # Load Session from Memcached and decode it.
+    # Load a session from Memcached on the basis of a session ID header
+    # in the current interaction's Rack request data.
     #
-    # On exit, +@session+ and +@session_id+ will have been updated. Be
-    # sure to check +@response.halt_processing?+ to see if processing
-    # should abort and return immediately.
+    # On exit, the interaction context may have been updated. Be sure to
+    # check +interaction.context.response.halt_processing?+ to see if
+    # processing should abort and return immediately.
     #
-    def load_session
-      @session_id = @rack_request.env[ 'HTTP_X_SESSION_ID' ]
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
+    def load_session_into( interaction )
+      session_id = interaction.rack_request.env[ 'HTTP_X_SESSION_ID' ]
 
       # Use test mode for sessions if in a test environment or if there is
       # no configured MemCache available (assume local development).
@@ -819,53 +858,58 @@ module Hoodoo; module Services
       environment = self.class.environment()
 
       if self.class.environment().test? || ! self.class.has_memcached?
-        @session = self.class.test_session()
+        session = self.class.test_session()
       else
-        @session = Hoodoo::Services::Session.new(
+        session = Hoodoo::Services::Session.new(
           :memcached_host => self.class.memcached_host(),
-          :session_id     => @session_id
+          :session_id     => session_id
         )
 
-        result = @session.load_from_memcached!( @session_id )
-        @session = nil if result != true
+        result = session.load_from_memcached!( session_id )
+        session = nil if result != true
       end
 
-      if @session.nil? && interfaces_have_public_methods? == false
-        #
-        # TODO: Delete legacy code (start)
-        #
-        unless self.class.environment().test? || ! self.class.has_memcached?
-          @session = Hoodoo::Services::LegacySession.load_session(
-            self.class.memcached_host(),
-            @session_id
-          )
-        end
-        #
-        if @session.nil? && interfaces_have_public_methods? == false
-          return @response.add_error( 'platform.invalid_session' )
-        end
-        #
-        # TODO: Delete legacy code (end)
-        #       Replace with just:
-        #
-        #       return @response.add_error( 'platform.invalid_session' )
-        #
+      # If there's no session and no local interfaces have any public
+      # methods (everything is protected) then bail out early, as the
+      # request can't possibly succeed.
+
+      if session.nil? && interfaces_have_public_methods? == false
+        return interaction.context.response.add_error( 'platform.invalid_session' )
+      end
+
+      # Update the interaction's context with the new session. Since
+      # the context data is exposed to service implementations, the
+      # session reference is read-only; don't break that protection;
+      # instead build and use a replacement context.
+
+      if session != interaction.context.session
+        updated_context = Hoodoo::Services::Context.new(
+          session,
+          interaction.context.request,
+          interaction.context.response,
+          interaction
+        )
+        interaction.context = updated_context
       end
     end
 
-    # Run request preprocessing - common actions that occur prior to any service
-    # instance selection or service-specific processing. Generates the service
-    # response object in @response, interaction ID in @interaction_id,
-    # locale data in @locale and so-on.
+    # Run request preprocessing - common actions that occur prior to any
+    # service instance selection or service-specific processing.
     #
-    # After calling, be sure to check +@response.halt_processing?+ to
-    # see if processing should abort and return immediately.
+    # Returns +nil+ if successful.
     #
     # If the method returns something else, it's a Rack response; an early
     # and immediate response has been created. Return this (through whatever
     # call chain is necessary) as the return value for #call.
     #
-    def preprocess
+    # After calling, be sure to check +@response.halt_processing?+ to
+    # see if processing should abort and return immediately.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Parts of this may
+    #                 be updated on exit.
+    #
+    def preprocess( interaction )
 
 
       # =======================================================================
@@ -874,33 +918,21 @@ module Hoodoo; module Services
       # =======================================================================
 
 
-      @locale         = deal_with_language_header()
-      @interaction_id = find_or_generate_interaction_id()
-      @response       = Hoodoo::Services::Response.new( @interaction_id )
+      deal_with_content_type_header( interaction )
+      deal_with_language_header( interaction )
+      set_common_response_headers( interaction )
 
-      check_content_type_header()
+      # (SMH, Rack...)
 
-      # This is far too much work just to log the full details of the inbound
-      # request, but Rack makes it ridiculously hard to extract the original
-      # URI, request headers and body. We can't just log all of "env" as it
-      # contains complex objects which break for-queue serialization.
-
-      env  = @rack_request.env
-      body = @rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
-             @rack_request.body.rewind()
-
+      env     = interaction.rack_request.env
       headers = env.select do | key, value |
         key.to_s.match( /^HTTP_/ )
       end
 
-      # (SMH, Rack...)
-
       headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
       headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
 
-      set_common_response_headers( @response )
-
-      # Simplisitic CORS preflight handler.
+      # Simplisitic CORS preflight handler. We might exit early here.
       #
       # http://www.html5rocks.com/en/tutorials/cors/
       # http://www.html5rocks.com/static/images/cors_server_flowchart.png
@@ -910,25 +942,37 @@ module Hoodoo; module Services
       unless ( origin.nil? )
         ok = false
 
-        if @rack_request.request_method == 'OPTIONS'
+        if interaction.rack_request.request_method == 'OPTIONS'
           requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
           requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
           allowed           = Set.new( %w( GET POST PATCH DELETE ) )
 
           if allowed.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
-            set_cors_preflight_response_headers( @response, origin )
-            @response.set_resources( [] )
-            return respond_with( @response.for_rack() )
+            set_cors_preflight_response_headers( interaction, origin )
+            interaction.context.response.set_resources( [] )
+
+            return respond_for( interaction )
           end
         else
-          set_cors_normal_response_headers( @response, origin )
+          set_cors_normal_response_headers( interaction, origin )
         end
       end
 
-      load_session()
+      # If we reach here - it's a normal request, not preflight.
+
+      load_session_into( interaction )
+
+      # This is far too much work just to log the full details of the inbound
+      # request, but Rack makes it ridiculously hard to extract the original
+      # URI, request headers and body. We can't just log all of "env" as it
+      # contains complex objects which break for-queue serialization.
+
+      env  = interaction.rack_request.env
+      body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
+             interaction.rack_request.body.rewind()
 
       data = {
-        :interaction_id => @interaction_id,
+        :interaction_id => interaction.interaction_id,
         :payload        => {
           :method  => env[ 'REQUEST_METHOD', ],
           :scheme  => env[ 'rack.url_scheme' ],
@@ -942,7 +986,7 @@ module Hoodoo; module Services
         }
       }
 
-      data[ :session ] = @session.to_h unless @session.nil?
+      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
 
       @@logger.report(
         :info,
@@ -958,7 +1002,10 @@ module Hoodoo; module Services
     # invocation. Relies entirely on data assembled during initialisation of
     # this middleware instance or during handling in #call.
     #
-    def process
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
+    def process( interaction )
 
 
       # =======================================================================
@@ -967,26 +1014,29 @@ module Hoodoo; module Services
       # =======================================================================
 
 
+      response = interaction.context.response # Convenience
+
       # Select a service based on the escaped URI's path. If we find none,
       # then there's no matching endpoint; badly routed request; 404. If we
       # find many, raise an exception and rely on the exception handler to
       # send back a 500.
 
-      uri_path = CGI.unescape( @rack_request.path() )
+      uri_path = CGI.unescape( interaction.rack_request.path() )
 
-      selected_services = @@services.select do | service_data |
+      selected_path_data = nil
+      selected_services  = @@services.select do | service_data |
         path_data = process_uri_path( uri_path, service_data[ :regexp ] )
 
         if path_data.nil?
           false
         else
-          @path_data = path_data
+          selected_path_data = path_data
           true
         end
       end
 
       if selected_services.size == 0
-        return @response.add_error(
+        return response.add_error(
           'platform.not_found',
           'reference' => { :entity_name => '' }
         )
@@ -996,54 +1046,47 @@ module Hoodoo; module Services
         selected_service = selected_services[ 0 ]
       end
 
-      uri_path_components, uri_path_extension = @path_data
+      uri_path_components, uri_path_extension = selected_path_data
       interface                               = selected_service[ :interface      ]
       implementation                          = selected_service[ :implementation ]
 
-      @target_resource_for_error_reports = interface.resource
+      interaction.target_interface                  = interface
+      interaction.target_resource_for_error_reports = interface.resource
+      interaction.target_implementation             = implementation
 
-      update_response_for( @response, interface )
+      update_response_for( interaction.context.response, interface )
 
       # Check for a supported, session-accessible action.
 
-      http_method   = @rack_request.request_method
-      action        = determine_action( http_method, uri_path_components.empty? )
-      authorisation = determine_authorisation( @session, interface, action, http_method, @response )
+      http_method                  = interaction.rack_request.request_method
+      action                       = determine_action( http_method, uri_path_components.empty? )
+      interaction.requested_action = action
+      authorisation                = determine_authorisation( interaction )
 
-      return if @response.halt_processing?
+      return if response.halt_processing?
 
-      # Looks good so far, so allocate a request object to pass on to the
-      # interface and hold other higher level parsed data assembled below.
+      # Looks good so far, so start filling in request details.
 
-      request                     = new_request_for( interface )
+      request                     = interaction.context.request # Convenience
       request.uri_path_components = uri_path_components
       request.uri_path_extension  = uri_path_extension
 
-      # There should only be a query string for GET methods that ask for lists
-      # of resources.
+      process_query_string( interaction )
 
-      process_query_string(
-        action,
-        @rack_request.query_string,
-        interface,
-        request,
-        @response
-      )
-
-      return if @response.halt_processing?
+      return if response.halt_processing?
 
       # There should be no spurious path data for "list" or "create" actions -
       # only "show", "update" and "delete" take extra data via the URL's path.
       # Conversely, other actions require it.
 
       if action == :list || action == :create
-        return @response.add_error( 'platform.malformed',
-                                            'message' => 'Unexpected path components for this action',
-                                            'reference' => { :action => action } ) unless uri_path_components.empty?
+        return response.add_error( 'platform.malformed',
+                                   'message' => 'Unexpected path components for this action',
+                                   'reference' => { :action => action } ) unless uri_path_components.empty?
       else
-        return @response.add_error( 'platform.malformed',
-                                            'message' => 'Expected path components identifying target resource instance for this action',
-                                            'reference' => { :action => action } ) if uri_path_components.empty?
+        return response.add_error( 'platform.malformed',
+                                   'message' => 'Expected path components identifying target resource instance for this action',
+                                   'reference' => { :action => action } ) if uri_path_components.empty?
       end
 
       # There should be no spurious body data for anything other than "create"
@@ -1063,73 +1106,63 @@ module Hoodoo; module Services
       # data to read, it should return nil. If it doesn't, the payload is
       # too big. Reject it.
 
-      body = @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
+      body = interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE )
 
-      unless ( body.nil? || body.is_a?( ::String ) ) && @rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
-        return @response.add_error( 'platform.malformed',
-                                            'message' => 'Body data exceeds configured maximum size for platform' )
+      unless ( body.nil? || body.is_a?( ::String ) ) && interaction.rack_request.body.read( MAXIMUM_PAYLOAD_SIZE ).nil?
+        return response.add_error( 'platform.malformed',
+                                   'message' => 'Body data exceeds configured maximum size for platform' )
       end
 
-      debug_log( 'Raw body data read successfully', body )
+      debug_log( interaction, 'Raw body data read successfully', body )
 
       if action == :create || action == :update
-        request.body = payload_to_hash( body )
+        parse_body_string_into( interaction, body )
 
-        unless @response.halt_processing?
-          validate_body_data_for( action,
-                                  interface,
-                                  request.body,
-                                  @response )
+        if response.halt_processing?
+          return
+        else
+          validate_body_data_for( interaction )
         end
-
-        return @response.for_rack() if @response.halt_processing?
 
       elsif body.nil? == false && body.to_s.strip.length > 0
 
-        return @response.add_error( 'platform.malformed',
-                                            'message' => 'Unexpected body data for this action',
-                                            'reference' => { :action => action } )
+        return response.add_error( 'platform.malformed',
+                                   'message' => 'Unexpected body data for this action',
+                                   'reference' => { :action => action } )
 
       end
 
-      debug_log( 'Dispatching with parsed body data', request.body )
+      debug_log( interaction, 'Dispatching with parsed body data', request.body )
 
-      # Build a context for the call. We can now, if necessary, do a final
-      # check with the resource endpoint for authorisation.
-
-      context = Hoodoo::Services::Context.new(
-        @session,
-        request,
-        @response,
-        self
-      )
+      # Can now, if necessary, do a final check with the resource endpoint
+      # for authorisation because the request data is fully populated so
+      # the resource implementation's "verify" method has something to use.
 
       if authorisation == Hoodoo::Services::Permissions::ASK
-        ask_for_authorisation( context, implementation, action, @response )
-        return if @response.halt_processing?
+        ask_for_authorisation( interaction )
+        return if response.halt_processing?
       end
 
       # Finally - dispatch to service.
 
-      dispatch_to( interface, implementation, action, context )
+      dispatch( interaction )
     end
 
     # Dispatch a call to the given implementation, with before/after actions.
     #
-    # +interface+::      The Hoodoo::Services::Interface subclass referring
-    #                    to the implementation class of which an instance is
-    #                    given in the +implementation+ parameter.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
-    # +implementation+:: Hoodoo::Services::Implementation subclass instance to
-    #                    call.
-    #
-    # +action+::         Name of method to call in that instance as a Symbol,
-    #                    e.g. :list, :show.
-    #
-    # +context+::        Hoodoo::Services::Context instance to pass to the
-    #                    named action method as the sole input parameter.
-    #
-    def dispatch_to( interface, implementation, action, context )
+    def dispatch( interaction )
+
+      # Set up some convenience variables
+
+      interface      = interaction.target_interface
+      implementation = interaction.target_implementation
+      action         = interaction.requested_action
+      context        = interaction.context
+
+      # Benchmark the "inner" dispatch call
 
       dispatch_time = Benchmark.realtime do
 
@@ -1152,9 +1185,11 @@ module Hoodoo; module Services
           block.call
         end
 
-        @target_resource_for_error_reports = interface.resource if context.response.halt_processing?
+        if context.response.halt_processing?
+          interaction.target_resource_for_error_reports = interface.resource
+        end
 
-        auto_log( interface, action, context )
+        auto_log( interaction )
 
       end # "Benchmark.realtime do"
 
@@ -1168,9 +1203,12 @@ module Hoodoo; module Services
     # Run request preprocessing - common actions that occur after service
     # instance selection and service-specific processing.
     #
-    # On exit, +@response+ may have been updated.
+    # On exit, interaction data may have been updated.
     #
-    def postprocess
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
+    def postprocess( interaction )
 
 
       # =======================================================================
@@ -1203,44 +1241,53 @@ module Hoodoo; module Services
     # a halt of any further processing (subject to the caller checking for
     # response errors afterwards).
     #
-    # On success, +@content_type+ contains the requested media type (e.g.
-    # +application/json+) and +@content_encoding+ contains the requested
-    # encoding (e.g. +utf-8+).
+    # If successful, updates the given interaction data with the request
+    # content type and encoding.
     #
-    def check_content_type_header
-      content_type      = @rack_request.media_type
-      content_encoding  = @rack_request.content_charset
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
+    #
+    def deal_with_content_type_header( interaction )
+      content_type      = interaction.rack_request.media_type
+      content_encoding  = interaction.rack_request.content_charset
 
-      @content_type     = content_type.nil?     ? nil : content_type.downcase
-      @content_encoding = content_encoding.nil? ? nil : content_encoding.downcase
+      content_type.downcase!     unless content_type.nil?
+      content_encoding.downcase! unless content_encoding.nil?
 
-      unless SUPPORTED_MEDIA_TYPES.include?( @content_type ) &&
-             SUPPORTED_ENCODINGS.include?( @content_encoding )
+      unless SUPPORTED_MEDIA_TYPES.include?( content_type ) &&
+             SUPPORTED_ENCODINGS.include?( content_encoding )
+
+        interaction.context.response.errors.add_error(
+          'platform.malformed',
+          'message' => "Content-Type '#{ interaction.rack_request.content_type || "<unknown>" }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
+        )
 
         # Avoid incorrect Content-Type in responses, which otherwise "inherits"
         # from inbound type and encoding.
         #
-        @content_type = @content_encoding = nil
-
-        @response.errors.add_error(
-          'platform.malformed',
-          'message' => "Content-Type '#{ @rack_request.content_type }' does not match supported types '#{ SUPPORTED_MEDIA_TYPES }' and/or encodings '#{ SUPPORTED_ENCODINGS }'"
-        )
+        content_type = content_encoding = nil
 
       end
+
+      interaction.requested_content_type     = content_type
+      interaction.requested_content_encoding = content_encoding
     end
 
     # Extract the +Content-Language+ header value from the client, or if that
-    # is missing, +Accept-Language+. Returns it, or a default of "en-nz",
-    # converted to lower case.
+    # is missing, +Accept-Language+. Uses it, or a default of "en-nz",
+    # converts to lower case and sets the value as the interaction's request's
+    # locale value.
     #
     # We support neither a list of preferences nor "qvalues", so if there is
     # a list, we only take the first item; if there is a qvalue, we strip it
     # leaving just the language part, e.g. "en-gb".
     #
-    def deal_with_language_header
-      lang = @rack_request.env[ 'HTTP_CONTENT_LANGUAGE' ]
-      lang = @rack_request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
+    #
+    def deal_with_language_header( interaction )
+      lang = interaction.rack_request.env[ 'HTTP_CONTENT_LANGUAGE' ]
+      lang = interaction.rack_request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
 
       unless lang.nil? || lang.empty?
         # E.g. "Accept-Language: da, en-gb;q=0.8, en;q=0.7" => 'da'
@@ -1249,16 +1296,7 @@ module Hoodoo; module Services
       end
 
       lang = 'en-nz' if lang.nil? || lang.empty?
-      lang.downcase
-    end
-
-    # Find the value of an X-Interaction-ID header (if one is already present)
-    # or generate a new Interaction ID.
-    #
-    def find_or_generate_interaction_id
-      iid = @rack_request.env[ 'HTTP_X_INTERACTION_ID' ]
-      iid = Hoodoo::UUID.generate() if iid.nil? || iid == ''
-      iid
+      interaction.context.request.locale = lang.downcase
     end
 
     # Preprocessing stage that sets up common headers required in any response.
@@ -1270,9 +1308,9 @@ module Hoodoo; module Services
     #
     # +response+:: Hoodoo::Services::Response instance to update.
     #
-    def set_common_response_headers( response )
-      response.add_header( 'X-Interaction-ID', @interaction_id )
-      response.add_header( 'Content-Type', "#{ @content_type || 'application/json' }; charset=#{ @content_encoding || 'utf-8' }" )
+    def set_common_response_headers( interaction )
+      interaction.context.response.add_header( 'X-Interaction-ID', interaction.interaction_id )
+      interaction.context.response.add_header( 'Content-Type', "#{ interaction.requested_content_type || 'application/json' }; charset=#{ interaction.requested_content_encoding || 'utf-8' }" )
     end
 
     # Preprocessing stage that sets up CORS response headers in response to a
@@ -1281,11 +1319,13 @@ module Hoodoo; module Services
     # http://www.html5rocks.com/en/tutorials/cors/
     # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
-    # +response+:: Hoodoo::Services::Response instance to update.
-    # +origin+::   Value of inbound request's "Origin" HTTP header.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
-    def set_cors_normal_response_headers( response, origin )
-      response.add_header( 'Access-Control-Allow-Origin', origin )
+    # +origin+::      Value of inbound request's "Origin" HTTP header.
+    #
+    def set_cors_normal_response_headers( interaction, origin )
+      interaction.context.response.add_header( 'Access-Control-Allow-Origin', origin )
     end
 
     # Preprocessing stage that sets up CORS response headers in response to a
@@ -1294,18 +1334,20 @@ module Hoodoo; module Services
     # http://www.html5rocks.com/en/tutorials/cors/
     # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
-    # +response+:: Hoodoo::Services::Response instance to update.
-    # +origin+::   Value of inbound request's "Origin" HTTP header.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
-    def set_cors_preflight_response_headers( response, origin )
+    # +origin+::      Value of inbound request's "Origin" HTTP header.
+    #
+    def set_cors_preflight_response_headers( interaction, origin )
 
-      set_cors_normal_response_headers( response, origin )
+      set_cors_normal_response_headers( interaction, origin )
 
       # We don't try and figure out a target resource interface and give back
       # just the verbs it supports in preflight; too much trouble; just list
       # all *possible* supported methods.
 
-      response.add_header(
+      interaction.context.response.add_header(
         'Access-Control-Allow-Methods',
         'GET, POST, PATCH, DELETE'
       )
@@ -1313,7 +1355,7 @@ module Hoodoo; module Services
       # Only allow X-Session-ID inbound. Don't let any of the custom headers
       # be exposed to JavaScript (no "Access-Control-Expose-Headers" is set).
 
-      response.add_header(
+      interaction.context.response.add_header(
         'Access-Control-Allow-Headers',
         'X-Session-ID'
       )
@@ -1423,23 +1465,8 @@ module Hoodoo; module Services
     # Determine the authorisation / permission to perform a particular
     # action.
     #
-    # Pass the following parameters, all required:
-    #
-    # +session+::     Hoodoo::Services::Session instance describing the
-    #                 prevailing session details, including permissions.
-    #
-    # +interface+::   Hoodoo::Services::Interface for which the call is
-    #                 being made.
-    #
-    # +action+::      The action of interest; a Symbol from
-    #                 ALLOWED_ACTIONS; see also #determine_action.
-    #
-    # +http_method+:: Inbound method as a string, e.g. +'POST'+. Upper
-    #                 or lower case. Used for error reporting only.
-    #
-    # +response+::    Hoodoo::Services::Response instance that will be
-    #                 updated with an error if the HTTP method does not
-    #                 map to an allowed action or if permission is refused.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
     # Returns:
     #
@@ -1454,7 +1481,17 @@ module Hoodoo; module Services
     #   allowed by calling #ask_for_authorisation at some point later in
     #   processing when the information this needs is available.
     #
-    def determine_authorisation( session, interface, action, http_method, response )
+    def determine_authorisation( interaction )
+
+      # Set up some convenience variables
+
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+      session   = interaction.context.session
+      response  = interaction.context.response
+
+      # Check authorisation
+
       result = nil
 
       if interface.public_actions.include?( action )
@@ -1488,6 +1525,8 @@ module Hoodoo; module Services
 
         else
 
+          http_method = interaction.rack_request.request_method
+
           response.add_error(
             'platform.method_not_allowed',
             'message' => "Service endpoint '/v#{ interface.version }/#{ interface.endpoint }' does not support HTTP method '#{ ( http_method || '<unknown>' ).upcase }' yielding action '#{ action }'"
@@ -1507,20 +1546,10 @@ module Hoodoo; module Services
     # that isn't Hoodoo::Services::Permissions::ALLOW is treated as
     # Hoodoo::Services::Permissions::DENY.
     #
-    # Pass the following parameters, all required:
+    # Parameters:
     #
-    # +context+::        Fully initialised Hoodoo::Services::Context
-    #                    instance as passed to any other service
-    #                    implementation method.
-    #
-    # +implementation+:: The service implementation instance to call.
-    #
-    # +action+::         The action to ask about - one of the values
-    #                    in ALLOWED_ACTIONS.
-    #
-    # +response+::       Hoodoo::Services::Response instance that will
-    #                    be updated with an error if the authorisation
-    #                    is not granted.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
     # Returns:
     #
@@ -1530,13 +1559,17 @@ module Hoodoo; module Services
     #   with an appropriate error message (e.g. "invalid session",
     #   "forbidden" etc.).
     #
-    def ask_for_authorisation( context, implementation, action, response )
-      permission = implementation.verify( context, action )
+    def ask_for_authorisation( interaction )
+
+      permission = interaction.target_implementation.verify(
+                     interaction.context,
+                     interaction.requested_action
+                   )
 
       if permission == Hoodoo::Services::Permissions::ALLOW
         return permission
       else
-        response.add_error( 'platform.forbidden' )
+        interaction.context.response.add_error( 'platform.forbidden' )
         return nil
       end
     end
@@ -1557,38 +1590,19 @@ module Hoodoo; module Services
       end
     end
 
-    # Returns a new Hoodoo::Services::Request instance for making a call to
-    # the given Hoodoo::Services::Interface, setting up locale information.
-    # Other initialisation is left to the caller.
-    #
-    # +interface+:: Hoodoo::Services::Interface for which the request is being
-    #               constructed.
-    #
-    def new_request_for( interface )
-      request        = Hoodoo::Services::Request.new
-      request.locale = @locale
-
-      return request
-    end
-
     # Process query string data for list actions. Only call if there's a list
     # action being requested.
     #
-    # +action+::          Intended service action as a symbol, e.g. +:list+,
-    #                     +:create+. Different actions may allow/prohibit
-    #                     different things in the query string.
-    # +query_string+::    The 'raw' query string from Rack.
-    # +interface+::       Interface definition for the service being targeted.
-    # +request::  An Hoodoo::Services::Request instance. This will be
-    #                     updated if successful with list parameter data.
-    # +response:: An Hoodoo::Services::Response instance. This will be
-    #                     updated if unsuccessful with error data.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
-    # On exit, +response+ will be updated with errors or
-    # +request+ will have deciphered query data entered into
-    # attributes in the object.
+    # The interaction's request data will be updated with list parameter
+    # information if successul. The interaction's response data will be
+    # updated with error information if anything is wrong.
     #
-    def process_query_string( action, query_string, interface, request, response )
+    def process_query_string( interaction )
+
+      query_string = interaction.rack_request.query_string
 
       # The 'decode' call produces an array of two-element arrays, the first
       # being the key and next being the value, already CGI unescaped once.
@@ -1612,13 +1626,7 @@ module Hoodoo; module Services
       str                       = query_hash[ '_reference' ]
       query_hash[ '_reference'] = str.split( ',' ) unless str.nil?
 
-      return process_query_hash(
-               action,
-               query_hash,
-               interface,
-               request,
-               response
-             )
+      return process_query_hash( interaction, query_hash )
     end
 
     # Process a hash of URI-decoded form data in the same way as
@@ -1627,19 +1635,28 @@ module Hoodoo; module Services
     # _reference lists should be stored as arrays. Keys and values must be
     # Strings.
     #
-    # +action+::           See #process_query_string.
-    # +query_hash+::       Hash of data derived from query string.
-    # +interface+::        See #process_query_string.
-    # +request+::  See #process_query_string.
-    # +response+:: See #process_query_string.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
     #
-    # On exit, +response+ will be updated with errors or
-    # +request+ will have deciphered query data entered into
-    # attributes in the object.
+    # +query_hash+::  Hash of data derived from query string - see
+    #                 #process_query_string.
     #
-    def process_query_hash( action, query_hash, interface, request, response )
-      allowed    = ALLOWED_QUERIES_ALL
-      allowed   += ALLOWED_QUERIES_LIST if action == :list
+    # The interaction's request data will be updated with list parameter
+    # information if successul. The interaction's response data will be
+    # updated with error information if anything is wrong.
+    #
+    def process_query_hash( interaction, query_hash )
+
+      # Set up some convenience variables
+
+      interface = interaction.target_interface
+      request   = interaction.context.request
+      response  = interaction.context.response
+
+      # Process the query hash
+
+      allowed  = ALLOWED_QUERIES_ALL
+      allowed += ALLOWED_QUERIES_LIST if interaction.requested_action == :list
 
       unrecognised_query_keys = query_hash.keys - allowed
       malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
@@ -1717,50 +1734,64 @@ module Hoodoo; module Services
     end
 
     # Safely parse the client payload in the context of the defined content
-    # type (#check_content_type_header must have been run first). Pass the
-    # body payload string.
+    # type (#deal_with_content_type_header must have been run first).
     #
-    def payload_to_hash( body )
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Response may be
+    #                 updated on exit with an error, or request may be
+    #                 updated with the parsed body data as a Hash.
+    #
+    # +body+::        Calling client request's body payload as a String.
+    #
+    def parse_body_string_into( interaction, body )
+
+      content_type = interaction.requested_content_type
 
       begin
-        case @content_type
+        case content_type
           when 'application/json'
 
             # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
             #
             # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
             #
-            @payload_hash = JSON.parse( body, :create_additions => false )
+            payload_hash = JSON.parse( body, :create_additions => false )
 
         end
 
       rescue => e
-        @payload_hash = {}
-        @response.errors.add_error( 'generic.malformed' )
+        payload_hash = {}
+        interaction.context.response.errors.add_error( 'generic.malformed' )
 
       end
 
-      if @payload_hash.nil?
-        raise "Internal error - content type '#{ @content_type }' is not supported here; \#check_content_type_header() should have caught that"
+      if payload_hash.nil?
+        raise "Internal error - content type '#{ interaction.requested_content_type }' is not supported here; \#deal_with_content_type_header() should have caught that"
       end
 
-      return @payload_hash
+      interaction.context.request.body = payload_hash
     end
 
     # For the given action and service interface, verify the given body data
     # via to-update / to-create DSL data where available. On exit, the given
     # response data may have errors added.
     #
-    # +action+::    Must be +:create+ or +:update+.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Response may be
+    #                 updated on exit with an error, or request may be
+    #                 updated with the parsed body data as a Hash.
     #
-    # +interface+:: Hoodoo::Services::Interface to use for verification schema.
-    #
-    # +body+::      Hash of body data to verify under verification schema.
-    #
-    # +response+::  Hoodoo::Services::Response instance to update if errors are
-    #               found in the body data.
-    #
-    def validate_body_data_for( action, interface, body, response )
+    def validate_body_data_for( interaction )
+
+      # Set up some convenience variables
+
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+      response  = interaction.context.response
+      body      = interaction.context.request.body
+
+      # Work out which verification schema to use
+
       verification_object = if ( action == :create )
         interface.to_create()
       else
@@ -1782,14 +1813,15 @@ module Hoodoo; module Services
     # Record an exception in a given response object, overwriting any previous
     # error data if present.
     #
-    # +response+::  The Hoodoo::Services::Response object to record in; its
-    #               Hoodoo::Services::Response#errors collection is overwritten.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Response will be
+    #                 updated on exit with just the exception error.
     #
-    # +exception+:: The Exception instance to record.
+    # +exception+::   The Exception instance to record.
     #
-    # Returns the result of Hoodoo::Services::Response#add_error.
+    # Returns a "for Rack" representation of the whole response.
     #
-    def record_exception( response, exception )
+    def record_exception( interaction, exception )
       reference = {
         :exception => exception.message
       }
@@ -1801,9 +1833,9 @@ module Hoodoo; module Services
       # A service can rewrite this field with a different object, leading
       # to an exception within the exception handler; so use a new one!
       #
-      response.errors = Hoodoo::Errors.new()
+      interaction.context.response.errors = Hoodoo::Errors.new()
 
-      return response.add_error(
+      return interaction.context.response.add_error(
         'platform.fault',
         'message' => exception.message,
         'reference' => reference
@@ -1913,23 +1945,36 @@ module Hoodoo; module Services
     #
     # Options are as follows - keys must be Symbols:
     #
-    # +local+::       A +@@services+ entry (see implementation of #initialize)
-    #                 describing the service to call if local, else +nil+ or
-    #                 absent for remote calls.
-    # +remote+::      A return value of #remote_service_for describing the
-    #                 location of a service for remote calls, else +nil+ or
-    #                 absent for local calls.
-    # +resource+::    The String or Symbol resource name, e.g. "Product".
-    # +version+::     The Integer endpoint API version, e.g. 2.
-    # +http_method+:: HTTP method as a String, e.g. "+GET+", "+DELETE+".
-    # +ident+::       ID / UUID / similar; first and only path component.
-    # +query_hash+::  Converted to query string.
-    # +body_hash+::   Converted to body data.
+    # +source_interaction+:: The Hoodoo::Services::Middleware::Interaction
+    #                        instance that was created to handle the request
+    #                        which led to a resource implementation being
+    #                        called, that implementation now calling back
+    #                        here to make an inter-resource call.
+    #
+    # +local+::              A +@@services+ entry (see implementation of
+    #                        #initialize) describing the service to call if
+    #                        local, else +nil+ or absent for remote calls.
+    #
+    # +remote+::             A return value of #remote_service_for describing
+    #                        the location of a service for remote calls, else
+    #                        +nil+ or absent for local calls.
+    #
+    # +resource+::           Resource name, String or Symbol, e.g. "Product".
+    #
+    # +version+::            Endpoint API version, Integer, e.g. 2.
+    #
+    # +http_method+::        HTTP method, String, e.g. "+GET+", "+DELETE+".
+    #
+    # +ident+::              ID, UUID etc; first (and only) path component.
+    #
+    # +query_hash+::         Converted to query string.
+    #
+    # +body_hash+::          Converted to body data.
     #
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # An Hoodoo::Services::Middleware::Endpoint::AugmentedArray or
+    # A Hoodoo::Services::Middleware::Endpoint::AugmentedArray or
     # Hoodoo::Services::Middleware::Endpoint::AugmentedHash is returned
     # from these methods; @response or the wider processing context
     # is not automatically modified. Callers MUST use the methods provided by
@@ -1938,6 +1983,12 @@ module Hoodoo; module Services
     # resource-to-resource call errors.
     #
     def inter_resource( options )
+
+      interaction = options[ :source_interaction ]
+
+      if interaction.nil?
+        raise 'Hoodoo::Services::Middleware#inter_resource: Serious internal error - no source interaction data was provided'
+      end
 
       remote = options[ :local ].nil?
 
@@ -1950,7 +2001,7 @@ module Hoodoo; module Services
         'Local inter-resource call'
       end
 
-      debug_log( debug_str, 'requested', options )
+      debug_log( interaction, debug_str, 'requested', options )
 
       if ( remote )
         result = inter_resource_remote( options )
@@ -1959,9 +2010,9 @@ module Hoodoo; module Services
       end
 
       if result.platform_errors.has_errors?
-        debug_log( debug_str, 'halted processing', result.platform_errors )
+        debug_log( interaction, debug_str, 'halted processing', result.platform_errors )
       else
-        debug_log( debug_str, 'succeeded', result )
+        debug_log( interaction, debug_str, 'succeeded', result )
       end
 
       return result
@@ -1974,11 +2025,12 @@ module Hoodoo; module Services
     # Returns:: See #inter_resource.
     #
     def inter_resource_remote( options )
-      remote_info = options[ :remote      ]
-      http_method = options[ :http_method ]
-      ident       = options[ :ident       ]
-      body_hash   = options[ :body_hash   ]
-      query_hash  = options[ :query_hash  ]
+      source_interaction = options[ :source_interaction ]
+      remote_info        = options[ :remote             ]
+      http_method        = options[ :http_method        ]
+      ident              = options[ :ident              ]
+      body_hash          = options[ :body_hash          ]
+      query_hash         = options[ :query_hash         ]
 
       on_queue = self.class.on_queue?
 
@@ -2011,6 +2063,21 @@ module Hoodoo; module Services
 
       end
 
+      # When a source implementation calls a target implementation, we
+      # look at the source implementation to see if it grants any extra
+      # permissions for downstream resources it wants. All of that is
+      # a "dialogue" that we have with the requesting, source resource
+      # based on the action it is handling when it decides to make an
+      # inter-resource call and the code control flow ends up here.
+
+      session = augment_session_with_permissions_for_action( source_interaction )
+
+      if session == false
+        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash.platform_errors.add_error( 'platform.invalid_session' )
+        return hash
+      end
+
       # Grey area over whether this encodes spaces as "%20" or "+", but so
       # long as the middleware consistently uses the URI encode/decode calls,
       # it should work out in the end anyway.
@@ -2040,11 +2107,11 @@ module Hoodoo; module Services
       body_data = body_hash.nil? ? '' : body_hash.to_json
       headers   = {
         'Content-Type'     => 'application/json; charset=utf-8',
-        'Content-Language' => @locale,
-        'X-Interaction-ID' => @interaction_id
+        'Content-Language' => source_interaction.context.request.locale,
+        'X-Interaction-ID' => source_interaction.interaction_id
       }
 
-      headers[ 'X-Session-ID' ] = @session_id unless @session_id.nil?
+      headers[ 'X-Session-ID' ] = session.session_id unless session.nil?
 
       # Use HTTP or Alchemy for the actual communications.
 
@@ -2151,23 +2218,63 @@ module Hoodoo; module Services
     # Returns:: See #inter_resource.
     #
     def inter_resource_local( options )
-      service        = options[ :local       ]
-      http_method    = options[ :http_method ]
-      ident          = options[ :ident       ]
-      body_hash      = options[ :body_hash   ]
-      query_hash     = options[ :query_hash  ]
+      source_interaction = options[ :source_interaction ]
+      service            = options[ :local              ]
+      http_method        = options[ :http_method        ]
+      ident              = options[ :ident              ]
+      body_hash          = options[ :body_hash          ]
+      query_hash         = options[ :query_hash         ]
 
-      interface      = service[ :interface      ]
-      actions        = service[ :actions        ]
-      implementation = service[ :implementation ]
+      interface          = service[ :interface      ]
+      actions            = service[ :actions        ]
+      implementation     = service[ :implementation ]
 
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
       # parsed an inbound HTTP request and a response object that contains
       # the usual default data.
 
-      local_response = Hoodoo::Services::Response.new( @interaction_id )
-      set_common_response_headers( local_response )
+      env = {
+        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
+      }
+
+      local_interaction = Hoodoo::Services::Middleware::Interaction.new(
+        {},
+        self
+      )
+
+      local_interaction.target_interface                  = interface
+      local_interaction.target_implementation             = implementation
+      local_interaction.target_resource_for_error_reports = interface.resource
+      local_interaction.requested_content_type            = source_interaction.requested_content_type
+      local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
+
+      # For convenience...
+
+      local_request  = local_interaction.context.request
+      local_response = local_interaction.context.response
+
+      # Need to possibly augment the caller's session - same rationale
+      # as #local_service_remote, so see that for details.
+
+      session = augment_session_with_permissions_for_action( source_interaction )
+
+      if session == false
+        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash.platform_errors.add_error( 'platform.invalid_session' )
+        return hash
+      end
+
+      # New session means a new context.
+
+      local_interaction.context = Hoodoo::Services::Context.new(
+        session,
+        local_request,
+        local_response,
+        local_interaction
+      )
+
+      set_common_response_headers( local_interaction )
       update_response_for( local_response, interface )
 
       # Add errors from the local service response into an augmented hash
@@ -2185,14 +2292,14 @@ module Hoodoo; module Services
       upc  = []
       upc << ident unless ident.nil? || ident.empty?
 
-      action        = determine_action( http_method, upc.empty? )
-      authorisation = determine_authorisation( @session, interface, action, http_method, local_response )
+      action                             = determine_action( http_method, upc.empty? )
+      local_interaction.requested_action = action
+      authorisation                      = determine_authorisation( local_interaction )
 
       return add_local_errors.call() if local_response.halt_processing?
 
       # Construct the local request details.
 
-      local_request                     = new_request_for( interface )
       local_request.uri_path_components = upc
       local_request.uri_path_extension  = ''
 
@@ -2215,47 +2322,29 @@ module Hoodoo; module Services
         query_hash[ '_embed'     ].map!( &:to_s ) unless query_hash[ '_embed'     ].nil?
         query_hash[ '_reference' ].map!( &:to_s ) unless query_hash[ '_reference' ].nil?
 
-        process_query_hash(
-          action,
-          query_hash,
-          interface,
-          local_request,
-          local_response
-        )
+        process_query_hash( local_interaction, query_hash )
       end
 
       local_request.body = body_hash
 
       if ( action == :create || action == :update )
-        validate_body_data_for( action,
-                                interface,
-                                body_hash,
-                                local_response )
+        validate_body_data_for( local_interaction )
       end
 
       return add_local_errors.call() if local_response.halt_processing?
 
-      # Build a context for the call. We can now, if necessary, do a final
-      # check with the resource endpoint for authorisation.
-
-      context = Hoodoo::Services::Context.new(
-        @session,
-        local_request,
-        local_response,
-        self
-      )
+      # Can now, if necessary, do a final check with the target endpoint
+      # for authorisation.
 
       if authorisation == Hoodoo::Services::Permissions::ASK
-        ask_for_authorisation( context, implementation, action, local_response )
+        ask_for_authorisation( local_interaction )
         return add_local_errors.call() if local_response.halt_processing?
       end
 
-      # Dispatch the call, merge any errors that might have come back and
-      # return the body of the called service's response.
+      # Dispatch the call.
 
-      debug_log( 'Dispatching local inter-resource call', local_request.body )
-
-      dispatch_to( interface, implementation, action, context )
+      debug_log( local_interaction, 'Dispatching local inter-resource call', local_request.body )
+      dispatch( local_interaction )
 
       # Extract the returned data and "rephrase" it as an augmented
       # array or hash carrying error data if necessary.
@@ -2275,7 +2364,90 @@ module Hoodoo; module Services
       return data
     end
 
-    # Take an Hoodoo::Errors instance constructed from, or obtained via
+    # Take the current session (if any) and create an interim augmented
+    # session for an inter-resource call which includes any additional
+    # parameters that the calling interface says it needs for the currently
+    # handled action.
+    #
+    # Through calling this method, the middleware implements the access
+    # permission functionality described by
+    # Hoodoo::Services::Interface#additional_permissions_for.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. This is for the
+    #                 request that a resource implementation *is handling*
+    #                 at the point it wants to make an inter-resource call
+    #                 - it is *not* data related to the *target* of that
+    #                 call.
+    #
+    # Returns:
+    #
+    # * +nil+ if given +nil+ as an input session.
+    #
+    # * Hoodoo::Services::Session instance if everything works OK; this
+    #   may be the same as, or different from, the input session depending
+    #   on whether or not there were any permissions that needed adding.
+    #
+    # * +false+ if the session can't be saved due to a mismatched caller
+    #   version - the session must have become invalid _during_ handling.
+    #
+    # If the augmented session cannot be saved due to a Memcached problem,
+    # an exception is raised and the generic handler will turn this into a
+    # 500 response for the caller. At this time, we really can't do much
+    # better than that since failure to save the augmented session means
+    # the inter-resource call cannot proceed; it's an internal fault.
+    #
+    def augment_session_with_permissions_for_action( interaction )
+
+      # Set up some convenience variables
+
+      session   = interaction.context.session
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+
+      # If there is no session, the caller can only have reached here via
+      # a public action. We don't let public actions call protected actions.
+      # Just return "nil" back again and let the usual permissions checking
+      # code then refuse the request.
+
+      return nil if session.nil?
+
+      # If there are no additional permissions for this action, just return
+      # the current session back again.
+
+      action                 = action.to_s()
+      additional_permissions = ( interface.additional_permissions() || {} )[ action ]
+
+      return session if additional_permissions.nil?
+
+      # Otherwise, duplicate the session and its permissions (or generate
+      # defaults) and merge the additional permissions.
+
+      local_session     = session.dup()
+      local_permissions = session.permissions ? session.permissions.dup() : Hoodoo::Services::Permissions.new
+
+      local_permissions.merge!( additional_permissions.to_h() )
+
+      # Make sure the new session has its own ID and set the updated
+      # permissions. Then try to save it and return the result.
+
+      local_session.session_id  = Hoodoo::UUID.generate()
+      local_session.permissions = local_permissions
+
+      case local_session.save_to_memcached()
+        when true
+          return local_session
+
+        when false
+          # Caller version mismatch; original session is now outdated and invalid
+          return false
+
+        else # Couldn't save it
+          raise "Unable to create interim session for inter-resource call to #{ interface.resource } / #{ action }"
+      end
+    end
+
+    # Take a Hoodoo::Errors instance constructed from, or obtained via
     # a call to another service (inter-resource local or remote call) and
     # translate the contents to make sense when those errors are reported
     # in the context of an outer resource's response to a request.

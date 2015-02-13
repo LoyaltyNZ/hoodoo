@@ -153,10 +153,11 @@ describe Hoodoo::Services::Middleware do
 
     it 'should self-check content type' do
       mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
-      mw.instance_variable_set( '@content_type', 'application/xml' )
+      interaction = Hoodoo::Services::Middleware::Interaction.new( {}, mw )
+      interaction.requested_content_type = 'application/xml'
       expect {
-        mw.send( :payload_to_hash, '{}' )
-      }.to raise_error(RuntimeError, "Internal error - content type 'application/xml' is not supported here; \#check_content_type_header() should have caught that");
+        mw.send( :parse_body_string_into, interaction, '{}' )
+      }.to raise_error(RuntimeError, "Internal error - content type 'application/xml' is not supported here; \#deal_with_content_type_header() should have caught that");
     end
   end
 
@@ -212,7 +213,7 @@ describe Hoodoo::Services::Middleware do
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.malformed')
-      expect(result['errors'][0]['message']).to eq("Content-Type '' does not match supported types '[\"application/json\"]' and/or encodings '[\"utf-8\"]'")
+      expect(result['errors'][0]['message']).to eq("Content-Type '<unknown>' does not match supported types '[\"application/json\"]' and/or encodings '[\"utf-8\"]'")
     end
 
     it 'should complain about missing charset' do
@@ -341,17 +342,15 @@ describe Hoodoo::Services::Middleware do
     it 'a matching endpoint should use fallback exception handler if early failures occur' do
 
       # Stub out anything early in request handling inside call() and make it
-      # throw an exception. Can't throw for Rack::Request.new as other parts
-      # of the handler chain are able to call this an arbitrary number of
-      # times. At the time of writing, the next thing along is a call to
-      # private method "debug_log".
+      # throw an exception.
 
       expect_any_instance_of(Hoodoo::Services::Middleware).to receive(:debug_log).and_raise("boo!")
+      expect_any_instance_of(Hoodoo::Services::Middleware).to receive(:record_exception).and_raise("boo!")
 
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to eq('Middleware exception in exception handler')
+      expect(last_response.body).to include('Middleware exception in exception handler')
     end
 
     it 'a matching endpoint should use fallback exception handler if the primary handler fails' do

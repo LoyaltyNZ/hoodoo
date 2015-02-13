@@ -57,7 +57,7 @@ module Hoodoo; module Services
         #       # ...
         #     end
         #
-        # +collection+:: An Hoodoo::Errors instance, typically obtained
+        # +collection+:: A Hoodoo::Errors instance, typically obtained
         #                from the Hoodoo::Services::Context instance passed to
         #                a service implementation in calls like
         #                Hoodoo::Services::Implementation#list or
@@ -80,7 +80,7 @@ module Hoodoo; module Services
           end
         end
 
-        # Returns an Hoodoo::Errors instance that's either been assigned
+        # Returns a Hoodoo::Errors instance that's either been assigned
         # via #set_platform_errors or is an empty, internally assigned
         # collection. This method is very closely related to
         # #adds_errors_to? and, if you have not already done so, you should

@@ -16,8 +16,9 @@ module Hoodoo; module Services
   #
   class Context
 
-    # The Hoodoo::Services::Session or Hoodoo::Services::LegacySession instance
-    # describing the authorised call context.
+    # The Hoodoo::Services::Session instance describing the authorised call
+    # context. If a resource implementation is handling a public action this
+    # may be +nil+, else it will be a valid instance.
     #
     attr_reader :session
 
@@ -32,19 +33,29 @@ module Hoodoo; module Services
     #
     attr_reader :response
 
-    # Create a new instance.
+    # The Hoodoo::Services::Middleware::Interaction instance for which this
+    # context exists (the 'owning' instance). Generally speaking this is only
+    # needed internally as part of the inter-resource call mechanism.
+    #
+    attr_reader :owning_interaction
+
+    # Create a new instance. There is almost certainly never any need to
+    # call this unless you're the Hoodoo::Services::Middleware::Interaction
+    # constructor! If you want to build a context for (say) test purposes,
+    # it's probably best to construct an interaction instance and use the
+    # context instance this provides.
     #
     # +session+:: See #session.
     # +request+:: See #request.
     # +response+:: See #response.
-    # +middleware+:: Hoodoo::Services::Middleware instance creating this item.
+    # +owning_interaction+:: See #interaction.
     #
-    def initialize( session, request, response, middleware )
-      @session    = session
-      @request    = request
-      @response   = response
-      @middleware = middleware
-      @endpoints  = {}
+    def initialize( session, request, response, owning_interaction )
+      @session            = session
+      @request            = request
+      @response           = response
+      @owning_interaction = owning_interaction
+      @endpoints          = {}
     end
 
     # Request (and lazy-initialize) a new resource endpoint instance for
@@ -68,7 +79,7 @@ module Hoodoo; module Services
     #
     def resource( resource_name, version = 1 )
       @endpoints[ "#{ resource_name }/#{ version }" ] ||= Hoodoo::Services::Middleware::Endpoint.new(
-        @middleware,
+        self.owning_interaction,
         resource_name,
         version
       )

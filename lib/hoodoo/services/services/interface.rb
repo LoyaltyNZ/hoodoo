@@ -29,7 +29,7 @@ module Hoodoo; module Services
     # validate incoming query strings for lists and reject requests that ask
     # for unsupported things. When instantiated the class sets itself up with
     # defaults that match those described by the your platform's API. When
-    # passed to an Hoodoo::Services::Interface::ToListDSL instance, the DSL
+    # passed to a Hoodoo::Services::Interface::ToListDSL instance, the DSL
     # methods, if called, update the values stored herein.
     #
     class ToList
@@ -115,7 +115,7 @@ module Hoodoo; module Services
 
     # Implementation of the DSL that's written inside a block passed to
     # Hoodoo::Services::Interface#to_list. This is an internal implementation
-    # class. Instantiate with an Hoodoo::Services::Interface::ToList instance,
+    # class. Instantiate with a Hoodoo::Services::Interface::ToList instance,
     # the data in which is updated as the DSL methods run.
     #
     class ToListDSL
@@ -136,7 +136,7 @@ module Hoodoo; module Services
         @tl = hoodoo_interface_to_list_instance # Shorthand!
 
         unless @tl.instance_of?( Hoodoo::Services::Interface::ToList )
-          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::Services::ServiceInstance::ToList instance - got '#{ @tl.class }'"
+          raise "Hoodoo::Services::Interface::ToListDSL\#initialize requires a Hoodoo::Services::Interface::ToList instance - got '#{ @tl.class }'"
         end
 
         self.instance_eval( &block )
@@ -152,7 +152,7 @@ module Hoodoo; module Services
       #
       def limit( limit )
         unless limit.is_a?( ::Integer )
-          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
+          raise "Hoodoo::Services::Interface::ToListDSL\#limit requires an Integer - got '#{ limit.class }'"
         end
 
         @tl.send( :limit=, limit )
@@ -178,7 +178,7 @@ module Hoodoo; module Services
       #
       def sort( sort )
         unless sort.is_a?( ::Hash )
-          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
+          raise "Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
         # Convert hash keys to strings and values in arrays to strings too.
@@ -206,7 +206,7 @@ module Hoodoo; module Services
       #
       def default( sort_key )
         unless sort_key.is_a?( ::String ) || sort_key.is_a?( ::Symbol )
-          raise "Hoodoo::Services::ServiceInstance::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
+          raise "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got '#{ sort_key.class }'"
         end
 
         @tl.send( :default_sort_key=, sort_key.to_s )
@@ -327,7 +327,14 @@ module Hoodoo; module Services
     # public actions, no X-Session-ID or similar header is consulted and
     # no session data will be associated with your
     # Hoodoo::Services::Context instance when action methods are called.
+    #
     # Use with great care!
+    #
+    # Note that if the implementation of a public action needs to call
+    # other resources, it can only ever call them if those actions in
+    # those other resources are also public. The implementation of a
+    # public action is prohibited from making calls to protected actions
+    # in other resources.
     #
     # *public_actions:: One or more from +:list+, +:show+, +:create+,
     #                   +:update+ and +:delete+. Always use symbols, not
@@ -485,9 +492,117 @@ module Hoodoo; module Services
       descriptions.errors_for( domain, &block )
     end
 
+    # Declare additional permissions that you require for a given action.
+    #
+    # If the implementation of a resource endpoint involves making calls out
+    # to other resources, then you need to consider how authorisation is
+    # granted to those other resources.
+    #
+    # The Hoodoo::Services::Session instance for the inbound external caller
+    # carries a Hoodoo::Services::Permission instance describing the actions
+    # that the caller is permitted to do. The middleware enforces these
+    # permissions, so that a resource implementation won't be called at all
+    # unless the caller has permission to do so.
+    #
+    # These permissions continue to apply during inter-resource calls. The
+    # wider session context is always applied. So, if one resource calls
+    # another resource, either:
+    #
+    # * The inbound API caller's session must have all necessary permissions
+    #   for both the resource it is actually directly calling, and for any
+    #   actions in any resources that the called resource in turn calls (and
+    #   so-on, for any chain of resources).
+    #
+    # ...or...
+    #
+    # * The resource uses this +additional_permissions_for+ method to declare
+    #   up-front that it will require the described permissions when a
+    #   particular action is performed on it. When an inter-resource call is
+    #   made, a temporary internal-only session is constructed that merges
+    #   the permissions of the inbound caller with the additional permissions
+    #   requested by the resource. The downstream called resource needs no
+    #   special case code at all - it just sees a valid session with valid
+    #   permissions and does what the upstream resource asked of it.
+    #
+    # For example, suppose a resource Clock returns both a time and a date,
+    # by calling out to the Time and Date resources. One option is that the
+    # inbound caller must have +show+ action permissions for all of Clock,
+    # Time and Date; if any of those are missing, then an attempt to call
+    # +show+ on the Clock resource would result in a 403 response.
+    #
+    # The other option is for Clock's interface to declare its requirements:
+    #
+    #     additional_permissions_for( :show ) do | p |
+    #       p.set_resource( :Time, :show, Hoodoo::Services::Permissions::ALLOW )
+    #       p.set_resource( :Date, :show, Hoodoo::Services::Permissions::ALLOW )
+    #     end
+    #
+    # Suppose you could create Clock instances for some reason, but there
+    # was an audit trail for this; Clock must create an Audit entry itself,
+    # but you don't want to expose this ability to external callers through
+    # their session permissions; so, just declare your additional
+    # permissions for that specific inter-service case:
+    #
+    #     additional_permissions_for( :create ) do | p |
+    #       p.set_resource( :Audit, :create, Hoodoo::Services::Permissions::ALLOW )
+    #     end
+    #
+    # The call says which action in _the declaring interface's resource_ is
+    # a target. The block takes a single parameter; this is a default
+    # initialisation Hoodoo::Services::Permissions instance. Use that
+    # object's methods to set up whatever permissions you need in other
+    # resources, to successfully process the action in question. You only
+    # need to describe the resources you immediately call, not the whole
+    # chain - if "this" resource calls another, then it's up to the other
+    # resource to in turn describe additional permissions should it make its
+    # own set of downstream calls to further resource endpoints.
+    #
+    # Setting default permissions or especially the default permission
+    # fallback inside the block is possible but *VERY STRONGLY DISCOURAGED*.
+    # Instead, precisely describe the downstream resources, actions and
+    # permissions that are required.
+    #
+    # Note an important restriction - public actions (see ::public_actions)
+    # cannot be augmented in this way. A public action in one resource can
+    # only ever call public actions in other resources. This is because no
+    # session is needed _at all_ to call a public action; calling into a
+    # protected action in another resource from this context would require
+    # invention of a full caller context which would be entirely invented
+    # and could represent an accidental (and significant) security hole.
+    #
+    # If you call this method for the same action more than once, the last
+    # call will be the one that takes effect - each call overwrites the
+    # results of any previous call made for the same action.
+    #
+    # Parameters are:
+    #
+    # +action+:: The action in this interface which will require the
+    #            additional permissions to be described. Pass a Symbol or
+    #            equivalent String from the list in
+    #            Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+    #
+    # &block::   Block which is passed a new, default state
+    #            Hoodoo::Services::Permissions instance; make method calls
+    #            on this instance to describe the required permissions.
+    #
+    def additional_permissions_for( action, &block )
+      action = action.to_s
+
+      unless block_given?
+        raise 'Hoodoo::Services::Interface#additional_permissions_for must be passed a block'
+      end
+
+      p = Hoodoo::Services::Permissions.new
+      yield( p )
+
+      additional_permissions = self.class.additional_permissions() || {}
+      additional_permissions[ action ] = p
+      self.class.send( :additional_permissions=, additional_permissions )
+    end
+
   protected
 
-    # Define the subclass service's interface. A DSL is used with methods
+    # Define the subclass Service's interface. A DSL is used with methods
     # documented in the Hoodoo::Services::InterfaceDSL class.
     #
     # The absolute bare minimum interface description just states that a
@@ -612,7 +727,7 @@ module Hoodoo; module Services
         #
         attr_reader :embeds
 
-        # An Hoodoo::Services::Interface::ToList instance describing the list
+        # A Hoodoo::Services::Interface::ToList instance describing the list
         # parameters for the interface as a Set of Strings. See also
         # Hoodoo::Services::Interface::ToListDSL.
         #
@@ -621,7 +736,7 @@ module Hoodoo; module Services
           @to_list
         end
 
-        # An Hoodoo::Presenters::Object instance describing the schema
+        # A Hoodoo::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that create instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely
@@ -629,7 +744,7 @@ module Hoodoo; module Services
         #
         attr_reader :to_create
 
-        # An Hoodoo::Presenters::Object instance describing the schema
+        # A Hoodoo::Presenters::Object instance describing the schema
         # for client JSON coming in for calls that modify instances of the
         # resource that the service's interface is addressing. If +nil+,
         # arbitrary data is acceptable (the implementation becomes entirely
@@ -637,12 +752,20 @@ module Hoodoo; module Services
         #
         attr_reader :to_update
 
-        # An Hoodoo::ErrorDescriptions instance describing all errors that
+        # A Hoodoo::ErrorDescriptions instance describing all errors that
         # the interface might return, including the default set of platform
         # and generic errors. If nil, there are no additional error codes
         # beyond the default set.
         #
         attr_reader :errors_for
+
+        # A Hash, keyed by String equivalents of the Symbols in
+        # Hoodoo::Services::Middleware::ALLOWED_ACTIONS, where the values
+        # are Hoodoo::Services::Permissions instances describing extended
+        # permissions for the related action. See
+        # ::additional_permissions_for.
+        #
+        attr_reader :additional_permissions
 
       private
 
@@ -705,6 +828,12 @@ module Hoodoo; module Services
         # See ::errors_for.
         #
         attr_writer :errors_for
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::additional_permissions.
+        #
+        attr_writer :additional_permissions
 
     end  # 'class << self'
   end    # 'class Interface'

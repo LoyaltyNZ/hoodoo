@@ -100,7 +100,7 @@ module Hoodoo; module Services
         @permissions = {}
         set_default_fallback( DENY )
       else
-        from_h( hash )
+        from_h!( hash )
       end
     end
 
@@ -200,7 +200,7 @@ module Hoodoo; module Services
 
     # Return a Hash representative of this permissions object, which can be
     # stored elsewhere, used to initialise another instance or written to an
-    # existing instance with #from_h.
+    # existing instance with #from_h!.
     #
     def to_h
       @permissions
@@ -211,8 +211,22 @@ module Hoodoo; module Services
     # +hash+:: Permissions hash, which must come (directly or indirectly) from
     #          a #to_h call.
     #
-    def from_h( hash )
+    def from_h!( hash )
       @permissions = Hoodoo::Utilities.stringify( hash )
+    end
+
+    # Merge the permissions described by the given Hash with those inside this
+    # instance. This will add to, or overwrite permissions with those from the
+    # given input Hash.
+    #
+    # +hash+:: Permissions hash, which must come (directly or indirectly) from
+    #          a #to_h call.
+    #
+    def merge!( hash )
+      @permissions = Hoodoo::Utilities.deep_merge_into(
+        @permissions,
+        Hoodoo::Utilities.stringify( hash )
+      )
     end
 
   private

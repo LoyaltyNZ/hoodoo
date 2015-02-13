@@ -172,13 +172,48 @@ describe Hoodoo::Services::Permissions do
 
     it 'can be loaded into another instance as a Hash' do
       p = described_class.new
-      p.from_h( @p.to_h )
+      p.from_h!( @p.to_h )
       expect( p.to_h ).to eq( @expected )
     end
 
     it 'can be used to initialise a new instance as a Hash' do
       p = described_class.new( @p.to_h )
       expect( p.to_h ).to eq( @expected )
+    end
+
+    it 'merges' do
+      p = described_class.new
+      p.set_resource_fallback( :Foo, described_class::ASK )
+      p.set_default( 'show', described_class::ALLOW )
+      p.set_default( 'update', described_class::ALLOW )
+      p.set_resource( :Bar, 'show', described_class::ALLOW )
+      @p.merge!( p.to_h )
+      expect( @p.to_h ).to eq( {
+        'resources' => {
+          'Foo' => {
+            'actions' => {
+              'create' => described_class::ALLOW,
+              'update' => described_class::ASK,
+              'delete' => described_class::DENY
+            },
+            'else' => described_class::ASK
+          },
+          'Bar' => {
+            'actions' => {
+              'show' => described_class::ALLOW
+            }
+          }
+        },
+        'default' => {
+          'actions' => {
+            'show'   => described_class::ALLOW,
+            'create' => described_class::ASK,
+            'update' => described_class::ALLOW,
+            'delete' => described_class::ALLOW
+          },
+          'else' => described_class::DENY
+        }
+      } )
     end
 
     it 'allows correctly' do

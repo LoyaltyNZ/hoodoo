@@ -245,7 +245,7 @@ module Hoodoo
           if session_hash.nil?
             return nil
           else
-            self.from_h( session_hash )
+            self.from_h!( session_hash )
             return false if self.expired?
 
             cv = load_caller_version_from_memcached( mclient, self.caller_id )
@@ -282,7 +282,7 @@ module Hoodoo
 
       # Represent this session's data as a Hash, for uses such as
       # storage in Memcached or loading into another session instance.
-      # See also #from_h.
+      # See also #from_h!.
       #
       def to_h
         hash = {}
@@ -328,7 +328,7 @@ module Hoodoo
       # If appropriate Hash keys are present, will set any or all of
       # #session_id, #identity, #scoping and #permissions.
       #
-      def from_h( hash )
+      def from_h!( hash )
         hash = Hoodoo::Utilities.stringify( hash )
 
         %w(

@@ -1,4 +1,4 @@
-# Test coverage (mostly hypothetical, just to ensure no syntax errors etc. via
+# Test coverage (mostly hypothetical, just to ensure no typing errors etc. via
 # full code coverage) for esoteric/exotic communcation methods such as on-queue
 # endpoints or HTTPS transport for local machine inter-resource calls.
 

@@ -42,7 +42,7 @@ module Hoodoo; module Services
       #
       def self.add( klass )
         unless klass < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
-          raise "Hoodoo::Services::Middleware.add must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
+          raise "Hoodoo::Services::Middleware.add must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.add( klass.instance )
@@ -56,7 +56,7 @@ module Hoodoo; module Services
       #
       def self.remove( klass )
         unless klass < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
-          raise "Hoodoo::Services::Middleware.remove must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
+          raise "Hoodoo::Services::Middleware.remove must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass"
         end
 
         @@reporter_pool.remove( klass.instance )

@@ -13,7 +13,7 @@ module Hoodoo; module Services
   class Middleware
 
     # Log writer which sends structured messages to an AMQP-based queue via the
-    # Alchemy and AMQEndpoint gems. An Hoodoo::Logger::FastWriter subclass,
+    # Alchemy and AMQEndpoint gems. A Hoodoo::Logger::FastWriter subclass,
     # since though talking to the queue might be comparatively slow, Alchemy
     # itself uses an asynchronous Thread for this so there's no need to add
     # another one for this logger.
@@ -53,9 +53,9 @@ module Hoodoo; module Services
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              an Hoodoo::Services::LegacySession instance. The client ID,
-      #              participant UUID and outlet UUID are sent as independent,
-      #              searchable fields in the log payload.
+      #              a Hoodoo::Services::Session as a hash. The Client UUID,
+      #              identity Participant UUID and Outlet UUID are sent as
+      #              independent, searchable fields in the log payload.
       #
       # +interaction_id+:: The interaction ID for this client's call. This is
       #                    also sent as an independent, searchable field in
@@ -67,10 +67,14 @@ module Hoodoo; module Services
         data[ :id ] ||= Hoodoo::UUID.generate()
 
         interaction_id = data[ :interaction_id ]
+
         session        = data[ :session ] || {}
-        client_id      = session[ :client_id      ]
-        participant_id = session[ :participant_id ]
-        outlet_id      = session[ :outlet_id      ]
+
+        client_id      = session[ :client_id ]
+        identity       = session[ :identity ] || {}
+
+        participant_id = identity[ :participant_id ]
+        outlet_id      = identity[ :outlet_id      ]
 
         message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
