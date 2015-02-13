@@ -80,7 +80,7 @@ module Hoodoo; module Services
   class Service
 
     # Return an array of the classes that make up the interfaces for this
-    # service. Each is an Hoodoo::Services::Interface subclass that was
+    # service. Each is a Hoodoo::Services::Interface subclass that was
     # registered by the subclass through a call to #comprised_of.
     #
     def self.component_interfaces
