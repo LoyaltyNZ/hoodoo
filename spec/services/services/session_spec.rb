@@ -297,6 +297,24 @@ describe Hoodoo::Services::Session do
     expect( loader.load_from_memcached!( '1234' ) ).to eq( false )
   end
 
+  it 'can explicitly update a caller' do
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    expect( described_class ).to receive( :connect_to_memcached ).once.and_return( FakeDalliClient.new )
+
+    expect( s.update_caller_version_in_memcached( '9944', 23                      ) ).to eq( true )
+    expect( s.update_caller_version_in_memcached( 'abcd', 2,  FakeDalliClient.new ) ).to eq( true )
+
+    store = FakeDalliClient.store()
+    expect( store[ '9944' ] ).to eq( { :expires_at => nil, :value => { 'version' => 23 } } )
+    expect( store[ 'abcd' ] ).to eq( { :expires_at => nil, :value => { 'version' => 2  } } )
+  end
+
   it 'handles invalid session IDs when loading' do
     expect( described_class ).to receive( :connect_to_memcached ).once.and_return( FakeDalliClient.new )
     loader = described_class.new
