@@ -357,11 +357,24 @@ describe Hoodoo::Services::Middleware do
 
       # This implicitly tests that Hoodoo' exception handler checks for test
       # and development mode and if both are false, calls the exception reporter.
+      #
+      # So, first, these are part of routine processing.
 
       expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(3).times.and_return(true)
+
+      # The check for 'unless test or development' is made prior to trying to use
+      # the ExceptionReporter class, so say 'no' to both then get the reporter to
+      # itself raise an error.
+
       expect(Hoodoo::Services::Middleware.environment).to receive(:test?).once.and_return(false)
       expect(Hoodoo::Services::Middleware.environment).to receive(:development?).and_return(false)
       expect(Hoodoo::Services::Middleware::ExceptionReporting).to receive(:report).and_raise("boo!")
+
+      # The inner handler checks for test/development to see it it should include
+      # backtraces.
+
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).once.and_return(false)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:development?).and_return(false)
 
       # Route through to the unimplemented "list" call, so the subclass raises
       # an exception. This is tested independently elsewhere too. This causes

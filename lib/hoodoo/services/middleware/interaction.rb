@@ -17,11 +17,11 @@ module Hoodoo; module Services; class Middleware
       attr_accessor :requested_content_type
       attr_accessor :requested_content_encoding
 
-      def initialize( env, owning_middleware_instance )
+      def initialize( env, owning_middleware_instance, session = nil )
         @rack_request   = Rack::Request.new( env )
         @interaction_id = find_or_generate_interaction_id()
         @context        = Hoodoo::Services::Context.new(
-          nil,
+          session,
           Hoodoo::Services::Request.new,
           Hoodoo::Services::Response.new( @interaction_id ),
           self

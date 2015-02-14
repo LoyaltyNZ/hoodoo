@@ -372,21 +372,9 @@ module Hoodoo; module Services
     # Run a Rack request, returning the [status, headers, body-array] data as
     # per the Rack protocol requirements.
     #
-    # Duplicates "this" instance for thread safety and invokes #_call.
-    #
     # +env+ Rack environment.
     #
     def call( env )
-      dup._call( env )
-    end
-
-    # Run a Rack request, returning the [status, headers, body-array] data as
-    # per the Rack protocol requirements. Called via #call, in a duplicated
-    # instance for thread safety.
-    #
-    # +env+ Rack environment.
-    #
-    def _call( env )
 
       # Global exception handler - catch problems in service implementations
       # and send back a 500 response as per API documentation (if possible).
@@ -2052,9 +2040,9 @@ module Hoodoo; module Services
 
       elsif on_queue
         alchemy_options = {
-          :session_id => @session_id,
-          :host       => @rack_request.host,
-          :port       => @rack_request.port
+          :session_id => source_interaction.context.session.session_id,
+          :host       => source_interaction.rack_request.host,
+          :port       => source_interaction.rack_request.port
         }
 
       else
@@ -2238,9 +2226,21 @@ module Hoodoo; module Services
         'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
       }
 
+      # Need to possibly augment the caller's session - same rationale
+      # as #local_service_remote, so see that for details.
+
+      session = augment_session_with_permissions_for_action( source_interaction )
+
+      if session == false
+        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash.platform_errors.add_error( 'platform.invalid_session' )
+        return hash
+      end
+
       local_interaction = Hoodoo::Services::Middleware::Interaction.new(
         {},
-        self
+        self,
+        session
       )
 
       local_interaction.target_interface                  = interface
@@ -2253,26 +2253,6 @@ module Hoodoo; module Services
 
       local_request  = local_interaction.context.request
       local_response = local_interaction.context.response
-
-      # Need to possibly augment the caller's session - same rationale
-      # as #local_service_remote, so see that for details.
-
-      session = augment_session_with_permissions_for_action( source_interaction )
-
-      if session == false
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
-        hash.platform_errors.add_error( 'platform.invalid_session' )
-        return hash
-      end
-
-      # New session means a new context.
-
-      local_interaction.context = Hoodoo::Services::Context.new(
-        session,
-        local_request,
-        local_response,
-        local_interaction
-      )
 
       set_common_response_headers( local_interaction )
       update_response_for( local_response, interface )
