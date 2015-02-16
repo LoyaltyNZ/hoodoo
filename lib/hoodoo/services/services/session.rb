@@ -413,9 +413,16 @@ module Hoodoo
       # Connect to the Memcached server. Returns a new Dalli client
       # instance. Raises an exception if no connection can be established.
       #
+      # In test environments, returns a MockDalliClient instance.
+      #
       # +host+:: Connection host (IP "address:port" String) for Memcached.
       #
       def self.connect_to_memcached( host )
+
+        if Hoodoo::Services::Middleware.environment.test? && MockDalliClient.bypass? == false
+          return MockDalliClient.new
+        end
+
         if host.nil? || host.empty?
           raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection host data is nil or empty'
         end
@@ -487,6 +494,99 @@ module Hoodoo
         )
       end
 
+      # Mock known uses of Dalli::Client with test implementations.
+      # Use explicitly, or as an RSpec implicit mock via something like
+      # this:
+      #
+      #     allow( Dalli::Client ).to receive( :new ).and_return( Hoodoo::Services::Session::MockDalliClient.new )
+      #
+      # ...whenever you need to stub out real Memcached. You will
+      # probably want to add:
+      #
+      #     before :all do # (or ":each")
+      #       Hoodoo::Services::Session::MockDalliClient.reset()
+      #     end
+      #
+      # ...to "clean out Memcached" before or between tests. You can
+      # check the contents of mock Memcached by examining ::store's
+      # hash of data.
+      #
+      class MockDalliClient
+        @@store = {}
+
+        # For test analysis, return the hash of 'memcached' mock data.
+        #
+        # Entries are referenced by the key you used to originally
+        # store them; values are hashes with ":expires_at" giving an
+        # expiry time or "nil" and ":value" giving your stored value.
+        #
+        def self.store
+          @@store
+        end
+
+        # Wipe out all saved data.
+        #
+        def self.reset
+          @@store = {}
+        end
+
+        # Pass +true+ to bypass the mock client (subject to the caller
+        # reading ::bypass?) to e.g. get test code coverage on real
+        # Memcached. Pass +false+ otherwise.
+        #
+        def self.bypass( bypass_boolean )
+          @@bypass = bypass_boolean
+        end
+
+        @@bypass = false
+
+        # If +true+, bypass this class and use real Dalli::Client; else
+        # don't. Default return value is +false+.
+        #
+        def self.bypass?
+          @@bypass
+        end
+
+        # Get the data stored under the given key. Returns +nil+ if
+        # not found / expired.
+        #
+        # +key+:: Key to look up (see #set).
+        #
+        def get( key )
+          data = @@store[ key ]
+          return nil if data.nil?
+
+          expires_at = data[ :expires_at ]
+          return nil unless expires_at.nil? || Time.now < expires_at
+
+          return data[ :value ]
+        end
+
+        # Set data for a given key.
+        #
+        # +key+::   Key under which to store data.
+        #
+        # +value+:: Data to store.
+        #
+        # +ttl+::   (Optional) time-to-live ('live' as in living, not as in
+        #           'live TV') - a value in seconds, after which the data is
+        #           considered expired. If omitted, the data does not expire.
+        #
+        def set( key, value, ttl = nil )
+          data = {
+            :expires_at => ttl.nil? ? nil : Time.now.utc + ttl,
+            :value      => value
+          }
+
+          @@store[ key ] = data
+        end
+
+        # Returns an empty hash.
+        #
+        def stats
+          {}
+        end
+      end
     end
   end
 end

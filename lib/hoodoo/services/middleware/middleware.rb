@@ -838,16 +838,11 @@ module Hoodoo; module Services
     #                 describing the current interaction.
     #
     def load_session_into( interaction )
+
+      session    = nil
       session_id = interaction.rack_request.env[ 'HTTP_X_SESSION_ID' ]
 
-      # Use test mode for sessions if in a test environment or if there is
-      # no configured MemCache available (assume local development).
-
-      environment = self.class.environment()
-
-      if self.class.environment().test? || ! self.class.has_memcached?
-        session = self.class.test_session()
-      else
+      unless session_id.nil?
         session = Hoodoo::Services::Session.new(
           :memcached_host => self.class.memcached_host(),
           :session_id     => session_id
@@ -855,6 +850,10 @@ module Hoodoo; module Services
 
         result = session.load_from_memcached!( session_id )
         session = nil if result != true
+      end
+
+      if self.class.environment.test? && session.nil?
+        session = self.class.test_session()
       end
 
       # If there's no session and no local interfaces have any public
@@ -2040,9 +2039,8 @@ module Hoodoo; module Services
 
       elsif on_queue
         alchemy_options = {
-          :session_id => source_interaction.context.session.session_id,
-          :host       => source_interaction.rack_request.host,
-          :port       => source_interaction.rack_request.port
+          :host => source_interaction.rack_request.host,
+          :port => source_interaction.rack_request.port
         }
 
       else
@@ -2111,8 +2109,9 @@ module Hoodoo; module Services
           raise 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment'
         end
 
-        alchemy_options[ :body    ] = body_data
-        alchemy_options[ :headers ] = headers
+        alchemy_options[ :body       ] = body_data
+        alchemy_options[ :headers    ] = headers
+        alchemy_options[ :session_id ] = session.session_id unless session.nil?
 
         response = @@alchemy.http_request(
           remote_info[ :queue ],

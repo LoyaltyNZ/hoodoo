@@ -71,7 +71,8 @@ module Hoodoo; module Services
         return true
       end
 
-      # Add an endpoint to the list.
+      # Add an endpoint to the list. If the endpoint was already added,
+      # it will be overwritten with the new data.
       #
       # +resource+:: Resource as a String or Symbol, e.g. "Product"
       # +version+::  Endpoint's implemented API version as an Integer, e.g. 1
