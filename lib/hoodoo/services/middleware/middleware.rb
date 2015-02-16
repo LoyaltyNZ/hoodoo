@@ -153,43 +153,6 @@ module Hoodoo; module Services
       } ).to_h
     } )
 
-
-
-    def self.set_in_class( key, value )
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ] ||= {}
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ][ key ] = value
-    end
-
-    def self.set_once_in_class( key, value )
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ] ||= {}
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ][ key ] ||= value
-    end
-
-    def self.remove_from_class( key )
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ] ||= {}
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ].delete( key )
-    end
-
-    def self.has_in_class?( key )
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ] ||= {}
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ].has_key?( key )
-    end
-
-    def self.get_in_class( key )
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ] ||= {}
-      Thread.current[ :nz_co_loyalty_hoodoo_services_middleware ][ key ]
-    end
-
-    def self.reset_service_data_in_class
-      self.set_in_class( :services, [] )
-      self.set_in_class( :interfaces_have_public_methods, false )
-      self.remove_from_class( :recorded_host, [] )
-      self.remove_from_class( :recorded_port, [] )
-    end
-
-
-
-
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
     # or +false+ according to the +RACK_ENV+ environment variable setting.
@@ -214,14 +177,14 @@ module Hoodoo; module Services
     end
 
     # Return a Memcached host (IP address/port combination) as a String if
-    # defined in environment variable MEMCACHE_HOST (with MEMCACHED_HOST also
+    # defined in environment variable MEMCACHED_HOST (with MEMCACHE_URL also
     # accepted as a legacy fallback).
     #
     # If this returns +nil+ or an empty string, there's no defined Memcached
     # host available.
     #
     def self.memcached_host
-      ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_HOST' ]
+      ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
     end
 
     # Are we running on the queue, else (implied) a local HTTP server?
