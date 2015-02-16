@@ -447,7 +447,7 @@ def show( context )
   found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
 
   # ...map &#39;found&#39; to whatever resource you&#39;re representing,
-  # e.g. via an Hoodoo::Presenters::Base subclass with resource
+  # e.g. via a Hoodoo::Presenters::Base subclass with resource
   # schema and the subclass&#39;s Hoodoo::Presenters::Base::render
   # call, then...
 

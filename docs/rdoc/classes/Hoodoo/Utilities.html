@@ -55,6 +55,18 @@
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-deep_merge_into">deep_merge_into</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>S</dt>
         <dd>
           <ul>
@@ -113,6 +125,99 @@
       <div class="sectiontitle">Class Public methods</div>
       
         <div class="method">
+          <div class="title method-title" id="method-c-deep_merge_into">
+            
+              <b>deep_merge_into</b>( target_hash, inbound_hash )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-deep_merge_into" name="method-c-deep_merge_into" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Deep merge two hashes.</p>
+
+<p>Hash#merge/merge! only do a shallow merge. For example, without a block,
+when starting with this hash:</p>
+
+<pre><code>{ :one =&gt; { :two =&gt; { :three =&gt; 3 } } }
+</code></pre>
+
+<p>…and merging in this hash:</p>
+
+<pre><code>{ :one =&gt; { :two =&gt; { :and_four =&gt; 4 } } }
+</code></pre>
+
+<p>…the possibly unexpected result is this:</p>
+
+<pre><code>{ :one =&gt; { :two =&gt; { :and_four =&gt; 4 } } }
+</code></pre>
+
+<p>Because the value for key “:one” in the original hash is simply overwritten
+with the value from the merged-in hash.</p>
+
+<p>Deep merging takes a target hash, into which an “inbound” source hash is
+merged and returns a new hash that is the deep merged result. Taking the
+above example:</p>
+
+<pre><code>target_hash  = { :one =&gt; { :two =&gt; { :three =&gt; 3 } } }
+inbound_hash = { :one =&gt; { :two =&gt; { :and_four =&gt; 4 } } }
+Hoodoo::Utilities.deep_merge_into( target_hash, inbound_hash )
+</code></pre>
+
+<p>…yields:</p>
+
+<pre><code>{ :one =&gt; { :two =&gt; { :three =&gt; 3, :and_four =&gt; 4 } } }
+</code></pre>
+
+<p>For any same-named key with a non-hash value, the value in the inbound hash
+will overwrite the value in the target hash.</p>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>target_hash</code>
+<dd>
+<p>The hash into which something will be merged.</p>
+</dd><dt><code>inbound_hash</code>
+<dd>
+<p>The hash that will be merged into the target.</p>
+</dd></dl>
+
+<p>Returns the merged result.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-deep_merge_into_source')" id="l_method-c-deep_merge_into_source">show</a>
+                
+              </p>
+              <div id="method-c-deep_merge_into_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 101</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
+
+  <span class="ruby-comment"># Based on:</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash</span>
+
+  <span class="ruby-identifier">merger</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">v1</span>, <span class="ruby-identifier">v2</span> <span class="ruby-operator">|</span>
+    <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">v1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">v2</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">v2</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> ) <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>
+  }
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">target_hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">inbound_hash</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-c-spare_port">
             
               <b>spare_port</b>()
@@ -148,7 +253,7 @@ href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-p
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 80</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
   <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-number">0</span> )
   <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-number">0</span> ) )
@@ -309,7 +414,7 @@ Time.now (yields nil, nil).</p>
                 
               </p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 120</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>

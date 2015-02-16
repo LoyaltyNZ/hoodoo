@@ -217,20 +217,28 @@ keep your resource implementation data layers decoupled from one another.</p>
         <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>( middleware_instance, resource, version = 1 )
+              <b>new</b>( owning_interaction, resource, version = 1 )
             
             <a href="../../../../classes/Hoodoo/Services/Middleware/Endpoint.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Create an endpoint instance on behalf of the given <a
-href="../Middleware.html">Hoodoo::Services::Middleware</a> instance,
-directed at the given resource.</p>
-<dl class="rdoc-list note-list"><dt><code>middleware_instance</code>
+              <p>Create an endpoint instance on behalf of a (presumed) use case of a service
+implementation requesting a resource endpoint through its <a
+href="../Context.html">Hoodoo::Services::Context</a> instance.</p>
+
+<p>Except in test code, these shouldn&#39;t be created directly. <a
+href="../Request.html">Request</a> them through <a
+href="../Context.html#method-i-resource">Hoodoo::Services::Context#resource</a>
+instead.</p>
+<dl class="rdoc-list note-list"><dt><code>owning_interaction</code>
 <dd>
-<p><a href="../Middleware.html">Hoodoo::Services::Middleware</a> used to
-handle onward requests.</p>
+<p>The <a
+href="Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance related to the interaction for which a target resource
+implementation has been called, that implementation now requesting an
+endpoint for inter-resource communication.</p>
 </dd><dt><code>resource</code>
 <dd>
 <p>Resource name the endpoint targets, e.g. <code>:Purchase</code>. String or
@@ -241,7 +249,7 @@ symbol.</p>
 Default is 1.</p>
 </dd></dl>
 
-<p>The instance is then used with the <a
+<p>The endpoint is then used with the <a
 href="Endpoint.html#method-i-list">list</a>, <a
 href="Endpoint.html#method-i-show">show</a>, <a
 href="Endpoint.html#method-i-create">create</a>, <a
@@ -299,15 +307,17 @@ request (i.e. JSON, as a Hash).</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 96</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">middleware_instance</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 103</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">owning_interaction</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
-  <span class="ruby-ivar">@middleware</span>    = <span class="ruby-identifier">middleware_instance</span>
+  <span class="ruby-ivar">@owning_interaction</span>   = <span class="ruby-identifier">owning_interaction</span>
+  <span class="ruby-ivar">@owning_middleware</span>    = <span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
+
   <span class="ruby-ivar">@resource</span>      = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-ivar">@version</span>       = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
-  <span class="ruby-ivar">@local_service</span> = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
-  <span class="ruby-ivar">@remote_info</span>   = <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@local_service</span> = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@remote_info</span>   = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
 
   <span class="ruby-comment"># ...noting that @remote_info may now contain either a URI for local</span>
   <span class="ruby-comment"># development / real HTTP environments, or a Hash with &quot;:queue&quot; and</span>
@@ -340,7 +350,7 @@ request (i.e. JSON, as a Hash).</p>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns an <a
+<p>Returns a <a
 href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
 representation of the new resource instance. Call <a
 href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
@@ -365,17 +375,19 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 178</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 191</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
-    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
-    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
-    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
+    <span class="ruby-value">:local</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
 
-    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;POST&#39;</span>,
-    <span class="ruby-value">:body_hash</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
-    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:resource</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;POST&#39;</span>,
+    <span class="ruby-value">:body_hash</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -402,7 +414,7 @@ on the returned instance to detect and resolve error conditions
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns an <a
+<p>Returns a <a
 href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
 representation of the now-deleted resource instance. Call <a
 href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
@@ -427,17 +439,19 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 232</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
-    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
-    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
-    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
+    <span class="ruby-value">:local</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
 
-    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;DELETE&#39;</span>,
-    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:resource</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;DELETE&#39;</span>,
+    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -504,7 +518,7 @@ to the targer Resource&#39;s documented supported search/filter parameters
 and the platform&#39;s common all-resource behaviour.</p>
 </dd></dl>
 
-<p>Returns an <a
+<p>Returns a <a
 href="Endpoint/AugmentedArray.html">Hoodoo::Services::Middleware::Endpoint::AugmentedArray</a>
 representation of the requested list of resource instances. Call <a
 href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
@@ -531,16 +545,18 @@ found.</p>
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 127</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 136</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
-    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
-    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
-    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
+    <span class="ruby-value">:local</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
 
-    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
-    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:resource</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
+    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -567,7 +583,7 @@ found.</p>
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns an <a
+<p>Returns a <a
 href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
 representation of the requested resource instance. Call <a
 href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
@@ -592,17 +608,19 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 152</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 163</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
-    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
-    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
-    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
+    <span class="ruby-value">:local</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
 
-    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
-    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:resource</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;GET&#39;</span>,
+    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -632,7 +650,7 @@ on the returned instance to detect and resolve error conditions
 <p>See initialize.</p>
 </dd></dl>
 
-<p>Returns an <a
+<p>Returns a <a
 href="Endpoint/AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
 representation of the updated resource instance. Call <a
 href="Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F">Hoodoo::Services::Middleware::Endpoint::AugmentedBase#adds_errors_to?</a>
@@ -657,18 +675,20 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource</span>(
-    <span class="ruby-value">:local</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
-    <span class="ruby-value">:remote</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
-    <span class="ruby-value">:resource</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
-    <span class="ruby-value">:version</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
+    <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
+    <span class="ruby-value">:local</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@local_service</span>,
+    <span class="ruby-value">:remote</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@remote_info</span>,
 
-    <span class="ruby-value">:http_method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;PATCH&#39;</span>,
-    <span class="ruby-value">:ident</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
-    <span class="ruby-value">:body_hash</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
-    <span class="ruby-value">:query_hash</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
+    <span class="ruby-value">:resource</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@resource</span>,
+    <span class="ruby-value">:version</span>            =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@version</span>,
+
+    <span class="ruby-value">:http_method</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;PATCH&#39;</span>,
+    <span class="ruby-value">:ident</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span>,
+    <span class="ruby-value">:body_hash</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_hash</span>,
+    <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>

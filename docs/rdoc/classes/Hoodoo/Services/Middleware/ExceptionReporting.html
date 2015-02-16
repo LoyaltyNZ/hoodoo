@@ -210,7 +210,7 @@ subclass (class, not instance) to add.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 43</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.add must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.add must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )
@@ -258,7 +258,7 @@ subclass (class, not instance) to remove.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ExceptionReporting</span><span class="ruby-operator">::</span><span class="ruby-constant">BaseReporter</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.remove must be called with an Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware.remove must be called with a Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">@@reporter_pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">instance</span> )

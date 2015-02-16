@@ -305,11 +305,12 @@ others connect to if subsequently started.</p>
           
           
             <div class="description">
-              <p>Add an endpoint to the list.</p>
-<dl class="rdoc-list note-list"><dt>resource
+              <p>Add an endpoint to the list. If the endpoint was already added, it will be
+overwritten with the new data.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource as a String or Symbol, e.g. “Product”</p>
-</dd><dt>version
+</dd><dt><code>version</code>
 <dd>
 <p>Endpoint&#39;s implemented API version as an Integer, e.g. 1</p>
 </dd><dt><code>uri</code>
@@ -336,7 +337,7 @@ as a String.</p>
                 
               </p>
               <div id="method-i-add_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 82</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
 <span class="ruby-keyword">end</span></pre>
@@ -381,7 +382,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
                 
               </p>
               <div id="method-i-find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 92</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 93</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -455,7 +456,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
                 
               </p>
               <div id="method-i-stop_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 98</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 99</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stop</span>
   <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">thread</span>.<span class="ruby-identifier">exit</span>
 <span class="ruby-keyword">end</span></pre>
