@@ -164,7 +164,7 @@ module Hoodoo; module Services
     #     end
     #
     def self.environment
-      @@_env ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
+      @@environment ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
     # Do we have Memcached available? If not, assume local development with

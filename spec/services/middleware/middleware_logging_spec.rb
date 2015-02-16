@@ -26,7 +26,7 @@ end
 # instances now in use as an array (Hoodoo::Logger#instances).
 #
 def force_logging_to( test_env )
-  Hoodoo::Services::Middleware.class_variable_set( '@@_env', Hoodoo::StringInquirer.new( test_env ) )
+  Hoodoo::Services::Middleware.class_variable_set( '@@environment', Hoodoo::StringInquirer.new( test_env ) )
   Hoodoo::Services::Middleware.class_variable_set( '@@external_logger', false )
   Hoodoo::Services::Middleware.send( :set_up_basic_logging )
   Hoodoo::Services::Middleware.send( :add_file_logging, File.join( File.dirname( __FILE__), '..', '..', 'log' ) )
@@ -36,14 +36,14 @@ end
 describe Hoodoo::Services::Middleware do
 
   before :each do
-    @old_env = Hoodoo::Services::Middleware::class_variable_get( '@@_env' )
+    @old_env = Hoodoo::Services::Middleware::class_variable_get( '@@environment' )
     @old_logger = Hoodoo::Services::Middleware::logger
   end
 
   after :each do
     Hoodoo::Services::Middleware::logger.wait()
     force_logging_to( 'test' )
-    Hoodoo::Services::Middleware.class_variable_set( '@@_env', @old_env )
+    Hoodoo::Services::Middleware.class_variable_set( '@@environment', @old_env )
     Hoodoo::Services::Middleware.class_variable_set( '@@logger', @old_logger )
     begin
       Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
