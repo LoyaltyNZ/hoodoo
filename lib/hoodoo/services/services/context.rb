@@ -71,6 +71,27 @@ module Hoodoo; module Services
     # error (equivanent to HTTP status code 404) returned when a resource
     # implementation turns out to not actually be present.
     #
+    # The idiomatic call sequence is something like the following, where
+    # you get hold of an endpoint, make a call and handle the response:
+    #
+    #     clock = context.resource( :Clock, 2 ) # v2 of 'Clock' resource
+    #     time  = clock.show( 'now' )
+    #
+    #     return if time.adds_errors_to?( context.response.errors )
+    #
+    # ...or alternatively:
+    #
+    #     clock = context.resource( :Clock, 2 ) # v2 of 'Clock' resource
+    #     time  = clock.show( 'now' )
+    #
+    #     context.response.add_errors( time.platform_errors )
+    #     return if context.response.halt_processing?
+    #
+    # The return value of calls made to the endpoint is an Array or Hash
+    # that mixes in Hoodoo::Services::Middleware::Endpoint::AugmentedBase;
+    # see this class's documentation for details of the two alternative
+    # error handling approaches shown above.
+    #
     # +resource+:: Resource name for the endpoint, e.g. +:Purchase+. String
     #              or symbol.
     #

@@ -244,3 +244,59 @@ def spec_helper_http( path:,
 
   return http.request( request )
 end
+
+# Mock known uses of Dalli::Client with test implementations.
+# Use something like this:
+#
+#     allow( Dalli::Client ).to receive( :new ).and_return( MockDalliClient.new )
+#
+# ...whenever you need to stub out real Memcached. You will
+# probably want to add:
+#
+#     before :all do # (or ":each")
+#       MockDalliClient.reset()
+#     end
+#
+# ...to "clean out Memcached" before or between tests. You can
+# check the contents of mock Memcached by examining ::store's
+# hash of data. Entries are referenced by the key you used to
+# store them; values are hashes with ":expires_at" giving an
+# expiry time or "nil" and ":value" giving your stored value.
+#
+class MockDalliClient
+  @@store = {}
+
+  def initialize( ignored1 = nil, ignored2 = nil )
+  end
+
+  def self.store # For test analysis
+    @@store
+  end
+
+  def self.reset
+    @@store = {}
+  end
+
+  def get( key )
+    data = @@store[ key ]
+    return nil if data.nil?
+
+    expires_at = data[ :expires_at ]
+    return nil unless expires_at.nil? || Time.now < expires_at
+
+    return data[ :value ]
+  end
+
+  def set( key, value, ttl = nil )
+    data = {
+      :expires_at => ttl.nil? ? nil : Time.now.utc + ttl,
+      :value      => value
+    }
+
+    @@store[ key ] = data
+  end
+
+  def stats
+    {}
+  end
+end
