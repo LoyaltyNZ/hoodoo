@@ -155,7 +155,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
   end
 
   class RSpecTestTimeInterface < Hoodoo::Services::Interface
-    interface( :Time ) { endpoint :time, RSpecTestTimeImplementation }
+    interface( :RSpecDRbTestTime ) { endpoint :rspec_drb_test_time, RSpecTestTimeImplementation }
   end
 
   class RSpecTestTime < Hoodoo::Services::Service
@@ -164,12 +164,12 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
   class RSpecTestClockImplementation < Hoodoo::Services::Implementation
     def list( context )
-      context.response.set_resources( context.resource( :Time ).list() + [ { 'clock' => 'responded' } ] )
+      context.response.set_resources( context.resource( :RSpecDRbTestTime ).list() + [ { 'clock' => 'responded' } ] )
     end
   end
 
   class RSpecTestClockInterface < Hoodoo::Services::Interface
-    interface( :Clock ) { endpoint :clock, RSpecTestClockImplementation }
+    interface( :RSpecDRbTestClock ) { endpoint :rspec_drb_test_clock, RSpecTestClockImplementation }
   end
 
   class RSpecTestClock < Hoodoo::Services::Service
@@ -188,7 +188,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
     # over local machine HTTP via the DRb service for discovery.
     #
     it 'properly supports service discovery' do
-      response = spec_helper_http( path: '/v1/clock', port: @port1 )
+      response = spec_helper_http( path: '/v1/rspec_drb_test_clock', port: @port1 )
       expect( response.code ).to eq( '200' )
 
       parsed = JSON.parse( response.body )
