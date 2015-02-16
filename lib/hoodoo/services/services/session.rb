@@ -581,6 +581,12 @@ module Hoodoo
           @@store[ key ] = data
         end
 
+        # Remove data for the given key.
+        #
+        def delete( key )
+          @@store.delete( key )
+        end
+
         # Returns an empty hash.
         #
         def stats
