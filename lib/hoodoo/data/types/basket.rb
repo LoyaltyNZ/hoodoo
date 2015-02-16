@@ -16,11 +16,11 @@ module Hoodoo
       class Basket < Hoodoo::Presenters::Base
 
         schema do
-          array :items do
+          array :items, :required => false do
             type :BasketItem
           end
 
-          array :totals do
+          array :totals, :required => true do
             type :CurrencyAmount
           end
         end
