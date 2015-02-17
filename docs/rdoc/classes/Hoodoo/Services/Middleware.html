@@ -1211,7 +1211,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 
               </p>
               <div id="method-i-augment_session_with_permissions_for_action_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2429</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2427</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_session_with_permissions_for_action</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -1258,7 +1258,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
 
     <span class="ruby-keyword">else</span> <span class="ruby-comment"># Couldn&#39;t save it</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unable to create interim session for inter-resource call to #{ interface.resource } / #{ action }&quot;</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unable to create interim session for inter-resource call from #{ interface.resource } / #{ action }&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -1431,7 +1431,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2241</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2240</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">service</span>            = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>              ]
@@ -1566,7 +1566,6 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-comment"># the worst case we just have to wait for this to expire naturally.</span>
 
     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete_from_memcached</span>()
-
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Extract the returned data and &quot;rephrase&quot; it as an augmented</span>
@@ -1780,7 +1779,6 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-comment"># the worst case we just have to wait for this to expire naturally.</span>
 
     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete_from_memcached</span>()
-
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Parse the response (assumed valid JSON else #for_rack would have failed</span>
@@ -2032,7 +2030,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2492</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2490</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>

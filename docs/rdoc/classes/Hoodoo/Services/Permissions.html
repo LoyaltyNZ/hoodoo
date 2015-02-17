@@ -442,7 +442,7 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
     <span class="ruby-identifier">result</span> = <span class="ruby-identifier">permitted_in?</span>( <span class="ruby-identifier">tree</span>, <span class="ruby-identifier">action_name</span> )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DENY</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
