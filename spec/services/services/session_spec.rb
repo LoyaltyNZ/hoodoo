@@ -316,6 +316,22 @@ describe Hoodoo::Services::Session do
     expect( s.save_to_memcached() ).to be_nil
   end
 
+  it 'can be deleted' do
+    fdc = Hoodoo::Services::Session::MockDalliClient.new
+    allow( described_class ).to receive( :connect_to_memcached ).and_return( fdc )
+
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    s.save_to_memcached
+
+    expect{ s.delete_from_memcached }.to change{ s.load_from_memcached!( s.session_id ) }.from( true ).to( nil )
+  end
+
   # We really can't do this without insisting on testers having a
   # Memcached instance; instead, assume Dalli works (!) and mock it.
   #
