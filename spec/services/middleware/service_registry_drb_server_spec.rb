@@ -139,6 +139,24 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
       DRb.stop_service
     end
+
+    it 'flushes' do
+      DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+      @drb_server = DRbObject.new_with_uri( @drb_uri )
+
+      @drb_server.add( :Foo1, 2, 'http://localhost:3030/v2/foo_1' )
+      @drb_server.add( :Foo1, 1, 'http://127.0.0.1:3031/v1/foo_1' )
+
+      expect( @drb_server.find( :Foo1, 2 ) ).to_not be_nil
+      expect( @drb_server.find( :Foo1, 1 ) ).to_not be_nil
+
+      @drb_server.flush
+
+      expect( @drb_server.find( :Foo1, 2 ) ).to be_nil
+      expect( @drb_server.find( :Foo1, 1 ) ).to be_nil
+
+      DRb.stop_service
+    end
   end
 
   # A lot of this is copied from service_middleware_multi_spec.rb and

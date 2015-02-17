@@ -94,6 +94,13 @@ module Hoodoo; module Services
         @repository[ "#{ resource }/#{ version }" ]
       end
 
+      # Flush out the repository, clearing all stored service records. This is
+      # usually for test purposes only.
+      #
+      def flush
+        @repository = {}
+      end
+
       # Shut down this DRb service.
       #
       def stop

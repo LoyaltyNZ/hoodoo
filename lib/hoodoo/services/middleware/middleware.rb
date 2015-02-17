@@ -301,6 +301,20 @@ module Hoodoo; module Services
       @@recorded_port = options[ :Port ]
     end
 
+    # For test purposes, dump the internal service records and flush the DRb
+    # service. if it is running (exceptions are ignored). Existing middleware
+    # instances will be invalidated. New instances must be created to re-scan
+    # their services internally and (where required) inform the DRb process
+    # of the endpoints.
+    #
+    def self.flush_services_for_test
+      @@services = []
+      begin
+        @@drb_service.flush()
+      rescue
+      end
+    end
+
     # Initialize the middleware instance.
     #
     # +app+ Rack app instance to which calls should be passed.
@@ -816,6 +830,11 @@ module Hoodoo; module Services
         unless host.nil? || port.nil?
           services.each do | service |
             interface = service[ :interface ]
+
+            next if @@drb_service.find(
+              interface.resource,
+              interface.version
+            )
 
             @@drb_service.add(
               interface.resource,
