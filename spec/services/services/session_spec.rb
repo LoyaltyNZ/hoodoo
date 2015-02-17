@@ -287,11 +287,9 @@ describe Hoodoo::Services::Session do
   end
 
   it 'logs Memcached exceptions when loading' do
-    fdc = Hoodoo::Services::Session::MockDalliClient.new
-    expect( described_class ).to receive( :connect_to_memcached ).once.and_return( fdc )
     loader = described_class.new
 
-    expect( fdc ).to receive( :get ).once do
+    expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :get ).once do
       raise 'Mock Memcached connection failure'
     end
 
@@ -299,16 +297,28 @@ describe Hoodoo::Services::Session do
     expect( loader.load_from_memcached!( '1234' ) ).to be_nil
   end
 
-  it 'logs Memcached exceptions when saving' do
-    fdc = Hoodoo::Services::Session::MockDalliClient.new
-    expect( described_class ).to receive( :connect_to_memcached ).once.and_return( fdc )
-
+  it 'logs Memcached exceptions when updating caller version during session saving' do
     s = described_class.new(
       :caller_id => '0987',
       :caller_version => 1
     )
 
-    expect( fdc ).to receive( :set ).once do
+    expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :set ).once do
+      raise 'Mock Memcached connection failure'
+    end
+
+    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn ).once.and_call_original
+    expect( s.save_to_memcached() ).to be_nil
+  end
+
+  it 'logs Memcached exceptions when saving session' do
+    s = described_class.new(
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :set ).once.and_call_original
+    expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :set ).once do
       raise 'Mock Memcached connection failure'
     end
 
@@ -317,9 +327,6 @@ describe Hoodoo::Services::Session do
   end
 
   it 'can be deleted' do
-    fdc = Hoodoo::Services::Session::MockDalliClient.new
-    allow( described_class ).to receive( :connect_to_memcached ).and_return( fdc )
-
     s = described_class.new(
       :session_id => '1234',
       :memcached_host => 'abcd',
@@ -330,6 +337,25 @@ describe Hoodoo::Services::Session do
     s.save_to_memcached
 
     expect{ s.delete_from_memcached }.to change{ s.load_from_memcached!( s.session_id ) }.from( true ).to( nil )
+  end
+
+  it 'handles deletion exceptions' do
+    fdc = Hoodoo::Services::Session::MockDalliClient.new
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    s.save_to_memcached
+
+    allow( described_class ).to receive( :connect_to_memcached ) {
+      raise 'Intentional exception'
+    }
+
+    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn )
+    expect( s.delete_from_memcached ).to be_nil
   end
 
   # We really can't do this without insisting on testers having a

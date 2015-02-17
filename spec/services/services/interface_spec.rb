@@ -174,6 +174,25 @@ describe Hoodoo::Services::Interface do
       end
     end
 
+    # This is exercised in non-failure cases by
+    # middleware_permissions_spec.rb.
+    #
+    context 'in #additional_permissions_for' do
+      it 'should complain about a missing block' do
+        class RSpecTestInterfaceImplementationG < Hoodoo::Services::Implementation
+        end
+        class RSpecTestInterfaceInterfaceG < Hoodoo::Services::Interface
+        end
+
+        expect {
+          RSpecTestInterfaceInterfaceG.interface :FooF do
+            endpoint :an_endpoint, RSpecTestInterfaceImplementationG
+            additional_permissions_for( :show )
+          end
+        }.to raise_error(RuntimeError, 'Hoodoo::Services::Interface#additional_permissions_for must be passed a block')
+      end
+    end
+
     # This is really an internal sanity test for code coverage purposes...
     #
     it 'should complain about incorrect instantiation' do
