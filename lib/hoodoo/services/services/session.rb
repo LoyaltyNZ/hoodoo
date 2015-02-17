@@ -618,12 +618,6 @@ module Hoodoo
         def delete( key )
           @@store.delete( key )
         end
-
-        # Returns an empty hash.
-        #
-        def stats
-          {}
-        end
       end
     end
   end
