@@ -1835,4 +1835,13 @@ describe Hoodoo::Services::Middleware::Endpoint do
       expect(last_response.status).to eq(401)
     end
   end
+
+  context 'edge error cases' do
+    it 'complains about malformed inter-resource options' do
+      expect {
+        mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
+        mw.send( :inter_resource, {} )
+      }.to raise_error(RuntimeError, 'Hoodoo::Services::Middleware#inter_resource: Serious internal error - no source interaction data was provided')
+    end
+  end
 end

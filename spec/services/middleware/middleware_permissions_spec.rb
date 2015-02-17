@@ -83,7 +83,7 @@ class RSpecAddPermTestTimeImplementation < Hoodoo::Services::Implementation
   # code here lets future maintainers read this and know what's happening!
   #
   def verify( context, action )
-    Hoodoo::Session::Permissions::DENY
+    Hoodoo::Services::Permissions::DENY
   end
 end
 
@@ -380,6 +380,82 @@ describe Hoodoo::Services::Middleware do
         result = JSON.parse( last_response.body )
         expect( result ).to eq( { 'date' => '1999-12-31', 'time' => '23:59:59' } )
       end
+
+      context 'for code coverage' do
+
+        # Top-level "augment session failed"
+        #
+        it 'can deal with inter-resource session errors (1)' do
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(Hoodoo::Services::Middleware).to receive( :augment_session_with_permissions_for_action ).once.and_return( false )
+          expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
+
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 401 )
+        end
+
+        # Inside "augment session", attempt to save to Memcached returns 'false'
+        #
+        it 'can deal with inter-resource session errors (2)' do
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( false )
+          expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
+
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 401 )
+        end
+
+        # Inside "augment session", attempt to save to Memcached returns 'nil'
+        #
+        it 'can deal with inter-resource session errors (3)' do
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( nil )
+          expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
+
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 500 )
+
+          result = JSON.parse( last_response.body )
+          expect( result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Unable to create interim session for inter-resource call from RSpecAddPermTestClock / show' )
+        end
+
+        it 'handles nil permissions' do
+          @session.permissions = nil
+
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 403 )
+        end
+
+        it 'handles empty permissions' do
+          @session.permissions = Hoodoo::Services::Permissions.new( {} )
+
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 403 )
+        end
+
+        it 'handles default #verify response as deny' do
+          @session.permissions.set_resource( :RSpecAddPermTestClock, :show, Hoodoo::Services::Permissions::ASK )
+          expect_any_instance_of(Hoodoo::Services::Implementation).to receive( :verify ).once.and_call_original
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show ).once.and_call_original
+
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 403 )
+        end
+
+        it 'handles custom #verify response as deny' do
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show )
+          # The Time endpoint already returns DENY out-of-the-box.
+          expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).once.and_call_original
+
+          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect( last_response.status ).to eq( 403 )
+        end
+      end
     end
   end
 
@@ -524,6 +600,33 @@ describe Hoodoo::Services::Middleware do
 
         result = JSON.parse( response.body )
         expect( result ).to eq( { 'date' => '1999-12-31', 'time' => '23:59:59' } )
+      end
+
+      context 'for code coverage' do
+
+        # Top-level "augment session failed". Failures inside the "augment
+        # session" code were tested in the previous section dealing with
+        # local inter-resource calls (they use the same back-end method).
+        #
+        it 'can deal with inter-resource session errors' do
+          expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
+          expect_any_instance_of(Hoodoo::Services::Middleware).to receive( :augment_session_with_permissions_for_action ).once.and_return( false )
+          expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
+
+          response = spec_helper_http(
+            :path => '/v1/rspec_add_perm_test_clocks/any',
+            :port => @port_clock
+          )
+          expect( response.code ).to eq( '401' )
+        end
+
+        it 'handles an exception when attempting to flush services' do
+          drb_service = Hoodoo::Services::Middleware.class_variable_get( '@@drb_service' )
+          expect( drb_service ).to receive( :flush ).and_raise( 'boo!' )
+          expect {
+            Hoodoo::Services::Middleware.flush_services_for_test()
+          }.to_not raise_exception
+        end
       end
     end
   end

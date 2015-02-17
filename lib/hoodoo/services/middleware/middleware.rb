@@ -2183,7 +2183,6 @@ module Hoodoo; module Services
         # the worst case we just have to wait for this to expire naturally.
 
         session.delete_from_memcached()
-
       end
 
       # Parse the response (assumed valid JSON else #for_rack would have failed
@@ -2372,7 +2371,6 @@ module Hoodoo; module Services
         # the worst case we just have to wait for this to expire naturally.
 
         session.delete_from_memcached()
-
       end
 
       # Extract the returned data and "rephrase" it as an augmented
@@ -2472,7 +2470,7 @@ module Hoodoo; module Services
           return false
 
         else # Couldn't save it
-          raise "Unable to create interim session for inter-resource call to #{ interface.resource } / #{ action }"
+          raise "Unable to create interim session for inter-resource call from #{ interface.resource } / #{ action }"
       end
     end
 
