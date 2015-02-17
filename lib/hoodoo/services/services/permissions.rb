@@ -195,7 +195,7 @@ module Hoodoo; module Services
         result = permitted_in?( tree, action_name )
       end
 
-      return result
+      return result || DENY
     end
 
     # Return a Hash representative of this permissions object, which can be

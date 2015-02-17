@@ -240,5 +240,10 @@ describe Hoodoo::Services::Permissions do
       expect( @p.permitted?( :Bar, :show ) ).to eq( described_class::DENY )
       expect( @p.permitted?( :Bar, :list ) ).to eq( described_class::DENY )
     end
+
+    it 'empty hashes deny' do
+      @p.from_h!( {} )
+      expect( @p.permitted?( :Bar, :show ) ).to eq( described_class::DENY )
+    end
   end
 end
