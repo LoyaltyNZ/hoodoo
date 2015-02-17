@@ -304,6 +304,38 @@ module Hoodoo
 
       end
 
+      # Delete this session from Memcached. The Session object is not
+      # modified.
+      #
+      # Return values are:
+      #
+      # * +true+:  The Session was deleted from Memcached successfully.
+      #
+      # * +false+: This session was not found in Memcached.
+      #
+      # * +nil+:   An error occured whilst deleting from Memcached.
+      #
+      def delete_from_memcached
+        begin
+
+          mclient = self.class.connect_to_memcached( self.memcached_host() )
+
+          return mclient.delete( self.session_id ).present?
+
+        rescue Exception => exception
+
+          # Log error and return nil if the session can't be parsed
+          #
+          Hoodoo::Services::Middleware.logger.warn(
+            'Hoodoo::Services::Session\#delete_from_memcached: Session delete - connection fault',
+            exception
+          )
+
+          return nil
+        end
+
+      end
+
       # Has this session expired? Only valid if an expiry date is set;
       # see #expires_at.
       #

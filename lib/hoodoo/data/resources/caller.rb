@@ -22,13 +22,9 @@ module Hoodoo
 
           type :PermissionsResources,        :required => true
 
-          array :authorised_participant_ids, :required => true do
-            uuid :participant_id, :resource => :Participant
-          end
+          array :authorised_participant_ids, :required => true
 
-          array :authorised_programme_codes, :required => true do
-            text :authorised_programme_code
-          end
+          array :authorised_programme_codes, :required => true
         end
 
       end
