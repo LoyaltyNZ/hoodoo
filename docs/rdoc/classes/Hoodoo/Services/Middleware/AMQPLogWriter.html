@@ -41,7 +41,7 @@
     <div class="description">
       
 <p>Log writer which sends structured messages to an AMQP-based queue via the
-Alchemy and AMQEndpoint gems. An <a
+Alchemy and AMQEndpoint gems. A <a
 href="../../Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
 subclass, since though talking to the queue might be comparatively slow,
 Alchemy itself uses an asynchronous Thread for this so there&#39;s no need
@@ -197,9 +197,10 @@ href="../../UUID.html#method-c-generate">Hoodoo::UUID.generate</a>) to use
 for this log message - if absent, one is generated automatically.</p>
 </dd><dt><code>:session</code>
 <dd>
-<p>Description of the current request session when available; an <a
-href="../LegacySession.html">Hoodoo::Services::LegacySession</a> instance.
-The client ID, participant <a href="../../UUID.html">UUID</a> and outlet <a
+<p>Description of the current request session when available; a <a
+href="../Session.html">Hoodoo::Services::Session</a> as a hash. The Client
+<a href="../../UUID.html">UUID</a>, identity Participant <a
+href="../../UUID.html">UUID</a> and Outlet <a
 href="../../UUID.html">UUID</a> are sent as independent, searchable fields
 in the log payload.</p>
 </dd><dt><code>interaction_id</code>
@@ -231,10 +232,14 @@ independent, searchable field in the log payload.</p>
   <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
 
   <span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ]
+
   <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
-  <span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:client_id</span>      ]
-  <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:participant_id</span> ]
-  <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:outlet_id</span>      ]
+
+  <span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:client_id</span> ]
+  <span class="ruby-identifier">identity</span>       = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:identity</span> ] <span class="ruby-operator">||</span> {}
+
+  <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">identity</span>[ <span class="ruby-value">:participant_id</span> ]
+  <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">identity</span>[ <span class="ruby-value">:outlet_id</span>      ]
 
   <span class="ruby-identifier">message</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],

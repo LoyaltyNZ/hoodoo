@@ -43,7 +43,7 @@
 <p><a href="../Implementation.html">Implementation</a> of the DSL that&#39;s
 written inside a block passed to <a
 href="../Interface.html#method-i-to_list">Hoodoo::Services::Interface#to_list</a>.
-This is an internal implementation class. Instantiate with an <a
+This is an internal implementation class. Instantiate with a <a
 href="ToList.html">Hoodoo::Services::Interface::ToList</a> instance, the
 data in which is updated as the DSL methods run.</p>
 
@@ -202,7 +202,7 @@ updated.</p>
   <span class="ruby-ivar">@tl</span> = <span class="ruby-identifier">hoodoo_interface_to_list_instance</span> <span class="ruby-comment"># Shorthand!</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">instance_of?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span> )
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::Services::ServiceInstance::ToList instance - got &#39;#{ @tl.class }&#39;&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#initialize requires a Hoodoo::Services::Interface::ToList instance - got &#39;#{ @tl.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -256,7 +256,7 @@ that &#39;<code>code</code>&#39; is to be the default sort order.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">default</span>( <span class="ruby-identifier">sort_key</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Symbol</span> )
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::ServiceInstance::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got &#39;#{ sort_key.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:default_sort_key=</span>, <span class="ruby-identifier">sort_key</span>.<span class="ruby-identifier">to_s</span> )
@@ -349,7 +349,7 @@ entries is arbitrary.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 153</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">limit</span>( <span class="ruby-identifier">limit</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">limit</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Integer</span> )
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::ServiceInstance::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#limit requires an Integer - got &#39;#{ limit.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@tl</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:limit=</span>, <span class="ruby-identifier">limit</span> )
@@ -465,7 +465,7 @@ href="ToListDSL.html#method-i-default">default</a> DSL method.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 179</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">sort</span>( <span class="ruby-identifier">sort</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::ServiceInstance::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Convert hash keys to strings and values in arrays to strings too.</span>

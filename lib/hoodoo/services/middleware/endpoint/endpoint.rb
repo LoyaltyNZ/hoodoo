@@ -48,19 +48,26 @@ module Hoodoo; module Services
         @local_service.nil? ? nil : @local_service[ :interface ]
       end
 
-      # Create an endpoint instance on behalf of the given
-      # Hoodoo::Services::Middleware instance, directed at the given resource.
+      # Create an endpoint instance on behalf of a (presumed) use case of a
+      # service implementation requesting a resource endpoint through its
+      # Hoodoo::Services::Context instance.
       #
-      # +middleware_instance+:: Hoodoo::Services::Middleware used to handle
-      #                         onward requests.
+      # Except in test code, these shouldn't be created directly. Request
+      # them through Hoodoo::Services::Context#resource instead.
       #
-      # +resource+:: Resource name the endpoint targets, e.g. +:Purchase+.
-      #              String or symbol.
+      # +owning_interaction+:: The Hoodoo::Services::Middleware::Interaction
+      #                        instance related to the interaction for which
+      #                        a target resource implementation has been
+      #                        called, that implementation now requesting an
+      #                        endpoint for inter-resource communication.
       #
-      # +version+::  Optional required interface (API) version for that
-      #              endpoint. Integer. Default is 1.
+      # +resource+::           Resource name the endpoint targets, e.g.
+      #                        +:Purchase+. String or symbol.
       #
-      # The instance is then used with the #list, #show, #create, #update or
+      # +version+::            Optional required interface (API) version for
+      #                        that endpoint. Integer. Default is 1.
+      #
+      # The endpoint is then used with the #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
       # each of those methods for details of their specific requirements;
       # however all have common parameters some or all of which are used
@@ -93,14 +100,16 @@ module Hoodoo; module Services
       # +body_hash+::  The Hash representation of the body data that might be
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
-      def initialize( middleware_instance, resource, version = 1 )
+      def initialize( owning_interaction, resource, version = 1 )
 
-        @middleware    = middleware_instance
+        @owning_interaction   = owning_interaction
+        @owning_middleware    = owning_interaction.owning_middleware_instance
+
         @resource      = resource.to_s
         @version       = version.to_i
 
-        @local_service = @middleware.local_service_for( @resource, @version )
-        @remote_info   = @middleware.remote_service_for( @resource, @version )
+        @local_service = @owning_middleware.local_service_for( @resource, @version )
+        @remote_info   = @owning_middleware.remote_service_for( @resource, @version )
 
         # ...noting that @remote_info may now contain either a URI for local
         # development / real HTTP environments, or a Hash with ":queue" and
@@ -115,7 +124,7 @@ module Hoodoo; module Services
       #                supported search/filter parameters and the platform's
       #                common all-resource behaviour.
       #
-      # Returns an Hoodoo::Services::Middleware::Endpoint::AugmentedArray
+      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedArray
       # representation of the requested list of resource instances. Call
       # Hoodoo::Services::Middleware::Endpoint::AugmentedArray#adds_errors_to?
       # or
@@ -125,14 +134,16 @@ module Hoodoo; module Services
       # non-error cases if no items satisfying the list conditions were found.
       #
       def list( query_hash = nil )
-        return @middleware.inter_resource(
-          :local       => @local_service,
-          :remote      => @remote_info,
-          :resource    => @resource,
-          :version     => @version,
+        return @owning_middleware.inter_resource(
+          :source_interaction => @owning_interaction,
+          :local              => @local_service,
+          :remote             => @remote_info,
 
-          :http_method => 'GET',
-          :query_hash  => query_hash
+          :resource           => @resource,
+          :version            => @version,
+
+          :http_method        => 'GET',
+          :query_hash         => query_hash
         )
       end
 
@@ -141,7 +152,7 @@ module Hoodoo; module Services
       # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns an Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
       # representation of the requested resource instance. Call
       # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
       # or
@@ -150,15 +161,17 @@ module Hoodoo; module Services
       # examining its Hash-derived fields.
       #
       def show( ident, query_hash = nil )
-        return @middleware.inter_resource(
-          :local       => @local_service,
-          :remote      => @remote_info,
-          :resource    => @resource,
-          :version     => @version,
+        return @owning_middleware.inter_resource(
+          :source_interaction => @owning_interaction,
+          :local              => @local_service,
+          :remote             => @remote_info,
 
-          :http_method => 'GET',
-          :ident       => ident,
-          :query_hash  => query_hash
+          :resource           => @resource,
+          :version            => @version,
+
+          :http_method        => 'GET',
+          :ident              => ident,
+          :query_hash         => query_hash
         )
       end
 
@@ -167,7 +180,7 @@ module Hoodoo; module Services
       # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns an Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
       # representation of the new resource instance. Call
       # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
       # or
@@ -176,15 +189,17 @@ module Hoodoo; module Services
       # examining its Hash-derived fields.
       #
       def create( body_hash, query_hash = nil )
-        return @middleware.inter_resource(
-          :local       => @local_service,
-          :remote      => @remote_info,
-          :resource    => @resource,
-          :version     => @version,
+        return @owning_middleware.inter_resource(
+          :source_interaction => @owning_interaction,
+          :local              => @local_service,
+          :remote             => @remote_info,
 
-          :http_method => 'POST',
-          :body_hash   => body_hash,
-          :query_hash  => query_hash
+          :resource           => @resource,
+          :version            => @version,
+
+          :http_method        => 'POST',
+          :body_hash          => body_hash,
+          :query_hash         => query_hash
         )
       end
 
@@ -194,7 +209,7 @@ module Hoodoo; module Services
       # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns an Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
       # representation of the updated resource instance. Call
       # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
       # or
@@ -203,16 +218,18 @@ module Hoodoo; module Services
       # examining its Hash-derived fields.
       #
       def update( ident, body_hash, query_hash = nil )
-        return @middleware.inter_resource(
-          :local       => @local_service,
-          :remote      => @remote_info,
-          :resource    => @resource,
-          :version     => @version,
+        return @owning_middleware.inter_resource(
+          :source_interaction => @owning_interaction,
+          :local              => @local_service,
+          :remote             => @remote_info,
 
-          :http_method => 'PATCH',
-          :ident       => ident,
-          :body_hash   => body_hash,
-          :query_hash  => query_hash
+          :resource           => @resource,
+          :version            => @version,
+
+          :http_method        => 'PATCH',
+          :ident              => ident,
+          :body_hash          => body_hash,
+          :query_hash         => query_hash
         )
       end
 
@@ -221,7 +238,7 @@ module Hoodoo; module Services
       # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns an Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
       # representation of the now-deleted resource instance. Call
       # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
       # or
@@ -230,15 +247,17 @@ module Hoodoo; module Services
       # examining its Hash-derived fields.
       #
       def delete( ident, query_hash = nil )
-        return @middleware.inter_resource(
-          :local       => @local_service,
-          :remote      => @remote_info,
-          :resource    => @resource,
-          :version     => @version,
+        return @owning_middleware.inter_resource(
+          :source_interaction => @owning_interaction,
+          :local              => @local_service,
+          :remote             => @remote_info,
 
-          :http_method => 'DELETE',
-          :ident       => ident,
-          :query_hash  => query_hash
+          :resource           => @resource,
+          :version            => @version,
+
+          :http_method        => 'DELETE',
+          :ident              => ident,
+          :query_hash         => query_hash
         )
       end
     end

@@ -25,7 +25,6 @@ require 'hoodoo/logger'
 
 require 'hoodoo/services/services/permissions'
 require 'hoodoo/services/services/session'
-require 'hoodoo/services/services/legacy_session'
 require 'hoodoo/services/services/session'
 require 'hoodoo/services/services/request'
 require 'hoodoo/services/services/response'

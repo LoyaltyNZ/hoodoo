@@ -151,8 +151,7 @@ module Hoodoo
       # The Hoodoo::Services::Session::TTL constant determines how long the
       # key lives in Memcached.
       #
-      # Memcached communication failures may result in an exception; if not,
-      # return values are:
+      # Return values are:
       #
       # * +true+: The session data was saved OK and is valid. There was
       #   either a Caller record with an earlier or matching value in
@@ -169,27 +168,18 @@ module Hoodoo
           raise 'Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID'
         end
 
-        mclient = self.class.connect_to_memcached( self.memcached_host() )
-
         begin
+          mclient = self.class.connect_to_memcached( self.memcached_host() )
 
-          # (1) Get the current version from Memcached.
-          #
-          # (2) If it is missing or less than our version that's OK, just
-          #     set the version data.
-          #
-          # (3) If it is greater than our version we are already stale!
-          #     We don't know what the user of this session stored inside;
-          #     it could well be data about the Caller which would be out
-          #     of date if Memcached has a newer version available.
+          # Try to update the Caller version in Memcached using this
+          # Session's data. If this fails, the Caller version is out of
+          # date or we couldn't talk to Memcached. Either way, bail out.
 
-          cached_version = load_caller_version_from_memcached( mclient, self.caller_id )
-          return false if cached_version != nil && cached_version > self.caller_version
+          result = update_caller_version_in_memcached( self.caller_id,
+                                                       self.caller_version,
+                                                       mclient )
 
-          if cached_version.nil? || cached_version < self.caller_version
-            success = save_caller_version_to_memcached( mclient, self.caller_id, self.caller_version )
-            return nil unless success
-          end
+          return result unless result == true
 
           # Must set this before saving, even though the delay between
           # setting this value and Memcached actually saving the value
@@ -236,16 +226,14 @@ module Hoodoo
       #   or Memcached problem).
       #
       def load_from_memcached!( sid )
-        mclient = self.class.connect_to_memcached( self.memcached_host() )
-
         begin
-
+          mclient      = self.class.connect_to_memcached( self.memcached_host() )
           session_hash = mclient.get( sid )
 
           if session_hash.nil?
             return nil
           else
-            self.from_h( session_hash )
+            self.from_h!( session_hash )
             return false if self.expired?
 
             cv = load_caller_version_from_memcached( mclient, self.caller_id )
@@ -267,6 +255,87 @@ module Hoodoo
         end
       end
 
+      # Update the version of a given Caller in Memcached. This is done
+      # automatically when Sessions are saved to Memcached, but if external
+      # code alters any Callers independently, it *MUST* call here to keep
+      # Memcached records up to date.
+      #
+      # +cid+::     Caller UUID of the Caller record to update.
+      #
+      # +cv+::      New version to store (an Integer).
+      #
+      # +mclient+:: Optional Dalli::Client instance to use for talking to
+      #             Memcached. If omitted, a connection is established for
+      #             you. This is mostly an optimisation parameter, used by
+      #             code which already has established a connection and
+      #             wants to avoid creating another unnecessarily.
+      #
+      # Return values are:
+      #
+      # * +true+: The Caller record was updated successfully.
+      #
+      # * +false+: The Caller was already present in Memcached with a
+      #   _higher version_ than the one you wanted to save. Your own
+      #   local Caller data must therefore already be out of date.
+      #
+      # * +nil+: The Caller could not be updated (Memcached problem).
+      #
+      def update_caller_version_in_memcached( cid, cv, mclient = nil )
+        begin
+          mclient ||= self.class.connect_to_memcached( self.memcached_host() )
+
+          cached_version = load_caller_version_from_memcached( mclient, cid )
+          return false if cached_version != nil && cached_version > cv
+
+          success = save_caller_version_to_memcached( mclient, cid, cv )
+          return success ? true : nil
+
+        rescue Exception => exception
+
+          # Log error and return nil if the session can't be parsed
+          #
+          Hoodoo::Services::Middleware.logger.warn(
+            'Hoodoo::Services::Session\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record',
+            exception
+          )
+
+          return nil
+        end
+
+      end
+
+      # Delete this session from Memcached. The Session object is not
+      # modified.
+      #
+      # Return values are:
+      #
+      # * +true+:  The Session was deleted from Memcached successfully.
+      #
+      # * +false+: This session was not found in Memcached.
+      #
+      # * +nil+:   An error occured whilst deleting from Memcached.
+      #
+      def delete_from_memcached
+        begin
+
+          mclient = self.class.connect_to_memcached( self.memcached_host() )
+
+          return mclient.delete( self.session_id ).present?
+
+        rescue Exception => exception
+
+          # Log error and return nil if the session can't be parsed
+          #
+          Hoodoo::Services::Middleware.logger.warn(
+            'Hoodoo::Services::Session\#delete_from_memcached: Session delete - connection fault',
+            exception
+          )
+
+          return nil
+        end
+
+      end
+
       # Has this session expired? Only valid if an expiry date is set;
       # see #expires_at.
       #
@@ -282,7 +351,7 @@ module Hoodoo
 
       # Represent this session's data as a Hash, for uses such as
       # storage in Memcached or loading into another session instance.
-      # See also #from_h.
+      # See also #from_h!.
       #
       def to_h
         hash = {}
@@ -328,7 +397,7 @@ module Hoodoo
       # If appropriate Hash keys are present, will set any or all of
       # #session_id, #identity, #scoping and #permissions.
       #
-      def from_h( hash )
+      def from_h!( hash )
         hash = Hoodoo::Utilities.stringify( hash )
 
         %w(
@@ -376,9 +445,16 @@ module Hoodoo
       # Connect to the Memcached server. Returns a new Dalli client
       # instance. Raises an exception if no connection can be established.
       #
+      # In test environments, returns a MockDalliClient instance.
+      #
       # +host+:: Connection host (IP "address:port" String) for Memcached.
       #
       def self.connect_to_memcached( host )
+
+        if Hoodoo::Services::Middleware.environment.test? && MockDalliClient.bypass? == false
+          return MockDalliClient.new
+        end
+
         if host.nil? || host.empty?
           raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection host data is nil or empty'
         end
@@ -450,6 +526,99 @@ module Hoodoo
         )
       end
 
+      # Mock known uses of Dalli::Client with test implementations.
+      # Use explicitly, or as an RSpec implicit mock via something like
+      # this:
+      #
+      #     allow( Dalli::Client ).to receive( :new ).and_return( Hoodoo::Services::Session::MockDalliClient.new )
+      #
+      # ...whenever you need to stub out real Memcached. You will
+      # probably want to add:
+      #
+      #     before :all do # (or ":each")
+      #       Hoodoo::Services::Session::MockDalliClient.reset()
+      #     end
+      #
+      # ...to "clean out Memcached" before or between tests. You can
+      # check the contents of mock Memcached by examining ::store's
+      # hash of data.
+      #
+      class MockDalliClient
+        @@store = {}
+
+        # For test analysis, return the hash of 'memcached' mock data.
+        #
+        # Entries are referenced by the key you used to originally
+        # store them; values are hashes with ":expires_at" giving an
+        # expiry time or "nil" and ":value" giving your stored value.
+        #
+        def self.store
+          @@store
+        end
+
+        # Wipe out all saved data.
+        #
+        def self.reset
+          @@store = {}
+        end
+
+        # Pass +true+ to bypass the mock client (subject to the caller
+        # reading ::bypass?) to e.g. get test code coverage on real
+        # Memcached. Pass +false+ otherwise.
+        #
+        def self.bypass( bypass_boolean )
+          @@bypass = bypass_boolean
+        end
+
+        @@bypass = false
+
+        # If +true+, bypass this class and use real Dalli::Client; else
+        # don't. Default return value is +false+.
+        #
+        def self.bypass?
+          @@bypass
+        end
+
+        # Get the data stored under the given key. Returns +nil+ if
+        # not found / expired.
+        #
+        # +key+:: Key to look up (see #set).
+        #
+        def get( key )
+          data = @@store[ key ]
+          return nil if data.nil?
+
+          expires_at = data[ :expires_at ]
+          return nil unless expires_at.nil? || Time.now < expires_at
+
+          return data[ :value ]
+        end
+
+        # Set data for a given key.
+        #
+        # +key+::   Key under which to store data.
+        #
+        # +value+:: Data to store.
+        #
+        # +ttl+::   (Optional) time-to-live ('live' as in living, not as in
+        #           'live TV') - a value in seconds, after which the data is
+        #           considered expired. If omitted, the data does not expire.
+        #
+        def set( key, value, ttl = nil )
+          data = {
+            :expires_at => ttl.nil? ? nil : Time.now.utc + ttl,
+            :value      => value
+          }
+
+          @@store[ key ] = data
+        end
+
+        # Remove data for the given key.
+        #
+        def delete( key )
+          @@store.delete( key )
+        end
+      end
     end
   end
 end

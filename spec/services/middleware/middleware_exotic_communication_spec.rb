@@ -1,4 +1,4 @@
-# Test coverage (mostly hypothetical, just to ensure no syntax errors etc. via
+# Test coverage (mostly hypothetical, just to ensure no typing errors etc. via
 # full code coverage) for esoteric/exotic communcation methods such as on-queue
 # endpoints or HTTPS transport for local machine inter-resource calls.
 
@@ -68,13 +68,13 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'complains about missing Alchemy' do
-      interaction_id = Hoodoo::UUID.generate()
-      session_id = Hoodoo::UUID.generate()
-
-      @mw.instance_variable_set( '@rack_request', OpenStruct.new )
-      @mw.instance_variable_set( '@locale', 'fr' )
-      @mw.instance_variable_set( '@interaction_id', interaction_id )
-      @mw.instance_variable_set( '@session_id', session_id )
+      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
+      interaction = Hoodoo::Services::Middleware::Interaction.new(
+        {},
+        mw,
+        Hoodoo::Services::Middleware.test_session()
+      )
+      interaction.target_interface = OpenStruct.new
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
@@ -85,21 +85,26 @@ describe Hoodoo::Services::Middleware do
           :inter_resource_remote,
           {
             # Purely hypothetical; no actual call will be made
-            :remote      => { :queue => 'service.utility', :path => '/v2/version' },
-            :http_method => 'GET'
+            :source_interaction => interaction,
+            :remote             => { :queue => 'service.utility', :path => '/v2/version' },
+            :http_method        => 'GET'
           }
         )
       }.to raise_error( RuntimeError, 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment' )
     end
 
     it 'calls Alchemy' do
-      interaction_id = Hoodoo::UUID.generate()
-      session_id = Hoodoo::UUID.generate()
+      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
+      interaction = Hoodoo::Services::Middleware::Interaction.new(
+        {},
+        mw,
+        Hoodoo::Services::Middleware.test_session()
+      )
+      interaction.target_interface = OpenStruct.new
+      interaction.context.request.locale = 'fr'
 
-      @mw.instance_variable_set( '@rack_request', OpenStruct.new )
-      @mw.instance_variable_set( '@locale', 'fr' )
-      @mw.instance_variable_set( '@interaction_id', interaction_id )
-      @mw.instance_variable_set( '@session_id', session_id )
+      session_id = interaction.context.session.session_id
+      interaction_id = interaction.interaction_id
 
       mock_alchemy = OpenStruct.new
       Hoodoo::Services::Middleware.class_variable_set( '@@alchemy', mock_alchemy )
@@ -112,6 +117,7 @@ describe Hoodoo::Services::Middleware do
       mock_response = OpenStruct.new
       mock_response.body = '{}'
 
+
       expect( mock_alchemy ).to receive( :http_request ).once do | queue, method, path, opts |
         expect( queue ).to eq( mock_queue )
         expect( method ).to eq( mock_method )
@@ -119,15 +125,15 @@ describe Hoodoo::Services::Middleware do
         expect( opts ).to eq(
           {
             :session_id => session_id,
-            :host       => nil,
-            :port       => nil,
+            :host       => ':',
+            :port       => 0,
             :body       => '',
             :query      => mock_query,
             :headers    => {
               'Content-Type' => 'application/json; charset=utf-8',
               'Content-Language' => 'fr',
               'X-Interaction-ID' => interaction_id,
-              'X-Session-ID' => session_id
+              'X-Session-ID' =>session_id
             }
           }
         )
@@ -137,9 +143,10 @@ describe Hoodoo::Services::Middleware do
         :inter_resource_remote,
         {
           # Purely hypothetical; no actual call will be made
-          :remote      => { :queue => mock_queue, :path => mock_path },
-          :http_method => mock_method,
-          :query_hash  => mock_query
+          :source_interaction => interaction,
+          :remote             => { :queue => mock_queue, :path => mock_path },
+          :http_method        => mock_method,
+          :query_hash         => mock_query
         }
       )
 
@@ -178,20 +185,19 @@ describe Hoodoo::Services::Middleware do
     #
     it 'attempts HTTPS communication' do
       mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
-
-      interaction_id = Hoodoo::UUID.generate()
-      session_id = Hoodoo::UUID.generate()
-
-      mw.instance_variable_set( '@rack_request', OpenStruct.new )
-      mw.instance_variable_set( '@locale', 'fr' )
-      mw.instance_variable_set( '@interaction_id', interaction_id )
-      mw.instance_variable_set( '@session_id', session_id )
+      interaction = Hoodoo::Services::Middleware::Interaction.new(
+        {},
+        mw,
+        Hoodoo::Services::Middleware.test_session()
+      )
+      interaction.target_interface = OpenStruct.new
 
       mock_result = mw.send(
         :inter_resource_remote,
         {
-          :remote      => "https://127.0.0.1:#{ @port }/v2/version",
-          :http_method => 'GET'
+          :source_interaction => interaction,
+          :remote             => "https://127.0.0.1:#{ @port }/v2/version",
+          :http_method        => 'GET'
         }
       )
 

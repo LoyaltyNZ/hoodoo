@@ -142,7 +142,19 @@ puts JSON.pretty_generate( p.to_h() )
             
               
               <li>
-                <a href="#method-i-from_h">from_h</a>
+                <a href="#method-i-from_h-21">from_h!</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>M</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-merge-21">merge!</a>
               </li>
             
           </ul>
@@ -273,7 +285,7 @@ all actions for all resources.</p>
     <span class="ruby-ivar">@permissions</span> = {}
     <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-constant">DENY</span> )
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">from_h</span>( <span class="ruby-identifier">hash</span> )
+    <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -284,11 +296,11 @@ all actions for all resources.</p>
       <div class="sectiontitle">Instance Public methods</div>
       
         <div class="method">
-          <div class="title method-title" id="method-i-from_h">
+          <div class="title method-title" id="method-i-from_h-21">
             
-              <b>from_h</b>( hash )
+              <b>from_h!</b>( hash )
             
-            <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-from_h" name="method-i-from_h" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-from_h-21" name="method-i-from_h-21" class="permalink">Link</a>
           </div>
           
           
@@ -313,13 +325,61 @@ call.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-from_h_source')" id="l_method-i-from_h_source">show</a>
+                <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
                 
               </p>
-              <div id="method-i-from_h_source" class="dyn-source">
+              <div id="method-i-from_h-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 214</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-merge-21">
+            
+              <b>merge!</b>( hash )
+            
+            <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-merge-21" name="method-i-merge-21" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Merge the permissions described by the given Hash with those inside this
+instance. This will add to, or overwrite permissions with those from the
+given input Hash.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p><a href="Permissions.html">Permissions</a> hash, which must come (directly
+or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
+call.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-merge-21_source')" id="l_method-i-merge-21_source">show</a>
+                
+              </p>
+              <div id="method-i-merge-21_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 225</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">merge!</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_merge_into</span>(
+    <span class="ruby-ivar">@permissions</span>,
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+  )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -616,7 +676,7 @@ href="Permissions.html#ASK">ASK</a>.</p>
               <p>Return a Hash representative of this permissions object, which can be
 stored elsewhere, used to initialise another instance or written to an
 existing instance with <a
-href="Permissions.html#method-i-from_h">from_h</a>.</p>
+href="Permissions.html#method-i-from_h-21">from_h!</a>.</p>
             </div>
           
           

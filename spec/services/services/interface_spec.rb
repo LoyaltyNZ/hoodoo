@@ -180,7 +180,7 @@ describe Hoodoo::Services::Interface do
       expect {
         Hoodoo::Services::Interface::ToListDSL.new( Array.new ) do
         end
-      }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#initialize requires an Hoodoo::Services::ServiceInstance::ToList instance - got 'Array'")
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#initialize requires a Hoodoo::Services::Interface::ToList instance - got 'Array'")
     end
 
     context 'in #limit' do
@@ -189,7 +189,7 @@ describe Hoodoo::Services::Interface do
           Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             limit "hello"
           end
-        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#limit requires an Integer - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#limit requires an Integer - got 'String'")
       end
     end
 
@@ -199,7 +199,7 @@ describe Hoodoo::Services::Interface do
           Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             sort "hello"
           end
-        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#sort requires a Hash - got 'String'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got 'String'")
       end
     end
 
@@ -209,7 +209,7 @@ describe Hoodoo::Services::Interface do
           Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
             default 42
           end
-        }.to raise_error(RuntimeError, "Hoodoo::Services::ServiceInstance::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
       end
     end
   end

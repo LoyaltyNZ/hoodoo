@@ -16,23 +16,28 @@ end
 describe Hoodoo::Services::Context do
 
   it 'should initialise correctly' do
-    ses = Hoodoo::Services::LegacySession.new
+    ses = Hoodoo::Services::Session.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
-    con = Hoodoo::Services::Context.new( ses, req, res, mid )
+    int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
+
+    con = Hoodoo::Services::Context.new( ses, req, res, int )
 
     expect(con.session).to eq(ses)
     expect(con.request).to eq(req)
     expect(con.response).to eq(res)
+    expect(con.owning_interaction).to eq(int)
   end
 
   it 'should report endpoints' do
-    ses = Hoodoo::Services::LegacySession.new
+    ses = Hoodoo::Services::Session.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
-    con = Hoodoo::Services::Context.new( ses, req, res, mid )
+    int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
+
+    con = Hoodoo::Services::Context.new( ses, req, res, int )
 
     expect(con.resource(:RSpecTestResource)).to be_a( Hoodoo::Services::Middleware::Endpoint )
     expect(con.resource(:RSpecTestResource).interface).to eq( RSpecTestContextInterface )

@@ -88,7 +88,12 @@ href="Interface.html#method-c-interface">::interface</a> for details.</p>
             
               
               <li>
-                <a href="#method-i-actions">actions</a>
+                <a href="#method-i-actions">actions</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-additional_permissions_for">additional_permissions_for</a>
               </li>
             
           </ul>
@@ -228,6 +233,18 @@ default is for all actions to be present in the Set.</p></td>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>additional_permissions</td>
+            <td class='attr-desc'><p>A Hash, keyed by String equivalents of the Symbols in
+Hoodoo::Services::Middleware::ALLOWED_ACTIONS, where the values are <a
+href="Permissions.html">Hoodoo::Services::Permissions</a> instances
+describing extended permissions for the related action. See
+::additional_permissions_for.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>embeds</td>
             <td class='attr-desc'><p>Array of strings listing allowed embeddable things. Each string matches the
 split up comma-separated value for query string “_embed” or “_reference”
@@ -261,7 +278,7 @@ an implied endpoint.</p></td>
               [RW]
             </td>
             <td class='attr-name'>errors_for</td>
-            <td class='attr-desc'><p>An <a href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
+            <td class='attr-desc'><p>A <a href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
 instance describing all errors that the interface might return, including
 the default set of platform and generic errors. If nil, there are no
 additional error codes beyond the default set.</p></td>
@@ -304,7 +321,7 @@ empty Set.</p></td>
               [RW]
             </td>
             <td class='attr-name'>to_create</td>
-            <td class='attr-desc'><p>An <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
+            <td class='attr-desc'><p>A <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
 instance describing the schema for client JSON coming in for calls that
 create instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
@@ -316,7 +333,7 @@ implementation becomes entirely responsible for data validation).</p></td>
               [RW]
             </td>
             <td class='attr-name'>to_update</td>
-            <td class='attr-desc'><p>An <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
+            <td class='attr-desc'><p>A <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
 instance describing the schema for client JSON coming in for calls that
 modify instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
@@ -350,7 +367,7 @@ implementation becomes entirely responsible for data validation).</p></td>
           
           
             <div class="description">
-              <p>An <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
+              <p>A <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
 instance describing the list parameters for the interface as a Set of
 Strings. See also <a
 href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
@@ -371,7 +388,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
                 
               </p>
               <div id="method-c-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 619</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 734</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
@@ -393,7 +410,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
           
           
             <div class="description">
-              <p>Define the subclass service&#39;s interface. A DSL is used with methods
+              <p>Define the subclass Service&#39;s interface. A DSL is used with methods
 documented in the Hoodoo::Services::InterfaceDSL class.</p>
 
 <p>The absolute bare minimum interface description just states that a
@@ -451,7 +468,7 @@ call.</p>
                 
               </p>
               <div id="method-c-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 525</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 640</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
@@ -544,6 +561,152 @@ are given.</p>
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-i-additional_permissions_for">
+            
+              <b>additional_permissions_for</b>( action, &amp;block )
+            
+            <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-additional_permissions_for" name="method-i-additional_permissions_for" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Declare additional permissions that you require for a given action.</p>
+
+<p>If the implementation of a resource endpoint involves making calls out to
+other resources, then you need to consider how authorisation is granted to
+those other resources.</p>
+
+<p>The <a href="Session.html">Hoodoo::Services::Session</a> instance for the
+inbound external caller carries a Hoodoo::Services::Permission instance
+describing the actions that the caller is permitted to do. The middleware
+enforces these permissions, so that a resource implementation won&#39;t be
+called at all unless the caller has permission to do so.</p>
+
+<p>These permissions continue to apply during inter-resource calls. The wider
+session context is always applied. So, if one resource calls another
+resource, either:</p>
+<ul><li>
+<p>The inbound API caller&#39;s session must have all necessary permissions
+for both the resource it is actually directly calling, and for any actions
+in any resources that the called resource in turn calls (and so-on, for any
+chain of resources).</p>
+</li></ul>
+
+<p>…or…</p>
+<ul><li>
+<p>The resource uses this <code>additional_permissions_for</code> method to
+declare up-front that it will require the described permissions when a
+particular action is performed on it. When an inter-resource call is made,
+a temporary internal-only session is constructed that merges the
+permissions of the inbound caller with the additional permissions requested
+by the resource. The downstream called resource needs no special case code
+at all - it just sees a valid session with valid permissions and does what
+the upstream resource asked of it.</p>
+</li></ul>
+
+<p>For example, suppose a resource Clock returns both a time and a date, by
+calling out to the Time and Date resources. One option is that the inbound
+caller must have <code>show</code> action permissions for all of Clock,
+Time and Date; if any of those are missing, then an attempt to call
+<code>show</code> on the Clock resource would result in a 403 response.</p>
+
+<p>The other option is for Clock&#39;s interface to declare its requirements:</p>
+
+<pre><code>additional_permissions_for( :show ) do | p |
+  p.set_resource( :Time, :show, Hoodoo::Services::Permissions::ALLOW )
+  p.set_resource( :Date, :show, Hoodoo::Services::Permissions::ALLOW )
+end
+</code></pre>
+
+<p>Suppose you could create Clock instances for some reason, but there was an
+audit trail for this; Clock must create an Audit entry itself, but you
+don&#39;t want to expose this ability to external callers through their
+session permissions; so, just declare your additional permissions for that
+specific inter-service case:</p>
+
+<pre><code>additional_permissions_for( :create ) do | p |
+  p.set_resource( :Audit, :create, Hoodoo::Services::Permissions::ALLOW )
+end
+</code></pre>
+
+<p>The call says which action in _the declaring interface&#39;s resource_ is a
+target. The block takes a single parameter; this is a default
+initialisation <a href="Permissions.html">Hoodoo::Services::Permissions</a>
+instance. Use that object&#39;s methods to set up whatever permissions you
+need in other resources, to successfully process the action in question.
+You only need to describe the resources you immediately call, not the whole
+chain - if “this” resource calls another, then it&#39;s up to the other
+resource to in turn describe additional permissions should it make its own
+set of downstream calls to further resource endpoints.</p>
+
+<p>Setting default permissions or especially the default permission fallback
+inside the block is possible but *VERY STRONGLY DISCOURAGED*. Instead,
+precisely describe the downstream resources, actions and permissions that
+are required.</p>
+
+<p>Note an important restriction - public actions (see <a
+href="Interface.html#attribute-c-public_actions">::public_actions</a>)
+cannot be augmented in this way. A public action in one resource can only
+ever call public actions in other resources. This is because no session is
+needed _at all_ to call a public action; calling into a protected action in
+another resource from this context would require invention of a full caller
+context which would be entirely invented and could represent an accidental
+(and significant) security hole.</p>
+
+<p>If you call this method for the same action more than once, the last call
+will be the one that takes effect - each call overwrites the results of any
+previous call made for the same action.</p>
+
+<p>Parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>action</code>
+<dd>
+<p>The action in this interface which will require the additional permissions
+to be described. Pass a Symbol or equivalent String from the list in
+Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Block which is passed a new, default state <a
+href="Permissions.html">Hoodoo::Services::Permissions</a> instance; make
+method calls on this instance to describe the required permissions.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-additional_permissions_for_source')" id="l_method-i-additional_permissions_for_source">show</a>
+                
+              </p>
+              <div id="method-i-additional_permissions_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 588</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">action</span> = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Interface#additional_permissions_for must be passed a block&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">p</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword">yield</span>( <span class="ruby-identifier">p</span> )
+
+  <span class="ruby-identifier">additional_permissions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">additional_permissions</span>() <span class="ruby-operator">||</span> {}
+  <span class="ruby-identifier">additional_permissions</span>[ <span class="ruby-identifier">action</span> ] = <span class="ruby-identifier">p</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:additional_permissions=</span>, <span class="ruby-identifier">additional_permissions</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-embeds">
             
               <b>embeds</b>( *embeds )
@@ -596,7 +759,7 @@ return:</p>
                 
               </p>
               <div id="method-i-embeds_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 371</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 378</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -730,7 +893,7 @@ end
                 
               </p>
               <div id="method-i-errors_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 478</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 485</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
@@ -759,7 +922,14 @@ end
 actions, no X-Session-ID or similar header is consulted and no session data
 will be associated with your <a
 href="Context.html">Hoodoo::Services::Context</a> instance when action
-methods are called. Use with great care!</p>
+methods are called.</p>
+
+<p>Use with great care!</p>
+
+<p>Note that if the implementation of a public action needs to call other
+resources, it can only ever call them if those actions in those other
+resources are also public. The implementation of a public action is
+prohibited from making calls to protected actions in other resources.</p>
 <dl class="rdoc-list note-list"><dt>*public_actions
 <dd>
 <p>One or more from <code>:list</code>, <code>:show</code>,
@@ -784,7 +954,7 @@ are given.</p>
                 
               </p>
               <div id="method-i-public_actions_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 337</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 344</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
   <span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">public_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
@@ -866,7 +1036,7 @@ the fields used for resource creation.</p>
                 
               </p>
               <div id="method-i-to_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 425</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 432</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -916,7 +1086,7 @@ filter   nil
                 
               </p>
               <div id="method-i-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 385</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 392</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
@@ -966,7 +1136,7 @@ the fields used for resource modification.</p>
                 
               </p>
               <div id="method-i-to_update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 439</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 446</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -1015,7 +1185,7 @@ those required for modifying resources too.</p>
                 
               </p>
               <div id="method-i-update_same_as_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 455</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 462</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span> )
 <span class="ruby-keyword">end</span></pre>

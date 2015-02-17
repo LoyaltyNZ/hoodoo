@@ -15,31 +15,31 @@ end
 
 describe Hoodoo::Services::Implementation do
   it 'should raise base class exceptions' do
-    ses = Hoodoo::Services::LegacySession.new
-    req = Hoodoo::Services::Request.new
-    res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
     mid = Hoodoo::Services::Middleware.new( RSpecTestImplementation.new )
-    con = Hoodoo::Services::Context.new( ses, req, res, mid )
-    int = Hoodoo::Services::Implementation.new
+    int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
+    con = int.context
+    imp = Hoodoo::Services::Implementation.new
 
     expect {
-      int.list( con )
+      imp.list( con )
     }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses must implement 'list'")
 
     expect {
-      int.show( con )
+      imp.show( con )
     }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses must implement 'show'")
 
     expect {
-      int.create( con )
+      imp.create( con )
     }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses must implement 'create'")
 
     expect {
-      int.update( con )
+      imp.update( con )
     }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses must implement 'update'")
 
     expect {
-      int.delete( con )
+      imp.delete( con )
     }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses must implement 'delete'")
+
+    expect( imp.verify( con, :show ) ).to eq( Hoodoo::Services::Permissions::DENY )
   end
 end

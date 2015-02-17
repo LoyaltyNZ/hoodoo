@@ -139,6 +139,24 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
       DRb.stop_service
     end
+
+    it 'flushes' do
+      DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+      @drb_server = DRbObject.new_with_uri( @drb_uri )
+
+      @drb_server.add( :Foo1, 2, 'http://localhost:3030/v2/foo_1' )
+      @drb_server.add( :Foo1, 1, 'http://127.0.0.1:3031/v1/foo_1' )
+
+      expect( @drb_server.find( :Foo1, 2 ) ).to_not be_nil
+      expect( @drb_server.find( :Foo1, 1 ) ).to_not be_nil
+
+      @drb_server.flush
+
+      expect( @drb_server.find( :Foo1, 2 ) ).to be_nil
+      expect( @drb_server.find( :Foo1, 1 ) ).to be_nil
+
+      DRb.stop_service
+    end
   end
 
   # A lot of this is copied from service_middleware_multi_spec.rb and
@@ -155,7 +173,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
   end
 
   class RSpecTestTimeInterface < Hoodoo::Services::Interface
-    interface( :Time ) { endpoint :time, RSpecTestTimeImplementation }
+    interface( :RSpecDRbTestTime ) { endpoint :rspec_drb_test_time, RSpecTestTimeImplementation }
   end
 
   class RSpecTestTime < Hoodoo::Services::Service
@@ -164,12 +182,12 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
   class RSpecTestClockImplementation < Hoodoo::Services::Implementation
     def list( context )
-      context.response.set_resources( context.resource( :Time ).list() + [ { 'clock' => 'responded' } ] )
+      context.response.set_resources( context.resource( :RSpecDRbTestTime ).list() + [ { 'clock' => 'responded' } ] )
     end
   end
 
   class RSpecTestClockInterface < Hoodoo::Services::Interface
-    interface( :Clock ) { endpoint :clock, RSpecTestClockImplementation }
+    interface( :RSpecDRbTestClock ) { endpoint :rspec_drb_test_clock, RSpecTestClockImplementation }
   end
 
   class RSpecTestClock < Hoodoo::Services::Service
@@ -188,7 +206,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
     # over local machine HTTP via the DRb service for discovery.
     #
     it 'properly supports service discovery' do
-      response = spec_helper_http( path: '/v1/clock', port: @port1 )
+      response = spec_helper_http( path: '/v1/rspec_drb_test_clock', port: @port1 )
       expect( response.code ).to eq( '200' )
 
       parsed = JSON.parse( response.body )

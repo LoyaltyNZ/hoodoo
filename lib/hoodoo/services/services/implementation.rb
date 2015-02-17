@@ -22,8 +22,8 @@ module Hoodoo; module Services
   # interface implementation. It defines a series of methods that must be
   # implemented in order to service requests.
   #
-  # An Hoodoo::Services::Implementation subclass is selected by the platform
-  # middleware because an Hoodoo::Services::Interface subclass tells it about
+  # A Hoodoo::Services::Implementation subclass is selected by the platform
+  # middleware because a Hoodoo::Services::Interface subclass tells it about
   # the implementation class through the Hoodoo::Services::Interface::interface
   # DSL; the interface class is referenced from an
   # Hoodoo::Services::Service subclass through the

@@ -54,12 +54,35 @@
 
 
   
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Session/MockDalliClient.html">Hoodoo::Services::Session::MockDalliClient</a>
+        </li>
+      
+    </ul>
+  
 
 
   
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-delete_from_memcached">delete_from_memcached</a>
+              </li>
+            
+          </ul>
+        </dd>
       
         <dt>E</dt>
         <dd>
@@ -79,7 +102,7 @@
             
               
               <li>
-                <a href="#method-i-from_h">from_h</a>
+                <a href="#method-i-from_h-21">from_h!</a>
               </li>
             
           </ul>
@@ -145,6 +168,18 @@
               
               <li>
                 <a href="#method-i-to_h">to_h</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update_caller_version_in_memcached">update_caller_version_in_memcached</a>
               </li>
             
           </ul>
@@ -388,6 +423,71 @@ methods.</p>
       <div class="sectiontitle">Instance Public methods</div>
       
         <div class="method">
+          <div class="title method-title" id="method-i-delete_from_memcached">
+            
+              <b>delete_from_memcached</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-delete_from_memcached" name="method-i-delete_from_memcached" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Delete this session from Memcached. The <a href="Session.html">Session</a>
+object is not modified.</p>
+
+<p>Return values are:</p>
+<ul><li>
+<p><code>true</code>:  The <a href="Session.html">Session</a> was deleted from
+Memcached successfully.</p>
+</li><li>
+<p><code>false</code>: This session was not found in Memcached.</p>
+</li><li>
+<p><code>nil</code>:   An error occured whilst deleting from Memcached.</p>
+</li></ul>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-delete_from_memcached_source')" id="l_method-i-delete_from_memcached_source">show</a>
+                
+              </p>
+              <div id="method-i-delete_from_memcached_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 318</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete_from_memcached</span>
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> ).<span class="ruby-identifier">present?</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+      <span class="ruby-string">&#39;Hoodoo::Services::Session\#delete_from_memcached: Session delete - connection fault&#39;</span>,
+      <span class="ruby-identifier">exception</span>
+    )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-expired-3F">
             
               <b>expired?</b>()
@@ -419,7 +519,7 @@ if it has either not expired, or has no expiry date set yet.</p>
                 
               </p>
               <div id="method-i-expired-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 276</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 345</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
@@ -432,11 +532,11 @@ if it has either not expired, or has no expiry date set yet.</p>
           </div>
         
         <div class="method">
-          <div class="title method-title" id="method-i-from_h">
+          <div class="title method-title" id="method-i-from_h-21">
             
-              <b>from_h</b>( hash )
+              <b>from_h!</b>( hash )
             
-            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-from_h" name="method-i-from_h" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-from_h-21" name="method-i-from_h-21" class="permalink">Link</a>
           </div>
           
           
@@ -462,12 +562,12 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
               
               <p class="source-link">
                 Source: 
-                <a href="javascript:toggleSource('method-i-from_h_source')" id="l_method-i-from_h_source">show</a>
+                <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
                 
               </p>
-              <div id="method-i-from_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 331</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h</span>( <span class="ruby-identifier">hash</span> )
+              <div id="method-i-from_h-21_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 400</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
   <span class="ruby-node">%w(
@@ -602,18 +702,16 @@ or Memcached problem).</p>
                 
               </p>
               <div id="method-i-load_from_memcached-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 238</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">sid</span> )
-  <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
-
   <span class="ruby-keyword">begin</span>
-
+    <span class="ruby-identifier">mclient</span>      = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
     <span class="ruby-identifier">session_hash</span> = <span class="ruby-identifier">mclient</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">sid</span> )
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">session_hash</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-keyword">else</span>
-      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">from_h</span>( <span class="ruby-identifier">session_hash</span> )
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">session_hash</span> )
       <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expired?</span>
 
       <span class="ruby-identifier">cv</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
@@ -661,8 +759,7 @@ hash passed to the constructor.</p>
 <p>The Hoodoo::Services::Session::TTL constant determines how long the key
 lives in Memcached.</p>
 
-<p>Memcached communication failures may result in an exception; if not, return
-values are:</p>
+<p>Return values are:</p>
 <ul><li>
 <p><code>true</code>: The session data was saved OK and is valid. There was
 either a Caller record with an earlier or matching value in Memcached, or
@@ -691,33 +788,24 @@ Caller record was found in Memcached with a <em>newer</em> version than
                 
               </p>
               <div id="method-i-save_to_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 167</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 166</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_memcached</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID&#39;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
-
   <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
 
-    <span class="ruby-comment"># (1) Get the current version from Memcached.</span>
-    <span class="ruby-comment">#</span>
-    <span class="ruby-comment"># (2) If it is missing or less than our version that&#39;s OK, just</span>
-    <span class="ruby-comment">#     set the version data.</span>
-    <span class="ruby-comment">#</span>
-    <span class="ruby-comment"># (3) If it is greater than our version we are already stale!</span>
-    <span class="ruby-comment">#     We don&#39;t know what the user of this session stored inside;</span>
-    <span class="ruby-comment">#     it could well be data about the Caller which would be out</span>
-    <span class="ruby-comment">#     of date if Memcached has a newer version available.</span>
+    <span class="ruby-comment"># Try to update the Caller version in Memcached using this</span>
+    <span class="ruby-comment"># Session&#39;s data. If this fails, the Caller version is out of</span>
+    <span class="ruby-comment"># date or we couldn&#39;t talk to Memcached. Either way, bail out.</span>
 
-    <span class="ruby-identifier">cached_version</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span> )
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
+    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">update_caller_version_in_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>,
+                                                 <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>,
+                                                 <span class="ruby-identifier">mclient</span> )
 
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>
-      <span class="ruby-identifier">success</span> = <span class="ruby-identifier">save_caller_version_to_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> )
-      <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">success</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 
     <span class="ruby-comment"># Must set this before saving, even though the delay between</span>
     <span class="ruby-comment"># setting this value and Memcached actually saving the value</span>
@@ -799,7 +887,7 @@ href="Session.html#attribute-i-scoping">scoping</a>.</p>
             <div class="description">
               <p>Represent this session&#39;s data as a Hash, for uses such as storage in
 Memcached or loading into another session instance. See also <a
-href="Session.html#method-i-from_h">from_h</a>.</p>
+href="Session.html#method-i-from_h-21">from_h!</a>.</p>
             </div>
           
           
@@ -817,7 +905,7 @@ href="Session.html#method-i-from_h">from_h</a>.</p>
                 
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 287</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 356</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {}
 
@@ -854,6 +942,90 @@ href="Session.html#method-i-from_h">from_h</a>.</p>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update_caller_version_in_memcached">
+            
+              <b>update_caller_version_in_memcached</b>( cid, cv, mclient = nil )
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-update_caller_version_in_memcached" name="method-i-update_caller_version_in_memcached" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Update the version of a given Caller in Memcached. This is done
+automatically when Sessions are saved to Memcached, but if external code
+alters any Callers independently, it <strong>MUST</strong> call here to
+keep Memcached records up to date.</p>
+<dl class="rdoc-list note-list"><dt><code>cid</code>
+<dd>
+<p>Caller <a href="../UUID.html">UUID</a> of the Caller record to update.</p>
+</dd><dt><code>cv</code>
+<dd>
+<p>New version to store (an Integer).</p>
+</dd><dt><code>mclient</code>
+<dd>
+<p>Optional Dalli::Client instance to use for talking to Memcached. If
+omitted, a connection is established for you. This is mostly an
+optimisation parameter, used by code which already has established a
+connection and wants to avoid creating another unnecessarily.</p>
+</dd></dl>
+
+<p>Return values are:</p>
+<ul><li>
+<p><code>true</code>: The Caller record was updated successfully.</p>
+</li><li>
+<p><code>false</code>: The Caller was already present in Memcached with a
+_higher version_ than the one you wanted to save. Your own local Caller
+data must therefore already be out of date.</p>
+</li><li>
+<p><code>nil</code>: The Caller could not be updated (Memcached problem).</p>
+</li></ul>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_caller_version_in_memcached_source')" id="l_method-i-update_caller_version_in_memcached_source">show</a>
+                
+              </p>
+              <div id="method-i-update_caller_version_in_memcached_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 283</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">mclient</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
+
+    <span class="ruby-identifier">cached_version</span> = <span class="ruby-identifier">load_caller_version_from_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-identifier">cid</span> )
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">cached_version</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">cv</span>
+
+    <span class="ruby-identifier">success</span> = <span class="ruby-identifier">save_caller_version_to_memcached</span>( <span class="ruby-identifier">mclient</span>, <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span> )
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">success</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-comment"># Log error and return nil if the session can&#39;t be parsed</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+      <span class="ruby-string">&#39;Hoodoo::Services::Session\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record&#39;</span>,
+      <span class="ruby-identifier">exception</span>
+    )
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

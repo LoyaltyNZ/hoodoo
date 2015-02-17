@@ -72,9 +72,9 @@ for details.</p>
 <p>An instance of the <a
 href="ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a> class gets
 built behind the scenes as part of the service interface description. This
-is found by the middleware and passed to an <a
+is found by the middleware and passed to a <a
 href="Errors.html">Hoodoo::Errors</a> constructor. The result is stored in
-an <a href="Services/Response.html">Hoodoo::Services::Response</a> instance
+a <a href="Services/Response.html">Hoodoo::Services::Response</a> instance
 and passed to handler methods in the service&#39;s <a
 href="Services/Implementation.html">Hoodoo::Services::Implementation</a>
 subclass for each request. Service implementations access the errors
@@ -96,7 +96,7 @@ end
 
 <p>As per the example above, services can share an instance across requests
 (and threads) via a class&#39;s variable if the descriptions don&#39;t
-change. You would use the descriptions to inform an <a
+change. You would use the descriptions to inform a <a
 href="Errors.html">Hoodoo::Errors</a> instance of the available codes and
 their requirements:</p>
 

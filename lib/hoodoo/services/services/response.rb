@@ -13,7 +13,7 @@
 
 module Hoodoo; module Services
 
-  # The service middleware creates an Hoodoo::Services::Response instance for
+  # The service middleware creates a Hoodoo::Services::Response instance for
   # each request it handles, populating it with some data before and after the
   # service implementation runs as part of standard pre- and post-processing.
   # In the middle, the service implementation is given the instance and adds
@@ -199,7 +199,7 @@ module Hoodoo; module Services
       return for_rack()
     end
 
-    # Add errors from an Hoodoo::Errors instance to this response's error
+    # Add errors from a Hoodoo::Errors instance to this response's error
     # collection.
     #
     # +errors_object+:: Hoodoo::Errors instance to merge into the error
