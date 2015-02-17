@@ -82,7 +82,12 @@ respects.</p>
             
               
               <li>
-                <a href="#method-i-find">find</a>
+                <a href="#method-i-find">find</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-flush">flush</a>
               </li>
             
           </ul>
@@ -392,6 +397,44 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-i-flush">
+            
+              <b>flush</b>()
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-flush" name="method-i-flush" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Flush out the repository, clearing all stored service records. This is
+usually for test purposes only.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-flush_source')" id="l_method-i-flush_source">show</a>
+                
+              </p>
+              <div id="method-i-flush_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 100</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">flush</span>
+  <span class="ruby-ivar">@repository</span> = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-ping">
             
               <b>ping</b>()
@@ -456,7 +499,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
                 
               </p>
               <div id="method-i-stop_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 99</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stop</span>
   <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">thread</span>.<span class="ruby-identifier">exit</span>
 <span class="ruby-keyword">end</span></pre>

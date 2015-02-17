@@ -213,6 +213,18 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
           </ul>
         </dd>
       
+        <dt>F</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-flush_services_for_test">flush_services_for_test</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>H</dt>
         <dd>
           <ul>
@@ -427,6 +439,51 @@ end
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-c-flush_services_for_test">
+            
+              <b>flush_services_for_test</b>()
+            
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-flush_services_for_test" name="method-c-flush_services_for_test" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>For test purposes, dump the internal service records and flush the DRb
+service. if it is running (exceptions are ignored). Existing middleware
+instances will be invalidated. New instances must be created to re-scan
+their services internally and (where required) inform the DRb process of
+the endpoints.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-flush_services_for_test_source')" id="l_method-c-flush_services_for_test_source">show</a>
+                
+              </p>
+              <div id="method-c-flush_services_for_test_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 310</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
+  <span class="ruby-identifier">@@services</span> = []
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">@@drb_service</span>.<span class="ruby-identifier">flush</span>()
+  <span class="ruby-keyword">rescue</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-c-has_memcached-3F">
             
               <b>has_memcached?</b>()
@@ -567,7 +624,7 @@ file-based logger depending on whether or not a queue is available.</p>
           
             <div class="description">
               <p>Return a Memcached host (IP address/port combination) as a String if
-defined in environment variable MEMCACHE_HOST (with MEMCACHED_HOST also
+defined in environment variable MEMCACHED_HOST (with MEMCACHE_URL also
 accepted as a legacy fallback).</p>
 
 <p>If this returns <code>nil</code> or an empty string, there&#39;s no defined
@@ -591,7 +648,7 @@ Memcached host available.</p>
               <div id="method-c-memcached_host_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 186</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">memcached_host</span>
-  <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_HOST&#39;</span> ]
+  <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -629,7 +686,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 308</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 322</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -1011,7 +1068,7 @@ protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 377</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 391</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -1154,7 +1211,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 
               </p>
               <div id="method-i-augment_session_with_permissions_for_action_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2379</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2429</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_session_with_permissions_for_action</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -1298,7 +1355,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1972</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1991</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
@@ -1374,7 +1431,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2207</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">service</span>            = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>              ]
@@ -1496,6 +1553,22 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-identifier">debug_log</span>( <span class="ruby-identifier">local_interaction</span>, <span class="ruby-string">&#39;Dispatching local inter-resource call&#39;</span>, <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">body</span> )
   <span class="ruby-identifier">dispatch</span>( <span class="ruby-identifier">local_interaction</span> )
 
+  <span class="ruby-comment"># If we get this far the interim session isn&#39;t needed. We might have</span>
+  <span class="ruby-comment"># exited early due to errors above and left this behind, but that&#39;s not</span>
+  <span class="ruby-comment"># the end of the world - it&#39;ll expire out of Memcached eventually.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">session_id</span>
+
+    <span class="ruby-comment"># Ignore errors, there&#39;s nothing much we can do about them and in</span>
+    <span class="ruby-comment"># the worst case we just have to wait for this to expire naturally.</span>
+
+    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete_from_memcached</span>()
+
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-comment"># Extract the returned data and &quot;rephrase&quot; it as an augmented</span>
   <span class="ruby-comment"># array or hash carrying error data if necessary.</span>
 
@@ -1553,7 +1626,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2014</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2033</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">remote_info</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>             ]
@@ -1589,7 +1662,6 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># Duplicate =&gt; avoid accidental modify-&quot;remote_info&quot;-by-reference via &quot;&lt;&lt;&quot; below</span>
     <span class="ruby-identifier">remote_uri</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ URI::escape( ident ) }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
-
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># When a source implementation calls a target implementation, we</span>
@@ -1695,6 +1767,22 @@ ignore resource-to-resource call errors.</p>
 
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-comment"># If we get this far the interim session isn&#39;t needed. We might have</span>
+  <span class="ruby-comment"># exited early due to errors above and left this behind, but that&#39;s not</span>
+  <span class="ruby-comment"># the end of the world - it&#39;ll expire out of Memcached eventually.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
+     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">session_id</span>
+
+    <span class="ruby-comment"># Ignore errors, there&#39;s nothing much we can do about them and in</span>
+    <span class="ruby-comment"># the worst case we just have to wait for this to expire naturally.</span>
+
+    <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete_from_memcached</span>()
+
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-comment"># Parse the response (assumed valid JSON else #for_rack would have failed</span>
   <span class="ruby-comment"># when the originating response object was turned into the Rack response).</span>
 
@@ -1784,7 +1872,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1846</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1865</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1851,7 +1939,7 @@ HTTP request).</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1877</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1896</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
@@ -1944,7 +2032,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2442</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2492</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>
