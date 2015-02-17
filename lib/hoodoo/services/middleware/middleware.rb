@@ -2065,7 +2065,6 @@ module Hoodoo; module Services
       else
         remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
-
       end
 
       # When a source implementation calls a target implementation, we
@@ -2168,6 +2167,22 @@ module Hoodoo; module Services
         rescue Errno::ECONNREFUSED => e
           return add_404.call()
         end
+
+      end
+
+      # If we get this far the interim session isn't needed. We might have
+      # exited early due to errors above and left this behind, but that's not
+      # the end of the world - it'll expire out of Memcached eventually.
+
+      if session &&
+         source_interaction.context &&
+         source_interaction.context.session &&
+         session.session_id != source_interaction.context.session.session_id
+
+        # Ignore errors, there's nothing much we can do about them and in
+        # the worst case we just have to wait for this to expire naturally.
+
+        session.delete_from_memcached()
 
       end
 
@@ -2343,6 +2358,22 @@ module Hoodoo; module Services
 
       debug_log( local_interaction, 'Dispatching local inter-resource call', local_request.body )
       dispatch( local_interaction )
+
+      # If we get this far the interim session isn't needed. We might have
+      # exited early due to errors above and left this behind, but that's not
+      # the end of the world - it'll expire out of Memcached eventually.
+
+      if session &&
+         source_interaction.context &&
+         source_interaction.context.session &&
+         session.session_id != source_interaction.context.session.session_id
+
+        # Ignore errors, there's nothing much we can do about them and in
+        # the worst case we just have to wait for this to expire naturally.
+
+        session.delete_from_memcached()
+
+      end
 
       # Extract the returned data and "rephrase" it as an augmented
       # array or hash carrying error data if necessary.
