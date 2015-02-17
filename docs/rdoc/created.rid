@@ -1,4 +1,4 @@
-Wed, 18 Feb 2015 11:29:05 +1300
+Wed, 18 Feb 2015 11:31:00 +1300
 README.md	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo.rb	Thu, 12 Feb 2015 16:40:05 +1300
 lib/hoodoo/active.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -96,7 +96,7 @@ lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Tue, 27 Jan 
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 17 Feb 2015 16:07:49 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/services/middleware/interaction.rb	Tue, 17 Feb 2015 16:07:49 +1300
+lib/hoodoo/services/middleware/interaction.rb	Wed, 18 Feb 2015 11:30:55 +1300
 lib/hoodoo/services/middleware/middleware.rb	Wed, 18 Feb 2015 11:23:27 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 29 Jan 2015 10:39:10 +1300
 lib/hoodoo/services/middleware/service_registry_drb_server.rb	Tue, 17 Feb 2015 16:07:49 +1300

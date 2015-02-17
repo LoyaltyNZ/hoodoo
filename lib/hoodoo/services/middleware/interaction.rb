@@ -83,10 +83,10 @@ module Hoodoo; module Services; class Middleware
       #         Interaction will use - without validation - whatever
       #         value the header holds, else a new UUID is generated.
       #
-      # +owning_middleware_instance+: See #owning_middleware_instance.
+      # +owning_middleware_instance+:: See #owning_middleware_instance.
       #
-      # +session+: The session data attached to the #context value;
-      #            optional; if omitted, +nil+ is used.
+      # +session+:: The session data attached to the #context value;
+      #             optional; if omitted, +nil+ is used.
       #
       def initialize( env, owning_middleware_instance, session = nil )
         @rack_request   = Rack::Request.new( env )
