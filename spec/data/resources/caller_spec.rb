@@ -4,10 +4,11 @@ describe Hoodoo::Data::Resources::Caller do
   it 'should match schema expectations' do
     schema = described_class.get_schema()
 
-    expect(schema.is_internationalised?()).to eq(false)
+    expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(6)
+    expect(schema.properties.count).to eq(7)
 
+    expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['participant_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['participant_id'].resource).to eq(:Participant)
     expect(schema.properties['outlet_id']).to be_a(Hoodoo::Presenters::UUID)

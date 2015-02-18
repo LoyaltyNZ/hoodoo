@@ -16,6 +16,9 @@ module Hoodoo
       class Caller < Hoodoo::Presenters::Base
 
         schema do
+          internationalised
+
+          text :name
           uuid :participant_id,              :required => true, :resource => :Participant
           uuid :outlet_id,                   :required => true, :resource => :Outlet
           text :authentication_secret
