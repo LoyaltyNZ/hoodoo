@@ -200,7 +200,7 @@ module Hoodoo
           #
           Hoodoo::Services::Middleware.logger.warn(
             'Hoodoo::Services::Session\#save_to_memcached: Session saving failed - connection fault or session corrupt',
-            exception
+            exception.to_s
           )
 
           return nil
@@ -248,7 +248,7 @@ module Hoodoo
           #
           Hoodoo::Services::Middleware.logger.warn(
             'Hoodoo::Services::Session\#load_from_memcached!: Session loading failed - connection fault or session corrupt',
-            exception
+            exception.to_s
           )
 
           return nil
@@ -296,7 +296,7 @@ module Hoodoo
           #
           Hoodoo::Services::Middleware.logger.warn(
             'Hoodoo::Services::Session\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record',
-            exception
+            exception.to_s
           )
 
           return nil
@@ -328,7 +328,7 @@ module Hoodoo
           #
           Hoodoo::Services::Middleware.logger.warn(
             'Hoodoo::Services::Session\#delete_from_memcached: Session delete - connection fault',
-            exception
+            exception.to_s
           )
 
           return nil
