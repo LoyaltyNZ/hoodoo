@@ -53,9 +53,10 @@ module Hoodoo; module Services
       #              message - if absent, one is generated automatically.
       #
       # +:session+:: Description of the current request session when available;
-      #              a Hoodoo::Services::Session as a hash. The Client UUID,
-      #              identity Participant UUID and Outlet UUID are sent as
-      #              independent, searchable fields in the log payload.
+      #              a Hoodoo::Services::Session as a Hash (via #to_h; keys as
+      #              Strings). The Caller UUID, identity Participant UUID and
+      #              identity Outlet UUID are sent as independent, searchable
+      #              fields in the log payload.
       #
       # +interaction_id+:: The interaction ID for this client's call. This is
       #                    also sent as an independent, searchable field in
@@ -64,17 +65,17 @@ module Hoodoo; module Services
       def report( level, component, code, data )
         return if @alchemy.nil? || defined?( Hoodoo::Services::Middleware::AMQPLogMessage ).nil?
 
+        # Take care with Symbol keys in 'data' vs string keys in e.g. 'Session'.
+
         data[ :id ] ||= Hoodoo::UUID.generate()
-
         interaction_id = data[ :interaction_id ]
-
         session        = data[ :session ] || {}
 
-        client_id      = session[ :client_id ]
-        identity       = session[ :identity ] || {}
+        caller_id      = session[ 'caller_id' ]
+        identity       = session[ 'identity'  ] || {}
 
-        participant_id = identity[ :participant_id ]
-        outlet_id      = identity[ :outlet_id      ]
+        participant_id = identity[ 'participant_id' ]
+        outlet_id      = identity[ 'outlet_id'      ]
 
         message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
@@ -84,7 +85,7 @@ module Hoodoo; module Services
 
           :data           => data,
 
-          :client_id      => client_id,
+          :caller_id      => caller_id,
           :interaction_id => interaction_id,
           :participant_id => participant_id,
           :outlet_id      => outlet_id,
