@@ -58,6 +58,12 @@ class RSpecAddPermTestClockImplementation < Hoodoo::Services::Implementation
     return if date_time.adds_errors_to?( context.response.errors )
     context.response.set_resource( date_time )
   end
+
+  def list( context )
+    date_time = context.resource( :RSpecAddPermTestDate ).show( 'now' )
+    return if date_time.adds_errors_to?( context.response.errors )
+    context.response.set_resource( date_time )
+  end
 end
 
 class RSpecAddPermTestDateImplementation < Hoodoo::Services::Implementation
@@ -112,7 +118,7 @@ end
 class RSpecAddPermTestClockInterface < Hoodoo::Services::Interface
   interface :RSpecAddPermTestClock do
     endpoint :rspec_add_perm_test_clocks, RSpecAddPermTestClockImplementation
-    actions :show
+    actions :show, :list
 
     additional_permissions_for( :show ) do | p |
       p.set_resource( :RSpecAddPermTestDate, :show, Hoodoo::Services::Permissions::ALLOW )
@@ -230,6 +236,11 @@ describe Hoodoo::Services::Middleware do
     @session.permissions.set_resource(
       :RSpecAddPermTestClock,
       :show,
+      Hoodoo::Services::Permissions::ALLOW
+    )
+    @session.permissions.set_resource(
+      :RSpecAddPermTestClock,
+      :list,
       Hoodoo::Services::Permissions::ALLOW
     )
 
@@ -381,6 +392,28 @@ describe Hoodoo::Services::Middleware do
         expect( result ).to eq( { 'date' => '1999-12-31', 'time' => '23:59:59' } )
       end
     end
+
+    context 'Listing Clocks with extra permissions for Date and Time' do
+      def app
+        Rack::Builder.new do
+          use Hoodoo::Services::Middleware
+          run RSpecAddPermTestClockServiceC.new
+        end
+      end
+
+      it 'can call #list and #show downstream without any extra session permissions' do
+        expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).with( anything(), :show ).and_return( Hoodoo::Services::Permissions::ALLOW )
+
+        get '/v1/rspec_add_perm_test_clocks', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect( last_response.status ).to eq( 200 )
+
+        result = JSON.parse( last_response.body )
+        expect( result ).to eq( { 'date' => '1999-12-31', 'time' => '23:59:59' } )
+      end
+    end
   end
 
   ############################################################################
@@ -518,6 +551,24 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clocks/any',
+          :port => @port_clock
+        )
+        expect( response.code ).to eq( '200' )
+
+        result = JSON.parse( response.body )
+        expect( result ).to eq( { 'date' => '1999-12-31', 'time' => '23:59:59' } )
+      end
+    end
+
+    context 'Clock with extra permissions for Date and Time' do
+      it 'can call #show without any extra session permissions' do
+        expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
+        expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).with( anything(), :show ).and_return( Hoodoo::Services::Permissions::ALLOW )
+
+        response = spec_helper_http(
+          :path => '/v1/rspec_add_perm_test_clocks',
           :port => @port_clock
         )
         expect( response.code ).to eq( '200' )
