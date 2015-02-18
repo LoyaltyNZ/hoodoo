@@ -73,6 +73,7 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       :data           => data,
 
       :caller_id      => @session.caller_id,
+      :client_id      => @session.caller_id,
       :interaction_id => interaction_id,
       :participant_id => @session.identity.participant_id,
       :outlet_id      => @session.identity.outlet_id,

@@ -86,6 +86,7 @@ module Hoodoo; module Services
           :data           => data,
 
           :caller_id      => caller_id,
+          :client_id      => caller_id, # Backwards compatibility
           :interaction_id => interaction_id,
           :participant_id => participant_id,
           :outlet_id      => outlet_id,

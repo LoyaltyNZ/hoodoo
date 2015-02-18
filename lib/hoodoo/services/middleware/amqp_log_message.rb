@@ -74,6 +74,10 @@ module Hoodoo; module Services
         #
         attr_accessor :client_id
 
+        # Modern Session parlance alias for #client_id.
+        #
+        attr_accessor :caller_id
+
         # Optional interaction UUID, via session data inside the payload - see
         # Hoodoo::Services::Middleware::StructuredLogger.
         #
