@@ -7,4 +7,5 @@ gemspec
 
 group :test do
   gem 'amq-endpoint', :git => 'git@github.com:LoyaltyNZ/amq-endpoint.git', :branch => 'master'
+  gem 'byebug'
 end

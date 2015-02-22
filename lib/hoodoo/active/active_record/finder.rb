@@ -19,7 +19,23 @@ module Hoodoo
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
     module Finder
+      
+      class Slice
 
+        attr_reader :data, :count, :rendered_data
+
+        def initialize(data, count)
+          @data = data
+          @count = count
+          @rendered_data = @data
+        end
+
+        def render_with(&block)
+          @rendered_data = @data.map(&block)
+          @rendered_data
+        end
+ 
+      end
       # Instantiates this module when it is included:
       #
       # Example:
@@ -221,42 +237,66 @@ module Hoodoo
         #                     / Hoodoo::Services::Request#list).
         #
         def list_finder( list_parameters )
-
-          finder = self
+          finder = self.apply_search_and_filter_maps(list_parameters.search_data, list_parameters.filter_data)
           finder = finder.offset( list_parameters.offset ).limit( list_parameters.limit )
           finder = finder.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )
+          return finder
+        end
 
+        def apply_search_and_filter_maps(search_data, filter_data)
+          scope = self.all
           search_map = class_variable_defined?( :@@nz_co_loyalty_list_search_map ) ? class_variable_get( :@@nz_co_loyalty_list_search_map ) : nil
-
-          dry_proc = Proc.new do | data, attr, proc |
-            value = data[ attr.to_s ]
-            next if value.nil?
-
-            if ( proc.nil? )
-              [ { attr => value } ]
-            else
-              proc.call( attr, value )
-            end
-          end
-
           unless search_map.nil?
-            search_map.each do | attr, proc |
-              args   = dry_proc.call( list_parameters.search_data, attr, proc )
-              finder = finder.where( *args ) unless args.nil?
-            end
+            scope = scope.apply_search_map(search_map, search_data)
           end
 
           filter_map = class_variable_defined?( :@@nz_co_loyalty_list_filter_map ) ? class_variable_get( :@@nz_co_loyalty_list_filter_map ) : nil
-
           unless filter_map.nil?
-            filter_map.each do | attr, proc |
-              args   = dry_proc.call( list_parameters.filter_data, attr, proc )
-              finder = finder.where.not( *args ) unless args.nil?
-            end
+            scope = scope.apply_filter_map(filter_map, filter_data)
           end
-
-          return finder
+          scope
         end
+
+        def dry_proc(data, attr, proc)
+          value = data[ attr.to_s ]
+          return nil if value.nil?
+
+          if ( proc.nil? )
+            [ { attr => value } ]
+          else
+            proc.call( attr, value )
+          end
+        end
+
+        def apply_filter_map(filter_map, filter_data)
+          scope = self.all
+          filter_map.each do | attr, proc |
+            args   = dry_proc(filter_data, attr, proc )
+            scope = scope.where.not( *args ) unless args.nil?
+          end
+          scope
+        end
+
+        def apply_search_map(search_map, search_data)
+          scope = self.all
+          search_map.each do | attr, proc |
+            args  = dry_proc( search_data, attr, proc )
+            scope = scope.where( *args ) unless args.nil?
+          end
+          scope
+        end
+
+        def slice(list_parameters)
+          scope = self.apply_search_and_filter_maps(list_parameters.search_data, list_parameters.filter_data)
+          
+          count = scope.clone.count
+
+          scope = scope.offset( list_parameters.offset ).limit( list_parameters.limit )
+          scope = scope.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )          
+
+          return Slice.new(scope, count)
+        end
+
 
         # Specify a search mapping for use by #list_finder to automatically
         # restrict list results.
