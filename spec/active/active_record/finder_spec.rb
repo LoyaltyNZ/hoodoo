@@ -119,20 +119,20 @@ describe Hoodoo::ActiveRecord::Finder do
   context 'acquire_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
-      @scoped_1.uuid = 'uuid 1'
-      @scoped_1.code = 'code 1'
+      @scoped_1.uuid        = 'uuid 1'
+      @scoped_1.code        = 'code 1'
       @scoped_1.field_one = 'scoped 1'
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
-      @scoped_2.uuid = 'uuid 1'
-      @scoped_2.code = 'code 2'
+      @scoped_2.uuid        = 'uuid 1'
+      @scoped_2.code        = 'code 2'
       @scoped_2.field_one = 'scoped 2'
       @scoped_2.save!
 
       @scoped_3 = RSpecModelFinderTest.new
-      @scoped_3.uuid = 'uuid 2'
-      @scoped_3.code = 'code 2'
+      @scoped_3.uuid        = 'uuid 2'
+      @scoped_3.code        = 'code 2'
       @scoped_3.field_one = 'scoped 3'
       @scoped_3.save!
 
