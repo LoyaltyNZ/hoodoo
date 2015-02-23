@@ -19,7 +19,9 @@ module Hoodoo
       # of ActiveRecord::Base.
       #
       class Base < ::ActiveRecord::Base
+
         include Hoodoo::ActiveRecord::UUID
+        include Hoodoo::ActiveRecord::Secure
         include Hoodoo::ActiveRecord::Finder
         include Hoodoo::ActiveRecord::ErrorMapping
 
@@ -30,9 +32,13 @@ module Hoodoo
         # Instantiates all the ActiveRecord mixins when this class is
         # inherited.
         #
+        # +model+:: The ActiveRecord::Base descendant that is including
+        #           this module.
+        #
         def self.inherited( model )
 
           Hoodoo::ActiveRecord::UUID.instantiate( model )
+          Hoodoo::ActiveRecord::Secure.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
 
           super

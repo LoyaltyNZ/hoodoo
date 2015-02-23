@@ -2205,7 +2205,9 @@ module Hoodoo; module Services
       # the hash part.
 
       if ( parsed[ '_data' ].is_a?( ::Array ) )
-        parsed = parsed[ '_data' ]
+        size   = parsed[ '_dataset_size' ]
+        parsed = parsed[ '_data'         ]
+        parsed.dataset_size = size
 
       elsif ( parsed[ 'kind' ] == 'Errors' )
 
@@ -2379,7 +2381,8 @@ module Hoodoo; module Services
       data = local_response.body
 
       if data.is_a? Array
-        data = Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new( data )
+        data              = Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new( data )
+        data.dataset_size = local_response.dataset_size
       else
         data = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[ data ]
       end

@@ -57,14 +57,19 @@ module Hoodoo; module Services
     #
     # This method is aliased as #set_resource, for semantic use when you want
     # to set the response body to a representation (as a Hash) of a resource.
-    #
-    # This method is also aliased as #set_resources, for semantic use when
-    # you want to set the response body to an array of representations (as
-    # Hashes) of resources.
+    # When you want to set an Array of items for a list, it is strongly
+    # recommended that you call #set_resources and pass a total dataset size
+    # in addition to just the Array containing a page of list data.
     #
     attr_accessor :body
-    alias_method  :set_resource,  :body=
-    alias_method  :set_resources, :body=
+    alias_method  :set_resource,:body=
+
+    # Read back a the dataset size given by a prior call to #set_resources,
+    # or +nil+ if none has been provided (either the response contains no
+    # list yet/at all, or an Array was given but the dataset size was not
+    # supplied).
+    #
+    attr_reader :dataset_size
 
     # Create a new instance, ready to take on a response. The service
     # middleware is responsible for doing this.
@@ -83,6 +88,7 @@ module Hoodoo; module Services
       @headers          = {}
       @http_status_code = 200
       @body             = {}
+      @dataset_size     = nil
 
     end
 
@@ -93,6 +99,30 @@ module Hoodoo; module Services
     #
     def halt_processing?
       @errors.has_errors?
+    end
+
+    # Similar to #body and #set_resource, but used when you are returning an
+    # array of items. Although you can just assign an array to either of
+    # #body or #set_resource, calling #set_resources is more semantically
+    # correct and provides an additional feature; you can specify the total
+    # number of items in the dataset.
+    #
+    # For example, if you were listing a page of 50 resource instances but
+    # the total matching dataset of that list included 344 instances, you
+    # would pass 344 in the +dataset_size+ input parameter. This is optional
+    # but highly recommended as it is often very useful for calling clients.
+    #
+    # +array+::        Array of resource representations (Ruby Array with
+    #                  Ruby Hash entries representing rendered resources,
+    #                  ideally through the Hoodoo::Presenters framework).
+    #
+    # +dataset_size+:: Optional _total_ number of items in the entire dataset
+    #                  of which +array+ is, most likely, just a subset due to
+    #                  paginated lists via offset and limit parameters.
+    #
+    def set_resources( array, dataset_size = nil )
+      self.body = array
+      @dataset_size = dataset_size
     end
 
     # Add an HTTP header to the internal collection that will be used for the
@@ -249,6 +279,7 @@ module Hoodoo; module Services
 
       if body_data.is_a?( ::Array )
         response_hash = { '_data' => body_data }
+        response_hash[ '_dataset_size' ] = @dataset_size unless @dataset_size.nil?
       else
         response_hash = body_data
       end

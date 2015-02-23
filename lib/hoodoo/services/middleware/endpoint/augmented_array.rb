@@ -20,6 +20,12 @@ module Hoodoo; module Services
       #
       class AugmentedArray < ::Array
         include Hoodoo::Services::Middleware::Endpoint::AugmentedBase
+
+        # For lists, the (optional) total size of the data set, of which
+        # the contents of this Array will often only represent a single
+        # page. If unknown, the value is +nil+.
+        #
+        attr_accessor :dataset_size
       end
 
     end

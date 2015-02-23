@@ -17,7 +17,7 @@ describe Hoodoo::ActiveRecord::Finder do
       class RSpecModelFinderTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Finder
 
-        polymorphic_id_fields :uuid, :code
+        acquire_with :uuid, :code
 
         # These forms follow quite closely the RDoc comments in
         # the finder.rb source.
@@ -26,11 +26,20 @@ describe Hoodoo::ActiveRecord::Finder do
           [ { attr => [ value ].flatten } ]
         }
 
+        # Pretend security scoping that only finds things with
+        # a UUID and code coming in from the session, for secured
+        # searches. Note intentional mix of Symbols and Strings.
+
+        secure_with(
+          'uuid' => :authorised_uuids, # Array
+          :code => 'authorised_code'   # Single item
+        )
+
         # Deliberate mixture of symbols and strings. No ILIKE
         # in SQLite, so just use LIKE. It's case insensitive by
         # default anyway.
 
-        list_search_map(
+        search_with(
           'field_one' => nil,
           :field_two => Proc.new { | attr, value |
             [ "#{ attr } LIKE ?", value ]
@@ -38,7 +47,7 @@ describe Hoodoo::ActiveRecord::Finder do
           :field_three => ARRAY_MATCH
         )
 
-        list_filter_map(
+        filter_with(
           :field_one => ARRAY_MATCH,
           :field_two => nil,
           'field_three' => Proc.new { | attr, value |
@@ -67,7 +76,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @uuid = @b.uuid
 
     @c = RSpecModelFinderTest.new
-    @c.code = "C"
+    @c.code = 'C'
     @c.field_one = 'group 2'
     @c.field_two = 'two c'
     @c.field_three = 'three c'
@@ -79,29 +88,164 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'polymorphic find' do
+  context 'acquire' do
     it 'finds from the class' do
-      found = RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest, @id )
+      found = RSpecModelFinderTest.acquire( @id )
       expect( found ).to eq(@a)
 
-      found = RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest, @uuid )
+      found = RSpecModelFinderTest.acquire( @uuid )
       expect( found ).to eq(@b)
 
-      found = RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest, @code )
+      found = RSpecModelFinderTest.acquire( @code )
       expect( found ).to eq(@c)
     end
 
     it 'finds with a chain' do
       finder = RSpecModelFinderTest.where( :field_one => 'group 1' )
 
-      found = RSpecModelFinderTest.polymorphic_find( finder, @id )
+      found = finder.acquire( @id )
       expect( found ).to eq(@a)
 
-      found = RSpecModelFinderTest.polymorphic_find( finder, @uuid )
+      found = finder.acquire( @uuid )
       expect( found ).to eq(@b)
 
-      found = RSpecModelFinderTest.polymorphic_find( finder, @code )
+      found = finder.acquire( @code )
       expect( found ).to eq(nil) # Not in 'group 1'
+    end
+  end
+
+  # ==========================================================================
+
+  context 'acquire_in' do
+    before :each do
+      @scoped_1 = RSpecModelFinderTest.new
+      @scoped_1.uuid = 'uuid 1'
+      @scoped_1.code = 'code 1'
+      @scoped_1.field_one = 'scoped 1'
+      @scoped_1.save!
+
+      @scoped_2 = RSpecModelFinderTest.new
+      @scoped_2.uuid = 'uuid 1'
+      @scoped_2.code = 'code 2'
+      @scoped_2.field_one = 'scoped 2'
+      @scoped_2.save!
+
+      @scoped_3 = RSpecModelFinderTest.new
+      @scoped_3.uuid = 'uuid 2'
+      @scoped_3.code = 'code 2'
+      @scoped_3.field_one = 'scoped 3'
+      @scoped_3.save!
+
+      # Get a good-enough-for-test interaction which has a context
+      # that contains a Session we can modify.
+
+      @interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+      @interaction.context = Hoodoo::Services::Context.new(
+        Hoodoo::Services::Session.new,
+        @interaction.context.request,
+        @interaction.context.response,
+        @interaction
+      )
+
+      @context = @interaction.context
+      @session = @interaction.context.session
+    end
+
+    it 'finds with secure scopes from the class' do
+      @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to eq( @scoped_1 )
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @session.scoping.authorised_code = 'code 2'
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to eq( @scoped_2 )
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @session.scoping.authorised_uuids = [ 'uuid 2' ]
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to eq( @scoped_3 )
+
+      @session.scoping.authorised_uuids = [ 'uuid 1', 'uuid 2' ]
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to eq( @scoped_2 )
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.acquire_in( @context )
+      expect( found ).to eq( @scoped_3 )
+    end
+
+    it 'finds with secure scopes with a chain' do
+      @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_1.field_one ).acquire_in( @context )
+      expect( found ).to eq( @scoped_1 )
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_1.field_one + '!' ).acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_2.field_one ).acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one ).acquire_in( @context )
+      expect( found ).to be_nil
+
+      @session.scoping.authorised_uuids = [ 'uuid 1', 'uuid 2' ]
+      @session.scoping.authorised_code  = 'code 2'
+
+      @context.request.uri_path_components = [ @scoped_1.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_1.field_one ).acquire_in( @context )
+      expect( found ).to be_nil
+
+      @context.request.uri_path_components = [ @scoped_2.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_2.field_one ).acquire_in( @context )
+      expect( found ).to eq( @scoped_2 )
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one ).acquire_in( @context )
+      expect( found ).to eq( @scoped_3 )
+
+      @context.request.uri_path_components = [ @scoped_3.id ]
+      found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one + '!' ).acquire_in( @context )
+      expect( found ).to be_nil
     end
   end
 
@@ -113,37 +257,37 @@ describe Hoodoo::ActiveRecord::Finder do
         'field_one' => 'group 1'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@b, @a])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
 
       @list_params.search_data = {
         'field_one' => 'group 2'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@c])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
 
       @list_params.search_data = {
         'field_two' => 'TWO_A'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@a])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@a])
 
       @list_params.search_data = {
         'field_three' => [ 'three a', 'three c' ]
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@c, @a])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c, @a])
 
       @list_params.search_data = {
         'field_two' => 'two c',
         'field_three' => [ 'three a', 'three c' ]
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@c])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
     end
 
     it 'searches with chain' do
@@ -153,37 +297,37 @@ describe Hoodoo::ActiveRecord::Finder do
         'field_one' => 'group 1'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@b, @a])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@b, @a])
 
       @list_params.search_data = {
         'field_one' => 'group 2'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
 
       @list_params.search_data = {
         'field_two' => 'TWO_A'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@a])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@a])
 
       @list_params.search_data = {
         'field_three' => [ 'three a', 'three c' ]
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@a])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@a])
 
       @list_params.search_data = {
         'field_two' => 'two c',
         'field_three' => [ 'three a', 'three c' ]
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
     end
   end
 
@@ -195,37 +339,37 @@ describe Hoodoo::ActiveRecord::Finder do
         'field_two' => 'two a'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@c, @b])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c, @b])
 
       @list_params.filter_data = {
         'field_three' => 'three c'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@b, @a])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 1', 'group 2' ]
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 2' ]
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@b, @a])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 2' ],
         'field_three' => 'three a'
       }
 
-      finder = RSpecModelFinderTest.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@b])
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b])
     end
 
     it 'filters with chain' do
@@ -239,37 +383,140 @@ describe Hoodoo::ActiveRecord::Finder do
         'field_two' => 'two a'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([@c])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@c])
 
       @list_params.filter_data = {
         'field_three' => 'three c'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 1', 'group 2' ]
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 2' ]
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
 
       @list_params.filter_data = {
         'field_one' => [ 'group 2' ],
         'field_three' => 'three a'
       }
 
-      finder = constraint.list_finder( @list_params )
-      expect( finder.all.to_a ).to eq([])
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
+    end
+  end
+
+  # ==========================================================================
+
+  context 'list_in' do
+    before :each do
+      @scoped_1 = RSpecModelFinderTest.new
+      @scoped_1.uuid = 'uuid 1'
+      @scoped_1.code = 'code 1'
+      @scoped_1.field_one = 'scoped 1'
+      @scoped_1.save!
+
+      @scoped_2 = RSpecModelFinderTest.new
+      @scoped_2.uuid = 'uuid 1'
+      @scoped_2.code = 'code 2'
+      @scoped_2.field_one = 'scoped 2'
+      @scoped_2.save!
+
+      @scoped_3 = RSpecModelFinderTest.new
+      @scoped_3.uuid = 'uuid 2'
+      @scoped_3.code = 'code 2'
+      @scoped_3.field_one = 'scoped 3'
+      @scoped_3.save!
+
+      # Get a good-enough-for-test interaction which has a context
+      # that contains a Session we can modify.
+
+      @interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+      @interaction.context = Hoodoo::Services::Context.new(
+        Hoodoo::Services::Session.new,
+        @interaction.context.request,
+        @interaction.context.response,
+        @interaction
+      )
+
+      @context = @interaction.context
+      @session = @interaction.context.session
+    end
+
+    it 'lists with secure scopes from the class' do
+      @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+
+      list = RSpecModelFinderTest.list_in( @context )
+      expect( list ).to eq( [ @scoped_1 ] )
+
+      @session.scoping.authorised_code = 'code 2'
+
+      list = RSpecModelFinderTest.list_in( @context )
+      expect( list ).to eq( [ @scoped_2 ] )
+
+      @session.scoping.authorised_uuids = [ 'uuid 2' ]
+
+      list = RSpecModelFinderTest.list_in( @context )
+      expect( list ).to eq( [ @scoped_3 ] )
+
+      @session.scoping.authorised_uuids = [ 'uuid 1', 'uuid 2' ]
+
+      # OK, so these test 'with a chain' too... It's just convenient to (re-)cover
+      # that aspect here.
+
+      list = RSpecModelFinderTest.list_in( @context ).reorder( 'field_one' => 'asc' )
+      expect( list ).to eq( [ @scoped_2, @scoped_3 ] )
+
+      list = RSpecModelFinderTest.list_in( @context ).reorder( 'field_one' => 'desc' )
+      expect( list ).to eq( [ @scoped_3, @scoped_2 ] )
+
+      list = RSpecModelFinderTest.reorder( 'field_one' => 'asc' ).list_in( @context )
+      expect( list ).to eq( [ @scoped_2, @scoped_3 ] )
+
+      list = RSpecModelFinderTest.reorder( 'field_one' => 'desc' ).list_in( @context )
+      expect( list ).to eq( [ @scoped_3, @scoped_2 ] )
+    end
+
+    it 'finds with secure scopes with a chain' do
+      @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+
+      list = RSpecModelFinderTest.where( :field_one => @scoped_1.field_one ).list_in( @context )
+      expect( list ).to eq( [ @scoped_1 ] )
+
+      list = RSpecModelFinderTest.where( :field_one => @scoped_1.field_one + '!' ).list_in( @context )
+      expect( list ).to eq( [] )
+
+      list = RSpecModelFinderTest.list_in( @context ).where( :field_one => @scoped_1.field_one )
+      expect( list ).to eq( [ @scoped_1 ] )
+
+      list = RSpecModelFinderTest.list_in( @context ).where( :field_one => @scoped_1.field_one + '!' )
+      expect( list ).to eq( [] )
+
+      @session.scoping.authorised_uuids = [ 'uuid 1', 'uuid 2' ]
+      @session.scoping.authorised_code  = 'code 2'
+
+      list = RSpecModelFinderTest.where( :field_one => [ @scoped_1.field_one, @scoped_2.field_one ] ).list_in( @context )
+      expect( list ).to eq( [ @scoped_2 ] )
+
+      list = RSpecModelFinderTest.list_in( @context ).where( :field_one => [ @scoped_1.field_one, @scoped_2.field_one ] )
+      expect( list ).to eq( [ @scoped_2 ] )
+
+      list = RSpecModelFinderTest.where( :field_one => [ @scoped_2.field_one, @scoped_3.field_one ] ).list_in( @context ).reorder( 'field_one' => 'asc' )
+      expect( list ).to eq( [ @scoped_2, @scoped_3 ] )
+
+      list = RSpecModelFinderTest.list_in( @context ).reorder( 'field_one' => 'asc' ).where( :field_one => [ @scoped_2.field_one, @scoped_3.field_one ] )
+      expect( list ).to eq( [ @scoped_2, @scoped_3 ] )
     end
   end
 end

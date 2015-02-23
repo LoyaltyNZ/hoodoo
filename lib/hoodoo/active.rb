@@ -18,6 +18,7 @@ require 'hoodoo/errors'
 require 'hoodoo/active/active_model/uuid_validator'
 
 require 'hoodoo/active/active_record/error_mapping'
+require 'hoodoo/active/active_record/secure'
 require 'hoodoo/active/active_record/finder'
 require 'hoodoo/active/active_record/uuid'
 require 'hoodoo/active/active_record/base'
