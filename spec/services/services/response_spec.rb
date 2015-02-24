@@ -141,7 +141,7 @@ describe Hoodoo::Services::Response do
     it 'should return default empty data correctly' do
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate({})
+      expected = JSON.generate({})
       expect(status).to eq(200)
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
@@ -153,7 +153,7 @@ describe Hoodoo::Services::Response do
 
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate({})
+      expected = JSON.generate({})
       expect(status).to eq(200)
       expect(headers).to eq({'X-Foo' => 'baz', 'X-Bar' => 'boo', 'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
@@ -168,7 +168,7 @@ describe Hoodoo::Services::Response do
       errors_hash = @r.errors.render(@r.instance_variable_get('@interaction_id'))
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate(errors_hash)
+      expected = JSON.generate(errors_hash)
       expect(status).to eq(422) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
@@ -180,7 +180,7 @@ describe Hoodoo::Services::Response do
 
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate(response_hash)
+      expected = JSON.generate(response_hash)
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
@@ -192,7 +192,7 @@ describe Hoodoo::Services::Response do
 
       status, headers, body = @r.for_rack
 
-      expected = JSON.pretty_generate({'_data' => response_array})
+      expected = JSON.generate({'_data' => response_array})
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])

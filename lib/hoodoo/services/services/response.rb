@@ -284,7 +284,7 @@ module Hoodoo; module Services
         response_hash = body_data
       end
 
-      rack_response.write( JSON.pretty_generate( response_hash ) )
+      rack_response.write( JSON.generate( response_hash ) )
 
       # Finally, sort out the headers
 
