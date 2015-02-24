@@ -519,4 +519,47 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( list ).to eq( [ @scoped_2, @scoped_3 ] )
     end
   end
+
+  # ==========================================================================
+
+  context 'deprecated' do
+    it '#polymorphic_find calls #acquire' do
+      expect( $stderr ).to receive( :puts ).once
+      expect( RSpecModelFinderTest ).to receive( :acquire ).once.with( 21 )
+      RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest, 21 )
+    end
+
+    it '#polymorphic_find raises exception in unsupported call' do
+      expect {
+        RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest.where( :field_one => 'one' ), 21 )
+      }.to raise_error
+    end
+
+    it '#polymorphic_id_fields calls #acquire_with' do
+      expect( $stderr ).to receive( :puts ).once
+      expect( RSpecModelFinderTest ).to receive( :acquire_with ).once.with( :uuid, :code )
+      RSpecModelFinderTest.polymorphic_id_fields( :uuid, :code )
+    end
+
+    it '#list_finder calls #list' do
+      params = { :search => { :field_one => 'one' } }
+      expect( $stderr ).to receive( :puts ).once
+      expect( RSpecModelFinderTest ).to receive( :list ).once.with( params )
+      RSpecModelFinderTest.list_finder( params )
+    end
+
+    it '#list_search_map calls #search_with' do
+      params = { :foo => nil, :bar => nil }
+      expect( $stderr ).to receive( :puts ).once
+      expect( RSpecModelFinderTest ).to receive( :search_with ).once.with( params )
+      RSpecModelFinderTest.list_search_map( params )
+    end
+
+    it '#list_filter_map calls #filter_with' do
+      params = { :foo => nil, :bar => nil }
+      expect( $stderr ).to receive( :puts ).once
+      expect( RSpecModelFinderTest ).to receive( :filter_with ).once.with( params )
+      RSpecModelFinderTest.list_filter_map( params )
+    end
+  end
 end

@@ -8,7 +8,7 @@ describe Hoodoo::Services::Middleware do
 
   class RSpecTestServiceExoticStubImplementation < Hoodoo::Services::Implementation
     def list( context )
-      context.response.set_resources( [] )
+      context.response.set_resources( [], 99 )
     end
   end
 
@@ -117,7 +117,6 @@ describe Hoodoo::Services::Middleware do
       mock_response = OpenStruct.new
       mock_response.body = '{}'
 
-
       expect( mock_alchemy ).to receive( :http_request ).once do | queue, method, path, opts |
         expect( queue ).to eq( mock_queue )
         expect( method ).to eq( mock_method )
@@ -201,9 +200,10 @@ describe Hoodoo::Services::Middleware do
         }
       )
 
-      # Expect an empty *array* back. A Hash implies an error.
+      # Expect an empty *array* back, with dataset size. A Hash implies an error.
 
       expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new )
+      expect( mock_result.dataset_size ).to eq(99)
     end
   end
 end

@@ -134,5 +134,17 @@ describe Hoodoo::ActiveRecord::Secure do
       found = RSpecModelSecureTest.where( :field => @scoped_3.field + '!' ).secure( @context ).find_by_id( @scoped_3.id )
       expect( found ).to be_nil
     end
+
+    it 'finds nothing if scope lacks required keys' do
+      @session.scoping = { :authorised_distributor => 'distributor 1' }
+
+      found = RSpecModelSecureTest.secure( @context ).find_by_id( @scoped_1.id )
+      expect( found ).to be_nil
+    end
+
+    it 'finds nothing if scope is missing' do
+      found = RSpecModelSecureTest.secure( @context ).find_by_id( @scoped_1.id )
+      expect( found ).to be_nil
+    end
   end
 end

@@ -13,11 +13,14 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
   public
 
     def list( context )
-      context.response.body = [
-         { 'list0' => to_h( context ) },
-         { 'list1' => to_h( context ) },
-         { 'list2' => to_h( context ) }
-      ]
+      context.response.set_resources(
+        [
+          { 'list0' => to_h( context ) },
+          { 'list1' => to_h( context ) },
+          { 'list2' => to_h( context ) }
+        ],
+        49
+      )
     end
     def show( context )
       if context.request.uri_path_components[ 0 ] == 'return_error'
@@ -132,11 +135,14 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
-    context.response.body = [
-      { 'listA' => result },
-      { 'listB' => result },
-      { 'listC' => result }
-    ]
+    context.response.set_resources(
+      [
+        { 'listA' => result },
+        { 'listB' => result },
+        { 'listC' => result }
+      ],
+      ( result.dataset_size || 0 ) + 2
+    )
   end
 
   def show( context )
@@ -281,6 +287,7 @@ describe Hoodoo::Services::Middleware do
           'references'          => [ 'embed_one', 'embed_two' ]
         }
       )
+      expect( parsed[ '_dataset_size' ] ).to eq( 49 )
     end
 
     it 'lists things with callbacks', :check_callbacks => true do
@@ -539,6 +546,7 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+      expect( parsed[ '_dataset_size' ]).to eq( 51 )
     end
 
     it 'list things in the remote service with callbacks', :check_callbacks => true do
