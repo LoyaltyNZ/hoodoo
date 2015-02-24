@@ -78,6 +78,18 @@ href="../Finder.html#method-c-included">Hoodoo::ActiveRecord::Finder.included</a
           </ul>
         </dd>
       
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-dataset_size">dataset_size</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>F</dt>
         <dd>
           <ul>
@@ -456,6 +468,52 @@ more details.</p>
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-i-dataset_size">
+            
+              <b>dataset_size</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-dataset_size" name="method-i-dataset_size" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Given some scope - typically that obtained from a prior call to <a
+href="ClassMethods.html#method-i-list">list</a> or <a
+href="ClassMethods.html#method-i-list_in">list_in</a>, with possibly other
+query modifiers too - return the total dataset size. This is basically a
+<code>COUNT</code> operation, but run without offset or limit
+considerations (ignoring pagination).</p>
+
+<p>This is particularly useful if you are calling <a
+href="../../Services/Response.html#method-i-set_resources">Hoodoo::Services::Response#set_resources</a>
+and want to fill in its <code>dataset_size</code> parameter.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dataset_size_source')" id="l_method-i-dataset_size_source">show</a>
+                
+              </p>
+              <div id="method-i-dataset_size_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 393</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dataset_size</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">count</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-filter_with">
             
               <b>filter_with</b>( map )
@@ -488,7 +546,7 @@ used in <code>where.not</code> queries.</p>
                 
               </p>
               <div id="method-i-filter_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 449</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 467</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">filter_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_hoodoo_filter_with&#39;</span>, <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -546,9 +604,13 @@ def list( context )
   results = finder.all.map do | item |
     # ...map database objects to response objects...
   end
-  context.response.set_resources( results, finder.count )
+  context.response.set_resources( results, finder.dataset_size )
 end
 </code></pre>
+
+<p>Note the use of helper method <a
+href="ClassMethods.html#method-i-dataset_size">dataset_size</a> to count
+the total amount of results in the dataset without pagination.</p>
 
 <p>The service middleware enforces sane values for things like list offsets,
 sort keys and so-on according to service interface definitions, so if using
@@ -567,7 +629,7 @@ href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Se
   results = finder.all.map do | item |
     # ...map database objects to response objects...
   end
-  context.response.set_resources( results )
+  context.response.set_resources( results, finder.dataset_size )
 end
 </code></pre>
 
@@ -615,12 +677,14 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 311</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( { <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_direction</span>.<span class="ruby-identifier">to_sym</span> } )
 
-  <span class="ruby-comment"># DRY up the &#39;each&#39; loops below.</span>
+  <span class="ruby-comment"># DRY up the &#39;each&#39; loops below. Use a Proc not a method because any</span>
+  <span class="ruby-comment"># methods we define will end up being defined on the including Model,</span>
+  <span class="ruby-comment"># increasing the chance of a name collision.</span>
   <span class="ruby-comment">#</span>
   <span class="ruby-identifier">dry_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_s</span> ]
@@ -696,7 +760,7 @@ alias).</p>
                 
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 510</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 528</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to &quot;#filter_with&quot;&#39;</span> )
   <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">map</span> )
@@ -739,7 +803,7 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
                 
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 492</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 510</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to &quot;#list&quot;&#39;</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
@@ -806,7 +870,7 @@ methods like <code>where</code> or fetching from the database with
                 
               </p>
               <div id="method-i-list_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 375</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 380</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">list</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -849,7 +913,7 @@ alias).</p>
                 
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 501</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 519</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to &quot;#search_with&quot;&#39;</span> )
   <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">map</span> )
@@ -909,7 +973,7 @@ will cause an exception.</p>
                 
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 471</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 489</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">finder</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">self</span>
     <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find no longer supports a first parameter that is an arbitrary chain; use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
@@ -957,7 +1021,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
                 
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 483</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 501</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to &quot;#acquire_with&quot;&#39;</span> )
   <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
@@ -1065,7 +1129,7 @@ or Symbols.</p>
                 
               </p>
               <div id="method-i-search_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 441</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 459</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">search_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_hoodoo_search_with&#39;</span>, <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
