@@ -760,7 +760,7 @@ alias).</p>
                 
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 528</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 524</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to &quot;#filter_with&quot;&#39;</span> )
   <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">map</span> )
@@ -803,7 +803,7 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
                 
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 510</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 506</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to &quot;#list&quot;&#39;</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
@@ -913,7 +913,7 @@ alias).</p>
                 
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 519</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 515</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to &quot;#search_with&quot;&#39;</span> )
   <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">map</span> )
@@ -948,8 +948,7 @@ href="ClassMethods.html#method-i-acquire">acquire</a>. Instead of:</p>
 href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
 <dl class="rdoc-list note-list"><dt><code>finder</code>
 <dd>
-<p>Ignored. Uses of non-class finder chains here are no longer supported and
-will cause an exception.</p>
+<p><a href="ClassMethods.html#method-i-acquire">acquire</a> is called on this.</p>
 </dd><dt><code>ident</code>
 <dd>
 <p>Passed to <a href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
@@ -973,13 +972,10 @@ will cause an exception.</p>
                 
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 489</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 488</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">finder</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">self</span>
-    <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find no longer supports a first parameter that is an arbitrary chain; use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
-  <span class="ruby-keyword">end</span>
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
-  <span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> ) <span class="ruby-comment"># Ignore &#39;finder&#39;</span>
+  <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> ) <span class="ruby-comment"># Ignore &#39;finder&#39;</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -1021,7 +1017,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
                 
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 501</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 497</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to &quot;#acquire_with&quot;&#39;</span> )
   <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )

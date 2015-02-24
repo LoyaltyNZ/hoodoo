@@ -549,12 +549,6 @@ describe Hoodoo::ActiveRecord::Finder do
       RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest, 21 )
     end
 
-    it '#polymorphic_find raises exception in unsupported call' do
-      expect {
-        RSpecModelFinderTest.polymorphic_find( RSpecModelFinderTest.where( :field_one => 'one' ), 21 )
-      }.to raise_error
-    end
-
     it '#polymorphic_id_fields calls #acquire_with' do
       expect( $stderr ).to receive( :puts ).once
       expect( RSpecModelFinderTest ).to receive( :acquire_with ).once.with( :uuid, :code )

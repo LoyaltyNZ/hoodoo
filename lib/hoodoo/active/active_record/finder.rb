@@ -479,19 +479,15 @@ module Hoodoo
         # This implementation is for legacy support and just calls through
         # to #acquire.
         #
-        # +finder+:: Ignored. Uses of non-class finder chains here are
-        #            no longer supported and will cause an exception.
+        # +finder+:: #acquire is called on this.
         #
         # +ident+::  Passed to #acquire.
         #
         # Returns a found model instance or +nil+ for no match.
         #
         def polymorphic_find( finder, ident )
-          if finder != self
-            raise( 'Hoodoo:ActiveRecord::Finder#polymorphic_find no longer supports a first parameter that is an arbitrary chain; use "foo.acquire( ident )" instead of "Model.polymorphic_find( foo, ident )"' )
-          end
           $stderr.puts( 'Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use "foo.acquire( ident )" instead of "Model.polymorphic_find( foo, ident )"' )
-          acquire( ident ) # Ignore 'finder'
+          finder.acquire( ident ) # Ignore 'finder'
         end
 
         # Deprecated interface replaced by #acquire_with (this is an alias).
