@@ -1211,7 +1211,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 
               </p>
               <div id="method-i-augment_session_with_permissions_for_action_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2427</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2430</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_session_with_permissions_for_action</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -1431,7 +1431,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2240</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2242</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">service</span>            = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>              ]
@@ -1574,7 +1574,8 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">body</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">Array</span>
-    <span class="ruby-identifier">data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">data</span> )
+    <span class="ruby-identifier">data</span>              = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">data</span> )
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">dataset_size</span> = <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">dataset_size</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>[ <span class="ruby-identifier">data</span> ]
   <span class="ruby-keyword">end</span>
@@ -1801,7 +1802,9 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-comment"># the hash part.</span>
 
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> ) )
-    <span class="ruby-identifier">parsed</span> = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span> ]
+    <span class="ruby-identifier">size</span>   = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span> ]
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span>         ]
+    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">dataset_size</span> = <span class="ruby-identifier">size</span>
 
   <span class="ruby-keyword">elsif</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;kind&#39;</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Errors&#39;</span> )
 
@@ -2030,7 +2033,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2490</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2493</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>

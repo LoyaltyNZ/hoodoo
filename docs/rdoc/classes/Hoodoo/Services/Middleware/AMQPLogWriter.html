@@ -198,9 +198,9 @@ for this log message - if absent, one is generated automatically.</p>
 </dd><dt><code>:session</code>
 <dd>
 <p>Description of the current request session when available; a <a
-href="../Session.html">Hoodoo::Services::Session</a> as a hash. The Client
-<a href="../../UUID.html">UUID</a>, identity Participant <a
-href="../../UUID.html">UUID</a> and Outlet <a
+href="../Session.html">Hoodoo::Services::Session</a> as a Hash (via to_h;
+keys as Strings). The Caller <a href="../../UUID.html">UUID</a>, identity
+Participant <a href="../../UUID.html">UUID</a> and identity Outlet <a
 href="../../UUID.html">UUID</a> are sent as independent, searchable fields
 in the log payload.</p>
 </dd><dt><code>interaction_id</code>
@@ -225,21 +225,21 @@ independent, searchable field in the log payload.</p>
                 
               </p>
               <div id="method-i-report_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 64</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span> ).<span class="ruby-identifier">nil?</span>
 
+  <span class="ruby-comment"># Take care with Symbol keys in &#39;data&#39; vs string keys in e.g. &#39;Session&#39;.</span>
+
   <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
-
   <span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ]
-
   <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
 
-  <span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:client_id</span> ]
-  <span class="ruby-identifier">identity</span>       = <span class="ruby-identifier">session</span>[ <span class="ruby-value">:identity</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span> ]
+  <span class="ruby-identifier">identity</span>       = <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span>  ] <span class="ruby-operator">||</span> {}
 
-  <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">identity</span>[ <span class="ruby-value">:participant_id</span> ]
-  <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">identity</span>[ <span class="ruby-value">:outlet_id</span>      ]
+  <span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">identity</span>[ <span class="ruby-string">&#39;participant_id&#39;</span> ]
+  <span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">identity</span>[ <span class="ruby-string">&#39;outlet_id&#39;</span>      ]
 
   <span class="ruby-identifier">message</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
@@ -249,7 +249,8 @@ independent, searchable field in the log payload.</p>
 
     <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
 
-    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">client_id</span>,
+    <span class="ruby-value">:caller_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">caller_id</span>,
+    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">caller_id</span>, <span class="ruby-comment"># Backwards compatibility</span>
     <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction_id</span>,
     <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">participant_id</span>,
     <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">outlet_id</span>,

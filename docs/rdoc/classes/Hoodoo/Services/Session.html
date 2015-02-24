@@ -475,7 +475,7 @@ Memcached successfully.</p>
     <span class="ruby-comment">#</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
       <span class="ruby-string">&#39;Hoodoo::Services::Session\#delete_from_memcached: Session delete - connection fault&#39;</span>,
-      <span class="ruby-identifier">exception</span>
+      <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">to_s</span>
     )
 
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
@@ -726,7 +726,7 @@ or Memcached problem).</p>
     <span class="ruby-comment">#</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
       <span class="ruby-string">&#39;Hoodoo::Services::Session\#load_from_memcached!: Session loading failed - connection fault or session corrupt&#39;</span>,
-      <span class="ruby-identifier">exception</span>
+      <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">to_s</span>
     )
 
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
@@ -826,7 +826,7 @@ Caller record was found in Memcached with a <em>newer</em> version than
     <span class="ruby-comment">#</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
       <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Session saving failed - connection fault or session corrupt&#39;</span>,
-      <span class="ruby-identifier">exception</span>
+      <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">to_s</span>
     )
 
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
@@ -1020,7 +1020,7 @@ data must therefore already be out of date.</p>
     <span class="ruby-comment">#</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
       <span class="ruby-string">&#39;Hoodoo::Services::Session\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record&#39;</span>,
-      <span class="ruby-identifier">exception</span>
+      <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">to_s</span>
     )
 
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>

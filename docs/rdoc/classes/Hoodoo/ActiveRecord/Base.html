@@ -95,6 +95,14 @@ href="Base.html">ActiveRecord::Base</a>.</p>
       
         <li>
           
+            <a href="Secure.html">
+              Hoodoo::ActiveRecord::Secure
+            </a>
+          
+        </li>
+      
+        <li>
+          
             <a href="Finder.html">
               Hoodoo::ActiveRecord::Finder
             </a>
@@ -142,6 +150,11 @@ href="Base.html">ActiveRecord::Base</a>.</p>
             <div class="description">
               <p>Instantiates all the <a href="../ActiveRecord.html">ActiveRecord</a> mixins
 when this class is inherited.</p>
+<dl class="rdoc-list note-list"><dt>model
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
             </div>
           
           
@@ -159,10 +172,11 @@ when this class is inherited.</p>
                 
               </p>
               <div id="method-c-inherited_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 33</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 38</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-keyword">super</span>

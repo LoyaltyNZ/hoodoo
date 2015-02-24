@@ -255,7 +255,7 @@ omitted, <code>nil</code> is used.</p>
               <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 91</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
+  <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">find_or_generate_interaction_id</span>()
   <span class="ruby-ivar">@context</span>        = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-identifier">session</span>,
