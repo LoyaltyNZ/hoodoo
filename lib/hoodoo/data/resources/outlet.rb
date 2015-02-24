@@ -20,7 +20,6 @@ module Hoodoo
 
           text :name
           uuid :participant_id, :resource => :Participant, :required => true
-          uuid :calculator_id,  :resource => :Calculator
         end
 
       end
