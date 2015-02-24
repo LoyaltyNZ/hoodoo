@@ -262,8 +262,11 @@ module Hoodoo
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
-        #       context.response.set_resources( results, finder.count )
+        #       context.response.set_resources( results, finder.dataset_size )
         #     end
+        #
+        # Note the use of helper method #dataset_size to count the total
+        # amount of results in the dataset without pagination.
         #
         # The service middleware enforces sane values for things like list
         # offsets, sort keys and so-on according to service interface
@@ -283,7 +286,7 @@ module Hoodoo
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
-        #       context.response.set_resources( results )
+        #       context.response.set_resources( results, finder.dataset_size )
         #     end
         #
         # Since it's just a chained scope, you can call in any order:
@@ -312,7 +315,9 @@ module Hoodoo
           finder = all.offset( list_parameters.offset ).limit( list_parameters.limit )
           finder = finder.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )
 
-          # DRY up the 'each' loops below.
+          # DRY up the 'each' loops below. Use a Proc not a method because any
+          # methods we define will end up being defined on the including Model,
+          # increasing the chance of a name collision.
           #
           dry_proc = Proc.new do | data, attr, proc |
             value = data[ attr.to_s ]
@@ -374,6 +379,19 @@ module Hoodoo
         #
         def list_in( context )
           return secure( context ).list( context.request.list )
+        end
+
+        # Given some scope - typically that obtained from a prior call to
+        # #list or #list_in, with possibly other query modifiers too - return
+        # the total dataset size. This is basically a +COUNT+ operation, but
+        # run without offset or limit considerations (ignoring pagination).
+        #
+        # This is particularly useful if you are calling
+        # Hoodoo::Services::Response#set_resources and want to fill in its
+        # +dataset_size+ parameter.
+        #
+        def dataset_size
+          return all.limit( nil ).offset( nil ).count
         end
 
         # Specify a search mapping for use by #list_finder to automatically

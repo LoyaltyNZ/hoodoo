@@ -251,6 +251,26 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
+  context 'lists' do
+    it 'lists with pages, offsets and counts' do
+      @list_params.offset = 1 # 0 is first record
+      @list_params.limit  = 1
+
+      finder = RSpecModelFinderTest.order( :field_three => :asc ).list( @list_params )
+      expect( finder ).to eq([@b])
+      expect( finder.dataset_size).to eq(3)
+
+      @list_params.offset = 1
+      @list_params.limit  = 2
+
+      finder = RSpecModelFinderTest.order( :field_three => :asc ).list( @list_params )
+      expect( finder ).to eq([@b, @c])
+      expect( finder.dataset_size).to eq(3)
+    end
+  end
+
+  # ==========================================================================
+
   context 'search' do
     it 'searches without chain' do
       @list_params.search_data = {
