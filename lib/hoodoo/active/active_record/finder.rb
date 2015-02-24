@@ -14,7 +14,12 @@ module Hoodoo
 
     # Support mixin for models subclassed from ActiveRecord::Base providing
     # support methods to handle common +show+ and +list+ filtering actions
-    # based on inbound data. See:
+    # based on inbound data.
+    #
+    # Requires Hoodoo::ActiveRecord::Secure, which is automatically included
+    # if necessary.
+    #
+    # See also:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
@@ -29,13 +34,25 @@ module Hoodoo
       #       # ...
       #     end
       #
+      # +model+:: The ActiveRecord::Base descendant that is including
+      #           this module.
+      #
       def self.included( model )
-        instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
+        unless model == Hoodoo::ActiveRecord::Base
+          model.send( :include, Hoodoo::ActiveRecord::Secure )
+          instantiate( model )
+        end
       end
 
       # When instantiated in an ActiveRecord::Base subclass, all of the
       # Hoodoo::ActiveRecord::Finder::ClassMethods methods are defined as
       # class methods on the including class.
+      #
+      # This module depends upon Hoodoo::ActiveRecord::Secure, so that
+      # will be auto-included first if it isn't already.
+      #
+      # +model+:: The ActiveRecord::Base descendant that is including
+      #           this module.
       #
       def self.instantiate( model )
         model.extend( ClassMethods )
@@ -46,25 +63,38 @@ module Hoodoo
       #
       module ClassMethods
 
-        # "Polymorphic" find - support for finding a model by fields other than
-        # just +:id+, based on a single unique identifier. The attributes to be
-        # searched upon are specified via #polymorphic_id_fields; +:id+ is
-        # always included as a lookup attribute and will be checked first.
+        # "Polymorphic" find - support for finding a model by fields other
+        # than just +:id+, based on a single unique identifier. Use #acquire
+        # just like you'd use +find_by_id+ and only bother with it if you
+        # support finding a resource instance by +id+ _and_ one or more
+        # other model fields. Otherwise, just use +find_by_id+.
         #
-        # Pass an ActiveRecord::Relation instance or the model class itself as
-        # the base finder, then the identifier. To explain this more - in the
-        # simple case, you might just want to search across several fields for
-        # a match against the identifier thus:
+        # For secured data access, use #acquire_in instead, or only call
+        # #acquire with a secure scope from e.g. a call to
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure.
+        #
+        # In the model, you declare the list of fields _in_ _addition_ _to_
+        # +id+ by calling #acquire_with thus:
         #
         #     class SomeModel < ActiveRecord::Base
         #       include Hoodoo::ActiveRecord::Finder
-        #       polymorphic_id_fields # ...<list-of-other-fields>
+        #       acquire_with ... # <list-of-other-fields>
         #     end
         #
-        #     # ...elsewhere...
+        # For example, maybe you allow some resource to be looked up by fields
+        # +id+ or +code+, both of which are independently unique sets. Since
+        # +id+ is always automatically included, you only need to do this:
+        #
+        #     class SomeModel < ActiveRecord::Base
+        #       include Hoodoo::ActiveRecord::Finder
+        #       acquire_with :code
+        #     end
+        #
+        # Then, in a resource's implementation:
         #
         #     def show( context )
-        #       found = SomeModel.polymorphic_find( SomeModel, context.request.ident )
+        #       found = SomeModel.acquire( context.request.ident )
+        #       return context.response.not_found() if found.nil?
         #
         #       # ...map 'found' to whatever resource you're representing,
         #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
@@ -74,36 +104,29 @@ module Hoodoo
         #       context.response.set_resource( resource_representation_of_found )
         #     end
         #
-        # More often, though, you might want to restrict the search to model
-        # instances matching certain fields, perhaps for security reasons.
-        # Maybe caller authoristion layers provide a session with a +client_id+
-        # and you implicitly only allow lookups for instances owned by that
-        # client, through storing the value with the model in a field of the
-        # same name.
+        # There is nothing magic "under the hood" - Hoodoo just tries to
+        # find records with a value matching the incoming identifier for
+        # each of the fields in turn. It starts with +id+ then runs through
+        # any other fields in the order given through #acquire_with.
         #
-        #     def show( context )
-        #       finder = SomeModel.where( :client_id => context.session.client_id )
-        #       found = SomeModel.polymorphic_find( finder, context.request.ident )
-        #     end
+        # In more complex scenarious, you can just call #acquire at the end
+        # of any chain of AREL queries just as you would call ActiveRecord's
+        # own #find_by_id method, e.g.:
         #
-        # +finder+:: An ActiveRecord::Base subclass or ActiveRecord::Relation
-        #            instance - something that the likes of +where+ can be
-        #            sent to, as part of building up a query chain; the
-        #            ActiveRecord::QueryMethods must be supported.
+        #     SomeModel.where( :foo => :bar ).acquire( context.request.ident )
         #
-        #            http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
-        #
-        # +ident+::  The value to search for in the fields (attributes)
-        #            specified via #polymorphic_id_fields, using
-        #            +where( attr => ident )+.
+        # +ident+:: The value to search for in the fields (attributes)
+        #           specified via #acquire_with, matched using calls to
+        #           <tt>where( attr => ident )</tt>.
         #
         # Returns a found model instance or +nil+ for no match.
         #
-        def polymorphic_find( finder, ident )
+        def acquire( ident )
+          extra_fields = class_variable_defined?( :@@nz_co_loyalty_hoodoo_show_id_fields ) ?
+                              class_variable_get( :@@nz_co_loyalty_hoodoo_show_id_fields ) :
+                              nil
 
-          extra_fields = class_variable_defined?( :@@nz_co_loyalty_show_id_fields ) ? class_variable_get( :@@nz_co_loyalty_show_id_fields ) : nil
-          id_fields    = [ :id ] + ( extra_fields || [] )
-
+          id_fields = [ :id ] + ( extra_fields || [] )
           id_fields.each do | field |
 
             # This is fiddly.
@@ -123,88 +146,153 @@ module Hoodoo
             # approach rather than higher level AREL, causing a string-like SQL
             # query on all adapters which SQL handles just fine for varying
             # field data types.
-            #
-            checker = finder.where( [ "#{ field } = ?", ident ] )
+
+            checker = where( [ "#{ field } = ?", ident ] )
             return checker.first unless checker.count == 0
           end
 
           return nil
         end
 
-        # Specify the fields (attributes / columns) upon which
-        # #polymorphic_find will perform its search. +:id+ is included by
-        # default always and does not need specifying.
+        # Implicily secure version of #acquire.
         #
-        # For example, if a model supported looking up via a UUID in the
-        # +:id+ attribute or through a secondary unique identifier in the
-        # +:code+ attribute, then declare the situation thus:
+        # Assuming you are using or at some point intend to use the
+        # mechanism described by
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, call here as a
+        # convenience to both obtain a secure context and find a record
+        # (with or without additional find-by fields other than +id+) in one
+        # go. Building on the example from
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, we might have
+        # an Audit model as follows:
         #
-        #     class SomeModel < ActiveRecord::Base
-        #       include Hoodoo::ActiveRecord::Finder
-        #       polymorphic_id_fields :code
+        #     class Audit < ActiveRecord::Base
+        #       include Hoodoo::ActiveRecord::Secure
+        #
+        #       secure_with( {
+        #         :creating_caller_uuid => :authorised_caller_uuid
+        #       } )
+        #
+        #       # Plus perhaps a call to "acquire_with"
         #     end
         #
-        # ...and find records via #polymorphic_find.
+        # Then, in a resource's implementation:
         #
-        # *args:: One or more fields (attributes), as Symbols.
+        #     def show( context )
+        #       found = SomeModel.acquire_in( context )
+        #       return context.response.not_found() if found.nil?
         #
-        def polymorphic_id_fields( *args )
-          class_variable_set( '@@nz_co_loyalty_show_id_fields', args )
+        #       # ...map 'found' to whatever resource you're representing,
+        #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
+        #       # schema and the subclass's Hoodoo::Presenters::Base::render
+        #       # call, then...
+        #
+        #       context.response.set_resource( resource_representation_of_found )
+        #     end
+        #
+        # The value of +found+ will be acquired within the secure context
+        # determined by the prevailing call context (and its session), so
+        # the data it finds is inherently correctly scoped - provided your
+        # model's Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with
+        # call describes things correctly.
+        #
+        # This method is for convenience and safety - you can't accidentally
+        # forget the secure scope:
+        #
+        #     SomeModel.secure( context ).acquire( context.request.ident )
+        #
+        #     # ...has the same result as...
+        #
+        #     SomeModel.acquire_in( context )
+        #
+        # Parameters:
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # Returns a found model instance or +nil+ for no match.
+        #
+        def acquire_in( context )
+          return secure( context ).acquire( context.request.ident )
+        end
+
+        # Describe the list of model fields _in_ _addition_ _to_ +id+ which
+        # are to be used to "find-by-identifier" through calls #acquire and
+        # #acquire_in. See those for more details.
+        #
+        # *args:: One or more field names as Strings or Symbols.
+        #
+        def acquire_with( *args )
+          class_variable_set( '@@nz_co_loyalty_hoodoo_show_id_fields', args )
         end
 
         # Generate an ActiveRecord::Relation instance which can be used to
-        # count, retrieve or further refine a list of model instances from the
-        # database.
+        # count, retrieve or further refine a list of model instances from
+        # the database.
         #
-        # The returned relation is generated via a given instance of
-        # Hoodoo::Services::Context. It takes into account the context's
-        # Hoodoo::Services::Request and the list offset, list limit, list sort
-        # key and list sort direction automatically. In addition, it can do
-        # simple search and filter operations if search and filter mappings
-        # are set up via #list_search_map and #list_filter_map.
+        # For secured data access, use #list_in instead, or only call
+        # #acquire with a secure scope from e.g. a call to
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. An example of
+        # this second option is shown below.
         #
-        # For exampe, in a simple case where a model can be listed without any
-        # unusual constraints, we might do this:
+        # Pass a Hoodoo::Services::Request::ListParameters instance, e.g.
+        # via the Hoodoo::Services::Context instance passed to resource
+        # endpoint implementations and accessor +context.request.list+. It
+        # takes into account the list offset, limit, sort key and sort
+        # direction automatically. In addition, it can do simple search and
+        # filter operations if search and filter mappings are set up via
+        # #search_with and #filter_with.
+        #
+        # For exampe, in a simple case where a model can be listed without
+        # any unusual constraints, we might do this:
         #
         #     class SomeModel < ActiveRecord::Base
         #       include Hoodoo::ActiveRecord::Finder
         #
-        #       list_search_map # ...<field-to-search-info mapping>
+        #       search_with # ...<field-to-search-info mapping>
         #       # ...and/or...
-        #       list_filter_map # ...<field-to-search-info mapping>
+        #       filter_with # ...<field-to-search-info mapping>
         #     end
         #
-        #     # ...elsewhere...
+        #     # ...then, in the resource implementation...
         #
         #     def list( context )
-        #       finder = SomeModel.list_finder( context.request.list )
+        #       finder = SomeModel.list( context.request.list )
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
-        #       context.response.set_resources( results )
+        #       context.response.set_resources( results, finder.count )
         #     end
         #
-        # (Bear in mind that the service middleware enforces sane values for
-        # things like list offsets, sort keys and so-on according to service
-        # interface definitions, so if using the middleware you don't need to
-        # do any extra checking).
+        # The service middleware enforces sane values for things like list
+        # offsets, sort keys and so-on according to service interface
+        # definitions, so if using the middleware you don't need to do any
+        # extra checking yourself.
         #
         # Since the returned object is just a relation, adding further
-        # constraints is easy - call things like +where+, +group+ and so-on as
-        # normal. For example, suppose caller authoristion layers provide a
-        # session with a +client_id+ and you implicitly only allow lookups for
-        # instances owned by that client, through storing the value with the
-        # model in a field of the same name. The previous example changes only
-        # a little:
+        # constraints is easy - call things like +where+, +group+ and so-on
+        # as normal. You can also list in a secure context via the included
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, assuming
+        # appropriate data is set in the model via
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with:
         #
         #     def list( context )
-        #       finder = SomeModel.list_finder( context.request.list )
-        #       finder = finder.where( :client_id => context.session.client_id )
+        #       finder = SomeModel.secure( context ).list( context.request.list )
+        #       finder = finder.where( :additional_filter => 'some value' )
         #       results = finder.all.map do | item |
         #         # ...map database objects to response objects...
         #       end
         #       context.response.set_resources( results )
         #     end
+        #
+        # Since it's just a chained scope, you can call in any order:
+        #
+        #     SomeModel.secure( context ).list( context.request.list )
+        #
+        #     # ...has the same result as...
+        #
+        #     SomeModel.list( context.request.list ).secure( context )
         #
         # Any of the ActiveRecord::QueryMethods can be called on the returned
         # value. See:
@@ -220,14 +308,12 @@ module Hoodoo
         #                     Hoodoo::Services::Context#request
         #                     / Hoodoo::Services::Request#list).
         #
-        def list_finder( list_parameters )
-
-          finder = self
-          finder = finder.offset( list_parameters.offset ).limit( list_parameters.limit )
+        def list( list_parameters )
+          finder = all.offset( list_parameters.offset ).limit( list_parameters.limit )
           finder = finder.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )
 
-          search_map = class_variable_defined?( :@@nz_co_loyalty_list_search_map ) ? class_variable_get( :@@nz_co_loyalty_list_search_map ) : nil
-
+          # DRY up the 'each' loops below.
+          #
           dry_proc = Proc.new do | data, attr, proc |
             value = data[ attr.to_s ]
             next if value.nil?
@@ -239,14 +325,20 @@ module Hoodoo
             end
           end
 
+          search_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_search_with ) ?
+                            class_variable_get( :@@nz_co_loyalty_hoodoo_search_with ) :
+                            nil
+
+          filter_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_filter_with ) ?
+                            class_variable_get( :@@nz_co_loyalty_hoodoo_filter_with ) :
+                            nil
+
           unless search_map.nil?
             search_map.each do | attr, proc |
               args   = dry_proc.call( list_parameters.search_data, attr, proc )
               finder = finder.where( *args ) unless args.nil?
             end
           end
-
-          filter_map = class_variable_defined?( :@@nz_co_loyalty_list_filter_map ) ? class_variable_get( :@@nz_co_loyalty_list_filter_map ) : nil
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
@@ -258,6 +350,32 @@ module Hoodoo
           return finder
         end
 
+        # Implicily secure version of #list.
+        #
+        # Read the documentation on #acquire_in versus #acquire for information
+        # on the use of secure scopes.
+        #
+        # As with #acquire_in, this method is for convenience and safety - you
+        # can't accidentally forget the secure scope:
+        #
+        #     SomeModel.secure( context ).list( context.request.list )
+        #
+        #     # ...has the same result as...
+        #
+        #     SomeModel.list_in( context )
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # Returns a secure list scope, for either further modification with
+        # query methods like +where+ or fetching from the database with +all+.
+        #
+        def list_in( context )
+          return secure( context ).list( context.request.list )
+        end
+
         # Specify a search mapping for use by #list_finder to automatically
         # restrict list results.
         #
@@ -265,7 +383,7 @@ module Hoodoo
         # fields +name+ and +colour+:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       list_search_map(
+        #       search_with(
         #         :name => nil,
         #         :colour => nil
         #       )
@@ -275,7 +393,7 @@ module Hoodoo
         # is matched case-insensitive, assuming PostgreSQL's ILIKE is there:
         #
         #     class SomeModel < ActiveRecord::Base
-        #       list_search_map(
+        #       search_with(
         #         :name => Proc.new { | attr, value |
         #           [ 'name ILIKE ?', value ]
         #         },
@@ -291,7 +409,7 @@ module Hoodoo
         #         [ "#{ attr } ILIKE ?", value ]
         #       }
         #
-        #       list_search_map(
+        #       search_with(
         #         :name   => CI_MATCH,
         #         :colour => CI_MATCH
         #       )
@@ -320,16 +438,78 @@ module Hoodoo
         #         The Hash keys giving the search attribute names can be
         #         specified as Strings or Symbols.
         #
-        def list_search_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_search_map', Hoodoo::Utilities.stringify( map ) )
+        def search_with( map )
+          class_variable_set( '@@nz_co_loyalty_hoodoo_search_with', map )
         end
 
-        # As #list_search_map, but used in +where.not+ queries.
+        # As #search_with, but used in +where.not+ queries.
         #
-        # +map+:: As #list_search_map.
+        # +map+:: As #search_with.
+        #
+        def filter_with( map )
+          class_variable_set( '@@nz_co_loyalty_hoodoo_filter_with', map )
+        end
+
+        # Deprecated interface replaced by #acquire. Instead of:
+        #
+        #     Model.polymorphic_find( foo, ident )
+        #
+        # ...use:
+        #
+        #     foo.acquire( ident )
+        #
+        # This implementation is for legacy support and just calls through
+        # to #acquire.
+        #
+        # +finder+:: Ignored. Uses of non-class finder chains here are
+        #            no longer supported and will cause an exception.
+        #
+        # +ident+::  Passed to #acquire.
+        #
+        # Returns a found model instance or +nil+ for no match.
+        #
+        def polymorphic_find( finder, ident )
+          if finder != self
+            raise( 'Hoodoo:ActiveRecord::Finder#polymorphic_find no longer supports a first parameter that is an arbitrary chain; use "foo.acquire( ident )" instead of "Model.polymorphic_find( foo, ident )"' )
+          end
+          $stderr.puts( 'Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use "foo.acquire( ident )" instead of "Model.polymorphic_find( foo, ident )"' )
+          acquire( ident ) # Ignore 'finder'
+        end
+
+        # Deprecated interface replaced by #acquire_with (this is an alias).
+        #
+        # *args:: Passed to #acquire_with.
+        #
+        def polymorphic_id_fields( *args )
+          $stderr.puts( 'Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to "#acquire_with"' )
+          acquire_with( *args )
+        end
+
+        # Deprecated interface replaced by #list (this is an alias).
+        #
+        # +list_parameters+:: Passed to #list.
+        #
+        def list_finder( list_parameters )
+          $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to "#list"' )
+          return list( list_parameters )
+        end
+
+        # Deprecated interface replaced by #search_with (this is an alias).
+        #
+        # +map+:: Passed to #search_with.
+        #
+        def list_search_map( map )
+          $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to "#search_with"' )
+          search_with( map )
+        end
+
+        # Deprecated interface replaced by #filter_with (this is an alias).
+        #
+        # +map+:: Passed to #filter_with.
         #
         def list_filter_map( map )
-          class_variable_set( '@@nz_co_loyalty_list_filter_map', Hoodoo::Utilities.stringify( map ) )
+          $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to "#filter_with"' )
+          filter_with( map )
         end
       end
     end

@@ -36,6 +36,9 @@ module Hoodoo
       #       # ...
       #     end
       #
+      # +model+:: The ActiveRecord::Base descendant class that is including
+      #           this module.
+      #
       def self.included( model )
         instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
       end
@@ -50,8 +53,8 @@ module Hoodoo
       #
       # The model *MUST* define its database representation in migrations so
       # that +id+ is a string based primary key. That means creating the table
-      # with option <tt>:id => false</tt> and calling +#add_index+ afterwards to
-      # properly declare the ID field as a unique primary key.
+      # with option <tt>:id => false</tt> and calling +#add_index+ afterwards
+      # to properly declare the ID field as a unique primary key.
       #
       # Example:
       #
@@ -61,16 +64,17 @@ module Hoodoo
       #
       #     add_index :model_table_name, :id, :unique => true
       #
+      # +model+:: The ActiveRecord::Base descendant class that is including
+      #           this module.
+      #
       def self.instantiate( model )
-
         model.primary_key = 'id'
 
         model.before_validation do
           self.id = Hoodoo::UUID.generate() if self.id.nil?
         end
 
-        model.validates :id, uuid: true, presence: true, uniqueness: true
-
+        model.validates( :id, uuid: true, presence: true, uniqueness: true )
       end
 
     end

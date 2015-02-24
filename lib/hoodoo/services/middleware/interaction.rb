@@ -89,7 +89,7 @@ module Hoodoo; module Services; class Middleware
       #             optional; if omitted, +nil+ is used.
       #
       def initialize( env, owning_middleware_instance, session = nil )
-        @rack_request   = Rack::Request.new( env )
+        @rack_request   = ::Rack::Request.new( env )
         @interaction_id = find_or_generate_interaction_id()
         @context        = Hoodoo::Services::Context.new(
           session,
