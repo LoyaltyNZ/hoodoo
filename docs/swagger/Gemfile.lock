@@ -1,11 +1,12 @@
 GIT
   remote: git@github.com:LoyaltyNZ/hoodoo.git
-  revision: e3c2882baff95c1ecf32c6815319145797793877
+  revision: 854541bdd50711bc8e394eed23a44f26dd86b119
   branch: master
   specs:
     hoodoo (0.6.0)
       dalli (~> 2.7)
       json_builder (~> 3.1)
+      kgio (~> 2.9)
       uuidtools (~> 2.1)
 
 GEM
@@ -17,16 +18,17 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    addressable (2.3.6)
+    addressable (2.3.7)
     dalli (2.7.2)
     i18n (0.7.0)
-    json (1.8.1)
-    json-schema (2.5.0)
-      addressable (~> 2.3)
+    json (1.8.2)
+    json-schema (2.5.1)
+      addressable (~> 2.3.7)
     json_builder (3.1.7)
       activesupport (>= 2.0.0)
       json
-    minitest (5.5.0)
+    kgio (2.9.3)
+    minitest (5.5.1)
     thread_safe (0.3.4)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)

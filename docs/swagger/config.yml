@@ -62,12 +62,13 @@ paths:
 
 repositories:
   - 'develop git@github.com:LoyaltyNZ/service_financial.git'
-  - 'develop git@github.com:LoyaltyNZ/service_logging.git'
   - 'develop git@github.com:LoyaltyNZ/service_member.git'
-  - 'develop git@github.com:LoyaltyNZ/service_product.git'
-  - 'develop git@github.com:LoyaltyNZ/service_programme.git'
   - 'develop git@github.com:LoyaltyNZ/service_purchase.git'
   - 'develop git@github.com:LoyaltyNZ/service_utility.git'
+  - 'develop git@github.com:LoyaltyNZ/service_programme.git'
+  - 'develop git@github.com:LoyaltyNZ/service_logging.git'
+  - 'develop git@github.com:LoyaltyNZ/service_authentication.git'
+  - 'develop git@github.com:LoyaltyNZ/service_product.git'
 
 # Default output filename.
 

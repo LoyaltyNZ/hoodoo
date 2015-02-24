@@ -125,8 +125,8 @@ begin
 
   interfaces = Set.new
 
-  ObjectSpace.each_object( Hoodoo::ServiceInterface.singleton_class ) do | klass |
-    interfaces << klass unless klass == Hoodoo::ServiceInterface
+  ObjectSpace.each_object( Hoodoo::Services::Interface.singleton_class ) do | klass |
+    interfaces << klass unless klass == Hoodoo::Services::Interface
   end
 
   # With this, 'interfaces' becomes an Array, not a Set.
@@ -379,13 +379,13 @@ paths                        = {}
 required_reference_resources = []
 
 interfaces.each do | interface |
-  actions = interface.actions || Hoodoo::ServiceMiddleware::ALLOWED_ACTIONS
+  actions = interface.actions || Hoodoo::Services::Middleware::ALLOWED_ACTIONS
   next if actions.empty?
 
   base = "/v#{ interface.version }/#{ interface.endpoint }"
 
   actions.each do | action |
-    queries = Hoodoo::ServiceMiddleware::ALLOWED_QUERIES_ALL.dup
+    queries = Hoodoo::Services::Middleware::ALLOWED_QUERIES_ALL.dup
 
     case action
       when :show
@@ -394,7 +394,7 @@ interfaces.each do | interface |
       when :list
         method   = :get
         path     = base
-        queries += Hoodoo::ServiceMiddleware::ALLOWED_QUERIES_LIST
+        queries += Hoodoo::Services::Middleware::ALLOWED_QUERIES_LIST
       when :create
         method = :post
         path   = base + "/{ident}"
