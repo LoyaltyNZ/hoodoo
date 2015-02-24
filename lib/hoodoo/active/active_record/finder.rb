@@ -65,20 +65,20 @@ module Hoodoo
 
         # "Polymorphic" find - support for finding a model by fields other
         # than just +:id+, based on a single unique identifier. Use #acquire
-        # just like you'd use #find_by_id and only bother with it if you
+        # just like you'd use +find_by_id+ and only bother with it if you
         # support finding a resource instance by +id+ _and_ one or more
-        # other model fields. Otherwise, just use #find_by_id.
+        # other model fields. Otherwise, just use +find_by_id+.
         #
         # For secured data access, use #acquire_in instead, or only call
         # #acquire with a secure scope from e.g. a call to
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure.
         #
-        # In the model, you declare the list of fields _in addition to_ +id+
-        # by calling #acquire_with thus:
+        # In the model, you declare the list of fields _in_ _addition_ _to_
+        # +id+ by calling #acquire_with thus:
         #
         #     class SomeModel < ActiveRecord::Base
         #       include Hoodoo::ActiveRecord::Finder
-        #       acquire_with # ...<list-of-other-fields>
+        #       acquire_with ... # <list-of-other-fields>
         #     end
         #
         # For example, maybe you allow some resource to be looked up by fields
@@ -104,8 +104,8 @@ module Hoodoo
         #       context.response.set_resource( resource_representation_of_found )
         #     end
         #
-        # There is nothing magic "under the hood" - the code just tries to
-        # find a resource with a value matching the incoming identifier for
+        # There is nothing magic "under the hood" - Hoodoo just tries to
+        # find records with a value matching the incoming identifier for
         # each of the fields in turn. It starts with +id+ then runs through
         # any other fields in the order given through #acquire_with.
         #
@@ -117,7 +117,7 @@ module Hoodoo
         #
         # +ident+:: The value to search for in the fields (attributes)
         #           specified via #acquire_with, matched using calls to
-        #           +where( attr => ident )+.
+        #           <tt>where( attr => ident )</tt>.
         #
         # Returns a found model instance or +nil+ for no match.
         #
@@ -161,7 +161,8 @@ module Hoodoo
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, call here as a
         # convenience to both obtain a secure context and find a record
         # (with or without additional find-by fields other than +id+) in one
-        # go. Taking the example from the 'secure' call above, we might have
+        # go. Building on the example from
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, we might have
         # an Audit model as follows:
         #
         #     class Audit < ActiveRecord::Base
@@ -194,6 +195,15 @@ module Hoodoo
         # model's Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with
         # call describes things correctly.
         #
+        # This method is for convenience and safety - you can't accidentally
+        # forget the secure scope:
+        #
+        #     SomeModel.secure( context ).acquire( context.request.ident )
+        #
+        #     # ...has the same result as...
+        #
+        #     SomeModel.acquire_in( context )
+        #
         # Parameters:
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -207,8 +217,8 @@ module Hoodoo
           return secure( context ).acquire( context.request.ident )
         end
 
-        # Describe the list of model fields _in addition to_ +id+ which are
-        # to be used to "find-by-identifier" through calls #acquire and
+        # Describe the list of model fields _in_ _addition_ _to_ +id+ which
+        # are to be used to "find-by-identifier" through calls #acquire and
         # #acquire_in. See those for more details.
         #
         # *args:: One or more field names as Strings or Symbols.
@@ -263,8 +273,9 @@ module Hoodoo
         # Since the returned object is just a relation, adding further
         # constraints is easy - call things like +where+, +group+ and so-on
         # as normal. You can also list in a secure context via the included
-        # Hoodoo::ActiveRecord::Secure#secure, assuming appropriate data is
-        # set in the model via Hoodoo::ActiveRecord::Secure#secure_with:
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, assuming
+        # appropriate data is set in the model via
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with:
         #
         #     def list( context )
         #       finder = SomeModel.secure( context ).list( context.request.list )
@@ -341,8 +352,8 @@ module Hoodoo
 
         # Implicily secure version of #list.
         #
-        # Read the documentation on #acquire_in vs #acquire for information on
-        # the use of secure scopes.
+        # Read the documentation on #acquire_in versus #acquire for information
+        # on the use of secure scopes.
         #
         # As with #acquire_in, this method is for convenience and safety - you
         # can't accidentally forget the secure scope:
@@ -492,9 +503,9 @@ module Hoodoo
           search_with( map )
         end
 
-        # As #search_with, but used in +where.not+ queries.
+        # Deprecated interface replaced by #filter_with (this is an alias).
         #
-        # +map+:: As #search_with.
+        # +map+:: Passed to #filter_with.
         #
         def list_filter_map( map )
           $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to "#filter_with"' )

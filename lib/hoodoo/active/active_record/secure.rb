@@ -57,7 +57,7 @@ module Hoodoo
         # The core of out-of-the-box Hoodoo data access security.
         #
         # In most non-trivial systems, people calling into the system under
-        # a Session will have limited access to system resources. Often the
+        # a Session will have limited access to resource records. Often the
         # broad pattern is: Someone can only see what they create. Maybe
         # there's a superuser-like monitoring concept of someone who can
         # see what everyone creates... In any event, there needs to be some
@@ -134,16 +134,16 @@ module Hoodoo
         #       secure_scope = Audit.secure( context )
         #     end
         #
-        # The 'secure_scope' is just an ActiveRecord::Relation instance; you
-        # could call +to_sql()+ on the result for debugging and print the
-        # result to console or log if you wanted to see the query built up
-        # so far. Otherwise, any of the ActiveRecord::QueryMethods can be
-        # called; see:
+        # The 'secure_scope' is just an ActiveRecord::Relation instance;
+        # you could call +to_sql+ on the result for debugging and print the
+        # result to console if you wanted to see the query built up so far.
+        # Otherwise, any of the ActiveRecord::QueryMethods can be called;
+        # see:
         #
         # http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html
         #
         # The most common use cases, though, involve finding a specific
-        # record or listing records. Hodooo::ActiveRecord::Finder provides
+        # record or listing records. Hoodoo::ActiveRecord::Finder provides
         # much higher level constructs that build on top of #secure and
         # you are strongly encouraged to use these wherever possible, rather
         # than calling #secure directly.
@@ -156,8 +156,8 @@ module Hoodoo
         # * The session scoping data does not have one or more of the
         #   fields that the #secure_with map's values describe, _then_
         #
-        # ...the returned scope *will find _no results_*, by design. The
-        # default failure mode is to reveal no data at all.
+        # ...the returned scope *will* *find* *no* *results*, by design.
+        # The default failure mode is to reveal no data at all.
         #
         # Parameters:
         #
