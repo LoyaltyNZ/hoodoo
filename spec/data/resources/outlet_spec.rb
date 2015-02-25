@@ -6,12 +6,10 @@ describe Hoodoo::Data::Resources::Outlet do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(3)
+    expect(schema.properties.count).to eq(2)
 
     expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['participant_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['participant_id'].resource).to eq(:Participant)
-    expect(schema.properties['calculator_id']).to be_a(Hoodoo::Presenters::UUID)
-    expect(schema.properties['calculator_id'].resource).to eq(:Calculator)
   end
 end
