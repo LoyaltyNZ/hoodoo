@@ -352,6 +352,52 @@ module Hoodoo; module Services
       self.class.send( :public_actions=, Set.new( public_actions ) )
     end
 
+    # Set secure log actions.
+    #
+    # +secure_log_actions+:: A Hash, described below.
+    #
+    # The given Hash keys are names of actions as Symbols: +:list+,
+    # +:show+, +:create+, +:update+ or +:delete+. Values are +:request+,
+    # +:response+ or +:both+. For a given action targeted at this resource:
+    #
+    # * A key of +:request+ means that API call-related Hoodoo automatic
+    #   logging will _exclude_ body data for the _inbound request_, but
+    #   still include body data in the response. Example: A POST to a Login
+    #   resource includes a password which you don't want logged, but the
+    #   response data doesn't quote the password back so is "safe". The
+    #   secure log actions Hash for the Login resource's interface would
+    #   include ":create => :request".
+    #
+    # * A key of +:response+ means that API call-related Hoodoo automatic
+    #   logging will _exclude_ body data for the _outbound response_, but
+    #   still include body data in the request. Example: A POST to a
+    #   Caller resource creates a Caller with a generated authentication
+    #   secret that's only exposed in the POST's response. The inbound
+    #   data used to create that Caller can be safely logged, but the
+    #   authentication secret is sensitive and shouldn't be recorded. The
+    #   secure log actions Hash for the Caller resource's interface would
+    #   include ":create => :response".
+    #
+    # * A key of +both+ has the same result as both +:request+ and
+    #   +:response+, so body data is never logged. It's hard to come up
+    #   with good examples of resources where both the incoming data is
+    #   sensitive and the outgoing data is sensitive but the option is
+    #   included for competion, as someone out there will need it.
+    #
+    # The default is an empty Hash; all actions have both inbound request
+    # body data and outbound response body data logged by Hoodoo.
+    #
+    def secure_log_for( secure_log_actions = {} )
+      secure_log_actions = Hoodoo::Utilities.symbolize( secure_log_actions )
+      invalid = secure_log_actions.keys - Hoodoo::Services::Middleware::ALLOWED_ACTIONS
+
+      unless invalid.empty?
+        raise "Hoodoo::Services::Interface#secure_log_for does not recognise one or more actions: '#{ invalid.join( ', ' ) }'"
+      end
+
+      self.class.send( :secure_log_for=, secure_log_actions )
+    end
+
     # An array of supported embed keys (as per documentation, so singular or
     # plural as per resource interface descriptions in the Loyalty Platform
     # API). Things which can be embedded can also be referenced, via the
@@ -653,6 +699,7 @@ module Hoodoo; module Services
         embeds # Nothing
         actions *Hoodoo::Services::Middleware::ALLOWED_ACTIONS
         public_actions # None
+        secure_log_for # None
       end
 
       interface.instance_eval( &block )
@@ -709,6 +756,11 @@ module Hoodoo; module Services
         # security. The default is an empty Set.
         #
         attr_reader :public_actions
+
+        # Secure log actions set by #secure_log_for - see that call for
+        # details. The default is an empty Hash.
+        #
+        attr_reader :secure_log_for
 
         # Array of strings listing allowed embeddable things. Each string
         # matches the split up comma-separated value for query string
@@ -804,6 +856,12 @@ module Hoodoo; module Services
         # See ::public_actions.
         #
         attr_writer :public_actions
+
+        # Private property writer allows instances running the DSL to set
+        # values on the class for querying using the public readers.
+        # See ::secure_log_for.
+        #
+        attr_writer :secure_log_for
 
         # Private property writer allows instances running the DSL to set
         # values on the class for querying using the public readers.
