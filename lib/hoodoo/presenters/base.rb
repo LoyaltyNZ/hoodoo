@@ -5,7 +5,7 @@
 # Purpose:: Schema-based data rendering and validation.
 # ----------------------------------------------------------------------
 #           02-Dec-2014 (ADH): Merge of DocumentedPresenter code into
-#                              BasePresenter.
+#                              Base.
 ########################################################################
 
 module Hoodoo

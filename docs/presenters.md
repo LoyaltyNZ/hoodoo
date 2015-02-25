@@ -32,13 +32,13 @@ The class provides the following methods, plus a DSL for schema definition.
 The intent is to decouple incoming (e.g.) JSON strings / other format inbound data from internal hashes representing the equivalent data; and this in turn is decoupled from any persistence layer you might implement (e.g. ActiveRecord models). The conceptual code flow when you _receive_ data is:
 
 * `JSON.parse` an incoming JSON string, keeping keys as strings (don't symbolize keys).
-* Use `validate` to see if that incoming JSON is valid, according to a `BasePresenter` subclass you write which defines the expected/permitted schema of that inbound data.
+* Use `validate` to see if that incoming JSON is valid, according to a `Hoodoo::Presenters::Base` subclass you write which defines the expected/permitted schema of that inbound data.
 * That's all. You'll have a validated ruby Hash representation of the JSON string you originally received, with string keys throughout. If you want to merge in any default values on top of the data you got, run the input data through #render and examine the result.
 
 The conceptual code flow when you _generate_ data is:
 
 * Create a Hash with strings as keys containing the data you want to return.
-* Use `validate` if you want to be sure that your outbound data is valid, according to a `BasePresenter` subclass you write which defines the expected/permitted schema of that outbound data.
+* Use `validate` if you want to be sure that your outbound data is valid, according to a `Hoodoo::Presenters::Base` subclass you write which defines the expected/permitted schema of that outbound data.
 * Use `render` to merge in any default values with the data you generated.
 * `JSON.generate` the string to send out from the rendered Hash.
 

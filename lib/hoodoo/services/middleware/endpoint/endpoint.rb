@@ -102,14 +102,14 @@ module Hoodoo; module Services
       #
       def initialize( owning_interaction, resource, version = 1 )
 
-        @owning_interaction   = owning_interaction
-        @owning_middleware    = owning_interaction.owning_middleware_instance
+        @owning_interaction = owning_interaction
+        @owning_middleware  = owning_interaction.owning_middleware_instance
 
-        @resource      = resource.to_s
-        @version       = version.to_i
+        @resource           = resource.to_s
+        @version            = version.to_i
 
-        @local_service = @owning_middleware.local_service_for( @resource, @version )
-        @remote_info   = @owning_middleware.remote_service_for( @resource, @version )
+        @local_service      = @owning_middleware.local_service_for( @resource, @version )
+        @remote_info        = @owning_middleware.remote_service_for( @resource, @version )
 
         # ...noting that @remote_info may now contain either a URI for local
         # development / real HTTP environments, or a Hash with ":queue" and
