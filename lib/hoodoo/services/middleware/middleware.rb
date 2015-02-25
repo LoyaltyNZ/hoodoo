@@ -2061,7 +2061,7 @@ module Hoodoo; module Services
           :host => source_interaction.rack_request.host,
           :port => source_interaction.rack_request.port
         }
-
+        remote_info[:path] += "/#{ URI::escape( ident ) }" unless ident.nil?
       else
         remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
@@ -2215,13 +2215,12 @@ module Hoodoo; module Services
         # this into a formal errors collection.
 
         errors_from_other_resource = Hoodoo::Errors.new()
-
         parsed[ 'errors' ].each do | error |
           errors_from_other_resource.add_precompiled_error(
             error[ 'code'      ],
             error[ 'message'   ],
             error[ 'reference' ],
-            response.code
+            response.status_code
           )
         end
 
