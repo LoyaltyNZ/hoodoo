@@ -147,7 +147,7 @@ module Hoodoo
             # query on all adapters which SQL handles just fine for varying
             # field data types.
 
-            checker = where( [ "#{ field } = ?", ident ] )
+            checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
             return checker.first unless checker.count == 0
           end
 
