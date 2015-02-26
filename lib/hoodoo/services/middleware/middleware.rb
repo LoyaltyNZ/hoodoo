@@ -2213,12 +2213,12 @@ module Hoodoo; module Services
 
         # This isn't an array, it's an AugmentedHash describing errors. Turn
         # this into a formal errors collection.
-        if response.respond_to?(:status_code)
-          code = response.status_code
-        else
+        if response.respond_to?(:code)
           code = response.code
+        else
+          code = response.status_code
         end
-        
+
         errors_from_other_resource = Hoodoo::Errors.new()
         parsed[ 'errors' ].each do | error |
           errors_from_other_resource.add_precompiled_error(
