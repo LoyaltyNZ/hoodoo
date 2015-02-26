@@ -174,19 +174,35 @@ describe Hoodoo::Services::Interface do
       end
     end
 
-    # This is exercised in non-failure cases by
-    # middleware_permissions_spec.rb.
-    #
-    context 'in #additional_permissions_for' do
-      it 'should complain about a missing block' do
+    context 'in #public_action' do
+      it 'should complain about incorrect actions' do
         class RSpecTestInterfaceImplementationG < Hoodoo::Services::Implementation
         end
         class RSpecTestInterfaceInterfaceG < Hoodoo::Services::Interface
         end
 
         expect {
-          RSpecTestInterfaceInterfaceG.interface :FooF do
+          RSpecTestInterfaceInterfaceG.interface :FooG do
             endpoint :an_endpoint, RSpecTestInterfaceImplementationG
+            secure_log_for :create => :both, :made_this_up => :request, :delete => :response, :made_this_up_too => :both
+          end
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface#secure_log_for does not recognise one or more actions: 'made_this_up, made_this_up_too'")
+      end
+    end
+
+    # This is exercised in non-failure cases by
+    # middleware_permissions_spec.rb.
+    #
+    context 'in #additional_permissions_for' do
+      it 'should complain about a missing block' do
+        class RSpecTestInterfaceImplementationH < Hoodoo::Services::Implementation
+        end
+        class RSpecTestInterfaceInterfaceH < Hoodoo::Services::Interface
+        end
+
+        expect {
+          RSpecTestInterfaceInterfaceH.interface :FooH do
+            endpoint :an_endpoint, RSpecTestInterfaceImplementationH
             additional_permissions_for( :show )
           end
         }.to raise_error(RuntimeError, 'Hoodoo::Services::Interface#additional_permissions_for must be passed a block')
