@@ -2330,13 +2330,6 @@ module Hoodoo; module Services
           :array_class  => Hoodoo::Services::Middleware::Endpoint::AugmentedArray
         )
 
-        # Just in case someone changes JSON parsers under us and the replacement
-        # doesn't support the options used above...
-
-        unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
-          raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
-        end
-
       rescue
 
         http_errors = Hoodoo::Errors.new
@@ -2368,6 +2361,13 @@ module Hoodoo; module Services
           http_errors.render( source_interaction.interaction_id )
         ]
 
+      end
+
+      # Just in case someone changes JSON parsers under us and the replacement
+      # doesn't support the options used above...
+
+      unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
       end
 
       # If the parsed data wrapped an array, extract just the array part, else
