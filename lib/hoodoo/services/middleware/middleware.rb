@@ -740,8 +740,6 @@ module Hoodoo; module Services
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance for
     #                 the interaction currently being logged.
     #
-
-
     def log_outbound_response( interaction, rack_data )
       secure = true
       id     = nil
@@ -815,6 +813,10 @@ module Hoodoo; module Services
 
     # Log a debug message. Pass optional extra arguments which will be used as
     # strings that get appended to the log message.
+    #
+    # THIS IS INSCURE. Sensitive data might be logged. DO NOT USE IN DEPLOYED
+    # ENVIRONMENTS. At the time of writing, Hoodoo ensures this by only using
+    # debug logging in 'development' or 'test' environments.
     #
     # Before calling, +@rack_request+ must be set up with the Rack::Request
     # instance for the call environment.
