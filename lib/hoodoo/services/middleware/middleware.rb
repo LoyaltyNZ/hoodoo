@@ -2213,14 +2213,18 @@ module Hoodoo; module Services
 
         # This isn't an array, it's an AugmentedHash describing errors. Turn
         # this into a formal errors collection.
-
+        if on_queue
+          code = response.status_code
+        else
+          code = response.code
+        end
         errors_from_other_resource = Hoodoo::Errors.new()
         parsed[ 'errors' ].each do | error |
           errors_from_other_resource.add_precompiled_error(
             error[ 'code'      ],
             error[ 'message'   ],
             error[ 'reference' ],
-            response.status_code
+            code
           )
         end
 
