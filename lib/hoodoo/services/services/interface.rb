@@ -384,6 +384,16 @@ module Hoodoo; module Services
     #   sensitive and the outgoing data is sensitive but the option is
     #   included for competion, as someone out there will need it.
     #
+    # Example: The request body data sent by a caller into a resource's
+    # +:create+ action will not be logged:
+    #
+    #     secure_log_for( { :create => :request } )
+    #
+    # Example: Neither the request data sent by a caller, nor the
+    # response data sent back, will be logged for an +:update+ action:
+    #
+    #     secure_log_for( { :update => :both } )
+    #
     # The default is an empty Hash; all actions have both inbound request
     # body data and outbound response body data logged by Hoodoo.
     #
