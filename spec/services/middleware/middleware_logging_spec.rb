@@ -7,17 +7,41 @@ class TestLogImplementation < Hoodoo::Services::Implementation
   def show( context )
     context.response.body = { 'show' => 'the thing', 'the_thing' => context.request.ident }
   end
+
+  def create( context )
+    context.response.set_resource( { 'log' => 'create' } )
+  end
+
+  def update( context )
+    context.response.set_resource( { 'log' => 'update' } )
+  end
 end
 
 class TestLogInterface < Hoodoo::Services::Interface
   interface :TestLog do
     endpoint :test_log, TestLogImplementation
-    actions :show
+    actions :show, :create, :update
+
+    secure_log_for :create => :request,
+                   :update => :response
   end
 end
 
 class TestLogService < Hoodoo::Services::Service
   comprised_of TestLogInterface
+end
+
+class TestLogInterfaceB < Hoodoo::Services::Interface
+  interface :TestLog do
+    endpoint :test_log_b, TestLogImplementation
+    actions :show, :create, :update
+
+    secure_log_for :create => :both
+  end
+end
+
+class TestLogService < Hoodoo::Services::Service
+  comprised_of TestLogInterfaceB
 end
 
 # Force the middleware logging mode to that passed as a string in 'test_env'.
@@ -209,6 +233,98 @@ describe Hoodoo::Services::Middleware do
       instances = Hoodoo::Services::Middleware.logger.instances
       expect( instances[ 0 ] ).to be_a( Hoodoo::Services::Middleware::AMQPLogWriter )
       expect( Hoodoo::Services::Middleware.logger.level ).to eq( :info )
+    end
+  end
+
+  context 'secure logging' do
+    class HashLogger < Hoodoo::Logger::FastWriter
+      @@log_data = []
+
+      def self.reset
+        @@log_data = []
+      end
+
+      def self.log_data
+        @@log_data
+      end
+
+      def report( log_level, component, code, data )
+        @@log_data << { log_level: log_level, component: component, code: code, data: data }
+      end
+    end
+
+    def get_data_for( action )
+      inbound  = HashLogger.log_data().select { | x | x[ :code ] == :inbound }
+      result   = HashLogger.log_data().select { | x | x[ :code ] == "middleware_#{ action }" }
+      outbound = HashLogger.log_data().select { | x | x[ :code ] == :outbound }
+
+      expect( inbound  ).to_not be_empty
+      expect( result   ).to_not be_empty
+      expect( outbound ).to_not be_empty
+
+      return [ inbound, result, outbound ]
+    end
+
+    before :each do
+      HashLogger.reset()
+      logger = Hoodoo::Logger.new
+      logger.add( HashLogger.new )
+      Hoodoo::Services::Middleware.set_logger( logger )
+    end
+
+    def app
+      Rack::Builder.new do
+        use Hoodoo::Services::Middleware
+        run TestLogService.new
+      end
+    end
+
+    # To test_log, 'create' says secure for 'request'
+    #
+    it 'does not log creation requests unexpectedly' do
+      post '/v1/test_log', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      inbound, result, outbound = get_data_for( :create )
+
+      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
+      entry = result.first;   expect( entry[ :data ]             ).to     have_key( :payload )
+      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to     have_key( :response_body )
+    end
+
+    # To test_log, 'update' says secure for 'request'
+    #
+    it 'does not log update responses unexpectedly' do
+      patch '/v1/test_log/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      inbound, result, outbound = get_data_for( :update )
+
+      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to     have_key( :body )
+      entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
+      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
+    end
+
+    # To test_log_b, 'create' says secure for 'both'.
+    #
+    it 'does not log requests or responses unexpectedly' do
+      post '/v1/test_log_b', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      inbound, result, outbound = get_data_for( :create )
+
+      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
+      entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
+      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
+    end
+
+    # To test_log_b, 'update' does not ask for security.
+    #
+    it 'does not log requests or responses unexpectedly' do
+      patch '/v1/test_log_b/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      inbound, result, outbound = get_data_for( :update )
+
+      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to have_key( :body )
+      entry = result.first;   expect( entry[ :data ]             ).to have_key( :payload )
+      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to have_key( :response_body )
     end
   end
 end
