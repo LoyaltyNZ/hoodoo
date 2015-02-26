@@ -1,4 +1,13 @@
 GIT
+  remote: git@github.com:LoyaltyNZ/alchemy-amq.git
+  revision: d198bbc3f029ad4a05638fb0cdf0a261e117d61b
+  branch: master
+  specs:
+    alchemy-amq (0.2.1)
+      amq-endpoint
+      rack (= 1.6.0)
+
+GIT
   remote: git@github.com:LoyaltyNZ/amq-endpoint.git
   revision: 03296a065775f98bfc07c6efdbeb6e07b600f29e
   branch: master
@@ -104,6 +113,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord (~> 4.1)
   airbrake (~> 4.1)
+  alchemy-amq!
   amq-endpoint!
   database_cleaner (~> 1.3)
   hoodoo!

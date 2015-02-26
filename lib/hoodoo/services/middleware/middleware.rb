@@ -2317,20 +2317,57 @@ module Hoodoo; module Services
         session.delete_from_memcached()
       end
 
-      # Parse the response (assumed valid JSON else #for_rack would have failed
-      # when the originating response object was turned into the Rack response).
+      # Parse the response. Valid JSON is expected but potentially the target
+      # resource was never called - we might have got (say) a Timeout. In that
+      # case, handle the parser exception and try to figure out what we can do
+      # to communicate the internal failure upwards elegantly.
 
-      parsed = JSON.parse(
-        response.body,
-        :object_class => Hoodoo::Services::Middleware::Endpoint::AugmentedHash,
-        :array_class  => Hoodoo::Services::Middleware::Endpoint::AugmentedArray
-      )
+      begin
 
-      # Just in case someone changes JSON parsers under us and the replacement
-      # doesn't support the options used above...
+        parsed = JSON.parse(
+          response.body,
+          :object_class => Hoodoo::Services::Middleware::Endpoint::AugmentedHash,
+          :array_class  => Hoodoo::Services::Middleware::Endpoint::AugmentedArray
+        )
 
-      unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
-        raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
+        # Just in case someone changes JSON parsers under us and the replacement
+        # doesn't support the options used above...
+
+        unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+          raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
+        end
+
+      rescue
+
+        http_errors = Hoodoo::Errors.new
+
+        case http_status_code
+          when 404
+            # Highly unexpected! Don't leak the failed internal path data
+            # (information disclosure; might include UUIDs of resources to
+            # which the top-level caller has no access).
+            http_errors.add_error(
+              'platform.not_found',
+              :reference => { :entity_name => '<internal resource>' }
+            )
+          when 408
+            http_errors.add_error( 'platform.timeout' )
+          when 200
+            http_errors.add_error(
+              'platform.fault',
+              :reference => { :exception => RuntimeError.new( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' ) }
+            )
+          else
+            http_errors.add_error(
+              'platform.fault',
+              :reference => { :exception => RuntimeError.new( "Unexpected raw HTTP status code #{ http_status_code } during inter-resource call" ) }
+            )
+        end
+
+        parsed = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[
+          http_errors.render( source_interaction.interaction_id )
+        ]
+
       end
 
       # If the parsed data wrapped an array, extract just the array part, else

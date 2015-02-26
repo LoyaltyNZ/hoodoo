@@ -3,6 +3,7 @@
 # endpoints or HTTPS transport for local machine inter-resource calls.
 
 require 'spec_helper'
+require 'alchemy-amq'
 
 describe Hoodoo::Services::Middleware do
 
@@ -93,63 +94,223 @@ describe Hoodoo::Services::Middleware do
       }.to raise_error( RuntimeError, 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment' )
     end
 
-    it 'calls Alchemy' do
-      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
-      interaction = Hoodoo::Services::Middleware::Interaction.new(
-        {},
-        mw,
-        Hoodoo::Services::Middleware.test_session()
-      )
-      interaction.target_interface = OpenStruct.new
-      interaction.context.request.locale = 'fr'
+    context 'calling Alchemy' do
+      before :each do
+        mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
+        @interaction = Hoodoo::Services::Middleware::Interaction.new(
+          {},
+          mw,
+          Hoodoo::Services::Middleware.test_session()
+        )
+        @interaction.target_interface = OpenStruct.new
+        @interaction.context.request.locale = 'fr'
 
-      session_id = interaction.context.session.session_id
-      interaction_id = interaction.interaction_id
+        @mock_alchemy = OpenStruct.new
+        Hoodoo::Services::Middleware.class_variable_set( '@@alchemy', @mock_alchemy )
+      end
 
-      mock_alchemy = OpenStruct.new
-      Hoodoo::Services::Middleware.class_variable_set( '@@alchemy', mock_alchemy )
-
-      mock_queue  = 'service.utility'
-      mock_path   = '/v2/version'
-      mock_method = 'GET'
-      mock_query  = { :search => { :foo => :bar } }
-
-      mock_response = OpenStruct.new
-      mock_response.body = '{}'
-
-      expect( mock_alchemy ).to receive( :http_request ).once do | queue, method, path, opts |
-        expect( queue ).to eq( mock_queue )
-        expect( method ).to eq( mock_method )
-        expect( path ).to eq( mock_path )
-        expect( opts ).to eq(
-          {
-            :session_id => session_id,
-            :host       => ':',
-            :port       => 0,
-            :body       => '',
-            :query      => mock_query,
-            :headers    => {
-              'Content-Type' => 'application/json; charset=utf-8',
-              'Content-Language' => 'fr',
-              'X-Interaction-ID' => interaction_id,
-              'X-Session-ID' =>session_id
+      def run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+        expect( @mock_alchemy ).to receive( :http_request ).once do | queue, method, path, opts |
+          expect( queue ).to eq( mock_queue )
+          expect( method ).to eq( mock_method )
+          expect( path ).to eq( mock_path )
+          expect( opts ).to eq(
+            {
+              :session_id => @interaction.context.session.session_id,
+              :host       => ':',
+              :port       => 0,
+              :body       => '',
+              :query      => mock_query,
+              :headers    => {
+                'Content-Type' => 'application/json; charset=utf-8',
+                'Content-Language' => 'fr',
+                'X-Interaction-ID' => @interaction.interaction_id,
+                'X-Session-ID' =>@interaction.context.session.session_id
+              }
             }
+          )
+        end.and_return( mock_response )
+      end
+
+      it 'calls #list over Alchemy and handles 200' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 200,
+          :body => '{"_data":[]}'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
           }
         )
-      end.and_return( mock_response )
 
-      mock_result = @mw.send(
-        :inter_resource_remote,
-        {
-          # Purely hypothetical; no actual call will be made
-          :source_interaction => interaction,
-          :remote             => { :queue => mock_queue, :path => mock_path },
-          :http_method        => mock_method,
-          :query_hash         => mock_query
-        }
-      )
+        expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new )
+      end
 
-      expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new )
+      it 'calls #show over Alchemy and handles 200' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/ident'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 200,
+          :body => '{}'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
+          }
+        )
+
+        expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new )
+      end
+
+      it 'calls #show over Alchemy and handles 408' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/ident'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 408,
+          :body => '408 Timeout'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
+          }
+        )
+
+        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to have_key( 'errors' )
+        expect( mock_result[ 'errors' ] ).to be_a( Array )
+        expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
+      end
+
+      it 'calls #show over Alchemy and handles 404' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/ident'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 404,
+          :body => '404 Not Found'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
+          }
+        )
+
+        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to have_key( 'errors' )
+        expect( mock_result[ 'errors' ] ).to be_a( Array )
+        expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
+      end
+
+      it 'calls #show over Alchemy and handles "unexpected" status codes' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/ident'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 499,
+          :body => '499 Invented'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
+          }
+        )
+
+        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to have_key( 'errors' )
+        expect( mock_result[ 'errors' ] ).to be_a( Array )
+        expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Unexpected raw HTTP status code 499 during inter-resource call' )
+      end
+
+      it 'calls #show over Alchemy and handles 200 status but bad JSON' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/ident'
+        mock_method = 'PATCH'
+        mock_query  = { :search => { :foo => :bar } }
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 200,
+          :body => 'Not JSON'
+        )
+
+        run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
+
+        mock_result = @mw.send(
+          :inter_resource_remote,
+          {
+            # Purely hypothetical; no actual call will be made
+            :source_interaction => @interaction,
+            :remote             => { :queue => mock_queue, :path => mock_path },
+            :http_method        => mock_method,
+            :query_hash         => mock_query
+          }
+        )
+
+        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to have_key( 'errors' )
+        expect( mock_result[ 'errors' ] ).to be_a( Array )
+        expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
+        expect( mock_result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' )
+      end
     end
   end
 
