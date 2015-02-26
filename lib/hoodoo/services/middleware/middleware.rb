@@ -2353,7 +2353,7 @@ module Hoodoo; module Services
             error[ 'code'      ],
             error[ 'message'   ],
             error[ 'reference' ],
-            response.code
+            http_status_code
           )
         end
 
