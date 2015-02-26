@@ -2062,6 +2062,9 @@ module Hoodoo; module Services
           :port => source_interaction.rack_request.port
         }
 
+        request_path = remote_info[ :path ].dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        request_path << "/#{ URI::escape( ident ) }" unless ident.nil?
+
       else
         remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
@@ -2134,9 +2137,11 @@ module Hoodoo; module Services
         response = @@alchemy.http_request(
           remote_info[ :queue ],
           http_method,
-          remote_info[ :path ],
+          request_path,
           alchemy_options
         )
+
+        http_status_code = response.status_code
 
       else
 
@@ -2167,6 +2172,8 @@ module Hoodoo; module Services
         rescue Errno::ECONNREFUSED => e
           return add_404.call()
         end
+
+        http_status_code = response.code
 
       end
 
