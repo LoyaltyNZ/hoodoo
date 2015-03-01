@@ -1295,7 +1295,7 @@ module Hoodoo; module Services
 
       # Benchmark the "inner" dispatch call
 
-      dispatch_time = Benchmark.realtime do
+      dispatch_time = ::Benchmark.realtime do
 
         block = Proc.new do
 
