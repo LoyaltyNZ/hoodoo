@@ -1013,7 +1013,7 @@ module Hoodoo; module Services
         session = nil if result != true
       end
 
-      if self.class.environment.test? && session.nil?
+      if ( self.class.environment.test? || self.class.environment.development? ) && session.nil?
         session = self.class.test_session()
       end
 
