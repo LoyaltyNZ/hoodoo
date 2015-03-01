@@ -13,6 +13,7 @@
 
 require 'set'
 require 'uri'
+require 'benchmark'
 require 'net/http'
 require 'net/https'
 require 'drb/drb'
