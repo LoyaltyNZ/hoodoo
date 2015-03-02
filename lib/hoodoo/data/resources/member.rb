@@ -16,7 +16,6 @@ module Hoodoo
       class Member < Hoodoo::Presenters::Base
 
         schema do
-          uuid :account_id,    :resource => :Account
         end
 
       end
