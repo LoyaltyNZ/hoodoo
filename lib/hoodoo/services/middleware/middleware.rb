@@ -320,7 +320,7 @@ module Hoodoo; module Services
     def self.flush_services_for_test
       @@services = []
       begin
-        @@discoverer.flush_services_for_test()
+        @discoverer.flush_services_for_test()
       rescue
       end
     end
@@ -406,7 +406,6 @@ module Hoodoo; module Services
       begin
 
         enable_alchemy_logging_from( env )
-        update_discoverer_from( env )
 
         interaction = Hoodoo::Services::Middleware::Interaction.new( env, self )
         debug_log( interaction )
@@ -883,6 +882,8 @@ module Hoodoo; module Services
     # Announce the presence of the service endpoints to known interested
     # parties.
     #
+    # ONLY CALL AS PART OF INSTANCE CREATION (from #initialize).
+    #
     # +services+:: Array of Hashes describing service information.
     #
     # Hash keys/values are as follows:
@@ -897,13 +898,27 @@ module Hoodoo; module Services
     #
     def announce_presence_of( services )
 
+      # Note the RARE LEGITIMATE USE of an instance variable here. It will
+      # be shared across potentially many threads with the same instance
+      # driven through Rack. Presence announcements to the Discoverer are
+      # made only upon object initialisation and remain valid (and
+      # unchanged) for its lifetime.
+      #
+      # A class variable is wrong, as entirely new instances of the service
+      # middleware might be stood up in one process and could potentially
+      # be handling different services. This is typically only the case for
+      # running tests, but *might* happen elsewhere too. In any event, we
+      # don't want announcements in one instance to pollute the discovery
+      # data in another (especially the records of which services were
+      # announced by, and therefore must be local to, an instance).
+
       if ! self.class.environment.test? && self.class.on_queue?
 
-        @@discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
+        @discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
 
       else
 
-        @@discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
+        @discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
 
         # Rack provides no formal way to find out our host or port before a
         # request arrives, because in part it might change due to clustering.
@@ -941,7 +956,7 @@ module Hoodoo; module Services
         services.each do | service |
           interface = service[ :interface ]
 
-          @@discoverer.announce(
+          @discoverer.announce(
             interface.resource,
             interface.version,
             {
@@ -1976,17 +1991,13 @@ module Hoodoo; module Services
     #
     # * +nil+ if the endpoint is not found.
     #
-    # * Hoodoo::Services::Discovery::ByDRb discovery response if we are _not_
-    #   running on an AMQP/Alchemy based architecture (see ::on_queue?).
-    #
-    # * If an endpoint is found and we _are_ running on an AMQP/Alchemy based
-    #   architecture (see ::on_queue?), returns a
-    #   Hoodoo::Services::Discovery::ByConsul discovery response.
+    # * One of the Hoodoo::Services::Discovery::DiscoveryResultFor... class
+    #   family instances, depending on the discoverer in use.
     #
     def remote_service_for( resource, version = 1 )
       return begin
-        @@discoverer.discover( resource, version )
-      rescue
+        @discoverer.discover( resource, version )
+      rescue => e
         nil
       end
     end
@@ -2087,8 +2098,6 @@ module Hoodoo; module Services
       body_hash          = options[ :body_hash          ]
       query_hash         = options[ :query_hash         ]
 
-      on_queue = self.class.on_queue?
-
       # Add a 404 error to the response (via a Proc for internal reuse).
 
       add_404 = Proc.new {
@@ -2102,20 +2111,21 @@ module Hoodoo; module Services
 
       # No endpoint found? Yikes!
 
-      if ( remote_info.nil? )
-        return add_404.call()
+      return add_404.call() if ( remote_info.nil? )
 
-      elsif on_queue
+      on_queue = remote_info.is_a?( Hoodoo::Services::Discovery::DiscoveryResultForAMQP )
+
+      if on_queue
         alchemy_options = {
           :host => source_interaction.rack_request.host,
           :port => source_interaction.rack_request.port
         }
 
-        request_path = remote_info[ :path ].dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        request_path = remote_info.equivalent_path.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         request_path << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       else
-        remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        remote_uri  = remote_info.endpoint_uri.to_s
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
       end
 
@@ -2184,7 +2194,7 @@ module Hoodoo; module Services
         alchemy_options[ :session_id ] = session.session_id unless session.nil?
 
         response = @@alchemy.http_request(
-          remote_info[ :queue ],
+          remote_info.queue_name,
           http_method,
           request_path,
           alchemy_options

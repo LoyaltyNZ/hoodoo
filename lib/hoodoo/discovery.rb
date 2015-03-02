@@ -22,10 +22,11 @@ end
 # Services
 
 require 'hoodoo/services/discovery/discovery_results/discovery_result_for_http'
-require 'hoodoo/services/discovery/discovery_results/discovery_result_for_aqmp'
+require 'hoodoo/services/discovery/discovery_results/discovery_result_for_amqp'
 
 require 'hoodoo/services/discovery/base'
-require 'hoodoo/services/discovery/by_convention'
-require 'hoodoo/services/discovery/by_consul'
-require 'hoodoo/services/discovery/by_drb/drb_server'
-require 'hoodoo/services/discovery/by_drb/by_drb'
+
+require 'hoodoo/services/discovery/discoverers/by_convention'
+require 'hoodoo/services/discovery/discoverers/by_consul'
+require 'hoodoo/services/discovery/discoverers/by_drb/drb_server'
+require 'hoodoo/services/discovery/discoverers/by_drb/by_drb'

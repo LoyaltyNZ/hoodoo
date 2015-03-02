@@ -7,7 +7,7 @@ module Hoodoo
 
         # ...returns ForHTTP result...
         #
-        class ByConvention < Hoodoo::Services::Discovery::BaseForHTTP
+        class ByConvention < Hoodoo::Services::Discovery::Base
 
           protected
 

@@ -111,9 +111,9 @@ module Hoodoo; module Services
         @local_service      = @owning_middleware.local_service_for( @resource, @version )
         @remote_info        = @owning_middleware.remote_service_for( @resource, @version )
 
-        # ...noting that @remote_info may now contain either a URI for local
-        # development / real HTTP environments, or a Hash with ":queue" and
-        # ":path" values - see the middleware's #remote_service_for.
+        # ...noting that @remote_info contains an instance of one of the
+        # Hoodoo::Services::Discovery::DiscoveryResultFor... class family.
+        # See Hoodoo::Services::Middleware#remote_service_for for more.
 
       end
 

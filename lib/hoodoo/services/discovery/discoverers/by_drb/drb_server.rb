@@ -22,7 +22,7 @@ require 'drb/drb'
 require 'drb/acl'
 
 module Hoodoo; module Services; module Discovery
-  class ByDRb
+  class ByDRb < Hoodoo::Services::Discovery::Base # Just used as a namespace here
 
     # A registry of service endpoints, implenented as a DRB server class. An
     # internal implementation detail of Hoodoo::Services::Middleware, in most

@@ -38,7 +38,7 @@ module Hoodoo
           def discover_remote( resource, version, options = {} )
             endpoint_uri_string = drb_service().find( resource, version )
 
-            if result.nil?
+            if endpoint_uri_string.nil?
               return nil
             else
               return Hoodoo::Services::Discovery::DiscoveryResultForHTTP.new(
@@ -85,6 +85,8 @@ module Hoodoo
 
               end
             end
+
+            return drb_service
           end
 
       end

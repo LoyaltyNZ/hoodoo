@@ -753,8 +753,7 @@ describe Hoodoo::Services::Middleware do
         end
 
         it 'handles an exception when attempting to flush services' do
-          drb_service = Hoodoo::Services::Middleware.class_variable_get( '@@drb_service' )
-          expect( drb_service ).to receive( :flush ).and_raise( 'boo!' )
+          expect_any_instance_of( Hoodoo::Services::Discovery::ByDRb::DRbServer ).to receive( :flush ).and_raise( 'boo!' )
           expect {
             Hoodoo::Services::Middleware.flush_services_for_test()
           }.to_not raise_exception

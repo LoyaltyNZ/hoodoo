@@ -53,7 +53,7 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
 
   context "via DRb" do
     it 'starts as a server' do
-      DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+      DRb.start_service( @drb_uri, Hoodoo::Services::Discovery::ByDRb::FRONT_OBJECT )
       @drb_server = DRbObject.new_with_uri( @drb_uri )
 
       expect do
@@ -101,7 +101,7 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
 
     it 'starts as a client' do
       expect {
-        DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+        DRb.start_service( @drb_uri, Hoodoo::Services::Discovery::ByDRb::FRONT_OBJECT )
         @drb_server = DRbObject.new_with_uri( @drb_uri )
         @drb_server.add( :FooS2, 2, 'http://localhost:3030/v2/foo_s2' )
 
@@ -117,7 +117,7 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
     end
 
     it 'synchronises data' do
-      DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+      DRb.start_service( @drb_uri, Hoodoo::Services::Discovery::ByDRb::FRONT_OBJECT )
       @drb_server = DRbObject.new_with_uri( @drb_uri )
 
       @drb_server.add( :Foo1, 2, 'http://localhost:3030/v2/foo_1' )
@@ -141,7 +141,7 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
     end
 
     it 'flushes' do
-      DRb.start_service( @drb_uri, Hoodoo::Services::Middleware::FRONT_OBJECT )
+      DRb.start_service( @drb_uri, Hoodoo::Services::Discovery::ByDRb::FRONT_OBJECT )
       @drb_server = DRbObject.new_with_uri( @drb_uri )
 
       @drb_server.add( :Foo1, 2, 'http://localhost:3030/v2/foo_1' )

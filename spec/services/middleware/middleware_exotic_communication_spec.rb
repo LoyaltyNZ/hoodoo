@@ -58,9 +58,9 @@ describe Hoodoo::Services::Middleware do
     #
     it 'returns known queue endpoint locations' do
       location = @mw.send( :remote_service_for, :Version, 2 )
-      expect( location ).to be_a( Hash )
-      expect( location[ :queue ] ).to eq( 'service.utility' )
-      expect( location[ :path ] ).to eq( '/v2/version' )
+      expect( location ).to be_a( Hoodoo::Services::Discovery::DiscoveryResultForAMQP )
+      expect( location.queue_name ).to eq( 'service.utility' )
+      expect( location.equivalent_path ).to eq( '/v2/version' )
     end
 
     it 'returns "nil" for unknown queue endpoint locations' do

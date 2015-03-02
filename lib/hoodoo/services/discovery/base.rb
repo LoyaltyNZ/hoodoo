@@ -17,7 +17,7 @@ module Hoodoo
           # options will be returned by #discover in any _other_ instance, for
           # which the resource endpoint is remote rather than local.
           #
-          def announce( resource, version, options = {} )
+          def announce( resource, version = 1, options = {} )
             @known_local_resources[ key_for( resource, version ) ] = options
             announce_remote( resource, version, options )
           end
@@ -25,10 +25,10 @@ module Hoodoo
           # return :local  => <whatever options were in #announce>
           #     or :remote => <something else defined by subclass you're calling>
           #
-          def discover( resource, version, options = {} )
+          def discover( resource, version = 1, options = {} )
             local_key = key_for( resource, version )
 
-            if ( @known_local_resources.has_key?( local _key ) )
+            if ( @known_local_resources.has_key?( local_key ) )
               return { :local => @known_local_resources[ local_key ] }
             else
               return discover_remote( resource, version, options )

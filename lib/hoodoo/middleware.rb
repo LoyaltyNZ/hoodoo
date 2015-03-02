@@ -13,6 +13,7 @@ require 'hoodoo/utilities'
 require 'hoodoo/errors'
 require 'hoodoo/communicators'
 require 'hoodoo/logger'
+require 'hoodoo/discovery'
 
 # Middleware
 
@@ -24,7 +25,6 @@ require 'hoodoo/services/middleware/endpoint/augmented_base'
 require 'hoodoo/services/middleware/endpoint/augmented_hash'
 require 'hoodoo/services/middleware/endpoint/augmented_array'
 require 'hoodoo/services/middleware/endpoint/endpoint'
-require 'hoodoo/services/middleware/service_registry_drb_server'
 require 'hoodoo/services/middleware/middleware'
 
 require 'hoodoo/services/middleware/exception_reporting/exception_reporting'
