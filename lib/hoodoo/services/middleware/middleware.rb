@@ -312,16 +312,17 @@ module Hoodoo; module Services
     end
 
     # For test purposes, dump the internal service records and flush the DRb
-    # service. if it is running (exceptions are ignored). Existing middleware
+    # service, if it is running. Existing middleware
     # instances will be invalidated. New instances must be created to re-scan
     # their services internally and (where required) inform the DRb process
     # of the endpoints.
     #
     def self.flush_services_for_test
       @@services = []
-      begin
-        @discoverer.flush_services_for_test()
-      rescue
+
+      ObjectSpace.each_object( self ) do | middleware_instance |
+        discoverer = middleware_instance.instance_variable_get( '@discoverer' )
+        discoverer.flush_services_for_test() if discoverer.respond_to?( :flush_services_for_test )
       end
     end
 

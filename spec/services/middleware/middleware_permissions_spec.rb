@@ -290,7 +290,7 @@ describe Hoodoo::Services::Middleware do
 
   context 'with local resources and' do
 
-    before :all do
+    after :all do
       Hoodoo::Services::Middleware.flush_services_for_test()
     end
 
@@ -548,8 +548,6 @@ describe Hoodoo::Services::Middleware do
   context 'with remote resources and' do
 
     before :all do
-      Hoodoo::Services::Middleware.flush_services_for_test()
-
       @port_clock_no_perms_calls_date_no_perms = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockNoPermsCallsDateNoPermsService )
       @port_clock_calls_date_no_perms = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockCallsDateNoPermsService )
       @port_clock = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockService )
@@ -557,6 +555,10 @@ describe Hoodoo::Services::Middleware do
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestDateNoPermsService )
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestDateService )
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestTimeService )
+    end
+
+    after :all do
+      Hoodoo::Services::Middleware.flush_services_for_test()
     end
 
     context 'Clock with no extra permissions for Date or Time' do
