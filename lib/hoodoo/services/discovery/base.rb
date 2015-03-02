@@ -2,11 +2,14 @@ module Hoodoo
   module Services
     module Discovery
       class Base
+
         public
 
           def initialize( options = {} )
             @configuration_options = options
             @known_local_resources = {}
+
+            configure_with( options )
           end
 
           # Indicate that a resource is available locally and broacast its
@@ -33,6 +36,10 @@ module Hoodoo
           end
 
         protected
+
+          def configure_with( options )
+            # Implementation is optional and up to subclasses to do.
+          end
 
           def announce_remote( resource, version, options = {} )
             # Implementation is optional and up to subclasses to do.

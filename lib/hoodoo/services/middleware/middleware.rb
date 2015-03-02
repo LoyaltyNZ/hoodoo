@@ -19,6 +19,7 @@ require 'drb/drb'
 
 require 'hoodoo/services/services/permissions'
 require 'hoodoo/services/services/session'
+require 'hoodoo/discovery'
 
 module Hoodoo; module Services
 
@@ -319,7 +320,7 @@ module Hoodoo; module Services
     def self.flush_services_for_test
       @@services = []
       begin
-        @@drb_service.flush()
+        @@discoverer.flush_services_for_test()
       rescue
       end
     end
@@ -405,6 +406,8 @@ module Hoodoo; module Services
       begin
 
         enable_alchemy_logging_from( env )
+        update_discoverer_from( env )
+
         interaction = Hoodoo::Services::Middleware::Interaction.new( env, self )
         debug_log( interaction )
 
@@ -896,9 +899,11 @@ module Hoodoo; module Services
 
       if ! self.class.environment.test? && self.class.on_queue?
 
-        # Queue-based announcement goes here
+        @@discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
 
       else
+
+        @@discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
 
         # Rack provides no formal way to find out our host or port before a
         # request arrives, because in part it might change due to clustering.
@@ -931,59 +936,20 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Now attempt to contact the DRb server daemon. If it can't be
-        # contacted, try to start it first, then connect.
+        # Announce the resource endpoints.
 
-        drb_uri = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.uri()
-        DRb.start_service
+        services.each do | service |
+          interface = service[ :interface ]
 
-        begin
-          @@drb_service = DRbObject.new_with_uri( drb_uri )
-          @@drb_service.ping()
-
-        rescue DRb::DRbConnError
-          script_path = File.join( File.dirname( __FILE__ ), 'service_registry_drb_server_start.rb' )
-          Process.detach( spawn( "bundle exec ruby '#{ script_path }'" ) )
-
-          begin
-            Timeout::timeout( 5 ) do
-              loop do
-                begin
-                  @@drb_service = DRbObject.new_with_uri( drb_uri )
-                  @@drb_service.ping()
-                  break
-                rescue DRb::DRbConnError
-                  sleep 0.1
-                end
-              end
-            end
-
-          rescue Timeout::Error
-            raise "Middleware timed out while waiting for DRb service registry to start"
-
-          end
-        end
-
-        # Announce our local services if we managed to find the host and port,
-        # but no point otherwise; the values could be anything. In a 'guard'
-        # based envrionment, first-run determines host and port but subsequent
-        # runs do not - yet it stays the same, so it works out OK there.
-        #
-        unless host.nil? || port.nil?
-          services.each do | service |
-            interface = service[ :interface ]
-
-            next if @@drb_service.find(
-              interface.resource,
-              interface.version
-            )
-
-            @@drb_service.add(
-              interface.resource,
-              interface.version,
-              "http://#{ host }:#{ port }#{ service[ :path ] }"
-            )
-          end
+          @@discoverer.announce(
+            interface.resource,
+            interface.version,
+            {
+              :host => host,
+              :port => port,
+              :path => service[ :path ]
+            }
+          )
         end
       end
     end
@@ -2010,60 +1976,18 @@ module Hoodoo; module Services
     #
     # * +nil+ if the endpoint is not found.
     #
-    # * URI as a string if an endpoint is found and we are _not_ running on an
-    #   AMQP/Alchemy based architecture (see ::on_queue?).
+    # * Hoodoo::Services::Discovery::ByDRb discovery response if we are _not_
+    #   running on an AMQP/Alchemy based architecture (see ::on_queue?).
     #
     # * If an endpoint is found and we _are_ running on an AMQP/Alchemy based
-    #   architecture (see ::on_queue?), this is a Hash with keys +:queue+
-    #   (value is the AMQP queue name) and +path+ (the equivalent URI path that
-    #   would be used, were this an HTTP request).
+    #   architecture (see ::on_queue?), returns a
+    #   Hoodoo::Services::Discovery::ByConsul discovery response.
     #
     def remote_service_for( resource, version = 1 )
-
-      if self.class.on_queue?
-
-        v = "/v#{ version }/"
-
-        # Static mapping until service discovery is sorted. Yes, this Hash gets
-        # computed at run-time for every call. It's a temporary stopgap.
-        #
-        return {
-
-          'Health'      => { :queue => 'service.utility',   :path => v + 'health'       },
-          'Version'     => { :queue => 'service.utility',   :path => v + 'version'      },
-
-          'Log'         => { :queue => 'service.logging',   :path => v + 'logs'         },
-          'Errors'      => { :queue => 'service.logging',   :path => v + 'errors'       },
-          'Statistic'   => { :queue => 'service.logging',   :path => v + 'statistics'   },
-
-          'Account'     => { :queue => 'service.member',    :path => v + 'accounts'     },
-          'Member'      => { :queue => 'service.member',    :path => v + 'members'      },
-          'Membership'  => { :queue => 'service.member',    :path => v + 'memberships'  },
-          'Token'       => { :queue => 'service.member',    :path => v + 'tokens'       },
-
-          'Participant' => { :queue => 'service.programme', :path => v + 'participants' },
-          'Outlet'      => { :queue => 'service.programme', :path => v + 'outlets'      },
-          'Involvement' => { :queue => 'service.programme', :path => v + 'involvements' },
-          'Programme'   => { :queue => 'service.programme', :path => v + 'programmes'   },
-
-          'Balance'     => { :queue => 'service.financial', :path => v + 'balances'     },
-          'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
-          'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
-          'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
-          'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
-
-          'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
-
-        }[ resource.to_s ]
-
-      else
-
-        return begin
-          @@drb_service.find( resource, version )
-        rescue
-          nil
-        end
-
+      return begin
+        @@discoverer.discover( resource, version )
+      rescue
+        nil
       end
     end
 

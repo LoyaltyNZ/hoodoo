@@ -1,5 +1,5 @@
 ########################################################################
-# File::    service_registry_drb_server.rb
+# File::    drb_server.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: For local development with no wider registration service
@@ -13,6 +13,7 @@
 #           File "service_middleware.rb" must be "require"'d first.
 # ----------------------------------------------------------------------
 #           11-Nov-2014 (ADH): Split out from service_middleware.rb.
+#           02-Mar-2015 (ADH): Moved into Discovery namespace.
 ########################################################################
 
 require 'hoodoo'
@@ -20,20 +21,28 @@ require 'hoodoo'
 require 'drb/drb'
 require 'drb/acl'
 
-module Hoodoo; module Services
-  class Middleware
+module Hoodoo; module Services; module Discovery
+  class ByDRb
 
     # A registry of service endpoints, implenented as a DRB server class. An
     # internal implementation detail of Hoodoo::Services::Middleware, in most
     # respects.
     #
-    class ServiceRegistryDRbServer
+    class DRbServer
 
       # URI for DRb server used during local machine development as a registry
       # of service endpoints. Whichever service starts first runs the server
       # which others connect to if subsequently started.
       #
-      def self.uri
+      # +port+:: Optional integer port number for DRb service. If specified,
+      #          this is used; else the +HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE+
+      #          environment variable is used; else a default of 8787 is
+      #          chosen. Passing +nil+ explicitly also leads to the use of
+      #          the environment variable or default value.
+      #
+      def self.uri( port = nil )
+
+        port ||= ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] || 8787
 
         # Use IP address, rather than 'localhost' here, to ensure that "address
         # in use" errors are raised immediately if a second server startup
@@ -41,7 +50,7 @@ module Hoodoo; module Services
         #
         #   https://bugs.ruby-lang.org/issues/3052
         #
-        "druby://127.0.0.1:#{ ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] || 8787 }"
+        "druby://127.0.0.1:#{ port }"
 
       end
 
@@ -117,11 +126,11 @@ module Hoodoo; module Services
 
     # Singleton "Front object" for the DRB service used in local development.
     #
-    FRONT_OBJECT = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.new
+    FRONT_OBJECT = Hoodoo::Services::Discovery::ByDRb::DRbServer.new
 
     # Only allow connections from 127.0.0.1.
     #
     LOCAL_ACL = ACL.new( [ 'deny', 'all', 'allow', '127.0.0.1' ] )
 
   end
-end; end
+end; end; end

@@ -16,12 +16,28 @@ module Hoodoo
       public
 
         def initialize( platform_uri:,
+                        drb_port:,
                         caller_id:     nil,
                         caller_secret: nil )
 
           @platform_uri  = platform_uri
+          @drb_port      = drb_port
           @caller_id     = caller_id
           @caller_secret = caller_secret
+
+          if @platform_uri != nil
+            @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+              :base_uri => @platform_uri
+            )
+          elsif @drb_port != nil
+            @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+              :drb_port => @drb_port
+            )
+          end
+
+          if @discoverer.nil?
+            raise 'No service discovery mechanism selected. Please pass one of the "platform_uri" or "drb_port" parameters.'
+          end
         end
 
         def endpoint( resource, version )
@@ -30,6 +46,12 @@ module Hoodoo
             resource_name,
             version
           )
+
+
+
+          So Endpoint gets given a Discoverer? But how can it deal with the results?
+          It doesn't, those go to IRLocal or IRRemote
+
 
           Refactor discovery out to some kind of Discovery hierarchy?
 

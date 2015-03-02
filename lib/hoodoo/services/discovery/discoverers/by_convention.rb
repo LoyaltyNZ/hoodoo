@@ -3,24 +3,29 @@ module Hoodoo
     module Discovery
 
       begin
-        require 'active_support/infector'
+        require 'active_support/inflector'
 
+        # ...returns ForHTTP result...
+        #
         class ByConvention < Hoodoo::Services::Discovery::BaseForHTTP
-
-          public
-
-            def initialize( options = {} )
-              @base_uri = options[ :base_uri ]
-            end
 
           protected
 
+            def configure_with( options )
+              @base_uri = URI.parse( options[ :base_uri ] )
+            end
+
             def discover_remote( resource, version, options = {} )
-              @base_uri/v/foos
+              path = "/v#{ version }/#{ resource.to_s.underscore.pluralize }"
 
+              endpoint_uri      = @base_uri.dup
+              endpoint_uri.path = path
 
-
-
+              return Hoodoo::Services::Discovery::DiscoveryResultForHTTP.new(
+                resource:     resource,
+                version:      version,
+                endpoint_uri: endpoint_uri
+              )
             end
         end
 

@@ -1,11 +1,11 @@
 ########################################################################
-# File::    service_registry_drb_server_start.rb
+# File::    drb_server_start.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Run the DRB server. See service_registry_drb_server.rb.
 #           Usage:
 #
-#               bundle exec ruby service_registry_drb_server_start.rb
+#               bundle exec ruby drb_server_start.rb
 #
 #           There is usually no need to do this manually, as the
 #           middleware does it for you automatically.
@@ -16,4 +16,4 @@
 require 'hoodoo'
 
 Process.setsid()
-Hoodoo::Services::Middleware::ServiceRegistryDRbServer.start()
+Hoodoo::Services::Discovery::ByDRb::DRbServer.start()

@@ -1,6 +1,6 @@
 require 'spec_helper.rb'
 
-describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
+describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
 
   # When running tests we can't assume any particular static port is free
   # on the test machine, so we must get a port dynamically. Since it might
@@ -68,9 +68,9 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
         port = Hoodoo::Utilities.spare_port().to_s
 
         thread = Thread.new do
-          ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = port
+          ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] = port
           described_class.start()
-          ENV.delete( 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' )
+          ENV.delete( 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' )
         end
 
         client = nil
@@ -94,7 +94,7 @@ describe Hoodoo::Services::Middleware::ServiceRegistryDRbServer do
 
         # For good measure...
         #
-        ENV.delete( 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' )
+        ENV.delete( 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' )
 
       }.to_not raise_error
     end

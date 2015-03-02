@@ -91,17 +91,22 @@ RSpec.configure do | config |
 
     Hoodoo::Services::Middleware.set_log_folder( base_path )
 
-    ENV[ 'HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
+    ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
   end
 
   # Session test mode - test mode disabled explicitly for session tests.
 
   config.after( :suite ) do
-    DRb.start_service
-    drb_uri = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.uri()
-    drb_service = DRbObject.new_with_uri( drb_uri )
-    drb_service.stop()
-    DRb.stop_service
+    begin
+      DRb.start_service
+      drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri()
+      drb_service = DRbObject.new_with_uri( drb_uri )
+      drb_service.stop()
+      DRb.stop_service
+    rescue
+      # Ignore exceptions. For test subsets or depending on test order,
+      # there might not be a DRb service to shut down.
+    end
   end
 
   # Make sure DatabaseCleaner runs between each test.

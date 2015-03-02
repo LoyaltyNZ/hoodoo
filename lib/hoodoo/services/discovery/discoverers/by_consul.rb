@@ -1,23 +1,25 @@
 module Hoodoo
   module Services
     module Discovery
-      class ByAlchemy < Hoodoo::Services::Discovery::BaseForAMQP
 
-        public
-
-          def initialize( options = {} )
-
-            # TODO: Take an Alchemy endpoint or change entire class to
-            #       "ByConsul" and get data for that instead.
-
-          end
+      # ...returns ForAMQP result...
+      #
+      class ByConsul < Hoodoo::Services::Discovery::Base
 
         protected
+
+          def configure_with( options = {} )
+
+            @alchemy = options[ :alchemy ]
+
+          end
 
           def announce_remote( resource, version, options = {} )
 
             # TODO: Announce to queue discovery via Alchemy or change
             #       entire class to "ByConsul" and talk to it directly.
+            #
+            # @alchemy.<something>
 
           end
 
@@ -28,9 +30,8 @@ module Hoodoo
             #       directly.
             #
 
-            v = "/v#{ version }/"
-
-            return {
+            v    = "/v#{ version }/"
+            data = {
 
               'Health'      => { :queue => 'service.utility',   :path => v + 'health'       },
               'Version'     => { :queue => 'service.utility',   :path => v + 'version'      },
@@ -58,6 +59,17 @@ module Hoodoo
               'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
 
             }[ resource.to_s ]
+
+            if data.nil?
+              return nil
+            else
+              return Hoodoo::Services::Discovery::DescoveryResultForAMQP.new(
+                resource:        resource,
+                version:         version,
+                queue_name:      data[ :queue ],
+                equivalent_path: data[ :path  ]
+              )
+            end
 
           end
 
