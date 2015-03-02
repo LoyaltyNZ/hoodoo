@@ -21,8 +21,8 @@ end
 
 # Services
 
-require 'hoodoo/services/discovery/discovery_results/discovery_result_for_http'
-require 'hoodoo/services/discovery/discovery_results/discovery_result_for_amqp'
+require 'hoodoo/services/discovery/results/for_http'
+require 'hoodoo/services/discovery/results/for_amqp'
 
 require 'hoodoo/services/discovery/base'
 

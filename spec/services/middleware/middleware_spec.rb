@@ -361,7 +361,7 @@ describe Hoodoo::Services::Middleware do
       #
       # So, first, these are part of routine processing.
 
-      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(3).times.and_return(true)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(2).times.and_return(true)
 
       # The check for 'unless test or development' is made prior to trying to use
       # the ExceptionReporter class, so say 'no' to both then get the reporter to

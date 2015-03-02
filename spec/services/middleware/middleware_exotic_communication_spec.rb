@@ -58,7 +58,7 @@ describe Hoodoo::Services::Middleware do
     #
     it 'returns known queue endpoint locations' do
       location = @mw.send( :remote_service_for, :Version, 2 )
-      expect( location ).to be_a( Hoodoo::Services::Discovery::DiscoveryResultForAMQP )
+      expect( location ).to be_a( Hoodoo::Services::Discovery::ForAMQP )
       expect( location.queue_name ).to eq( 'service.utility' )
       expect( location.equivalent_path ).to eq( '/v2/version' )
     end
@@ -81,13 +81,20 @@ describe Hoodoo::Services::Middleware do
         Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
       end
 
+      remote = Hoodoo::Services::Discovery::ForAMQP.new(
+        resource: 'Version',
+        version: 2,
+        queue_name: 'service.utility',
+        equivalent_path: '/v2/version'
+      )
+
       expect {
         @mw.send(
           :inter_resource_remote,
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => interaction,
-            :remote             => { :queue => 'service.utility', :path => '/v2/version' },
+            :remote             => remote,
             :http_method        => 'GET'
           }
         )
@@ -138,6 +145,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 200,
           :body => '{"_data":[]}'
@@ -150,7 +164,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -165,6 +179,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 200,
           :body => '{}'
@@ -177,7 +198,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -192,6 +213,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 408,
           :body => '408 Timeout'
@@ -204,7 +232,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -223,6 +251,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 404,
           :body => '404 Not Found'
@@ -235,7 +270,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -254,6 +289,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 499,
           :body => '499 Invented'
@@ -266,7 +308,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -286,6 +328,13 @@ describe Hoodoo::Services::Middleware do
         mock_method = 'PATCH'
         mock_query  = { :search => { :foo => :bar } }
 
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 200,
           :body => 'Not JSON'
@@ -298,7 +347,7 @@ describe Hoodoo::Services::Middleware do
           {
             # Purely hypothetical; no actual call will be made
             :source_interaction => @interaction,
-            :remote             => { :queue => mock_queue, :path => mock_path },
+            :remote             => mock_remote,
             :http_method        => mock_method,
             :query_hash         => mock_query
           }
@@ -352,11 +401,17 @@ describe Hoodoo::Services::Middleware do
       )
       interaction.target_interface = OpenStruct.new
 
+      remote = Hoodoo::Services::Discovery::ForHTTP.new(
+        resource: 'Version',
+        version: 2,
+        endpoint_uri: "https://127.0.0.1:#{ @port }/v2/version"
+      )
+
       mock_result = mw.send(
         :inter_resource_remote,
         {
           :source_interaction => interaction,
-          :remote             => "https://127.0.0.1:#{ @port }/v2/version",
+          :remote             => remote,
           :http_method        => 'GET'
         }
       )

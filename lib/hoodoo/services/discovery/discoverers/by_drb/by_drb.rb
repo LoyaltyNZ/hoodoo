@@ -24,32 +24,38 @@ module Hoodoo
             port = options[ :port ]
             path = options[ :path ]
 
+            endpoint_uri_string = "http://#{ host }:#{ port }#{ path }"
+
             # Announce our local services if we managed to find the host and port,
             # but no point otherwise; the values could be anything. In a 'guard'
             # based environment, first-run determines host and port but subsequent
             # runs do not - yet it stays the same, so it works out OK there.
             #
             unless host.nil? || port.nil? || discover_remote( resource, version )
-              endpoint_uri_string = "http://#{ host }:#{ port }#{ path }"
               drb_service().add( resource, version, endpoint_uri_string )
             end
+
+            return result_for( resource, version, endpoint_uri_string, options )
           end
 
           def discover_remote( resource, version, options = {} )
             endpoint_uri_string = drb_service().find( resource, version )
+            return result_for( resource, version, endpoint_uri_string, options )
+          end
 
+        private
+
+          def result_for( resource, version, endpoint_uri_string, options )
             if endpoint_uri_string.nil?
               return nil
             else
-              return Hoodoo::Services::Discovery::DiscoveryResultForHTTP.new(
+              return Hoodoo::Services::Discovery::ForHTTP.new(
                 resource:     resource,
                 version:      version,
                 endpoint_uri: URI.parse( endpoint_uri_string )
               )
             end
           end
-
-        private
 
           def drb_service
 

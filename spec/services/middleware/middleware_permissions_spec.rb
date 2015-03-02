@@ -754,12 +754,6 @@ describe Hoodoo::Services::Middleware do
           expect( response.code ).to eq( '401' )
         end
 
-        it 'handles an exception when attempting to flush services' do
-          expect_any_instance_of( Hoodoo::Services::Discovery::ByDRb::DRbServer ).to receive( :flush ).and_raise( 'boo!' )
-          expect {
-            Hoodoo::Services::Middleware.flush_services_for_test()
-          }.to_not raise_exception
-        end
       end
     end
   end

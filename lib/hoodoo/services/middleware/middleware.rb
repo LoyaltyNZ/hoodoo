@@ -913,7 +913,7 @@ module Hoodoo; module Services
       # data in another (especially the records of which services were
       # announced by, and therefore must be local to, an instance).
 
-      if ! self.class.environment.test? && self.class.on_queue?
+      if self.class.on_queue?
 
         @discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
 
@@ -1992,7 +1992,7 @@ module Hoodoo; module Services
     #
     # * +nil+ if the endpoint is not found.
     #
-    # * One of the Hoodoo::Services::Discovery::DiscoveryResultFor... class
+    # * One of the Hoodoo::Services::Discovery::For... class
     #   family instances, depending on the discoverer in use.
     #
     def remote_service_for( resource, version = 1 )
@@ -2114,7 +2114,7 @@ module Hoodoo; module Services
 
       return add_404.call() if ( remote_info.nil? )
 
-      on_queue = remote_info.is_a?( Hoodoo::Services::Discovery::DiscoveryResultForAMQP )
+      on_queue = remote_info.is_a?( Hoodoo::Services::Discovery::ForAMQP )
 
       if on_queue
         alchemy_options = {

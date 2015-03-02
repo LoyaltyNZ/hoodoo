@@ -21,6 +21,7 @@ module Hoodoo
             #
             # @alchemy.<something>
 
+            return discover_remote( resource, version ) # TODO: Replace
           end
 
           def discover_remote( resource, version, options = {} )
@@ -63,7 +64,7 @@ module Hoodoo
             if data.nil?
               return nil
             else
-              return Hoodoo::Services::Discovery::DescoveryResultForAMQP.new(
+              return Hoodoo::Services::Discovery::ForAMQP.new(
                 resource:        resource,
                 version:         version,
                 queue_name:      data[ :queue ],

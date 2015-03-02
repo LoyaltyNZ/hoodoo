@@ -1,7 +1,7 @@
 module Hoodoo
   module Services
     module Discovery
-      class DiscoveryResultForAMQP
+      class ForAMQP
 
         attr_accessor :resource
         attr_accessor :version

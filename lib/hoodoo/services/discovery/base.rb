@@ -18,21 +18,20 @@ module Hoodoo
           # which the resource endpoint is remote rather than local.
           #
           def announce( resource, version = 1, options = {} )
-            @known_local_resources[ key_for( resource, version ) ] = options
-            announce_remote( resource, version, options )
+            result = announce_remote( resource, version, options )
+            @known_local_resources[ key_for( resource, version ) ] = result
           end
 
-          # return :local  => <whatever options were in #announce>
-          #     or :remote => <something else defined by subclass you're calling>
-          #
           def discover( resource, version = 1, options = {} )
-            local_key = key_for( resource, version )
-
-            if ( @known_local_resources.has_key?( local_key ) )
-              return { :local => @known_local_resources[ local_key ] }
+            if ( is_local?( resource, version ) )
+              return @known_local_resources[ key_for( resource, version ) ]
             else
               return discover_remote( resource, version, options )
             end
+          end
+
+          def is_local?( resource, version = 1 )
+            return @known_local_resources.has_key?( key_for( resource, version ) )
           end
 
         protected

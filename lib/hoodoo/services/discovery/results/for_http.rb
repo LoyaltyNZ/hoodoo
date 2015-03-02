@@ -1,7 +1,7 @@
 module Hoodoo
   module Services
     module Discovery
-      class DiscoveryResultForHTTP
+      class ForHTTP
 
         attr_accessor :resource
         attr_accessor :version

@@ -15,18 +15,23 @@ module Hoodoo
               @base_uri = URI.parse( options[ :base_uri ] )
             end
 
+            def announce_remote( resource, version, options )
+              return discover_remote( resource, version )
+            end
+
             def discover_remote( resource, version, options = {} )
               path = "/v#{ version }/#{ resource.to_s.underscore.pluralize }"
 
               endpoint_uri      = @base_uri.dup
               endpoint_uri.path = path
 
-              return Hoodoo::Services::Discovery::DiscoveryResultForHTTP.new(
+              return Hoodoo::Services::Discovery::ForHTTP.new(
                 resource:     resource,
                 version:      version,
                 endpoint_uri: endpoint_uri
               )
             end
+
         end
 
       rescue LoadError
