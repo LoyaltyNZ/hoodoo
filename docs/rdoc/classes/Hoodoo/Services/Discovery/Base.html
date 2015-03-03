@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::Base</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Discovery::Base 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/base_rb.html">lib/hoodoo/services/discovery/base.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p><a href="Base.html">Base</a> class for discovery code.</p>
+
+<p>Implementations of service announcement and discovery code should subclass
+from this, then optionally implement <a
+href="Base.html#method-i-configure_with">configure_with</a> and (almost
+certainly, but still optionally) <a
+href="Base.html#method-i-announce_remote">announce_remote</a>, and always
+implement <a href="Base.html#method-i-discover_remote">discover_remote</a>.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-announce">announce</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-announce_remote">announce_remote</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-configure_with">configure_with</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-discover">discover</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-discover_remote">discover_remote</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>I</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-is_local-3F">is_local?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create a new instance.</p>
+<dl class="rdoc-list note-list"><dt>options
+<dd>
+<p>Passed to the subclass in use via ::configure_with. Subclasses define their
+options. Only instantiate such subclasses, not this &#39;Base&#39; class;
+see the subclass documentation for option details.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-ivar">@known_local_resources</span> = {}
+  <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-announce">
+            
+              <b>announce</b>( resource, version = 1, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-announce" name="method-i-announce" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Indicate that a resource is available locally and broacast its location to
+whatever discovery service a subclass supports via ::announce_remote.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a Symbol or String (e.g. “Account”).</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer; optional; default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Defined by whatever subclass is in use. See that subclass&#39;s
+documentation for details.</p>
+</dd></dl>
+
+<p>Returns the result of calling <a
+href="Base.html#method-i-announce_remote">announce_remote</a> (in the
+subclass in use) with the same parameters.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-announce_source')" id="l_method-i-announce_source">show</a>
+                
+              </p>
+              <div id="method-i-announce_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">result</span>   = <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+
+  <span class="ruby-ivar">@known_local_resources</span>[ <span class="ruby-identifier">key_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) ] = <span class="ruby-identifier">result</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-discover">
+            
+              <b>discover</b>( resource, version = 1, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-discover" name="method-i-discover" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Find a resource endpoint. This may be recorded locally or via whatever
+remote discovery mechanism a subclass implements.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as symbol or string (e.g. “Account”).</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer; optional; default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Defined by whatever subclass is in use. See that subclass&#39;s
+documentation for details.</p>
+</dd></dl>
+
+<p>Returns the result of calling <a
+href="Base.html#method-i-discover_remote">discover_remote</a> (in the
+subclass in use) with the same parameters.</p>
+
+<p>Use <a href="Base.html#method-i-is_local-3F">is_local?</a> if you need to
+know that an endpoint was announced through this same instance (“locally”).</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-discover_source')" id="l_method-i-discover_source">show</a>
+                
+              </p>
+              <div id="method-i-discover_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 79</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">is_local?</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) )
+    <span class="ruby-keyword">return</span> <span class="ruby-ivar">@known_local_resources</span>[ <span class="ruby-identifier">key_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) ]
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-is_local-3F">
+            
+              <b>is_local?</b>( resource, version = 1 )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-is_local-3F" name="method-i-is_local-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Was a resource announced in this instance (“locally”)? Returns
+<code>true</code> if so, else <code>false</code>.</p>
+<dl class="rdoc-list note-list"><dt>resource
+<dd>
+<p>Resource name as symbol or string (e.g. “Account”).</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer; optional; default is 1.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-is_local-3F_source')" id="l_method-i-is_local-3F_source">show</a>
+                
+              </p>
+              <div id="method-i-is_local-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 98</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">is_local?</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+  <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@known_local_resources</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+              
+      <div class="sectiontitle">Instance Protected methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-announce_remote">
+            
+              <b>announce_remote</b>( resource, version, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Announce a resource endpoint. Subclasses optionally implement this method
+to broadcast information to other instances of the same subclass by some
+subclass-implemented mechanism.</p>
+
+<p><a href="../Discovery.html">Discovery</a> instance users do not call this
+method directly. Call <a href="Base.html#method-i-announce">announce</a>
+instead.</p>
+
+<p>Subclasses must return a <a
+href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a> or <a
+href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a> instance in
+response to this call, giving the HTTP details required to contact the
+endpoint, or AMQP (on-queue) details required to contact the endpoint,
+respectively.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a String.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>See subclass documentation for option details.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
+                
+              </p>
+              <div id="method-i-announce_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 135</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-comment"># Implementation is optional and up to subclasses to do.</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-configure_with">
+            
+              <b>configure_with</b>( options )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Configure a new instance. Subclasses optionally implement this method to
+store configuration information relevant to that subclass. Subclasses must
+document their options.</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>See subclass documentation for option details.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
+                
+              </p>
+              <div id="method-i-configure_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 113</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-comment"># Implementation is optional and up to subclasses to do.</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-discover_remote">
+            
+              <b>discover_remote</b>( resource, version, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/Base.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Discover the location of a resource endpoint. Subclasses <em>must</em>
+implement this method to retrieve information about the location of
+resource endpoints by some subclass-implemented mechanism.</p>
+
+<p><a href="../Discovery.html">Discovery</a> instance users do not call this
+method directly. Call <a href="Base.html#method-i-discover">discover</a>
+instead.</p>
+
+<p>Subclasses must return either <code>nil</code> if the endpoint is not
+found, or a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
+or <a href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a> instance
+giving the HTTP details required to contact the endpoint, or AMQP
+(on-queue) details required to contact the endpoint, respectively.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a String.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>See subclass documentation for option details.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
+                
+              </p>
+              <div id="method-i-discover_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/base.rb, line 157</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource &#39;#{ resource }&#39; / version &#39;#{ version }&#39;&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

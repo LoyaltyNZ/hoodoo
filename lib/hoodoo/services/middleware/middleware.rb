@@ -20,6 +20,7 @@ require 'drb/drb'
 
 require 'hoodoo/services/services/permissions'
 require 'hoodoo/services/services/session'
+require 'hoodoo/discovery'
 
 module Hoodoo; module Services
 
@@ -312,16 +313,17 @@ module Hoodoo; module Services
     end
 
     # For test purposes, dump the internal service records and flush the DRb
-    # service. if it is running (exceptions are ignored). Existing middleware
+    # service, if it is running. Existing middleware
     # instances will be invalidated. New instances must be created to re-scan
     # their services internally and (where required) inform the DRb process
     # of the endpoints.
     #
     def self.flush_services_for_test
       @@services = []
-      begin
-        @@drb_service.flush()
-      rescue
+
+      ObjectSpace.each_object( self ) do | middleware_instance |
+        discoverer = middleware_instance.instance_variable_get( '@discoverer' )
+        discoverer.flush_services_for_test() if discoverer.respond_to?( :flush_services_for_test )
       end
     end
 
@@ -406,6 +408,7 @@ module Hoodoo; module Services
       begin
 
         enable_alchemy_logging_from( env )
+
         interaction = Hoodoo::Services::Middleware::Interaction.new( env, self )
         debug_log( interaction )
 
@@ -881,6 +884,8 @@ module Hoodoo; module Services
     # Announce the presence of the service endpoints to known interested
     # parties.
     #
+    # ONLY CALL AS PART OF INSTANCE CREATION (from #initialize).
+    #
     # +services+:: Array of Hashes describing service information.
     #
     # Hash keys/values are as follows:
@@ -895,11 +900,27 @@ module Hoodoo; module Services
     #
     def announce_presence_of( services )
 
-      if ! self.class.environment.test? && self.class.on_queue?
+      # Note the RARE LEGITIMATE USE of an instance variable here. It will
+      # be shared across potentially many threads with the same instance
+      # driven through Rack. Presence announcements to the Discoverer are
+      # made only upon object initialisation and remain valid (and
+      # unchanged) for its lifetime.
+      #
+      # A class variable is wrong, as entirely new instances of the service
+      # middleware might be stood up in one process and could potentially
+      # be handling different services. This is typically only the case for
+      # running tests, but *might* happen elsewhere too. In any event, we
+      # don't want announcements in one instance to pollute the discovery
+      # data in another (especially the records of which services were
+      # announced by, and therefore must be local to, an instance).
 
-        # Queue-based announcement goes here
+      if self.class.on_queue?
+
+        @discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
 
       else
+
+        @discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
 
         # Rack provides no formal way to find out our host or port before a
         # request arrives, because in part it might change due to clustering.
@@ -932,59 +953,20 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Now attempt to contact the DRb server daemon. If it can't be
-        # contacted, try to start it first, then connect.
+        # Announce the resource endpoints.
 
-        drb_uri = Hoodoo::Services::Middleware::ServiceRegistryDRbServer.uri()
-        DRb.start_service
+        services.each do | service |
+          interface = service[ :interface ]
 
-        begin
-          @@drb_service = DRbObject.new_with_uri( drb_uri )
-          @@drb_service.ping()
-
-        rescue DRb::DRbConnError
-          script_path = File.join( File.dirname( __FILE__ ), 'service_registry_drb_server_start.rb' )
-          Process.detach( spawn( "bundle exec ruby '#{ script_path }'" ) )
-
-          begin
-            Timeout::timeout( 5 ) do
-              loop do
-                begin
-                  @@drb_service = DRbObject.new_with_uri( drb_uri )
-                  @@drb_service.ping()
-                  break
-                rescue DRb::DRbConnError
-                  sleep 0.1
-                end
-              end
-            end
-
-          rescue Timeout::Error
-            raise "Middleware timed out while waiting for DRb service registry to start"
-
-          end
-        end
-
-        # Announce our local services if we managed to find the host and port,
-        # but no point otherwise; the values could be anything. In a 'guard'
-        # based envrionment, first-run determines host and port but subsequent
-        # runs do not - yet it stays the same, so it works out OK there.
-        #
-        unless host.nil? || port.nil?
-          services.each do | service |
-            interface = service[ :interface ]
-
-            next if @@drb_service.find(
-              interface.resource,
-              interface.version
-            )
-
-            @@drb_service.add(
-              interface.resource,
-              interface.version,
-              "http://#{ host }:#{ port }#{ service[ :path ] }"
-            )
-          end
+          @discoverer.announce(
+            interface.resource,
+            interface.version,
+            {
+              :host => host,
+              :port => port,
+              :path => service[ :path ]
+            }
+          )
         end
       end
     end
@@ -2011,61 +1993,14 @@ module Hoodoo; module Services
     #
     # * +nil+ if the endpoint is not found.
     #
-    # * URI as a string if an endpoint is found and we are _not_ running on an
-    #   AMQP/Alchemy based architecture (see ::on_queue?).
-    #
-    # * If an endpoint is found and we _are_ running on an AMQP/Alchemy based
-    #   architecture (see ::on_queue?), this is a Hash with keys +:queue+
-    #   (value is the AMQP queue name) and +path+ (the equivalent URI path that
-    #   would be used, were this an HTTP request).
+    # * One of the Hoodoo::Services::Discovery::For... class
+    #   family instances, depending on the discoverer in use.
     #
     def remote_service_for( resource, version = 1 )
-
-      if self.class.on_queue?
-
-        v = "/v#{ version }/"
-
-        # Static mapping until service discovery is sorted. Yes, this Hash gets
-        # computed at run-time for every call. It's a temporary stopgap.
-        #
-        return {
-
-          'Health'      => { :queue => 'service.utility',   :path => v + 'health'       },
-          'Version'     => { :queue => 'service.utility',   :path => v + 'version'      },
-
-          'Log'         => { :queue => 'service.logging',   :path => v + 'logs'         },
-          'Errors'      => { :queue => 'service.logging',   :path => v + 'errors'       },
-          'Statistic'   => { :queue => 'service.logging',   :path => v + 'statistics'   },
-
-          'Account'     => { :queue => 'service.member',    :path => v + 'accounts'     },
-          'Member'      => { :queue => 'service.member',    :path => v + 'members'      },
-          'Membership'  => { :queue => 'service.member',    :path => v + 'memberships'  },
-          'Token'       => { :queue => 'service.member',    :path => v + 'tokens'       },
-
-          'Participant' => { :queue => 'service.programme', :path => v + 'participants' },
-          'Outlet'      => { :queue => 'service.programme', :path => v + 'outlets'      },
-          'Involvement' => { :queue => 'service.programme', :path => v + 'involvements' },
-          'Programme'   => { :queue => 'service.programme', :path => v + 'programmes'   },
-
-          'Balance'     => { :queue => 'service.financial', :path => v + 'balances'     },
-          'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
-          'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
-          'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
-          'Calculator'  => { :queue => 'service.financial', :path => v + 'calculators'   },
-          'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
-
-          'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
-
-        }[ resource.to_s ]
-
-      else
-
-        return begin
-          @@drb_service.find( resource, version )
-        rescue
-          nil
-        end
-
+      return begin
+        @discoverer.discover( resource, version )
+      rescue => e
+        nil
       end
     end
 
@@ -2165,8 +2100,6 @@ module Hoodoo; module Services
       body_hash          = options[ :body_hash          ]
       query_hash         = options[ :query_hash         ]
 
-      on_queue = self.class.on_queue?
-
       # Add a 404 error to the response (via a Proc for internal reuse).
 
       add_404 = Proc.new {
@@ -2180,20 +2113,21 @@ module Hoodoo; module Services
 
       # No endpoint found? Yikes!
 
-      if ( remote_info.nil? )
-        return add_404.call()
+      return add_404.call() if ( remote_info.nil? )
 
-      elsif on_queue
+      on_queue = remote_info.is_a?( Hoodoo::Services::Discovery::ForAMQP )
+
+      if on_queue
         alchemy_options = {
           :host => source_interaction.rack_request.host,
           :port => source_interaction.rack_request.port
         }
 
-        request_path = remote_info[ :path ].dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        request_path = remote_info.equivalent_path.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
         request_path << "/#{ URI::escape( ident ) }" unless ident.nil?
 
       else
-        remote_uri  = remote_info.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
+        remote_uri  = remote_info.endpoint_uri.to_s
         remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
       end
 
@@ -2262,7 +2196,7 @@ module Hoodoo; module Services
         alchemy_options[ :session_id ] = session.session_id unless session.nil?
 
         response = @@alchemy.http_request(
-          remote_info[ :queue ],
+          remote_info.queue_name,
           http_method,
           request_path,
           alchemy_options

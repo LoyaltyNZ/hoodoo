@@ -3,15 +3,15 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Hoodoo::Services::Middleware::ServiceRegistryDRbServer</title>
+    <title>Hoodoo::Services::Discovery::ByDRb::DRbServer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
-<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 
@@ -20,7 +20,7 @@
         
         <h1>
             <span class="type">Class</span> 
-            Hoodoo::Services::Middleware::ServiceRegistryDRbServer 
+            Hoodoo::Services::Discovery::ByDRb::DRbServer 
             
                 <span class="parent">&lt; 
                     
@@ -31,7 +31,7 @@
         </h1>
         <ul class="files">
             
-            <li><a href="../../../../files/lib/hoodoo/services/middleware/service_registry_drb_server_rb.html">lib/hoodoo/services/middleware/service_registry_drb_server.rb</a></li>
+            <li><a href="../../../../../files/lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_rb.html">lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb</a></li>
             
         </ul>
     </div>
@@ -42,7 +42,7 @@
       
 <p>A registry of service endpoints, implenented as a DRB server class. An
 internal implementation detail of <a
-href="../Middleware.html">Hoodoo::Services::Middleware</a>, in most
+href="../../Middleware.html">Hoodoo::Services::Middleware</a>, in most
 respects.</p>
 
     </div>
@@ -174,7 +174,7 @@ respects.</p>
             
               <b>new</b>()
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
           
           
@@ -197,7 +197,7 @@ respects.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 64</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -209,9 +209,9 @@ respects.</p>
         <div class="method">
           <div class="title method-title" id="method-c-start">
             
-              <b>start</b>()
+              <b>start</b>( port = nil )
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-c-start" name="method-c-start" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-c-start" name="method-c-start" class="permalink">Link</a>
           </div>
           
           
@@ -219,6 +219,10 @@ respects.</p>
               <p>Start the DRb server. Does not return (joins the DRb thread). If the server
 is already running, expect an “address in use” connection exception from
 DRb.</p>
+<dl class="rdoc-list note-list"><dt><code>port</code>
+<dd>
+<p>Passed to <a href="DRbServer.html#method-c-uri">::uri</a> method.</p>
+</dd></dl>
             </div>
           
           
@@ -236,9 +240,9 @@ DRb.</p>
                 
               </p>
               <div id="method-c-start_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 52</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">start</span>
-  <span class="ruby-identifier">drb_uri</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri</span>()
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">start</span>( <span class="ruby-identifier">port</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">drb_uri</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri</span>( <span class="ruby-identifier">port</span> )
 
   <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">start_service</span>( <span class="ruby-identifier">drb_uri</span>,
                      <span class="ruby-constant">FRONT_OBJECT</span>,
@@ -254,9 +258,9 @@ DRb.</p>
         <div class="method">
           <div class="title method-title" id="method-c-uri">
             
-              <b>uri</b>()
+              <b>uri</b>( port = nil )
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-c-uri" name="method-c-uri" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-c-uri" name="method-c-uri" class="permalink">Link</a>
           </div>
           
           
@@ -264,6 +268,14 @@ DRb.</p>
               <p>URI for DRb server used during local machine development as a registry of
 service endpoints. Whichever service starts first runs the server which
 others connect to if subsequently started.</p>
+<dl class="rdoc-list note-list"><dt><code>port</code>
+<dd>
+<p>Optional integer port number for DRb service. If specified, this is used;
+else the <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> environment
+variable is used; else a default of 8787 is chosen. Passing
+<code>nil</code> explicitly also leads to the use of the environment
+variable or default value.</p>
+</dd></dl>
             </div>
           
           
@@ -281,8 +293,10 @@ others connect to if subsequently started.</p>
                 
               </p>
               <div id="method-c-uri_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">uri</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">uri</span>( <span class="ruby-identifier">port</span> = <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-identifier">port</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">8787</span>
 
   <span class="ruby-comment"># Use IP address, rather than &#39;localhost&#39; here, to ensure that &quot;address</span>
   <span class="ruby-comment"># in use&quot; errors are raised immediately if a second server startup</span>
@@ -290,7 +304,7 @@ others connect to if subsequently started.</p>
   <span class="ruby-comment">#</span>
   <span class="ruby-comment">#   https://bugs.ruby-lang.org/issues/3052</span>
   <span class="ruby-comment">#</span>
-  <span class="ruby-node">&quot;druby://127.0.0.1:#{ ENV[ &#39;HOODOO_MIDDLEWARE_DRB_PORT_OVERRIDE&#39; ] || 8787 }&quot;</span>
+  <span class="ruby-node">&quot;druby://127.0.0.1:#{ port }&quot;</span>
 
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -305,7 +319,7 @@ others connect to if subsequently started.</p>
             
               <b>add</b>( resource, version, uri )
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-add" name="method-i-add" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-i-add" name="method-i-add" class="permalink">Link</a>
           </div>
           
           
@@ -342,7 +356,7 @@ as a String.</p>
                 
               </p>
               <div id="method-i-add_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 83</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
 <span class="ruby-keyword">end</span></pre>
@@ -356,7 +370,7 @@ as a String.</p>
             
               <b>find</b>( resource, version )
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-find" name="method-i-find" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-i-find" name="method-i-find" class="permalink">Link</a>
           </div>
           
           
@@ -387,7 +401,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
                 
               </p>
               <div id="method-i-find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 93</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -401,7 +415,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
             
               <b>flush</b>()
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-flush" name="method-i-flush" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-i-flush" name="method-i-flush" class="permalink">Link</a>
           </div>
           
           
@@ -425,7 +439,7 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-flush_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 100</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 111</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">flush</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -439,7 +453,7 @@ usually for test purposes only.</p>
             
               <b>ping</b>()
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-ping" name="method-i-ping" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-i-ping" name="method-i-ping" class="permalink">Link</a>
           </div>
           
           
@@ -462,7 +476,7 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-ping_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 70</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 81</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">ping</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -476,7 +490,7 @@ usually for test purposes only.</p>
             
               <b>stop</b>()
             
-            <a href="../../../../classes/Hoodoo/Services/Middleware/ServiceRegistryDRbServer.html#method-i-stop" name="method-i-stop" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Services/Discovery/ByDRb/DRbServer.html#method-i-stop" name="method-i-stop" class="permalink">Link</a>
           </div>
           
           
@@ -499,7 +513,7 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-stop_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/service_registry_drb_server.rb, line 106</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stop</span>
   <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">thread</span>.<span class="ruby-identifier">exit</span>
 <span class="ruby-keyword">end</span></pre>

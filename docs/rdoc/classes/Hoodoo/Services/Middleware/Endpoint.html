@@ -310,18 +310,19 @@ request (i.e. JSON, as a Hash).</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">owning_interaction</span>, <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
 
-  <span class="ruby-ivar">@owning_interaction</span>   = <span class="ruby-identifier">owning_interaction</span>
-  <span class="ruby-ivar">@owning_middleware</span>    = <span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
+  <span class="ruby-ivar">@owning_interaction</span> = <span class="ruby-identifier">owning_interaction</span>
+  <span class="ruby-ivar">@owning_middleware</span>  = <span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
 
-  <span class="ruby-ivar">@resource</span>      = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
-  <span class="ruby-ivar">@version</span>       = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-ivar">@resource</span>           = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-ivar">@version</span>            = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
-  <span class="ruby-ivar">@local_service</span> = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
-  <span class="ruby-ivar">@remote_info</span>   = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@local_service</span>      = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">local_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
+  <span class="ruby-ivar">@remote_info</span>        = <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">remote_service_for</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span> )
 
-  <span class="ruby-comment"># ...noting that @remote_info may now contain either a URI for local</span>
-  <span class="ruby-comment"># development / real HTTP environments, or a Hash with &quot;:queue&quot; and</span>
-  <span class="ruby-comment"># &quot;:path&quot; values - see the middleware&#39;s #remote_service_for.</span>
+  <span class="ruby-comment"># ...noting that @remote_info contains an instance of one of the</span>
+  <span class="ruby-comment"># Hoodoo::Services::Discovery::For... class family.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># See Hoodoo::Services::Middleware#remote_service_for for more.</span>
 
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -375,7 +376,7 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 191</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 192</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
@@ -439,7 +440,7 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 249</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
@@ -545,7 +546,7 @@ found.</p>
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 136</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
@@ -608,7 +609,7 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 163</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
@@ -675,7 +676,7 @@ on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 220</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/endpoint.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@owning_middleware</span>.<span class="ruby-identifier">inter_resource</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@owning_interaction</span>,
