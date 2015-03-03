@@ -2051,7 +2051,7 @@ module Hoodoo; module Services
           'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
           'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
           'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
-          'Calculator'  => { :queue => 'service.financial', :path => v + 'calculator'   },
+          'Calculator'  => { :queue => 'service.financial', :path => v + 'calculators'   },
           'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
 
           'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
