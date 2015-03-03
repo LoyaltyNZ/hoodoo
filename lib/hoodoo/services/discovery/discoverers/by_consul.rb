@@ -43,7 +43,7 @@ module Hoodoo
           # Discover the location of an instance using Consul.
           #
           # TODO: This currently doesn't use Consul at all! It has a
-          #       hard-coded mapping.
+          # hard-coded mapping.
           #
           # Returns a Hoodoo::Services::Discovery::ForAMQP instance if
           # the endpoint is found, else +nil+.

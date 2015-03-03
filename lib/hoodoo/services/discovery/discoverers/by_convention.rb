@@ -63,11 +63,11 @@ module Hoodoo
             # underscore and pluralize the resource name with ActiveSupport
             # to produce a path. For example:
             #
-            #   Version 3 of resource Member results in:
-            #   /v3/members
+            # * Version 3 of resource Member results in
+            #   <tt>/v3/members</tt>
             #
-            #   Version 2 of resource FarmAnimal results in:
-            #   /v2/farm_animals
+            # * Version 2 of resource FarmAnimal results in
+            #   <tt>/v2/farm_animals</tt>
             #
             # Returns a Hoodoo::Services::Discovery::ForHTTP instance.
             #

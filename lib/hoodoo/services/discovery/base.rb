@@ -15,8 +15,8 @@ module Hoodoo
       #
       # Implementations of service announcement and discovery code should
       # subclass from this, then optionally implement
-      # ::configure_with and ::announce_remote, and always implement
-      # ::discover_remote.
+      # #configure_with and (almost certainly, but still optionally)
+      # #announce_remote, and always implement #discover_remote.
       #
       class Base
 
