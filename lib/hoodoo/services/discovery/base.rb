@@ -6,9 +6,7 @@ module Hoodoo
         public
 
           def initialize( options = {} )
-            @configuration_options = options
             @known_local_resources = {}
-
             configure_with( options )
           end
 
@@ -18,11 +16,18 @@ module Hoodoo
           # which the resource endpoint is remote rather than local.
           #
           def announce( resource, version = 1, options = {} )
-            result = announce_remote( resource, version, options )
+            resource = resource.to_s
+            version  = version.to_i
+            result   = announce_remote( resource, version, options )
+
             @known_local_resources[ key_for( resource, version ) ] = result
+            return result
           end
 
           def discover( resource, version = 1, options = {} )
+            resource = resource.to_s
+            version  = version.to_i
+
             if ( is_local?( resource, version ) )
               return @known_local_resources[ key_for( resource, version ) ]
             else
@@ -31,6 +36,9 @@ module Hoodoo
           end
 
           def is_local?( resource, version = 1 )
+            resource = resource.to_s
+            version  = version.to_i
+
             return @known_local_resources.has_key?( key_for( resource, version ) )
           end
 
@@ -42,6 +50,7 @@ module Hoodoo
 
           def announce_remote( resource, version, options = {} )
             # Implementation is optional and up to subclasses to do.
+            true
           end
 
           def discover_remote( resource, version, options = {} )

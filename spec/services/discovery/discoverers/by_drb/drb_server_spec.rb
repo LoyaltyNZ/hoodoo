@@ -89,12 +89,50 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
             end
           end
         rescue Timeout::Error
-          raise "Timed out while waiting for DRb service registry to start"
+          raise "Timed out while waiting for DRb service to communicate"
         end
 
         # For good measure...
         #
         ENV.delete( 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' )
+
+      }.to_not raise_error
+    end
+
+    # This also tests in passing specifying a port number right through
+    # the discoverer to the CLI script that starts a DRb server up.
+    #
+    # If you get timeouts from the test, it's likely that the port number
+    # hasn't reached the server startup script and the server has come up
+    # on a different port.
+    #
+    it 'runs in a thread via a discoverer, can be pinged and shuts down' do
+      expect {
+        port = Hoodoo::Utilities.spare_port().to_s
+
+        thread = Thread.new do
+          discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
+          discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
+        end
+
+        client = nil
+
+        begin
+          Timeout::timeout( 5 ) do
+            loop do
+              begin
+                client = DRbObject.new_with_uri( described_class.uri( port ) )
+                client.ping()
+                client.stop()
+                break
+              rescue DRb::DRbConnError
+                sleep 0.1
+              end
+            end
+          end
+        rescue Timeout::Error
+          raise "Timed out while waiting for DRb service to communicate"
+        end
 
       }.to_not raise_error
     end

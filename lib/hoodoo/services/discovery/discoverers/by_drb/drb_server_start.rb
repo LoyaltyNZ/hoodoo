@@ -13,7 +13,25 @@
 #           23-Dec-2014 (ADH): Created.
 ########################################################################
 
+require 'ostruct'
+require 'optparse'
+
 require 'hoodoo'
 
+options = OpenStruct.new
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: drb_server_start.rb [options]'
+
+  opts.on( '-p', '--port PORT', 'Listening port' ) do | val |
+    options.port = val || ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] || 8787
+  end
+
+  opts.on( '-h', '--help', 'Prints this help' ) do
+    puts opts
+    exit
+  end
+end.parse!
+
 Process.setsid()
-Hoodoo::Services::Discovery::ByDRb::DRbServer.start()
+Hoodoo::Services::Discovery::ByDRb::DRbServer.start( options.port )

@@ -404,7 +404,7 @@ describe Hoodoo::Services::Middleware do
       remote = Hoodoo::Services::Discovery::ForHTTP.new(
         resource: 'Version',
         version: 2,
-        endpoint_uri: "https://127.0.0.1:#{ @port }/v2/version"
+        endpoint_uri: URI.parse( "https://127.0.0.1:#{ @port }/v2/version" )
       )
 
       mock_result = mw.send(

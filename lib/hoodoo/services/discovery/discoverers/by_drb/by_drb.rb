@@ -14,7 +14,7 @@ module Hoodoo
 
         protected
 
-          def configure( options )
+          def configure_with( options )
             @drb_port = options[ :drb_port ]
           end
 
@@ -71,7 +71,10 @@ module Hoodoo
 
             rescue DRb::DRbConnError
               script_path = File.join( File.dirname( __FILE__ ), 'drb_server_start.rb' )
-              Process.detach( spawn( "bundle exec ruby '#{ script_path }'" ) )
+              command     = "bundle exec ruby '#{ script_path }'"
+              command    << " --port #{ @drb_port }" unless @drb_port.nil? || @drb_port.empty?
+
+              Process.detach( spawn( command ) )
 
               begin
                 Timeout::timeout( 5 ) do
@@ -87,7 +90,7 @@ module Hoodoo
                 end
 
               rescue Timeout::Error
-                raise "Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start"
+                raise 'Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start'
 
               end
             end

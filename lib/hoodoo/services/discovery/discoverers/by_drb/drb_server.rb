@@ -58,8 +58,10 @@ module Hoodoo; module Services; module Discovery
       # server is already running, expect an "address in use" connection
       # exception from DRb.
       #
-      def self.start
-        drb_uri = self.uri()
+      # +port+:: Passed to ::uri method.
+      #
+      def self.start( port = nil )
+        drb_uri = self.uri( port )
 
         DRb.start_service( drb_uri,
                            FRONT_OBJECT,
