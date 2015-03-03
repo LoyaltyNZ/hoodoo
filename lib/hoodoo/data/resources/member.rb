@@ -14,10 +14,8 @@ module Hoodoo
       # Documented Platform API Resource 'Member'.
       #
       class Member < Hoodoo::Presenters::Base
-
         schema do
         end
-
       end
     end
   end
