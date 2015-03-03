@@ -20,7 +20,7 @@ require 'hoodoo'
 
 options = OpenStruct.new
 
-OptionParser.new do |opts|
+OptionParser.new do | opts |
   opts.banner = 'Usage: drb_server_start.rb [options]'
 
   opts.on( '-p', '--port PORT', 'Listening port' ) do | val |

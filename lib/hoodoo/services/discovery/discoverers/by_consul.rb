@@ -1,19 +1,35 @@
+########################################################################
+# File::    by_consul.rb
+# (C)::     Loyalty New Zealand 2015
+#
+# Purpose:: Discover resource endpoint locations via a registry held in
+#           Consul. For AMQP-based endpoints.
+# ----------------------------------------------------------------------
+#           03-Mar-2015 (ADH): Created.
+########################################################################
+
 module Hoodoo
   module Services
     module Discovery
 
-      # ...returns ForAMQP result...
+      # Discover resource endpoint locations via a registry held in
+      # Consul. For AMQP-based endpoints.
       #
       class ByConsul < Hoodoo::Services::Discovery::Base
 
         protected
 
-          def configure_with( options = {} )
-
-            @alchemy = options[ :alchemy ]
-
-          end
-
+          # Announce the location of an instance to Consul.
+          #
+          # TODO: This is currently a no-op that runs through and
+          # returns the result of #discover_remote.
+          #
+          # Call via Hoodoo::Services::Discovery::Base#announce.
+          #
+          # +resource+:: Passed to #discover_remote.
+          # +version+::  Passed to #discover_remote.
+          # +options+::  Ignored. TODO: Queue name, equivalent path.
+          #
           def announce_remote( resource, version, options = {} )
 
             # TODO: Announce to queue discovery via Alchemy or change
@@ -24,6 +40,20 @@ module Hoodoo
             return discover_remote( resource, version ) # TODO: Replace
           end
 
+          # Discover the location of an instance using Consul.
+          #
+          # TODO: This currently doesn't use Consul at all! It has a
+          #       hard-coded mapping.
+          #
+          # Returns a Hoodoo::Services::Discovery::ForAMQP instance if
+          # the endpoint is found, else +nil+.
+          #
+          # Call via Hoodoo::Services::Discovery::Base#announce.
+          #
+          # +resource+:: Passed to #discover_remote.
+          # +version+::  Passed to #discover_remote.
+          # +options+::  Ignored.
+          #
           def discover_remote( resource, version, options = {} )
 
             # TODO: Replace with queue discovery over Alchemy endpoint
@@ -51,13 +81,18 @@ module Hoodoo
               'Involvement' => { :queue => 'service.programme', :path => v + 'involvements' },
               'Programme'   => { :queue => 'service.programme', :path => v + 'programmes'   },
 
+              'Product'     => { :queue => 'service.product',   :path => v + 'products'     },
+
               'Balance'     => { :queue => 'service.financial', :path => v + 'balances'     },
               'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
               'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
               'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
+              'Calculator'  => { :queue => 'service.financial', :path => v + 'calculators'  },
               'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
 
+              'Estimation'  => { :queue => 'service.purchase',  :path => v + 'estimations'  },
               'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
+              'Refund'      => { :queue => 'service.purchase',  :path => v + 'refunds'      },
 
             }[ resource.to_s ]
 

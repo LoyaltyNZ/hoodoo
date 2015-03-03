@@ -28,8 +28,6 @@ describe Hoodoo::Services::Discovery::Base do
 
   context 'when subclassed' do
     class RSpecTestDiscoverer < described_class
-      def configure_with( options )
-      end
       def announce_remote( resource, version, options )
         'announce'
       end
