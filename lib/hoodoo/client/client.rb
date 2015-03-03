@@ -30,7 +30,7 @@ module Hoodoo
               :base_uri => @platform_uri
             )
           elsif @drb_port != nil
-            @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+            @discoverer = Hoodoo::Services::Discovery::ByDRb.new(
               :drb_port => @drb_port
             )
           end
@@ -46,27 +46,6 @@ module Hoodoo
             resource_name,
             version
           )
-
-
-
-          So Endpoint gets given a Discoverer? But how can it deal with the results?
-          It doesn't, those go to IRLocal or IRRemote
-
-
-          Refactor discovery out to some kind of Discovery hierarchy?
-
-          So you ask for endpoint talk to it get 404
-          Discovery via:
-          Preconfigured URL (that's what this code would use)
-          DRb (Middleware would use it, after checking local)
-          Queue (Middleware would use it, after checking local)
-          Something else
-          Middleware ought to have defaults but allow external discovery specification
-          '
-
-
-
-
         end
 
       private
