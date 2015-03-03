@@ -57,10 +57,6 @@
             
             <li><a href="../../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
             
-            <li><a href="../../../files/lib/hoodoo/services/middleware/service_registry_drb_server_rb.html">lib/hoodoo/services/middleware/service_registry_drb_server.rb</a></li>
-            
-            <li><a href="../../../files/lib/hoodoo/services/middleware/service_registry_drb_server_start_rb.html">lib/hoodoo/services/middleware/service_registry_drb_server_start.rb</a></li>
-            
             <li><a href="../../../files/lib/hoodoo/services/services/context_rb.html">lib/hoodoo/services/services/context.rb</a></li>
             
             <li><a href="../../../files/lib/hoodoo/services/services/interface_rb.html">lib/hoodoo/services/services/interface.rb</a></li>
@@ -161,11 +157,6 @@ provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
         <li>
           <span class="type">CLASS</span>
           <a href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
-        </li>
-      
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/ServiceRegistryDRbServer.html">Hoodoo::Services::Middleware::ServiceRegistryDRbServer</a>
         </li>
       
     </ul>
@@ -429,7 +420,7 @@ end
                 
               </p>
               <div id="method-c-environment_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 166</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">environment</span>
   <span class="ruby-identifier">@@environment</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">StringInquirer</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;RACK_ENV&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;development&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -449,10 +440,9 @@ end
           
             <div class="description">
               <p>For test purposes, dump the internal service records and flush the DRb
-service. if it is running (exceptions are ignored). Existing middleware
-instances will be invalidated. New instances must be created to re-scan
-their services internally and (where required) inform the DRb process of
-the endpoints.</p>
+service, if it is running. Existing middleware instances will be
+invalidated. New instances must be created to re-scan their services
+internally and (where required) inform the DRb process of the endpoints.</p>
             </div>
           
           
@@ -470,12 +460,13 @@ the endpoints.</p>
                 
               </p>
               <div id="method-c-flush_services_for_test_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 310</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 321</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
   <span class="ruby-identifier">@@services</span> = []
-  <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">@@drb_service</span>.<span class="ruby-identifier">flush</span>()
-  <span class="ruby-keyword">rescue</span>
+
+  <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">each_object</span>( <span class="ruby-keyword">self</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">middleware_instance</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">discoverer</span> = <span class="ruby-identifier">middleware_instance</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@discoverer&#39;</span> )
+    <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">flush_services_for_test</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:flush_services_for_test</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -513,7 +504,7 @@ ever need to check this.</p>
                 
               </p>
               <div id="method-c-has_memcached-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 174</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcached?</span>
   <span class="ruby-identifier">m</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -587,6 +578,9 @@ writers as follows:</p>
 &#39;test.log&#39; happens; in development mode $stdout always happens; and
 in addition for non-test environment, you&#39;ll get a queue-based or
 file-based logger depending on whether or not a queue is available.</p>
+
+<p>See Hoodoo::Services::Interface#secure_logs_for for information about
+security considerations when using logs.</p>
             </div>
           
           
@@ -604,7 +598,7 @@ file-based logger depending on whether or not a queue is available.</p>
                 
               </p>
               <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 230</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 235</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
 <span class="ruby-keyword">end</span></pre>
@@ -646,7 +640,7 @@ Memcached host available.</p>
                 
               </p>
               <div id="method-c-memcached_host_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 186</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 188</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">memcached_host</span>
   <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -686,7 +680,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 322</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 334</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -783,7 +777,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-on_queue-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 192</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ENDPOINT&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -827,7 +821,7 @@ recorded.</p>
                 
               </p>
               <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 299</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 310</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
@@ -856,6 +850,9 @@ configure the folder used for logs when file output is active.</p>
 <p>If you don&#39;t do this at least once, no log file output can occur.</p>
 
 <p>You can call more than once to output to more than one log folder.</p>
+
+<p>See Hoodoo::Services::Interface#secure_logs_for for information about
+security considerations when using logs.</p>
 <dl class="rdoc-list note-list"><dt><code>base_path</code>
 <dd>
 <p>Path to folder to use for logs; file “#{environment}.log” may be written
@@ -879,7 +876,7 @@ href="Middleware.html#method-c-environment">::environment</a>).</p>
                 
               </p>
               <div id="method-c-set_log_folder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 264</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -904,6 +901,9 @@ mechanisms set up (mostly) without service author intervention.</p>
 
 <p>If you want to completely override the middleware&#39;s logger and replace
 it with your own at any time (not recommended), call here.</p>
+
+<p>See Hoodoo::Services::Interface#secure_logs_for for information about
+security considerations when using logs.</p>
 <dl class="rdoc-list note-list"><dt><code>logger</code>
 <dd>
 <p>Alternative <a href="../Logger.html">Hoodoo::Logger</a> instance to use for
@@ -928,7 +928,7 @@ class method.</p>
                 
               </p>
               <div id="method-c-set_logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 244</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 252</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
@@ -979,7 +979,7 @@ session ID had been supplied.</p>
                 
               </p>
               <div id="method-c-set_test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 288</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 297</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1025,7 +1025,7 @@ used.</p>
                 
               </p>
               <div id="method-c-test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 275</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 286</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">test_session</span>
   <span class="ruby-identifier">@@test_session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1068,7 +1068,7 @@ protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 391</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 403</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -1077,6 +1077,7 @@ protocol requirements.</p>
   <span class="ruby-keyword">begin</span>
 
     <span class="ruby-identifier">enable_alchemy_logging_from</span>( <span class="ruby-identifier">env</span> )
+
     <span class="ruby-identifier">interaction</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Interaction</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span>, <span class="ruby-keyword">self</span> )
     <span class="ruby-identifier">debug_log</span>( <span class="ruby-identifier">interaction</span> )
 
@@ -1211,7 +1212,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 
               </p>
               <div id="method-i-augment_session_with_permissions_for_action_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2430</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2535</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_session_with_permissions_for_action</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -1355,7 +1356,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1991</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2053</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource</span>( <span class="ruby-identifier">options</span> )
 
   <span class="ruby-identifier">interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
@@ -1431,7 +1432,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2242</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2347</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">service</span>            = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:local</span>              ]
@@ -1626,7 +1627,7 @@ ignore resource-to-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2033</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2095</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_remote</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">source_interaction</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:source_interaction</span> ]
   <span class="ruby-identifier">remote_info</span>        = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:remote</span>             ]
@@ -1634,8 +1635,6 @@ ignore resource-to-resource call errors.</p>
   <span class="ruby-identifier">ident</span>              = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:ident</span>              ]
   <span class="ruby-identifier">body_hash</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:body_hash</span>          ]
   <span class="ruby-identifier">query_hash</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:query_hash</span>         ]
-
-  <span class="ruby-identifier">on_queue</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
 
   <span class="ruby-comment"># Add a 404 error to the response (via a Proc for internal reuse).</span>
 
@@ -1650,17 +1649,21 @@ ignore resource-to-resource call errors.</p>
 
   <span class="ruby-comment"># No endpoint found? Yikes!</span>
 
-  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">nil?</span> )
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_404</span>.<span class="ruby-identifier">call</span>()
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_404</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">nil?</span> )
 
-  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">on_queue</span>
+  <span class="ruby-identifier">on_queue</span> = <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">on_queue</span>
     <span class="ruby-identifier">alchemy_options</span> = {
       <span class="ruby-value">:host</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">host</span>,
       <span class="ruby-value">:port</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">port</span>
     }
 
+    <span class="ruby-identifier">request_path</span> = <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">equivalent_path</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># Duplicate =&gt; avoid accidental modify-&quot;remote_info&quot;-by-reference via &quot;&lt;&lt;&quot; below</span>
+    <span class="ruby-identifier">request_path</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ URI::escape( ident ) }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
+
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># Duplicate =&gt; avoid accidental modify-&quot;remote_info&quot;-by-reference via &quot;&lt;&lt;&quot; below</span>
+    <span class="ruby-identifier">remote_uri</span>  = <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">to_s</span>
     <span class="ruby-identifier">remote_uri</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ URI::escape( ident ) }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
@@ -1729,11 +1732,13 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-identifier">alchemy_options</span>[ <span class="ruby-value">:session_id</span> ] = <span class="ruby-identifier">session</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span>
 
     <span class="ruby-identifier">response</span> = <span class="ruby-identifier">@@alchemy</span>.<span class="ruby-identifier">http_request</span>(
-      <span class="ruby-identifier">remote_info</span>[ <span class="ruby-value">:queue</span> ],
+      <span class="ruby-identifier">remote_info</span>.<span class="ruby-identifier">queue_name</span>,
       <span class="ruby-identifier">http_method</span>,
-      <span class="ruby-identifier">remote_info</span>[ <span class="ruby-value">:path</span> ],
+      <span class="ruby-identifier">request_path</span>,
       <span class="ruby-identifier">alchemy_options</span>
     )
+
+    <span class="ruby-identifier">http_status_code</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">status_code</span>
 
   <span class="ruby-keyword">else</span>
 
@@ -1765,6 +1770,8 @@ ignore resource-to-resource call errors.</p>
       <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_404</span>.<span class="ruby-identifier">call</span>()
     <span class="ruby-keyword">end</span>
 
+    <span class="ruby-identifier">http_status_code</span> = <span class="ruby-identifier">response</span>.<span class="ruby-identifier">code</span>
+
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># If we get this far the interim session isn&#39;t needed. We might have</span>
@@ -1782,14 +1789,51 @@ ignore resource-to-resource call errors.</p>
     <span class="ruby-identifier">session</span>.<span class="ruby-identifier">delete_from_memcached</span>()
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Parse the response (assumed valid JSON else #for_rack would have failed</span>
-  <span class="ruby-comment"># when the originating response object was turned into the Rack response).</span>
+  <span class="ruby-comment"># Parse the response. Valid JSON is expected but potentially the target</span>
+  <span class="ruby-comment"># resource was never called - we might have got (say) a Timeout. In that</span>
+  <span class="ruby-comment"># case, handle the parser exception and try to figure out what we can do</span>
+  <span class="ruby-comment"># to communicate the internal failure upwards elegantly.</span>
 
-  <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
-    <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>,
-    <span class="ruby-value">:object_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
-    <span class="ruby-value">:array_class</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>
-  )
+  <span class="ruby-keyword">begin</span>
+
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
+      <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>,
+      <span class="ruby-value">:object_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
+      <span class="ruby-value">:array_class</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>
+    )
+
+  <span class="ruby-keyword">rescue</span>
+
+    <span class="ruby-identifier">http_errors</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
+
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">http_status_code</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-number">404</span>
+        <span class="ruby-comment"># Highly unexpected! Don&#39;t leak the failed internal path data</span>
+        <span class="ruby-comment"># (information disclosure; might include UUIDs of resources to</span>
+        <span class="ruby-comment"># which the top-level caller has no access).</span>
+        <span class="ruby-identifier">http_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-string">&#39;platform.not_found&#39;</span>,
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:entity_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;&lt;internal resource&gt;&#39;</span> }
+        )
+      <span class="ruby-keyword">when</span> <span class="ruby-number">408</span>
+        <span class="ruby-identifier">http_errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;platform.timeout&#39;</span> )
+      <span class="ruby-keyword">when</span> <span class="ruby-number">200</span>
+        <span class="ruby-identifier">http_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-string">&#39;platform.fault&#39;</span>,
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Could not parse body data returned from inter-resource call despite receiving HTTP status code 200&#39;</span> ) }
+        )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">http_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-string">&#39;platform.fault&#39;</span>,
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ http_status_code } during inter-resource call&quot;</span> ) }
+        )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>[
+      <span class="ruby-identifier">http_errors</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">interaction_id</span> )
+    ]
+
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Just in case someone changes JSON parsers under us and the replacement</span>
   <span class="ruby-comment"># doesn&#39;t support the options used above...</span>
@@ -1818,7 +1862,7 @@ ignore resource-to-resource call errors.</p>
         <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;code&#39;</span>      ],
         <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;message&#39;</span>   ],
         <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;reference&#39;</span> ],
-        <span class="ruby-identifier">response</span>.<span class="ruby-identifier">code</span>
+        <span class="ruby-identifier">http_status_code</span>
       )
     <span class="ruby-keyword">end</span>
 
@@ -1873,7 +1917,7 @@ else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-local_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1865</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1973</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">local_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1912,16 +1956,8 @@ HTTP?</p>
 <ul><li>
 <p><code>nil</code> if the endpoint is not found.</p>
 </li><li>
-<p>URI as a string if an endpoint is found and we are <em>not</em> running on
-an AMQP/Alchemy based architecture (see <a
-href="Middleware.html#method-c-on_queue-3F">::on_queue?</a>).</p>
-</li><li>
-<p>If an endpoint is found and we <em>are</em> running on an AMQP/Alchemy
-based architecture (see <a
-href="Middleware.html#method-c-on_queue-3F">::on_queue?</a>), this is a
-Hash with keys <code>:queue</code> (value is the AMQP queue name) and
-<code>path</code> (the equivalent URI path that would be used, were this an
-HTTP request).</p>
+<p>One of the Hoodoo::Services::Discovery::For… class family instances,
+depending on the discoverer in use.</p>
 </li></ul>
             </div>
           
@@ -1940,53 +1976,12 @@ HTTP request).</p>
                 
               </p>
               <div id="method-i-remote_service_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1896</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1999</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remote_service_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
-
-  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">on_queue?</span>
-
-    <span class="ruby-identifier">v</span> = <span class="ruby-node">&quot;/v#{ version }/&quot;</span>
-
-    <span class="ruby-comment"># Static mapping until service discovery is sorted. Yes, this Hash gets</span>
-    <span class="ruby-comment"># computed at run-time for every call. It&#39;s a temporary stopgap.</span>
-    <span class="ruby-comment">#</span>
-    <span class="ruby-keyword">return</span> {
-
-      <span class="ruby-string">&#39;Health&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.utility&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;health&#39;</span>       },
-      <span class="ruby-string">&#39;Version&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.utility&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;version&#39;</span>      },
-
-      <span class="ruby-string">&#39;Log&#39;</span>         =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;logs&#39;</span>         },
-      <span class="ruby-string">&#39;Errors&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;errors&#39;</span>       },
-      <span class="ruby-string">&#39;Statistic&#39;</span>   =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;statistics&#39;</span>   },
-
-      <span class="ruby-string">&#39;Account&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;accounts&#39;</span>     },
-      <span class="ruby-string">&#39;Member&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;members&#39;</span>      },
-      <span class="ruby-string">&#39;Membership&#39;</span>  =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;memberships&#39;</span>  },
-      <span class="ruby-string">&#39;Token&#39;</span>       =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;tokens&#39;</span>       },
-
-      <span class="ruby-string">&#39;Participant&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;participants&#39;</span> },
-      <span class="ruby-string">&#39;Outlet&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;outlets&#39;</span>      },
-      <span class="ruby-string">&#39;Involvement&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;involvements&#39;</span> },
-      <span class="ruby-string">&#39;Programme&#39;</span>   =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;programmes&#39;</span>   },
-
-      <span class="ruby-string">&#39;Balance&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;balances&#39;</span>     },
-      <span class="ruby-string">&#39;Currency&#39;</span>    =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;currencies&#39;</span>   },
-      <span class="ruby-string">&#39;Voucher&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;vouchers&#39;</span>     },
-      <span class="ruby-string">&#39;Calculation&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;calculations&#39;</span> },
-      <span class="ruby-string">&#39;Transaction&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;transactions&#39;</span> },
-
-      <span class="ruby-string">&#39;Purchase&#39;</span>    =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.purchase&#39;</span>,  <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;purchases&#39;</span>    },
-
-    }[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span> ]
-
-  <span class="ruby-keyword">else</span>
-
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">begin</span>
-      <span class="ruby-identifier">@@drb_service</span>.<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
-    <span class="ruby-keyword">rescue</span>
-      <span class="ruby-keyword">nil</span>
-    <span class="ruby-keyword">end</span>
-
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">begin</span>
+    <span class="ruby-ivar">@discoverer</span>.<span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-keyword">nil</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -2033,7 +2028,7 @@ into a 422 with code/message/reference data describing the equivalent
                 
               </p>
               <div id="method-i-translate_errors_from_other_resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2493</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 2598</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">translate_errors_from_other_resource</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-comment"># TODO - lots of testing; e.g. c.f. nested basket items accumulating</span>
   <span class="ruby-comment"># a bunch of 404s for products which weren&#39;t found via a complex path.</span>
@@ -2207,30 +2202,6 @@ following characteristics:</p>
 <p>See also <a href="Middleware.html#method-c-test_session">::test_session</a>
 and <a
 href="Middleware.html#method-c-set_test_session">::set_test_session</a>.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">FRONT_OBJECT</td>
-            <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Middleware::ServiceRegistryDRbServer.new</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Singleton “Front object” for the DRB service used in local development.</p></td>
-            </tr>
-          
-        
-          <tr valign='top'>
-            <td class="attr-name">LOCAL_ACL</td>
-            <td>=</td>
-            <td class="attr-value">ACL.new( [ &#39;deny&#39;, &#39;all&#39;, &#39;allow&#39;, &#39;127.0.0.1&#39; ] )</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Only allow connections from 127.0.0.1.</p></td>
             </tr>
           
         

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Client</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Client 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../files/lib/hoodoo/client/client_rb.html">lib/hoodoo/client/client.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>E</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-endpoint">endpoint</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( platform_uri:, drb_port:, caller_id: nil, caller_secret: nil )
+            
+            <a href="../../../classes/Hoodoo/Services/Client.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">platform_uri</span>,,
+                <span class="ruby-identifier">drb_port</span>,,
+                <span class="ruby-identifier">caller_id</span><span class="ruby-operator">:</span>     <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">caller_secret</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-ivar">@platform_uri</span>  = <span class="ruby-identifier">platform_uri</span>
+  <span class="ruby-ivar">@drb_port</span>      = <span class="ruby-identifier">drb_port</span>
+  <span class="ruby-ivar">@caller_id</span>     = <span class="ruby-identifier">caller_id</span>
+  <span class="ruby-ivar">@caller_secret</span> = <span class="ruby-identifier">caller_secret</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@platform_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-ivar">@discoverer</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">:base_uri</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@platform_uri</span>
+    )
+  <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@drb_port</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
+    <span class="ruby-ivar">@discoverer</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-value">:drb_port</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@drb_port</span>
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@discoverer</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;No service discovery mechanism selected. Please pass one of the &quot;platform_uri&quot; or &quot;drb_port&quot; parameters.&#39;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-endpoint">
+            
+              <b>endpoint</b>( resource, version )
+            
+            <a href="../../../classes/Hoodoo/Services/Client.html#method-i-endpoint" name="method-i-endpoint" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-endpoint_source')" id="l_method-i-endpoint_source">show</a>
+                
+              </p>
+              <div id="method-i-endpoint_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 43</span>
+        <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">endpoint</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+          <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-node">&quot;#{ resource_name }/#{ version }&quot;</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">new</span>(
+            <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owning_interaction</span>,
+            <span class="ruby-identifier">resource_name</span>,
+            <span class="ruby-identifier">version</span>
+          )
+
+
+
+          <span class="ruby-constant">So</span> <span class="ruby-constant">Endpoint</span> <span class="ruby-identifier">gets</span> <span class="ruby-identifier">given</span> <span class="ruby-identifier">a</span> <span class="ruby-constant">Discoverer?</span> <span class="ruby-constant">But</span> <span class="ruby-identifier">how</span> <span class="ruby-identifier">can</span> <span class="ruby-identifier">it</span> <span class="ruby-identifier">deal</span> <span class="ruby-identifier">with</span> <span class="ruby-identifier">the</span> <span class="ruby-identifier">results?</span>
+          <span class="ruby-constant">It</span> <span class="ruby-identifier">doesn</span><span class="ruby-string">&#39;t, those go to IRLocal or IRRemote
+
+
+          Refactor discovery out to some kind of Discovery hierarchy?
+
+          So you ask for endpoint talk to it get 404
+          Discovery via:
+          Preconfigured URL (that&#39;</span><span class="ruby-identifier">s</span> <span class="ruby-identifier">what</span> <span class="ruby-identifier">this</span> <span class="ruby-identifier">code</span> <span class="ruby-identifier">would</span> <span class="ruby-identifier">use</span>)
+          <span class="ruby-constant">DRb</span> (<span class="ruby-constant">Middleware</span> <span class="ruby-identifier">would</span> <span class="ruby-identifier">use</span> <span class="ruby-identifier">it</span>, <span class="ruby-identifier">after</span> <span class="ruby-identifier">checking</span> <span class="ruby-identifier">local</span>)
+          <span class="ruby-constant">Queue</span> (<span class="ruby-constant">Middleware</span> <span class="ruby-identifier">would</span> <span class="ruby-identifier">use</span> <span class="ruby-identifier">it</span>, <span class="ruby-identifier">after</span> <span class="ruby-identifier">checking</span> <span class="ruby-identifier">local</span>)
+          <span class="ruby-constant">Something</span> <span class="ruby-keyword">else</span>
+          <span class="ruby-constant">Middleware</span> <span class="ruby-identifier">ought</span> <span class="ruby-identifier">to</span> <span class="ruby-identifier">have</span> <span class="ruby-identifier">defaults</span> <span class="ruby-identifier">but</span> <span class="ruby-identifier">allow</span> <span class="ruby-identifier">external</span> <span class="ruby-identifier">discovery</span> <span class="ruby-identifier">specification</span>
+          <span class="ruby-string">&#39;
+
+
+
+
+        end
+
+      private
+
+        def acquire_session
+          post to Session with client ID and secret else return error
+        end
+
+    end
+  end
+end
+</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

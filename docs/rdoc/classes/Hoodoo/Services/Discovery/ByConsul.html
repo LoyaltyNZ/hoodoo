@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::ByConsul</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Discovery::ByConsul 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="Base.html">Hoodoo::Services::Discovery::Base</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_consul_rb.html">lib/hoodoo/services/discovery/discoverers/by_consul.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Discover resource endpoint locations via a registry held in Consul. For
+AMQP-based endpoints.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-announce_remote">announce_remote</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-discover_remote">discover_remote</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Protected methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-announce_remote">
+            
+              <b>announce_remote</b>( resource, version, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByConsul.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Announce the location of an instance to Consul.</p>
+
+<p>TODO: This is currently a no-op that runs through and returns the result of
+<a href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+
+<p>Call via <a
+href="Base.html#method-i-announce">Hoodoo::Services::Discovery::Base#announce</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Ignored. TODO: Queue name, equivalent path.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
+                
+              </p>
+              <div id="method-i-announce_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_consul.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+
+  <span class="ruby-comment"># TODO: Announce to queue discovery via Alchemy or change</span>
+  <span class="ruby-comment">#       entire class to &quot;ByConsul&quot; and talk to it directly.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># @alchemy.&lt;something&gt;</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) <span class="ruby-comment"># TODO: Replace</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-discover_remote">
+            
+              <b>discover_remote</b>( resource, version, options = {} )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByConsul.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Discover the location of an instance using Consul.</p>
+
+<p>TODO: This currently doesn&#39;t use Consul at all! It has a hard-coded
+mapping.</p>
+
+<p>Returns a <a href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
+instance if the endpoint is found, else <code>nil</code>.</p>
+
+<p>Call via <a
+href="Base.html#method-i-announce">Hoodoo::Services::Discovery::Base#announce</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Ignored.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
+                
+              </p>
+              <div id="method-i-discover_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_consul.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+
+  <span class="ruby-comment"># TODO: Replace with queue discovery over Alchemy endpoint</span>
+  <span class="ruby-comment">#       or change entire class to &quot;ByConsul&quot; and talk to it</span>
+  <span class="ruby-comment">#       directly.</span>
+  <span class="ruby-comment">#</span>
+
+  <span class="ruby-identifier">v</span>    = <span class="ruby-node">&quot;/v#{ version }/&quot;</span>
+  <span class="ruby-identifier">data</span> = {
+
+    <span class="ruby-string">&#39;Health&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.utility&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;health&#39;</span>       },
+    <span class="ruby-string">&#39;Version&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.utility&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;version&#39;</span>      },
+
+    <span class="ruby-string">&#39;Log&#39;</span>         =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;logs&#39;</span>         },
+    <span class="ruby-string">&#39;Errors&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;errors&#39;</span>       },
+    <span class="ruby-string">&#39;Statistic&#39;</span>   =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.logging&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;statistics&#39;</span>   },
+
+    <span class="ruby-string">&#39;Account&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;accounts&#39;</span>     },
+    <span class="ruby-string">&#39;Member&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;members&#39;</span>      },
+    <span class="ruby-string">&#39;Membership&#39;</span>  =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;memberships&#39;</span>  },
+    <span class="ruby-string">&#39;Token&#39;</span>       =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.member&#39;</span>,    <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;tokens&#39;</span>       },
+
+    <span class="ruby-string">&#39;Participant&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;participants&#39;</span> },
+    <span class="ruby-string">&#39;Outlet&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;outlets&#39;</span>      },
+    <span class="ruby-string">&#39;Involvement&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;involvements&#39;</span> },
+    <span class="ruby-string">&#39;Programme&#39;</span>   =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.programme&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;programmes&#39;</span>   },
+
+    <span class="ruby-string">&#39;Product&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.product&#39;</span>,   <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;products&#39;</span>     },
+
+    <span class="ruby-string">&#39;Balance&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;balances&#39;</span>     },
+    <span class="ruby-string">&#39;Currency&#39;</span>    =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;currencies&#39;</span>   },
+    <span class="ruby-string">&#39;Voucher&#39;</span>     =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;vouchers&#39;</span>     },
+    <span class="ruby-string">&#39;Calculation&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;calculations&#39;</span> },
+    <span class="ruby-string">&#39;Calculator&#39;</span>  =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;calculators&#39;</span>  },
+    <span class="ruby-string">&#39;Transaction&#39;</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.financial&#39;</span>, <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;transactions&#39;</span> },
+
+    <span class="ruby-string">&#39;Estimation&#39;</span>  =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.purchase&#39;</span>,  <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;estimations&#39;</span>  },
+    <span class="ruby-string">&#39;Purchase&#39;</span>    =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.purchase&#39;</span>,  <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;purchases&#39;</span>    },
+    <span class="ruby-string">&#39;Refund&#39;</span>      =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:queue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;service.purchase&#39;</span>,  <span class="ruby-value">:path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;refunds&#39;</span>      },
+
+  }[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span> ]
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>        <span class="ruby-identifier">resource</span>,
+      <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>         <span class="ruby-identifier">version</span>,
+      <span class="ruby-identifier">queue_name</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">data</span>[ <span class="ruby-value">:queue</span> ],
+      <span class="ruby-identifier">equivalent_path</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:path</span>  ]
+    )
+  <span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    
