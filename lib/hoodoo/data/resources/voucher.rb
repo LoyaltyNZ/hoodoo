@@ -22,10 +22,13 @@ module Hoodoo
         schema do
           internationalised
 
-          enum  :state, :from => STATES
-          text  :token_identifier
-          text  :name
-          hash  :burn_reason
+          enum     :state,            :required => true, :from => STATES
+          text     :token_identifier, :required => true
+          text     :name,             :required => true
+          text     :programme_code,   :required => true
+          integer  :time_to_live,     :required => false
+          datetime :expires_after,    :required => false # note: this is a read only field
+          hash     :burn_reason,      :required => false
         end
 
       end

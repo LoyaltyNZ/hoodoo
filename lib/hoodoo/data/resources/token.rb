@@ -20,9 +20,12 @@ module Hoodoo
         STATES = [ :waiting, :active, :closed ]
 
         schema do
-          enum :state,      :from     => STATES
-          text :identifier, :required => true
-          uuid :member_id,  :required => true, :resource => :Member
+          enum :state,          :from     => STATES
+          text :identifier,     :required => true
+          uuid :member_id,      :required => false, :resource => :Member
+          uuid :account_id,     :required => false, :resource => :Account
+          text :programme_code, :required => false
+          uuid :programme_id,   :required => false, :resource => :Programme
         end
 
       end
