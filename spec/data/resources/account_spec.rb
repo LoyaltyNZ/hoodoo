@@ -6,10 +6,6 @@ describe Hoodoo::Data::Resources::Account do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(1)
-
-    expect(schema.properties['owner_id']).to be_a(Hoodoo::Presenters::UUID)
-    expect(schema.properties['owner_id'].resource).to eq(:Member)
-    expect(schema.properties['owner_id'].required).to eq(false)
+    expect(schema.properties.count).to eq(0)
   end
 end
