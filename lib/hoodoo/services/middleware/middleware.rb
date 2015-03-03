@@ -13,6 +13,7 @@
 
 require 'set'
 require 'uri'
+require 'benchmark'
 require 'net/http'
 require 'net/https'
 require 'drb/drb'
@@ -995,7 +996,7 @@ module Hoodoo; module Services
         session = nil if result != true
       end
 
-      if self.class.environment.test? && session.nil?
+      if ( self.class.environment.test? || self.class.environment.development? ) && session.nil?
         session = self.class.test_session()
       end
 
@@ -1277,7 +1278,7 @@ module Hoodoo; module Services
 
       # Benchmark the "inner" dispatch call
 
-      dispatch_time = Benchmark.realtime do
+      dispatch_time = ::Benchmark.realtime do
 
         block = Proc.new do
 
