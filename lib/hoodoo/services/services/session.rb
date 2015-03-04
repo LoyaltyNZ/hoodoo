@@ -488,6 +488,11 @@ module Hoodoo
       # Return the Caller version for a given Caller ID via Memcached.
       # Returns "nil" if there are any errors or no version is stored.
       #
+      # TODO: As a temporary measure, compatibility bridge code in Authsome
+      #       may call this private interface via ".send". Until that is
+      #       decommissioned, the API shouldn't be changed without updating
+      #       Authsome too.
+      #
       # +mclient+:: A Dalli::Client instance to use for talking to
       #             Memcached.
       #
