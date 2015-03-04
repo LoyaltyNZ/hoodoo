@@ -5,11 +5,11 @@ describe Hoodoo::Services::Discovery::ForHTTP do
     r = described_class.new(
       resource: 'Foo',
       version: 3,
-      endpoint_uri: URI.parse( 'http://foo.bar/v1/foos ')
+      endpoint_uri: URI.parse( 'http://foo.bar/v1/foos' )
     )
 
     expect( r.resource     ).to eq( 'Foo' )
     expect( r.version      ).to eq( 3 )
-    expect( r.endpoint_uri ).to eq( URI.parse( 'http://foo.bar/v1/foos ') )
+    expect( r.endpoint_uri ).to eq( URI.parse( 'http://foo.bar/v1/foos' ) )
   end
 end
