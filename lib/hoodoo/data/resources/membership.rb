@@ -17,7 +17,8 @@ module Hoodoo
 
         schema do
           text :token_identifier, :required => true
-          uuid :programme_id,     :required => true, :resource => :Programme
+          text :programme_code
+          uuid :programme_id,     :resource => :Programme
           type :CalculatorConfiguration
         end
 
