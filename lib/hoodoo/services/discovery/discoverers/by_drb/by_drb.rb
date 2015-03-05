@@ -12,6 +12,10 @@ module Hoodoo
   module Services
     module Discovery
 
+      # DRb must be available.
+      #
+      DRb.start_service
+
       # Discover resource endpoint locations via a DRb registry. For
       # HTTP-based endpoints.
       #
@@ -137,7 +141,6 @@ module Hoodoo
             # contacted, try to start it first, then connect.
 
             drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( @drb_port )
-            DRb.start_service
 
             begin
               drb_service = DRbObject.new_with_uri( drb_uri )
