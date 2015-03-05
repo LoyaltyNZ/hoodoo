@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::Services::Discovery::Base do
+describe Hoodoo::Services::Discovery do
   context 'alone' do
     it 'supports announcement directly' do
       d = described_class.new

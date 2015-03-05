@@ -11,7 +11,7 @@
 
 module Hoodoo
   module Services
-    module Discovery
+    class Discovery # Just used as a namespace here
 
       begin
         require 'active_support/inflector'
@@ -25,7 +25,7 @@ module Hoodoo
         # See #configure_with for details of required instantiation
         # options. See #discover_remote for the returned data type.
         #
-        class ByConvention < Hoodoo::Services::Discovery::Base
+        class ByConvention < Hoodoo::Services::Discovery
 
           protected
 

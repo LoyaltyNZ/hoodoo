@@ -10,16 +10,16 @@
 
 module Hoodoo
   module Services
-    module Discovery
-
-      # DRb must be available.
-      #
-      DRb.start_service
+    class Discovery # Just used as a namespace here
 
       # Discover resource endpoint locations via a DRb registry. For
       # HTTP-based endpoints.
       #
-      class ByDRb < Hoodoo::Services::Discovery::Base
+      class ByDRb < Hoodoo::Services::Discovery
+
+        # DRb must be available.
+        #
+        DRb.start_service
 
         public
 

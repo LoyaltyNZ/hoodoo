@@ -10,7 +10,7 @@
 
 module Hoodoo
   module Services
-    module Discovery
+    class Discovery # Just used as a namespace here
 
       # Describe a resource endpoint location in a way that allows
       # it to be contacted over HTTP.

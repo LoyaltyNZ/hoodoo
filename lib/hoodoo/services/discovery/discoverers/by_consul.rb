@@ -10,12 +10,12 @@
 
 module Hoodoo
   module Services
-    module Discovery
+    class Discovery # Just used as a namespace here
 
       # Discover resource endpoint locations via a registry held in
       # Consul. For AMQP-based endpoints.
       #
-      class ByConsul < Hoodoo::Services::Discovery::Base
+      class ByConsul < Hoodoo::Services::Discovery
 
         protected
 
