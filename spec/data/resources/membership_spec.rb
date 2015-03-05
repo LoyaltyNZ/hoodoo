@@ -6,14 +6,17 @@ describe Hoodoo::Data::Resources::Membership do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(3)
+    expect(schema.properties.count).to eq(4)
 
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['token_identifier'].required).to eq(true)
 
+    expect(schema.properties['programme_code']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['programme_code'].required).to eq(false)
+
     expect(schema.properties['programme_id']).to be_a(Hoodoo::Presenters::UUID)
-    expect(schema.properties['programme_id'].required).to eq(true)
     expect(schema.properties['programme_id'].resource).to eq(:Programme)
+    expect(schema.properties['programme_id'].required).to eq(false)
 
     expect(schema.properties['calculator_data']).to be_a(Hoodoo::Presenters::Hash)
     expect(schema.properties['calculator_data'].required).to eq(false)
