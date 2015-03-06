@@ -66,23 +66,20 @@ module Hoodoo
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
         #
-        # +options+::  Defined by whatever subclass is in use. See that
-        #              subclass's documentation for details.
-        #
         # Returns the result of calling #discover_remote (in the subclass
         # in use) with the same parameters.
         #
         # Use #is_local? if you need to know that an endpoint was
         # announced through this same instance ("locally").
         #
-        def discover( resource, version = 1, options = {} )
+        def discover( resource, version = 1 )
           resource = resource.to_s
           version  = version.to_i
 
           if ( is_local?( resource, version ) )
             return @known_local_resources[ key_for( resource, version ) ]
           else
-            return discover_remote( resource, version, options )
+            return discover_remote( resource, version )
           end
         end
 
@@ -151,9 +148,8 @@ module Hoodoo
         #
         # +resource+:: Resource name as a String.
         # +version+::  Endpoint version as an Integer.
-        # +options+::  See subclass documentation for option details.
         #
-        def discover_remote( resource, version, options = {} )
+        def discover_remote( resource, version )
           raise "Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource '#{ resource }' / version '#{ version }'"
         end
 

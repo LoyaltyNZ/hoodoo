@@ -44,7 +44,6 @@ module Hoodoo
           #              +HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE+ will be
           #              consulted. If unset, port 8787 is used.
           #
-          #
           def configure_with( options )
             @drb_port = options[ :drb_port ]
           end
@@ -97,9 +96,8 @@ module Hoodoo
           #
           # +resource+:: Resource name as a String.
           # +version+::  Endpoint version as an Integer.
-          # +options+::  Ignored.
           #
-          def discover_remote( resource, version, options = {} )
+          def discover_remote( resource, version )
             endpoint_uri_string = drb_service().find( resource, version )
             return result_for( resource, version, endpoint_uri_string )
           end

@@ -26,7 +26,7 @@ module Hoodoo
     #
     # The error handling mechanism this mixin provides is intentionally
     # analogous to that used for resource-to-resource calls through
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedBase.
+    # Hoodoo::Client::AugmentedBase.
     #
     module ErrorMapping
 

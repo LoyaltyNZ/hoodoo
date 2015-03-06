@@ -170,7 +170,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new )
+        expect( mock_result ).to eq( Hoodoo::Client::AugmentedArray.new )
       end
 
       it 'calls #show over Alchemy and handles 200' do
@@ -204,7 +204,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new )
+        expect( mock_result ).to eq( Hoodoo::Client::AugmentedHash.new )
       end
 
       it 'calls #show over Alchemy and handles 408' do
@@ -238,7 +238,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( mock_result ).to have_key( 'errors' )
         expect( mock_result[ 'errors' ] ).to be_a( Array )
         expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
@@ -276,7 +276,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( mock_result ).to have_key( 'errors' )
         expect( mock_result[ 'errors' ] ).to be_a( Array )
         expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
@@ -314,7 +314,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( mock_result ).to have_key( 'errors' )
         expect( mock_result[ 'errors' ] ).to be_a( Array )
         expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
@@ -353,7 +353,7 @@ describe Hoodoo::Services::Middleware do
           }
         )
 
-        expect( mock_result ).to be_a( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+        expect( mock_result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( mock_result ).to have_key( 'errors' )
         expect( mock_result[ 'errors' ] ).to be_a( Array )
         expect( mock_result[ 'errors' ][ 0 ] ).to have_key( 'code' )
@@ -418,7 +418,7 @@ describe Hoodoo::Services::Middleware do
 
       # Expect an empty *array* back, with dataset size. A Hash implies an error.
 
-      expect( mock_result ).to eq( Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new )
+      expect( mock_result ).to eq( Hoodoo::Client::AugmentedArray.new )
       expect( mock_result.dataset_size ).to eq(99)
     end
   end

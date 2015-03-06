@@ -125,11 +125,11 @@ module Hoodoo; module Services
       #                supported search/filter parameters and the platform's
       #                common all-resource behaviour.
       #
-      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedArray
+      # Returns a Hoodoo::Client::AugmentedArray
       # representation of the requested list of resource instances. Call
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedArray#adds_errors_to?
+      # Hoodoo::Client::AugmentedArray#adds_errors_to?
       # or
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedArray#platform_errors
+      # Hoodoo::Client::AugmentedArray#platform_errors
       # on the returned instance to detect and resolve error conditions _before_
       # examining its Array-derived contents. The contents will be empty in
       # non-error cases if no items satisfying the list conditions were found.
@@ -153,11 +153,11 @@ module Hoodoo; module Services
       # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Client::AugmentedHash
       # representation of the requested resource instance. Call
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
+      # Hoodoo::Client::AugmentedHash#adds_errors_to?
       # or
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#platform_errors
+      # Hoodoo::Client::AugmentedHash#platform_errors
       # on the returned instance to detect and resolve error conditions _before_
       # examining its Hash-derived fields.
       #
@@ -181,11 +181,11 @@ module Hoodoo; module Services
       # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Client::AugmentedHash
       # representation of the new resource instance. Call
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
+      # Hoodoo::Client::AugmentedHash#adds_errors_to?
       # or
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#platform_errors
+      # Hoodoo::Client::AugmentedHash#platform_errors
       # on the returned instance to detect and resolve error conditions _before_
       # examining its Hash-derived fields.
       #
@@ -210,11 +210,11 @@ module Hoodoo; module Services
       # +body_hash+::  See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Client::AugmentedHash
       # representation of the updated resource instance. Call
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
+      # Hoodoo::Client::AugmentedHash#adds_errors_to?
       # or
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#platform_errors
+      # Hoodoo::Client::AugmentedHash#platform_errors
       # on the returned instance to detect and resolve error conditions _before_
       # examining its Hash-derived fields.
       #
@@ -239,11 +239,11 @@ module Hoodoo; module Services
       # +ident+::      See #initialize.
       # +query_hash+:: See #initialize.
       #
-      # Returns a Hoodoo::Services::Middleware::Endpoint::AugmentedHash
+      # Returns a Hoodoo::Client::AugmentedHash
       # representation of the now-deleted resource instance. Call
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#adds_errors_to?
+      # Hoodoo::Client::AugmentedHash#adds_errors_to?
       # or
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash#platform_errors
+      # Hoodoo::Client::AugmentedHash#platform_errors
       # on the returned instance to detect and resolve error conditions _before_
       # examining its Hash-derived fields.
       #

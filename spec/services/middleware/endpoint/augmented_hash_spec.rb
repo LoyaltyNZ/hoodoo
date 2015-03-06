@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::Services::Middleware::Endpoint::AugmentedHash do
+describe Hoodoo::Client::AugmentedHash do
 
   # However much the class arrangement might change in future, ultimately the
   # class must inherit from Hash and support a basic interface expected by

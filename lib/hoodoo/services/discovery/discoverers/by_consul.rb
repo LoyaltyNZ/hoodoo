@@ -52,9 +52,8 @@ module Hoodoo
           #
           # +resource+:: Passed to #discover_remote.
           # +version+::  Passed to #discover_remote.
-          # +options+::  Ignored.
           #
-          def discover_remote( resource, version, options = {} )
+          def discover_remote( resource, version )
 
             # TODO: Replace with queue discovery over Alchemy endpoint
             #       or change entire class to "ByConsul" and talk to it

@@ -2042,11 +2042,11 @@ module Hoodoo; module Services
     # Parameters should be nil where the value would not be allowed given the
     # HTTP method. HTTP methods must map to understood actions.
     #
-    # A Hoodoo::Services::Middleware::Endpoint::AugmentedArray or
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedHash is returned
+    # A Hoodoo::Client::AugmentedArray or
+    # Hoodoo::Client::AugmentedHash is returned
     # from these methods; @response or the wider processing context
     # is not automatically modified. Callers MUST use the methods provided by
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedBase to detect
+    # Hoodoo::Client::AugmentedBase to detect
     # and handle error conditions, unless for some reason they wish to ignore
     # resource-to-resource call errors.
     #
@@ -2103,7 +2103,7 @@ module Hoodoo; module Services
       # Add a 404 error to the response (via a Proc for internal reuse).
 
       add_404 = Proc.new {
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash = Hoodoo::Client::AugmentedHash.new
         hash.platform_errors.add_error(
           'platform.not_found',
           'reference' => { :entity_name => "v#{ options[ :version ] } of #{ options[ :resource ] } interface endpoint" }
@@ -2141,7 +2141,7 @@ module Hoodoo; module Services
       session = augment_session_with_permissions_for_action( source_interaction )
 
       if session == false
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash = Hoodoo::Client::AugmentedHash.new
         hash.platform_errors.add_error( 'platform.invalid_session' )
         return hash
       end
@@ -2262,8 +2262,8 @@ module Hoodoo; module Services
 
         parsed = JSON.parse(
           response.body,
-          :object_class => Hoodoo::Services::Middleware::Endpoint::AugmentedHash,
-          :array_class  => Hoodoo::Services::Middleware::Endpoint::AugmentedArray
+          :object_class => Hoodoo::Client::AugmentedHash,
+          :array_class  => Hoodoo::Client::AugmentedArray
         )
 
       rescue
@@ -2293,7 +2293,7 @@ module Hoodoo; module Services
             )
         end
 
-        parsed = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[
+        parsed = Hoodoo::Client::AugmentedHash[
           http_errors.render( source_interaction.interaction_id )
         ]
 
@@ -2302,7 +2302,7 @@ module Hoodoo; module Services
       # Just in case someone changes JSON parsers under us and the replacement
       # doesn't support the options used above...
 
-      unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
+      unless parsed.is_a?( Hoodoo::Client::AugmentedHash )
         raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
       end
 
@@ -2371,7 +2371,7 @@ module Hoodoo; module Services
       session = augment_session_with_permissions_for_action( source_interaction )
 
       if session == false
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash = Hoodoo::Client::AugmentedHash.new
         hash.platform_errors.add_error( 'platform.invalid_session' )
         return hash
       end
@@ -2400,7 +2400,7 @@ module Hoodoo; module Services
       # for responding early (via a Proc for internal reuse later).
 
       add_local_errors = Proc.new {
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
+        hash = Hoodoo::Client::AugmentedHash.new
         hash.platform_errors.merge!( local_response.errors )
         hash
       }
@@ -2486,10 +2486,10 @@ module Hoodoo; module Services
       data = local_response.body
 
       if data.is_a? Array
-        data              = Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new( data )
+        data              = Hoodoo::Client::AugmentedArray.new( data )
         data.dataset_size = local_response.dataset_size
       else
-        data = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[ data ]
+        data = Hoodoo::Client::AugmentedHash[ data ]
       end
 
       data.set_platform_errors(

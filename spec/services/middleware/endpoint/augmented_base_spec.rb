@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Hoodoo::Services::Middleware::Endpoint::AugmentedBase do
+describe Hoodoo::Client::AugmentedBase do
 
   class AugmentedBaseTest
-    include Hoodoo::Services::Middleware::Endpoint::AugmentedBase
+    include Hoodoo::Client::AugmentedBase
   end
 
   before :each do

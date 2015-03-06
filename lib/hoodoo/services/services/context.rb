@@ -66,7 +66,7 @@ module Hoodoo; module Services
     # implementation actually exists for it. Until you try and talk to the
     # interface through the endpoint instance, you won't know if it is there.
     # All endpoint methods return instances of classes that mix in
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedBase; these
+    # Hoodoo::Client::AugmentedBase; these
     # mixin methods provide error handling options to detect a "not found"
     # error (equivanent to HTTP status code 404) returned when a resource
     # implementation turns out to not actually be present.
@@ -88,7 +88,7 @@ module Hoodoo; module Services
     #     return if context.response.halt_processing?
     #
     # The return value of calls made to the endpoint is an Array or Hash
-    # that mixes in Hoodoo::Services::Middleware::Endpoint::AugmentedBase;
+    # that mixes in Hoodoo::Client::AugmentedBase;
     # see this class's documentation for details of the two alternative
     # error handling approaches shown above.
     #

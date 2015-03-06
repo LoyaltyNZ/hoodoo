@@ -18,12 +18,17 @@ module Hoodoo
         def initialize( platform_uri:,
                         drb_port:,
                         caller_id:     nil,
-                        caller_secret: nil )
+                        caller_secret: nil,
+                        locale:        nil )
 
+          @endpoints     = {}
           @platform_uri  = platform_uri
           @drb_port      = drb_port
+
           @caller_id     = caller_id
           @caller_secret = caller_secret
+
+          @locale        = locale
 
           if @platform_uri != nil
             @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
@@ -40,18 +45,18 @@ module Hoodoo
           end
         end
 
-        def endpoint( resource, version )
-          @endpoints[ "#{ resource_name }/#{ version }" ] ||= Hoodoo::Services::Middleware::Endpoint.new(
-            self.owning_interaction,
-            resource_name,
-            version
+        def resource( resource, version )
+          return @endpoints[ "#{ resource_name }/#{ version }" ] ||= Hoodoo::Client::Endpoint.endpoint_for(
+            resource,
+            version,
+            @discoverer
           )
         end
 
       private
 
         def acquire_session
-          post to Session with client ID and secret else return error
+#          post to Session with client ID and secret else return error
         end
 
     end

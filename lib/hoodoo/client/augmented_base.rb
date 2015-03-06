@@ -3,40 +3,44 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: A subclass of Ruby standard library Array used by the
-#           Hoodoo::Services::Middleware::Endpoint family of
-#           inter-resource calls.
+#           Hoodoo::Client::Endpoint family.
 # ----------------------------------------------------------------------
 #           11-Dec-2014 (ADH): Created.
+#           05-Mar-2015 (ADH): Moved to Hoodoo::Client.
 ########################################################################
 
-module Hoodoo; module Services
-  class Middleware
+module Hoodoo
+  module Client
 
-    class Endpoint < Hoodoo::Services::Middleware
-
-      # Base mixin for
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedHash and
-      # Hoodoo::Services::Middleware::Endpoint::AugmentedArray,
-      # used by Hoodoo::Services::Middleware::Endpoint for return
-      # values in its resource calling API - see
-      # Hoodoo::Services::Middleware::Endpoint#list,
-      # Hoodoo::Services::Middleware::Endpoint#show,
-      # Hoodoo::Services::Middleware::Endpoint#create,
-      # Hoodoo::Services::Middleware::Endpoint#update and
-      # Hoodoo::Services::Middleware::Endpoint#delete.
+      # Base mixin for Hoodoo::Client::AugmentedHash and
+      # Hoodoo::Client::AugmentedArray, used by the
+      # Hoodoo::Client::Endpoint family for return
+      # values in its resource calling API - see:
+      #
+      # * Hoodoo::Client::Endpoint#list
+      # * Hoodoo::Client::Endpoint#show
+      # * Hoodoo::Client::Endpoint#create
+      # * Hoodoo::Client::Endpoint#update
+      # * Hoodoo::Client::Endpoint#delete
       #
       # The error handling mechanism this mixin provides is intentionally
       # analogous to that used for mapping ActiveRecord model validation
-      # failures to platform errors in Hoodoo::ActiveRecord::ErrorMapping.
+      # failures to platform errors in Hoodoo::ActiveRecord::ErrorMapping
+      # for when resource endpoint implementations are calling other
+      # resource endpoint implementations, while also supporting use cases
+      # of external callers wanting to communicate with resources from
+      # "outside the system".
       #
       module AugmentedBase
 
-        # Adds errors set via #set_platform_errors to the
+        # This call is typically used by resource endpoint implementations
+        # ("service authors") during inter-resource calls, rather than by
+        # external entities calling into a system via Hoodoo::Client.
+        #
+        # Errors set via #set_platform_errors are added to the
         # given Hoodoo::Errors instance. Generally, #set_platform_errors is
-        # only ever called by the middleware when one resource calls another
-        # resource via Hoodoo::Services::Context#resource and the methods in
-        # the Hoodoo::Services::Middleware::Endpoint instance it
-        # returns.
+        # only called by the Hoodoo::Client under-the-hood implementation
+        # code as part of routine error handling.
         #
         # Returns +true+ if any errors were added else +false+ if everything
         # is OK (no platform errors have been noted internally).
@@ -56,6 +60,11 @@ module Hoodoo; module Services
         #       return if list.adds_errors_to?( context.response.errors )
         #       # ...
         #     end
+        #
+        # External callers that have nothing to do with resource endpoint
+        # implementations could still construct an errors collection manually
+        # and make use of this method, but calling #platform_errors makes a
+        # lot more sense for that use case.
         #
         # +collection+:: A Hoodoo::Errors instance, typically obtained
         #                from the Hoodoo::Services::Context instance passed to
@@ -80,16 +89,31 @@ module Hoodoo; module Services
           end
         end
 
+        # This call is typically used by external entities calling into a
+        # system via Hoodoo::Client.
+        #
         # Returns a Hoodoo::Errors instance that's either been assigned
         # via #set_platform_errors or is an empty, internally assigned
         # collection. This method is very closely related to
         # #adds_errors_to? and, if you have not already done so, you should
         # read that method's documentation before continuing.
         #
-        # The #platform_errors method supports a slightly more verbose form
-        # of error handling for inter-resource calls that avoids changing a
-        # passed in parameter in the manner of #adds_errors_to?. Compare the
-        # idiom shown there:
+        # For external client users, the error handling pattern is:
+        #
+        #     client   = Hoodoo::Client.new( ... )
+        #     endpoint = client.resource( 'Foo' )
+        #     result   = endpoint.show/list/create/update/delete( ... )
+        #
+        #     if result.platform_errors.halt_processing?
+        #       # Handle result.platform_errors's error data
+        #     else
+        #       # Success case
+        #     end
+        #
+        # For service authors, the #platform_errors method supports a
+        # slightly more verbose form of error handling for inter-resource
+        # calls that avoids changing a passed in parameter in the manner
+        # of #adds_errors_to?. Compare the idiom shown there:
         #
         #     return if list.adds_errors_to?( context.response.errors )
         #
@@ -109,11 +133,10 @@ module Hoodoo; module Services
         # Sets the Hoodoo::Errors instance used by #adds_errors_to? or
         # returned by #platform_errors.
         #
-        # It is expected that only Hoodoo middleware code will call this
-        # method as part of inter-resource call handling for the internal
-        # use cases of this class, though client code may find other uses
-        # that are independent of the inter-resource call case wherein the
-        # method may be safely invoked.
+        # It is expected that only Hoodoo::Client-family code will call this
+        # method as part of general error handling, though client code may
+        # find other uses that are independent of the inter-resource call
+        # case wherein the method may be safely invoked.
         #
         def set_platform_errors( errors )
           @nz_co_loyalty_platform_errors = errors
