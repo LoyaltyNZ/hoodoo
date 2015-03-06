@@ -18,6 +18,7 @@ module Hoodoo
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator
           text  :token_identifier,        :required => true
+          text  :programme_code,          :required => true
           type  :CalculatorConfiguration, :required => false
           array :currency_amounts,        :required => true do
             type :CurrencyAmount
