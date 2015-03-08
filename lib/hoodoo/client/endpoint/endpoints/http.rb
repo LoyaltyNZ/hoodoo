@@ -33,10 +33,11 @@ module Hoodoo
               raise "Hoodoo::Client::Endpoint::HTTP must be configured with a Hoodoo::Services::Discovery::ForHTTP instance - got '#{ discovery_result.class.name }'"
             end
 
-            @description              = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
-            @description.endpoint_uri = discovery_result.endpoint_uri
-            @description.session      = options[ :session ]
-            @description.locale       = options[ :locale  ]
+            @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
+            @description.discovery_result = discovery_result
+            @description.endpoint_uri     = discovery_result.endpoint_uri
+            @description.session          = options[ :session ]
+            @description.locale           = options[ :locale  ]
           end
 
         public
@@ -54,42 +55,46 @@ module Hoodoo
           # See Hoodoo::Client::Endpoint#show.
           #
           def show( ident, query_hash = nil )
-            return do_http(
-              :http_method => 'GET',
-              :ident       => ident,
-              :query_hash  => query_hash
-            )
+            d            = @description.dup
+            d.action     = :show
+            d.ident      = ident
+            d.query_hash = query_hash
+
+            return do_http( d )
           end
 
           # See Hoodoo::Client::Endpoint#create.
           #
           def create( body_hash, query_hash = nil )
-            return do_http(
-              :http_method => 'POST',
-              :body_hash   => body_hash,
-              :query_hash  => query_hash
-            )
+            d            = @description.dup
+            d.action     = :create
+            d.body_hash  = body_hash
+            d.query_hash = query_hash
+
+            return do_http( d )
           end
 
           # See Hoodoo::Client::Endpoint#update.
           #
           def update( ident, body_hash, query_hash = nil )
-            return do_http(
-              :http_method => 'PATCH',
-              :ident       => ident,
-              :body_hash   => body_hash,
-              :query_hash  => query_hash
-            )
+            d            = @description.dup
+            d.action     = :update
+            d.ident      = ident
+            d.body_hash  = body_hash
+            d.query_hash = query_hash
+
+            return do_http( d )
           end
 
           # See Hoodoo::Client::Endpoint#delete.
           #
           def delete( ident, query_hash = nil )
-            return do_http(
-              :http_method => 'DELETE',
-              :ident       => ident,
-              :query_hash  => query_hash
-            )
+            d            = @description.dup
+            d.action     = :delete
+            d.ident      = ident
+            d.query_hash = query_hash
+
+            return do_http( d )
           end
 
         private
@@ -135,7 +140,6 @@ module Hoodoo
             end
 
             return get_data_for_response( description_of_response )
-
           end
 
 

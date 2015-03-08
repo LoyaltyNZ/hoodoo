@@ -42,6 +42,7 @@ module Hoodoo
           class DescriptionOfRequest
             attr_accessor :action
 
+            attr_accessor :discovery_result
             attr_accessor :endpoint_uri
             attr_accessor :body_hash
             attr_accessor :query_hash
