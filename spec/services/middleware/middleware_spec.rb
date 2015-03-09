@@ -188,21 +188,6 @@ describe Hoodoo::Services::Middleware do
       expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
       ENV[ 'AMQ_ENDPOINT' ] = old
     end
-
-    # This is a fairly nasty heavy assumptions test which poorly implements
-    # code coverage for the 'rescue' in 'remote_service_for'. It's probably
-    # quite fragile in the face of code changes. It assumes '@discoverer'
-    # is the instance variable used (indirectly) for DRb comms and that
-    # overwriting that with something silly will result in the exception
-    # 'rescue' code running.
-    #
-    it 'internally responds with "nil" if local DRb service malfunctions' do
-      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
-      expect( mw.send( :remote_service_for, :RSpecTestResource, 2 ) ).to_not be_nil
-
-      mw.instance_variable_set( '@discoverer', 'I am not a discoverer' )
-      expect( mw.send( :remote_service_for, :RSpecTestResource, 2 ) ).to be_nil
-    end
   end
 
   context 'malformed basics in requests' do
@@ -361,7 +346,7 @@ describe Hoodoo::Services::Middleware do
       #
       # So, first, these are part of routine processing.
 
-      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(2).times.and_return(true)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(1).times.and_return(true)
 
       # The check for 'unless test or development' is made prior to trying to use
       # the ExceptionReporter class, so say 'no' to both then get the reporter to

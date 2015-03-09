@@ -945,14 +945,6 @@ module Hoodoo; module Services
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
         port = @@recorded_port if port.nil? && defined?( @@recorded_port )
 
-        # In a test environment, default to a fake host and port if
-        # need be.
-
-        if ( self.class.environment.test? )
-          host ||= '127.0.0.1'
-          port ||= '9292'
-        end
-
         # Announce the resource endpoints unless we are still missing a host
         # or port. Implication is 'racksh'.
 

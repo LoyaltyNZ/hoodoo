@@ -135,6 +135,9 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+
+    return if result.adds_errors_to?( context.response.errors )
+
     context.response.set_resources(
       [
         { 'listA' => result },
@@ -507,6 +510,21 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of( TestEchoImplementation ).to receive( :before ).once
         expect_any_instance_of( TestEchoImplementation ).to receive( :after ).once
       expect_any_instance_of( TestCallImplementation ).to receive( :after ).once
+    end
+
+    # This is basically just for code coverage of a 'rescue' case inside
+    # the middleware's 'remote_service_for' method.
+    #
+    it 'handles "this can never happen" DRb discovery service failures' do
+      expect_any_instance_of( Hoodoo::Services::Discovery ).to receive( :discover ).and_raise( 'boo!' )
+
+      get(
+        '/v1/test_call/',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 404 )
     end
 
     def list_things
