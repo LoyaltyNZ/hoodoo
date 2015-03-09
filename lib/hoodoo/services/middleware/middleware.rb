@@ -953,20 +953,23 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Announce the resource endpoints.
+        # Announce the resource endpoints unless we are still missing a host
+        # or port. Implication is 'racksh'.
 
-        services.each do | service |
-          interface = service[ :interface ]
+        unless host.nil? || port.nil?
+          services.each do | service |
+            interface = service[ :interface ]
 
-          @discoverer.announce(
-            interface.resource,
-            interface.version,
-            {
-              :host => host,
-              :port => port,
-              :path => service[ :path ]
-            }
-          )
+            @discoverer.announce(
+              interface.resource,
+              interface.version,
+              {
+                :host => host,
+                :port => port,
+                :path => service[ :path ]
+              }
+            )
+          end
         end
       end
     end
