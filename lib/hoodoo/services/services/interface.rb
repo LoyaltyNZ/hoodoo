@@ -688,8 +688,9 @@ module Hoodoo; module Services
     # requests, but they're entirely optional if the implementation class wants
     # to take over all of that itself.
     #
-    # +resource+:: Name of the resource that the interface is for, as a symbol;
-    #              for example, ':Purchase'.
+    # +resource+:: Name of the resource that the interface is for, as a String
+    #              or Symbol (e.g. +:Purchase+).
+    #
     # &block::     Block that calls the Hoodoo::Services::InterfaceDSL methods;
     #              #endpoint is the only mandatory call.
     #

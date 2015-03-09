@@ -67,7 +67,7 @@ module Hoodoo
         locale     = options[ :locale  ]
         discoverer = options.delete( :discoverer )
 
-        discovery_result = discoverer.discover( resource.to_s, version.to_i )
+        discovery_result = discoverer.discover( resource.to_sym, version.to_i )
 
         klass = if discovery_result.is_a( Hoodoo::Services::Discovery::ForHTTP )
           Hoodoo::Client::Endpoint::HTTP
@@ -173,7 +173,7 @@ module Hoodoo
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
       def initialize( resource, version = 1, options )
-        @resource = resource.to_s
+        @resource = resource.to_sym
         @version  = version.to_i
         @session  = options[ :session ]
         @locale   = options[ :locale  ]
@@ -192,8 +192,8 @@ module Hoodoo
         # however they want and validate any required options, raising errors
         # if need be.
         #
-        # +resource+:: Resource name the endpoint targets, e.g. +"Purchase"+.
-        #              String.
+        # +resource+:: Resource name the endpoint targets, e.g. +:Purchase+.
+        #              Symbol.
         #
         # +version+::  Optional required interface (API) version for that
         #              endpoint. Integer.

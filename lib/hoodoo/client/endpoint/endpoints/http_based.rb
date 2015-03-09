@@ -232,10 +232,6 @@ module Hoodoo
               parsed = response_class.new
               parsed.set_platform_errors( errors_from_resource )
 
-              # ! TODO !
-              # parsed.set_platform_errors(
-              #   translate_errors_from_other_resource( errors_from_resource )
-              # )
             end
 
             return parsed

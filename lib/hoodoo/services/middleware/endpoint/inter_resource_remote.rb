@@ -37,7 +37,7 @@ module Hoodoo
           #                      concept; the middleware is handling some
           #                      API call which the source interaction data
           #                      describes, but the resource which is
-          #                      handling the call needs to make an
+          #                      handling the call needs to make a remote
           #                      inter-resource call, which is why this
           #                      Endpoint subclass instance is needed.
           #
@@ -132,7 +132,7 @@ module Hoodoo
           end
 
           def postprocess( result )
-            translate_errors_from_other_resource_in( result )
+            annotate_errors_from_other_resource_in( result )
 
             if @wrapped_endpoint.session &&
                @owning_interaction.context &&
@@ -148,7 +148,7 @@ module Hoodoo
             end
           end
 
-          def translate_errors_from_other_resource_in( augmented_thing )
+          def annotate_errors_from_other_resource_in( augmented_thing )
             # TODO - this probably needs to live somewhere else so the
             # endpoint and middleware local service call can 'reach' it.
             # Run through errors, if any; prefix messages with target resource

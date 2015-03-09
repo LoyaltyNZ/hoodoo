@@ -37,8 +37,8 @@ module Hoodoo
         # location to whatever discovery service a subclass supports via
         # ::announce_remote.
         #
-        # +resource+:: Resource name as a Symbol or String
-        #              (e.g. "Account").
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
@@ -50,7 +50,7 @@ module Hoodoo
         # in use) with the same parameters.
         #
         def announce( resource, version = 1, options = {} )
-          resource = resource.to_s
+          resource = resource.to_sym
           version  = version.to_i
           result   = announce_remote( resource, version, options )
 
@@ -61,7 +61,8 @@ module Hoodoo
         # Find a resource endpoint. This may be recorded locally or
         # via whatever remote discovery mechanism a subclass implements.
         #
-        # +resource+:: Resource name as symbol or string (e.g. "Account").
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
@@ -73,7 +74,7 @@ module Hoodoo
         # announced through this same instance ("locally").
         #
         def discover( resource, version = 1 )
-          resource = resource.to_s
+          resource = resource.to_sym
           version  = version.to_i
 
           if ( is_local?( resource, version ) )
@@ -86,13 +87,14 @@ module Hoodoo
         # Was a resource announced in this instance ("locally")? Returns
         # +true+ if so, else +false+.
         #
-        # +resource+:: Resource name as symbol or string (e.g. "Account").
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
         #
         def is_local?( resource, version = 1 )
-          resource = resource.to_s
+          resource = resource.to_sym
           version  = version.to_i
 
           return @known_local_resources.has_key?( key_for( resource, version ) )

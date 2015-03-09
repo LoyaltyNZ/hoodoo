@@ -105,7 +105,7 @@ module Hoodoo; module Services
         @owning_interaction = owning_interaction
         @owning_middleware  = owning_interaction.owning_middleware_instance
 
-        @resource           = resource.to_s
+        @resource           = resource.to_sym
         @version            = version.to_i
 
         @local_service      = @owning_middleware.local_service_for( @resource, @version )
