@@ -8,7 +8,7 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client # Just used as a namespace here
 
     # Base class for endpoint code.
     #
@@ -88,6 +88,26 @@ module Hoodoo
         end
       end
 
+      # The resource name passed to the constructor, as a String.
+      #
+      attr_reader :resource
+
+      # The version number passed to the constructor, as an Integer.
+      #
+      attr_reader :version
+
+      # The Hoodoo::Services::Session instance passed to the constructor or
+      # some value provided later; its session ID is used for the calls to
+      # the target resource. If +nil+, only public actions in the target
+      # resource will be accessible.
+      #
+      attr_accessor :session
+
+      # The locale passed to the constructor or some value provided later; a
+      # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
+      #
+      attr_accessor :locale
+
       # Create an endpoint instance that will be used to make requests to
       # a given resource.
       #
@@ -113,6 +133,10 @@ module Hoodoo
       # +session+::          As in the options for ::endpoint_for.
       #
       # +locale+::           As in the options for ::endpoint_for.
+      #
+      # The out-of-the box initialiser sets up the data for the
+      # #resource, #version, #session and #locale accessors using this data,
+      # so subclass authors don't need to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
@@ -149,7 +173,12 @@ module Hoodoo
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
       def initialize( resource, version = 1, options )
-        configure_with( resource.to_s, version.to_i, options )
+        @resource = resource.to_s
+        @version  = version.to_i
+        @session  = options[ :session ]
+        @locale   = options[ :locale  ]
+
+        configure_with( @resource, @version, options )
       end
 
       ########################################################################
@@ -163,7 +192,6 @@ module Hoodoo
         # however they want and validate any required options, raising errors
         # if need be.
         #
-        #
         # +resource+:: Resource name the endpoint targets, e.g. +"Purchase"+.
         #              String.
         #
@@ -174,6 +202,39 @@ module Hoodoo
         #
         def configure_with( resource, version, options )
           raise "Subclasses must implement Hoodoo::Client::Endpoint\#configure_with"
+        end
+
+        # Utility method to aid subclass authors. Not usually overridden.
+        #
+        # Determine the response class needed for a given action - returns
+        # Hoodoo::Client::AugmentedArray or Hoodoo::Client::AugmentedHash
+        # (class references, not instances).
+        #
+        # +action+:: A Symbol from
+        #            Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+        #
+        def response_class_for( action )
+          return action === :list ? Hoodoo::Client::AugmentedArray : Hoodoo::Client::AugmentedHash
+        end
+
+        # Utility method to aid subclass authors. Not usually overridden.
+        #
+        # Return an instance of Hoodoo::Client::AugmentedArray or
+        # Hoodoo::Client::AugmentedHash with an associated 404 error (as
+        # a fully formed platform error) describing 'Not Found' for the
+        # target resource, version and given action.
+        #
+        # +action+:: A Symbol from
+        #            Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+        #
+        def generate_404_response_for( action )
+          data = response_class_for( action ).new
+          data.platform_errors.add_error(
+            'platform.not_found',
+            'reference' => { :entity_name => "v#{ @version } of #{ @resource } interface endpoint" }
+          )
+
+          return data
         end
 
       public

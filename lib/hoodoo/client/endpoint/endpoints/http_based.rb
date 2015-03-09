@@ -1,5 +1,5 @@
 ########################################################################
-# File::    http.rb
+# File::    http_based.rb
 # (C)::     Loyalty New Zealand 2015
 #
 # Purpose:: Resource endpoint definition.
@@ -8,7 +8,7 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
 
       # Base class for endpoints that have an HTTP basis to their request
@@ -26,63 +26,97 @@ module Hoodoo
 
         protected
 
-          # See Hoodoo::Client::Endpoint#configure_with.
+          # Describe a request for HTTP-like endpoints.
           #
-          # Subclass must call "super" to get +@resource+ and +@version+
-          # set, then store whatever other information they need about
-          # the discovery result data.
-          #
-          def configure_with( resource, version, discovery_result )
-            @resource = resource
-            @version  = version
-          end
-
-        protected
-
           class DescriptionOfRequest
+
+            # The action to perform - a Symbol from
+            # Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+            #
             attr_accessor :action
 
+            # A Hoodoo::Services::Discovery "For..." family member instance
+            # giving information required to 'find' the target resource. The
+            # required class instance depends upon the endpoint in use.
+            #
             attr_accessor :discovery_result
+
+            # The full HTTP URI (or equivalent HTTP URI for HTTP-like, but
+            # non-HTTP systems like AMQP) at which the endpoint is found.
+            # Excludes any query string or resource identifier portion (it
+            # is the "list" action URI without query data, in essence)
+            #
             attr_accessor :endpoint_uri
-            attr_accessor :body_hash
+
+            # Optional Hash of query data.
+            #
             attr_accessor :query_hash
+
+            # Optional Hash of body data for actions +:create+ and +:update+.
+            #
+            attr_accessor :body_hash
+
+            # Optional resource identifier for actions +:show+, +:update+ and
+            # +:delete+:
+            #
             attr_accessor :ident
 
-            attr_accessor :session
-            attr_accessor :locale
           end
 
+          # Description of data that will be used for request - essentially a
+          # compilation of a DescriptionOfRequest instance produced via a call
+          # to ::get_data_for_request.
+          #
           class DataForRequest
+
+            # The full HTTP URI (or equivalent HTTP URI for HTTP-like, but
+            # non-HTTP systems like AMQP) for the call, including any resource
+            # identifier and query data.
+            #
             attr_accessor :full_uri
+
+            # String of compiled body data for all actions (may be empty).
+            #
             attr_accessor :body_string
+
+            # Hash of headers; keys are HTTP header names as a Strings (e.g.
+            # "Content-Type", "X-Interaction-ID"), values are header values
+            # as Strings.
+            #
             attr_accessor :header_hash
+
           end
 
+          # Description of data describing an HTTP response. Used by
+          # ::get_data_for_response to generate a response array or hash
+          # (see ::response_class_for).
+          #
           class DescriptionOfResponse
+
+            # The action that was performed - a Symbol from
+            # Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+            #
             attr_accessor :action
+
+            # The HTTP status code _as an Integer_.
+            #
             attr_accessor :http_status_code
+
+            # The raw ("unparsed") returned body data as a String.
+            #
             attr_accessor :raw_body_data
+
           end
 
-          def response_class_for( action )
-            return action === :list ? Hoodoo::Client::AugmentedArray : Hoodoo::Client::AugmentedHash
-          end
-
-          def generate_404_response_for( action )
-            data = response_class_for( action ).new
-            data.platform_errors.add_error(
-              'platform.not_found',
-              'reference' => { :entity_name => "v#{ @version } of #{ @resource } interface endpoint" }
-            )
-
-            return data
-          end
-
+          # Preprocess a high level request description, returning HTTP
+          # orientated compiled data as a DataForRequest instance.
+          #
+          # +description_of_request+: DescriptionOfRequest instance.
+          #
           def get_data_for_request( description_of_request )
             body_hash  = description_of_request.body_hash
             query_hash = description_of_request.query_hash
             ident      = description_of_request.ident
-            session    = description_of_request.session
 
             body_data  = body_hash.nil? ? '' : body_hash.to_json
             remote_uri = description_of_request.endpoint_uri.dup # We will modify this and can't mutate original
@@ -111,10 +145,10 @@ module Hoodoo
 
             headers = {
               'Content-Type'     => 'application/json; charset=utf-8',
-              'Content-Language' => description_of_request.locale || 'en-nz'
+              'Content-Language' => self.locale() || 'en-nz' # Locale comes from Endpoint superclass
             }
 
-            headers[ 'X-Session-ID' ] = session.session_id unless session.nil?
+            headers[ 'X-Session-ID' ] = self.session().session_id unless self.session().nil? # Session comes from Endpoint superclass
 
             data             = DataForRequest.new
             data.full_uri    = request_uri
@@ -124,6 +158,12 @@ module Hoodoo
             return data
           end
 
+          # Process a raw HTTP response description, returning an instance of
+          # Hoodoo::Client::AugmentedArray or Hoodoo::Client::AugmentedHash
+          # with either processed body data inside, or error data associated.
+          #
+          # +description_of_response+: DescriptionOfResponse instance.
+          #
           def get_data_for_response( description_of_response )
             code = description_of_response.http_status_code
             body = description_of_response.raw_body_data

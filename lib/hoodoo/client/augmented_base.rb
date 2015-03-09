@@ -10,7 +10,7 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client # Just used as a namespace here
 
       # Base mixin for Hoodoo::Client::AugmentedHash and
       # Hoodoo::Client::AugmentedArray, used by the

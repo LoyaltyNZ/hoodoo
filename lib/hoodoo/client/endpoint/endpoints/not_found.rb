@@ -1,6 +1,6 @@
 
 module Hoodoo
-  module Client
+  class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
 
       # An endpoint that, when called, returns 'Not Found' for
@@ -8,11 +8,16 @@ module Hoodoo
       # endpoints when in fact, the lack of endpoint presence
       # is already known.
       #
+      # Ignores any discovery result data if provided.
+      #
       class NotFound < Hoodoo::Client::Endpoint::HTTPBased
 
         protected
 
           # See Hoodoo::Client::Endpoint#configure_with.
+          #
+          # Ignores the +discovery_result+ field of the +options+ Hash,
+          # so this may be absent or present with any value.
           #
           def configure_with( resource, version, options )
             super( resource, version, options )

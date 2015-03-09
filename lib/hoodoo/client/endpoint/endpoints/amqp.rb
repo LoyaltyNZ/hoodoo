@@ -1,5 +1,5 @@
 ########################################################################
-# File::    http.rb
+# File::    amqp.rb
 # (C)::     Loyalty New Zealand 2015
 #
 # Purpose:: Resource endpoint definition.
@@ -8,17 +8,27 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
 
-      # An endpoint that is contacted over AMQP using HTTP emulation
+      # Talk to a resource that is contacted over AMQP using HTTP emulation
       # via the Alchemy and AMQ Endpoint gems.
+      #
+      # Calls cannot be made until #alchemy= has been called
+      # to set an Alchemy caller instance. The Alchemy +http_request+ method
+      # is called on this instance to perform the over-queue HTTP simulation.
+      #
+      # Configured with a Hoodoo::Services::Discovery::ForAMQP discovery
+      # result instance.
       #
       class AMQP < Hoodoo::Client::Endpoint::HTTPBased
 
         protected
 
           # See Hoodoo::Client::Endpoint#configure_with.
+          #
+          # Requires a Hoodoo::Services::Discovery::ForAMQP instance in the
+          # +discovery_result+ field of the +options+ Hash.
           #
           def configure_with( resource, version, options )
             super( resource, version, options )
@@ -38,11 +48,19 @@ module Hoodoo
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
             @description.discovery_result = discovery_result
             @description.endpoint_uri     = endpoint_uri
-            @description.session          = options[ :session ]
-            @description.locale           = options[ :locale  ]
           end
 
         public
+
+          # Set/get the Alchemy caller instance. Its +http_request+ method is
+          # called to perform the over-queue HTTP simulation.
+          #
+          # Instances of the AMQP endpoint can be created, but cannot be
+          # used for resource calls - #list, #show, #create, #update and
+          # #delete _cannot_ be called - until an Alchemy instance has been
+          # specified. An exception will be raised if you try.
+          #
+          attr_accessor :alchemy
 
           # See Hoodoo::Client::Endpoint#list.
           #
@@ -101,7 +119,23 @@ module Hoodoo
 
         private
 
+          # Call Alchemy to make an HTTP simulated request over AMQP to a
+          # target resource and return the result as a
+          # Hoodoo::Client::AugmentedArray (for 'list' calls) or
+          # Hoodoo::Client::AugumentedHash (for all other calls) instance.
+          #
+          # +description_of_request+:: A Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest
+          #                            instance with all the request details
+          #                            set inside. The +discovery_data+ field
+          #                            must refer to a
+          #                            Hoodoo::Services::Discovery::ForAMQP
+          #                            instance (not re-checked internally).
+          #
           def do_amqp( description_of_request )
+
+            if self.alchemy().nil?
+              raise 'Hoodoo::Client::Endpoint::AMQP cannot be used unless an Alchemy instance has been provided'
+            end
 
             action = description_of_request.action
             data   = get_data_for_request( description_of_request )
@@ -116,8 +150,8 @@ module Hoodoo
               :headers => data.headers
             }
 
-            unless description_of_request.session.nil?
-              alchemy_options[ :session_id ] = description_of_requestsession.session_id
+            unless self.session().nil? # Session comes from Endpoint superclass
+              alchemy_options[ :session_id ] = self.session().session_id
             end
 
             http_method = {
@@ -129,7 +163,7 @@ module Hoodoo
             description_of_response        = DescriptionOfResponse.new
             description_of_response.action = action
 
-            amqp_response = @@alchemy.http_request(
+            amqp_response = self.alchemy().http_request(
               description_of_request.discovery_data.queue_name,
               http_method,
               description_of_request.endpoint_uri.path,

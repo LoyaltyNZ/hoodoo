@@ -10,7 +10,7 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client # Just used as a namespace here
 
     # Ruby standard library Hash subclass which mixes in
     # Hoodoo::Client::AugmentedBase. See that for details.

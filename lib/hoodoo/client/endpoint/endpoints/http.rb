@@ -8,21 +8,22 @@
 ########################################################################
 
 module Hoodoo
-  module Client
+  class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
 
-      # Used by Hoodoo::Service::Context to encapsulate information
-      # needed for an inter-resource call from one resource
-      # implementation to another. From the caller's perspective,
-      # the operation looks the same whether the target resource is
-      # in the same application or another application and if so, the
-      # transport (e.g. HTTP, AMQP) is irrelevant to the caller too.
+      # Talk to a resource that is contacted over HTTP or HTTPS.
+      #
+      # Configured with a Hoodoo::Services::Discovery::ForHTTP discovery
+      # result instance.
       #
       class HTTP < Hoodoo::Client::Endpoint::HTTPBased
 
         protected
 
           # See Hoodoo::Client::Endpoint#configure_with.
+          #
+          # Requires a Hoodoo::Services::Discovery::ForHTTP instance in the
+          # +discovery_result+ field of the +options+ Hash.
           #
           def configure_with( resource, version, options )
             super( resource, version, options )
@@ -36,8 +37,6 @@ module Hoodoo
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
             @description.discovery_result = discovery_result
             @description.endpoint_uri     = discovery_result.endpoint_uri
-            @description.session          = options[ :session ]
-            @description.locale           = options[ :locale  ]
           end
 
         public
