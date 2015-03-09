@@ -956,7 +956,7 @@ module Hoodoo; module Services
         # Announce the resource endpoints unless we are still missing a host
         # or port. Implication is 'racksh'.
 
-        unless host.nil? || host.empty? || port.nil? || port.empty?
+        unless host.nil? || port.nil?
           services.each do | service |
             interface = service[ :interface ]
 
