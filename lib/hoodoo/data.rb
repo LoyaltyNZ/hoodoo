@@ -86,3 +86,8 @@ require 'hoodoo/data/resources/refund'
 require 'hoodoo/data/resources/session'
 require 'hoodoo/data/resources/version'
 require 'hoodoo/data/resources/voucher'
+require 'hoodoo/data/resources/platformify_event'
+
+#Order here is important to solve dependency issues for platformification types and resources.
+require 'hoodoo/data/types/harry_account_structure'
+require 'hoodoo/data/resources/sync_platformify_event'
