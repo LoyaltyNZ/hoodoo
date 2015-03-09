@@ -75,52 +75,56 @@ module Hoodoo
           # See Hoodoo::Client::Endpoint#list.
           #
           def list( query_hash = nil )
-            preprocess( :list )
-            result = @wrapped_endpoint.list( query_hash )
+            result = preprocess( :list )
+            result = @wrapped_endpoint.list( query_hash ) if result.nil?
             return postprocess( result )
           end
 
           # See Hoodoo::Client::Endpoint#show.
           #
           def show( ident, query_hash = nil )
-            preprocess( :show )
-            result = @wrapped_endpoint.show( ident, query_hash )
+            result = preprocess( :show )
+            result = @wrapped_endpoint.show( ident, query_hash ) if result.nil?
             return postprocess( result )
           end
 
           # See Hoodoo::Client::Endpoint#create.
           #
           def create( body_hash, query_hash = nil )
-            preprocess( :create )
-            result = @wrapped_endpoint.create( body_hash, query_hash )
+            result = preprocess( :create )
+            result = @wrapped_endpoint.create( body_hash, query_hash ) if result.nil?
             return postprocess( result )
           end
 
           # See Hoodoo::Client::Endpoint#update.
           #
           def update( ident, body_hash, query_hash = nil )
-            preprocess( :update )
-            result = @wrapped_endpoint.update( ident, body_hash, query_hash )
+            result = preprocess( :update )
+            result = @wrapped_endpoint.update( ident, body_hash, query_hash ) if result.nil?
             return postprocess( result )
           end
 
           # See Hoodoo::Client::Endpoint#delete.
           #
           def delete( ident, query_hash = nil )
-            preprocess( :delete )
-            result = @wrapped_endpoint.delete( ident, query_hash )
+            result = preprocess( :delete )
+            result = @wrapped_endpoint.delete( ident, query_hash ) if result.nil?
             return postprocess( result )
           end
 
         private
 
           def preprocess( action )
-            response_class = response_class_for( action )
-            session = augment_session_with_permissions_for_action( @owning_interaction )
+            session = @owning_interaction.context.session
+
+            unless session.nil?
+              session = session.augment_with_permissions_for( @owning_interaction )
+            end
 
             if session == false
-              response_class.platform_errors.add_error( 'platform.invalid_session' )
-              return response_class
+              data = response_class_for( action ).new
+              data.platform_errors.add_error( 'platform.invalid_session' )
+              return data
             else
               @wrapped_endpoint.session = session
               return nil
@@ -128,6 +132,28 @@ module Hoodoo
           end
 
           def postprocess( result )
+            translate_errors_from_other_resource_in( result )
+
+            if @wrapped_endpoint.session &&
+               @owning_interaction.context &&
+               @owning_interaction.context.session &&
+               @wrapped_endpoint.session.session_id != @owning_interaction.context.session.session_id
+
+              # Ignore errors, there's nothing much we can do about them and in
+              # the worst case we just have to wait for this to expire naturally.
+
+              session = @wrapped_endpoint.session
+              @wrapped_endpoint.session = nil
+              session.delete_from_memcached()
+            end
+          end
+
+          def translate_errors_from_other_resource_in( augmented_thing )
+            # TODO - this probably needs to live somewhere else so the
+            # endpoint and middleware local service call can 'reach' it.
+            # Run through errors, if any; prefix messages with target resource
+            # and version; maybe source resource and version too; e.g.:
+            # "In v1 of Bar while handling <action> in v2 of Foo: ..."
           end
 
       end

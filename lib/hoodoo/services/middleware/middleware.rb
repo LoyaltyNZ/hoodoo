@@ -2138,7 +2138,11 @@ module Hoodoo; module Services
       # based on the action it is handling when it decides to make an
       # inter-resource call and the code control flow ends up here.
 
-      session = augment_session_with_permissions_for_action( source_interaction )
+      session = source_interaction.context.session
+
+      unless session.nil?
+        session = session.augment_with_permissions_for( source_interaction )
+      end
 
       if session == false
         hash = Hoodoo::Client::AugmentedHash.new
@@ -2368,7 +2372,11 @@ module Hoodoo; module Services
       # Need to possibly augment the caller's session - same rationale
       # as #local_service_remote, so see that for details.
 
-      session = augment_session_with_permissions_for_action( source_interaction )
+      session = source_interaction.context.session
+
+      unless session.nil?
+        session = session.augment_with_permissions_for( source_interaction )
+      end
 
       if session == false
         hash = Hoodoo::Client::AugmentedHash.new
@@ -2497,89 +2505,6 @@ module Hoodoo; module Services
       )
 
       return data
-    end
-
-    # Take the current session (if any) and create an interim augmented
-    # session for an inter-resource call which includes any additional
-    # parameters that the calling interface says it needs for the currently
-    # handled action.
-    #
-    # Through calling this method, the middleware implements the access
-    # permission functionality described by
-    # Hoodoo::Services::Interface#additional_permissions_for.
-    #
-    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
-    #                 describing the current interaction. This is for the
-    #                 request that a resource implementation *is handling*
-    #                 at the point it wants to make an inter-resource call
-    #                 - it is *not* data related to the *target* of that
-    #                 call.
-    #
-    # Returns:
-    #
-    # * +nil+ if given +nil+ as an input session.
-    #
-    # * Hoodoo::Services::Session instance if everything works OK; this
-    #   may be the same as, or different from, the input session depending
-    #   on whether or not there were any permissions that needed adding.
-    #
-    # * +false+ if the session can't be saved due to a mismatched caller
-    #   version - the session must have become invalid _during_ handling.
-    #
-    # If the augmented session cannot be saved due to a Memcached problem,
-    # an exception is raised and the generic handler will turn this into a
-    # 500 response for the caller. At this time, we really can't do much
-    # better than that since failure to save the augmented session means
-    # the inter-resource call cannot proceed; it's an internal fault.
-    #
-    def augment_session_with_permissions_for_action( interaction )
-
-      # Set up some convenience variables
-
-      session   = interaction.context.session
-      interface = interaction.target_interface
-      action    = interaction.requested_action
-
-      # If there is no session, the caller can only have reached here via
-      # a public action. We don't let public actions call protected actions.
-      # Just return "nil" back again and let the usual permissions checking
-      # code then refuse the request.
-
-      return nil if session.nil?
-
-      # If there are no additional permissions for this action, just return
-      # the current session back again.
-
-      action                 = action.to_s()
-      additional_permissions = ( interface.additional_permissions() || {} )[ action ]
-
-      return session if additional_permissions.nil?
-
-      # Otherwise, duplicate the session and its permissions (or generate
-      # defaults) and merge the additional permissions.
-
-      local_session     = session.dup()
-      local_permissions = session.permissions ? session.permissions.dup() : Hoodoo::Services::Permissions.new
-
-      local_permissions.merge!( additional_permissions.to_h() )
-
-      # Make sure the new session has its own ID and set the updated
-      # permissions. Then try to save it and return the result.
-
-      local_session.session_id  = Hoodoo::UUID.generate()
-      local_session.permissions = local_permissions
-
-      case local_session.save_to_memcached()
-        when true
-          return local_session
-
-        when false
-          # Caller version mismatch; original session is now outdated and invalid
-          return false
-
-        else # Couldn't save it
-          raise "Unable to create interim session for inter-resource call from #{ interface.resource } / #{ action }"
-      end
     end
 
     # Take a Hoodoo::Errors instance constructed from, or obtained via
