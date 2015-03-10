@@ -11,6 +11,7 @@ require 'hoodoo/services/discovery/discovery'
 
 require 'hoodoo/services/discovery/results/for_http'
 require 'hoodoo/services/discovery/results/for_amqp'
+require 'hoodoo/services/discovery/results/for_local'
 
 require 'hoodoo/services/discovery/discoverers/by_convention'
 require 'hoodoo/services/discovery/discoverers/by_consul'

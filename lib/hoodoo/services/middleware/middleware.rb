@@ -391,7 +391,7 @@ module Hoodoo; module Services
           :routing_regexp          => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
           :interface_class         => interface,
           :implementation_instance => interface.implementation.new
-        }
+        )
       end
 
       announce_presence_of( @@services )
@@ -2219,7 +2219,7 @@ module Hoodoo; module Services
       )
     end
 
-    # Take a Hoodoo::Errors instance constructed from, or obtained via
+    # Take a Hoodoo::Errors instance constructed from, or obtained via
     # a call to another service (inter-resource local or remote call) and
     # translate the contents to make sense when those errors are reported
     # in the context of an outer resource's response to a request.

@@ -10,7 +10,7 @@
 ########################################################################
 
 module Hoodoo
-  module Client # Just used as a namespace here
+  class Client # Just used as a namespace here
 
     # Ruby standard library Array subclass which mixes in
     # Hoodoo::Client::AugmentedBase. See that for details.
