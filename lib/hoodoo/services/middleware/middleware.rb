@@ -488,13 +488,14 @@ module Hoodoo; module Services
     #                 as an Integer - defaults to 1.
     #
     def inter_resource_endpoint_for( interaction, resource, version = 1 )
+      resource = resource.to_sym
+      version  = version.to_i
+
       if @discoverer.is_local?( resource, version )
 
         # For local inter-resource calls, return the middleware's endpoint
         # for that. In turn, if used this calls into #inter_resource_local.
 
-        resource         = resource.to_sym
-        version          = version.to_i
         discovery_result = @@services.find do | entry |
           interface = entry.interface_class
           interface.resource == resource && interface.version == version
@@ -505,8 +506,8 @@ module Hoodoo; module Services
         end
 
         return Hoodoo::Services::Middleware::InterResourceLocal.new(
-          discovery_result.resource,
-          discovery_result.version,
+          resource,
+          version,
           {
             :interaction      => interaction,
             :discovery_result => discovery_result
@@ -533,12 +534,23 @@ module Hoodoo; module Services
           }
         )
 
+        # Using "ForRemote" here is redundant - we could just as well
+        # pass wrapped_endpoint directly to an option in the
+        # InterResourceRemote class - but keeping "with the pattern"
+        # just sort of 'seems right' and might be useful in future.
+
+        discovery_result = Hoodoo::Services::Discovery::ForRemote.new(
+          resource,
+          version,
+          wrapped_endpoint
+        )
+
         return Hoodoo::Services::Middleware::InterResourceRemote.new(
           resource,
           version,
           {
             :interaction      => interaction,
-            :wrapped_endpoint => wrapped_endpoint
+            :discovery_result => discovery_result
           }
         )
       end

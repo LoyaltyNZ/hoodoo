@@ -41,14 +41,9 @@ module Hoodoo
           #                      inter-resource call, which is why this
           #                      Endpoint subclass instance is needed.
           #
-          # +wrapped_endpoint+:: The Hoodoo::Client::Endpoint subclass
-          #                      instance which is being wrapped. This will
-          #                      be called to
-          #
-          # +discovery_result+:: Ignored. The +wrapped_endpoint+ data will
-          #                      by definition already have discovery data
-          #                      associated with it, else it could not have
-          #                      been instantiated in the first place.
+          # +discovery_result+:: A Hoodoo::Services::Discovery::ForRemote
+          #                      instance describing the locally available
+          #                      resource endpoint.
           #
           # So, the pattern for creating and using this instance is:
           #
@@ -114,6 +109,12 @@ module Hoodoo
 
         private
 
+          # Preprocess the given action. This, for example, includes setting
+          # up a session with extra permissions requested by the *calling*
+          # resource implementation's interface, if necessary.
+          #
+          # +action+:: A Hoodoo::Services::Middleware::ALLOWED_ACTIONS entry.
+          #
           def preprocess( action )
             session = @owning_interaction.context.session
 
@@ -131,6 +132,15 @@ module Hoodoo
             end
           end
 
+          # Postprocess the given action. This, for example, includes
+          # removing any session with extra permissions that might have been
+          # set up in #preprocess.
+          #
+          # +action+:: A Hoodoo::Client::AugmentedHash or
+          #            Hoodoo::Client::AugmentedArray containing the result
+          #            of a previous (successful or unsuccessful) call to a
+          #            remote target resource. It may be modified.
+          #
           def postprocess( result )
             annotate_errors_from_other_resource_in( result )
 
@@ -148,6 +158,8 @@ module Hoodoo
             end
           end
 
+          # TODO
+          #
           def annotate_errors_from_other_resource_in( augmented_thing )
             # TODO - this probably needs to live somewhere else so the
             # endpoint and middleware local service call can 'reach' it.

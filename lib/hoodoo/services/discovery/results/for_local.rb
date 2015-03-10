@@ -12,18 +12,18 @@ module Hoodoo
   module Services
     class Discovery # Just used as a namespace here
 
-      # Describe a resource endpoint location in a way that allows
-      # it to be method-called from the service middleware directly.
+      # Describe a resource endpoint location in a way that allows it to be
+      # method-called from the service middleware directly.
       #
-      # This is a very special case class used for the inter-resource
-      # local call code in Hoodoo::Services::Middleware. It really
-      # exists only for semantic purposes; the middleware calls via
-      # Hoodoo::Client::Endpoint subclass,
-      # Hoodoo::Sevices::Middleware::InterResourceLocal; and the
-      # Endpoint subclass family are supposed to use result classes
-      # from the Hoodoo::Services::Discovery engine when they
-      # configure instances. This isn't actually enforced anywhere,
-      # but conceptually it's cleanest to follow the same pattern.
+      # This is a very special case class used for the inter-resource local
+      # call code in Hoodoo::Services::Middleware. It really exists only for
+      # semantic purposes; the middleware calls via Hoodoo::Client::Endpoint
+      # subclass Hoodoo::Sevices::Middleware::InterResourceLocal; and the
+      # Endpoint subclass family are supposed to use result classes from the
+      # Hoodoo::Services::Discovery engine when they configure instances.
+      #
+      # This isn't actually enforced anywhere, but conceptually it's cleanest
+      # to follow the same pattern.
       #
       class ForLocal
 
@@ -40,7 +40,7 @@ module Hoodoo
         #
         attr_accessor :base_path
 
-        # A regular expression which matches the +base_path+ and any
+        # A regular expression which matches the #base_path and any
         # identifier data, allowing inbound URI-based requests to be
         # routed to this endpoint. Regexp instance.
         #
@@ -52,7 +52,7 @@ module Hoodoo
         attr_accessor :interface_class
 
         # The Hoodoo::Services::Implementation subclass _instance_
-        # which implements the interface described by +interface_class+.
+        # which implements the interface described by #interface_class.
         #
         attr_accessor :implementation_instance
 
