@@ -69,9 +69,9 @@ module Hoodoo
 
         discovery_result = discoverer.discover( resource.to_sym, version.to_i )
 
-        klass = if discovery_result.is_a( Hoodoo::Services::Discovery::ForHTTP )
+        klass = if discovery_result.is_a?( Hoodoo::Services::Discovery::ForHTTP )
           Hoodoo::Client::Endpoint::HTTP
-        elsif discovery_result.is_a( Hoodoo::Services::Discovery::ForAMQP )
+        elsif discovery_result.is_a?( Hoodoo::Services::Discovery::ForAMQP )
           Hoodoo::Client::Endpoint::AMQP
         elsif discovery_result.nil?
           Hoodoo::Client::Endpoint::NotFound
@@ -95,6 +95,11 @@ module Hoodoo
       # The version number passed to the constructor, as an Integer.
       #
       attr_reader :version
+
+      # The discovery result data passed to the constructor. A
+      # Hoodoo::Services::Discovery "For..." family member instance
+      #
+      attr_reader :discovery_result
 
       # The Hoodoo::Services::Session instance passed to the constructor or
       # some value provided later; its session ID is used for the calls to
@@ -135,8 +140,8 @@ module Hoodoo
       # +locale+::           As in the options for ::endpoint_for.
       #
       # The out-of-the box initialiser sets up the data for the
-      # #resource, #version, #session and #locale accessors using this data,
-      # so subclass authors don't need to.
+      # #resource, #version, #discovery_result, #session and #locale
+      # accessors using this data, so subclass authors don't need to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
@@ -173,10 +178,11 @@ module Hoodoo
       #                sent in an HTTP request (i.e. JSON, as a Hash).
       #
       def initialize( resource, version = 1, options )
-        @resource = resource.to_sym
-        @version  = version.to_i
-        @session  = options[ :session ]
-        @locale   = options[ :locale  ]
+        @resource         = resource.to_sym
+        @version          = version.to_i
+        @discovery_result = options[ :discovery_result ]
+        @session          = options[ :session          ]
+        @locale           = options[ :locale           ]
 
         configure_with( @resource, @version, options )
       end

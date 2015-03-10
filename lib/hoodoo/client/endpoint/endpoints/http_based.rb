@@ -151,7 +151,7 @@ module Hoodoo
             headers[ 'X-Session-ID' ] = self.session().session_id unless self.session().nil? # Session comes from Endpoint superclass
 
             data             = DataForRequest.new
-            data.full_uri    = request_uri
+            data.full_uri    = remote_uri
             data.body_string = body_data
             data.header_hash = headers
 
@@ -169,7 +169,12 @@ module Hoodoo
             body = description_of_response.raw_body_data
 
             begin
-              parsed = JSON.parse( body )
+              parsed = JSON.parse(
+                body,
+                :object_class => Hoodoo::Client::AugmentedHash,
+                :array_class  => Hoodoo::Client::AugmentedArray
+              )
+
             rescue => e
               data = response_class_for( description_of_response.action ).new
 

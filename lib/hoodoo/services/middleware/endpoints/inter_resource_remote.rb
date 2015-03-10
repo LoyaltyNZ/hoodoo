@@ -59,10 +59,8 @@ module Hoodoo
           #   mechanics of remote inter-resource calling are handled here.
           #
           def configure_with( resource, version, options )
-            super( resource, version, options )
-
-            @owning_interaction = options[ :interaction      ]
-            @wrapped_endpoint   = options[ :wrapped_endpoint ]
+            @owning_interaction = options[ :interaction ]
+            @wrapped_endpoint   = @discovery_result.wrapped_endpoint
           end
 
         public
@@ -156,6 +154,8 @@ module Hoodoo
               @wrapped_endpoint.session = nil
               session.delete_from_memcached()
             end
+
+            result
           end
 
           # TODO

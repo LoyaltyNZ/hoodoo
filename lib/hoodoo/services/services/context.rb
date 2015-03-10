@@ -61,8 +61,7 @@ module Hoodoo; module Services
       end
 
       # Request (and lazy-initialize) a new resource endpoint instance for
-      # talking to a resource's interface. See
-      # Hoodoo::Services::Middleware::Endpoint.
+      # talking to a resource's interface. See Hoodoo::Client::Endpoint.
       #
       # You can request an endpoint for any resource name, whether or not an
       # implementation actually exists for it. Until you try and talk to the
@@ -101,7 +100,8 @@ module Hoodoo; module Services
       #              as an Integer - defaults to 1.
       #
       def resource( resource, version = 1 )
-        @endpoints[ "#{ resource }/#{ version }" ] ||= self.endpoint_for( resource, version )
+        @endpoints[ resource ] ||= {}
+        @endpoints[ resource ][ version ] ||= endpoint_for( resource, version )
       end
 
     private
@@ -113,12 +113,12 @@ module Hoodoo; module Services
       # +version+::  Required implemented version for the endpoint, Integer.
       #
       def endpoint_for( resource, version )
-        middleware = @self.owning_interaction.owning_middleware_instance
+        middleware = @owning_interaction.owning_middleware_instance
 
         return middleware.inter_resource_endpoint_for(
           resource,
           version,
-          self.owning_interaction
+          @owning_interaction,
         )
       end
 

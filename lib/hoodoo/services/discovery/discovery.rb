@@ -54,7 +54,9 @@ module Hoodoo
           version  = version.to_i
           result   = announce_remote( resource, version, options )
 
-          @known_local_resources[ key_for( resource, version ) ] = result
+          @known_local_resources[ resource ] ||= {}
+          @known_local_resources[ resource ][ version ] = result
+
           return result
         end
 
@@ -78,7 +80,7 @@ module Hoodoo
           version  = version.to_i
 
           if ( is_local?( resource, version ) )
-            return @known_local_resources[ key_for( resource, version ) ]
+            return @known_local_resources[ resource ][ version ]
           else
             return discover_remote( resource, version )
           end
@@ -86,6 +88,9 @@ module Hoodoo
 
         # Was a resource announced in this instance ("locally")? Returns
         # +true+ if so, else +false+.
+        #
+        # This only returns +true+ if #annouce has been called for the
+        # given resource and version.
         #
         # +resource+:: Resource name as a Symbol or String (e.g.
         #              +:Purchase+).
@@ -97,7 +102,8 @@ module Hoodoo
           resource = resource.to_sym
           version  = version.to_i
 
-          return @known_local_resources.has_key?( key_for( resource, version ) )
+          return @known_local_resources.has_key?( resource ) &&
+                 @known_local_resources[ resource ].has_key?( version )
         end
 
       protected

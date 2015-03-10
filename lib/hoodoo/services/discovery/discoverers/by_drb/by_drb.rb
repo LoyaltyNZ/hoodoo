@@ -8,6 +8,8 @@
 #           03-Mar-2015 (ADH): Created.
 ########################################################################
 
+require 'drb/drb'
+
 module Hoodoo
   module Services
     class Discovery # Just used as a namespace here

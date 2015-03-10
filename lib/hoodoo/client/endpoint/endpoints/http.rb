@@ -7,6 +7,9 @@
 #           05-Mar-2015 (ADH): Created.
 ########################################################################
 
+require 'net/http'
+require 'net/https'
+
 module Hoodoo
   class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
@@ -26,17 +29,13 @@ module Hoodoo
           # +discovery_result+ field of the +options+ Hash.
           #
           def configure_with( resource, version, options )
-            super( resource, version, options )
-
-            discovery_result = options[ :discovery_result ]
-
-            unless discovery_result.is_a?( Hoodoo::Services::Discovery::ForHTTP )
-              raise "Hoodoo::Client::Endpoint::HTTP must be configured with a Hoodoo::Services::Discovery::ForHTTP instance - got '#{ discovery_result.class.name }'"
+            unless @discovery_result.is_a?( Hoodoo::Services::Discovery::ForHTTP )
+              raise "Hoodoo::Client::Endpoint::HTTP must be configured with a Hoodoo::Services::Discovery::ForHTTP instance - got '#{ @discovery_result.class.name }'"
             end
 
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
-            @description.discovery_result = discovery_result
-            @description.endpoint_uri     = discovery_result.endpoint_uri
+            @description.discovery_result = @discovery_result
+            @description.endpoint_uri     = @discovery_result.endpoint_uri
           end
 
         public
@@ -102,12 +101,16 @@ module Hoodoo
 
             action = description_of_request.action
             data   = get_data_for_request( description_of_request )
+            http   = Net::HTTP.new( data.full_uri.host, data.full_uri.port )
 
-            if data.full_uri.scheme == "https"
+            if data.full_uri.scheme == 'https'
               http.use_ssl = true
 
               # TODO:  Urgent
               # FIXME: Urgent
+              # http://mislav.uniqpath.com/2013/07/ruby-openssl/
+              # http://notetoself.vrensk.com/2008/09/verified-https-in-ruby/
+              # http://stackoverflow.com/questions/2507902/how-to-validate-ssl-certificate-chain-in-ruby-with-net-http
               #
               http.verify_mode = OpenSSL::SSL::VERIFY_NONE
             end
@@ -118,10 +121,10 @@ module Hoodoo
               :delete => Net::HTTP::Delete
             }[ action ] || Net::HTTP::Get
 
-            request      = request_class.new( remote_uri.request_uri() )
+            request      = request_class.new( data.full_uri.request_uri() )
             request.body = data.body_string unless data.body_string.empty?
 
-            request.initialize_http_header( data.headers )
+            request.initialize_http_header( data.header_hash )
 
             description_of_response        = DescriptionOfResponse.new
             description_of_response.action = action

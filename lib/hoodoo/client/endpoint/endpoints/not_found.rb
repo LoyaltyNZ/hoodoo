@@ -16,11 +16,9 @@ module Hoodoo
 
           # See Hoodoo::Client::Endpoint#configure_with.
           #
-          # Ignores the +discovery_result+ field of the +options+ Hash,
-          # so this may be absent or present with any value.
+          # Does nothing in this subclass.
           #
           def configure_with( resource, version, options )
-            super( resource, version, options )
           end
 
         public

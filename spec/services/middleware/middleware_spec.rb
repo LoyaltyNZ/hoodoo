@@ -1531,7 +1531,7 @@ class RSpecTestInterResourceCalls < Hoodoo::Services::Service
                RSpecTestInterResourceCallsCInterface
 end
 
-describe Hoodoo::Services::Middleware::Endpoint do
+describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   # Middleware maintains class-level record of whether or not any interfaces
   # had public actions for efficiency; ensure this is cleared after all these
@@ -1820,15 +1820,6 @@ describe Hoodoo::Services::Middleware::Endpoint do
     it 'cannot call the secure update method in the other service without a session' do
       patch '/v1/rspec_test_inter_resource_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(401)
-    end
-  end
-
-  context 'edge error cases' do
-    it 'complains about malformed inter-resource options' do
-      expect {
-        mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
-        mw.send( :inter_resource, {} )
-      }.to raise_error(RuntimeError, 'Hoodoo::Services::Middleware#inter_resource: Serious internal error - no source interaction data was provided')
     end
   end
 end

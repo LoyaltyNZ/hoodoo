@@ -14,9 +14,6 @@
 require 'set'
 require 'uri'
 require 'benchmark'
-require 'net/http'
-require 'net/https'
-require 'drb/drb'
 
 require 'hoodoo/services/services/permissions'
 require 'hoodoo/services/services/session'
@@ -476,18 +473,17 @@ module Hoodoo; module Services
     # instance which can be used for inter-resource communication, whether
     # the target endpoint implementation is local or remote.
     #
+    # +resource+::    Resource name for the endpoint, e.g. +:Purchase+.
+    #                 String or symbol.
+    #
+    # +version+::     Required implemented version for the endpoint. Integer.
+    #
     # +interaction+:: The Hoodoo::Services::Interaction instance describing
     #                 the inbound call, the processing of which is leading to
     #                 a request for an inter-resource call by an endpoint
     #                 implementation.
     #
-    # +resource+::    Resource name for the endpoint, e.g. +:Purchase+.
-    #                 String or symbol.
-    #
-    # +version+::     Optional required implemented version for the endpoint,
-    #                 as an Integer - defaults to 1.
-    #
-    def inter_resource_endpoint_for( interaction, resource, version = 1 )
+    def inter_resource_endpoint_for( resource, version, interaction )
       resource = resource.to_sym
       version  = version.to_i
 
@@ -540,9 +536,9 @@ module Hoodoo; module Services
         # just sort of 'seems right' and might be useful in future.
 
         discovery_result = Hoodoo::Services::Discovery::ForRemote.new(
-          resource,
-          version,
-          wrapped_endpoint
+          :resource         => resource,
+          :version          => version,
+          :wrapped_endpoint => wrapped_endpoint
         )
 
         return Hoodoo::Services::Middleware::InterResourceRemote.new(
@@ -600,7 +596,7 @@ module Hoodoo; module Services
                               body_hash:  nil,
                               query_hash: nil )
 
-      source_interaction = options[ :source_interaction ]
+      source_interaction = source_interaction
       interface          = discovery_result.interface_class
       implementation     = discovery_result.implementation_instance
 
@@ -1225,12 +1221,20 @@ module Hoodoo; module Services
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
         port = @@recorded_port if port.nil? && defined?( @@recorded_port )
 
+        # Under test, ensure a simulation of an available host and port is
+        # always available for discovery-related tests.
+
+        if ( self.class.environment.test? )
+          host ||= '127.0.0.1'
+          port ||= '9292'
+        end
+
         # Announce the resource endpoints unless we are still missing a host
         # or port. Implication is 'racksh'.
 
         unless host.nil? || port.nil?
           services.each do | service |
-            interface = service[ :interface ]
+            interface = service.interface_class
 
             @discoverer.announce(
               interface.resource,
@@ -1238,7 +1242,7 @@ module Hoodoo; module Services
               {
                 :host => host,
                 :port => port,
-                :path => service[ :path ]
+                :path => service.base_path
               }
             )
           end
@@ -2140,11 +2144,10 @@ module Hoodoo; module Services
         case content_type
           when 'application/json'
 
-            # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
-            #
+            # Hoodoo requires Ruby 2.1 or later, else:
             # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
             #
-            payload_hash = JSON.parse( body, :create_additions => false )
+            payload_hash = JSON.parse( body )
 
         end
 

@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do |s|
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2015-02-04'
+  s.date        = '2015-03-11'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = ["Tom Cully", "Andrew Hodgkinson"]
@@ -38,4 +38,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'raygun4ruby',      '~> 1.1' # raygun.io
   s.add_development_dependency 'airbrake',         '~> 4.1' # airbrake.io
   s.add_development_dependency 'le',               '~> 2.6' # logentries.com
+  s.add_development_dependency 'byebug',           '~> 3.5'
 end

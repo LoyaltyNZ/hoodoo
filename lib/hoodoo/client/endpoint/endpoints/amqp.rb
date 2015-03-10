@@ -31,22 +31,18 @@ module Hoodoo
           # +discovery_result+ field of the +options+ Hash.
           #
           def configure_with( resource, version, options )
-            super( resource, version, options )
-
-            discovery_result = options[ :discovery_result ]
-
-            unless discovery_result.is_a?( Hoodoo::Services::Discovery::ForAMQP )
-              raise "Hoodoo::Client::Endpoint::AMQP must be configured with a Hoodoo::Services::Discovery::ForAMQP instance - got '#{ discovery_result.class.name }'"
+            unless @discovery_result.is_a?( Hoodoo::Services::Discovery::ForAMQP )
+              raise "Hoodoo::Client::Endpoint::AMQP must be configured with a Hoodoo::Services::Discovery::ForAMQP instance - got '#{ @discovery_result.class.name }'"
             end
 
             # Host and port isn't relevant for Alchemy but *is* needed
             # to keep Rack happy.
 
             endpoint_uri      = URI.parse( 'http://localhost:80' )
-            endpoint_uri.path = discovery_result.equivalent_path
+            endpoint_uri.path = @discovery_result.equivalent_path
 
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
-            @description.discovery_result = discovery_result
+            @description.discovery_result = @discovery_result
             @description.endpoint_uri     = endpoint_uri
           end
 

@@ -39,11 +39,8 @@ module Hoodoo; module Services
         #                      resource endpoint.
         #
         def configure_with( resource, version, options )
-          super( resource, version, options )
-
           @owning_interaction = options[ :interaction ]
-          @owning_middleware  = owning_interaction.owning_middleware_instance
-          @discovery_result   = options[ :discovery_result ]
+          @owning_middleware  = @owning_interaction.owning_middleware_instance
         end
 
       public
