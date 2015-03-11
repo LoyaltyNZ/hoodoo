@@ -25,6 +25,9 @@ module Hoodoo
           uuid   :outlet_id,        :required => true, :resource => :Outlet
           enum   :reason,           :required => true, :from     => REASONS
 
+          text  :reference,         :required => false
+          uuid  :reference_id,      :required => false
+
           object :debit,            :required => false do
             type :CurrencyAmount
           end
