@@ -5,7 +5,7 @@ describe Hoodoo::Data::Resources::Ledger do
     schema = described_class.get_schema()
 
     expect(schema.is_internationalised?()).to eq(false)
-    expect(schema.properties.count).to eq(6)
+    expect(schema.properties.count).to eq(8)
 
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['token_identifier'].required).to eq(true)
@@ -21,6 +21,12 @@ describe Hoodoo::Data::Resources::Ledger do
     expect(schema.properties['reason']).to be_a(Hoodoo::Presenters::Enum)
     expect(schema.properties['reason'].from).to eq(['calculation', 'manipulation'])
     expect(schema.properties['reason'].required).to eq(true)
+
+    expect(schema.properties['reference']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['reference'].required).to eq(false)
+
+    expect(schema.properties['reference_id']).to be_a(Hoodoo::Presenters::UUID)
+    expect(schema.properties['reference_id'].required).to eq(false)
 
     expect(schema.properties['debit']).to be_a(Hoodoo::Presenters::Object)
     expect(schema.properties['debit'].required).to eq(false)
