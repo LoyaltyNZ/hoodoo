@@ -213,7 +213,7 @@ module Hoodoo
     # structured logging under the component specified in the constructor
     # and code 'log'.
     #
-    # Calling ::report is recommended over unstructured direct logging.
+    # Calling #report is recommended over unstructured direct logging.
     #
     # *args:: One or more arguments that will be treated as strings and
     #         written in the presented order to the log, each on its own
@@ -230,7 +230,7 @@ module Hoodoo
     # structured logging under the component specified in the constructor
     # and code 'log'.
     #
-    # Calling ::report is recommended over unstructured direct logging.
+    # Calling #report is recommended over unstructured direct logging.
     #
     # *args:: One or more arguments that will be treated as strings and
     #         written in the presented order to the log, each on its own
@@ -247,7 +247,7 @@ module Hoodoo
     # structured logging under the component specified in the constructor
     # and code 'log'.
     #
-    # Calling ::report is recommended over unstructured direct logging.
+    # Calling #report is recommended over unstructured direct logging.
     #
     # *args:: One or more arguments that will be treated as strings and
     #         written in the presented order to the log, each on its own
@@ -263,7 +263,7 @@ module Hoodoo
     # structured logging under the component specified in the constructor
     # and code 'log'.
     #
-    # Calling ::report is recommended over unstructured direct logging.
+    # Calling #report is recommended over unstructured direct logging.
     #
     # *args:: One or more arguments that will be treated as strings and
     #         written in the presented order to the log, each on its own

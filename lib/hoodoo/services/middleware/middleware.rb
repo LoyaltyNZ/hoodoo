@@ -524,11 +524,16 @@ module Hoodoo; module Services
           resource,
           version,
           {
-            :discoverer => @discoverer,
-            :session    => interaction.context.session,
-            :locale     => interaction.context.request.locale
+            :discoverer  => @discoverer,
+            :interaction => interaction,
+            :session     => interaction.context.session,
+            :locale      => interaction.context.request.locale
           }
         )
+
+        if wrapped_endpoint.is_a?( Hoodoo::Client::Endpoint::AMQP ) && defined?( @@alchemy )
+          wrapped_endpoint.alchemy = @@alchemy
+        end
 
         # Using "ForRemote" here is redundant - we could just as well
         # pass wrapped_endpoint directly to an option in the

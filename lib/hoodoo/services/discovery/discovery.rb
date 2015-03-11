@@ -23,7 +23,7 @@ module Hoodoo
 
         # Create a new instance.
         #
-        # +options+:: Passed to the subclass in use via ::configure_with.
+        # +options+:: Passed to the subclass in use via #configure_with.
         #             Subclasses define their options. Only instantiate
         #             such subclasses, not this 'Base' class; see the
         #             subclass documentation for option details.
@@ -35,7 +35,7 @@ module Hoodoo
 
         # Indicate that a resource is available locally and broacast its
         # location to whatever discovery service a subclass supports via
-        # ::announce_remote.
+        # #announce_remote.
         #
         # +resource+:: Resource name as a Symbol or String (e.g.
         #              +:Purchase+).

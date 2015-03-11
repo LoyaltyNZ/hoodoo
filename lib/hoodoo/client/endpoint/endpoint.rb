@@ -33,21 +33,31 @@ module Hoodoo
       # Items in the options hash are required, unless explicitly listed
       # as optional. They are:
       #
-      # +discoverer+:: A Hoodoo::Services::Discovery "By..." family member
-      #                instance, e.g. a
-      #                Hoodoo::Services::Discovery::ByConvention instance.
-      #                This is used to look up a service instance. The
-      #                returned discovery data type is used to determine
-      #                the required endpoint type; for example,
-      #                a Hoodoo::Services::Discovery::ForHTTP result would
-      #                result in a Hoodoo::Client::Endpoint::HTTP instance.
+      # +discoverer+::     A Hoodoo::Services::Discovery "By..." family
+      #                    member instance, e.g. a
+      #                    Hoodoo::Services::Discovery::ByDRb instance.
+      #                    This is used to look up a service instance. The
+      #                    returned discovery data type is used to determine
+      #                    the required endpoint type; for example, a
+      #                    Hoodoo::Services::Discovery::ForHTTP result yields
+      #                    a Hoodoo::Client::Endpoint::HTTP instance.
       #
-      # +session+::    A Hoodoo::Services::Session instance. Optional, but
-      #                if omitted, only public resource actions will be
-      #                accessible.
+      # +session+::        A Hoodoo::Services::Session instance. Optional,
+      #                    but if omitted, only public resource actions will
+      #                    be accessible.
       #
-      # +locale+:      Locale string for request/response, e.g. "en-gb". If
-      #                omitted, defaults to "en-nz".
+      # +locale+::         Locale string for request/response, e.g. "en-gb".
+      #                    Optional. If omitted, defaults to "en-nz".
+      #
+      # +interaction+::    A Hoodoo::Services::Middleware::Interaction
+      #                    instance which describes a *source* interaction at
+      #                    hand. This is a middleware concept and most of the
+      #                    time, only the middleware would use this; the
+      #                    middleware is handling some API call which the
+      #                    source interaction data describes but the resource
+      #                    which is handling the call needs to make an
+      #                    inter-resource call, which is why an Endpoint is
+      #                    being created.
       #
       # Returns a Hoodoo::Services::Discovery "For..." family member
       # instance (e.g. Hoodoo::Services::Discovery::ForHTTP) which can be
@@ -62,11 +72,7 @@ module Hoodoo
       # before bothering to instantiate an endpoint.
       #
       def self.endpoint_for( resource, version, options )
-
-        session    = options[ :session ]
-        locale     = options[ :locale  ]
-        discoverer = options.delete( :discoverer )
-
+        discoverer       = options.delete( :discoverer )
         discovery_result = discoverer.discover( resource.to_sym, version.to_i )
 
         klass = if discovery_result.is_a?( Hoodoo::Services::Discovery::ForHTTP )
@@ -96,10 +102,15 @@ module Hoodoo
       #
       attr_reader :version
 
-      # The discovery result data passed to the constructor. A
-      # Hoodoo::Services::Discovery "For..." family member instance
+      # The value of the +interaction+ option key passed to the
+      # constructor. See #initialize and #endpoint_for.
       #
-      attr_reader :discovery_result
+      attr_reader :interaction
+
+      # The locale passed to the constructor or some value provided later; a
+      # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
+      #
+      attr_accessor :locale
 
       # The Hoodoo::Services::Session instance passed to the constructor or
       # some value provided later; its session ID is used for the calls to
@@ -135,12 +146,14 @@ module Hoodoo
       #                      result type, so see its documentation for
       #                      details.
       #
-      # +session+::          As in the options for ::endpoint_for.
+      # +interaction+::      As in the options for #endpoint_for.
       #
-      # +locale+::           As in the options for ::endpoint_for.
+      # +session+::          As in the options for #endpoint_for.
       #
-      # The out-of-the box initialiser sets up the data for the
-      # #resource, #version, #discovery_result, #session and #locale
+      # +locale+::           As in the options for #endpoint_for.
+      #
+      # The out-of-the box initialiser sets up the data for the #resource,
+      # #version, #discovery_result, #interaction, #session and #locale
       # accessors using this data, so subclass authors don't need to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
@@ -183,6 +196,7 @@ module Hoodoo
         @discovery_result = options[ :discovery_result ]
         @session          = options[ :session          ]
         @locale           = options[ :locale           ]
+        @interaction      = options[ :interaction      ]
 
         configure_with( @resource, @version, options )
       end

@@ -29,7 +29,7 @@ module Hoodoo
           # It isn't expected that anyone will ever need to use this class
           # beyond Hoodoo::Services::Middleware, but you never know...
           #
-          # Extra configuration option keys which must be supplied are:
+          # Configuration option keys which _must_ be supplied are:
           #
           # +interaction+::      A Hoodoo::Services::Middleware::Interaction
           #                      instance which describes the *source*
@@ -59,8 +59,7 @@ module Hoodoo
           #   mechanics of remote inter-resource calling are handled here.
           #
           def configure_with( resource, version, options )
-            @owning_interaction = options[ :interaction ]
-            @wrapped_endpoint   = @discovery_result.wrapped_endpoint
+            @wrapped_endpoint = @discovery_result.wrapped_endpoint
           end
 
         public
@@ -114,10 +113,13 @@ module Hoodoo
           # +action+:: A Hoodoo::Services::Middleware::ALLOWED_ACTIONS entry.
           #
           def preprocess( action )
-            session = @owning_interaction.context.session
+
+            # Interaction ID comes from Endpoint superclass.
+            #
+            session = self.interaction().context.session
 
             unless session.nil?
-              session = session.augment_with_permissions_for( @owning_interaction )
+              session = session.augment_with_permissions_for( self.interaction() )
             end
 
             if session == false
@@ -140,10 +142,13 @@ module Hoodoo
           #            remote target resource. It may be modified.
           #
           def postprocess( result )
+
+            # Interaction ID comes from Endpoint superclass.
+            #
             if @wrapped_endpoint.session &&
-               @owning_interaction.context &&
-               @owning_interaction.context.session &&
-               @wrapped_endpoint.session.session_id != @owning_interaction.context.session.session_id
+               self.interaction().context &&
+               self.interaction().context.session &&
+               @wrapped_endpoint.session.session_id != self.interaction().context.session.session_id
 
               # Ignore errors, there's nothing much we can do about them and in
               # the worst case we just have to wait for this to expire naturally.

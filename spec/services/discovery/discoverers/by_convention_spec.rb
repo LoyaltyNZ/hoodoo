@@ -22,7 +22,7 @@ describe Hoodoo::Services::Discovery::ByConvention do
 
     result = @d.discover( :Apple, 3 )
     expect( result ).to be_a( Hoodoo::Services::Discovery::ForHTTP )
-    expect( result.resource ).to eq( 'Apple' )
+    expect( result.resource ).to eq( :Apple )
     expect( result.version ).to eq( 3 )
     expect( result.endpoint_uri.to_s ).to eq( 'http://pond.org.uk/v3/apples')
   end

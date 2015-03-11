@@ -65,7 +65,7 @@ module Hoodoo
 
           # Description of data that will be used for request - essentially a
           # compilation of a DescriptionOfRequest instance produced via a call
-          # to ::get_data_for_request.
+          # to #get_data_for_request.
           #
           class DataForRequest
 
@@ -88,8 +88,8 @@ module Hoodoo
           end
 
           # Description of data describing an HTTP response. Used by
-          # ::get_data_for_response to generate a response array or hash
-          # (see ::response_class_for).
+          # #get_data_for_response to generate a response array or hash
+          # (see #response_class_for).
           #
           class DescriptionOfResponse
 
@@ -177,7 +177,18 @@ module Hoodoo
               'Content-Language' => self.locale() || 'en-nz' # Locale comes from Endpoint superclass
             }
 
-            headers[ 'X-Session-ID' ] = self.session().session_id unless self.session().nil? # Session comes from Endpoint superclass
+            # Interaction comes from Endpoint superclass.
+            #
+            # TODO: Can anything be done about inbound X-Interaction-ID
+            #       headers or interaction ID values specified by the
+            #       calling client which would be stripped by an Alchemy
+            #       architecture but not by conventional HTTP servers?
+            #
+            headers[ 'X-Interaction-ID' ] = self.interaction().interaction_id unless self.interaction().nil?
+
+            # Session comes from Endpoint superclass.
+            #
+            headers[ 'X-Session-ID'] = self.session().session_id unless self.session().nil?
 
             data             = DataForRequest.new
             data.full_uri    = remote_uri

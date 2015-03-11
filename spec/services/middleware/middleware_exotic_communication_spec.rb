@@ -57,48 +57,15 @@ describe Hoodoo::Services::Middleware do
     #       for generic Hoodoo.
     #
     it 'returns known queue endpoint locations' do
-      location = @mw.send( :remote_service_for, :Version, 2 )
+      location = @mw.instance_variable_get( '@discoverer' ).discover( :Version, 2 )
       expect( location ).to be_a( Hoodoo::Services::Discovery::ForAMQP )
       expect( location.queue_name ).to eq( 'service.utility' )
       expect( location.equivalent_path ).to eq( '/v2/version' )
     end
 
     it 'returns "nil" for unknown queue endpoint locations' do
-      location = @mw.send( :remote_service_for, :NotAKnownResource )
+      location = @mw.instance_variable_get( '@discoverer' ).discover( :NotAKnownResource, 2 )
       expect( location ).to be_nil
-    end
-
-    it 'complains about missing Alchemy' do
-      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
-      interaction = Hoodoo::Services::Middleware::Interaction.new(
-        {},
-        mw,
-        Hoodoo::Services::Middleware.test_session()
-      )
-      interaction.target_interface = OpenStruct.new
-
-      if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
-        Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
-      end
-
-      remote = Hoodoo::Services::Discovery::ForAMQP.new(
-        resource: 'Version',
-        version: 2,
-        queue_name: 'service.utility',
-        equivalent_path: '/v2/version'
-      )
-
-      expect {
-        @mw.send(
-          :inter_resource_remote,
-          {
-            # Purely hypothetical; no actual call will be made
-            :source_interaction => interaction,
-            :remote             => remote,
-            :http_method        => 'GET'
-          }
-        )
-      }.to raise_error( RuntimeError, 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment' )
     end
 
     context 'calling Alchemy' do
@@ -124,25 +91,54 @@ describe Hoodoo::Services::Middleware do
           expect( opts ).to eq(
             {
               :session_id => @interaction.context.session.session_id,
-              :host       => ':',
-              :port       => 0,
+              :host       => 'localhost',
+              :port       => 80,
               :body       => '',
               :query      => mock_query,
               :headers    => {
                 'Content-Type' => 'application/json; charset=utf-8',
                 'Content-Language' => 'fr',
                 'X-Interaction-ID' => @interaction.interaction_id,
-                'X-Session-ID' =>@interaction.context.session.session_id
+                'X-Session-ID' => @interaction.context.session.session_id
               }
             }
           )
         end.and_return( mock_response )
       end
 
+      it 'complains about a missing Alchemy instance' do
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/'
+
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
+        expect_any_instance_of( Hoodoo::Services::Discovery::ByConsul ).to receive(
+          :discover_remote
+        ).and_return(
+          mock_remote
+        )
+
+        endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
+
+        mock_response = AlchemyAMQ::HTTPResponse.new(
+          :status_code => 200,
+          :body => '{"_data":[]}'
+        )
+
+        expect {
+          mock_result = endpoint.list()
+        }.to raise_error( RuntimeError, 'Hoodoo::Client::Endpoint::AMQP cannot be used unless an Alchemy instance has been provided' )
+      end
+
       it 'calls #list over Alchemy and handles 200' do
         mock_queue  = 'service.utility'
         mock_path   = '/v2/version/'
-        mock_method = 'PATCH'
+        mock_method = 'GET'
         mock_query  = { :search => { :foo => :bar } }
 
         mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
@@ -152,23 +148,21 @@ describe Hoodoo::Services::Middleware do
           equivalent_path: mock_path
         )
 
+        expect_any_instance_of( Hoodoo::Services::Discovery::ByConsul ).to receive(
+          :discover_remote
+        ).and_return(
+          mock_remote
+        )
+
+        endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
+
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 200,
           :body => '{"_data":[]}'
         )
 
         run_expectations( mock_queue, mock_path, mock_method, mock_query, mock_response )
-
-        mock_result = @mw.send(
-          :inter_resource_remote,
-          {
-            # Purely hypothetical; no actual call will be made
-            :source_interaction => @interaction,
-            :remote             => mock_remote,
-            :http_method        => mock_method,
-            :query_hash         => mock_query
-          }
-        )
+        mock_result = endpoint.list( mock_query )
 
         expect( mock_result ).to eq( Hoodoo::Client::AugmentedArray.new )
       end

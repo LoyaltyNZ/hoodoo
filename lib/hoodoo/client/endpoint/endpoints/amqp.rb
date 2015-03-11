@@ -142,8 +142,9 @@ module Hoodoo
             alchemy_options = {
               :host    => description_of_request.endpoint_uri.host,
               :port    => description_of_request.endpoint_uri.port,
+              :query   => description_of_request.query_hash,
               :body    => data.body_string,
-              :headers => data.headers
+              :headers => data.header_hash
             }
 
             unless self.session().nil? # Session comes from Endpoint superclass
@@ -160,7 +161,7 @@ module Hoodoo
             description_of_response.action = action
 
             amqp_response = self.alchemy().http_request(
-              description_of_request.discovery_data.queue_name,
+              description_of_request.discovery_result.queue_name,
               http_method,
               description_of_request.endpoint_uri.path,
               alchemy_options

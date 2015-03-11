@@ -22,7 +22,7 @@ module Hoodoo; module Services
         # It isn't expected that anyone will ever need to use this class
         # beyond Hoodoo::Services::Middleware, but you never know...
         #
-        # Extra configuration option keys which must be supplied are:
+        # Configuration option keys which _must_ be supplied are:
         #
         # +interaction+::      A Hoodoo::Services::Middleware::Interaction
         #                      instance which describes the *source*
@@ -39,8 +39,7 @@ module Hoodoo; module Services
         #                      resource endpoint.
         #
         def configure_with( resource, version, options )
-          @owning_interaction = options[ :interaction ]
-          @owning_middleware  = @owning_interaction.owning_middleware_instance
+          @middleware = self.interaction().owning_middleware_instance
         end
 
       public
@@ -48,8 +47,8 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#list.
         #
         def list( query_hash = nil )
-          return @owning_middleware.inter_resource_local(
-            :source_interaction => @owning_interaction,
+          return @middleware.inter_resource_local(
+            :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
 
             :action             => :list,
@@ -61,8 +60,8 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#show.
         #
         def show( ident, query_hash = nil )
-          return @owning_middleware.inter_resource_local(
-            :source_interaction => @owning_interaction,
+          return @middleware.inter_resource_local(
+            :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
 
             :action             => :show,
@@ -75,8 +74,8 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#create.
         #
         def create( body_hash, query_hash = nil )
-          return @owning_middleware.inter_resource_local(
-            :source_interaction => @owning_interaction,
+          return @middleware.inter_resource_local(
+            :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
 
             :action             => :create,
@@ -89,8 +88,8 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#update.
         #
         def update( ident, body_hash, query_hash = nil )
-          return @owning_middleware.inter_resource_local(
-            :source_interaction => @owning_interaction,
+          return @middleware.inter_resource_local(
+            :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
 
             :action             => :update,
@@ -104,8 +103,8 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#delete.
         #
         def delete( ident, query_hash = nil )
-          return @owning_middleware.inter_resource_local(
-            :source_interaction => @owning_interaction,
+          return @middleware.inter_resource_local(
+            :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
 
             :action             => :delete,

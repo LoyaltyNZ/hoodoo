@@ -13,7 +13,7 @@ module Hoodoo
 
     # Base functionality for JSON validation and presenter (rendering) layers.
     # Subclass this to define a schema against which validation of inbound data
-    # or rendering of outbound data can be performed. Call ::schema in the
+    # or rendering of outbound data can be performed. Call #schema in the
     # subclass to declare, via the DSL, the shape of the schema.
     #
     class Base
@@ -142,14 +142,14 @@ module Hoodoo
         @schema.is_internationalised?
       end
 
-      # Return the schema graph. See also ::get_schema_definition.
+      # Return the schema graph. See also #get_schema_definition.
       #
       def self.get_schema
         @schema
       end
 
       # Read back the block that defined the schema graph. See also
-      # ::get_schema.
+      # #get_schema.
       #
       def self.get_schema_definition
         @schema_definition

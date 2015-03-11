@@ -39,7 +39,7 @@ module Hoodoo
       #
       THREAD_EXIT_TIMEOUT = 5
 
-      # Analogous to ::THREAD_WAIT_TIMEOUT but used when waiting for a
+      # Analogous to THREAD_WAIT_TIMEOUT but used when waiting for a
       # processing Thread to drain its Queue, without asking it to exit.
       #
       THREAD_WAIT_TIMEOUT = 5
@@ -69,7 +69,7 @@ module Hoodoo
       # order is indeterminate for such instances.
       #
       # If a slow communicator's inbound message queue length matches or
-      # exceeds ::MAX_SLOW_QUEUE_SIZE, messages for that specific communicator
+      # exceeds MAX_SLOW_QUEUE_SIZE, messages for that specific communicator
       # will start being dropped until the communicator clears the backlog and
       # at last one space opens on the queue. Slow communicators can detect
       # when this has happened by implementing
@@ -109,7 +109,7 @@ module Hoodoo
       # the call simply has no side effects.
       #
       # If removing a slow communicator, its thread will be terminated with
-      # default timeout value of ::THREAD_EXIT_TIMEOUT seconds. For this
+      # default timeout value of THREAD_EXIT_TIMEOUT seconds. For this
       # reason, removing a slow communicator may take a long time.
       #
       # Returns the passed-in communicator instance parameter, for convenience.
@@ -205,7 +205,7 @@ module Hoodoo
       #
       # +per_instance_timeout+:: Timeout for _each_ slow communicator Thread
       #                          in seconds. Optional. Default is the value
-      #                          in ::THREAD_WAIT_TIMEOUT.
+      #                          in THREAD_WAIT_TIMEOUT.
       #
       # +communicator+::         If you want to wait for specific instance only
       #                          (see #add), pass it here. If the instance is a
@@ -266,7 +266,7 @@ module Hoodoo
       #
       # +per_instance_timeout+:: Timeout for _each_ slow communicator Thread
       #                          in seconds. Optional. Default is the value
-      #                          in ::THREAD_EXIT_TIMEOUT. For example,
+      #                          in THREAD_EXIT_TIMEOUT. For example,
       #                          with three slow communicators in the pool
       #                          and all three reached a 5 second timeout,
       #                          the termination method would not return for
