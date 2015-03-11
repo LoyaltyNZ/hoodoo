@@ -119,7 +119,36 @@ module Hoodoo
             ident      = description_of_request.ident
 
             body_data  = body_hash.nil? ? '' : body_hash.to_json
-            remote_uri = description_of_request.endpoint_uri.dup # We will modify this and can't mutate original
+
+            # Amazingly, there's no fast way to deep clone a URI. Long story
+            # short - Marshal.load(Marshal.dump(uri)) takes, astonishingly,
+            # twice as long to execute as URI.parse(uri.to_s). I have no idea
+            # how that's possible. The Addressable gem is even slower.
+            #
+            #   require 'benchmark'
+            #   require 'addressable/uri' # Assuming gem is present
+            #
+            #   s='http://user:password@pond.org.uk:9924/foo/bar.baz?thing=that'
+            #   u=URI.parse(s)
+            #   a=Addressable::URI.parse(s)
+            #
+            #   Benchmark.realtime { 1000000.times { u2=URI.parse(u.to_s) } }
+            #   # => 14.110195
+            #   Benchmark.realtime { 1000000.times { a2=a.dup } }
+            #   # => 26.530487
+            #   Benchmark.realtime { 1000000.times { u2=Marshal.load(Marshal.dump(u)) } }
+            #   # => 22.048637
+            #
+            # ...repeatably.
+            #
+            # TODO: Is it possible to improve this? It's truly awful, to the
+            #       extent I'm almost motivated to write a URI handler gem.
+            #       The core library URI API is tragically bad.
+
+            remote_uri = URI.parse( description_of_request.endpoint_uri.to_s )
+
+            # Now we've a copy, we can use high level URI methods to manipulate
+            # it to form the full request URI.
 
             remote_uri.path << "/#{ URI::escape( ident ) }" unless ident.nil?
 
@@ -180,7 +209,7 @@ module Hoodoo
 
               case code
                 when 404
-                  return generate_404_response_for( description_of_request.action )
+                  return generate_404_response_for( description_of_response.action )
                 when 408
                   data.platform_errors.add_error( 'platform.timeout' )
                 when 200
@@ -234,7 +263,7 @@ module Hoodoo
               # error payloads and trip over with the early return 404 stuff
               # etc. this way.
 
-              parsed = response_class.new
+              parsed = response_class_for( description_of_response.action ).new
               parsed.set_platform_errors( errors_from_resource )
 
             end

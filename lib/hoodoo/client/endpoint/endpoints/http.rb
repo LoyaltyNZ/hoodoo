@@ -43,7 +43,7 @@ module Hoodoo
           # See Hoodoo::Client::Endpoint#list.
           #
           def list( query_hash = nil )
-            d            = @description.dup
+            d            = @description.dup # This does NOT dup the objects to which @description points
             d.action     = :list
             d.query_hash = query_hash
 

@@ -140,8 +140,6 @@ module Hoodoo
           #            remote target resource. It may be modified.
           #
           def postprocess( result )
-            annotate_errors_from_other_resource_in( result )
-
             if @wrapped_endpoint.session &&
                @owning_interaction.context &&
                @owning_interaction.context.session &&
@@ -155,7 +153,9 @@ module Hoodoo
               session.delete_from_memcached()
             end
 
-            result
+            annotate_errors_from_other_resource_in( result )
+
+            return result
           end
 
           # TODO

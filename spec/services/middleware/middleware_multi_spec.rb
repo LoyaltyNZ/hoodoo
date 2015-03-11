@@ -514,21 +514,6 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( TestCallImplementation ).to receive( :after ).once
     end
 
-    # This is basically just for code coverage of a 'rescue' case inside
-    # the middleware's 'remote_service_for' method.
-    #
-    it 'handles "this can never happen" DRb discovery service failures' do
-      expect_any_instance_of( Hoodoo::Services::Discovery ).to receive( :discover ).and_raise( 'boo!' )
-
-      get(
-        '/v1/test_call/',
-        nil,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      )
-
-      expect( last_response.status ).to eq( 404 )
-    end
-
     def list_things
       get(
         '/v1/test_call.tar.gz?limit=25&offset=75',
