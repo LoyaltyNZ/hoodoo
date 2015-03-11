@@ -161,18 +161,6 @@ module Hoodoo
           raise "Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource '#{ resource }' / version '#{ version }'"
         end
 
-      private
-
-        # For a given resource and version, return a key for the internal
-        # Hash of locally announced resources.
-        #
-        # +resource+:: Resource name as a String.
-        # +version+::  Endpoint version as an Integer.
-        #
-        def key_for( resource, version )
-          "#{ resource }/#{ version }"
-        end
-
     end
   end
 end
