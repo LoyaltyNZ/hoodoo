@@ -15,15 +15,9 @@ module Hoodoo
       # Describe a "pseudo" resource endpoint location in terms of
       # an interation context and wrapped "real" endpoint instance.
       #
-      # This is a very special case class used for the inter-resource remote
-      # call code in Hoodoo::Services::Middleware. It really exists only for
-      # semantic purposes; the middleware calls via Hoodoo::Client::Endpoint
-      # subclass Hoodoo::Sevices::Middleware::InterResourceRemote; and the
-      # Endpoint subclass family are supposed to use result classes from the
-      # Hoodoo::Services::Discovery engine when they configure instances.
-      #
-      # This isn't actually enforced anywhere, but conceptually it's cleanest
-      # to follow the same pattern.
+      # This is a very special case class used for wrapping endpoints in, for
+      # example, the inter-resource remote call code in the middleware and in
+      # the auto-session code in Hoodoo::Client::Endpoint::AutoSession.
       #
       class ForRemote
 

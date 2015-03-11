@@ -147,8 +147,8 @@ module Hoodoo
               :headers => data.header_hash
             }
 
-            unless self.session().nil? # Session comes from Endpoint superclass
-              alchemy_options[ :session_id ] = self.session().session_id
+            unless self.session_id().nil? # Session comes from Endpoint superclass
+              alchemy_options[ :session_id ] = self.session_id()
             end
 
             http_method = {

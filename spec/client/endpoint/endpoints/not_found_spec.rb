@@ -7,7 +7,7 @@ describe Hoodoo::Client::Endpoint::NotFound do
 
   context 'produces "not found" result for' do
     def run_expectations( result )
-      expect( result.platform_errors ).to_not be_nil
+      expect( result.platform_errors.has_errors? ).to eq( true )
       expect( result.platform_errors.errors.size ).to eq( 1 )
       expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
     end

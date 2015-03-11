@@ -16,6 +16,12 @@ module Hoodoo
     # so that endpoint users don't need to care how the endpoint
     # actually communicates with a target resource.
     #
+    # ENDPOINTS ARE NOT INTENDED TO BE THREAD SAFE. Whenever you want to
+    # use one from a particular thread, instantiate an endpoint for use by
+    # just that thread. Don't share instances between threads via e.g.
+    # controlling class instance variables recording a reference to a
+    # single endpoint object.
+    #
     class Endpoint
 
       # Endpoint factory - instantiates and endpoint for the given resource
@@ -42,9 +48,9 @@ module Hoodoo
       #                    Hoodoo::Services::Discovery::ForHTTP result yields
       #                    a Hoodoo::Client::Endpoint::HTTP instance.
       #
-      # +session+::        A Hoodoo::Services::Session instance. Optional,
-      #                    but if omitted, only public resource actions will
-      #                    be accessible.
+      # +session_id+::     A session UUID, for the X-Session-ID HTTP header
+      #                    or an equivalent. Optional, but if omitted, only
+      #                    public resource actions will be accessible.
       #
       # +locale+::         Locale string for request/response, e.g. "en-gb".
       #                    Optional. If omitted, defaults to "en-nz".
@@ -112,12 +118,12 @@ module Hoodoo
       #
       attr_accessor :locale
 
-      # The Hoodoo::Services::Session instance passed to the constructor or
-      # some value provided later; its session ID is used for the calls to
-      # the target resource. If +nil+, only public actions in the target
-      # resource will be accessible.
+      # The session UUID passed to the constructor or some value provided
+      # later; used for the calls to the target resource via the X-Session-ID
+      # HTTP header or an equivalent. If +nil+, only public actions in the
+      # target resource will be accessible.
       #
-      attr_accessor :session
+      attr_accessor :session_id
 
       # The locale passed to the constructor or some value provided later; a
       # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
@@ -148,12 +154,12 @@ module Hoodoo
       #
       # +interaction+::      As in the options for #endpoint_for.
       #
-      # +session+::          As in the options for #endpoint_for.
+      # +session_id+::       As in the options for #endpoint_for.
       #
       # +locale+::           As in the options for #endpoint_for.
       #
       # The out-of-the box initialiser sets up the data for the #resource,
-      # #version, #discovery_result, #interaction, #session and #locale
+      # #version, #discovery_result, #interaction, #session_id and #locale
       # accessors using this data, so subclass authors don't need to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
@@ -194,7 +200,7 @@ module Hoodoo
         @resource         = resource.to_sym
         @version          = version.to_i
         @discovery_result = options[ :discovery_result ]
-        @session          = options[ :session          ]
+        @session_id       = options[ :session_id       ]
         @locale           = options[ :locale           ]
         @interaction      = options[ :interaction      ]
 

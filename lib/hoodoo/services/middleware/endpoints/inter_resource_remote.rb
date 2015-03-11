@@ -42,18 +42,20 @@ module Hoodoo
           #                      Endpoint subclass instance is needed.
           #
           # +discovery_result+:: A Hoodoo::Services::Discovery::ForRemote
-          #                      instance describing the locally available
+          #                      instance describing the remotely available
           #                      resource endpoint.
           #
-          # So, the pattern for creating and using this instance is:
-          #
-          # * Discover the location of the remote resource.
+          # The pattern for creating and using this instance is:
           #
           # * Use the discovery result to build an appropriate Endpoint
-          #   subclass instance.
+          #   subclass instance, e.g. Hoodoo::Client::Endpoint::HTTP.
           #
-          # * Build an instance of this inter-resource Endpoint class,
-          #   giving it the wrapped endpoint from the above step.
+          # * Create a Hoodoo::Services::Discovery::ForRemote instance
+          #   which describes the above endpoint via the +wrapped_endpoint+
+          #   option.
+          #
+          # * Build an instance of this auto-session Endpoint subclass,
+          #   giving it the above object as the +discovery_result+.
           #
           # * Use this endpoint in the normal fashion. All the special
           #   mechanics of remote inter-resource calling are handled here.
@@ -127,7 +129,24 @@ module Hoodoo
               data.platform_errors.add_error( 'platform.invalid_session' )
               return data
             else
-              @wrapped_endpoint.session = session
+
+              # We only get away with @wrapping_session as an instance
+              # variable because endpoints are not intended to be thread
+              # safe, so we assume that only one thread at any given time
+              # will be running through "this" instance.
+              #
+              # We only store the full session rather than just the ID so
+              # that we can easily delete it. The inbound session which
+              # may have been augmented, would already have any relevant
+              # configuration data associated with it - so we don't want
+              # to lose that reference by only storing the ID. This would
+              # make it very hard / impossible to delete the session again
+              # in #postprocess, which could represent a security issue as
+              # an elevated permission session could be left kicking
+              # around somewhere.
+
+              @wrapping_session = session
+              @wrapped_endpoint.session_id = session.session_id
               return nil
             end
           end
@@ -145,16 +164,18 @@ module Hoodoo
 
             # Interaction ID comes from Endpoint superclass.
             #
-            if @wrapped_endpoint.session &&
+            if @wrapping_session &&
                self.interaction().context &&
                self.interaction().context.session &&
-               @wrapped_endpoint.session.session_id != self.interaction().context.session.session_id
+               @wrapping_session.session_id != self.interaction().context.session.session_id
 
               # Ignore errors, there's nothing much we can do about them and in
               # the worst case we just have to wait for this to expire naturally.
 
-              session = @wrapped_endpoint.session
-              @wrapped_endpoint.session = nil
+              @wrapped_endpoint.session_id = nil
+
+              session = @wrapping_session
+              @wrapping_session = nil
               session.delete_from_memcached()
             end
 

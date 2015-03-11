@@ -186,9 +186,9 @@ module Hoodoo
             #
             headers[ 'X-Interaction-ID' ] = self.interaction().interaction_id unless self.interaction().nil?
 
-            # Session comes from Endpoint superclass.
+            # Session ID comes from Endpoint superclass.
             #
-            headers[ 'X-Session-ID'] = self.session().session_id unless self.session().nil?
+            headers[ 'X-Session-ID'] = self.session_id() unless self.session_id().nil?
 
             data             = DataForRequest.new
             data.full_uri    = remote_uri
