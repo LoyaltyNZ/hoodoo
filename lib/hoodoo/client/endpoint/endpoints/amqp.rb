@@ -163,7 +163,7 @@ module Hoodoo
             amqp_response = self.alchemy().http_request(
               description_of_request.discovery_result.queue_name,
               http_method,
-              description_of_request.endpoint_uri.path,
+              data.full_uri.path,
               alchemy_options
             )
 
