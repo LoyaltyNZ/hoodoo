@@ -11,6 +11,7 @@ describe Hoodoo::Data::Types::Basket do
     # BasketItem array
 
     expect(schema.properties['items']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['items'].required).to eq(false)
 
     expect(schema.properties['items'].properties.count).to eq(6)
     expect(schema.properties['items'].properties['quantity']).to be_a(Hoodoo::Presenters::Integer)
@@ -33,6 +34,7 @@ describe Hoodoo::Data::Types::Basket do
     # CurrencyAmount array
 
     expect(schema.properties['totals']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['totals'].required).to eq(true)
 
     expect(schema.properties['totals'].properties.count).to eq(3)
 
