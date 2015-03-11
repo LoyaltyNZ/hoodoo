@@ -444,6 +444,9 @@ describe Hoodoo::Services::Middleware do
     # at all from that same chunk of code here.
     #
     it 'attempts HTTPS communication' do
+
+      # Set up a middleware instance and mock interaction
+
       mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
       interaction = Hoodoo::Services::Middleware::Interaction.new(
         {},
@@ -452,20 +455,43 @@ describe Hoodoo::Services::Middleware do
       )
       interaction.target_interface = OpenStruct.new
 
-      remote = Hoodoo::Services::Discovery::ForHTTP.new(
+      # Synthesise an HTTP(S) discovery result for 'Version' / v2 and use
+      # it to build an HTTP(S) endpoint.
+
+      mock_wrapped_discovery_result = Hoodoo::Services::Discovery::ForHTTP.new(
         resource: 'Version',
         version: 2,
         endpoint_uri: URI.parse( "https://127.0.0.1:#{ @port }/v2/version" )
       )
 
-      mock_result = mw.send(
-        :inter_resource_remote,
+      mock_wrapped_endpoint = Hoodoo::Client::Endpoint::HTTP.new(
+        'Version',
+        2,
+        :session => Hoodoo::Services::Middleware.test_session(),
+        :discovery_result => mock_wrapped_discovery_result
+      )
+
+      # Synthesise a remote resource discovery result for the HTTP(S) endpoint
+      # built above and use that to make a remote call endpoint.
+
+      discovery_result = Hoodoo::Services::Discovery::ForRemote.new(
+        :resource         => 'Version',
+        :version          => 2,
+        :wrapped_endpoint => mock_wrapped_endpoint
+      )
+
+      endpoint = Hoodoo::Services::Middleware::InterResourceRemote.new(
+        'Version',
+        2,
         {
-          :source_interaction => interaction,
-          :remote             => remote,
-          :http_method        => 'GET'
+          :interaction      => interaction,
+          :discovery_result => discovery_result
         }
       )
+
+      # Use the endpoint.
+
+      mock_result = endpoint.list()
 
       # Expect an empty *array* back, with dataset size. A Hash implies an error.
 
