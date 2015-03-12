@@ -162,7 +162,7 @@ describe Hoodoo::Services::Middleware do
           :body => '{"_data":[]}'
         )
 
-        run_expectations( :list, mock_queue, mock_path, mock_method, mock_query, mock_remote, mock_response )
+        run_expectations( :list, mock_queue, mock_path + '/', mock_method, mock_query, mock_remote, mock_response )
 
         endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
         mock_result = endpoint.list( mock_query )
@@ -214,7 +214,7 @@ describe Hoodoo::Services::Middleware do
           :body => '{}'
         )
 
-        run_expectations( :create, mock_queue, mock_path, mock_method, mock_query, mock_remote, mock_response )
+        run_expectations( :create, mock_queue, mock_path + '/', mock_method, mock_query, mock_remote, mock_response )
 
         endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
         mock_result = endpoint.create( {}, mock_query )

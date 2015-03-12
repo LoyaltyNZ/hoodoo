@@ -114,9 +114,9 @@ module Hoodoo
           # +description_of_request+: DescriptionOfRequest instance.
           #
           def get_data_for_request( description_of_request )
-            body_hash  = description_of_request.body_hash
-            query_hash = description_of_request.query_hash
-            ident      = description_of_request.ident
+            body_hash  = Hoodoo::Utilities.stringify( description_of_request.body_hash  )
+            query_hash = Hoodoo::Utilities.stringify( description_of_request.query_hash )
+            ident      = description_of_request.ident.to_s
 
             body_data  = body_hash.nil? ? '' : body_hash.to_json
 
