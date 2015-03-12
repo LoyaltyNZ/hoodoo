@@ -109,36 +109,80 @@ module Hoodoo
 
         private
 
+          # Try to perform an action through the wrapped endpoint,
+          # acquiring a session first if need be or if necessary
+          # reacquiring a session and retrying the request.
+          #
+          # +action+:: The name of the method to call in the wrapped endpoint
+          #            - see Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
+          #
+          # *args::    Any other arguments to pass to +action+.
+          #
+          #
           def auto_retry( action, *args )
-            result =
+
+            # We use the session endpoint as a session ID cache, in essence,
+            # storing the acquired ID there and passing it into the wrapped
+            # endpoint for the 'real' calls.
+
+            if @session_endpoint.session_id.nil?
+              session_creation_result = acquire_session_for( action )
+              return session_creation_result unless session_creation_result.nil?
+            else
+              @wrapped_endpoint.session_id = @session_endpoint.session_id
+            end
+
             result = @wrapped_endpoint.send( action, *args )
-            if result
+
+            if result.platform_errors.has_errors? &&
+               result.platform_errors.errors.size == 1 &&
+               result.platform_errors.errors[ 0 ][ 'code' ] == 'platform.invalid_session'
+
+               session_creation_result = acquire_session_for( action )
+               return session_creation_result unless session_creation_result.nil?
+               return @wrapped_endpoint.send( action, *args )
+            else
+              return result
             end
           end
 
-
-
-
-          def acquire_session
+          # Acquire a sessino using the configured session endpoint. If this
+          # fails, the failure result is returned. If it seems to succeed but
+          # a session ID cannot be found, an internal 'generic.malformed'
+          # result is generated and returned.
+          #
+          # The returned data uses an appropriate response class for the
+          # action at hand - an augmented array for lists, else an augmented
+          # hash. It can be returned directly up to the calling layer.
+          #
+          # Returns +nil+ if all goes well; #session_id will be updated.
+          #
+          # +action+:: As given to #auto_retry.
+          #
+          def acquire_session_for( action )
             session_creation_result = @session_endpoint.create(
               'caller_id'             => @caller_id,
-              'authentication_secret' => @authentication_secret
+              'authentication_secret' => @caller_secret
             )
 
             if session_creation_result.platform_errors.has_errors?
-              return session_creation_result
+              data = response_class_for( action ).new
+              data.platform_errors.merge!( session_creation_result.platform_errors )
+              return data
             end
 
-            self.session_id = session_creation_result[ 'id' ]
+            @session_endpoint.session_id = session_creation_result[ 'id' ]
 
-            if self.session_id.nil? || self.session_id.empty?
-              session_creation_result.platform_errors.add_error(
-                'code' => 'generic.malformed',
+            if @session_endpoint.session_id.nil? || @session_endpoint.session_id.empty?
+              data = response_class_for( action ).new
+              data.platform_errors.add_error(
+                'generic.malformed',
                 'message' => 'Received bad session description from Session endpoint despite "200" response code'
               )
 
-              return session_creation_result
+              return data
             else
+              @wrapped_endpoint.session_id = @session_endpoint.session_id
               return nil
             end
           end
