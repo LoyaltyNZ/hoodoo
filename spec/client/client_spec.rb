@@ -8,6 +8,7 @@
 # In passing we necessarily end up with quite a lot of test coverage for
 # some of the endpoint and discovery code.
 
+require 'securerandom'
 require 'spec_helper.rb'
 
 ##############################################################################
@@ -46,6 +47,10 @@ end
 # Target resource
 ##############################################################################
 
+# This resource 'echoes back' some of the query and body data in its
+# responses so we can check to see if things seem to be passed through
+# the layers properly. It's not exhaustive.
+#
 class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
 
   public
@@ -82,7 +87,10 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
       {
         'id'         => context.request.ident || Hoodoo::UUID.generate(),
         'created_at' => Time.now.utc.iso8601,
-        'kind'       => 'RSpecClientTestTarget'
+        'kind'       => 'RSpecClientTestTarget',
+        'language'   => context.request.locale,
+        'embeds'     => context.request.embeds,
+        'body_hash'  => context.request.body
       }
     end
 end
@@ -92,6 +100,7 @@ class RSpecClientTestTargetInterface < Hoodoo::Services::Interface
     endpoint :r_spec_client_test_targets, RSpecClientTestTargetImplementation
     public_actions :show
     actions :list, :create, :update, :delete
+    embeds :foo, :bar, :baz
   end
 end
 
@@ -124,28 +133,58 @@ describe Hoodoo::Client do
     Hoodoo::Services::Middleware.set_test_session( @old_test_session )
   end
 
-  context 'without auto-session' do
+  # Set @locale, @expected_locale (latter for 'to eq(...)' matching),
+  # @client and callable @endpoint up, passing the given options to
+  # the Hoodoo::Client constructor, with randomised locale merged in.
+  #
+  def set_vars_for( opts )
+    @locale          = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
+    @expected_locale = @locale.nil? ? 'en-nz' : @locale.downcase
+    @client          = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
+    @endpoint        = @client.resource( :RSpecClientTestTarget )
+  end
+
+  ##############################################################################
+  # No automatic session acquisition and no session
+  ##############################################################################
+
+  context 'without any session' do
     shared_examples Hoodoo::Client do
       it 'can contact public actions' do
         mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'foo', 'baz' ]
+        query_hash = { '_embed' => embeds }
 
         result = @endpoint.show( mock_ident )
-
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'embeds' ] ).to eq( [] )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        result = @endpoint.show( mock_ident, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
       end
+
+      it 'cannot contact protected actions' do
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.invalid_session' )
+      end
+    end
+
+    before :each do
+      Hoodoo::Services::Middleware.set_test_session( nil )
     end
 
     context 'and by drb' do
       before :each do
-        drb_port = URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port
-
-        @client = Hoodoo::Client.new(
-          drb_port:     drb_port,
+        set_vars_for(
+          drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
           auto_session: false
         )
-
-        @endpoint = @client.resource( :RSpecClientTestTarget )
       end
 
       it_behaves_like Hoodoo::Client
@@ -153,17 +192,107 @@ describe Hoodoo::Client do
 
     context 'and by convention' do
       before :each do
-        @client = Hoodoo::Client.new(
+        set_vars_for(
           base_uri:     "http://localhost:#{ @port }",
           auto_session: false
         )
-
-        @endpoint = @client.resource( :RSpecClientTestTarget )
       end
 
       it_behaves_like Hoodoo::Client
     end
   end
+
+  ##############################################################################
+  # No automatic session acquisition with manual session
+  ##############################################################################
+
+  context 'with a manual session' do
+    shared_examples Hoodoo::Client do
+      it 'can contact public actions' do
+        mock_ident = Hoodoo::UUID.generate()
+
+        result = @endpoint.show( mock_ident )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+      end
+
+      it 'can contact protected actions' do
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'bar' ]
+        query_hash = { '_embed' => embeds }
+
+        result = @endpoint.list( query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.dataset_size ).to eq( result.size )
+        expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
+        expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
+
+        embeds     = [ 'baz' ]
+        query_hash = { '_embed' => embeds }
+        body_hash  = { 'hello' => 'world' }
+
+        result = @endpoint.create( body_hash, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'body_hash' ] ).to eq( body_hash )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'foo' ]
+        query_hash = { '_embed' => embeds }
+        body_hash  = { 'left' => 'right' }
+
+        result = @endpoint.update( mock_ident, body_hash, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'body_hash' ] ).to eq( body_hash )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'baz', 'bar' ]
+        query_hash = { '_embed' => embeds }
+
+        result = @endpoint.delete( mock_ident, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+      end
+    end
+
+    before :each do
+      Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+    end
+
+    context 'and by drb' do
+      before :each do
+        set_vars_for(
+          drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
+          auto_session: false,
+          session_id:   @old_test_session.session_id
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+
+    context 'and by convention' do
+      before :each do
+        set_vars_for(
+          base_uri:     "http://localhost:#{ @port }",
+          auto_session: false,
+          session_id:   @old_test_session.session_id
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+  end
+
+  ##############################################################################
+  # Automatic session acquisition
+  ##############################################################################
 
   context 'with auto-session' do
   end

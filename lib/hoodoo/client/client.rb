@@ -20,7 +20,7 @@ module Hoodoo
 
                       locale:                nil,
 
-                      session:               nil,
+                      session_id:            nil,
                       auto_session:          :true,
                       auto_session_resource: 'Session',
                       auto_session_version:  1,
@@ -51,7 +51,7 @@ module Hoodoo
 
         # If doing automatic sessions, acquire a session creation endpoint
 
-        @session_id    = session.session_id unless session.nil?
+        @session_id    = session_id
         @caller_id     = caller_id
         @caller_secret = caller_secret
 
