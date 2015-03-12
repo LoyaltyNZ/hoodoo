@@ -14,7 +14,8 @@ module Hoodoo
 
     public
 
-      def initialize( platform_uri:          nil,
+      def initialize( base_uri:              nil,
+                      drb_uri:               nil,
                       drb_port:              nil,
 
                       locale:                nil,
@@ -26,24 +27,26 @@ module Hoodoo
                       caller_id:             nil,
                       caller_secret:         nil )
 
-        @endpoints     = {}
-        @platform_uri  = platform_uri
-        @drb_port      = drb_port
+        @endpoints = {}
+        @base_uri  = base_uri
+        @drb_uri   = drb_uri
+        @drb_port  = drb_port
 
-        @locale        = locale
+        @locale    = locale
 
-        if @platform_uri != nil
+        if @base_uri != nil
           @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
-            :base_uri => @platform_uri
+            :base_uri => @base_uri
           )
-        elsif @drb_port != nil
+        elsif @drb_uri != nil || @drb_port != nil
           @discoverer = Hoodoo::Services::Discovery::ByDRb.new(
+            :drb_uri  => @drb_uri,
             :drb_port => @drb_port
           )
         end
 
         if @discoverer.nil?
-          raise 'No service discovery mechanism selected. Please pass one of the "platform_uri" or "drb_port" parameters.'
+          raise 'Hoodoo::Client: Please pass one of the "base_uri", "drb_uri" or "drb_port" parameters.'
         end
 
         # If doing automatic sessions, acquire a session creation endpoint
@@ -61,7 +64,7 @@ module Hoodoo
         end
       end
 
-      def resource( resource, version )
+      def resource( resource, version = 1 )
         resource = resource.to_sym
         version  = version.to_i
 

@@ -46,7 +46,12 @@ module Hoodoo
           #              +HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE+ will be
           #              consulted. If unset, port 8787 is used.
           #
+          # +drb_uri+::  Optional URI on which to find an existing DRB
+          #              service. It must alreayd be running. If omitted,
+          #              the +drb_port+ option's behaviour applies.
+          #
           def configure_with( options )
+            @drb_host = options[ :drb_host ]
             @drb_port = options[ :drb_port ]
           end
 
@@ -140,34 +145,46 @@ module Hoodoo
             # Attempt to contact the DRb server daemon. If it can't be
             # contacted, try to start it first, then connect.
 
-            drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( @drb_port )
+            if @drb_uri.nil? || @drb_uri.empty?
+              drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( @drb_port )
+              start_on_localhost_if_not_already_running = true
+            else
+              drb_uri = @drb_uri
+              start_on_localhost_if_not_already_running = false
+            end
 
             begin
               drb_service = DRbObject.new_with_uri( drb_uri )
               drb_service.ping()
 
             rescue DRb::DRbConnError
-              script_path = File.join( File.dirname( __FILE__ ), 'drb_server_start.rb' )
-              command     = "bundle exec ruby '#{ script_path }'"
-              command    << " --port #{ @drb_port }" unless @drb_port.nil? || @drb_port.empty?
+              if start_on_localhost_if_not_already_running
+                script_path = File.join( File.dirname( __FILE__ ), 'drb_server_start.rb' )
+                command     = "bundle exec ruby '#{ script_path }'"
+                command    << " --port #{ @drb_port }" unless @drb_port.nil? || @drb_port.empty?
 
-              Process.detach( spawn( command ) )
+                Process.detach( spawn( command ) )
 
-              begin
-                Timeout::timeout( 5 ) do
-                  loop do
-                    begin
-                      drb_service = DRbObject.new_with_uri( drb_uri )
-                      drb_service.ping()
-                      break
-                    rescue DRb::DRbConnError
-                      sleep 0.1
+                begin
+                  Timeout::timeout( 5 ) do
+                    loop do
+                      begin
+                        drb_service = DRbObject.new_with_uri( drb_uri )
+                        drb_service.ping()
+                        break
+                      rescue DRb::DRbConnError
+                        sleep 0.1
+                      end
                     end
                   end
+
+                rescue Timeout::Error
+                  raise "Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start on local port #{ @drb_port }"
+
                 end
 
-              rescue Timeout::Error
-                raise 'Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start'
+              else
+                raise "Hoodoo::Services::Discovery::ByDRb could not contact a DRb service registry at #{ @drb_uri }"
 
               end
             end
