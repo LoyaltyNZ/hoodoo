@@ -15,11 +15,15 @@ module Hoodoo
       #
       class Calculation < Hoodoo::Presenters::Base
 
+      # Defined values for the +reference_name+ enumeration in the schema.
+      #
+      REFERENCE_NAMES = [ :Calculation, :Credit, :Debit ]
+
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator
           text  :token_identifier,        :required => true
           text  :programme_code,          :required => true
-          text  :reference,               :required => false
+          text  :reference_name,          :required => false,  :from     => REFERENCE_NAMES
           uuid  :reference_id,            :required => false
           type  :CalculatorConfiguration, :required => false
           array :currency_amounts,        :required => true do

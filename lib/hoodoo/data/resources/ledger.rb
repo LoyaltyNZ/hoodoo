@@ -19,14 +19,18 @@ module Hoodoo
         #
         REASONS = [ :calculation, :manipulation ]
 
+        # Defined values for the +reference_name+ enumeration in the schema.
+        #
+        REFERENCE_NAMES = [ :Calculation, :Credit, :Debit ]
+
         schema do
           text   :token_identifier, :required => true
-          uuid   :participant_id,   :required => true, :resource => :Participant
-          uuid   :outlet_id,        :required => true, :resource => :Outlet
-          enum   :reason,           :required => true, :from     => REASONS
+          uuid   :participant_id,   :required => true,  :resource => :Participant
+          uuid   :outlet_id,        :required => true,  :resource => :Outlet
+          enum   :reason,           :required => true,  :from     => REASONS
 
-          text  :reference,         :required => false
-          uuid  :reference_id,      :required => false
+          text   :reference_name,   :required => false, :from     => REFERENCE_NAMES
+          uuid   :reference_id,     :required => false
 
           object :debit,            :required => false do
             type :CurrencyAmount

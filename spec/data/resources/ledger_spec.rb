@@ -22,8 +22,9 @@ describe Hoodoo::Data::Resources::Ledger do
     expect(schema.properties['reason'].from).to eq(['calculation', 'manipulation'])
     expect(schema.properties['reason'].required).to eq(true)
 
-    expect(schema.properties['reference']).to be_a(Hoodoo::Presenters::Text)
-    expect(schema.properties['reference'].required).to eq(false)
+    expect(schema.properties['reference_name']).to be_a(Hoodoo::Presenters::Enum)
+    expect(schema.properties['reference_name'].from).to eq(['Calculation', 'Credit', 'Debit'])
+    expect(schema.properties['reference_name'].required).to eq(false)
 
     expect(schema.properties['reference_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['reference_id'].required).to eq(false)

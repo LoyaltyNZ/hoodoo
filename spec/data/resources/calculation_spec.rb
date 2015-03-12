@@ -11,7 +11,7 @@ describe Hoodoo::Data::Resources::Calculation do
 
     expect(schema.properties['calculator_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
-    expect(schema.properties['reference']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['reference_name']).to be_a(Hoodoo::Presenters::Enum)
     expect(schema.properties['reference_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['calculator_data']).to be_a(Hoodoo::Presenters::Hash)
     expect(schema.properties['currency_amounts']).to be_a(Hoodoo::Presenters::Array)
