@@ -120,7 +120,7 @@ module Hoodoo
     def add_error( code, options = nil )
 
       options   = Hoodoo::Utilities.stringify( options || {} )
-      reference = Hoodoo::Utilities.stringify( options[ 'reference' ] || {} )
+      reference = options[ 'reference' ] || {}
       message   = options[ 'message' ]
 
       # Make sure nobody uses an undeclared error code.

@@ -2057,69 +2057,43 @@ module Hoodoo; module Services
       allowed += ALLOWED_QUERIES_LIST if interaction.requested_action == :list
 
       unrecognised_query_keys = query_hash.keys - allowed
-      malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
+      malformed = unrecognised_query_keys
 
-      unless malformed
-        if query_hash.has_key?( 'limit' )
-          limit     = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] )
-          malformed = :limit if limit.nil?
-        else
-          limit = interface.to_list.limit.to_i
-        end
-      end
+      limit = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] || interface.to_list.limit )
+      malformed << :limit if limit.nil?
 
-      unless malformed
-        if query_hash.has_key?( 'offset' )
-          offset    = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] )
-          malformed = :offset if offset.nil?
-        else
-          offset = 0
-        end
-      end
+      offset = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] || 0 )
+      malformed << :offset if offset.nil?
 
-      unless malformed
-        sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
-        malformed = :sort unless interface.to_list.sort.keys.include?( sort_key )
-      end
+      sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
+      malformed << :sort unless interface.to_list.sort.keys.include?( sort_key )
 
-      unless malformed
+      unless interface.to_list.sort[ sort_key ].nil?
         direction = query_hash[ 'direction' ] || interface.to_list.sort[ sort_key ][ 0 ]
-        malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
+        malformed << :direction unless interface.to_list.sort[ sort_key ].include?( direction )
       end
 
-      unless malformed
-        search = query_hash[ 'search' ] || {}
+      search = query_hash[ 'search' ] || {}
+      unrecognised_search_keys = search.keys - interface.to_list.search
+      malformed << "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
 
-        unrecognised_search_keys = search.keys - interface.to_list.search
-        malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
-      end
+      filter = query_hash[ 'filter' ] || {}
+      unrecognised_filter_keys = filter.keys - interface.to_list.filter
+      malformed << "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
 
-      unless malformed
-        filter = query_hash[ 'filter' ] || {}
+      embeds = query_hash[ '_embed' ] || []
+      unrecognised_embeds = embeds - interface.embeds
+      malformed << "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
 
-        unrecognised_filter_keys = filter.keys - interface.to_list.filter
-        malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
-      end
-
-      unless malformed
-        embeds = query_hash[ '_embed' ] || []
-
-        unrecognised_embeds = embeds - interface.embeds
-        malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
-      end
-
-      unless malformed
-        references = query_hash[ '_reference' ] || []
-
-        unrecognised_references = references - interface.embeds # (sic.)
-        malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
-      end
+      references = query_hash[ '_reference' ] || []
+      unrecognised_references = references - interface.embeds # (sic.)
+      malformed << "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
 
       return response.add_error(
         'platform.malformed',
         'message' => "One or more malformed or invalid query string parameters",
-        'reference' => { :including => malformed }
-      ) if malformed
+        'reference' => { :including => malformed.join( ', ' ) }
+      ) unless malformed.empty?
 
       request.list.offset         = offset
       request.list.limit          = limit

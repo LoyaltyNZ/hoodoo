@@ -700,6 +700,16 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('_reference: one\\, two')
       end
 
+      it 'should complain about several bad query parameters' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?_reference=one,emb,two&direction=asc&sort=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('sort\\, _reference: one\\, two')
+      end
+
     end
 
     # -------------------------------------------------------------------------
