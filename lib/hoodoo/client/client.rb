@@ -10,6 +10,47 @@
 
 module Hoodoo
 
+  # Hoodoo::Client makes it very easy to call resource endpoints over API,
+  # complete with automatic session management if required.
+  #
+  # First, a Client instance is created. This is then asked for resource
+  # endpoints - in essence, treated as an enpoint factory. Calls are then
+  # made through those endpoints.
+  #
+  # If we had resources with only +public_actions+ declared on "test.com",
+  # so no sessions were needed, then the Client instantation is very easy:
+  #
+  #     client = Hoodoo::Client.new( base_uri: 'http://test.com/' )
+  #
+  # Next, let's ask it for an endpoint of resource "Member" implementing
+  # version 2 of its interface.
+  #
+  #     members = client.resource( :Member, 1 )
+  #
+  # Now we can perform operations on the endpoints according to the methods
+  # in the base class - see these for details:
+  #
+  # * Hoodoo::Client::Endpoint#list
+  # * Hoodoo::Client::Endpoint#show
+  # * Hoodoo::Client::Endpoint#create
+  # * Hoodoo::Client::Endpoint#update
+  # * Hoodoo::Client::Endpoint#delete
+  #
+  # The above reference describes the basic approach for each call, with
+  # common parameters such as the query hash or body hash data described
+  # in Hoodoo::Client::Endpoint#new.
+  #
+  # As an example, we could list records 50-79 inclusive of "Member"
+  # sorted by +created_at+ ascending and embedding an "account" for each:
+  #
+  #     results = members.list(
+  #       :offset    => 50,
+  #       :limit     => 25,
+  #       :sort      => :created_at,
+  #       :direction => :asc,
+  #       :embeds    => 'account'
+  #     )
+  #
   class Client
 
     public

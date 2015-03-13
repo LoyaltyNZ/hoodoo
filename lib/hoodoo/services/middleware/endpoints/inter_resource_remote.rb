@@ -11,7 +11,7 @@ module Hoodoo
   module Services
     class Middleware # Just used as a namespace here
 
-      # This is an endpoint which the Middleware uses for inter-resource
+      # This is an endpoint which the middleware uses for inter-resource
       # calls over another 'wrapped' endpoint. This endpoint manages all
       # the inter-resource preparation and post processing, but calls in
       # to another wrapped endpoint to actually talk to the resource for

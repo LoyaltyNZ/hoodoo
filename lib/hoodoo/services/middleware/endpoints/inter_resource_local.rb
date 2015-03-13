@@ -13,6 +13,12 @@
 module Hoodoo; module Services
   class Middleware
 
+    # This is an endpoint which the middleware uses for inter-resource
+    # calls back calling back to that same middleware instance, for
+    # resources which exist within the same service application. The
+    # middleware manages all the inter-resource preparation and post
+    # processing.
+    #
     class InterResourceLocal < Hoodoo::Client::Endpoint
 
       protected
