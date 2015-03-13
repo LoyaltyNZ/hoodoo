@@ -51,8 +51,8 @@ module Hoodoo
           #              the +drb_port+ option's behaviour applies.
           #
           def configure_with( options )
-            @drb_host = options[ :drb_host ]
             @drb_port = options[ :drb_port ]
+            @drb_uri  = options[ :drb_uri  ]
           end
 
           # Announce the location of an instance through the DRb service
