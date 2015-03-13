@@ -19,7 +19,7 @@ class RSpecClientTestSessionImplementation < Hoodoo::Services::Implementation
   def create( context )
 
     session_id = Hoodoo::UUID.generate()
-    test_session = Hoodoo::Services::Middleware.test_session().dup
+    test_session = Hoodoo::Services::Middleware::DEFAULT_TEST_SESSION.dup
     test_session.session_id = session_id
     Hoodoo::Services::Middleware.set_test_session( test_session )
 
@@ -295,5 +295,133 @@ describe Hoodoo::Client do
   ##############################################################################
 
   context 'with auto-session' do
+    shared_examples Hoodoo::Client do
+      it 'can contact public actions' do
+        mock_ident = Hoodoo::UUID.generate()
+
+        result = @endpoint.show( mock_ident )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+      end
+
+      it 'can contact protected actions' do
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'bar' ]
+        query_hash = { '_embed' => embeds }
+
+        result = @endpoint.list( query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.dataset_size ).to eq( result.size )
+        expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
+        expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
+
+        embeds     = [ 'baz' ]
+        query_hash = { '_embed' => embeds }
+        body_hash  = { 'hello' => 'world' }
+
+        result = @endpoint.create( body_hash, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'body_hash' ] ).to eq( body_hash )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'foo' ]
+        query_hash = { '_embed' => embeds }
+        body_hash  = { 'left' => 'right' }
+
+        result = @endpoint.update( mock_ident, body_hash, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'body_hash' ] ).to eq( body_hash )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        mock_ident = Hoodoo::UUID.generate()
+        embeds     = [ 'baz', 'bar' ]
+        query_hash = { '_embed' => embeds }
+
+        result = @endpoint.delete( mock_ident, query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+        expect( result[ 'embeds' ] ).to eq( embeds )
+        expect( result[ 'language' ] ).to eq( @expected_locale )
+      end
+
+      it 'automatically retries' do
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ).once.and_call_original
+        Hoodoo::Services::Middleware.set_test_session( nil )
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+      end
+
+      it 'handles errors from the session resource' do
+        expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ).and_raise( "boo!" )
+
+        Hoodoo::Services::Middleware.set_test_session( nil )
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.fault' )
+      end
+
+      it 'handles malformed sessions' do
+        expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ) { | ignored, context |
+          context.response.body = { 'not' => 'a session' }
+        }
+
+        Hoodoo::Services::Middleware.set_test_session( nil )
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
+      end
+    end
+
+    before :each do
+      Hoodoo::Services::Middleware.set_test_session( nil )
+    end
+
+    context 'and by drb' do
+      before :each do
+        set_vars_for(
+          drb_port:              URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
+          caller_id:             Hoodoo::UUID.generate,
+          caller_secret:         Hoodoo::UUID.generate,
+          auto_session_resource: 'RSpecClientTestSession'
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+
+    context 'and by convention' do
+      before :each do
+        set_vars_for(
+          base_uri:              "http://localhost:#{ @port }",
+          caller_id:             Hoodoo::UUID.generate,
+          caller_secret:         Hoodoo::UUID.generate,
+          auto_session_resource: 'RSpecClientTestSession'
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+  end
+
+  ##############################################################################
+  # Code coverage
+  ##############################################################################
+
+  context 'code coverage' do
+    it 'complains about missing options in the constructor' do
+      expect {
+        Hoodoo::Client.new
+      }.to raise_error( RuntimeError, 'Hoodoo::Client: Please pass one of the "base_uri", "drb_uri" or "drb_port" parameters.' )
+    end
   end
 end
