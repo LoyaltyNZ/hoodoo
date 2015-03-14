@@ -109,7 +109,7 @@ module Hoodoo
       attr_reader :version
 
       # The value of the +interaction+ option key passed to the
-      # constructor. See #initialize and #endpoint_for.
+      # constructor. See the constructor and #endpoint_for for more.
       #
       attr_reader :interaction
 
@@ -267,10 +267,11 @@ module Hoodoo
 
         # Obtain a list of resource instance representations.
         #
-        # +query_hash+:: See #initialize. This is the only way to search or
-        #                filter the list, via the target Resource's documented
-        #                supported search/filter parameters and the platform's
-        #                common all-resource behaviour.
+        # +query_hash+:: See the constructor for more. This is the only way
+        #                to search or filter the list, via the target
+        #                Resource's documented supported search/filter
+        #                parameters and the platform's common all-Resources
+        #                behaviour.
         #
         # Returns a Hoodoo::Client::AugmentedArray representation of the
         # requested list of resource instances.
@@ -291,8 +292,8 @@ module Hoodoo
 
         # Obtain a resource instance representation.
         #
-        # +ident+::      See #initialize.
-        # +query_hash+:: See #initialize.
+        # +ident+::      See the constructor for details.
+        # +query_hash+:: See the constructor for details.
         #
         # Returns a Hoodoo::Client::AugmentedHash representation of the
         # requested resource instance.
@@ -311,8 +312,8 @@ module Hoodoo
 
         # Create a resource instance.
         #
-        # +body_hash+::  See #initialize.
-        # +query_hash+:: See #initialize.
+        # +body_hash+::  See the constructor for details.
+        # +query_hash+:: See the constructor for details.
         #
         # Returns a Hoodoo::Client::AugmentedHash representation of the
         # new resource instance.
@@ -331,9 +332,9 @@ module Hoodoo
 
         # Update a resource instance.
         #
-        # +ident+::      See #initialize.
-        # +body_hash+::  See #initialize.
-        # +query_hash+:: See #initialize.
+        # +ident+::      See the constructor for details.
+        # +body_hash+::  See the constructor for details.
+        # +query_hash+:: See the constructor for details.
         #
         # Returns a Hoodoo::Client::AugmentedHash representation of the
         # updated resource instance.
@@ -352,8 +353,8 @@ module Hoodoo
 
         # Delete a resource instance.
         #
-        # +ident+::      See #initialize.
-        # +query_hash+:: See #initialize.
+        # +ident+::      See the constructor for details.
+        # +query_hash+:: See the constructor for details.
         #
         # Returns a Hoodoo::Client::AugmentedHash representation of the
         # now-deleted resource instance,from the instant before deletion.

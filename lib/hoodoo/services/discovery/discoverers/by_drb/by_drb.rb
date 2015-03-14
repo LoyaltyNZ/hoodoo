@@ -46,9 +46,10 @@ module Hoodoo
           #              +HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE+ will be
           #              consulted. If unset, port 8787 is used.
           #
-          # +drb_uri+::  Optional URI on which to find an existing DRB
-          #              service. It must alreayd be running. If omitted,
-          #              the +drb_port+ option's behaviour applies.
+          # +drb_uri+::  Optional URI String at which to find an existing DRB
+          #              service. It must alreayd be running. If omitted, the
+          #              +drb_port+ option's behaviour applies. If present,
+          #              the +drb_port+ option is ignored.
           #
           def configure_with( options )
             @drb_port = options[ :drb_port ]

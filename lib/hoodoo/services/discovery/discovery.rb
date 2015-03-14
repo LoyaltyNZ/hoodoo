@@ -10,12 +10,25 @@
 module Hoodoo
   module Services
 
-    # Base class for discovery code.
+    # The service discovery mechanism is a way to find Resource
+    # implementations running inside service applications that may be
+    # available at HTTP URIs, over an AMQP queue or, potentially, any other
+    # system. Subclasses implement a particular distinct discovery approach.
+    # When implementations of services start up, they announce themselves
+    # (via Hoodoo::Services::Middleware) to the discovery engine. When other
+    # Resources (or Hoodoo::Client) want to find them, they query the same
+    # discovery engine to find out the original announcement information.
     #
-    # Implementations of service announcement and discovery code should
-    # subclass from this, then optionally implement
-    # #configure_with and (almost certainly, but still optionally)
-    # #announce_remote, and always implement #discover_remote.
+    # Depending on how a discovery engine shares information about
+    # announced Resource endpoints, Resources might only be found if they are
+    # are on the same local machine; or the same remote host or queue; or
+    # they might perhaps be available even if scattered across multiple hosts
+    # and/or transport types.
+    #
+    # Implementations of service announcement and discovery code must be a
+    # subclass of this class, then optionally implement #configure_with and
+    # (almost certainly, but still optionally) #announce_remote; and must
+    # always implement #discover_remote.
     #
     class Discovery
 
