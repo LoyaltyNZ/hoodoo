@@ -78,9 +78,8 @@ module Hoodoo
             #
             # +resource+:: Resource name as a String.
             # +version+::  Endpoint version as an Integer.
-            # +options+::  Ignored.
             #
-            def discover_remote( resource, version, options = {} )
+            def discover_remote( resource, version )
               path = "/v#{ version }/#{ resource.to_s.underscore.pluralize }"
 
               endpoint_uri      = @base_uri.dup

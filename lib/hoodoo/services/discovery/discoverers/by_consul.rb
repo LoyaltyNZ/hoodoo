@@ -52,9 +52,8 @@ module Hoodoo
           #
           # +resource+:: Passed to #discover_remote.
           # +version+::  Passed to #discover_remote.
-          # +options+::  Ignored.
           #
-          def discover_remote( resource, version, options = {} )
+          def discover_remote( resource, version )
 
             # TODO: Replace with queue discovery over Alchemy endpoint
             #       or change entire class to "ByConsul" and talk to it
@@ -64,37 +63,37 @@ module Hoodoo
             v    = "/v#{ version }/"
             data = {
 
-              'Health'      => { :queue => 'service.utility',   :path => v + 'health'       },
-              'Version'     => { :queue => 'service.utility',   :path => v + 'version'      },
+              :Health      => { :queue => 'service.utility',   :path => v + 'health'       },
+              :Version     => { :queue => 'service.utility',   :path => v + 'version'      },
 
-              'Log'         => { :queue => 'service.logging',   :path => v + 'logs'         },
-              'Errors'      => { :queue => 'service.logging',   :path => v + 'errors'       },
-              'Statistic'   => { :queue => 'service.logging',   :path => v + 'statistics'   },
+              :Log         => { :queue => 'service.logging',   :path => v + 'logs'         },
+              :Errors      => { :queue => 'service.logging',   :path => v + 'errors'       },
+              :Statistic   => { :queue => 'service.logging',   :path => v + 'statistics'   },
 
-              'Account'     => { :queue => 'service.member',    :path => v + 'accounts'     },
-              'Member'      => { :queue => 'service.member',    :path => v + 'members'      },
-              'Membership'  => { :queue => 'service.member',    :path => v + 'memberships'  },
-              'Token'       => { :queue => 'service.member',    :path => v + 'tokens'       },
+              :Account     => { :queue => 'service.member',    :path => v + 'accounts'     },
+              :Member      => { :queue => 'service.member',    :path => v + 'members'      },
+              :Membership  => { :queue => 'service.member',    :path => v + 'memberships'  },
+              :Token       => { :queue => 'service.member',    :path => v + 'tokens'       },
 
-              'Participant' => { :queue => 'service.programme', :path => v + 'participants' },
-              'Outlet'      => { :queue => 'service.programme', :path => v + 'outlets'      },
-              'Involvement' => { :queue => 'service.programme', :path => v + 'involvements' },
-              'Programme'   => { :queue => 'service.programme', :path => v + 'programmes'   },
+              :Participant => { :queue => 'service.programme', :path => v + 'participants' },
+              :Outlet      => { :queue => 'service.programme', :path => v + 'outlets'      },
+              :Involvement => { :queue => 'service.programme', :path => v + 'involvements' },
+              :Programme   => { :queue => 'service.programme', :path => v + 'programmes'   },
 
-              'Product'     => { :queue => 'service.product',   :path => v + 'products'     },
+              :Product     => { :queue => 'service.product',   :path => v + 'products'     },
 
-              'Balance'     => { :queue => 'service.financial', :path => v + 'balances'     },
-              'Currency'    => { :queue => 'service.financial', :path => v + 'currencies'   },
-              'Voucher'     => { :queue => 'service.financial', :path => v + 'vouchers'     },
-              'Calculation' => { :queue => 'service.financial', :path => v + 'calculations' },
-              'Calculator'  => { :queue => 'service.financial', :path => v + 'calculators'  },
-              'Transaction' => { :queue => 'service.financial', :path => v + 'transactions' },
+              :Balance     => { :queue => 'service.financial', :path => v + 'balances'     },
+              :Currency    => { :queue => 'service.financial', :path => v + 'currencies'   },
+              :Voucher     => { :queue => 'service.financial', :path => v + 'vouchers'     },
+              :Calculation => { :queue => 'service.financial', :path => v + 'calculations' },
+              :Calculator  => { :queue => 'service.financial', :path => v + 'calculators'  },
+              :Transaction => { :queue => 'service.financial', :path => v + 'transactions' },
 
-              'Estimation'  => { :queue => 'service.purchase',  :path => v + 'estimations'  },
-              'Purchase'    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
-              'Refund'      => { :queue => 'service.purchase',  :path => v + 'refunds'      },
+              :Estimation  => { :queue => 'service.purchase',  :path => v + 'estimations'  },
+              :Purchase    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
+              :Refund      => { :queue => 'service.purchase',  :path => v + 'refunds'      },
 
-            }[ resource.to_s ]
+            }[ resource.to_sym ]
 
             if data.nil?
               return nil

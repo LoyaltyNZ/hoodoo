@@ -469,7 +469,7 @@ describe Hoodoo::Services::Middleware do
         #
         it 'can deal with inter-resource session errors (1)' do
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
-          expect_any_instance_of(Hoodoo::Services::Middleware).to receive( :augment_session_with_permissions_for_action ).once.and_return( false )
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :augment_with_permissions_for ).once.and_return( false )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
           get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -744,7 +744,7 @@ describe Hoodoo::Services::Middleware do
         #
         it 'can deal with inter-resource session errors' do
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
-          expect_any_instance_of(Hoodoo::Services::Middleware).to receive( :augment_session_with_permissions_for_action ).once.and_return( false )
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :augment_with_permissions_for ).once.and_return( false )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
           response = spec_helper_http(

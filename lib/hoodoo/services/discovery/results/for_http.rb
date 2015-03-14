@@ -17,7 +17,7 @@ module Hoodoo
       #
       class ForHTTP
 
-        # The resource name described, as a String (e.g. "Account").
+        # The resource name described, as a Symbol (e.g. +:Purchase+).
         #
         attr_accessor :resource
 
@@ -40,8 +40,8 @@ module Hoodoo
                         version:,
                         endpoint_uri: )
 
-          self.resource     = resource.to_s
-          self.version      = version
+          self.resource     = resource.to_sym
+          self.version      = version.to_i
           self.endpoint_uri = endpoint_uri
         end
       end

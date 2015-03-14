@@ -29,6 +29,11 @@ describe Hoodoo::Errors do
       expect(@errors.errors).to be_empty
       expect(@errors.http_status_code).to eq(500)
     end
+
+    it 'should inspect elegantly' do
+      @errors.add_error('platform.malformed')
+      expect(@errors.inspect).to eq( '[{"code"=>"platform.malformed", "message"=>"Malformed request"}]' )
+    end
   end
 
   describe '#add_error, #has_errors?' do

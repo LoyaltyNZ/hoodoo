@@ -4,6 +4,7 @@
 
 require 'spec_helper'
 require 'json'
+require 'byebug'
 
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
@@ -198,6 +199,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+
     context.response.body = { 'update' => result }
   end
 
@@ -510,21 +512,6 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of( TestEchoImplementation ).to receive( :before ).once
         expect_any_instance_of( TestEchoImplementation ).to receive( :after ).once
       expect_any_instance_of( TestCallImplementation ).to receive( :after ).once
-    end
-
-    # This is basically just for code coverage of a 'rescue' case inside
-    # the middleware's 'remote_service_for' method.
-    #
-    it 'handles "this can never happen" DRb discovery service failures' do
-      expect_any_instance_of( Hoodoo::Services::Discovery ).to receive( :discover ).and_raise( 'boo!' )
-
-      get(
-        '/v1/test_call/',
-        nil,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      )
-
-      expect( last_response.status ).to eq( 404 )
     end
 
     def list_things

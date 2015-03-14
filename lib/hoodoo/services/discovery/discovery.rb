@@ -10,12 +10,25 @@
 module Hoodoo
   module Services
 
-    # Base class for discovery code.
+    # The service discovery mechanism is a way to find Resource
+    # implementations running inside service applications that may be
+    # available at HTTP URIs, over an AMQP queue or, potentially, any other
+    # system. Subclasses implement a particular distinct discovery approach.
+    # When implementations of services start up, they announce themselves
+    # (via Hoodoo::Services::Middleware) to the discovery engine. When other
+    # Resources (or Hoodoo::Client) want to find them, they query the same
+    # discovery engine to find out the original announcement information.
     #
-    # Implementations of service announcement and discovery code should
-    # subclass from this, then optionally implement
-    # #configure_with and (almost certainly, but still optionally)
-    # #announce_remote, and always implement #discover_remote.
+    # Depending on how a discovery engine shares information about
+    # announced Resource endpoints, Resources might only be found if they are
+    # are on the same local machine; or the same remote host or queue; or
+    # they might perhaps be available even if scattered across multiple hosts
+    # and/or transport types.
+    #
+    # Implementations of service announcement and discovery code must be a
+    # subclass of this class, then optionally implement #configure_with and
+    # (almost certainly, but still optionally) #announce_remote; and must
+    # always implement #discover_remote.
     #
     class Discovery
 
@@ -23,7 +36,7 @@ module Hoodoo
 
         # Create a new instance.
         #
-        # +options+:: Passed to the subclass in use via ::configure_with.
+        # +options+:: Passed to the subclass in use via #configure_with.
         #             Subclasses define their options. Only instantiate
         #             such subclasses, not this 'Base' class; see the
         #             subclass documentation for option details.
@@ -35,10 +48,10 @@ module Hoodoo
 
         # Indicate that a resource is available locally and broacast its
         # location to whatever discovery service a subclass supports via
-        # ::announce_remote.
+        # #announce_remote.
         #
-        # +resource+:: Resource name as a Symbol or String
-        #              (e.g. "Account").
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
@@ -50,24 +63,24 @@ module Hoodoo
         # in use) with the same parameters.
         #
         def announce( resource, version = 1, options = {} )
-          resource = resource.to_s
+          resource = resource.to_sym
           version  = version.to_i
           result   = announce_remote( resource, version, options )
 
-          @known_local_resources[ key_for( resource, version ) ] = result
+          @known_local_resources[ resource ] ||= {}
+          @known_local_resources[ resource ][ version ] = result
+
           return result
         end
 
         # Find a resource endpoint. This may be recorded locally or
         # via whatever remote discovery mechanism a subclass implements.
         #
-        # +resource+:: Resource name as symbol or string (e.g. "Account").
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
-        #
-        # +options+::  Defined by whatever subclass is in use. See that
-        #              subclass's documentation for details.
         #
         # Returns the result of calling #discover_remote (in the subclass
         # in use) with the same parameters.
@@ -75,30 +88,35 @@ module Hoodoo
         # Use #is_local? if you need to know that an endpoint was
         # announced through this same instance ("locally").
         #
-        def discover( resource, version = 1, options = {} )
-          resource = resource.to_s
+        def discover( resource, version = 1 )
+          resource = resource.to_sym
           version  = version.to_i
 
           if ( is_local?( resource, version ) )
-            return @known_local_resources[ key_for( resource, version ) ]
+            return @known_local_resources[ resource ][ version ]
           else
-            return discover_remote( resource, version, options )
+            return discover_remote( resource, version )
           end
         end
 
         # Was a resource announced in this instance ("locally")? Returns
         # +true+ if so, else +false+.
         #
-        # +resource+:: Resource name as symbol or string (e.g. "Account").
+        # This only returns +true+ if #annouce has been called for the
+        # given resource and version.
+        #
+        # +resource+:: Resource name as a Symbol or String (e.g.
+        #              +:Purchase+).
         #
         # +version+::  Endpoint version as an Integer; optional; default
         #              is 1.
         #
         def is_local?( resource, version = 1 )
-          resource = resource.to_s
+          resource = resource.to_sym
           version  = version.to_i
 
-          return @known_local_resources.has_key?( key_for( resource, version ) )
+          return @known_local_resources.has_key?( resource ) &&
+                 @known_local_resources[ resource ].has_key?( version )
         end
 
       protected
@@ -151,22 +169,9 @@ module Hoodoo
         #
         # +resource+:: Resource name as a String.
         # +version+::  Endpoint version as an Integer.
-        # +options+::  See subclass documentation for option details.
         #
-        def discover_remote( resource, version, options = {} )
+        def discover_remote( resource, version )
           raise "Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource '#{ resource }' / version '#{ version }'"
-        end
-
-      private
-
-        # For a given resource and version, return a key for the internal
-        # Hash of locally announced resources.
-        #
-        # +resource+:: Resource name as a String.
-        # +version+::  Endpoint version as an Integer.
-        #
-        def key_for( resource, version )
-          "#{ resource }/#{ version }"
         end
 
     end

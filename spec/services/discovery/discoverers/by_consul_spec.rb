@@ -8,9 +8,9 @@ describe Hoodoo::Services::Discovery::ByConsul do
   # TODO: Assume static mapping and no Consul communication to mock out.
 
   it 'announces' do
-    result = @d.announce( 'Version', 2 )
+    result = @d.announce( 'Version', '2' ) # Intentional string use
     expect( result ).to be_a( Hoodoo::Services::Discovery::ForAMQP )
-    expect( result.resource ).to eq( 'Version' )
+    expect( result.resource ).to eq( :Version )
     expect( result.version ).to eq( 2 )
     expect( result.queue_name ).to eq( 'service.utility' )
     expect( result.equivalent_path ).to eq( '/v2/version')
@@ -20,8 +20,8 @@ describe Hoodoo::Services::Discovery::ByConsul do
     result = @d.announce( 'Version', 2 )
     @d.instance_variable_set( '@known_local_resources', {} ) # Hack for test!
 
-    result = @d.discover( 'Version', 2 )
-    expect( result.resource ).to eq( 'Version' )
+    result = @d.discover( :Version, 2 )
+    expect( result.resource ).to eq( :Version )
     expect( result.version ).to eq( 2 )
     expect( result.queue_name ).to eq( 'service.utility' )
     expect( result.equivalent_path ).to eq( '/v2/version')

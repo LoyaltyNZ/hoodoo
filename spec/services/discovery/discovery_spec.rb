@@ -31,7 +31,7 @@ describe Hoodoo::Services::Discovery do
       def announce_remote( resource, version, options )
         'announce'
       end
-      def discover_remote( resource, version, options )
+      def discover_remote( resource, version )
         'discover'
       end
     end
@@ -45,11 +45,11 @@ describe Hoodoo::Services::Discovery do
     it 'passes announcements on' do
       opts = { :foo => :bar, :bar => :baz }
       d = RSpecTestDiscoverer.new
-      expect( d ).to receive( :announce_remote ).with( 'Foo', 3, opts ).and_call_original
-      expect( d.announce( :Foo, 3, opts ) ).to eq( 'announce' )
-      expect( d ).to receive( :announce_remote ).with( 'Foo', 3, {} ).and_call_original
+      expect( d ).to receive( :announce_remote ).with( :Foo, 3, opts ).and_call_original
+      expect( d.announce( :Foo, '3', opts ) ).to eq( 'announce' )
+      expect( d ).to receive( :announce_remote ).with( :Foo, 3, {} ).and_call_original
       expect( d.announce( 'Foo', 3 ) ).to eq( 'announce' )
-      expect( d ).to receive( :announce_remote ).with( 'Foo', 1, {} ).and_call_original
+      expect( d ).to receive( :announce_remote ).with( :Foo, 1, {} ).and_call_original
       expect( d.announce( :Foo ) ).to eq( 'announce' )
     end
 
@@ -58,17 +58,16 @@ describe Hoodoo::Services::Discovery do
       d.announce( 'Baz', 4 )
 
       expect( d ).to_not receive( :discover_remote )
-      expect( d.discover( 'Baz', 4 ) ).to eq( 'announce' )
+      expect( d.discover( :Baz, '4' ) ).to eq( 'announce' )
     end
 
     it 'passes remote discovery on' do
-      opts = { :foo => :bar, :bar => :baz }
       d = RSpecTestDiscoverer.new
       d.announce( :Bar, 2 )
       d.instance_variable_set( '@known_local_resources', {} ) # Hack for test!
 
-      expect( d ).to receive( :discover_remote ).with( 'Bar', 2, opts ).and_call_original
-      expect( d.discover( 'Bar', 2, opts ) ).to eq( 'discover' )
+      expect( d ).to receive( :discover_remote ).with( :Bar, 2 ).and_call_original
+      expect( d.discover( 'Bar', 2 ) ).to eq( 'discover' )
     end
   end
 end

@@ -159,6 +159,19 @@ describe Hoodoo::Services::Middleware do
         mw.send( :parse_body_string_into, interaction, '{}' )
       }.to raise_error(RuntimeError, "Internal error - content type 'application/xml' is not supported here; \#deal_with_content_type_header() should have caught that");
     end
+
+    it 'should detect a local versus remote endpoint mismatch' do
+      mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
+      interaction = Hoodoo::Services::Middleware::Interaction.new( {}, mw )
+
+      mock_discoverer = OpenStruct.new
+      mw.instance_variable_set( '@discoverer', mock_discoverer )
+      expect( mock_discoverer ).to receive( :is_local? ).and_return( true )
+
+      expect {
+        mw.send( :inter_resource_endpoint_for, :NotALocalResource, 1, interaction )
+      }.to raise_error(RuntimeError, 'Hoodoo::Services::Middleware#inter_resource_endpoint_for: Internal error - version 1 of resource NotALocalResource endpoint is local according to the discovery engine, but no local service discovery record can be found')
+    end
   end
 
   context 'utility methods' do
@@ -346,7 +359,7 @@ describe Hoodoo::Services::Middleware do
       #
       # So, first, these are part of routine processing.
 
-      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(1).times.and_return(true)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).exactly(2).times.and_return(true)
 
       # The check for 'unless test or development' is made prior to trying to use
       # the ExceptionReporter class, so say 'no' to both then get the reporter to
@@ -685,6 +698,16 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('_reference: one\\, two')
+      end
+
+      it 'should complain about several bad query parameters' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?_reference=one,emb,two&direction=asc&sort=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('sort\\, _reference: one\\, two')
       end
 
     end
@@ -1531,7 +1554,7 @@ class RSpecTestInterResourceCalls < Hoodoo::Services::Service
                RSpecTestInterResourceCallsCInterface
 end
 
-describe Hoodoo::Services::Middleware::Endpoint do
+describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   # Middleware maintains class-level record of whether or not any interfaces
   # had public actions for efficiency; ensure this is cleared after all these
@@ -1820,15 +1843,6 @@ describe Hoodoo::Services::Middleware::Endpoint do
     it 'cannot call the secure update method in the other service without a session' do
       patch '/v1/rspec_test_inter_resource_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       expect(last_response.status).to eq(401)
-    end
-  end
-
-  context 'edge error cases' do
-    it 'complains about malformed inter-resource options' do
-      expect {
-        mw = Hoodoo::Services::Middleware.new( RSpecTestServiceStub.new )
-        mw.send( :inter_resource, {} )
-      }.to raise_error(RuntimeError, 'Hoodoo::Services::Middleware#inter_resource: Serious internal error - no source interaction data was provided')
     end
   end
 end

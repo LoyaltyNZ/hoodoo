@@ -14,9 +14,6 @@
 require 'set'
 require 'uri'
 require 'benchmark'
-require 'net/http'
-require 'net/https'
-require 'drb/drb'
 
 require 'hoodoo/services/services/permissions'
 require 'hoodoo/services/services/session'
@@ -384,12 +381,14 @@ module Hoodoo; module Services
         # any) followed after the endpoint ("/" or ".") while index 2 contains
         # everything else.
 
-        {
-          :regexp         => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
-          :path           => "/v#{ interface.version }/#{ interface.endpoint }",
-          :interface      => interface,
-          :implementation => interface.implementation.new
-        }
+        Hoodoo::Services::Discovery::ForLocal.new(
+          :resource                => interface.resource,
+          :version                 => interface.version,
+          :base_path               => "/v#{ interface.version }/#{ interface.endpoint }",
+          :routing_regexp          => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :interface_class         => interface,
+          :implementation_instance => interface.implementation.new
+        )
       end
 
       announce_presence_of( @@services )
@@ -468,6 +467,288 @@ module Hoodoo; module Services
 
         end
       end
+    end
+
+    # Return something that behaves like a Hoodoo::Client::Endpoint subclass
+    # instance which can be used for inter-resource communication, whether
+    # the target endpoint implementation is local or remote.
+    #
+    # +resource+::    Resource name for the endpoint, e.g. +:Purchase+.
+    #                 String or symbol.
+    #
+    # +version+::     Required implemented version for the endpoint. Integer.
+    #
+    # +interaction+:: The Hoodoo::Services::Interaction instance describing
+    #                 the inbound call, the processing of which is leading to
+    #                 a request for an inter-resource call by an endpoint
+    #                 implementation.
+    #
+    def inter_resource_endpoint_for( resource, version, interaction )
+      resource = resource.to_sym
+      version  = version.to_i
+
+      if @discoverer.is_local?( resource, version )
+
+        # For local inter-resource calls, return the middleware's endpoint
+        # for that. In turn, if used this calls into #inter_resource_local.
+
+        discovery_result = @@services.find do | entry |
+          interface = entry.interface_class
+          interface.resource == resource && interface.version == version
+        end
+
+        if discovery_result.nil?
+          raise "Hoodoo::Services::Middleware\#inter_resource_endpoint_for: Internal error - version #{ version } of resource #{ resource } endpoint is local according to the discovery engine, but no local service discovery record can be found"
+        end
+
+        return Hoodoo::Services::Middleware::InterResourceLocal.new(
+          resource,
+          version,
+          {
+            :interaction      => interaction,
+            :discovery_result => discovery_result
+          }
+        )
+
+      else
+
+        # For remote inter-resource calls, use Hoodoo::Client's endpoint
+        # factory to get a (say) HTTP or AMQP contact endpoint, but then
+        # wrap it with the middleware's remote call endpoint, since the
+        # request requires extra processing before it goes to the Client
+        # (e.g. session permission augmentation) and the result needs
+        # extra processing before it is returned to the caller (e.g.
+        # delete an augmented session, annotate any errors from call).
+
+        wrapped_endpoint = Hoodoo::Client::Endpoint.endpoint_for(
+          resource,
+          version,
+          {
+            :discoverer  => @discoverer,
+            :interaction => interaction,
+            :session     => interaction.context.session,
+            :locale      => interaction.context.request.locale
+          }
+        )
+
+        if wrapped_endpoint.is_a?( Hoodoo::Client::Endpoint::AMQP ) && defined?( @@alchemy )
+          wrapped_endpoint.alchemy = @@alchemy
+        end
+
+        # Using "ForRemote" here is redundant - we could just as well
+        # pass wrapped_endpoint directly to an option in the
+        # InterResourceRemote class - but keeping "with the pattern"
+        # just sort of 'seems right' and might be useful in future.
+
+        discovery_result = Hoodoo::Services::Discovery::ForRemote.new(
+          :resource         => resource,
+          :version          => version,
+          :wrapped_endpoint => wrapped_endpoint
+        )
+
+        return Hoodoo::Services::Middleware::InterResourceRemote.new(
+          resource,
+          version,
+          {
+            :interaction      => interaction,
+            :discovery_result => discovery_result
+          }
+        )
+      end
+    end
+
+    # Make a local (non-HTTP local Ruby method call) inter-resource call. This
+    # is fast compared to any remote resource call, even though there is still
+    # a lot of overhead involved in setting up data so that the target
+    # resource "sees" the call in the same way as any other.
+    #
+    # Named parameters are as follows:
+    #
+    # +source_interaction+:: A Hoodoo::Services::Interaction instance for the
+    #                        inbound call which is being processed right now
+    #                        by some resource endpoint implementation and this
+    #                        implementation is now making an inter-resource
+    #                        call as part of its processing;
+    #
+    # +discovery_result+::   A Hoodoo::Services::Discovery::ForLocal instance
+    #                        describing the target of the inter-resource call;
+    #
+    # +action+::             A Hoodoo::Services::Middleware::ALLOWED_ACTIONS
+    #                        entry;
+    #
+    # +ident+::              UUID or other unique identifier of a resource
+    #                        instance. Required for +show+, +update+ and
+    #                        +delete+ actions, ignored for others;
+    #
+    # +query_hash+::         Optional Hash of query data to be turned into a
+    #                        query string - applicable to any action;
+    #
+    # +body_hash+::          Hash of data to convert to a body string using
+    #                        the source interaction's described content type.
+    #                        Required for +create+ and +update+ actions,
+    #                        ignored for others.
+    #
+    # A Hoodoo::Client::AugmentedArray or Hoodoo::Client::AugmentedHash is
+    # returned from these methods; @response or the wider processing context
+    # is not automatically modified. Callers MUST use the methods provided by
+    # Hoodoo::Client::AugmentedBase to detect and handle error conditions,
+    # unless for some reason they wish to ignore inter-resource call errors.
+    #
+    def inter_resource_local( source_interaction:,
+                              discovery_result:,
+                              action:,
+                              ident:      nil,
+                              body_hash:  nil,
+                              query_hash: nil )
+
+      source_interaction = source_interaction
+      interface          = discovery_result.interface_class
+      implementation     = discovery_result.implementation_instance
+
+      # We must construct a call context for the local service. This means
+      # a local request object which we fill in with data just as if we'd
+      # parsed an inbound HTTP request and a response object that contains
+      # the usual default data.
+
+      env = {
+        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
+      }
+
+      # Need to possibly augment the caller's session - same rationale
+      # as #local_service_remote, so see that for details.
+
+      session = source_interaction.context.session
+
+      unless session.nil?
+        session = session.augment_with_permissions_for( source_interaction )
+      end
+
+      if session == false
+        hash = Hoodoo::Client::AugmentedHash.new
+        hash.platform_errors.add_error( 'platform.invalid_session' )
+        return hash
+      end
+
+      local_interaction = Hoodoo::Services::Middleware::Interaction.new(
+        {},
+        self,
+        session
+      )
+
+      local_interaction.target_interface                  = interface
+      local_interaction.target_implementation             = implementation
+      local_interaction.target_resource_for_error_reports = interface.resource
+      local_interaction.requested_content_type            = source_interaction.requested_content_type
+      local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
+
+      # For convenience...
+
+      local_request  = local_interaction.context.request
+      local_response = local_interaction.context.response
+
+      set_common_response_headers( local_interaction )
+      update_response_for( local_response, interface )
+
+      # Add errors from the local service response into an augmented hash
+      # for responding early (via a Proc for internal reuse later).
+
+      add_local_errors = Proc.new {
+        hash = Hoodoo::Client::AugmentedHash.new
+        hash.platform_errors.merge!( local_response.errors )
+        hash
+      }
+
+      # Figure out initial action / authorisation results for this request.
+      # We may still have to construct a context and ask the service after.
+
+      upc  = []
+      upc << ident unless ident.nil? || ident.empty?
+
+      local_interaction.requested_action = action
+      authorisation                      = determine_authorisation( local_interaction )
+
+      return add_local_errors.call() if local_response.halt_processing?
+
+      # Construct the local request details.
+
+      local_request.uri_path_components = upc
+      local_request.uri_path_extension  = ''
+
+      unless query_hash.nil?
+        query_hash = Hoodoo::Utilities.stringify( query_hash )
+
+        # This is for inter-resource local calls where a service author
+        # specifies ":_embed => 'foo'" accidentally, forgetting that it
+        # should be a single element array. It's such a common mistake
+        # that we tolerate it here. Same for "_reference".
+
+        data = query_hash[ '_embed' ]
+        query_hash[ '_embed' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
+
+        data = query_hash[ '_reference' ]
+        query_hash[ '_reference' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
+
+        # Regardless, make sure embed/reference array data contains strings.
+
+        query_hash[ '_embed'     ].map!( &:to_s ) unless query_hash[ '_embed'     ].nil?
+        query_hash[ '_reference' ].map!( &:to_s ) unless query_hash[ '_reference' ].nil?
+
+        process_query_hash( local_interaction, query_hash )
+      end
+
+      local_request.body = body_hash
+
+      if ( action == :create || action == :update )
+        validate_body_data_for( local_interaction )
+      end
+
+      return add_local_errors.call() if local_response.halt_processing?
+
+      # Can now, if necessary, do a final check with the target endpoint
+      # for authorisation.
+
+      if authorisation == Hoodoo::Services::Permissions::ASK
+        ask_for_authorisation( local_interaction )
+        return add_local_errors.call() if local_response.halt_processing?
+      end
+
+      # Dispatch the call.
+
+      debug_log( local_interaction, 'Dispatching local inter-resource call', local_request.body )
+      dispatch( local_interaction )
+
+      # If we get this far the interim session isn't needed. We might have
+      # exited early due to errors above and left this behind, but that's not
+      # the end of the world - it'll expire out of Memcached eventually.
+
+      if session &&
+         source_interaction.context &&
+         source_interaction.context.session &&
+         session.session_id != source_interaction.context.session.session_id
+
+        # Ignore errors, there's nothing much we can do about them and in
+        # the worst case we just have to wait for this to expire naturally.
+
+        session.delete_from_memcached()
+      end
+
+      # Extract the returned data and "rephrase" it as an augmented
+      # array or hash carrying error data if necessary.
+
+      data = local_response.body
+
+      if data.is_a? Array
+        data              = Hoodoo::Client::AugmentedArray.new( data )
+        data.dataset_size = local_response.dataset_size
+      else
+        data = Hoodoo::Client::AugmentedHash[ data ]
+      end
+
+      data.set_platform_errors(
+        annotate_errors_from_other_resource( local_response.errors )
+      )
+
+      return data
     end
 
   private
@@ -945,12 +1226,20 @@ module Hoodoo; module Services
         host = @@recorded_host if host.nil? && defined?( @@recorded_host )
         port = @@recorded_port if port.nil? && defined?( @@recorded_port )
 
+        # Under test, ensure a simulation of an available host and port is
+        # always available for discovery-related tests.
+
+        if ( self.class.environment.test? )
+          host ||= '127.0.0.1'
+          port ||= '9292'
+        end
+
         # Announce the resource endpoints unless we are still missing a host
         # or port. Implication is 'racksh'.
 
         unless host.nil? || port.nil?
           services.each do | service |
-            interface = service[ :interface ]
+            interface = service.interface_class
 
             @discoverer.announce(
               interface.resource,
@@ -958,7 +1247,7 @@ module Hoodoo; module Services
               {
                 :host => host,
                 :port => port,
-                :path => service[ :path ]
+                :path => service.base_path
               }
             )
           end
@@ -1126,7 +1415,7 @@ module Hoodoo; module Services
 
       selected_path_data = nil
       selected_services  = @@services.select do | service_data |
-        path_data = process_uri_path( uri_path, service_data[ :regexp ] )
+        path_data = process_uri_path( uri_path, service_data.routing_regexp )
 
         if path_data.nil?
           false
@@ -1151,8 +1440,8 @@ module Hoodoo; module Services
       # of the chosen service's information.
 
       uri_path_components, uri_path_extension = selected_path_data
-      interface                               = selected_service[ :interface      ]
-      implementation                          = selected_service[ :implementation ]
+      interface                               = selected_service.interface_class
+      implementation                          = selected_service.implementation_instance
 
       interaction.target_interface                  = interface
       interaction.target_resource_for_error_reports = interface.resource
@@ -1768,69 +2057,43 @@ module Hoodoo; module Services
       allowed += ALLOWED_QUERIES_LIST if interaction.requested_action == :list
 
       unrecognised_query_keys = query_hash.keys - allowed
-      malformed = unrecognised_query_keys unless unrecognised_query_keys.empty?
+      malformed = unrecognised_query_keys
 
-      unless malformed
-        if query_hash.has_key?( 'limit' )
-          limit     = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] )
-          malformed = :limit if limit.nil?
-        else
-          limit = interface.to_list.limit.to_i
-        end
-      end
+      limit = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] || interface.to_list.limit )
+      malformed << :limit if limit.nil?
 
-      unless malformed
-        if query_hash.has_key?( 'offset' )
-          offset    = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] )
-          malformed = :offset if offset.nil?
-        else
-          offset = 0
-        end
-      end
+      offset = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] || 0 )
+      malformed << :offset if offset.nil?
 
-      unless malformed
-        sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
-        malformed = :sort unless interface.to_list.sort.keys.include?( sort_key )
-      end
+      sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
+      malformed << :sort unless interface.to_list.sort.keys.include?( sort_key )
 
-      unless malformed
+      unless interface.to_list.sort[ sort_key ].nil?
         direction = query_hash[ 'direction' ] || interface.to_list.sort[ sort_key ][ 0 ]
-        malformed = :direction unless interface.to_list.sort[ sort_key ].include?( direction )
+        malformed << :direction unless interface.to_list.sort[ sort_key ].include?( direction )
       end
 
-      unless malformed
-        search = query_hash[ 'search' ] || {}
+      search = query_hash[ 'search' ] || {}
+      unrecognised_search_keys = search.keys - interface.to_list.search
+      malformed << "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
 
-        unrecognised_search_keys = search.keys - interface.to_list.search
-        malformed = "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
-      end
+      filter = query_hash[ 'filter' ] || {}
+      unrecognised_filter_keys = filter.keys - interface.to_list.filter
+      malformed << "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
 
-      unless malformed
-        filter = query_hash[ 'filter' ] || {}
+      embeds = query_hash[ '_embed' ] || []
+      unrecognised_embeds = embeds - interface.embeds
+      malformed << "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
 
-        unrecognised_filter_keys = filter.keys - interface.to_list.filter
-        malformed = "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
-      end
-
-      unless malformed
-        embeds = query_hash[ '_embed' ] || []
-
-        unrecognised_embeds = embeds - interface.embeds
-        malformed = "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
-      end
-
-      unless malformed
-        references = query_hash[ '_reference' ] || []
-
-        unrecognised_references = references - interface.embeds # (sic.)
-        malformed = "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
-      end
+      references = query_hash[ '_reference' ] || []
+      unrecognised_references = references - interface.embeds # (sic.)
+      malformed << "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
 
       return response.add_error(
         'platform.malformed',
         'message' => "One or more malformed or invalid query string parameters",
-        'reference' => { :including => malformed }
-      ) if malformed
+        'reference' => { :including => malformed.join( ', ' ) }
+      ) unless malformed.empty?
 
       request.list.offset         = offset
       request.list.limit          = limit
@@ -1860,11 +2123,10 @@ module Hoodoo; module Services
         case content_type
           when 'application/json'
 
-            # We're aiming for Ruby 2.1 or later, but might end up on 1.9.
-            #
+            # Hoodoo requires Ruby 2.1 or later, else:
             # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
             #
-            payload_hash = JSON.parse( body, :create_additions => false )
+            payload_hash = JSON.parse( body )
 
         end
 
@@ -1951,632 +2213,6 @@ module Hoodoo; module Services
       )
     end
 
-  protected # :nodoc: all
-
-    # Is the given resource available as a local endpoint in this service
-    # application?
-    #
-    # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
-    #              symbol.
-    #
-    # +version+::  Version of interface required as an Integer. Optional -
-    #              default is 1.
-    #
-    # Returns an @@services entry (see implementation of #initialize) if local,
-    # else +nil+.
-    #
-    def local_service_for( resource, version = 1 )
-      resource = resource.to_sym
-      version  = version.to_i
-
-      @@services.find do | entry |
-        interface = entry[ :interface ]
-        interface.resource == resource && interface.version == version
-      end
-    end
-
-    # Is the given resource available as a remote endpoint we can target via
-    # HTTP?
-    #
-    # +resource+:: Resource name of interest, e.g. +:Purchase+. String or
-    #              symbol.
-    #
-    # +version+::  Version of interface required as an Integer. Optional -
-    #              default is 1.
-    #
-    # Returns:
-    #
-    # * +nil+ if the endpoint is not found.
-    #
-    # * One of the Hoodoo::Services::Discovery::For... class
-    #   family instances, depending on the discoverer in use.
-    #
-    def remote_service_for( resource, version = 1 )
-      return begin
-        @discoverer.discover( resource, version )
-      rescue => e
-        nil
-      end
-    end
-
-    # Perform an inter-resource call. This shouldn't be called directly; call
-    # via the Hoodoo::Services::Middleware::Endpoint subclass specialised
-    # methods instead, which makes sure it sets up the required parameters in
-    # correct combinations. Undefined results will arise for incorrect calls.
-    #
-    # +options+:: Options hash with keys and required values described below.
-    #
-    # Options are as follows - keys must be Symbols:
-    #
-    # +source_interaction+:: The Hoodoo::Services::Middleware::Interaction
-    #                        instance that was created to handle the request
-    #                        which led to a resource implementation being
-    #                        called, that implementation now calling back
-    #                        here to make an inter-resource call.
-    #
-    # +local+::              A +@@services+ entry (see implementation of
-    #                        #initialize) describing the service to call if
-    #                        local, else +nil+ or absent for remote calls.
-    #
-    # +remote+::             A return value of #remote_service_for describing
-    #                        the location of a service for remote calls, else
-    #                        +nil+ or absent for local calls.
-    #
-    # +resource+::           Resource name, String or Symbol, e.g. "Product".
-    #
-    # +version+::            Endpoint API version, Integer, e.g. 2.
-    #
-    # +http_method+::        HTTP method, String, e.g. "+GET+", "+DELETE+".
-    #
-    # +ident+::              ID, UUID etc; first (and only) path component.
-    #
-    # +query_hash+::         Converted to query string.
-    #
-    # +body_hash+::          Converted to body data.
-    #
-    # Parameters should be nil where the value would not be allowed given the
-    # HTTP method. HTTP methods must map to understood actions.
-    #
-    # A Hoodoo::Services::Middleware::Endpoint::AugmentedArray or
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedHash is returned
-    # from these methods; @response or the wider processing context
-    # is not automatically modified. Callers MUST use the methods provided by
-    # Hoodoo::Services::Middleware::Endpoint::AugmentedBase to detect
-    # and handle error conditions, unless for some reason they wish to ignore
-    # resource-to-resource call errors.
-    #
-    def inter_resource( options )
-
-      interaction = options[ :source_interaction ]
-
-      if interaction.nil?
-        raise 'Hoodoo::Services::Middleware#inter_resource: Serious internal error - no source interaction data was provided'
-      end
-
-      remote = options[ :local ].nil?
-
-      # Don't use string composition here; profiling shows it is slow and
-      # this is only for debugging anyway.
-
-      debug_str = if remote
-        'Remote inter-resource call'
-      else
-        'Local inter-resource call'
-      end
-
-      debug_log( interaction, debug_str, 'requested', options )
-
-      if ( remote )
-        result = inter_resource_remote( options )
-      else
-        result = inter_resource_local( options )
-      end
-
-      if result.platform_errors.has_errors?
-        debug_log( interaction, debug_str, 'halted processing', result.platform_errors )
-      else
-        debug_log( interaction, debug_str, 'succeeded', result )
-      end
-
-      return result
-    end
-
-    # Make a remote (HTTP) inter-resource call. Slow.
-    #
-    # +options+:: See #inter_resource.
-    #
-    # Returns:: See #inter_resource.
-    #
-    def inter_resource_remote( options )
-      source_interaction = options[ :source_interaction ]
-      remote_info        = options[ :remote             ]
-      http_method        = options[ :http_method        ]
-      ident              = options[ :ident              ]
-      body_hash          = options[ :body_hash          ]
-      query_hash         = options[ :query_hash         ]
-
-      # Add a 404 error to the response (via a Proc for internal reuse).
-
-      add_404 = Proc.new {
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
-        hash.platform_errors.add_error(
-          'platform.not_found',
-          'reference' => { :entity_name => "v#{ options[ :version ] } of #{ options[ :resource ] } interface endpoint" }
-        )
-        hash
-      }
-
-      # No endpoint found? Yikes!
-
-      return add_404.call() if ( remote_info.nil? )
-
-      on_queue = remote_info.is_a?( Hoodoo::Services::Discovery::ForAMQP )
-
-      if on_queue
-        alchemy_options = {
-          :host => source_interaction.rack_request.host,
-          :port => source_interaction.rack_request.port
-        }
-
-        request_path = remote_info.equivalent_path.dup # Duplicate => avoid accidental modify-"remote_info"-by-reference via "<<" below
-        request_path << "/#{ URI::escape( ident ) }" unless ident.nil?
-
-      else
-        remote_uri  = remote_info.endpoint_uri.to_s
-        remote_uri << "/#{ URI::escape( ident ) }" unless ident.nil?
-      end
-
-      # When a source implementation calls a target implementation, we
-      # look at the source implementation to see if it grants any extra
-      # permissions for downstream resources it wants. All of that is
-      # a "dialogue" that we have with the requesting, source resource
-      # based on the action it is handling when it decides to make an
-      # inter-resource call and the code control flow ends up here.
-
-      session = augment_session_with_permissions_for_action( source_interaction )
-
-      if session == false
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
-        hash.platform_errors.add_error( 'platform.invalid_session' )
-        return hash
-      end
-
-      # Grey area over whether this encodes spaces as "%20" or "+", but so
-      # long as the middleware consistently uses the URI encode/decode calls,
-      # it should work out in the end anyway.
-
-      unless query_hash.nil?
-        query_hash = query_hash.dup
-        query_hash[ 'search' ] = URI.encode_www_form( query_hash[ 'search' ] ) if ( query_hash[ 'search' ].is_a?( ::Hash ) )
-        query_hash[ 'filter' ] = URI.encode_www_form( query_hash[ 'filter' ] ) if ( query_hash[ 'filter' ].is_a?( ::Hash ) )
-
-        query_hash[ '_embed'     ] = query_hash[ '_embed'     ].join( ',' ) if ( query_hash[ '_embed'     ].is_a?( ::Array ) )
-        query_hash[ '_reference' ] = query_hash[ '_reference' ].join( ',' ) if ( query_hash[ '_reference' ].is_a?( ::Array ) )
-
-        query_hash.delete( 'search'     ) if query_hash[ 'search'     ].nil? || query_hash[ 'search'     ].empty?
-        query_hash.delete( 'filter'     ) if query_hash[ 'filter'     ].nil? || query_hash[ 'filter'     ].empty?
-        query_hash.delete( '_embed'     ) if query_hash[ '_embed'     ].nil? || query_hash[ '_embed'     ].empty?
-        query_hash.delete( '_reference' ) if query_hash[ '_reference' ].nil? || query_hash[ '_reference' ].empty?
-      end
-
-      unless query_hash.nil? || query_hash.empty?
-        if on_queue
-          alchemy_options[ :query ] = query_hash
-        else
-          remote_uri << '?' << URI.encode_www_form( query_hash )
-        end
-      end
-
-      body_data = body_hash.nil? ? '' : body_hash.to_json
-      headers   = {
-        'Content-Type'     => 'application/json; charset=utf-8',
-        'Content-Language' => source_interaction.context.request.locale,
-        'X-Interaction-ID' => source_interaction.interaction_id
-      }
-
-      headers[ 'X-Session-ID' ] = session.session_id unless session.nil?
-
-      # Use HTTP or Alchemy for the actual communications.
-
-      if on_queue
-
-        # Call via Alchemy.
-
-        unless defined?( @@alchemy ) && @@alchemy.nil? == false
-          raise 'Inter-resource call requested on queue, but no Alchemy endpoint was sent in the Rack environment'
-        end
-
-        alchemy_options[ :body       ] = body_data
-        alchemy_options[ :headers    ] = headers
-        alchemy_options[ :session_id ] = session.session_id unless session.nil?
-
-        response = @@alchemy.http_request(
-          remote_info.queue_name,
-          http_method,
-          request_path,
-          alchemy_options
-        )
-
-        http_status_code = response.status_code
-
-      else
-
-        # Drive Net::HTTP directly.
-
-        remote_uri = URI.parse( remote_uri )
-        http       = Net::HTTP.new( remote_uri.host, remote_uri.port )
-
-        if remote_uri.scheme == "https"
-          http.use_ssl = true
-          # TODO: This is not so cool but want something going.
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        end
-
-        request_class = {
-          'POST'   => Net::HTTP::Post,
-          'PATCH'  => Net::HTTP::Patch,
-          'DELETE' => Net::HTTP::Delete
-        }[ http_method ] || Net::HTTP::Get
-
-        request      = request_class.new( remote_uri.request_uri() )
-        request.body = body_data unless body_data.empty?
-
-        request.initialize_http_header( headers )
-
-        begin
-          response = http.request( request )
-        rescue Errno::ECONNREFUSED => e
-          return add_404.call()
-        end
-
-        http_status_code = response.code
-
-      end
-
-      # If we get this far the interim session isn't needed. We might have
-      # exited early due to errors above and left this behind, but that's not
-      # the end of the world - it'll expire out of Memcached eventually.
-
-      if session &&
-         source_interaction.context &&
-         source_interaction.context.session &&
-         session.session_id != source_interaction.context.session.session_id
-
-        # Ignore errors, there's nothing much we can do about them and in
-        # the worst case we just have to wait for this to expire naturally.
-
-        session.delete_from_memcached()
-      end
-
-      # Parse the response. Valid JSON is expected but potentially the target
-      # resource was never called - we might have got (say) a Timeout. In that
-      # case, handle the parser exception and try to figure out what we can do
-      # to communicate the internal failure upwards elegantly.
-
-      begin
-
-        parsed = JSON.parse(
-          response.body,
-          :object_class => Hoodoo::Services::Middleware::Endpoint::AugmentedHash,
-          :array_class  => Hoodoo::Services::Middleware::Endpoint::AugmentedArray
-        )
-
-      rescue
-
-        http_errors = Hoodoo::Errors.new
-
-        case http_status_code
-          when 404
-            # Highly unexpected! Don't leak the failed internal path data
-            # (information disclosure; might include UUIDs of resources to
-            # which the top-level caller has no access).
-            http_errors.add_error(
-              'platform.not_found',
-              :reference => { :entity_name => '<internal resource>' }
-            )
-          when 408
-            http_errors.add_error( 'platform.timeout' )
-          when 200
-            http_errors.add_error(
-              'platform.fault',
-              :reference => { :exception => RuntimeError.new( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' ) }
-            )
-          else
-            http_errors.add_error(
-              'platform.fault',
-              :reference => { :exception => RuntimeError.new( "Unexpected raw HTTP status code #{ http_status_code } during inter-resource call" ) }
-            )
-        end
-
-        parsed = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[
-          http_errors.render( source_interaction.interaction_id )
-        ]
-
-      end
-
-      # Just in case someone changes JSON parsers under us and the replacement
-      # doesn't support the options used above...
-
-      unless parsed.is_a?( Hoodoo::Services::Middleware::Endpoint::AugmentedHash )
-        raise "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options"
-      end
-
-      # If the parsed data wrapped an array, extract just the array part, else
-      # the hash part.
-
-      if ( parsed[ '_data' ].is_a?( ::Array ) )
-        size   = parsed[ '_dataset_size' ]
-        parsed = parsed[ '_data'         ]
-        parsed.dataset_size = size
-
-      elsif ( parsed[ 'kind' ] == 'Errors' )
-
-        # This isn't an array, it's an AugmentedHash describing errors. Turn
-        # this into a formal errors collection.
-
-        errors_from_other_resource = Hoodoo::Errors.new()
-
-        parsed[ 'errors' ].each do | error |
-          errors_from_other_resource.add_precompiled_error(
-            error[ 'code'      ],
-            error[ 'message'   ],
-            error[ 'reference' ],
-            http_status_code
-          )
-        end
-
-        parsed.set_platform_errors(
-          translate_errors_from_other_resource( errors_from_other_resource )
-        )
-      end
-
-      return parsed
-    end
-
-    # Make a local (non-HTTP local Ruby method call) inter-resource call. Fast.
-    #
-    # +options+:: See #inter_resource.
-    #
-    # Returns:: See #inter_resource.
-    #
-    def inter_resource_local( options )
-      source_interaction = options[ :source_interaction ]
-      service            = options[ :local              ]
-      http_method        = options[ :http_method        ]
-      ident              = options[ :ident              ]
-      body_hash          = options[ :body_hash          ]
-      query_hash         = options[ :query_hash         ]
-
-      interface          = service[ :interface      ]
-      actions            = service[ :actions        ]
-      implementation     = service[ :implementation ]
-
-      # We must construct a call context for the local service. This means
-      # a local request object which we fill in with data just as if we'd
-      # parsed an inbound HTTP request and a response object that contains
-      # the usual default data.
-
-      env = {
-        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
-      }
-
-      # Need to possibly augment the caller's session - same rationale
-      # as #local_service_remote, so see that for details.
-
-      session = augment_session_with_permissions_for_action( source_interaction )
-
-      if session == false
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
-        hash.platform_errors.add_error( 'platform.invalid_session' )
-        return hash
-      end
-
-      local_interaction = Hoodoo::Services::Middleware::Interaction.new(
-        {},
-        self,
-        session
-      )
-
-      local_interaction.target_interface                  = interface
-      local_interaction.target_implementation             = implementation
-      local_interaction.target_resource_for_error_reports = interface.resource
-      local_interaction.requested_content_type            = source_interaction.requested_content_type
-      local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
-
-      # For convenience...
-
-      local_request  = local_interaction.context.request
-      local_response = local_interaction.context.response
-
-      set_common_response_headers( local_interaction )
-      update_response_for( local_response, interface )
-
-      # Add errors from the local service response into an augmented hash
-      # for responding early (via a Proc for internal reuse later).
-
-      add_local_errors = Proc.new {
-        hash = Hoodoo::Services::Middleware::Endpoint::AugmentedHash.new
-        hash.platform_errors.merge!( local_response.errors )
-        hash
-      }
-
-      # Figure out initial action / authorisation results for this request.
-      # We may still have to construct a context and ask the service after.
-
-      upc  = []
-      upc << ident unless ident.nil? || ident.empty?
-
-      action                             = determine_action( http_method, upc.empty? )
-      local_interaction.requested_action = action
-      authorisation                      = determine_authorisation( local_interaction )
-
-      return add_local_errors.call() if local_response.halt_processing?
-
-      # Construct the local request details.
-
-      local_request.uri_path_components = upc
-      local_request.uri_path_extension  = ''
-
-      unless query_hash.nil?
-        query_hash = Hoodoo::Utilities.stringify( query_hash )
-
-        # This is for inter-resource local calls where a service author
-        # specifies ":_embed => 'foo'" accidentally, forgetting that it
-        # should be a single element array. It's such a common mistake
-        # that we tolerate it here. Same for "_reference".
-
-        data = query_hash[ '_embed' ]
-        query_hash[ '_embed' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
-
-        data = query_hash[ '_reference' ]
-        query_hash[ '_reference' ] = [ data ] if data.is_a?( ::String ) || data.is_a?( ::Symbol )
-
-        # Regardless, make sure embed/reference array data contains strings.
-
-        query_hash[ '_embed'     ].map!( &:to_s ) unless query_hash[ '_embed'     ].nil?
-        query_hash[ '_reference' ].map!( &:to_s ) unless query_hash[ '_reference' ].nil?
-
-        process_query_hash( local_interaction, query_hash )
-      end
-
-      local_request.body = body_hash
-
-      if ( action == :create || action == :update )
-        validate_body_data_for( local_interaction )
-      end
-
-      return add_local_errors.call() if local_response.halt_processing?
-
-      # Can now, if necessary, do a final check with the target endpoint
-      # for authorisation.
-
-      if authorisation == Hoodoo::Services::Permissions::ASK
-        ask_for_authorisation( local_interaction )
-        return add_local_errors.call() if local_response.halt_processing?
-      end
-
-      # Dispatch the call.
-
-      debug_log( local_interaction, 'Dispatching local inter-resource call', local_request.body )
-      dispatch( local_interaction )
-
-      # If we get this far the interim session isn't needed. We might have
-      # exited early due to errors above and left this behind, but that's not
-      # the end of the world - it'll expire out of Memcached eventually.
-
-      if session &&
-         source_interaction.context &&
-         source_interaction.context.session &&
-         session.session_id != source_interaction.context.session.session_id
-
-        # Ignore errors, there's nothing much we can do about them and in
-        # the worst case we just have to wait for this to expire naturally.
-
-        session.delete_from_memcached()
-      end
-
-      # Extract the returned data and "rephrase" it as an augmented
-      # array or hash carrying error data if necessary.
-
-      data = local_response.body
-
-      if data.is_a? Array
-        data              = Hoodoo::Services::Middleware::Endpoint::AugmentedArray.new( data )
-        data.dataset_size = local_response.dataset_size
-      else
-        data = Hoodoo::Services::Middleware::Endpoint::AugmentedHash[ data ]
-      end
-
-      data.set_platform_errors(
-        translate_errors_from_other_resource( local_response.errors )
-      )
-
-      return data
-    end
-
-    # Take the current session (if any) and create an interim augmented
-    # session for an inter-resource call which includes any additional
-    # parameters that the calling interface says it needs for the currently
-    # handled action.
-    #
-    # Through calling this method, the middleware implements the access
-    # permission functionality described by
-    # Hoodoo::Services::Interface#additional_permissions_for.
-    #
-    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
-    #                 describing the current interaction. This is for the
-    #                 request that a resource implementation *is handling*
-    #                 at the point it wants to make an inter-resource call
-    #                 - it is *not* data related to the *target* of that
-    #                 call.
-    #
-    # Returns:
-    #
-    # * +nil+ if given +nil+ as an input session.
-    #
-    # * Hoodoo::Services::Session instance if everything works OK; this
-    #   may be the same as, or different from, the input session depending
-    #   on whether or not there were any permissions that needed adding.
-    #
-    # * +false+ if the session can't be saved due to a mismatched caller
-    #   version - the session must have become invalid _during_ handling.
-    #
-    # If the augmented session cannot be saved due to a Memcached problem,
-    # an exception is raised and the generic handler will turn this into a
-    # 500 response for the caller. At this time, we really can't do much
-    # better than that since failure to save the augmented session means
-    # the inter-resource call cannot proceed; it's an internal fault.
-    #
-    def augment_session_with_permissions_for_action( interaction )
-
-      # Set up some convenience variables
-
-      session   = interaction.context.session
-      interface = interaction.target_interface
-      action    = interaction.requested_action
-
-      # If there is no session, the caller can only have reached here via
-      # a public action. We don't let public actions call protected actions.
-      # Just return "nil" back again and let the usual permissions checking
-      # code then refuse the request.
-
-      return nil if session.nil?
-
-      # If there are no additional permissions for this action, just return
-      # the current session back again.
-
-      action                 = action.to_s()
-      additional_permissions = ( interface.additional_permissions() || {} )[ action ]
-
-      return session if additional_permissions.nil?
-
-      # Otherwise, duplicate the session and its permissions (or generate
-      # defaults) and merge the additional permissions.
-
-      local_session     = session.dup()
-      local_permissions = session.permissions ? session.permissions.dup() : Hoodoo::Services::Permissions.new
-
-      local_permissions.merge!( additional_permissions.to_h() )
-
-      # Make sure the new session has its own ID and set the updated
-      # permissions. Then try to save it and return the result.
-
-      local_session.session_id  = Hoodoo::UUID.generate()
-      local_session.permissions = local_permissions
-
-      case local_session.save_to_memcached()
-        when true
-          return local_session
-
-        when false
-          # Caller version mismatch; original session is now outdated and invalid
-          return false
-
-        else # Couldn't save it
-          raise "Unable to create interim session for inter-resource call from #{ interface.resource } / #{ action }"
-      end
-    end
-
     # Take a Hoodoo::Errors instance constructed from, or obtained via
     # a call to another service (inter-resource local or remote call) and
     # translate the contents to make sense when those errors are reported
@@ -2590,9 +2226,9 @@ module Hoodoo; module Services
     # into a 422 with code/message/reference data describing the equivalent
     # "inner reference not found" condition.
     #
-    def translate_errors_from_other_resource( errors )
-      # TODO - lots of testing; e.g. c.f. nested basket items accumulating
-      # a bunch of 404s for products which weren't found via a complex path.
+    def annotate_errors_from_other_resource( errors )
+      # TODO - Move to an accessible shared location, e.g. Errors itself
+      #        The inter-resource remote endpoint code duplicates this
       return errors
     end
 

@@ -14,6 +14,7 @@ require 'hoodoo/errors'
 require 'hoodoo/communicators'
 require 'hoodoo/logger'
 require 'hoodoo/discovery'
+require 'hoodoo/client'
 
 # Middleware
 
@@ -21,10 +22,8 @@ require 'hoodoo/services/middleware/rack_monkey_patch'
 require 'hoodoo/services/middleware/amqp_log_message'
 require 'hoodoo/services/middleware/amqp_log_writer'
 require 'hoodoo/services/middleware/interaction'
-require 'hoodoo/services/middleware/endpoint/augmented_base'
-require 'hoodoo/services/middleware/endpoint/augmented_hash'
-require 'hoodoo/services/middleware/endpoint/augmented_array'
-require 'hoodoo/services/middleware/endpoint/endpoint'
+require 'hoodoo/services/middleware/endpoints/inter_resource_remote'
+require 'hoodoo/services/middleware/endpoints/inter_resource_local'
 require 'hoodoo/services/middleware/middleware'
 
 require 'hoodoo/services/middleware/exception_reporting/exception_reporting'
