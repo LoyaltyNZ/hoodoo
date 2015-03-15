@@ -405,7 +405,7 @@ Platform API.</p>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">options</span>   = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> <span class="ruby-operator">||</span> {} )
-  <span class="ruby-identifier">reference</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;reference&#39;</span> ] <span class="ruby-operator">||</span> {} )
+  <span class="ruby-identifier">reference</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;reference&#39;</span> ] <span class="ruby-operator">||</span> {}
   <span class="ruby-identifier">message</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-string">&#39;message&#39;</span> ]
 
   <span class="ruby-comment"># Make sure nobody uses an undeclared error code.</span>

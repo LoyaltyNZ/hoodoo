@@ -201,7 +201,7 @@ otherwise.</p>
                 
               </p>
               <div id="method-c-bypass_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 569</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 651</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
   <span class="ruby-identifier">@@bypass</span> = <span class="ruby-identifier">bypass_boolean</span>
 <span class="ruby-keyword">end</span></pre>
@@ -239,7 +239,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
                 
               </p>
               <div id="method-c-bypass-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 578</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 660</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass?</span>
   <span class="ruby-identifier">@@bypass</span>
 <span class="ruby-keyword">end</span></pre>
@@ -276,7 +276,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
                 
               </p>
               <div id="method-c-reset_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 561</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 643</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">reset</span>
   <span class="ruby-identifier">@@store</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -317,7 +317,7 @@ giving your stored value.</p>
                 
               </p>
               <div id="method-c-store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 555</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 637</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">store</span>
   <span class="ruby-identifier">@@store</span>
 <span class="ruby-keyword">end</span></pre>
@@ -356,7 +356,7 @@ giving your stored value.</p>
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 618</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 700</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -398,7 +398,7 @@ found / expired.</p>
                 
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 587</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 669</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
@@ -453,7 +453,7 @@ If omitted, the data does not expire.</p>
                 
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 607</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 689</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">data</span> = {
     <span class="ruby-value">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,

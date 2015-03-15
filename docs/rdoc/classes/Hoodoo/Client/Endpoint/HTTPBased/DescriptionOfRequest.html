@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../../files/lib/hoodoo/client/endpoint/endpoints/http_based_rb.html">lib/hoodoo/client/endpoint/endpoints/http_based.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Describe a request for HTTP-like endpoints.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>action</td>
+            <td class='attr-desc'><p>The action to perform - a Symbol from
+Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>body_hash</td>
+            <td class='attr-desc'><p>Optional Hash of body data for actions <code>:create</code> and
+<code>:update</code>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>discovery_result</td>
+            <td class='attr-desc'><p>A <a
+href="../../../Services/Discovery.html">Hoodoo::Services::Discovery</a>
+“For…” family member instance giving information required to &#39;find&#39;
+the target resource. The required class instance depends upon the endpoint
+in use.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>endpoint_uri</td>
+            <td class='attr-desc'><p>The full <a href="../HTTP.html">HTTP</a> URI (or equivalent <a
+href="../HTTP.html">HTTP</a> URI for HTTP-like, but non-HTTP systems like
+<a href="../AMQP.html">AMQP</a>) at which the endpoint is found. Excludes
+any query string or resource identifier portion (it is the “list” action
+URI without query data, in essence)</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>ident</td>
+            <td class='attr-desc'><p>Optional resource identifier for actions <code>:show</code>,
+<code>:update</code> and <code>:delete</code>:</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>query_hash</td>
+            <td class='attr-desc'><p>Optional Hash of query data.</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+              </div>
+
+    </div>
+  </body>
+</html>    

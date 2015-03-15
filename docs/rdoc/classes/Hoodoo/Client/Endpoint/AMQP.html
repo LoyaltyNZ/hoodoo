@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Client::Endpoint::AMQP</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Client::Endpoint::AMQP 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/client/endpoint/endpoints/amqp_rb.html">lib/hoodoo/client/endpoint/endpoints/amqp.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Talk to a resource that is contacted over <a href="AMQP.html">AMQP</a>
+using <a href="HTTP.html">HTTP</a> emulation via the Alchemy and AMQ <a
+href="../Endpoint.html">Endpoint</a> gems.</p>
+
+<p>Calls cannot be made until <a
+href="AMQP.html#attribute-i-alchemy">alchemy=</a> has been called to set an
+Alchemy caller instance. The Alchemy <code>http_request</code> method is
+called on this instance to perform the over-queue <a
+href="HTTP.html">HTTP</a> simulation.</p>
+
+<p>Configured with a <a
+href="../../Services/Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
+discovery result instance.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-configure_with">configure_with</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-create">create</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-delete">delete</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>L</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-list">list</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-show">show</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update">update</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>alchemy</td>
+            <td class='attr-desc'><p>Set/get the Alchemy caller instance. Its <code>http_request</code> method
+is called to perform the over-queue <a href="HTTP.html">HTTP</a>
+simulation.</p>
+
+<p>Instances of the <a href="AMQP.html">AMQP</a> endpoint can be created, but
+cannot be used for resource calls - <a
+href="AMQP.html#method-i-list">list</a>, <a
+href="AMQP.html#method-i-show">show</a>, <a
+href="AMQP.html#method-i-create">create</a>, <a
+href="AMQP.html#method-i-update">update</a> and <a
+href="AMQP.html#method-i-delete">delete</a> <em>cannot</em> be called -
+until an Alchemy instance has been specified. An exception will be raised
+if you try.</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-create">
+            
+              <b>create</b>( body_hash, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-create" name="method-i-create" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
+                
+              </p>
+              <div id="method-i-create_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 84</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:create</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">body_hash</span>  = <span class="ruby-identifier">body_hash</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-delete">
+            
+              <b>delete</b>( ident, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
+                
+              </p>
+              <div id="method-i-delete_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 107</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:delete</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-list">
+            
+              <b>list</b>( query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-list" name="method-i-list" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
+                
+              </p>
+              <div id="method-i-list_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># This does NOT dup the objects to which @description points</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:list</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-show">
+            
+              <b>show</b>( ident, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-show" name="method-i-show" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
+                
+              </p>
+              <div id="method-i-show_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:show</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update">
+            
+              <b>update</b>( ident, body_hash, query_hash = nil )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-update" name="method-i-update" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
+                
+              </p>
+              <div id="method-i-update_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 95</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:update</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">ident</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">body_hash</span>  = <span class="ruby-identifier">body_hash</span>
+  <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+              
+      <div class="sectiontitle">Instance Protected methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-configure_with">
+            
+              <b>configure_with</b>( resource, version, options )
+            
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>See <a
+href="../Endpoint.html#method-i-configure_with">Hoodoo::Client::Endpoint#configure_with</a>.</p>
+
+<p>Requires a <a
+href="../../Services/Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
+instance in the <code>discovery_result</code> field of the
+<code>options</code> Hash.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
+                
+              </p>
+              <div id="method-i-configure_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Client::Endpoint::AMQP must be configured with a Hoodoo::Services::Discovery::ForAMQP instance - got &#39;#{ @discovery_result.class.name }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Host and port isn&#39;t relevant for Alchemy but *is* needed</span>
+  <span class="ruby-comment"># to keep Rack happy.</span>
+
+  <span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-string">&#39;http://localhost:80&#39;</span> )
+  <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">equivalent_path</span>
+
+  <span class="ruby-ivar">@description</span>                  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPBased</span><span class="ruby-operator">::</span><span class="ruby-constant">DescriptionOfRequest</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">discovery_result</span> = <span class="ruby-ivar">@discovery_result</span>
+  <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">endpoint_uri</span>     = <span class="ruby-identifier">endpoint_uri</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

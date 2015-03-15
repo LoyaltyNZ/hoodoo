@@ -204,7 +204,7 @@ context instance this provides.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 53</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
   <span class="ruby-ivar">@session</span>            = <span class="ruby-identifier">session</span>
   <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
@@ -222,7 +222,7 @@ context instance this provides.</p>
         <div class="method">
           <div class="title method-title" id="method-i-resource">
             
-              <b>resource</b>( resource_name, version = 1 )
+              <b>resource</b>( resource, version = 1 )
             
             <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
@@ -231,13 +231,13 @@ context instance this provides.</p>
             <div class="description">
               <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
 endpoint instance for talking to a resource&#39;s interface. See <a
-href="Middleware/Endpoint.html">Hoodoo::Services::Middleware::Endpoint</a>.</p>
+href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a>.</p>
 
 <p>You can request an endpoint for any resource name, whether or not an
 implementation actually exists for it. Until you try and talk to the
 interface through the endpoint instance, you won&#39;t know if it is there.
 All endpoint methods return instances of classes that mix in <a
-href="Middleware/Endpoint/AugmentedBase.html">Hoodoo::Services::Middleware::Endpoint::AugmentedBase</a>;
+href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>;
 these mixin methods provide error handling options to detect a “not found”
 error (equivanent to HTTP status code 404) returned when a resource
 implementation turns out to not actually be present.</p>
@@ -262,8 +262,8 @@ return if context.response.halt_processing?
 
 <p>The return value of calls made to the endpoint is an Array or Hash that
 mixes in <a
-href="Middleware/Endpoint/AugmentedBase.html">Hoodoo::Services::Middleware::Endpoint::AugmentedBase</a>;
-see this class&#39;s documentation for details of the two alternative error
+href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>; see
+this class&#39;s documentation for details of the two alternative error
 handling approaches shown above.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
@@ -291,13 +291,10 @@ defaults to 1.</p>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 101</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-node">&quot;#{ resource_name }/#{ version }&quot;</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owning_interaction</span>,
-    <span class="ruby-identifier">resource_name</span>,
-    <span class="ruby-identifier">version</span>
-  )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 102</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
+  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ][ <span class="ruby-identifier">version</span> ] <span class="ruby-operator">||=</span> <span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

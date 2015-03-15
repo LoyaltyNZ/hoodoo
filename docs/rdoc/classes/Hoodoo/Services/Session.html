@@ -72,6 +72,18 @@
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-augment_with_permissions_for">augment_with_permissions_for</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>D</dt>
         <dd>
           <ul>
@@ -422,6 +434,123 @@ methods.</p>
                   
       <div class="sectiontitle">Instance Public methods</div>
       
+        <div class="method">
+          <div class="title method-title" id="method-i-augment_with_permissions_for">
+            
+              <b>augment_with_permissions_for</b>( interaction )
+            
+            <a href="../../../classes/Hoodoo/Services/Session.html#method-i-augment_with_permissions_for" name="method-i-augment_with_permissions_for" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Speciality interface usually only called by the middleware, or components
+closely related to the middleware.</p>
+
+<p>Takes this session and creates a copy for an inter-resource call which adds
+any additional parameters that the calling interface says it needs in order
+to complete the currently handled action.</p>
+
+<p>Through calling this method, the middleware implements the access
+permission functionality described by <a
+href="Interface.html#method-i-additional_permissions_for">Hoodoo::Services::Interface#additional_permissions_for</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>interaction</code>
+<dd>
+<p><a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance describing the current interaction. This is for the request that a
+resource implementation *is handling* at the point it wants to make an
+inter-resource call</p>
+<ul><li>
+<p>it is <strong>not</strong> data related to the <strong>target</strong> of
+that</p>
+</li></ul>
+
+<p>call.</p>
+</dd></dl>
+
+<p>Returns:</p>
+<ul><li>
+<p><code>nil</code> if given <code>nil</code> as an input session.</p>
+</li><li>
+<p><a href="Session.html">Hoodoo::Services::Session</a> instance if everything
+works OK; this may be the same as, or different from, the input session
+depending on whether or not there were any permissions that needed adding.</p>
+</li><li>
+<p><code>false</code> if the session can&#39;t be saved due to a mismatched
+caller version - the session must have become invalid <em>during</em>
+handling.</p>
+</li></ul>
+
+<p>If the augmented session cannot be saved due to a Memcached problem, an
+exception is raised and the generic handler will turn this into a 500
+response for the caller. At this time, we really can&#39;t do much better
+than that since failure to save the augmented session means the
+inter-resource call cannot proceed; it&#39;s an internal fault.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-augment_with_permissions_for_source')" id="l_method-i-augment_with_permissions_for_source">show</a>
+                
+              </p>
+              <div id="method-i-augment_with_permissions_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 478</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
+
+  <span class="ruby-comment"># Set up some convenience variables</span>
+
+  <span class="ruby-identifier">interface</span> = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">target_interface</span>
+  <span class="ruby-identifier">action</span>    = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>
+
+  <span class="ruby-comment"># If there are no additional permissions for this action, just return</span>
+  <span class="ruby-comment"># the current session back again.</span>
+
+  <span class="ruby-identifier">action</span>                 = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>()
+  <span class="ruby-identifier">additional_permissions</span> = ( <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">additional_permissions</span>() <span class="ruby-operator">||</span> {} )[ <span class="ruby-identifier">action</span> ]
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">additional_permissions</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># Otherwise, duplicate the session and its permissions (or generate</span>
+  <span class="ruby-comment"># defaults) and merge the additional permissions.</span>
+
+  <span class="ruby-identifier">local_session</span>     = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dup</span>()
+  <span class="ruby-identifier">local_permissions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">permissions</span>.<span class="ruby-identifier">dup</span>() <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Permissions</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-identifier">local_permissions</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">additional_permissions</span>.<span class="ruby-identifier">to_h</span>() )
+
+  <span class="ruby-comment"># Make sure the new session has its own ID and set the updated</span>
+  <span class="ruby-comment"># permissions. Then try to save it and return the result.</span>
+
+  <span class="ruby-identifier">local_session</span>.<span class="ruby-identifier">session_id</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-identifier">local_session</span>.<span class="ruby-identifier">permissions</span> = <span class="ruby-identifier">local_permissions</span>
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">local_session</span>.<span class="ruby-identifier">save_to_memcached</span>()
+    <span class="ruby-keyword">when</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">local_session</span>
+
+    <span class="ruby-keyword">when</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-comment"># Caller version mismatch; original session is now outdated and invalid</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+
+    <span class="ruby-keyword">else</span> <span class="ruby-comment"># Couldn&#39;t save it</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Unable to create interim session for inter-resource call from #{ interface.resource } / #{ action }&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
         <div class="method">
           <div class="title method-title" id="method-i-delete_from_memcached">
             

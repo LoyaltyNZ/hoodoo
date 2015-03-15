@@ -24,7 +24,7 @@
             
                 <span class="parent">&lt; 
                     
-                    <a href="Base.html">Hoodoo::Services::Discovery::Base</a>
+                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
                     
                 </span>
             
@@ -144,8 +144,7 @@ the returned data type.</p>
 through and returns the result of <a
 href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
 
-<p>Call via <a
-href="Base.html#method-i-announce">Hoodoo::Services::Discovery::Base#announce</a>.</p>
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Passed to <a
@@ -238,7 +237,7 @@ resources.</p>
         <div class="method">
           <div class="title method-title" id="method-i-discover_remote">
             
-              <b>discover_remote</b>( resource, version, options = {} )
+              <b>discover_remote</b>( resource, version )
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByConvention.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
           </div>
@@ -261,17 +260,13 @@ instance.</p>
 <p>The use of ActiveSupport means that pluralisation is subject to the well
 known Rails limitations and quirks.</p>
 
-<p>Call via <a
-href="Base.html#method-i-discover">Hoodoo::Services::Discovery::Base#discover</a>.</p>
+<p>Call via Hoodoo::Services::Discovery::Base#discover.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name as a String.</p>
 </dd><dt><code>version</code>
 <dd>
 <p>Endpoint version as an Integer.</p>
-</dd><dt><code>options</code>
-<dd>
-<p>Ignored.</p>
 </dd></dl>
             </div>
           
@@ -290,8 +285,8 @@ href="Base.html#method-i-discover">Hoodoo::Services::Discovery::Base#discover</a
                 
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 82</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">path</span> = <span class="ruby-node">&quot;/v#{ version }/#{ resource.to_s.underscore.pluralize }&quot;</span>
 
   <span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-ivar">@base_uri</span>.<span class="ruby-identifier">dup</span>

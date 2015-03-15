@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::ForLocal</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Services::Discovery::ForLocal 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/results/for_local_rb.html">lib/hoodoo/services/discovery/results/for_local.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>Describe a resource endpoint location in a way that allows it to be
+method-called from the service middleware directly.</p>
+
+<p>This is a very special case class used for the inter-resource local call
+code in <a href="../Middleware.html">Hoodoo::Services::Middleware</a>. It
+really exists only for semantic purposes; the middleware calls via <a
+href="../../Client/Endpoint.html">Hoodoo::Client::Endpoint</a> subclass
+Hoodoo::Sevices::Middleware::InterResourceLocal; and the Endpoint subclass
+family are supposed to use result classes from the <a
+href="../Discovery.html">Hoodoo::Services::Discovery</a> engine when they
+configure instances.</p>
+
+<p>This isn&#39;t actually enforced anywhere, but conceptually it&#39;s
+cleanest to follow the same pattern.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>base_path</td>
+            <td class='attr-desc'><p>The base path of this resource and version - for example, “/v1/products” or
+“/v2/members”. String.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>implementation_instance</td>
+            <td class='attr-desc'><p>The <a href="../Implementation.html">Hoodoo::Services::Implementation</a>
+subclass <em>instance</em> which implements the interface described by <a
+href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>interface_class</td>
+            <td class='attr-desc'><p>The <a href="../Interface.html">Hoodoo::Services::Interface</a> subclass
+<em>class</em> describing the resource interface.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>resource</td>
+            <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>routing_regexp</td>
+            <td class='attr-desc'><p>A regular expression which matches the <a
+href="ForLocal.html#attribute-i-base_path">base_path</a> and any identifier
+data, allowing inbound URI-based requests to be routed to this endpoint.
+Regexp instance.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>version</td>
+            <td class='attr-desc'><p>Resource endpoint version, as an Integer (e.g. 2).</p></td>
+          </tr>
+        
+      </table>
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>( resource:, version:, base_path:, routing_regexp:, interface_class:, implementation_instance: )
+            
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ForLocal.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create an instance with named parameters as follows:</p>
+<dl class="rdoc-list note-list"><dt>resource
+<dd>
+<p>See <a href="ForLocal.html#attribute-i-resource">resource</a>.</p>
+</dd><dt>version
+<dd>
+<p>See <a href="ForLocal.html#attribute-i-version">version</a>.</p>
+</dd><dt><code>base_path</code>
+<dd>
+<p>See <a href="ForLocal.html#attribute-i-base_path">base_path</a>.</p>
+</dd><dt><code>routing_regexp</code>
+<dd>
+<p>See <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>.</p>
+</dd><dt><code>interface_class</code>
+<dd>
+<p>See <a
+href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p>
+</dd><dt><code>implementation_instance</code>
+<dd>
+<p>See <a
+href="ForLocal.html#attribute-i-implementation_instance">implementation_instance</a>.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_local.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
+                <span class="ruby-identifier">version</span>,,
+                <span class="ruby-identifier">base_path</span>,,
+                <span class="ruby-identifier">routing_regexp</span>,,
+                <span class="ruby-identifier">interface_class</span>,,
+                <span class="ruby-identifier">implementation_instance</span><span class="ruby-operator">:</span> )
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>                = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>                 = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">base_path</span>               = <span class="ruby-identifier">base_path</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">routing_regexp</span>          = <span class="ruby-identifier">routing_regexp</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface_class</span>         = <span class="ruby-identifier">interface_class</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">implementation_instance</span> = <span class="ruby-identifier">implementation_instance</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                        </div>
+
+    </div>
+  </body>
+</html>    

@@ -119,7 +119,7 @@ href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
               [RW]
             </td>
             <td class='attr-name'>resource</td>
-            <td class='attr-desc'><p>The resource name described, as a String (e.g. “Account”).</p></td>
+            <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
           </tr>
         
           <tr valign='top'>
@@ -185,8 +185,8 @@ href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
                 <span class="ruby-identifier">queue_name</span>,,
                 <span class="ruby-identifier">equivalent_path</span><span class="ruby-operator">:</span> )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>        = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_s</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>         = <span class="ruby-identifier">version</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>        = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>         = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">queue_name</span>      = <span class="ruby-identifier">queue_name</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">equivalent_path</span> = <span class="ruby-identifier">equivalent_path</span>
 <span class="ruby-keyword">end</span></pre>

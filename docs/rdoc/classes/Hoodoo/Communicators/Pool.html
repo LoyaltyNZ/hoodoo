@@ -213,8 +213,10 @@ value in seconds - it can take a floating point or integer value.</p></td>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Analogous to ::THREAD_WAIT_TIMEOUT but used when waiting for a processing
-Thread to drain its Queue, without asking it to exit.</p></td>
+              <td colspan="2" class="attr-desc"><p>Analogous to <a
+href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a> but used when
+waiting for a processing Thread to drain its Queue, without asking it to
+exit.</p></td>
             </tr>
           
         
@@ -311,10 +313,11 @@ communicator runs in its own Thread, the execution order is indeterminate
 for such instances.</p>
 
 <p>If a slow communicator&#39;s inbound message queue length matches or
-exceeds ::MAX_SLOW_QUEUE_SIZE, messages for that specific communicator will
-start being dropped until the communicator clears the backlog and at last
-one space opens on the queue. <a href="Slow.html">Slow</a> communicators
-can detect when this has happened by implementing <a
+exceeds <a href="Pool.html#MAX_SLOW_QUEUE_SIZE">MAX_SLOW_QUEUE_SIZE</a>,
+messages for that specific communicator will start being dropped until the
+communicator clears the backlog and at last one space opens on the queue.
+<a href="Slow.html">Slow</a> communicators can detect when this has
+happened by implementing <a
 href="Slow.html#method-i-dropped">Hoodoo::Communicators::Slow#dropped</a>
 in the subclass.</p>
 
@@ -477,8 +480,9 @@ to try to remove something that was never added in the first place; the
 call simply has no side effects.</p>
 
 <p>If removing a slow communicator, its thread will be terminated with default
-timeout value of ::THREAD_EXIT_TIMEOUT seconds. For this reason, removing a
-slow communicator may take a long time.</p>
+timeout value of <a
+href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a> seconds. For
+this reason, removing a slow communicator may take a long time.</p>
 
 <p>Returns the passed-in communicator instance parameter, for convenience.</p>
 <dl class="rdoc-list note-list"><dt><code>communicator</code>
@@ -559,10 +563,11 @@ further communications are made to them.</p>
 <dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
 <dd>
 <p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
-Default is the value in ::THREAD_EXIT_TIMEOUT. For example, with three slow
-communicators in the pool and all three reached a 5 second timeout, the
-termination method would not return for 15 seconds (3 * 5 seconds full
-timeout).</p>
+Default is the value in <a
+href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a>. For example,
+with three slow communicators in the pool and all three reached a 5 second
+timeout, the termination method would not return for 15 seconds (3 * 5
+seconds full timeout).</p>
 </dd></dl>
             </div>
           
@@ -626,7 +631,8 @@ to wait for them, so this call ignores such pool entries.</p>
 <dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
 <dd>
 <p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
-Default is the value in ::THREAD_WAIT_TIMEOUT.</p>
+Default is the value in <a
+href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a>.</p>
 </dd><dt><code>communicator</code>
 <dd>
 <p>If you want to wait for specific instance only (see <a

@@ -3,15 +3,15 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Hoodoo::Services::Middleware::Endpoint::AugmentedBase</title>
+    <title>Hoodoo::Client::AugmentedBase</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
-<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 
@@ -20,12 +20,12 @@
         
         <h1>
             <span class="type">Module</span> 
-            Hoodoo::Services::Middleware::Endpoint::AugmentedBase 
+            Hoodoo::Client::AugmentedBase 
             
         </h1>
         <ul class="files">
             
-            <li><a href="../../../../../files/lib/hoodoo/services/middleware/endpoint/augmented_base_rb.html">lib/hoodoo/services/middleware/endpoint/augmented_base.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/client/augmented_base_rb.html">lib/hoodoo/client/augmented_base.rb</a></li>
             
         </ul>
     </div>
@@ -35,27 +35,29 @@
     <div class="description">
       
 <p>Base mixin for <a
-href="AugmentedHash.html">Hoodoo::Services::Middleware::Endpoint::AugmentedHash</a>
-and <a
-href="AugmentedArray.html">Hoodoo::Services::Middleware::Endpoint::AugmentedArray</a>,
-used by <a
-href="../Endpoint.html">Hoodoo::Services::Middleware::Endpoint</a> for
-return values in its resource calling API - see <a
-href="../Endpoint.html#method-i-list">Hoodoo::Services::Middleware::Endpoint#list</a>,
-<a
-href="../Endpoint.html#method-i-show">Hoodoo::Services::Middleware::Endpoint#show</a>,
-<a
-href="../Endpoint.html#method-i-create">Hoodoo::Services::Middleware::Endpoint#create</a>,
-<a
-href="../Endpoint.html#method-i-update">Hoodoo::Services::Middleware::Endpoint#update</a>
-and <a
-href="../Endpoint.html#method-i-delete">Hoodoo::Services::Middleware::Endpoint#delete</a>.</p>
+href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> and <a
+href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>, used by the
+<a href="Endpoint.html">Hoodoo::Client::Endpoint</a> family for return
+values in its resource calling API - see:</p>
+<ul><li>
+<p><a href="Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a></p>
+</li><li>
+<p><a href="Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a></p>
+</li><li>
+<p><a href="Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a></p>
+</li><li>
+<p><a href="Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a></p>
+</li><li>
+<p><a href="Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a></p>
+</li></ul>
 
 <p>The error handling mechanism this mixin provides is intentionally analogous
-to that used for mapping <a
-href="../../../ActiveRecord.html">ActiveRecord</a> model validation
-failures to platform errors in <a
-href="../../../ActiveRecord/ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a>.</p>
+to that used for mapping <a href="../ActiveRecord.html">ActiveRecord</a>
+model validation failures to platform errors in <a
+href="../ActiveRecord/ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a>
+for when resource endpoint implementations are calling other resource
+endpoint implementations, while also supporting use cases of external
+callers wanting to communicate with resources from “outside the system”.</p>
 
     </div>
   
@@ -140,22 +142,22 @@ href="../../../ActiveRecord/ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMappin
             
               <b>adds_errors_to?</b>( collection )
             
-            <a href="../../../../../classes/Hoodoo/Services/Middleware/Endpoint/AugmentedBase.html#method-i-adds_errors_to-3F" name="method-i-adds_errors_to-3F" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-adds_errors_to-3F" name="method-i-adds_errors_to-3F" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Adds errors set via <a
+              <p>This call is typically used by resource endpoint implementations (“service
+authors”) during inter-resource calls, rather than by external entities
+calling into a system via <a href="../Client.html">Hoodoo::Client</a>.</p>
+
+<p><a href="../Errors.html">Errors</a> set via <a
 href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>
-to the given <a href="../../../Errors.html">Hoodoo::Errors</a> instance.
-Generally, <a
+are added to the given <a href="../Errors.html">Hoodoo::Errors</a>
+instance. Generally, <a
 href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>
-is only ever called by the middleware when one resource calls another
-resource via <a
-href="../../Context.html#method-i-resource">Hoodoo::Services::Context#resource</a>
-and the methods in the <a
-href="../Endpoint.html">Hoodoo::Services::Middleware::Endpoint</a> instance
-it returns.</p>
+is only called by the <a href="../Client.html">Hoodoo::Client</a>
+under-the-hood implementation code as part of routine error handling.</p>
 
 <p>Returns <code>true</code> if any errors were added else <code>false</code>
 if everything is OK (no platform errors have been noted internally).</p>
@@ -177,19 +179,24 @@ other resource:</p>
   # ...
 end
 </code></pre>
+
+<p>External callers that have nothing to do with resource endpoint
+implementations could still construct an errors collection manually and
+make use of this method, but calling <a
+href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>
+makes a lot more sense for that use case.</p>
 <dl class="rdoc-list note-list"><dt><code>collection</code>
 <dd>
-<p>A <a href="../../../Errors.html">Hoodoo::Errors</a> instance, typically
-obtained from the <a
-href="../../Context.html">Hoodoo::Services::Context</a> instance passed to
-a service implementation in calls like <a
-href="../../Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>
+<p>A <a href="../Errors.html">Hoodoo::Errors</a> instance, typically obtained
+from the <a href="../Services/Context.html">Hoodoo::Services::Context</a>
+instance passed to a service implementation in calls like <a
+href="../Services/Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>
 or <a
-href="../../Implementation.html#method-i-show">Hoodoo::Services::Implementation#show</a>,
+href="../Services/Implementation.html#method-i-show">Hoodoo::Services::Implementation#show</a>,
 via <code>context.response.errors</code> (i.e. <a
-href="../../Context.html#attribute-i-response">Hoodoo::Services::Context#response</a>
+href="../Services/Context.html#attribute-i-response">Hoodoo::Services::Context#response</a>
 / <a
-href="../../Response.html#attribute-i-errors">Hoodoo::Services::Response#errors</a>).
+href="../Services/Response.html#attribute-i-errors">Hoodoo::Services::Response#errors</a>).
 The collection you pass is updated with any errors noted internally via
 (usually-middleware-automatically-called) method <a
 href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.</p>
@@ -211,7 +218,7 @@ href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.<
                 
               </p>
               <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/augmented_base.rb, line 72</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 81</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
   <span class="ruby-identifier">to_add</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">platform_errors</span>()
 
@@ -232,13 +239,16 @@ href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.<
             
               <b>platform_errors</b>()
             
-            <a href="../../../../../classes/Hoodoo/Services/Middleware/Endpoint/AugmentedBase.html#method-i-platform_errors" name="method-i-platform_errors" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-platform_errors" name="method-i-platform_errors" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Returns a <a href="../../../Errors.html">Hoodoo::Errors</a> instance
-that&#39;s either been assigned via <a
+              <p>This call is typically used by external entities calling into a system via
+<a href="../Client.html">Hoodoo::Client</a>.</p>
+
+<p>Returns a <a href="../Errors.html">Hoodoo::Errors</a> instance that&#39;s
+either been assigned via <a
 href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>
 or is an empty, internally assigned collection. This method is very closely
 related to <a
@@ -246,7 +256,19 @@ href="AugmentedBase.html#method-i-adds_errors_to-3F">adds_errors_to?</a>
 and, if you have not already done so, you should read that method&#39;s
 documentation before continuing.</p>
 
-<p>The <a
+<p>For external client users, the error handling pattern is:</p>
+
+<pre><code>client   = Hoodoo::Client.new( ... )
+endpoint = client.resource( &#39;Foo&#39; )
+result   = endpoint.show/list/create/update/delete( ... )
+
+if result.platform_errors.halt_processing?
+  # Handle result.platform_errors&#39;s error data
+else
+  # Success case
+end</code></pre>
+
+<p>For service authors, the <a
 href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>
 method supports a slightly more verbose form of error handling for
 inter-resource calls that avoids changing a passed in parameter in the
@@ -283,7 +305,7 @@ code.</p>
                 
               </p>
               <div id="method-i-platform_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/augmented_base.rb, line 105</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
@@ -297,21 +319,20 @@ code.</p>
             
               <b>set_platform_errors</b>( errors )
             
-            <a href="../../../../../classes/Hoodoo/Services/Middleware/Endpoint/AugmentedBase.html#method-i-set_platform_errors" name="method-i-set_platform_errors" class="permalink">Link</a>
+            <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-set_platform_errors" name="method-i-set_platform_errors" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Sets the <a href="../../../Errors.html">Hoodoo::Errors</a> instance used by
-<a href="AugmentedBase.html#method-i-adds_errors_to-3F">adds_errors_to?</a>
-or returned by <a
+              <p>Sets the <a href="../Errors.html">Hoodoo::Errors</a> instance used by <a
+href="AugmentedBase.html#method-i-adds_errors_to-3F">adds_errors_to?</a> or
+returned by <a
 href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>.</p>
 
-<p>It is expected that only <a href="../../../../Hoodoo.html">Hoodoo</a>
-middleware code will call this method as part of inter-resource call
-handling for the internal use cases of this class, though client code may
-find other uses that are independent of the inter-resource call case
-wherein the method may be safely invoked.</p>
+<p>It is expected that only Hoodoo::Client-family code will call this method
+as part of general error handling, though client code may find other uses
+that are independent of the inter-resource call case wherein the method may
+be safely invoked.</p>
             </div>
           
           
@@ -329,7 +350,7 @@ wherein the method may be safely invoked.</p>
                 
               </p>
               <div id="method-i-set_platform_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoint/augmented_base.rb, line 118</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 141</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_platform_errors</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> = <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>

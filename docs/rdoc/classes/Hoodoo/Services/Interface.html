@@ -410,7 +410,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
                 
               </p>
               <div id="method-c-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 796</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 797</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
@@ -465,8 +465,8 @@ requests, but they&#39;re entirely optional if the implementation class
 wants to take over all of that itself.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Name of the resource that the interface is for, as a symbol; for example,
-&#39;:Purchase&#39;.</p>
+<p>Name of the resource that the interface is for, as a String or Symbol (e.g.
+<code>:Purchase</code>).</p>
 </dd><dt>&amp;block
 <dd>
 <p>Block that calls the Hoodoo::Services::InterfaceDSL methods; <a
@@ -490,7 +490,7 @@ call.</p>
                 
               </p>
               <div id="method-c-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 696</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 697</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>

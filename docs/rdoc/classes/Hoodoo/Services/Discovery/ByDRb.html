@@ -24,7 +24,7 @@
             
                 <span class="parent">&lt; 
                     
-                    <a href="Base.html">Hoodoo::Services::Discovery::Base</a>
+                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
                     
                 </span>
             
@@ -206,7 +206,7 @@ endpoints.</p>
                 
               </p>
               <div id="method-i-flush_services_for_test_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 25</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">flush_services_for_test</span>
   <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">flush</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -233,8 +233,7 @@ started up if necessary).</p>
 <p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
 instance.</p>
 
-<p>Call via <a
-href="Base.html#method-i-announce">Hoodoo::Services::Discovery::Base#announce</a>.</p>
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Passed to <a
@@ -275,7 +274,7 @@ local development is assumed).</p>
                 
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:host</span> ]
@@ -323,6 +322,11 @@ Parameters:</p>
 <p>Optional port on which to launch the DRb service. If omitted, environment
 variable <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> will be
 consulted. If unset, port 8787 is used.</p>
+</dd><dt><code>drb_uri</code>
+<dd>
+<p>Optional URI String at which to find an existing DRB service. It must
+alreayd be running. If omitted, the <code>drb_port</code> option&#39;s
+behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
 </dd></dl>
             </div>
           
@@ -341,9 +345,10 @@ consulted. If unset, port 8787 is used.</p>
                 
               </p>
               <div id="method-i-configure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 44</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@drb_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_port</span> ]
+  <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_uri</span>  ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -353,7 +358,7 @@ consulted. If unset, port 8787 is used.</p>
         <div class="method">
           <div class="title method-title" id="method-i-discover_remote">
             
-              <b>discover_remote</b>( resource, version, options = {} )
+              <b>discover_remote</b>( resource, version )
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
           </div>
@@ -371,9 +376,6 @@ instance if the endpoint is found, else <code>nil</code>.</p>
 </dd><dt><code>version</code>
 <dd>
 <p>Endpoint version as an Integer.</p>
-</dd><dt><code>options</code>
-<dd>
-<p>Ignored.</p>
 </dd></dl>
             </div>
           
@@ -392,8 +394,8 @@ instance if the endpoint is found, else <code>nil</code>.</p>
                 
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 108</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
 <span class="ruby-keyword">end</span></pre>
