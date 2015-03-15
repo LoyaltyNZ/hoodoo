@@ -9,11 +9,12 @@
 
 module Hoodoo
 
-  # Hoodoo::Client makes it very easy to call Resource endpoints, complete
-  # with automatic session management if required.
-  #
-  # First a Client instance is created. This is used as a factory for
-  # endpoint instances which communicate with Resource implementations.
+  # Hoodoo::Client provides a high-level abstracted interface for making
+  # calls to Resource implementations. A Client instance is created and used
+  # as a factory for objects representing individual Resources. Callers use
+  # a consistent, high level interface in these objects to make requests to
+  # those Resources and do not usually need to worry about where
+  # implementations are, or how they are being contacted.
   #
   # Please see the constructor documentation for full details.
   #
@@ -39,7 +40,7 @@ module Hoodoo
       # Ask this client for an endpoint of Resource "Member" implementing
       # version 2 of its interface:
       #
-      #     members = client.resource( :Member, 1 )
+      #     members = client.resource( :Member, 2 )
       #
       # Perform operations on the endpoints according to the methods in the
       # base class - see these for details:
@@ -52,7 +53,7 @@ module Hoodoo
       #
       # The above reference describes the basic approach for each call, with
       # common parameters such as the query hash or body hash data described
-      # in the base class initialiser, Hoodoo::Client::Endpoint#new.
+      # in the base class constructor, Hoodoo::Client::Endpoint#new.
       #
       # As an example, we could list records 50-79 inclusive of "Member"
       # sorted by +created_at+ ascending, embedding an "account" for each,
