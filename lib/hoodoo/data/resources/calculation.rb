@@ -17,7 +17,7 @@ module Hoodoo
 
       # Defined values for the +reference_kind+ enumeration in the schema.
       #
-      REFERENCE_KINDS = [ :Calculation, :Credit, :Debit ]
+      REFERENCE_KINDS = [ :Purchase ]
 
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator
