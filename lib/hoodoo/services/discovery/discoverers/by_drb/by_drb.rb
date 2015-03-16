@@ -164,6 +164,18 @@ module Hoodoo
                 command     = "bundle exec ruby '#{ script_path }'"
                 command    << " --port #{ @drb_port }" unless @drb_port.nil? || @drb_port.empty?
 
+                # TODO: This fixes issues in some of the threaded tests where
+                # the DRb service seems to just never respond. It's very odd;
+                # any sleep / "puts" / general I/O here stops intermittent
+                # test failures caused in talking to what should be a wholly
+                # independent Ruby process. Nothing to do with MRI threads in
+                # theory, then, but there's a very strong implication that an
+                # MRI thread issue is underneath this, given I/O or a sleep
+                # (*before* the spawn command) is what makes things work and
+                # such statements will give MRI the opportunity to perform a
+                # Ruby Thread context switch.
+
+                sleep 0.01
                 Process.detach( spawn( command ) )
 
                 begin
