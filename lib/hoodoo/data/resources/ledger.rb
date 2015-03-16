@@ -19,9 +19,9 @@ module Hoodoo
         #
         REASONS = [ :calculation, :manipulation ]
 
-        # Defined values for the +reference_name+ enumeration in the schema.
+        # Defined values for the +reference_kind+ enumeration in the schema.
         #
-        REFERENCE_NAMES = [ :Calculation, :Credit, :Debit ]
+        REFERENCE_KINDS = [ :Calculation, :Credit, :Debit ]
 
         schema do
           text   :token_identifier, :required => true
@@ -29,7 +29,7 @@ module Hoodoo
           uuid   :outlet_id,        :required => true,  :resource => :Outlet
           enum   :reason,           :required => true,  :from     => REASONS
 
-          text   :reference_name,   :required => false, :from     => REFERENCE_NAMES
+          enum   :reference_kind,   :required => false, :from     => REFERENCE_KINDS
           uuid   :reference_id,     :required => false
 
           object :debit,            :required => false do

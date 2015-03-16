@@ -6,7 +6,7 @@ describe Hoodoo::Data::Resources::Voucher do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(7)
+    expect(schema.properties.count).to eq(9)
 
     expect(schema.properties['state']).to be_a(Hoodoo::Presenters::Enum)
     expect(schema.properties['state'].from).to eq(['earned', 'burned'])
@@ -20,6 +20,13 @@ describe Hoodoo::Data::Resources::Voucher do
 
     expect(schema.properties['programme_code']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['programme_code'].required).to eq(true)
+
+    expect(schema.properties['reference_kind']).to be_a(Hoodoo::Presenters::Enum)
+    expect(schema.properties['reference_kind'].from).to eq(['Calculation'])
+    expect(schema.properties['reference_kind'].required).to eq(false)
+
+    expect(schema.properties['reference_id']).to be_a(Hoodoo::Presenters::UUID)
+    expect(schema.properties['reference_id'].required).to eq(false)
 
     expect(schema.properties['time_to_live']).to be_a(Hoodoo::Presenters::Integer)
     expect(schema.properties['time_to_live'].required).to eq(false)
