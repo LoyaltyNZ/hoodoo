@@ -2177,6 +2177,14 @@ module Hoodoo; module Services
 
         if result.has_errors?
           response.errors.merge!( result )
+        else
+
+          # To strip out unexpected/unrecognised fields and sanitise the input
+          # in addition to general validation, set the body data as the
+          # rendered result of the input.
+
+          interaction.context.request.body = verification_object.render( body )
+
         end
       end
     end
