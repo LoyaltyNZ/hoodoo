@@ -85,6 +85,12 @@ module Hoodoo
             #
             attr_accessor :header_hash
 
+            # Hash of query; keys are query keys as Strings (e.g.
+            # "search"), values are query values as URL encoded Strings. (e.g.
+            # "outlet_id%3Dd32a0e15754a486989fdde2b0830fe12")
+            #
+            attr_accessor :query_hash
+
           end
 
           # Description of data describing an HTTP response. Used by
@@ -194,7 +200,8 @@ module Hoodoo
             data.full_uri    = remote_uri
             data.body_string = body_data
             data.header_hash = headers
-
+            data.query_hash  = query_hash
+            
             return data
           end
 

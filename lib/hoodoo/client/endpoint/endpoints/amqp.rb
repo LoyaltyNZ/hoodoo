@@ -142,7 +142,7 @@ module Hoodoo
             alchemy_options = {
               :host    => description_of_request.endpoint_uri.host,
               :port    => description_of_request.endpoint_uri.port,
-              :query   => description_of_request.query_hash,
+              :query   => data.query_hash,
               :body    => data.body_string,
               :headers => data.header_hash
             }
