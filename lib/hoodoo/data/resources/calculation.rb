@@ -15,11 +15,15 @@ module Hoodoo
       #
       class Calculation < Hoodoo::Presenters::Base
 
+      # Defined values for the +reference_kind+ enumeration in the schema.
+      #
+      REFERENCE_KINDS = [ :Purchase ]
+
         schema do
           uuid  :calculator_id,           :required => true,   :resource => :Calculator
           text  :token_identifier,        :required => true
           text  :programme_code,          :required => true
-          text  :reference,               :required => false
+          enum  :reference_kind,          :required => false,  :from     => REFERENCE_KINDS
           uuid  :reference_id,            :required => false
           type  :CalculatorConfiguration, :required => false
           array :currency_amounts,        :required => true do
