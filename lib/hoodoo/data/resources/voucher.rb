@@ -19,6 +19,10 @@ module Hoodoo
         #
         STATES = [ :earned, :burned ]
 
+        # Defined values for the +reference_kind+ enumeration in the schema.
+        #
+        REFERENCE_KINDS = [ :Calculation ]
+
         schema do
           internationalised
 
@@ -26,6 +30,8 @@ module Hoodoo
           text     :token_identifier, :required => true
           text     :name,             :required => true
           text     :programme_code,   :required => true
+          enum     :reference_kind,   :required => false,  :from     => REFERENCE_KINDS
+          uuid     :reference_id,     :required => false
           integer  :time_to_live,     :required => false
           datetime :expires_after,    :required => false # note: this is a read only field
           hash     :burn_reason,      :required => false
