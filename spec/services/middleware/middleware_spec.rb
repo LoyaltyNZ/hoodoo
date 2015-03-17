@@ -1483,7 +1483,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
   def create( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).create(
-      { number: '42' }.merge( context.request.body ),
+      context.request.body,
       { _embed: 'foo' }
     )
 
@@ -1500,7 +1500,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
   def update( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).update(
       'hello' + context.request.ident,
-      { number: '42' }.merge( context.request.body ),
+      context.request.body,
       { _embed: 'foo' }
     )
     expectable_hook( result )
@@ -1630,7 +1630,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result['errors'][0]['reference']).to eq('search: foo')
   end
 
-  it 'should custom errors from the secondary service' do
+  it 'should report custom errors from the secondary service' do
     get '/v1/rspec_test_inter_resource_calls_b?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(412)
     result = JSON.parse(last_response.body)
@@ -1675,7 +1675,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-        expect(context.request.body).to eq({number: '42', 'foo' => 'required'})
+        expect(context.request.body).to eq({'foo' => 'required'})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
         expect(context.request.ident).to be_nil
@@ -1734,7 +1734,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-        expect(context.request.body).to eq({number: '42', 'sum' => 70})
+        expect(context.request.body).to eq({'sum' => 70})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
