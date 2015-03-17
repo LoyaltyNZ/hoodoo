@@ -2178,13 +2178,23 @@ module Hoodoo; module Services
         if result.has_errors?
           response.errors.merge!( result )
         else
+          # Strip out unexpected/unrecognised fields and sanitise the input
+          # in addition to general validation.
+          #
+          # At the time of writing, it makes more sense to warn callers if
+          # they send stuff that is not recognised; e.g. they might have
+          # misread the API and be trying to patch field "id", or change a
+          # field that's in the resource representation and maybe used for
+          # a "create" but can't be subsequently modified; or they might be
+          # using fields that are defined in a newer version of the API,
+          # but are talking to a service that doesn't implement it.
+          #
+          # Thus, complain if the sanitised body differs from the input.
 
-          # To strip out unexpected/unrecognised fields and sanitise the input
-          # in addition to general validation, set the body data as the
-          # rendered result of the input.
-
-          interaction.context.request.body = verification_object.render( body )
-
+          response.errors.add_error(
+            'generic.invalid_parameters',
+            'message' => 'Body data contains unrecognised or prohibited fields'
+          ) if body != verification_object.render( body )
         end
       end
     end
