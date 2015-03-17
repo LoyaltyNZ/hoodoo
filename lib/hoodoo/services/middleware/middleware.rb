@@ -74,6 +74,10 @@ module Hoodoo; module Services
       :delete,
     ]
 
+    # All allowed HTTP methods, related to ALLOWED_ACTIONS.
+    #
+    ALLOWED_HTTP_METHODS = Set.new( %w( GET POST PATCH DELETE ) )
+
     # Allowed common fields in query strings (list actions only). Strings.
     #
     # Only ever *add* to this list. As the API evolves, legacy clients will
@@ -1365,9 +1369,8 @@ module Hoodoo; module Services
         if interaction.rack_request.request_method == 'OPTIONS'
           requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
           requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
-          allowed           = Set.new( %w( GET POST PATCH DELETE ) )
 
-          if allowed.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
+          if ALLOWED_HTTP_METHODS.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
             set_cors_preflight_response_headers( interaction, origin )
             interaction.context.response.set_resources( [] )
 
