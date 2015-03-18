@@ -90,6 +90,12 @@ describe Hoodoo::Services::Middleware do
           mock_remote
         )
 
+        if mock_query
+          mock_query = Hoodoo::Utilities.stringify( mock_query )
+          mock_query[ 'search' ] = URI.encode_www_form( mock_query[ 'search' ] ) if ( mock_query[ 'search' ].is_a?( ::Hash ) )
+          mock_query[ 'filter' ] = URI.encode_www_form( mock_query[ 'filter' ] ) if ( mock_query[ 'filter' ].is_a?( ::Hash ) )
+        end
+
         expect( @mock_alchemy ).to receive( :http_request ).once do | queue, method, path, opts |
           expect( queue ).to eq( mock_queue )
           expect( method ).to eq( mock_method )
