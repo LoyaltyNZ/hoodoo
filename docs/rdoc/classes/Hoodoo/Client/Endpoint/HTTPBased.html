@@ -167,7 +167,7 @@ instance.</p>
                 
               </p>
               <div id="method-i-get_data_for_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 116</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 122</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
@@ -249,7 +249,8 @@ instance.</p>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">full_uri</span>    = <span class="ruby-identifier">remote_uri</span>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">body_string</span> = <span class="ruby-identifier">body_data</span>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">header_hash</span> = <span class="ruby-identifier">headers</span>
-
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">query_hash</span>  = <span class="ruby-identifier">query_hash</span>
+  
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -293,7 +294,7 @@ instance.</p>
                 
               </p>
               <div id="method-i-get_data_for_response_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 207</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 214</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
