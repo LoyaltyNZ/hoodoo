@@ -144,7 +144,6 @@ module Hoodoo
             return get_data_for_response( description_of_response )
           end
 
-
       end
     end
   end

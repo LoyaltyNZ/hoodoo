@@ -201,7 +201,7 @@ module Hoodoo
             data.body_string = body_data
             data.header_hash = headers
             data.query_hash  = query_hash
-            
+
             return data
           end
 
