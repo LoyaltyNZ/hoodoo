@@ -23,7 +23,7 @@ module Hoodoo
       # &block:: Block that makes calls to the DSL defined in
       #          Hoodoo::Presenters::BaseDSL in order to define the schema.
       #
-      def self.schema(&block)
+      def self.schema( &block )
         @schema = Hoodoo::Presenters::Object.new
         @schema.instance_eval( &block )
         @schema_definition = block
