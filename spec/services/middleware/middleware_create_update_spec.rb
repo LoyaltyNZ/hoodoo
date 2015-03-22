@@ -19,11 +19,13 @@ class RSpecToUpdateToCreateTestAInterface < Hoodoo::Services::Interface
     to_create do
       text :foo
       integer :bar, :required => true
+      integer :defaulted, :default => 42
     end
 
     to_update do
       boolean :foo, :required => true
       enum :bar, :from => [ :foo, :bar, :baz ]
+      integer :defaulted, :default => 24
     end
   end
 end
