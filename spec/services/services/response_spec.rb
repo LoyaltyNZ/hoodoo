@@ -53,7 +53,7 @@ describe Hoodoo::Services::Response do
       e.add_error( 'generic.malformed' )
 
       @r.add_error( 'platform.invalid_session' )
-      @r.add_errors( e )
+      expect( @r.add_errors( e ) ).to eq( true )
 
       expect(@r.errors.errors).to eq([
         { 'code' => 'platform.invalid_session', 'message' => 'Invalid session'   },
@@ -72,7 +72,7 @@ describe Hoodoo::Services::Response do
       e.add_error( 'platform.malformed' )
       e.add_error( 'generic.malformed' )
 
-      @r.add_errors( e )
+      expect( @r.add_errors( e ) ).to eq( true )
       @r.add_error( 'platform.invalid_session' )
 
       expect(@r.errors.errors).to eq([
@@ -85,6 +85,22 @@ describe Hoodoo::Services::Response do
       # which was the "platform.malformed" from the merged set.
 
       expect(@r.errors.http_status_code).to eq(422)
+    end
+
+    it 'should "merge" empty errors' do
+      e = Hoodoo::Errors.new
+
+      expect( @r.add_errors( e ) ).to eq( false )
+      @r.add_error( 'platform.invalid_session' )
+
+      expect(@r.errors.errors).to eq([
+        { 'code' => 'platform.invalid_session', 'message' => 'Invalid session' }
+      ])
+
+      # Should keep the HTTP status code from the first error added,
+      # which was the "platform.malformed" from the merged set.
+
+      expect(@r.errors.http_status_code).to eq(401)
     end
   end
 

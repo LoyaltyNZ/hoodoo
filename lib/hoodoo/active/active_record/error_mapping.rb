@@ -162,7 +162,11 @@ module Hoodoo
       # It is a little more verbose and in this example will run a little
       # slower due to the construction of the internal Hoodoo::Errors
       # instance followed by the addition to the +context.response+
-      # collection, but you may prefer the conceptually cleaner code.
+      # collection, but you may prefer the conceptually cleaner approach.
+      # You can lean on the return value of #add_errors and end up back at
+      # one line of (very slightly less obvious) code, too:
+      #
+      #     return if context.response.add_errors( model.platform_errors )
       #
       # +validate+:: Optional, defaults to +true+; same meaning as the same
       #              name parameter in #adds_errors_to?.

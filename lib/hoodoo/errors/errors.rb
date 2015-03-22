@@ -192,8 +192,16 @@ module Hoodoo
     # because, depending on error code and source/target contexts, a
     # duplicate may be a valid thing to have).
     #
+    # +source+:: Hoodoo::Errors instance to merge into the error collection
+    #            of 'this' target object.
+    #
+    # Returns +true+ if errors were merged, else +false+ (the source
+    # collection was empty).
+    #
     def merge!( source )
-      source.errors.each do | hash |
+      source_errors = source.errors
+
+      source_errors.each do | hash |
         add_precompiled_error(
           hash[ 'code'      ],
           hash[ 'message'   ],
@@ -201,6 +209,8 @@ module Hoodoo
           source.http_status_code
         )
       end
+
+      return ! source_errors.empty?
     end
 
     # Does this instance have any errors added? Returns +true+ if so,

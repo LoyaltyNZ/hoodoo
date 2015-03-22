@@ -122,9 +122,13 @@ module Hoodoo
       #     context.response.add_errors( list.platform_errors )
       #     return if context.response.halt_processing?
       #
-      # It is a little more verbose and very slightly less efficient as it
-      # involves more method calls end to end, but you may prefer the
-      # conceptually cleaner code.
+      # It is a little more verbose and very slightly less efficient as
+      # it involves more method calls end to end, but you may prefer the
+      # conceptually cleaner approach. You can lean on the return value
+      # of #add_errors and end up back at one line of (very slightly less
+      # obvious) code, too:
+      #
+      #     return if context.response.add_errors( list.platform_errors )
       #
       def platform_errors
         @nz_co_loyalty_platform_errors ||= Hoodoo::Errors.new

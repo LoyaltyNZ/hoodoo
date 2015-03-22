@@ -235,8 +235,11 @@ module Hoodoo; module Services
     # +errors_object+:: Hoodoo::Errors instance to merge into the error
     #                   collection of 'this' response object.
     #
+    # Returns +true+ if errors were merged, else +false+ (the source
+    # collection was empty).
+    #
     def add_errors( errors_object )
-      @errors.merge!( errors_object )
+      return @errors.merge!( errors_object )
     end
 
     # Set the standard not found error message (generic.not_found), to
