@@ -211,7 +211,7 @@ describe Hoodoo::Errors do
     it 'should merge when neither have errors' do
       @errors.clear_errors
       source = Hoodoo::Errors.new
-      @errors.merge!( source )
+      expect(@errors.merge!(source)).to eq(false)
       expect(@errors.errors).to eq([])
     end
 
@@ -220,7 +220,7 @@ describe Hoodoo::Errors do
       source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed', 'message' => 'Method not allowed 1', 'reference' => { :data => '1' })
       source.add_error('platform.malformed', 'message' => 'Malformed request 1', 'reference' => { :data => '1' })
-      @errors.merge!( source )
+      expect(@errors.merge!(source)).to eq(true)
 
       expect(@errors.errors).to eq([
         {
