@@ -2194,10 +2194,12 @@ module Hoodoo; module Services
           #
           # Thus, complain if the sanitised body differs from the input.
 
+          rendered = verification_object.render( body ) # May add default fields
+
           response.errors.add_error(
             'generic.invalid_parameters',
             'message' => 'Body data contains unrecognised or prohibited fields'
-          ) if body != verification_object.render( body )
+          ) if body.merge( rendered ) != rendered
         end
       end
     end
