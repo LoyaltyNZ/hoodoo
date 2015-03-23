@@ -82,7 +82,7 @@ module Hoodoo; module Services
     # service endpoint has been accounted for. For example, with a service
     # endpoint of "products", this URI:
     #
-    #     http://test.com/products/1234/foo.json
+    #     http://test.com/v1/products/1234/foo.json
     #
     # ...would lead to this path component array:
     #
@@ -120,7 +120,7 @@ module Hoodoo; module Services
     # string. The _first_ dot in the _last_ path component is looked for (see
     # also #uri_path_components), so for example this URI:
     #
-    #     http://test.com/products/1.2.3.4/foo.my.tar.gz
+    #     http://test.com/v1/products/1.2.3.4/foo.my.tar.gz
     #
     # ...would lead to this URI path extension string:
     #
