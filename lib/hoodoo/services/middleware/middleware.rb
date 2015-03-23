@@ -1203,6 +1203,15 @@ module Hoodoo; module Services
 
         @discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
 
+        services.each do | service |
+          interface = service.interface_class
+
+          @discoverer.announce(
+            interface.resource,
+            interface.version
+          )
+        end
+
       else
 
         @discoverer ||= Hoodoo::Services::Discovery::ByDRb.new
