@@ -1081,7 +1081,7 @@ module Hoodoo; module Services
           end
 
         else
-          body  = body[ 0 .. 1023 ] << '...' if ( body.size > 1024 )
+          body = body[ 0 .. 1023 ] << '...' if ( body.size > 1024 )
 
         end
 
