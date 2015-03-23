@@ -311,7 +311,12 @@ return if context.response.halt_processing?
 due to the construction of the internal <a
 href="../Errors.html">Hoodoo::Errors</a> instance followed by the addition
 to the <code>context.response</code> collection, but you may prefer the
-conceptually cleaner code.</p>
+conceptually cleaner approach. You can lean on the return value of
+add_errors and end up back at one line of (very slightly less obvious)
+code, too:</p>
+
+<pre><code>return if context.response.add_errors( model.platform_errors )
+</code></pre>
 <dl class="rdoc-list note-list"><dt><code>validate</code>
 <dd>
 <p>Optional, defaults to <code>true</code>; same meaning as the same name
@@ -335,7 +340,7 @@ href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>.</p>
                 
               </p>
               <div id="method-i-platform_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 170</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 174</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>( <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
   <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> )

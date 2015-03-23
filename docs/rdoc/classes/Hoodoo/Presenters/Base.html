@@ -377,7 +377,7 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
         <div class="method">
           <div class="title method-title" id="method-c-schema">
             
-              <b>schema</b>(&amp;block)
+              <b>schema</b>( &amp;block )
             
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-schema" name="method-c-schema" class="permalink">Link</a>
           </div>
@@ -409,7 +409,7 @@ schema.</p>
               </p>
               <div id="method-c-schema_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 26</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">schema</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema_definition</span> = <span class="ruby-identifier">block</span>

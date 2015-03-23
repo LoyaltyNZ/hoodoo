@@ -539,7 +539,7 @@ return <code>false</code>.</p>
                 
               </p>
               <div id="method-i-clear_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 216</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 226</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">clear_errors</span>
   <span class="ruby-ivar">@errors</span>           = []
   <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">500</span>
@@ -578,7 +578,7 @@ else <code>false</code>.</p>
                 
               </p>
               <div id="method-i-has_errors-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 209</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 219</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_errors?</span>
   <span class="ruby-operator">!</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -616,7 +616,7 @@ represent itself more concisely.</p>
                 
               </p>
               <div id="method-i-inspect_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 247</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inspect</span>
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -639,6 +639,14 @@ represent itself more concisely.</p>
 errors to this collection. No checks are made for duplicates (in part
 because, depending on error code and source/target contexts, a duplicate
 may be a valid thing to have).</p>
+<dl class="rdoc-list note-list"><dt><code>source</code>
+<dd>
+<p><a href="Errors.html">Hoodoo::Errors</a> instance to merge into the error
+collection of &#39;this&#39; target object.</p>
+</dd></dl>
+
+<p>Returns <code>true</code> if errors were merged, else <code>false</code>
+(the source collection was empty).</p>
             </div>
           
           
@@ -656,9 +664,11 @@ may be a valid thing to have).</p>
                 
               </p>
               <div id="method-i-merge-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 195</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">merge!</span>( <span class="ruby-identifier">source</span> )
-  <span class="ruby-identifier">source</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash</span> <span class="ruby-operator">|</span>
+  <span class="ruby-identifier">source_errors</span> = <span class="ruby-identifier">source</span>.<span class="ruby-identifier">errors</span>
+
+  <span class="ruby-identifier">source_errors</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">add_precompiled_error</span>(
       <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;code&#39;</span>      ],
       <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;message&#39;</span>   ],
@@ -666,6 +676,8 @@ may be a valid thing to have).</p>
       <span class="ruby-identifier">source</span>.<span class="ruby-identifier">http_status_code</span>
     )
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">source_errors</span>.<span class="ruby-identifier">empty?</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -707,7 +719,7 @@ with</p>
                 
               </p>
               <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 227</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">interaction_id</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">interaction_id</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Errors\#render must be given a valid Interaction ID (got &#39;#{ interaction_id.inspect }&#39;)&quot;</span>
@@ -768,7 +780,7 @@ separate individual values.</p>
                 
               </p>
               <div id="method-i-unjoin_and_unescape_commas_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 267</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 277</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>

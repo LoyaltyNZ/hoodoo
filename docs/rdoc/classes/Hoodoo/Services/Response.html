@@ -437,6 +437,9 @@ this response&#39;s error collection.</p>
 <p><a href="../Errors.html">Hoodoo::Errors</a> instance to merge into the
 error collection of &#39;this&#39; response object.</p>
 </dd></dl>
+
+<p>Returns <code>true</code> if errors were merged, else <code>false</code>
+(the source collection was empty).</p>
             </div>
           
           
@@ -454,9 +457,9 @@ error collection of &#39;this&#39; response object.</p>
                 
               </p>
               <div id="method-i-add_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 238</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors</span>( <span class="ruby-identifier">errors_object</span> )
-  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -617,7 +620,7 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
                 
               </p>
               <div id="method-i-for_rack_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 261</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 264</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
 
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
@@ -825,7 +828,7 @@ durning a &#39;show&#39; call when the requested resource does not exist.</p>
                 
               </p>
               <div id="method-i-not_found_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 252</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 255</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">not_found</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;generic.not_found&#39;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:ident</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> } )
 <span class="ruby-keyword">end</span></pre>
