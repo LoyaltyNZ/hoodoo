@@ -35,6 +35,12 @@ describe Hoodoo::Services::Middleware do
         @cvar = true
         @cvar_val = Hoodoo::Services::Middleware.class_variable_get( '@@alchemy' )
       end
+
+      # Need to blow away the discoverer's local cache or the simulation will
+      # never attempt to run on queue.
+
+      discoverer = @mw.instance_variable_get( '@discoverer' )
+      discoverer.instance_variable_set( '@known_local_resources', {} ) # Hack for test!
     end
 
     after :each do
