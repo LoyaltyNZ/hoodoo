@@ -378,6 +378,10 @@ module Hoodoo; module Services
     #   secure log actions Hash for the Caller resource's interface would
     #   include ":create => :response".
     #
+    #   _ERROR RESPONSES ARE STILL LOGGED_ because that's useful data; so
+    #   make sure that if you generate any custom errors in your service
+    #   that secure data is not contained within them.
+    #
     # * A key of +both+ has the same result as both +:request+ and
     #   +:response+, so body data is never logged. It's hard to come up
     #   with good examples of resources where both the incoming data is

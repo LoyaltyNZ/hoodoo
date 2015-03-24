@@ -1060,7 +1060,7 @@ module Hoodoo; module Services
         }
       }
 
-      unless secure
+      if secure == false || level == :error
         body = ''
         rack_data[ 2 ].each { | thing | body << thing.to_s }
 
