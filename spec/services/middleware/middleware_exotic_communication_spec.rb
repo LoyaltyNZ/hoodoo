@@ -124,6 +124,42 @@ describe Hoodoo::Services::Middleware do
         end.and_return( mock_response )
       end
 
+      # All the other tests in this section run with @mw having no
+      # local services "as far as it is concerned" via the before-each
+      # code above. We want to make sure that service announcement when
+      # on-queue *does* announce locally (because at one point it did
+      # not, which was a bug) so this test provides that coverage.
+      #
+      it 'runs local discovery unless that is knocked out' do
+
+        # @mw has local discovery knocked out, so build a new
+        # one that doesn't. This will have the local discovery data
+        # available still.
+        #
+        @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
+
+        mock_queue  = 'service.utility'
+        mock_path   = '/v2/version/'
+        mock_remote = Hoodoo::Services::Discovery::ForAMQP.new(
+          resource: 'Version',
+          version: 2,
+          queue_name: mock_queue,
+          equivalent_path: mock_path
+        )
+
+        # We expect local discovery, so no discover_remote call.
+
+        expect_any_instance_of( Hoodoo::Services::Discovery::ByConsul ).to_not receive( :discover_remote )
+        endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
+
+        # The endpoint should've been called locally; the implementation at
+        # the top of this file sets an empty array with dataset size 99.
+
+        mock_result = endpoint.list()
+        expect( mock_result ).to be_empty
+        expect( mock_result.dataset_size ).to eq( 99 )
+      end
+
       it 'complains about a missing Alchemy instance' do
         mock_queue  = 'service.utility'
         mock_path   = '/v2/version/'
