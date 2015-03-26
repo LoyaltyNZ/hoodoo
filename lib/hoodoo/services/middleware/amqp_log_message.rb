@@ -82,10 +82,16 @@ module Hoodoo; module Services
         #
         # +time+:: The Time instance to set (and process into a string
         #          internally via TIME_FORMATTER), *or* a String instance
-        #          already so formatted.
+        #          already so formatted, *or* +nil+ to clear the value.
         #
         def reported_at=( time )
-          @reported_at = time.is_a?( String ) ? time : time.strftime( TIME_FORMATTER )
+          if time.is_a?( String )
+            @reported_at = time
+          elsif time.is_a?( Time )
+            @reported_at = time.strftime( TIME_FORMATTER )
+          else
+            @reported_at = nil
+          end
         end
 
         # Log payload. See Hoodoo::Services::Middleware::StructuredLogger.

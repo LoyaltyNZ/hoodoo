@@ -47,4 +47,13 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
     obj.deserialize # Should reset instance vars based on prior serialization
     expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
   end
+
+  it 'handles nil' do
+    local_compare_hash = Hoodoo::Utilities.stringify(
+      source_hash.merge( :reported_at => nil )
+    )
+
+    obj = described_class.new( source_hash )
+    expect( MessagePack.unpack( obj.serialize ) ).to eq( local_compare_hash )
+  end
 end
