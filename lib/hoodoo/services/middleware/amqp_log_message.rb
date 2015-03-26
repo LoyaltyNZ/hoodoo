@@ -31,6 +31,11 @@ module Hoodoo; module Services
         #
         TYPE = 'hoodoo_service_middleware_amqp_log_message'
 
+        # The Time +strftime+ formatter used for string conversions in this
+        # class.
+        #
+        TIME_FORMATTER = '%Y-%m-%d %H:%M:%S.%12N %Z'
+
         # This line of code registers wth AMQEndpoint, but also makes RDoc
         # screw up. RDoc decides that we have a new module,
         # Hoodoo::Services::Middleware::AMQPLogMessage::AMQEndpoint. Very
@@ -64,6 +69,24 @@ module Hoodoo; module Services
         # Component log code. See Hoodoo::Services::Middleware::StructuredLogger.
         #
         attr_accessor :code
+
+        # The time at which this log message is being reported to the Logger
+        # instance. This is a formatted *String* to high accuracy. See also
+        # #reported_at=.
+        #
+        attr_reader :reported_at
+
+        # Set the time read back by #reported_at using a Time instance. This
+        # is formatted internally as a String via TIME_FORMATTER and reported
+        # as such in subsequent calls to #reported_at.
+        #
+        # +time+:: The Time instance to set (and process into a string
+        #          internally via TIME_FORMATTER), *or* a String instance
+        #          already so formatted.
+        #
+        def reported_at=( time )
+          @reported_at = time.is_a?( String ) ? time : time.strftime( TIME_FORMATTER )
+        end
 
         # Log payload. See Hoodoo::Services::Middleware::StructuredLogger.
         #
@@ -112,6 +135,7 @@ module Hoodoo; module Services
             :level          => @level,
             :component      => @component,
             :code           => @code,
+            :reported_at    => @reported_at,
 
             :data           => @data,
 
@@ -136,17 +160,18 @@ module Hoodoo; module Services
         # the attributes defined for the class.
         #
         def update( options )
-          @id             = options[ :id             ]
-          @level          = options[ :level          ]
-          @component      = options[ :component      ]
-          @code           = options[ :code           ]
+          self.id             = options[ :id             ]
+          self.level          = options[ :level          ]
+          self.component      = options[ :component      ]
+          self.code           = options[ :code           ]
+          self.reported_at    = options[ :reported_at    ]
 
-          @data           = options[ :data           ]
+          self.data           = options[ :data           ]
 
-          @client_id      = options[ :client_id      ]
-          @interaction_id = options[ :interaction_id ]
-          @participant_id = options[ :participant_id ]
-          @outlet_id      = options[ :outlet_id      ]
+          self.client_id      = options[ :client_id      ]
+          self.interaction_id = options[ :interaction_id ]
+          self.participant_id = options[ :participant_id ]
+          self.outlet_id      = options[ :outlet_id      ]
         end
       end
 

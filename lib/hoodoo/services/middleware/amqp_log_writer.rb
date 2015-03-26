@@ -82,6 +82,7 @@ module Hoodoo; module Services
           :level          => level,
           :component      => component,
           :code           => code,
+          :reported_at    => Time.now,
 
           :data           => data,
 

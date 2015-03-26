@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'database_cleaner', '~> 1.3'
   s.add_development_dependency 'sqlite3',          '~> 1.3'
   s.add_development_dependency 'byebug',           '~> 3.5'
+  s.add_development_dependency 'timecop',          '~> 0.7'
   s.add_development_dependency 'raygun4ruby',      '~> 1.1' # raygun.io
   s.add_development_dependency 'airbrake',         '~> 4.1' # airbrake.io
   s.add_development_dependency 'le',               '~> 2.6' # logentries.com

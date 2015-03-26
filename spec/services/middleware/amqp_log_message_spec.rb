@@ -4,11 +4,15 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
 
   require 'msgpack'
 
-  let(:hash) do
+  let( :now ) do
+    Time.now
+  end
+
+  let( :source_hash ) do
     {
       :id => '1',
-      :level => :info,
-      :component => :RSpec,
+      :level => 'info',
+      :component => 'RSpec',
       :code => 'hello',
       :data => { 'this' => 'that' },
       :client_id => '2',
@@ -18,17 +22,29 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
     }
   end
 
+  let( :hash ) do
+    source_hash().merge( :reported_at => now() )
+  end
+
+  let( :compare_hash ) do
+    Hoodoo::Utilities.stringify(
+      source_hash().merge(
+        :reported_at => now().strftime( Hoodoo::Services::Middleware::AMQPLogMessage::TIME_FORMATTER )
+      )
+    )
+  end
+
   it 'serializes' do
     obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
+    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
   end
 
   it 'deserializes' do
     obj = described_class.new( hash )
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
+    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
     obj.id = nil # Clear some instance vars
     obj.level = nil
     obj.deserialize # Should reset instance vars based on prior serialization
-    expect( obj.serialize ).to eq( MessagePack.pack( hash ) )
+    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
   end
 end

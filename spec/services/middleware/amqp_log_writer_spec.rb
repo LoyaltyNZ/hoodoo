@@ -1,4 +1,5 @@
 require 'spec_helper.rb'
+require 'timecop'
 
 describe Hoodoo::Services::Middleware::AMQPLogWriter do
   before :each do
@@ -53,37 +54,41 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
   end
 
   it 'sends expected data' do
-    level          = 'warn'
-    component      = 'test_component'
-    code           = 'test_code'
-    id             = Hoodoo::UUID.generate
-    interaction_id = Hoodoo::UUID.generate
-    data           = {
-      :id             => id,
-      :session        => @session.to_h(),
-      :interaction_id => interaction_id
-    }
+    Timecop.freeze do
+      level          = 'warn'
+      component      = 'test_component'
+      code           = 'test_code'
+      reported_at    = Time.now.strftime( Hoodoo::Services::Middleware::AMQPLogMessage::TIME_FORMATTER )
+      id             = Hoodoo::UUID.generate
+      interaction_id = Hoodoo::UUID.generate
+      data           = {
+        :id             => id,
+        :session        => @session.to_h(),
+        :interaction_id => interaction_id
+      }
 
-    expected_hash  = {
-      :id             => id,
-      :level          => 'warn',
-      :component      => component,
-      :code           => code,
+      expected_hash  = {
+        :id             => id,
+        :level          => 'warn',
+        :component      => component,
+        :code           => code,
+        :reported_at    => reported_at,
 
-      :data           => data,
+        :data           => data,
 
-      :caller_id      => @session.caller_id,
-      :client_id      => @session.caller_id,
-      :interaction_id => interaction_id,
-      :participant_id => @session.identity.participant_id,
-      :outlet_id      => @session.identity.outlet_id,
+        :caller_id      => @session.caller_id,
+        :client_id      => @session.caller_id,
+        :interaction_id => interaction_id,
+        :participant_id => @session.identity.participant_id,
+        :outlet_id      => @session.identity.outlet_id,
 
-      :routing_key    => @queue,
-    }
+        :routing_key    => @queue,
+      }
 
-    expect( Hoodoo::Services::Middleware::AMQPLogMessage ).to receive( :new ).with( expected_hash ).and_return( {} )
-    expect( @alchemy ).to receive( :send_message ).with( {} ).once
+      expect( Hoodoo::Services::Middleware::AMQPLogMessage ).to receive( :new ).with( expected_hash ).and_return( {} )
+      expect( @alchemy ).to receive( :send_message ).with( {} ).once
 
-    @logger.report( level, component, code, data )
+      @logger.report( level, component, code, data )
+    end
   end
 end
