@@ -1,4 +1,4 @@
-Thu, 26 Mar 2015 13:33:58 +1300
+Thu, 26 Mar 2015 14:28:05 +1300
 README.md	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/active.rb	Tue, 24 Feb 2015 13:48:01 +1300
@@ -109,7 +109,7 @@ lib/hoodoo/services/discovery/results/for_amqp.rb	Mon, 16 Mar 2015 09:45:31 +130
 lib/hoodoo/services/discovery/results/for_http.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/discovery/results/for_local.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/discovery/results/for_remote.rb	Mon, 16 Mar 2015 09:45:31 +1300
-lib/hoodoo/services/middleware/amqp_log_message.rb	Thu, 26 Mar 2015 13:33:52 +1300
+lib/hoodoo/services/middleware/amqp_log_message.rb	Thu, 26 Mar 2015 14:19:49 +1300
 lib/hoodoo/services/middleware/amqp_log_writer.rb	Thu, 26 Mar 2015 13:33:52 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Mon, 16 Mar 2015 09:45:31 +1300
