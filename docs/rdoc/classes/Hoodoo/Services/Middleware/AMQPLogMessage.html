@@ -102,6 +102,18 @@ more details.</p>
           </ul>
         </dd>
       
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-reported_at-3D">reported_at=</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>S</dt>
         <dd>
           <ul>
@@ -154,6 +166,19 @@ more details.</p>
               <td>&nbsp;</td>
               <td colspan="2" class="attr-desc"><p>The named “type” of this message, to be registered with <a
 href="AMQPLogMessage/AMQEndpoint.html">AMQEndpoint</a>.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">TIME_FORMATTER</td>
+            <td>=</td>
+            <td class="attr-value">&#39;%Y-%m-%d %H:%M:%S.%12N %Z&#39;</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>The Time <code>strftime</code> formatter used for string conversions in
+this class.</p></td>
             </tr>
           
         
@@ -252,6 +277,17 @@ the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
 inside the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
           </tr>
         
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>reported_at</td>
+            <td class='attr-desc'><p>The time at which this log message is being reported to the <a
+href="../../Logger.html">Logger</a> instance. This is a formatted
+<strong>String</strong> to high accuracy. See also <a
+href="AMQPLogMessage.html#method-i-reported_at-3D">reported_at=</a>.</p></td>
+          </tr>
+        
       </table>
     
 
@@ -289,7 +325,7 @@ class.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 99</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 122</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
@@ -333,10 +369,58 @@ AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 130</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-reported_at-3D">
+            
+              <b>reported_at=</b>( time )
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-i-reported_at-3D" name="method-i-reported_at-3D" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Set the time read back by <a
+href="AMQPLogMessage.html#attribute-i-reported_at">reported_at</a> using a
+Time instance. This is formatted internally as a String via <a
+href="AMQPLogMessage.html#TIME_FORMATTER">TIME_FORMATTER</a> and reported
+as such in subsequent calls to <a
+href="AMQPLogMessage.html#attribute-i-reported_at">reported_at</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>time</code>
+<dd>
+<p>The Time instance to set (and process into a string internally via <a
+href="AMQPLogMessage.html#TIME_FORMATTER">TIME_FORMATTER</a>),
+<strong>or</strong> a String instance already so formatted.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-reported_at-3D_source')" id="l_method-i-reported_at-3D_source">show</a>
+                
+              </p>
+              <div id="method-i-reported_at-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 87</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">reported_at=</span>( <span class="ruby-identifier">time</span> )
+  <span class="ruby-ivar">@reported_at</span> = <span class="ruby-identifier">time</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">time</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">time</span>.<span class="ruby-identifier">strftime</span>( <span class="ruby-constant">TIME_FORMATTER</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -373,13 +457,14 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 109</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
     <span class="ruby-value">:level</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@level</span>,
     <span class="ruby-value">:component</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@component</span>,
     <span class="ruby-value">:code</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@code</span>,
+    <span class="ruby-value">:reported_at</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@reported_at</span>,
 
     <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
 
@@ -425,19 +510,20 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 138</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 162</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
-  <span class="ruby-ivar">@id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
-  <span class="ruby-ivar">@level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]
-  <span class="ruby-ivar">@component</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:component</span>      ]
-  <span class="ruby-ivar">@code</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:code</span>           ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">component</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:component</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">code</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:code</span>           ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reported_at</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:reported_at</span>    ]
 
-  <span class="ruby-ivar">@data</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>           ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">data</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>           ]
 
-  <span class="ruby-ivar">@client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
-  <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction_id</span> ]
-  <span class="ruby-ivar">@participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
-  <span class="ruby-ivar">@outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction_id</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
