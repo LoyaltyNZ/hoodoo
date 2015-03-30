@@ -112,15 +112,10 @@ module Hoodoo; module Services
         #
         attr_accessor :interaction_id
 
-        # Optional participant UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Optional hash of identity properties from the session data inside the
+        # payload - see Hoodoo::Services::Middleware::StructuredLogger.
         #
-        attr_accessor :participant_id
-
-        # Optional outlet UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
-        #
-        attr_accessor :outlet_id
+        attr_accessor :identity
 
         # Create an instance with options keyed on the attributes defined for
         # the class.
@@ -145,10 +140,9 @@ module Hoodoo; module Services
 
             :data           => @data,
 
-            :client_id      => @client_id,
             :interaction_id => @interaction_id,
-            :participant_id => @participant_id,
-            :outlet_id      => @outlet_id,
+            :client_id      => @client_id,
+            :identity       => @identity,
           }
 
           super
@@ -174,10 +168,9 @@ module Hoodoo; module Services
 
           self.data           = options[ :data           ]
 
-          self.client_id      = options[ :client_id      ]
           self.interaction_id = options[ :interaction_id ]
-          self.participant_id = options[ :participant_id ]
-          self.outlet_id      = options[ :outlet_id      ]
+          self.client_id      = options[ :client_id      ]
+          self.identity       = options[ :identity       ]
         end
       end
 

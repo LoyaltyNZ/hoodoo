@@ -68,14 +68,12 @@ module Hoodoo; module Services
         # Take care with Symbol keys in 'data' vs string keys in e.g. 'Session'.
 
         data[ :id ] ||= Hoodoo::UUID.generate()
+
         interaction_id = data[ :interaction_id ]
         session        = data[ :session ] || {}
 
         caller_id      = session[ 'caller_id' ]
-        identity       = session[ 'identity'  ] || {}
-
-        participant_id = identity[ 'participant_id' ]
-        outlet_id      = identity[ 'outlet_id'      ]
+        identity       = ( session[ 'identity'  ] || {} ).to_h
 
         message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
@@ -86,11 +84,10 @@ module Hoodoo; module Services
 
           :data           => data,
 
+          :interaction_id => interaction_id,
           :caller_id      => caller_id,
           :client_id      => caller_id, # Backwards compatibility
-          :interaction_id => interaction_id,
-          :participant_id => participant_id,
-          :outlet_id      => outlet_id,
+          :identity       => identity,
 
           :routing_key    => @queue_name,
         )

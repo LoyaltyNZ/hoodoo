@@ -14,11 +14,12 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
       :level => 'info',
       :component => 'RSpec',
       :code => 'hello',
+
       :data => { 'this' => 'that' },
-      :client_id => '2',
+
       :interaction_id => '3',
-      :participant_id => '4',
-      :outlet_id => '5'
+      :client_id => '2',
+      :identity => { :foo => '4', :bar => '5' }
     }
   end
 

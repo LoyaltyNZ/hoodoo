@@ -32,20 +32,22 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
 
     @session.permissions = Hoodoo::Services::Permissions.new( @permissions_hash )
 
-    @participant_id = Hoodoo::UUID.generate
-    @outlet_id      = Hoodoo::UUID.generate
+    @identity_id_1    = Hoodoo::UUID.generate
+    @identity_id_2    = Hoodoo::UUID.generate
+    @identity_id_3    = Hoodoo::UUID.generate
 
-    @authorised_participant_ids = [ Hoodoo::UUID.generate, Hoodoo::UUID.generate ]
-    @authorised_programme_codes = [ 'PRG_A', 'PRG_B' ]
+    @authorised_ids   = [ Hoodoo::UUID.generate, Hoodoo::UUID.generate ]
+    @authorised_codes = [ 'CODE_A', 'CODE_B' ]
 
     @session.identity = {
-      :participant_id => @participant_id,
-      :outlet_id      => @outlet_id
+      :id_1 => @identity_id_1,
+      :id_2 => @identity_id_2,
+      :id_3 => @identity_id_3,
     }
 
     @session.scoping = {
-      :authorised_participant_ids => @authorised_participant_ids,
-      :authorised_programme_codes => @authorised_programme_codes
+      :authorised_ids   => @authorised_ids,
+      :authorised_codes => @authorised_codes
     }
 
     @alchemy = OpenStruct.new
@@ -76,11 +78,10 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
 
         :data           => data,
 
+        :interaction_id => interaction_id,
         :caller_id      => @session.caller_id,
         :client_id      => @session.caller_id,
-        :interaction_id => interaction_id,
-        :participant_id => @session.identity.participant_id,
-        :outlet_id      => @session.identity.outlet_id,
+        :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h ),
 
         :routing_key    => @queue,
       }
