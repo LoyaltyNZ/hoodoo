@@ -5,6 +5,7 @@
 # Purpose:: Define documented Platform API Resource 'Refund'.
 # ----------------------------------------------------------------------
 #           27-Jan-2015 (JML): Created.
+#           30-Mar-2015 (JML): Added token_identifier
 ########################################################################
 
 module Hoodoo
@@ -16,6 +17,8 @@ module Hoodoo
       class Refund < Hoodoo::Presenters::Base
 
         schema do
+          text   :token_identifier
+
           object :basket, :required => true do
             type :Basket
           end
