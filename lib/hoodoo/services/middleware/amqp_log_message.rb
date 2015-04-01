@@ -98,12 +98,8 @@ module Hoodoo; module Services
         #
         attr_accessor :data
 
-        # Optional calling client ID, via session data inside the payload - see
+        # Optional calling Caller ID, via session data inside the payload - see
         # Hoodoo::Services::Middleware::StructuredLogger.
-        #
-        attr_accessor :client_id
-
-        # Modern Session parlance alias for #client_id.
         #
         attr_accessor :caller_id
 
