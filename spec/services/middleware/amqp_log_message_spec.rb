@@ -18,7 +18,7 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
       :data => { 'this' => 'that' },
 
       :interaction_id => '3',
-      :client_id => '2',
+      :caller_id => '2',
       :identity => { :foo => '4', :bar => '5' }
     }
   end

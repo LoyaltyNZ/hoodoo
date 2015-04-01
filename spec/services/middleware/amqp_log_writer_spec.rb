@@ -80,7 +80,6 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
 
         :interaction_id => interaction_id,
         :caller_id      => @session.caller_id,
-        :client_id      => @session.caller_id,
         :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h ),
 
         :routing_key    => @queue,

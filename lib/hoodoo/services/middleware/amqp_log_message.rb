@@ -137,7 +137,7 @@ module Hoodoo; module Services
             :data           => @data,
 
             :interaction_id => @interaction_id,
-            :client_id      => @client_id,
+            :caller_id      => @caller_id,
             :identity       => @identity,
           }
 
@@ -165,7 +165,7 @@ module Hoodoo; module Services
           self.data           = options[ :data           ]
 
           self.interaction_id = options[ :interaction_id ]
-          self.client_id      = options[ :client_id      ]
+          self.caller_id      = options[ :caller_id      ]
           self.identity       = options[ :identity       ]
         end
       end

@@ -86,7 +86,6 @@ module Hoodoo; module Services
 
           :interaction_id => interaction_id,
           :caller_id      => caller_id,
-          :client_id      => caller_id, # Backwards compatibility
           :identity       => identity,
 
           :routing_key    => @queue_name,
