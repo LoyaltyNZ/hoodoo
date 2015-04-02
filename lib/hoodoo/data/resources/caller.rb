@@ -21,12 +21,12 @@ module Hoodoo
           text :authentication_secret
           text :name
 
-          object :identity do
+          hash :identity do
           end
 
           type :PermissionsResources, :required => true
 
-          object :scoping do
+          hash :scoping do
           end
 
         end
