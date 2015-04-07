@@ -19,6 +19,8 @@ describe Hoodoo::Services::Discovery::ByDRb do
             puts "Client acquired"
             client.ping()
             puts "Client ping'd"
+            sleep 0.5
+            puts "Attempt 'stop'"
             client.stop()
             puts "Client stop"
             break

@@ -79,7 +79,6 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
       # Check to see if this DRb service is awake. Returns +true+.
       #
       def ping
-        sleep 0.01
         return true
       end
 
@@ -116,7 +115,6 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
       # Shut down this DRb service.
       #
       def stop
-        sleep 0.01
         DRb.thread.exit
       end
     end
