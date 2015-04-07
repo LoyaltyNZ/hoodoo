@@ -605,9 +605,8 @@ module Hoodoo; module Services
                               body_hash:  nil,
                               query_hash: nil )
 
-      source_interaction = source_interaction
-      interface          = discovery_result.interface_class
-      implementation     = discovery_result.implementation_instance
+      interface      = discovery_result.interface_class
+      implementation = discovery_result.implementation_instance
 
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
@@ -634,7 +633,7 @@ module Hoodoo; module Services
       end
 
       local_interaction = Hoodoo::Services::Middleware::Interaction.new(
-        {},
+        env,
         self,
         session
       )
