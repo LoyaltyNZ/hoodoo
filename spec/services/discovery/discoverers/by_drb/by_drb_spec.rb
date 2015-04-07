@@ -9,29 +9,22 @@ describe Hoodoo::Services::Discovery::ByDRb do
   # the given port.
   #
   def shut_down_drb_service_on( port )
-    puts "Shutting down on port #{port}"
     begin
       Timeout::timeout( 5 ) do
         loop do
           begin
-            puts "URI is #{Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port )}"
             client = DRbObject.new_with_uri( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port ) )
-            puts "Client acquired"
+            sleep 0.1
             client.ping()
-            puts "Client ping'd"
-            sleep 0.5
-            puts "Attempt 'stop'"
+            sleep 0.1
             client.stop()
-            puts "Client stop"
             break
           rescue DRb::DRbConnError
-            puts "DRb::DRbConnError rescued"
             sleep 0.1
           end
         end
       end
     rescue Timeout::Error
-      puts "Timeout::Error rescued"
       raise "Timed out while waiting for DRb service to communicate"
     end
   end
