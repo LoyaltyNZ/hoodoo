@@ -14,9 +14,24 @@ describe Hoodoo::Services::Discovery::ByDRb do
         loop do
           begin
             client = DRbObject.new_with_uri( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port ) )
-            sleep 0.1
+            puts "PING IN"
             client.ping()
-            sleep 0.1
+            puts "PING SECOND"
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            puts "PING MID"
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            client.ping()
+            puts "PING OUT"
             client.stop()
             break
           rescue DRb::DRbConnError
