@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------
 #           27-Jan-2015 (JML): Created.
 #           30-Mar-2015 (JML): Added token_identifier
+#           08-Apr-2015 (JML): Made Basket Optional
 ########################################################################
 
 module Hoodoo
@@ -19,7 +20,7 @@ module Hoodoo
         schema do
           text   :token_identifier
 
-          object :basket, :required => true do
+          object :basket do
             type :Basket
           end
 
