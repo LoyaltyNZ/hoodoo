@@ -18,16 +18,19 @@ module Hoodoo
         schema do
           internationalised
 
-          text :name
-          uuid :participant_id,              :required => true, :resource => :Participant
-          uuid :outlet_id,                   :required => true, :resource => :Outlet
           text :authentication_secret
+          text :name
 
-          type :PermissionsResources,        :required => true
+          hash :identity, :required => true do
+          end
 
-          array :authorised_participant_ids, :required => true
+          object :permissions, :required => true do
+            type :PermissionsResources, :required => true
+          end
 
-          array :authorised_programme_codes, :required => true
+          hash :scoping, :required => true do
+          end
+
         end
 
       end
