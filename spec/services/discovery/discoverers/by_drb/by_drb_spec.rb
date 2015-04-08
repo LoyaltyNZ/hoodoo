@@ -10,7 +10,7 @@ describe Hoodoo::Services::Discovery::ByDRb do
   #
   def shut_down_drb_service_on( port )
     begin
-      Timeout::timeout( 5 ) do
+      Timeout::timeout( 15 ) do
         loop do
           begin
             client = DRbObject.new_with_uri( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port ) )
