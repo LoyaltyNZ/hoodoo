@@ -38,10 +38,10 @@ describe Hoodoo::Services::Discovery::ByDRb do
     expect {
       port = Hoodoo::Utilities.spare_port().to_s
 
-      thread = Thread.new do
+      # thread = Thread.new do
         discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
         discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
-      end
+      # end
 
       shut_down_drb_service_on( port )
     }.to_not raise_error
@@ -55,11 +55,11 @@ describe Hoodoo::Services::Discovery::ByDRb do
       port = Hoodoo::Utilities.spare_port().to_s
       $sync_queue = Queue.new
 
-      thread = Thread.new do
+      # thread = Thread.new do
         discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
         discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
         $sync_queue << :go!
-      end
+      # end
 
       # Have to wait for it to start and have the service announcement
       # made, before querying it.
