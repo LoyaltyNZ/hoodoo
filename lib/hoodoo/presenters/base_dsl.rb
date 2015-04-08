@@ -32,15 +32,17 @@ module Hoodoo
       # type are needed is up to the definition of that type. See #type for
       # more information.
       #
-      #     class Wealthy < Hoodoo::Presenters::Object
-      #       object :currencies, :required => true do
-      #         type :Currency
-      #         string :notes, :required => true, :length => 32
+      #     class Wealthy < Hoodoo::Presenters::Base
+      #       schema do
+      #         object :currencies, :required => true do
+      #           type :Currency
+      #           string :notes, :required => true, :length => 32
+      #         end
       #       end
       #     end
       #
       def object( name, options = {}, &block )
-        raise ArgumentError.new('Hoodoo::Presenters::Object must have block') unless block_given?
+        raise ArgumentError.new( 'Hoodoo::Presenters::Base#Object must have block' ) unless block_given?
 
         obj = property( name, Hoodoo::Presenters::Object, options, &block )
         internationalised() if obj.is_internationalised?()
@@ -68,10 +70,12 @@ module Hoodoo
       # the fields of the referenced Currency type are needed is up to the
       # definition of that type. See #type for more information.
       #
-      #     class VeryWealthy < Hoodoo::Presenters::Object
-      #       array :currencies, :required => true do
-      #         type :Currency
-      #         string :notes, :required => true, :length => 32
+      #     class VeryWealthy < Hoodoo::Presenters::Base
+      #       schema do
+      #         array :currencies, :required => true do
+      #           type :Currency
+      #           string :notes, :required => true, :length => 32
+      #         end
       #       end
       #     end
       #
@@ -92,10 +96,12 @@ module Hoodoo
       # Example 1 - a Hash where keys must be <= 16 characters long and values
       #             must match the Hoodoo::Data::Types::Currency type.
       #
-      #     class CurrencyHash < Hoodoo::Presenters::Object
-      #       hash :currencies do
-      #         keys :length => 16 do
-      #           type :Currency
+      #     class CurrencyHash < Hoodoo::Presenters::Base
+      #       schema do
+      #         hash :currencies do
+      #           keys :length => 16 do
+      #             type :Currency
+      #           end
       #         end
       #       end
       #     end
@@ -105,15 +111,17 @@ module Hoodoo
       # Example 2 - a Hash where keys must be 'one' or 'two', each with a
       #             value matching the given schema.
       #
-      #     class AltCurrencyHash < Hoodoo::Presenters::Object
-      #       hash :currencies do
-      #         key :one do
-      #           type :Currency
-      #         end
+      #     class AltCurrencyHash < Hoodoo::Presenters::Base
+      #       schema do
+      #         hash :currencies do
+      #           key :one do
+      #             type :Currency
+      #           end
       #
-      #         key :two do
-      #           text :title
-      #           text :description
+      #           key :two do
+      #             text :title
+      #             text :description
+      #           end
       #         end
       #       end
       #     end
@@ -125,79 +133,88 @@ module Hoodoo
         internationalised() if hash.is_internationalised?()
       end
 
-      # Define a JSON integer with the supplied name and options
-      # Params
+      # Define a JSON integer with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def integer(name, options = {})
-        property(name, Hoodoo::Presenters::Integer, options)
+      #
+      def integer( name, options = {} )
+        property( name, Hoodoo::Presenters::Integer, options )
       end
 
-      # Define a JSON string with the supplied name and options
-      # Params
+      # Define a JSON string with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
-      def string(name, options = {})
-        property(name, Hoodoo::Presenters::String, options)
+
+      def string( name, options = {} )
+        property( name, Hoodoo::Presenters::String, options )
       end
 
-      # Define a JSON float with the supplied name and options
-      # Params
+      # Define a JSON float with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def float(name, options = {})
-        property(name, Hoodoo::Presenters::Float, options)
+      #
+      def float( name, options = {} )
+        property( name, Hoodoo::Presenters::Float, options )
       end
 
-      # Define a JSON decimal with the supplied name and options
-      # Params
+      # Define a JSON decimal with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true, :precision => 10
-      def decimal(name, options = {})
-        property(name, Hoodoo::Presenters::Decimal, options)
+      #
+      def decimal( name, options = {} )
+        property( name, Hoodoo::Presenters::Decimal, options )
       end
 
-      # Define a JSON boolean with the supplied name and options
-      # Params
+      # Define a JSON boolean with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def boolean(name, options = {})
-        property(name, Hoodoo::Presenters::Boolean, options)
+      #
+      def boolean( name, options = {} )
+        property( name, Hoodoo::Presenters::Boolean, options )
       end
 
-      # Define a JSON date with the supplied name and options
-      # Params
+      # Define a JSON date with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def date(name, options = {})
-        property(name, Hoodoo::Presenters::Date, options)
+      #
+      def date( name, options = {} )
+        property( name, Hoodoo::Presenters::Date, options )
       end
 
-      # Define a JSON datetime with the supplied name and options
-      # Params
+      # Define a JSON datetime with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def datetime(name, options = {})
-        property(name, Hoodoo::Presenters::DateTime, options)
+      #
+      def datetime( name, options = {} )
+        property( name, Hoodoo::Presenters::DateTime, options )
       end
 
       # Define a JSON string of unlimited length with the supplied name
-      # and options
-      # Params
+      # and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true
-      def text(name, options = {})
-        property(name, Hoodoo::Presenters::Text, options)
+      #
+      def text( name, options = {} )
+        property( name, Hoodoo::Presenters::Text, options )
       end
 
       # Define a JSON string which can only have a restricted set of exactly
-      # matched values, with the supplied name and options
-      # Params
+      # matched values, with the supplied name and options.
+      #
       # +name+:: The JSON key
       # +options+:: A +Hash+ of options, e.g. :required => true and mandatory
       #             :from => [array-of-allowed-strings-or-symbols]
-      def enum(name, options = {})
-        property(name, Hoodoo::Presenters::Enum, options)
+      #
+      def enum( name, options = {} )
+        property( name, Hoodoo::Presenters::Enum, options )
       end
 
       # Declares that this Type or Resource has a string field of unlimited
@@ -208,20 +225,20 @@ module Hoodoo
       #
       # Example - a Product resource which supports product tagging:
       #
-      #     class Product < Hoodoo::Presenters::Object
+      #     class Product < Hoodoo::Presenters::Base
+      #       schema do
+      #         internationalised
       #
-      #       internationalised
-      #
-      #       text :name
-      #       text :description
-      #       string :sku, :length => 64
-      #       tags :tags
-      #
+      #         text :name
+      #         text :description
+      #         string :sku, :length => 64
+      #         tags :tags
+      #       end
       #     end
       #
       def tags( field_name, options = nil )
         options ||= {}
-        property(field_name, Hoodoo::Presenters::Tags, options)
+        property( field_name, Hoodoo::Presenters::Tags, options )
       end
 
       # Declares that this Type or Resource _refers to_ another Resource
@@ -245,11 +262,11 @@ module Hoodoo
       # Example - a basket item that refers to an integer quantity of some
       # specific Product resource instance:
       #
-      #     class BasketItem < Hoodoo::Presenters::Object
-      #
-      #       integer :quantity, :required => true
-      #       uuid :product_id, :resource => :Product
-      #
+      #     class BasketItem < Hoodoo::Presenters::Base
+      #       schema do
+      #         integer :quantity, :required => true
+      #         uuid :product_id, :resource => :Product
+      #       end
       #     end
       #
       def uuid( field_name, options = nil )
@@ -262,19 +279,27 @@ module Hoodoo
       # The fields of the given named type are considered to be defined inline
       # at the point of declaration - essentially, it's macro expansion.
       #
-      # +type_name+:: Name of the type to nest as a symbol, e.g. +:BasketItem+.
-      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
+      # +type_info+:: The Hoodoo::Presenters::Base subclass for the Type in
+      #               question, e.g. +BasketItem+. The deprecated form of this
+      #               interface takes the name of the type to nest as a symbol,
+      #               e.g. +:BasketItem+, in which case the Type must be
+      #               declared within nested modules "Hoodoo::Data::Types".
+      #
+      # +options+::   Optional options hash. No options currently defined.
       #
       # It doesn't make sense to mark a +type+ 'field' as +:required+ in the
       # options since the declaration just expands to the contents of the
       # referenced type and it is the definition of that type that determines
       # whether or not its various field(s) are optional or required.
       #
-      # Example 1 - a basket includes an array of the type +BasketItems+.
+      # Example 1 - a basket includes an array of the Type described by class
+      # +BasketItem+:
       #
-      #     class Basket < Hoodoo::Presenters::Object
-      #       array :items do
-      #         type :BasketItem
+      #     class Basket < Hoodoo::Presenters::Base
+      #       schema do
+      #         array :items do
+      #           type BasketItem
+      #         end
       #       end
       #     end
       #
@@ -295,15 +320,19 @@ module Hoodoo
       # Example 2 - a basket item refers to a product description by having
       # its fields inline. So suppose we have this:
       #
-      #     class Product < Hoodoo::Presenters::Object
-      #       internationalised
-      #       text :name
-      #       text :description
+      #     class Product < Hoodoo::Presenters::Base
+      #       schema do
+      #         internationalised
+      #         text :name
+      #         text :description
+      #       end
       #     end
       #
-      #     class BasketItem < Hoodoo::Presenters::Object
-      #       object :product_data do
-      #         type :Product
+      #     class BasketItem < Hoodoo::Presenters::Base
+      #       schema do
+      #         object :product_data do
+      #           type Product
+      #         end
       #       end
       #     end
       #
@@ -317,20 +346,27 @@ module Hoodoo
       #     }
       #
       # It is also possible to use this mechanism for inline expansions when
-      # you have, say, a Resource defined entirely in terms of something reused
-      # elsewhere as a Type. This is the case for a Currency - for example:
+      # you have, say, a Resource defined _entirely_ in terms of something
+      # reused elsewhere as a Type. For example, suppose the product/basket
+      # information from above included information on a Currency that was
+      # used for payment. It might reuse a Type; meanwhile we might have a
+      # resource for managing Currencies, defined entirely through that Type:
       #
-      #     type :Currency do
-      #       string :curency_code, :required => true, :length => 8
-      #       string :symbol, :length => 16
-      #       integer :multiplier, :default => 100
-      #       array :qualifiers do
-      #         string :qualifier, :length => 32
+      #     class Currency < Hoodoo::Presenters::Base
+      #       schema do
+      #         string :curency_code, :required => true, :length => 8
+      #         string :symbol, :length => 16
+      #         integer :multiplier, :default => 100
+      #         array :qualifiers do
+      #           string :qualifier, :length => 32
+      #         end
       #       end
       #     end
       #
       #     resource :Currency do
-      #       type :Currency
+      #       schema do
+      #         type :Currency
+      #       end
       #     end
       #
       # This means that the *Resource* of +Currency+ has exactly the same
@@ -338,35 +374,41 @@ module Hoodoo
       # fields too, though this would be risky as the Type might gain
       # same-named fields in future, leading to undefined behaviour. At such a
       # time, a degree of cut-and-paste and removing the +type+ call from the
-      # Resource definition would be necessary.
+      # Resource definition would probably be wise.
       #
-      def type( type_name, options = nil )
+      def type( type_info, options = nil )
         options ||= {}
 
-        begin
-          klass = Hoodoo::Data::Types.const_get( type_name )
-        rescue
-          raise "DocumentedObject#type: Unrecognised type name '#{type_name}'"
+        if type_info.is_a?( Class ) && type_info < Hoodoo::Presenters::Base
+          klass = type_info
+        else
+          begin
+            klass = Hoodoo::Data::Types.const_get( type_info )
+          rescue
+            raise "Hoodoo::Presenters::Base\#type: Unrecognised type name '#{ type_info }'"
+          end
         end
 
         self.instance_exec( &klass.get_schema_definition() )
       end
 
-      # Declare that a resource of a given name is included at this point. This
-      # is only normally done within the description of the schema  for an
+      # Declare that a resource of a given name is included at this point.
+      # This is only normally done within the description of the schema for an
       # interface. The fields of the given named resource are considered to be
       # defined inline at the point of declaration - essentially, it's macro
       # expansion.
       #
-      # +resource_name+:: Name of the resource as a symbol, e.g. +:Purchase+.
-      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
+      # +resource_info+:: The Hoodoo::Presenters::Base subclass for the
+      #                   Resource in question, e.g. +Product+. The deprecated
+      #                   form of this interface takes the name of the type to
+      #                   nest as a symbol, e.g. +:Product+, in which case the
+      #                   Resource must be declared within nested modules
+      #                   "Hoodoo::Data::Types".
       #
-      # It doesn't make sense to mark a +resource+ 'field' as +:required+ in the
-      # options since the declaration just expands to the contents of the
-      # referenced resource and it is the definition of that resource that
-      # determines whether or not its various field(s) are optional or required.
+      # +options+::       Optional options hash. No options currently defined.
       #
       # Example - an iterface takes an +Outlet+ resource in its create action.
+      #
       #     class Outlet < Hoodoo::Presenters::Base
       #       schema do
       #         internationalised
@@ -379,18 +421,31 @@ module Hoodoo
       #
       #     class OutletInterface < Hoodoo::Services::Interface
       #       to_create do
-      #         resource :Outlet
+      #         resource Outlet
       #       end
       #     end
       #
+      # It doesn't make sense to mark a +resource+ 'field' as +:required+ in
+      # the options since the declaration just expands to the contents of the
+      # referenced resource and it is the definition of that resource that
+      # determines whether or not its various field(s) are optional / required.
+      # That is, the following two declarations behave identically:
       #
-      def resource( resource_name, options = nil )
+      #     resource Outlet
+      #
+      #     resource Outlet, :required => true # Pointless option!
+      #
+      def resource( resource_info, options = nil )
         options ||= {}
 
-        begin
-          klass = Hoodoo::Data::Resources.const_get( resource_name )
-        rescue
-          raise "DocumentedObject#resource: Unrecognised resource name '#{ resource_name }'"
+        if resource_info.is_a?( Class ) && resource_info < Hoodoo::Presenters::Base
+          klass = resource_info
+        else
+          begin
+            klass = Hoodoo::Data::Resources.const_get( resource_info )
+          rescue
+            raise "Hoodoo::Presenters::Base\#resource: Unrecognised resource name '#{ resource_info }'"
+          end
         end
 
         self.instance_exec( &klass.get_schema_definition() )
@@ -406,23 +461,25 @@ module Hoodoo
       # implicitly internationalised (so it "taints" the resource). For
       # cross-referencing, see #type.
       #
-      # +options+:: Optional options hash. No option keys/values defined yet.
+      # +options+:: Optional options hash. No options currently defined.
       #
       # Example - a Member resource with internationalised fields such as
       # the member's name:
       #
-      #     class Member < Hoodoo::Presenters::Object
+      #     class Member < Hoodoo::Presenters::Base
+      #       schema do
       #
-      #       # Say that Member will contain at least one field that holds
-      #       # human readable data, causing the Member to be subject to
-      #       # internationalisation rules.
+      #         # Say that Member will contain at least one field that holds
+      #         # human readable data, causing the Member to be subject to
+      #         # internationalisation rules.
       #
-      #       internationalised
+      #         internationalised
       #
-      #       # Declare fields as normal, for example...
+      #         # Declare fields as normal, for example...
       #
-      #       text :name
+      #         text :name
       #
+      #       end
       #     end
       #
       def internationalised( options = nil )
