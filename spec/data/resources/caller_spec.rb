@@ -55,4 +55,102 @@ describe Hoodoo::Data::Resources::Caller do
 
     expect(result.errors).to eq([])
   end
+
+  it 'should be renderable with all data' do
+    id         = Hoodoo::UUID.generate
+    created_at = Time.now
+    json       = described_class.render(
+      {
+        "name"       => "Test Caller",
+        "identity"   => {
+          "array"   => [],
+          "integer" => 1,
+          "string"  => "thisisastring",
+          "object"  => { "key" => "value" }
+        },
+        "permissions" => {
+          "resources" => {
+            "Caller" => {
+              "else" => "allow"
+            },
+            "Member" => {
+              "actions" => {
+                "list" => "allow"
+              },
+              "else"    => "deny"
+            }
+          }
+        },
+        "scoping"    => {
+          "array"   => [],
+          "integer" => 1,
+          "string"  => "thisisastring",
+          "object"  => { "key" => "value" }
+        }
+      },
+      id,
+      created_at
+    )
+
+    expect(json).to eq(
+      {
+        'id'         => id,
+        'created_at' => created_at.utc.iso8601,
+        'kind'       => 'Caller',
+        "name"       => "Test Caller",
+        "identity"   => {
+          "array"   => [],
+          "integer" => 1,
+          "string"  => "thisisastring",
+          "object"  => { "key" => "value" }
+        },
+        "permissions" => {
+          "resources" => {
+            "Caller" => {
+              "else" => "allow"
+            },
+            "Member" => {
+              "actions" => {
+                "list" => "allow"
+              },
+              "else"    => "deny"
+            }
+          }
+        },
+        "scoping"    => {
+          "array"   => [],
+          "integer" => 1,
+          "string"  => "thisisastring",
+          "object"  => { "key" => "value" }
+        },
+        "language" => "en-nz"
+      }
+    )
+  end
+
+  it 'should be renderable with minimal data' do
+    id         = Hoodoo::UUID.generate
+    created_at = Time.now
+    json       = described_class.render(
+      {
+        "identity"    => {},
+        "permissions" => { "resources" => {} },
+        "scoping"     => {}
+      },
+      id,
+      created_at
+    )
+
+    expect(json).to eq(
+      {
+        'id'          => id,
+        'created_at'  => created_at.utc.iso8601,
+        'kind'        => 'Caller',
+        "identity"    => {},
+        "permissions" => { "resources" => {} },
+        "scoping"     => {},
+        "language"    => "en-nz"
+      }
+    )
+  end
 end
