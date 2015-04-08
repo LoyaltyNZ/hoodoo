@@ -17,7 +17,7 @@ module Hoodoo
 
         schema do
 
-          hash :resources do
+          hash :resources, :required => true do
             keys do
               type :Permissions
             end
