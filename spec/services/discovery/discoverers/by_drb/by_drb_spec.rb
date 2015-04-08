@@ -34,14 +34,12 @@ describe Hoodoo::Services::Discovery::ByDRb do
   # hasn't reached the server startup script and the server has come up
   # on a different port.
   #
-  it 'runs a DRb service in a thread which can be pinged and shuts down' do
+  it 'runs a DRb service which can be pinged and shuts down' do
     expect {
       port = Hoodoo::Utilities.spare_port().to_s
 
-      # thread = Thread.new do
-        discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
-        discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
-      # end
+      discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
+      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
 
       shut_down_drb_service_on( port )
     }.to_not raise_error
@@ -53,31 +51,9 @@ describe Hoodoo::Services::Discovery::ByDRb do
   it 'can contact an existing DRb server' do
     expect {
       port = Hoodoo::Utilities.spare_port().to_s
-      $sync_queue = Queue.new
 
-      # thread = Thread.new do
-        discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
-        discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
-        $sync_queue << :go!
-      # end
-
-      # Have to wait for it to start and have the service announcement
-      # made, before querying it.
-
-      begin
-        Timeout::timeout( 5 ) do
-          loop do
-            begin
-              $sync_queue.pop( true )
-              break
-            rescue ThreadError
-              sleep 0.1
-            end
-          end
-        end
-      rescue Timeout::Error
-        raise "Timed out while waiting for DRb server thread to run"
-      end
+      discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
+      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
 
       discoverer = Hoodoo::Services::Discovery::ByDRb.new(
         :drb_uri => Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port )
