@@ -98,12 +98,8 @@ module Hoodoo; module Services
         #
         attr_accessor :data
 
-        # Optional calling client ID, via session data inside the payload - see
+        # Optional calling Caller ID, via session data inside the payload - see
         # Hoodoo::Services::Middleware::StructuredLogger.
-        #
-        attr_accessor :client_id
-
-        # Modern Session parlance alias for #client_id.
         #
         attr_accessor :caller_id
 
@@ -112,13 +108,18 @@ module Hoodoo; module Services
         #
         attr_accessor :interaction_id
 
-        # Optional participant UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Optional hash of identity properties from the session data inside the
+        # payload - see Hoodoo::Services::Middleware::StructuredLogger.
+        #
+        attr_accessor :identity
+
+        # TODO: TEMPORARY: Bridging the gap between old and new payloads, this
+        # property exists for the "receiving end" only.
         #
         attr_accessor :participant_id
 
-        # Optional outlet UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # TODO: TEMPORARY: Bridging the gap between old and new payloads, this
+        # property exists for the "receiving end" only.
         #
         attr_accessor :outlet_id
 
@@ -145,10 +146,12 @@ module Hoodoo; module Services
 
             :data           => @data,
 
-            :client_id      => @client_id,
             :interaction_id => @interaction_id,
-            :participant_id => @participant_id,
-            :outlet_id      => @outlet_id,
+            :caller_id      => @caller_id,
+            :identity       => @identity,
+
+            :participant_id => '', # TODO: TEMPORARY: Remove
+            :outlet_id      => ''  # TODO: TEMPORARY: Remove
           }
 
           super
@@ -174,10 +177,12 @@ module Hoodoo; module Services
 
           self.data           = options[ :data           ]
 
-          self.client_id      = options[ :client_id      ]
           self.interaction_id = options[ :interaction_id ]
-          self.participant_id = options[ :participant_id ]
-          self.outlet_id      = options[ :outlet_id      ]
+          self.caller_id      = options[ :caller_id      ]
+          self.identity       = options[ :identity       ]
+
+          self.participant_id = options[ :participant_id ] # TODO: TEMPORARY: Remove
+          self.outlet_id      = options[ :outlet_id      ] # TODO: TEMPORARY: Remove
         end
       end
 

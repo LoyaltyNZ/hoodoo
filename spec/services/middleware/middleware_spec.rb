@@ -1571,6 +1571,10 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
   end
 
+  before :each do
+    @interaction_id = Hoodoo::UUID.generate()
+  end
+
   before :example, :check_callbacks => true do
     expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :before ).once
     # -> A
@@ -1585,6 +1589,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:list).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
@@ -1598,7 +1603,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(result.dataset_size).to eq(4321)
     end
 
-    get '/v1/rspec_test_inter_resource_calls_b', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b',
+        nil,
+        {
+          'HTTP_X_INTERACTION_ID' => @interaction_id,
+          'CONTENT_TYPE'          => 'application/json; charset=utf-8'
+        }
+
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => [1,2,3,4]})
@@ -1643,6 +1654,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
@@ -1656,7 +1668,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(result).to eq({ 'inner' => 'shown' })
     end
 
-    get '/v1/rspec_test_inter_resource_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b/world',
+        nil,
+        {
+          'HTTP_X_INTERACTION_ID' => @interaction_id,
+          'CONTENT_TYPE'          => 'application/json; charset=utf-8'
+        }
+
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'shown'}})
@@ -1675,6 +1693,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to eq({'foo' => 'required'})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq([])
@@ -1685,7 +1704,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(result).to eq({ 'inner' => 'created' })
     end
 
-    post '/v1/rspec_test_inter_resource_calls_b/', '{"foo": "required"}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         '{"foo": "required"}',
+         {
+           'HTTP_X_INTERACTION_ID' => @interaction_id,
+           'CONTENT_TYPE'          => 'application/json; charset=utf-8'
+         }
+
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'created'}})
@@ -1734,6 +1759,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to eq({'sum' => 70})
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
@@ -1744,7 +1770,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(result).to eq({ 'inner' => 'updated' })
     end
 
-    patch '/v1/rspec_test_inter_resource_calls_b/world', '{"sum": 70}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    patch '/v1/rspec_test_inter_resource_calls_b/world',
+          '{"sum": 70}',
+          {
+            'HTTP_X_INTERACTION_ID' => @interaction_id,
+            'CONTENT_TYPE'          => 'application/json; charset=utf-8'
+          }
+
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'updated'}})
@@ -1763,6 +1795,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete).once.and_call_original
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
         expect(context.request.uri_path_components).to eq(['helloworld'])
@@ -1773,7 +1806,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(result).to eq({ 'inner' => 'deleted' })
     end
 
-    delete '/v1/rspec_test_inter_resource_calls_b/world', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    delete '/v1/rspec_test_inter_resource_calls_b/world',
+           nil,
+           {
+             'HTTP_X_INTERACTION_ID' => @interaction_id,
+             'CONTENT_TYPE'          => 'application/json; charset=utf-8'
+           }
+
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
     expect(result).to eq({'result' => {'inner' => 'deleted'}})
