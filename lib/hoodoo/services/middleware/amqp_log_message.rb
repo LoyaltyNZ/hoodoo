@@ -113,6 +113,16 @@ module Hoodoo; module Services
         #
         attr_accessor :identity
 
+        # TODO: TEMPORARY: Bridging the gap between old and new payloads, this
+        # property exists for the "receiving end" only.
+        #
+        attr_accessor :participant_id
+
+        # TODO: TEMPORARY: Bridging the gap between old and new payloads, this
+        # property exists for the "receiving end" only.
+        #
+        attr_accessor :outlet_id
+
         # Create an instance with options keyed on the attributes defined for
         # the class.
         #
@@ -139,6 +149,9 @@ module Hoodoo; module Services
             :interaction_id => @interaction_id,
             :caller_id      => @caller_id,
             :identity       => @identity,
+
+            :participant_id => '', # TODO: TEMPORARY: Remove
+            :outlet_id      => ''  # TODO: TEMPORARY: Remove
           }
 
           super
