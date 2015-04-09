@@ -180,6 +180,9 @@ module Hoodoo; module Services
           self.interaction_id = options[ :interaction_id ]
           self.caller_id      = options[ :caller_id      ]
           self.identity       = options[ :identity       ]
+
+          self.participant_id = options[ :participant_id ] # TODO: TEMPORARY: Remove
+          self.outlet_id      = options[ :outlet_id      ] # TODO: TEMPORARY: Remove
         end
       end
 
