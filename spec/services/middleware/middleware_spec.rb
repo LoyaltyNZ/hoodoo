@@ -671,6 +671,15 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
+      it 'should filter out duplicates in embed query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.embeds).to eq(['embs', 'emb'])
+        end
+
+        get '/v2/rspec_test_service_stub?_embed=embs,emb,embs,embs,emb,emb,embs', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
       it 'should complain about bad embed query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get '/v2/rspec_test_service_stub?_embed=one,emb,two', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -687,6 +696,15 @@ describe Hoodoo::Services::Middleware do
         end
 
         get '/v2/rspec_test_service_stub?_reference=embs,emb', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should filter out duplicates in reference query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.references).to eq(['embs', 'emb'])
+        end
+
+        get '/v2/rspec_test_service_stub?_reference=embs,emb,embs,embs,emb,emb,embs', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
