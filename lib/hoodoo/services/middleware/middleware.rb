@@ -2112,8 +2112,8 @@ module Hoodoo; module Services
       request.list.sort_direction = direction
       request.list.search_data    = search
       request.list.filter_data    = filter
-      request.embeds              = embeds
-      request.references          = references
+      request.embeds              = embeds.uniq
+      request.references          = references.uniq
     end
 
     # Safely parse the client payload in the context of the defined content
