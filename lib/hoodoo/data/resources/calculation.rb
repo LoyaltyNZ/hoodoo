@@ -20,7 +20,6 @@ module Hoodoo
       REFERENCE_KINDS = [ :Purchase ]
 
         schema do
-          uuid  :calculator_id,           :required => true,   :resource => :Calculator
           text  :token_identifier,        :required => true
           text  :programme_code,          :required => true
           enum  :reference_kind,          :required => false,  :from     => REFERENCE_KINDS
