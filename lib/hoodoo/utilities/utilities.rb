@@ -58,6 +58,29 @@ module Hoodoo
       return obj
     end
 
+    # Thorough but slow deep duplication of any object (if it isn't
+    # duplicable, e.g. FixNum, you just get the same thing back). Usually
+    # used with Hashes or Arrays.
+    #
+    # +obj+: Object to duplicate.
+    #
+    # Returns the duplicated object if duplicable, else returns the input
+    # parameter.
+    #
+    def self.deep_dup( obj )
+      duplicate = obj.dup rescue obj
+
+      result = if duplicate.is_a?( Hash )
+        duplicate.each { | k, v | duplicate[ k ] = deep_dup( v ) }
+      elsif duplicate.is_a?( Array )
+        duplicate.map { | entry | deep_dup( entry ) }
+      else
+        duplicate
+      end
+
+      return result
+    end
+
     # Deep merge two hashes.
     #
     # Hash#merge/merge! only do a shallow merge. For example, without
@@ -109,6 +132,84 @@ module Hoodoo
       }
 
       return target_hash.merge( inbound_hash, &merger )
+    end
+
+    # Deep diff two hashes. Adapted shamelessly from:
+    #
+    # http://stackoverflow.com/questions/1766741/comparing-ruby-hashes
+    #
+    # +hash1+:: "Left hand" hash for comparison.
+    # +hash2+:: "Right hand" hash for comparison.
+    #
+    # The returned result is a Hash itself, potentially nested, with any
+    # present key paths leading to an array describing the difference found
+    # at that key path. If the two input hashes had values at the path, the
+    # differing values are placed in the array ("left hand" value at index
+    # 0, "right hand" at index 1). If one input hash has a key leading to
+    # a value which the other omits, the array contains +nil+ for the
+    # omitted entry.
+    #
+    # Example:
+    #
+    #     hash1 = { :foo => { :bar => 2 }, :baz => true, :boo => false }
+    #     hash2 = { :foo => { :bar => 3 },               :boo => false }
+    #
+    #     Hoodoo::Utilities.hash_diff( hash1, hash2 )
+    #     # => { :foo => { :bar => [ 2, 3 ] }, :baz => [ true, nil ] }
+    #
+    #     Hoodoo::Utilities.hash_diff( hash2, hash1 )
+    #     # => { :foo => { :bar => [ 3, 2 ] }, :baz => [ nil, true ] }
+    #
+    # Bear in mind that the difference array contains values of everything
+    # different from the first part of the key path where things diverge. So
+    # in this case:
+    #
+    #     hash1 = { :foo => { :bar => { :baz => [ 1, 2, 3 ] } } }
+    #     hash2 = {}
+    #
+    # ...the difference starts all the way up at ":foo". The result is thus
+    # *not* a Hash where just the ":baz" array is picked out as a difference;
+    # the entire Hash sub-tree is picked out:
+    #
+    #     diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
+    #     # => { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] }
+    #
+    def self.hash_diff( hash1, hash2 )
+      return ( hash1.keys + hash2.keys ).uniq.inject( {} ) do | memo, key |
+        unless hash1[ key ] == hash2[ key ]
+          if hash1[ key ].kind_of?( Hash ) && hash2[ key ].kind_of?( Hash )
+            memo[ key ] = hash_diff( hash1[ key ], hash2[ key ] )
+          else
+            memo[ key ] = [ hash1[ key ], hash2[ key ] ]
+          end
+        end
+
+        memo
+      end
+    end
+
+    # Convert a (potentially nested) Hash into an array of entries which
+    # represent its keys, with the notation "foo.bar.baz" for nested hashes.
+    #
+    # +hash+:: Input Hash.
+    #
+    # Example:
+    #
+    #     hash = { :foo => 1, :bar => { :baz => 2, :boo => { :hello => :world } } }
+    #
+    #     Hoodoo::Utilities.hash_key_paths( hash )
+    #     # => [ 'foo', 'bar.baz', 'bar.boo.hello' ]
+    #
+    def self.hash_key_paths( hash )
+      return hash.map do | key, value |
+        if value.is_a?( Hash )
+          hash_key_paths( value ).map do | entry |
+            "#{ key }.#{ entry }"
+          end
+        else
+          key.to_s
+        end
+      end.flatten
     end
 
     # Is a parameter convertable to an integer cleanly? Returns the integer

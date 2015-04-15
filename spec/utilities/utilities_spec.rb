@@ -242,6 +242,64 @@ describe Hoodoo::Utilities do
     end
   end
 
+  describe '#deep_dup' do
+    it 'survives non-duplicable duplication attempts' do
+      fixnum = 2
+      expect( Hoodoo::Utilities.deep_dup( fixnum ).object_id ).to eq( fixnum.object_id )
+    end
+
+    it 'duplicates simple things' do
+      str = 'hello world'
+      expect( Hoodoo::Utilities.deep_dup( str ) ).to eq( str )
+      expect( Hoodoo::Utilities.deep_dup( str ).object_id ).to_not eq( str.object_id )
+    end
+
+    it 'duplicates arrays' do
+      h = { :foo => :bar }
+      a = [ 1, 2, h ]
+
+      # Make sure Ruby works :-P - changing 'h' should change the array's
+      # apparent contents, since the array entry is by-reference to 'h'.
+
+      expect( a ).to eq( [ 1, 2, { :foo => :bar } ] )
+      h[ :foo ] = :baz
+      expect( a ).to eq( [ 1, 2, { :foo => :baz } ] )
+
+      expect( Hoodoo::Utilities.deep_dup( a ) ).to eq( a )
+      expect( Hoodoo::Utilities.deep_dup( a ).object_id ).to_not eq( a.object_id )
+      expect( Hoodoo::Utilities.deep_dup( a )[ 2 ].object_id ).to_not eq( h.object_id )
+
+      # Changing 'h' should not change the duplicated array's apparent
+      # contents, because the array values were duplicated if #deep_dup is
+      # working.
+
+      dup = Hoodoo::Utilities.deep_dup( a )
+      expect( dup ).to eq( [ 1, 2, { :foo => :baz } ] )
+      h[ :foo ] = :boo
+      expect( dup ).to eq( [ 1, 2, { :foo => :baz } ] ) # I.e. unchanged
+    end
+
+    it 'duplicates hashes' do
+      h1 = { :foo => 1 }
+      h2 = { :bar => { :baz => h1 } }
+
+      # As with arrays, make sure Ruby works as expected
+
+      expect( h2 ).to eq( { :bar => { :baz => { :foo => 1 } } } )
+      h1[ :foo ] = 2
+      expect( h2 ).to eq( { :bar => { :baz => { :foo => 2 } } } )
+
+      expect( Hoodoo::Utilities.deep_dup( h2 ) ).to eq( h2 )
+      expect( Hoodoo::Utilities.deep_dup( h2 ).object_id ).to_not eq( h2.object_id )
+      expect( Hoodoo::Utilities.deep_dup( h2 )[ :bar ][ :baz ].object_id ).to_not eq( h1.object_id )
+
+      dup = Hoodoo::Utilities.deep_dup( h2 )
+      expect( dup ).to eq( { :bar => { :baz => { :foo => 2 } } } )
+      h1[ :foo ] = 3
+      expect( dup ).to eq( { :bar => { :baz => { :foo => 2 } } } ) # I.e. unchanged
+    end
+  end
+
   describe '#deep_merge_into' do
     it 'merges hashes' do
       target_hash  = { :one => { :two => { :three => 3 } } }
@@ -262,6 +320,46 @@ describe Hoodoo::Utilities do
         :foo => 'baz', :one => { :two => { :three => 3, :and_four => 4, :five => 'five' } }
       } )
     end
+  end
+
+  describe '#hash_diff' do
+    it 'works with the RDoc example code in both directions' do
+      hash1 = { :foo => { :bar => 2 }, :baz => true, :boo => false }
+      hash2 = { :foo => { :bar => 3 },               :boo => false }
+
+      diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
+      expect( diff ).to eq( { :foo => { :bar => [ 2, 3 ] }, :baz => [ true, nil ] } )
+
+      diff = Hoodoo::Utilities.hash_diff( hash2, hash1 )
+      expect( diff ).to eq( { :foo => { :bar => [ 3, 2 ] }, :baz => [ nil, true ] } )
+    end
+
+    it 'works when both hashes are totally mismatched' do
+      hash1 = { :foo => 1 }
+      hash2 = { :bar => 2 }
+
+      diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
+      expect( diff ).to eq( { :foo => [ 1, nil ], :bar => [ nil, 2 ] } )
+    end
+
+    it 'works for deep paths' do
+      hash1 = { :foo => { :bar => { :baz => [ 1, 2, 3 ] } } }
+      hash2 = {}
+
+      diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
+      expect( diff ).to eq( { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] } )
+    end
+
+    it 'works for identical hashes' do
+      hash1 = { :foo => { :bar => 2 }, :baz => true, :boo => false }
+
+      diff = Hoodoo::Utilities.hash_diff( hash1, hash1 )
+      expect( diff ).to eq( {} )
+    end
+  end
+
+  describe '#hash_key_paths' do
+
   end
 
   describe '#spare_port' do

@@ -20,12 +20,18 @@ class RSpecToUpdateToCreateTestAInterface < Hoodoo::Services::Interface
       text :foo
       integer :bar, :required => true
       integer :defaulted, :default => 42
+      object :nested do
+        text :thing
+      end
     end
 
     to_update do
       boolean :foo, :required => true
       enum :bar, :from => [ :foo, :bar, :baz ]
       integer :defaulted, :default => 24
+      object :nested do
+        text :thing
+      end
     end
   end
 end
@@ -55,11 +61,29 @@ class RSpecToUpdateToCreateTestBInterface < Hoodoo::Services::Interface
   end
 end
 
-# Put them both in the same service application for simplicity.
+# Resource "C" describes nothing special, to check that common fields
+# are still rejected for creations and updates.
+
+class RSpecToUpdateToCreateTestCImplementation < Hoodoo::Services::Implementation
+  def create( context ); context.response.body = context.request.body; end
+  def update( context ); context.response.body = context.request.body; end
+end
+
+class RSpecToUpdateToCreateTestCInterface < Hoodoo::Services::Interface
+  interface :RSpecToUpdateToCreateTestC do
+    endpoint :r_spec_to_update_to_create_test_c, RSpecToUpdateToCreateTestCImplementation
+  end
+end
+
+# Put them all in the same service application for simplicity.
 
 class RSpecToUpdateToCreateTestService < Hoodoo::Services::Service
   comprised_of RSpecToUpdateToCreateTestAInterface,
                RSpecToUpdateToCreateTestBInterface
+
+  # Paranoid implicit check that multiple "comprised_of" calls still work :-)
+
+  comprised_of RSpecToUpdateToCreateTestCInterface
 end
 
 # Finally, the tests.
@@ -123,7 +147,9 @@ describe Hoodoo::Services::Middleware do
   context 'rejects unknown data' do
     def expectations( hash )
       expect( last_response.status ).to eq( 422 )
-      expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+      parsed = JSON.parse( last_response.body )
+      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'random' )
     end
 
     it 'with many fields' do
@@ -146,6 +172,30 @@ describe Hoodoo::Services::Middleware do
       do_post( :b, 'code' => 'hello', 'random' => true, 'message' => 'world', 'reference' => nil, 'errors' => [] )
       do_patch( :b, 'actions' => nil, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
       do_patch( :b, 'actions' => { 'list' => nil }, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+    end
+
+    it 'rejects unknown data across many fields (flat top level)' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 422 )
+        parsed = JSON.parse( last_response.body )
+        expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+        expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'random\\, more' )
+      end
+
+      do_post( :a, 'foo' => 'hello', 'bar' => 42, 'random' => { 'foo' => true, 'bar' => true }, 'more' => 42 )
+      do_patch( :a, 'foo' => true, 'bar' => 'foo', 'random' => { 'foo' => true, 'bar' => true }, 'more' => 42 )
+    end
+
+    it 'rejects unknown data across many fields (nested top level)' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 422 )
+        parsed = JSON.parse( last_response.body )
+        expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+        expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'nested.foo\\, nested.bar\\, more' )
+      end
+
+      do_post( :a, 'foo' => 'hello', 'bar' => 42, 'nested' => { 'foo' => true, 'bar' => true }, 'more' => 42 )
+      do_patch( :a, 'foo' => true, 'bar' => 'foo', 'nested' => { 'foo' => true, 'bar' => true }, 'more' => 42 )
     end
   end
 
@@ -221,6 +271,29 @@ describe Hoodoo::Services::Middleware do
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => 'still not an array' )
       do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time', 'identifier' => 'baz' )
       do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time', 'identifier' => 'baz' )
+    end
+  end
+
+  # Reject common fields where there's no create/update block.
+
+  context 'rejects common fields without schema' do
+    def expectations( ignore )
+      expect( last_response.status ).to eq( 422 )
+      parsed = JSON.parse( last_response.body )
+      expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'id\\, created_at\\, kind\\, language' )
+    end
+
+    it 'rejects bad creations' do
+      do_post( :c, 'created_at' => 'now', 'id' => '234',
+                   'kind' => 'FortyTwo', 'language' => 'bleat',
+                   'random' => 'field' )
+    end
+
+    it 'rejects bad updates' do
+      do_patch( :c, 'created_at' => 'now', 'id' => '234',
+                    'kind' => 'FortyTwo', 'language' => 'bleat',
+                    'random' => 'field' )
     end
   end
 
