@@ -622,7 +622,7 @@ module Hoodoo; module Services
 
       session = source_interaction.context.session
 
-      unless session.nil?
+      unless session.nil? || session == DEFAULT_TEST_SESSION
         session = session.augment_with_permissions_for( source_interaction )
       end
 

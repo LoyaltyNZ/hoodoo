@@ -120,7 +120,7 @@ module Hoodoo
             #
             session = self.interaction().context.session
 
-            unless session.nil?
+            unless session.nil? || session == Hoodoo::Services::Middleware::DEFAULT_TEST_SESSION
               session = session.augment_with_permissions_for( self.interaction() )
             end
 
