@@ -278,6 +278,18 @@ describe Hoodoo::Services::Middleware do
     Hoodoo::Services::Middleware.set_test_session( @session )
 
     Hoodoo::Services::Session::MockDalliClient.reset()
+
+    # We want to test session agumentation via the mock Memcached, but
+    # Hoodoo middleware won't do so if it thinks the test session is in
+    # use. It'll bypass augmentation.
+    #
+    # An extra 'describe' block much later in this file checks that this
+    # method is returning "true" as expected in non-stubbed operation.
+
+    allow_any_instance_of(
+      Hoodoo::Services::Middleware::Interaction
+    ).to receive( :using_test_session? ).and_return( false )
+
   end
 
   after :each do
@@ -756,5 +768,30 @@ describe Hoodoo::Services::Middleware do
 
       end
     end
+  end
+end
+
+# As per comments much earlier on, a weird (but effective) little test to
+# make sure that "using_test_session?" in Interaction works properly when
+# *not* being deliberately overridden.
+
+describe Hoodoo::Services::Middleware do
+  after :all do
+    Hoodoo::Services::Middleware.flush_services_for_test()
+  end
+
+  def app
+    Rack::Builder.new do
+      use Hoodoo::Services::Middleware
+      run RSpecAddPermTestClockServiceA.new
+    end
+  end
+
+  it 'knows it is using a test session' do
+    expect_any_instance_of( Hoodoo::Services::Middleware ).to receive( :process ).once do | mw, interaction |
+      expect( interaction.using_test_session? ).to eq( true )
+    end
+
+    get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
   end
 end

@@ -622,7 +622,7 @@ module Hoodoo; module Services
 
       session = source_interaction.context.session
 
-      unless session.nil? || session == DEFAULT_TEST_SESSION
+      unless session.nil? || source_interaction.using_test_session?
         session = session.augment_with_permissions_for( source_interaction )
       end
 
@@ -1293,6 +1293,7 @@ module Hoodoo; module Services
       end
 
       if ( self.class.environment.test? || self.class.environment.development? ) && session.nil?
+        interaction.using_test_session()
         session = self.class.test_session()
       end
 

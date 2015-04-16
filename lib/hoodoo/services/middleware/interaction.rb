@@ -68,6 +68,20 @@ module Hoodoo; module Services; class Middleware
       #
       attr_accessor :requested_content_encoding
 
+      # Hoodoo middleware calls here to say "I'm using the test session" (or
+      # not), so that this can be enquired about via #using_test_session? if
+      # need be.
+      #
+      def using_test_session
+        @using_test_session = true
+      end
+
+      # Returns +true+ if Hoodoo has previously called #using_test_session.
+      #
+      def using_test_session?
+        @using_test_session === true
+      end
+
       # Create a new Interaction instance, acquiring a new interaction
       # ID automatically or picking up one from an X-Interaction-ID
       # header if available.
