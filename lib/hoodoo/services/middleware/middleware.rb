@@ -115,6 +115,17 @@ module Hoodoo; module Services
     #
     SUPPORTED_ENCODINGS = [ 'utf-8' ]
 
+    # Prohibited fields in creations or updates - these are the common fields
+    # specified in the API, which are emergent in the platform or are set via
+    # other routes (e.g. "language" comes from HTTP headers in requests).
+    #
+    PROHIBITED_INBOUND_FIELDS = [
+      'id',
+      'created_at',
+      'kind',
+      'language'
+    ]
+
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
     # DOS attempts to consume RAM.
     #
@@ -2180,7 +2191,23 @@ module Hoodoo; module Services
         interface.to_update()
       end
 
-      unless ( verification_object.nil? )
+      # Verify the inbound parameters either via to-create/to-update schema
+      # or, if absent, at least make sure prohibited fields are absent.
+
+      if ( verification_object.nil? )
+
+        requested_fields = body.keys
+        union            = PROHIBITED_INBOUND_FIELDS & requested_fields
+
+        unless union.empty?
+          response.errors.add_error(
+            'generic.invalid_parameters',
+            'message' => 'Body data contains unrecognised or prohibited fields',
+            'reference' => { :fields => union.join( ', ' ) }
+          )
+        end
+
+      else
 
         # 'false' => validate as type-only, not a resource (no ID, kind etc.)
         #
@@ -2203,11 +2230,20 @@ module Hoodoo; module Services
           # Thus, complain if the sanitised body differs from the input.
 
           rendered = verification_object.render( body ) # May add default fields
+          merged   = body.merge( rendered )
 
-          response.errors.add_error(
-            'generic.invalid_parameters',
-            'message' => 'Body data contains unrecognised or prohibited fields'
-          ) if body.merge( rendered ) != rendered
+          if ( merged != rendered )
+            deep_dup    = Hoodoo::Utilities.deep_dup( body )
+            deep_merged = Hoodoo::Utilities.deep_merge_into( deep_dup, rendered )
+            diff        = Hoodoo::Utilities.hash_diff( deep_merged, rendered )
+            paths       = Hoodoo::Utilities.hash_key_paths( diff )
+
+            response.errors.add_error(
+              'generic.invalid_parameters',
+              'message' => 'Body data contains unrecognised or prohibited fields',
+              'reference' => { :fields => paths.join( ', ' ) }
+            )
+          end
         end
       end
     end
