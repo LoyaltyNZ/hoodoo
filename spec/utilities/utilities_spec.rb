@@ -359,7 +359,20 @@ describe Hoodoo::Utilities do
   end
 
   describe '#hash_key_paths' do
+    it 'works for empty hashes' do
+      hash = {}
+      expect( Hoodoo::Utilities.hash_key_paths( hash ) ).to eq( [] )
+    end
 
+    it 'works for flat hashes' do
+      hash = { :one => 1, :two => 2, :three => 3 }
+      expect( Hoodoo::Utilities.hash_key_paths( hash ) ).to eq( [ 'one', 'two', 'three' ] )
+    end
+
+    it 'works with the RDoc example code' do
+      hash = { :foo => 1, :bar => { :baz => 2, :boo => { :hello => :world } } }
+      expect( Hoodoo::Utilities.hash_key_paths( hash ) ).to eq( [ 'foo', 'bar.baz', 'bar.boo.hello' ] )
+    end
   end
 
   describe '#spare_port' do
