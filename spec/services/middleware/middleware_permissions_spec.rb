@@ -1,8 +1,18 @@
-# These tests focus on the way that a resource can declare a
-# requirement to gain extra permissions while processing an
-# action, that allow it to call other services. The caller's
-# inbound session only needs to be able to call the 'otuermost'
-# action to succeed.
+# These tests focus on the way that a resource can declare a requirement
+# to gain extra permissions while processing an action, that allow it to
+# call other services. The caller's inbound session only needs to be able
+# to call the 'otuermost' action to succeed.
+#
+# Mock Memcached is used for 'real' (nearly) session management in Hoodoo
+# rather than rely on the allow-all test session. If we used the test
+# session, we'd never test permissions augmentation as it is bypassed in
+# that mode.
+#
+# All the groundwork having been done for permissions testing, this is is
+# also a good place to make sure that interaction IDs are properly passed
+# between both local and remote inter-resource calls, so that's tested in
+# passing here too (there was once a bug where this got broken for local
+# inter-resource calls).
 
 require 'spec_helper'
 
@@ -118,6 +128,26 @@ class RSpecAddPermTestTimeImplementation < Hoodoo::Services::Implementation
   end
 end
 
+# The Interaction ID test "source" (calls to) and "destination" (called
+# by) classes.
+
+class RSpecTestInteractionIDPassingDestinationImplementation < Hoodoo::Services::Implementation
+  def show( context )
+    context.response.set_resource( { 'interaction_id' => context.owning_interaction.interaction_id } )
+  end
+end
+
+class RSpecTestInteractionIDPassingSourceImplementation < Hoodoo::Services::Implementation
+  def show( context )
+    destination = context.resource( :RSpecTestInteractionIDPassingDestination )
+
+    result = destination.show( context.request.ident )
+    return if result.adds_errors_to?( context.response.errors )
+
+    context.response.set_resource( result )
+  end
+end
+
 ##############################################################################
 # Interfaces
 ##############################################################################
@@ -181,6 +211,23 @@ class RSpecAddPermTestTimeInterface < Hoodoo::Services::Interface
   end
 end
 
+class RSpecTestInteractionIDPassingDestinationInterface < Hoodoo::Services::Interface
+  interface :RSpecTestInteractionIDPassingDestination do
+    endpoint :id_passing_destination, RSpecTestInteractionIDPassingDestinationImplementation
+    actions :show
+  end
+end
+
+class RSpecTestInteractionIDPassingSourceInterface < Hoodoo::Services::Interface
+  interface :RSpecTestInteractionIDPassingSource do
+    endpoint :id_passing_source, RSpecTestInteractionIDPassingSourceImplementation
+    actions :show
+    additional_permissions_for( :show ) do | p |
+      p.set_resource( :RSpecTestInteractionIDPassingDestination, :show, Hoodoo::Services::Permissions::ALLOW )
+    end
+  end
+end
+
 ##############################################################################
 # Service applications for local inter-resource calls
 ##############################################################################
@@ -207,6 +254,13 @@ class RSpecAddPermTestClockServiceC < Hoodoo::Services::Service
   comprised_of RSpecAddPermTestClockInterface,
                RSpecAddPermTestDateInterface,
                RSpecAddPermTestTimeInterface
+end
+
+# (See earlier) Interaction ID test
+
+class RSpecTestInteractionIDPassingService < Hoodoo::Services::Service
+  comprised_of RSpecTestInteractionIDPassingSourceInterface,
+               RSpecTestInteractionIDPassingDestinationInterface
 end
 
 ##############################################################################
@@ -236,6 +290,16 @@ end
 class RSpecAddPermTestTimeService < Hoodoo::Services::Service
   comprised_of RSpecAddPermTestTimeInterface
 end
+
+class RSpecTestInteractionIDPassingDestinationService < Hoodoo::Services::Service
+  comprised_of RSpecTestInteractionIDPassingDestinationInterface
+end
+
+class RSpecTestInteractionIDPassingSourceService < Hoodoo::Services::Service
+  comprised_of RSpecTestInteractionIDPassingSourceInterface
+end
+
+##############################################################################
 
 describe Hoodoo::Services::Middleware do
 
@@ -273,27 +337,20 @@ describe Hoodoo::Services::Middleware do
       :list,
       Hoodoo::Services::Permissions::ALLOW
     )
-
-    @old_test_session = Hoodoo::Services::Middleware.test_session()
-    Hoodoo::Services::Middleware.set_test_session( @session )
+    @session.permissions.set_resource(
+      :RSpecTestInteractionIDPassingSource,
+      :show,
+      Hoodoo::Services::Permissions::ALLOW
+    )
 
     Hoodoo::Services::Session::MockDalliClient.reset()
 
-    # We want to test session agumentation via the mock Memcached, but
-    # Hoodoo middleware won't do so if it thinks the test session is in
-    # use. It'll bypass augmentation.
-    #
-    # An extra 'describe' block much later in this file checks that this
-    # method is returning "true" as expected in non-stubbed operation.
-
-    allow_any_instance_of(
-      Hoodoo::Services::Middleware::Interaction
-    ).to receive( :using_test_session? ).and_return( false )
-
+    result = @session.save_to_memcached
+    raise "Can't save to mock Memcached (result = #{result})" unless result == true
   end
 
   after :each do
-    Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+    Hoodoo::Services::Session::MockDalliClient.reset()
   end
 
   ############################################################################
@@ -319,7 +376,13 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show )
 
-        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 403 )
 
         result = JSON.parse( last_response.body )
@@ -328,17 +391,27 @@ describe Hoodoo::Services::Middleware do
       end
 
       it 'cannot call #show in Time if session only grants Date access' do
+
         @session.permissions.set_resource(
           :RSpecAddPermTestDateNoPerms,
           :show,
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show )
 
-        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 403 )
 
         result = JSON.parse( last_response.body )
@@ -359,12 +432,21 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :verify )
 
-        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 200 )
 
         result = JSON.parse( last_response.body )
@@ -385,7 +467,13 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show )
 
-        get '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 403 )
 
         result = JSON.parse( last_response.body )
@@ -400,12 +488,21 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :verify )
 
-        get '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 200 )
 
         result = JSON.parse( last_response.body )
@@ -427,7 +524,13 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).with( anything(), :show ).and_return( Hoodoo::Services::Permissions::ALLOW )
 
-        get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clocks/any',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 200 )
 
         result = JSON.parse( last_response.body )
@@ -440,7 +543,13 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).with( anything(), :show ).and_return( Hoodoo::Services::Permissions::ALLOW )
 
-        get '/v1/rspec_add_perm_test_clocks/list_instead', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clocks/list_instead',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 200 )
 
         result = JSON.parse( last_response.body )
@@ -452,7 +561,13 @@ describe Hoodoo::Services::Middleware do
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show ).once.and_call_original
 
-        get '/v1/rspec_add_perm_test_clocks', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clocks',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 403 )
       end
 
@@ -463,16 +578,49 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).with( anything(), :show ).and_return( Hoodoo::Services::Permissions::ALLOW )
 
-        get '/v1/rspec_add_perm_test_clocks', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v1/rspec_add_perm_test_clocks',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_SESSION_ID' => @session.session_id
+            }
+
         expect( last_response.status ).to eq( 200 )
 
         result = JSON.parse( last_response.body )
         expect( result ).to eq( { '_data' => [ { 'date' => '1999-12-31', 'time' => '23:59:59' } ] } )
+      end
+
+      context 'testing for interaction ID passing' do
+        def app
+          Rack::Builder.new do
+            use Hoodoo::Services::Middleware
+            run RSpecTestInteractionIDPassingService.new
+          end
+        end
+
+        it 'passes the interaction ID' do
+          get '/v1/id_passing_source/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
+          expect( last_response.status ).to eq( 200 )
+
+          result = JSON.parse( last_response.body )
+          expect( result[ 'interaction_id' ] ).to_not be_blank
+          expect( result[ 'interaction_id' ] ).to eq( last_response.headers[ 'X-Interaction-ID' ] )
+        end
       end
 
       context 'for code coverage' do
@@ -484,7 +632,13 @@ describe Hoodoo::Services::Middleware do
           expect_any_instance_of(Hoodoo::Services::Session).to receive( :augment_with_permissions_for ).once.and_return( false )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 401 )
         end
 
@@ -495,7 +649,13 @@ describe Hoodoo::Services::Middleware do
           expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( false )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 401 )
         end
 
@@ -506,7 +666,13 @@ describe Hoodoo::Services::Middleware do
           expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( nil )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 500 )
 
           result = JSON.parse( last_response.body )
@@ -517,25 +683,55 @@ describe Hoodoo::Services::Middleware do
         it 'handles nil permissions' do
           @session.permissions = nil
 
+          result = @session.save_to_memcached
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 403 )
         end
 
         it 'handles empty permissions' do
           @session.permissions = Hoodoo::Services::Permissions.new( {} )
 
+          result = @session.save_to_memcached
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 403 )
         end
 
         it 'handles default #verify response as deny' do
           @session.permissions.set_resource( :RSpecAddPermTestClock, :show, Hoodoo::Services::Permissions::ASK )
+
+          result = @session.save_to_memcached
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
           expect_any_instance_of(Hoodoo::Services::Implementation).to receive( :verify ).once.and_call_original
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show ).once.and_call_original
 
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 403 )
         end
 
@@ -546,7 +742,13 @@ describe Hoodoo::Services::Middleware do
           # The Time endpoint already returns DENY out-of-the-box.
           expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :verify ).once.and_call_original
 
-          get '/v1/rspec_add_perm_test_clocks/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          get '/v1/rspec_add_perm_test_clocks/any',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_SESSION_ID' => @session.session_id
+              }
+
           expect( last_response.status ).to eq( 403 )
         end
       end
@@ -563,10 +765,12 @@ describe Hoodoo::Services::Middleware do
       @port_clock_no_perms_calls_date_no_perms = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockNoPermsCallsDateNoPermsService )
       @port_clock_calls_date_no_perms = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockCallsDateNoPermsService )
       @port_clock = spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestClockService )
+      @port_iid_source = spec_helper_start_svc_app_in_thread_for( RSpecTestInteractionIDPassingSourceService )
 
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestDateNoPermsService )
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestDateService )
       spec_helper_start_svc_app_in_thread_for( RSpecAddPermTestTimeService )
+      spec_helper_start_svc_app_in_thread_for( RSpecTestInteractionIDPassingDestinationService )
     end
 
     after :all do
@@ -581,7 +785,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
-          :port => @port_clock_no_perms_calls_date_no_perms
+          :port => @port_clock_no_perms_calls_date_no_perms,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '403' )
 
@@ -597,13 +802,17 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to_not receive( :show )
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
-          :port => @port_clock_no_perms_calls_date_no_perms
+          :port => @port_clock_no_perms_calls_date_no_perms,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '403' )
 
@@ -625,6 +834,9 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
@@ -632,7 +844,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any',
-          :port => @port_clock_no_perms_calls_date_no_perms
+          :port => @port_clock_no_perms_calls_date_no_perms,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '200' )
 
@@ -649,7 +862,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any',
-          :port => @port_clock_calls_date_no_perms
+          :port => @port_clock_calls_date_no_perms,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '403' )
 
@@ -665,6 +879,9 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
@@ -672,7 +889,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clock_calls_date_no_perms/any',
-          :port => @port_clock_calls_date_no_perms
+          :port => @port_clock_calls_date_no_perms,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '200' )
 
@@ -690,7 +908,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clocks/any',
-          :port => @port_clock
+          :port => @port_clock,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '200' )
 
@@ -706,7 +925,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clocks/list_instead',
-          :port => @port_clock
+          :port => @port_clock,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '200' )
 
@@ -721,7 +941,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clocks',
-          :port => @port_clock
+          :port => @port_clock,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '403' )
       end
@@ -733,6 +954,9 @@ describe Hoodoo::Services::Middleware do
           Hoodoo::Services::Permissions::ALLOW
         )
 
+        result = @session.save_to_memcached
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
+
         expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestTimeImplementation).to receive( :show ).once.and_call_original
@@ -740,7 +964,8 @@ describe Hoodoo::Services::Middleware do
 
         response = spec_helper_http(
           :path => '/v1/rspec_add_perm_test_clocks',
-          :port => @port_clock
+          :port => @port_clock,
+          :headers => { 'X-Session-ID' => @session.session_id }
         )
         expect( response.code ).to eq( '200' )
 
@@ -761,37 +986,29 @@ describe Hoodoo::Services::Middleware do
 
           response = spec_helper_http(
             :path => '/v1/rspec_add_perm_test_clocks/any',
-            :port => @port_clock
+            :port => @port_clock,
+            :headers => { 'X-Session-ID' => @session.session_id }
           )
           expect( response.code ).to eq( '401' )
         end
 
       end
     end
-  end
-end
 
-# As per comments much earlier on, a weird (but effective) little test to
-# make sure that "using_test_session?" in Interaction works properly when
-# *not* being deliberately overridden.
+    context 'testing for interaction ID passing' do
+      it 'passes the interaction ID' do
+        response = spec_helper_http(
+          :path => '/v1/id_passing_source/any',
+          :port => @port_iid_source,
+          :headers => { 'X-Session-ID' => @session.session_id }
+        )
+        expect( response.code ).to eq( '200' )
 
-describe Hoodoo::Services::Middleware do
-  after :all do
-    Hoodoo::Services::Middleware.flush_services_for_test()
-  end
+        result = JSON.parse( response.body )
 
-  def app
-    Rack::Builder.new do
-      use Hoodoo::Services::Middleware
-      run RSpecAddPermTestClockServiceA.new
+        expect( result[ 'interaction_id' ] ).to_not be_blank
+        expect( result[ 'interaction_id' ] ).to eq( response[ 'X-Interaction-ID' ] )
+      end
     end
-  end
-
-  it 'knows it is using a test session' do
-    expect_any_instance_of( Hoodoo::Services::Middleware ).to receive( :process ).once do | mw, interaction |
-      expect( interaction.using_test_session? ).to eq( true )
-    end
-
-    get '/v1/rspec_add_perm_test_clock_no_perms_calls_date_no_perms/any', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
   end
 end

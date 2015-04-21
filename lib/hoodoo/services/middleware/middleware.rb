@@ -1290,10 +1290,11 @@ module Hoodoo; module Services
     #
     def load_session_into( interaction )
 
-      session    = nil
-      session_id = interaction.rack_request.env[ 'HTTP_X_SESSION_ID' ]
+      test_session = self.class.test_session()
+      session      = nil
+      session_id   = interaction.rack_request.env[ 'HTTP_X_SESSION_ID' ]
 
-      unless session_id.nil?
+      if session_id != nil && ( test_session.nil? || test_session.session_id != session_id )
         session = Hoodoo::Services::Session.new(
           :memcached_host => self.class.memcached_host(),
           :session_id     => session_id
@@ -1301,9 +1302,7 @@ module Hoodoo; module Services
 
         result = session.load_from_memcached!( session_id )
         session = nil if result != true
-      end
-
-      if ( self.class.environment.test? || self.class.environment.development? ) && session.nil?
+      elsif ( self.class.environment.test? || self.class.environment.development? )
         interaction.using_test_session()
         session = self.class.test_session()
       end

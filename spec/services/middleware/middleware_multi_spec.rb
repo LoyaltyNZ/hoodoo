@@ -50,7 +50,6 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
 
     def to_h( context )
       {
-        'interaction_id'      => context.owning_interaction.interaction_id,
         'locale'              => context.request.locale,
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
@@ -93,7 +92,6 @@ class TestEchoQuietImplementation < Hoodoo::Services::Implementation
 
     def to_h( context )
       {
-        'interaction_id'      => context.owning_interaction.interaction_id,
         'locale'              => context.request.locale,
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
@@ -188,6 +186,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+    context.response.add_errors( result.platform_errors )
     context.response.body = { 'create' => result }
   end
 
@@ -201,7 +200,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
-
+    context.response.add_errors( result.platform_errors )
     context.response.body = { 'update' => result }
   end
 
@@ -214,6 +213,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+    context.response.add_errors( result.platform_errors )
     context.response.body = { 'delete' => result }
   end
 end
@@ -250,10 +250,6 @@ describe Hoodoo::Services::Middleware do
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
   end
 
-  before :example do
-    @interaction_id = Hoodoo::UUID.generate()
-  end
-
   # Although tests can run in random order so we can't force this set to come
   # first, at least having this set present validates all of the HTTP behaviour
   # we expect to work in the echo service. If these tests fail, all bets are
@@ -274,8 +270,7 @@ describe Hoodoo::Services::Middleware do
     def list_things
       response = spec_helper_http(
         port: @port,
-        path: '/v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two',
-        headers: { 'X-Interaction-ID' => @interaction_id }
+        path: '/v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two'
       )
 
       expect( response.code ).to eq( '200' )
@@ -285,7 +280,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ '_data' ][ 0 ]).to_not be_nil
       expect( parsed[ '_data' ][ 0 ][ 'list0' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [],
@@ -315,7 +309,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         port:    @port,
         path:    '/v2/test_some_echoes/one/two.tar.gz?_reference=embed_one,embed_two',
-        headers: { 'Content-Language' => 'fr', 'X-Interaction-ID' => @interaction_id }
+        headers: { 'Content-Language' => 'fr' }
       )
 
       expect( response.code ).to eq( '200' )
@@ -323,7 +317,6 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'show' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'fr',
           'body'                => nil,
           'uri_path_components' => [ 'one', 'two' ],
@@ -352,8 +345,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port: @port,
-        path: '/v1/test_echo_quiet/some_uuid',
-        headers: { 'X-Interaction-ID' => @interaction_id }
+        path: '/v1/test_echo_quiet/some_uuid'
       )
 
       expect( response.code ).to eq( '200' )
@@ -361,7 +353,6 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'show' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [ 'some_uuid' ],
@@ -383,8 +374,7 @@ describe Hoodoo::Services::Middleware do
         klass: Net::HTTP::Post,
         port:  @port,
         path:  '/v2/test_some_echoes.json?_embed=embed_one,embed_two',
-        body:  { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
-        headers: { 'X-Interaction-ID' => @interaction_id }
+        body:  { 'foo' => 'bar', 'baz' => 'boo' }.to_json
       )
 
       expect( response.code ).to eq( '200' )
@@ -392,7 +382,6 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'create' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => { 'foo' => 'bar', 'baz' => 'boo' },
           'uri_path_components' => [],
@@ -423,7 +412,7 @@ describe Hoodoo::Services::Middleware do
         port:    @port,
         path:    '/v2/test_some_echoes/a/b.json?_embed=embed_one',
         body:    { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
-        headers: { 'Content-Language' => 'de', 'X-Interaction-ID' => @interaction_id }
+        headers: { 'Content-Language' => 'de' }
       )
 
       expect( response.code ).to eq( '200' )
@@ -431,7 +420,6 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'update' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'de',
           'body'                => { 'foo' => 'boo', 'baz' => 'bar' },
           'uri_path_components' => [ 'a', 'b' ],
@@ -460,8 +448,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass: Net::HTTP::Delete,
         port:  @port,
-        path:  '/v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two',
-        headers: { 'X-Interaction-ID' => @interaction_id }
+        path:  '/v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two'
       )
 
       expect( response.code ).to eq( '200' )
@@ -469,7 +456,6 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'delete' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [ 'aa', 'bb' ],
@@ -535,8 +521,7 @@ describe Hoodoo::Services::Middleware do
         '/v1/test_call.tar.gz?limit=25&offset=75',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_CONTENT_LANGUAGE' => 'de',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+          'HTTP_CONTENT_LANGUAGE' => 'de' }
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -554,7 +539,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ '_data' ][ 0 ][ 'listA' ][ 0 ] ).to_not be_nil
       expect( parsed[ '_data' ][ 0 ][ 'listA' ][ 0 ][ 'list0'] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'de',
           'body'                => nil,
           'uri_path_components' => [],
@@ -596,8 +580,7 @@ describe Hoodoo::Services::Middleware do
         '/v1/test_call.tar.gz?limit=25&offset=75',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_CONTENT_LANGUAGE' => 'de',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+          'HTTP_CONTENT_LANGUAGE' => 'de' }
       )
 
       module JSON
@@ -616,8 +599,7 @@ describe Hoodoo::Services::Middleware do
       get(
         '/v1/test_call/one/two.tar.gz',
         nil,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -626,7 +608,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'show' ]).to_not be_nil
       expect( parsed[ 'show' ][ 'show' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => nil,
           'uri_path_components' => [ 'one,two' ],
@@ -655,8 +636,7 @@ describe Hoodoo::Services::Middleware do
       post(
         '/v1/test_call.tar.gz',
         { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -665,7 +645,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'create' ]).to_not be_nil
       expect( parsed[ 'create' ][ 'create' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => { 'foo' => 'bar', 'baz' => 'boo' },
           'uri_path_components' => [],
@@ -694,8 +673,7 @@ describe Hoodoo::Services::Middleware do
       patch(
         '/v1/test_call/aa/bb.tar.gz',
         { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -704,7 +682,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'update' ]).to_not be_nil
       expect( parsed[ 'update' ][ 'update' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'en-nz',
           'body'                => { 'foo' => 'boo', 'baz' => 'bar' },
           'uri_path_components' => [ 'aa,bb' ],
@@ -734,8 +711,7 @@ describe Hoodoo::Services::Middleware do
         '/v1/test_call/aone/btwo.tar.gz',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_CONTENT_LANGUAGE' => 'fr',
-          'HTTP_X_INTERACTION_ID' => @interaction_id }
+          'HTTP_CONTENT_LANGUAGE' => 'fr' }
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -744,7 +720,6 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'delete' ]).to_not be_nil
       expect( parsed[ 'delete' ][ 'delete' ] ).to eq(
         {
-          'interaction_id'      => @interaction_id,
           'locale'              => 'fr',
           'body'                => nil,
           'uri_path_components' => [ 'aone,btwo' ],
