@@ -20,7 +20,7 @@ module Hoodoo; module Services
     #
     # See also Hoodoo::Logger and Hoodoo::Services::Middleware::AMQPLogMessage.
     #
-    class AMQPLogWriter < Hoodoo::Logger::FastWriter
+    class AMQPLogWriter < Hoodoo::Logger::SlowWriter
 
       # Create an AMQP logger instance.
       #
