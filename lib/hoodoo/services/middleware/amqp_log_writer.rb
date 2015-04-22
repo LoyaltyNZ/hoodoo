@@ -91,7 +91,7 @@ module Hoodoo; module Services
           :routing_key    => @queue_name,
         )
 
-        @alchemy.send_message( message )
+        # @alchemy.send_message( message )
       end
     end
 
