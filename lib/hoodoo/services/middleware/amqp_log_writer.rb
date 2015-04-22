@@ -20,7 +20,7 @@ module Hoodoo; module Services
     #
     # See also Hoodoo::Logger and Hoodoo::Services::Middleware::AMQPLogMessage.
     #
-    class AMQPLogWriter < Hoodoo::Logger::SlowWriter
+    class AMQPLogWriter < Hoodoo::Logger::FastWriter
 
       # Create an AMQP logger instance.
       #
@@ -91,7 +91,7 @@ module Hoodoo; module Services
           :routing_key    => @queue_name,
         )
 
-        @alchemy.send_message( message )
+        # @alchemy.send_message( message )
       end
     end
 
