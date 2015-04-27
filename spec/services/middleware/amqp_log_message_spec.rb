@@ -19,10 +19,7 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
 
       :interaction_id => '3',
       :caller_id => '2',
-      :identity => { :foo => '4', :bar => '5' },
-
-      :participant_id => '', # TODO: TEMPORARY: Remove
-      :outlet_id => ''       # TODO: TEMPORARY: Remove
+      :identity => { :foo => '4', :bar => '5' }
     }
   end
 
