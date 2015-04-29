@@ -175,7 +175,13 @@ module Hoodoo
           unless extra_scope_map.nil?
             return none() if context.session.nil? || context.session.scoping.nil?
 
-            extra_scope_map.each do | model_field_name, session_scoping_key |
+            extra_scope_map.each do | model_field_name, key_or_options |
+              if key_or_options.is_a?( Hash )
+                session_scoping_key = key_or_options[ :session_field_name ]
+              else
+                session_scoping_key = key_or_options
+              end
+
               if context.session.scoping.respond_to?( session_scoping_key )
                 prevailing_scope = prevailing_scope.where( {
                   model_field_name => context.session.scoping.send( session_scoping_key )
@@ -203,6 +209,10 @@ module Hoodoo
         #         Hoodoo::Services::Session#scoping object.
         #
         def secure_with( map )
+
+          # If you change the name of the variable used here, make sure you
+          # update the Hoodoo::Presenters::Base#render_in implementation too.
+          #
           class_variable_set( '@@nz_co_loyalty_hoodoo_secure_with', map )
         end
       end

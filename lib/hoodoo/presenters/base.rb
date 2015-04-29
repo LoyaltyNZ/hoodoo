@@ -50,11 +50,13 @@ module Hoodoo
       # Since rendering top-level +nil+ is not valid JSON, should +nil+ be
       # provided as input, it'll be treated as an empty hash ("+{}+") instead.
       #
-      # +data+::       Hash or Array (depending on resource's top-level
-      #                data container type) to be represented. Data within
-      #                this is compared against the schema being called to
-      #                ensure that correct information is returned and
-      #                unknown data is ignored.
+      # This is quite a low-level call. For a higher level renderer which
+      # Hoodoo service resource implementations will probably want to use for
+      # returning resource representations in responses, see #render_in.
+      #
+      # +data+::       Hash to be represented. Data within this is compared
+      #                against the schema being called to ensure that correct
+      #                information is returned and unknown data is ignored.
       #
       # +uuid+::       Unique ID of the resource instance that is to be
       #                represented. If nil / omitted, this is assumed to be
@@ -99,6 +101,80 @@ module Hoodoo
 
         return target
       end
+
+      # A higher level version of #render, typically called from Hoodoo
+      # services in their resource implementation code.
+      #
+      # As with #render, given data is rendered according to the schema of
+      # the object the #render_in message is sent to. Options specify things
+      # like UUID and created-at date. Language information for
+      # internationalised fields can be given, but if omitted comes from the
+      # given request context data.
+      #
+      # Additional facilites exist over and above #render - security scoping
+      # information in the resource via the "secured_with" field is made
+      # available via options, along with support for embedded or referenced
+      # resource information.
+      #
+      # +context+:: A Hoodoo::Services::Context instance, which is usually the
+      #             value passed to a service implementation in calls like
+      #             Hoodoo::Services::Implementation#list or
+      #             Hoodoo::Services::Implementation#show.
+      #
+      # +data+::    Hash to be represented. Data within this is compared
+      #             against the schema being called to ensure that correct
+      #             information is returned and unknown data is ignored.
+      #
+      # +options+:: Options hash, see below.
+      #
+      # The options keys are Symbols, used as follows:
+      #
+      # +uuid+::
+      # +created_at+::
+      # +language+::
+      # +secured_with+::
+      # +embeds+::
+      # +references+::
+      # +secured_with+::
+      #
+      def self.render_in( context, data, options )
+        uuid         = options[ :uuid         ]
+        created_at   = options[ :created_at   ]
+        language     = options[ :language     ] || context.request.locale
+        secured_with = options[ :secured_with ]
+        embeds       = options[ :embeds       ]
+        references   = options[ :references   ]
+
+        target = self.render( data, uuid, created_at, language )
+
+        if secured_with.is_a?( ActiveRecord::Base )
+          result_hash     = {}
+          extra_scope_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
+                                 class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
+                                 nil
+
+          extra_scope_map.each do | model_field_name, key_or_options |
+            resource_field = if key_or_options.is_a?( Hash )
+              next if key_or_options[ :hide_from_resource ] == true
+              key_or_options[ :resource_field_name ] || model_field_name
+            else
+              key_or_options
+            end
+
+            secured_with[ resource_field ] = model.send( model_field_name )
+          end unless extra_scope_map.nil?
+
+          target[ 'secured_with' ] = result_hash unless result_hash.empty?
+        end
+
+        target[ '_embed'     ] = embeds.retrieve()     unless embeds.nil?
+        target[ '_reference' ] = references.retrieve() unless references.nil?
+
+        return target
+      end
+
+
+
 
       # Is the given rendering of a resource valid? Returns an array of
       # Error Primitive types (as hashes); this will be empty if the data
