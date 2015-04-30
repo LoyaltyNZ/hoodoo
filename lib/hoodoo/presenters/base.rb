@@ -52,7 +52,7 @@ module Hoodoo
       #
       # This is quite a low-level call. For a higher level renderer which
       # Hoodoo service resource implementations will probably want to use for
-      # returning resource representations in responses, see #render_in.
+      # returning resource representations in responses, see ::render_in.
       #
       # +data+::       Hash to be represented. Data within this is compared
       #                against the schema being called to ensure that correct
@@ -102,19 +102,19 @@ module Hoodoo
         return target
       end
 
-      # A higher level version of #render, typically called from Hoodoo
+      # A higher level version of ::render, typically called from Hoodoo
       # services in their resource implementation code.
       #
-      # As with #render, given data is rendered according to the schema of
-      # the object the #render_in message is sent to. Options specify things
-      # like UUID and created-at date. Language information for
-      # internationalised fields can be given, but if omitted comes from the
-      # given request context data.
+      # As with ::render, data is rendered according to the schema of the
+      # object the ::render_in message is sent to. Options specify things like
+      # UUID and created-at date. Language information for internationalised
+      # fields can be given, but if omitted comes from the given request
+      # context data.
       #
-      # Additional facilites exist over and above #render - security scoping
-      # information in the resource via the "secured_with" field is made
-      # available via options, along with support for embedded or referenced
-      # resource information.
+      # Additional facilites exist over and above ::render - security scoping
+      # information in the resource via its +secured_with+ field is made
+      # available through options (see below), along with support for embedded
+      # or referenced resource information.
       #
       # +context+:: A Hoodoo::Services::Context instance, which is usually the
       #             value passed to a service implementation in calls like
@@ -129,13 +129,31 @@ module Hoodoo
       #
       # The options keys are Symbols, used as follows:
       #
-      # +uuid+::
-      # +created_at+::
-      # +language+::
-      # +secured_with+::
-      # +embeds+::
-      # +references+::
-      # +secured_with+::
+      # +uuid+::         Same as the +uuid+ parameter to ::render, except
+      #                  mandatory.
+      #
+      # +created_at+::   Same as the +created_at+ parameter to ::render, except
+      #                  mandatory.
+      #
+      # +language+::     Optional value for resource's +language+ field; taken
+      #                  from the +context+ parameter if omitted.
+      #
+      # +embeds+::       A Hoodoo::Presenters::Embedding::Embeds instance that
+      #                  contains (fully rendered) resources which are to be
+      #                  embedded in this rendered representation. Optional.
+      #
+      # +references+::   A Hoodoo::Presenters::Embedding::References instance
+      #                  that contains UUIDs which are to be embedded in this
+      #                  rendered representation as references. Optional.
+      #
+      # +secured_with+:: An ActiveRecord::Base subclass instance where the
+      #                  model class includes a +secure_with+ declaration. As
+      #                  per documentation for
+      #                  Hoodoo::ActiveRecord::Secure::ClassMethods#secure and
+      #                  Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with,
+      #                  this leads (potentially) to the generation of the
+      #                  +secured_with+ field and object value in the rendered
+      #                  resource data.
       #
       def self.render_in( context, data, options )
         uuid         = options[ :uuid         ]
@@ -172,9 +190,6 @@ module Hoodoo
 
         return target
       end
-
-
-
 
       # Is the given rendering of a resource valid? Returns an array of
       # Error Primitive types (as hashes); this will be empty if the data
