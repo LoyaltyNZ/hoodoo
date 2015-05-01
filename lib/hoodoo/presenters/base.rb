@@ -155,7 +155,7 @@ module Hoodoo
       #                  +secured_with+ field and object value in the rendered
       #                  resource data.
       #
-      def self.render_in( context, data, options )
+      def self.render_in( context, data, options = {} )
         uuid         = options[ :uuid         ]
         created_at   = options[ :created_at   ]
         language     = options[ :language     ] || context.request.locale
@@ -165,21 +165,21 @@ module Hoodoo
 
         target = self.render( data, uuid, created_at, language )
 
-        if secured_with.is_a?( ActiveRecord::Base )
+        if secured_with.is_a?( ::ActiveRecord::Base )
           result_hash     = {}
-          extra_scope_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
-                                 class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
+          extra_scope_map = secured_with.class.class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
+                                 secured_with.class.class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
                                  nil
 
           extra_scope_map.each do | model_field_name, key_or_options |
-            resource_field = if key_or_options.is_a?( Hash )
+            resource_field = if key_or_options.is_a?( ::Hash )
               next if key_or_options[ :hide_from_resource ] == true
               key_or_options[ :resource_field_name ] || model_field_name
             else
-              key_or_options
+              model_field_name
             end
 
-            secured_with[ resource_field ] = model.send( model_field_name )
+            result_hash[ resource_field.to_s ] = secured_with.send( model_field_name )
           end unless extra_scope_map.nil?
 
           target[ 'secured_with' ] = result_hash unless result_hash.empty?
