@@ -747,7 +747,7 @@ describe '#schema' do
   end
 
   # Note that #render_in is tested in secure_spec.rb since a lot of the
-  # other complex setup therein would otherwisee need copying here.
+  # other complex setup therein would otherwise need copying here.
 
   describe '#render_in' do
     class RSpecTestContextForRenderInBasicImplementation < Hoodoo::Services::Implementation
