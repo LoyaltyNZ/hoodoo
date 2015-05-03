@@ -50,11 +50,13 @@ module Hoodoo
       # Since rendering top-level +nil+ is not valid JSON, should +nil+ be
       # provided as input, it'll be treated as an empty hash ("+{}+") instead.
       #
-      # +data+::       Hash or Array (depending on resource's top-level
-      #                data container type) to be represented. Data within
-      #                this is compared against the schema being called to
-      #                ensure that correct information is returned and
-      #                unknown data is ignored.
+      # This is quite a low-level call. For a higher level renderer which
+      # Hoodoo service resource implementations will probably want to use for
+      # returning resource representations in responses, see ::render_in.
+      #
+      # +data+::       Hash to be represented. Data within this is compared
+      #                against the schema being called to ensure that correct
+      #                information is returned and unknown data is ignored.
       #
       # +uuid+::       Unique ID of the resource instance that is to be
       #                represented. If nil / omitted, this is assumed to be
@@ -96,6 +98,95 @@ module Hoodoo
           target[ 'language' ] = language if self.is_internationalised?()
 
         end
+
+        return target
+      end
+
+      # A higher level version of ::render, typically called from Hoodoo
+      # services in their resource implementation code.
+      #
+      # As with ::render, data is rendered according to the schema of the
+      # object the ::render_in message is sent to. Options specify things like
+      # UUID and created-at date. Language information for internationalised
+      # fields can be given, but if omitted comes from the given request
+      # context data.
+      #
+      # Additional facilites exist over and above ::render - security scoping
+      # information in the resource via its +secured_with+ field is made
+      # available through options (see below), along with support for embedded
+      # or referenced resource information.
+      #
+      # +context+:: A Hoodoo::Services::Context instance, which is usually the
+      #             value passed to a service implementation in calls like
+      #             Hoodoo::Services::Implementation#list or
+      #             Hoodoo::Services::Implementation#show.
+      #
+      # +data+::    Hash to be represented. Data within this is compared
+      #             against the schema being called to ensure that correct
+      #             information is returned and unknown data is ignored.
+      #
+      # +options+:: Options hash, see below.
+      #
+      # The options keys are Symbols, used as follows:
+      #
+      # +uuid+::         Same as the +uuid+ parameter to ::render, except
+      #                  mandatory.
+      #
+      # +created_at+::   Same as the +created_at+ parameter to ::render, except
+      #                  mandatory.
+      #
+      # +language+::     Optional value for resource's +language+ field; taken
+      #                  from the +context+ parameter if omitted.
+      #
+      # +embeds+::       A Hoodoo::Presenters::Embedding::Embeds instance that
+      #                  contains (fully rendered) resources which are to be
+      #                  embedded in this rendered representation. Optional.
+      #
+      # +references+::   A Hoodoo::Presenters::Embedding::References instance
+      #                  that contains UUIDs which are to be embedded in this
+      #                  rendered representation as references. Optional.
+      #
+      # +secured_with+:: An ActiveRecord::Base subclass instance where the
+      #                  model class includes a +secure_with+ declaration. As
+      #                  per documentation for
+      #                  Hoodoo::ActiveRecord::Secure::ClassMethods#secure and
+      #                  Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with,
+      #                  this leads (potentially) to the generation of the
+      #                  +secured_with+ field and object value in the rendered
+      #                  resource data.
+      #
+      def self.render_in( context, data, options = {} )
+        uuid         = options[ :uuid         ]
+        created_at   = options[ :created_at   ]
+        language     = options[ :language     ] || context.request.locale
+        secured_with = options[ :secured_with ]
+        embeds       = options[ :embeds       ]
+        references   = options[ :references   ]
+
+        target = self.render( data, uuid, created_at, language )
+
+        if secured_with.is_a?( ::ActiveRecord::Base )
+          result_hash     = {}
+          extra_scope_map = secured_with.class.class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
+                                 secured_with.class.class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
+                                 nil
+
+          extra_scope_map.each do | model_field_name, key_or_options |
+            resource_field = if key_or_options.is_a?( ::Hash )
+              next if key_or_options[ :hide_from_resource ] == true
+              key_or_options[ :resource_field_name ] || model_field_name
+            else
+              model_field_name
+            end
+
+            result_hash[ resource_field.to_s ] = secured_with.send( model_field_name )
+          end unless extra_scope_map.nil?
+
+          target[ 'secured_with' ] = result_hash unless result_hash.empty?
+        end
+
+        target[ '_embed'     ] = embeds.retrieve()     unless embeds.nil?
+        target[ '_reference' ] = references.retrieve() unless references.nil?
 
         return target
       end

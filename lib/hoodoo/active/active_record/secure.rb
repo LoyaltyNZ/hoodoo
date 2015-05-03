@@ -54,7 +54,16 @@ module Hoodoo
       #
       module ClassMethods
 
-        # The core of out-of-the-box Hoodoo data access security.
+        # The core of out-of-the-box Hoodoo data access security layer.
+        #
+        # Parameters:
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # == Overview
         #
         # In most non-trivial systems, people calling into the system under
         # a Session will have limited access to resource records. Often the
@@ -100,6 +109,8 @@ module Hoodoo
         # matched up with the 'what can this Session see'. That can be done
         # but it might be error prone, especially if a lot of resource
         # endpoints all have the same data access scoping rules.
+        #
+        # == Automatic session-based finder scoping
         #
         # That's where the ActiveRecord secure context extension comes in.
         # Models declare _mappings_ between database fields and fields in
@@ -148,8 +159,113 @@ module Hoodoo
         # you are strongly encouraged to use these wherever possible, rather
         # than calling #secure directly.
         #
-        # *Important*: If you state a model must be secured by one or more
-        # fields, then:
+        # == Rendering resources
+        #
+        # Models aren't directly connected to Resource representations, but
+        # since the security later interfaces with session data herein, there
+        # is clearly an intersection of concepts. Even though fields in a
+        # Model may not map directly to fields in a related Resource (or
+        # many Models might contribute to a Resource), the security scoping
+        # rules that led to the limitations on data retrieval may be useful
+        # to an API caller. The API basic definitions support this through
+        # a +secured_with+ standard (but optional) resource field.
+        #
+        # The +secured_with+ field's value is an object of key/value pairs.
+        # Its contents depend on how the #secure_with method is used in a
+        # model. The #secure_with call actually supports _two_ modes of
+        # operation. One is as already shown above; suppose we have:
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => :authorised_caller_uuids,
+        #       :programme_code       => :authorised_programme_codes
+        #     } )
+        #
+        # If Hoodoo::Presenters::Base::render_in is called and an instance of
+        # a model with the above declaration is passed in the +secured_with+
+        # option, then the keys from the declaration appear in the resource
+        # representation's +secured_with+ field's object and the values are
+        # the _actual_ scoping values which were used, i.e. the rendered
+        # data would contain:
+        #
+        #     {
+        #       "id": "<UUID>",
+        #       "kind": "Example",
+        #       "created_at": "2015-04-30T16:25:17+12:00",
+        #       "secured_with": {
+        #         "creating_caller_uuid": "<UUID>",
+        #         "programme_code": "<code>"
+        #       },
+        #       ...
+        #     }
+        #
+        # This binds the field values in the model to the values in the
+        # rendered resource representation, though; and what if we only wanted
+        # (say) the "creating_caller_uuid" to be revealed, but did not want to
+        # show the "programme_code" value? To do this, instead of passing a
+        # Symbol in the values of the #secure_with options, you provide a Hash
+        # of options for that particular security entry. Option keys are
+        # Symbols:
+        #
+        # +session_field_name+::  This is the field that's looked up in the
+        #                         session's scoping section.
+        #
+        # +resource_field_name+:: This is the name that'll appear in the
+        #                         rendered resource.
+        #
+        # +hide_from_resource+::  If present and set to +true+, the entry will
+        #                         not be shown; else it is shown by default
+        #                         (if you're passing in a model instance to a
+        #                         render call via the +secured_with+ option it
+        #                         is assumed that you explicitly _do_ want to
+        #                         include this kind of information rather than
+        #                         hide it).
+        #
+        # To help clarify the above, the following two calls to #secure_with
+        # have exactly the same effect.
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => :authorised_caller_uuids
+        #     } )
+        #
+        #     # ...is equivalent to...
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name  => :authorised_caller_uuids,
+        #         :resource_field_name => :creating_caller_uuid, # (Or just omit this option)
+        #         :hide_from_resource  => false # (Or just omit this option)
+        #       }
+        #     } )
+        #
+        # Taking the previous example, let's change the name of the field shown
+        # in the resource and hide the "programme_code" entry:
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name  => :authorised_caller_uuids,
+        #         :resource_field_name => :caller_id # Note renaming of field
+        #       },
+        #       :programme_code => {
+        #         :session_field_name => :authorised_programme_codes,
+        #         :hide_from_resource => true
+        #       }
+        #     } )
+        #
+        # ...would lead to a rendered resource looking something like this:
+        #
+        #     {
+        #       "id": "<UUID>",
+        #       "kind": "Example",
+        #       "created_at": "2015-04-30T16:25:17+12:00",
+        #       "secured_with": {
+        #         "caller_id": "<UUID>",
+        #       },
+        #       ...
+        #     }
+        #
+        # == Important
+        #
+        # If you state a model must be secured by one or more fields, then:
         #
         # * If there is no session at all in the given context, _or_
         # * The session has no scoping data, _or_
@@ -158,13 +274,6 @@ module Hoodoo
         #
         # ...the returned scope *will* *find* *no* *results*, by design.
         # The default failure mode is to reveal no data at all.
-        #
-        # Parameters:
-        #
-        # +context+:: Hoodoo::Services::Context instance describing a call
-        #             context. This is typically a value passed to one of
-        #             the Hoodoo::Services::Implementation instance methods
-        #             that a resource subclass implements.
         #
         def secure( context )
           prevailing_scope = all() # "Model.all" -> returns anonymous scope
@@ -175,7 +284,13 @@ module Hoodoo
           unless extra_scope_map.nil?
             return none() if context.session.nil? || context.session.scoping.nil?
 
-            extra_scope_map.each do | model_field_name, session_scoping_key |
+            extra_scope_map.each do | model_field_name, key_or_options |
+              if key_or_options.is_a?( Hash )
+                session_scoping_key = key_or_options[ :session_field_name ]
+              else
+                session_scoping_key = key_or_options
+              end
+
               if context.session.scoping.respond_to?( session_scoping_key )
                 prevailing_scope = prevailing_scope.where( {
                   model_field_name => context.session.scoping.send( session_scoping_key )
@@ -200,9 +315,14 @@ module Hoodoo
         # +map+:: A Hash of String or Symbol keys and values that gives the
         #         secure mapping details. The keys are names of fields in
         #         the model. The values are names of fields in the
-        #         Hoodoo::Services::Session#scoping object.
+        #         Hoodoo::Services::Session#scoping object, or can be a Hash
+        #         of options; see #secure for full details and examples.
         #
         def secure_with( map )
+
+          # If you change the name of the variable used here, make sure you
+          # update the Hoodoo::Presenters::Base#render_in implementation too.
+          #
           class_variable_set( '@@nz_co_loyalty_hoodoo_secure_with', map )
         end
       end

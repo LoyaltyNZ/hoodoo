@@ -745,4 +745,127 @@ describe '#schema' do
       expect(result).to eq({ 'inter' => { 'one' => {}, 'two' => { 'hello' => 'twohellotext' } } })
     end
   end
+
+  # Note that #render_in is tested in secure_spec.rb since a lot of the
+  # other complex setup therein would otherwise need copying here.
+
+  describe '#render_in' do
+    class RSpecTestContextForRenderInBasicImplementation < Hoodoo::Services::Implementation
+    end
+
+    class RSpecTestContextForRenderInBasicInterface < Hoodoo::Services::Interface
+      interface :RSpecTestResource do
+        endpoint :rspec_test_service_stub, RSpecTestContextForRenderInBasicImplementation
+      end
+    end
+
+    class RSpecTestContextForRenderInBasic < Hoodoo::Services::Service
+      comprised_of RSpecTestContextForRenderInBasicInterface
+    end
+
+    class TestPresenter5 < Hoodoo::Presenters::Base
+      schema do
+        string :three, :length => 15, :required => false, :default => 'default_three'
+        internationalised
+      end
+    end
+
+    before :each do
+      ses = Hoodoo::Services::Session.new
+      req = Hoodoo::Services::Request.new
+      res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
+      mid = Hoodoo::Services::Middleware.new( RSpecTestContextForRenderInBasic.new )
+      int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
+
+      req.locale = 'de'
+
+      @con = Hoodoo::Services::Context.new( ses, req, res, int )
+    end
+
+    it 'renders without options' do
+      data = {}
+      expect(TestPresenter5.render_in(@con, data)).to eq({
+        'three' => 'default_three'
+      })
+    end
+
+    it 'renders with minimal options' do
+      data = {}
+      t = Time.now.utc
+      u = Hoodoo::UUID.generate
+      options = { :uuid => u, :created_at => t }
+      expect(TestPresenter5.render_in(@con, data, options)).to eq({
+        'id'         => u,
+        'kind'       => 'TestPresenter5',
+        'created_at' => t.iso8601,
+        'language'   => 'de',
+        'three'      => 'default_three'
+      })
+    end
+
+    it 'overrides language' do
+      data = {}
+      t = Time.now.utc
+      u = Hoodoo::UUID.generate
+      options = { :uuid => u, :created_at => t, :language => 'fr' }
+      expect(TestPresenter5.render_in(@con, data, options)).to eq({
+        'id'         => u,
+        'kind'       => 'TestPresenter5',
+        'created_at' => t.iso8601,
+        'language'   => 'fr',
+        'three'      => 'default_three'
+      })
+    end
+
+    it 'embeds things' do
+      data = {}
+      t = Time.now.utc
+      u = Hoodoo::UUID.generate
+      e = Hoodoo::Presenters::Embedding::Embeds.new
+      voucher = {'description' => 'foo'}
+      balances = [ {'NZD' => '23', 'X-FBPTS' => '1'} ]
+      e.add_one( 'voucher', voucher )
+      e.add_many( 'balances', balances )
+      options = { :uuid => u, :created_at => t, :embeds => e }
+      expect(TestPresenter5.render_in(@con, data, options)).to eq({
+        'id'         => u,
+        'kind'       => 'TestPresenter5',
+        'created_at' => t.iso8601,
+        'language'   => 'de',
+        'three'      => 'default_three',
+        '_embed'     => {
+          'voucher' => voucher,
+          'balances' => balances
+        }
+      })
+    end
+
+    it 'references things' do
+      data = {}
+      t = Time.now.utc
+      u = Hoodoo::UUID.generate
+      r = Hoodoo::Presenters::Embedding::References.new
+      voucher = Hoodoo::UUID.generate
+      balances = [ Hoodoo::UUID.generate, Hoodoo::UUID.generate ]
+      r.add_one( 'voucher', voucher )
+      r.add_many( 'balances', balances )
+      options = { :uuid => u, :created_at => t, :references => r }
+      expect(TestPresenter5.render_in(@con, data, options)).to eq({
+        'id'         => u,
+        'kind'       => 'TestPresenter5',
+        'created_at' => t.iso8601,
+        'language'   => 'de',
+        'three'      => 'default_three',
+        '_reference' => {
+          'voucher' => voucher,
+          'balances' => balances
+        }
+      })
+    end
+
+    # The "secured_with" option is tested in "secure_spec.rb" as lots of
+    # tricky related setup is done there that would only end up being
+    # coped in here otherwise.
+
+  end
 end

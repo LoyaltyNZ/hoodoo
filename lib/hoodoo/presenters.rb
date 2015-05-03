@@ -24,6 +24,7 @@ require 'hoodoo/utilities'
 
 require 'hoodoo/presenters/base'
 require 'hoodoo/presenters/base_dsl'
+require 'hoodoo/presenters/embedding'
 
 require 'hoodoo/presenters/types/field'
 require 'hoodoo/presenters/types/object'

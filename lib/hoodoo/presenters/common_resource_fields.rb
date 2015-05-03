@@ -20,6 +20,11 @@ module Hoodoo
         datetime :created_at, :required => true
         text     :kind,       :required => true
         text     :language
+
+        hash     :secured_with
+
+        hash     :_embed
+        hash     :_reference
       end
     end
   end

@@ -25,7 +25,7 @@ module Hoodoo
       # Create a client instance. This is used as a factory for endpoint
       # instances which communicate with Resource implementations.
       #
-      # = Overview
+      # == Overview
       #
       # Suppose you have Resources with only +public_actions+ so that no
       # sessions are needed, with resource implementations running at host
@@ -90,7 +90,7 @@ module Hoodoo
       #       # data (String keys) or Array of Hashes of such data.
       #     end
       #
-      # = Session management
+      # == Session management
       #
       # By default, the Hoodoo::Client constructor assumes you want automatic
       # session management.
@@ -129,7 +129,7 @@ module Hoodoo
       # given session is used until it expires (a "platform.invalid_session"
       # error is encountered), after which a new one will be obtained.
       #
-      # = Discovery parameters
+      # == Discovery parameters
       #
       # The Client instance needs to be able to find the place where the
       # requested Resource implementations are located, which it does using
@@ -167,7 +167,7 @@ module Hoodoo
       #                           +base_uri+ option is provided, both
       #                           +drb_uri+ and +drb_port+ will be ignored.
       #
-      # = Other parameters
+      # == Other parameters
       #
       # The following additional *named* parameters are all optional:
       #

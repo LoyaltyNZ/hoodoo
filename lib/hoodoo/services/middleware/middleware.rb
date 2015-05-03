@@ -117,14 +117,11 @@ module Hoodoo; module Services
 
     # Prohibited fields in creations or updates - these are the common fields
     # specified in the API, which are emergent in the platform or are set via
-    # other routes (e.g. "language" comes from HTTP headers in requests).
+    # other routes (e.g. "language" comes from HTTP headers in requests). This
+    # is obtained via the Hoodoo::Presenters::CommonResourceFields class and
+    # its described field schema, so see that for details.
     #
-    PROHIBITED_INBOUND_FIELDS = [
-      'id',
-      'created_at',
-      'kind',
-      'language'
-    ]
+    PROHIBITED_INBOUND_FIELDS = Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys
 
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
     # DOS attempts to consume RAM.

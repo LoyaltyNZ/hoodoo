@@ -118,7 +118,6 @@ module Hoodoo
           #
           # *args::    Any other arguments to pass to +action+.
           #
-          #
           def auto_retry( action, *args )
 
             # We use the session endpoint as a session ID cache, in essence,

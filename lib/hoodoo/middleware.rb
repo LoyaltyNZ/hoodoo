@@ -15,6 +15,7 @@ require 'hoodoo/communicators'
 require 'hoodoo/logger'
 require 'hoodoo/discovery'
 require 'hoodoo/client'
+require 'hoodoo/presenters'
 
 # Middleware
 
