@@ -544,14 +544,26 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should complain about bad limit query parameter' do
+      def test_with_limit( limit )
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
-        get '/v2/rspec_test_service_stub?limit=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get "/v2/rspec_test_service_stub?limit=#{ limit }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('limit')
+      end
+
+      it 'should complain about non-numeric limit query parameter' do
+        test_with_limit( 'foo' )
+      end
+
+      it 'should complain about zero limit query parameter' do
+        test_with_limit( 0 )
+      end
+
+      it 'should complain about negative limit query parameter' do
+        test_with_limit( -1 )
       end
 
       it 'should respond to offset query parameter' do
@@ -564,14 +576,22 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should complain about bad offset query parameter' do
+      def test_with_offset( offset )
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
-        get '/v2/rspec_test_service_stub?offset=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get "/v2/rspec_test_service_stub?offset=#{ offset }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('offset')
+      end
+
+      it 'should complain about non-numeric offset query parameter' do
+        test_with_offset( 'foo' )
+      end
+
+      it 'should complain about negative offset query parameter' do
+        test_with_offset( -1 )
       end
 
       it 'should respond to sort query parameter' do

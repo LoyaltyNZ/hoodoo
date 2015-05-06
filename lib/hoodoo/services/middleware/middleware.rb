@@ -2079,10 +2079,10 @@ module Hoodoo; module Services
       malformed = unrecognised_query_keys
 
       limit = Hoodoo::Utilities::to_integer?( query_hash[ 'limit' ] || interface.to_list.limit )
-      malformed << :limit if limit.nil?
+      malformed << :limit if limit.nil? || limit < 1
 
       offset = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] || 0 )
-      malformed << :offset if offset.nil?
+      malformed << :offset if offset.nil? || offset < 0
 
       sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
       malformed << :sort unless interface.to_list.sort.keys.include?( sort_key )
