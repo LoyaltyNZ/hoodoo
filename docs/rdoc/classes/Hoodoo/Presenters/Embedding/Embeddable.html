@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Presenters::Embedding::Embeddable</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            Hoodoo::Presenters::Embedding::Embeddable 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../../../files/lib/hoodoo/presenters/embedding_rb.html">lib/hoodoo/presenters/embedding.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>The <a href="Embeddable.html">Embeddable</a> base class should not be
+instantiated directly. It provides common functionality for <a
+href="Embeds.html">Hoodoo::Presenters::Embedding::Embeds</a> and <a
+href="References.html">Hoodoo::Presenters::Embedding::References</a> - use
+those instead.</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>A</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-add_many">add_many</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-add_one">add_one</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-remove">remove</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-retrieve">retrieve</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new</b>()
+            
+            <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeddable.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Create an instance.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
+  <span class="ruby-ivar">@hash</span> = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-add_many">
+            
+              <b>add_many</b>( key, array_of_rendered_resources_or_uuids )
+            
+            <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeddable.html#method-i-add_many" name="method-i-add_many" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Add a collection of resources (for embedding) or UUIDs (for referencing) to
+an embed or reference assembly.</p>
+<dl class="rdoc-list note-list"><dt><code>key</code>
+<dd>
+<p>The key to use in the resource representation leading to the embedded
+resource object or <a href="../UUID.html">UUID</a> string array. Typically
+follows a plural name convention in your resource API field language of
+choice, e.g. “members” (an API where the resource names and fields are in
+English), “mitglieder” (an API described in German).</p>
+
+<p>This key must match the value specified in the query string of a request in
+order to ask for the things in question to be embedded / referenced.</p>
+</dd><dt><code>array_of_rendered_resources_or_uuids</code>
+<dd>
+<p>An <a href="../Array.html">Array</a> of rendered</p>
+</dd></dl>
+
+<pre><code>resource representations in full, or an Array of resource
+UUID Strings.</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-add_many_source')" id="l_method-i-add_many_source">show</a>
+                
+              </p>
+              <div id="method-i-add_many_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 73</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_many</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span> )
+  <span class="ruby-identifier">validate_many</span>( <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span> )
+  <span class="ruby-ivar">@hash</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">array_of_rendered_resources_or_uuids</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-add_one">
+            
+              <b>add_one</b>( key, rendered_resource_or_uuid )
+            
+            <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeddable.html#method-i-add_one" name="method-i-add_one" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Add a singlular resource (for embedding) or <a href="../UUID.html">UUID</a>
+(for referencing) to an embed or reference assembly.</p>
+<dl class="rdoc-list note-list"><dt><code>key</code>
+<dd>
+<p>The key to use in the resource representation leading to the embedded
+resource object or <a href="../UUID.html">UUID</a> string. Typically
+follows a singular name convention in your resource API field language of
+choice, e.g. “member” (an API where the resource names and fields are in
+English), “mitglied” (an API described in German).</p>
+
+<p>This key must match the value specified in the query string of a request in
+order to ask for the thing in question to be embedded / referenced.</p>
+</dd><dt><code>rendered_resource_or_uuid</code>
+<dd>
+<p>A rendered resource representation</p>
+</dd></dl>
+
+<pre><code>in full, or a resource UUID String.</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-add_one_source')" id="l_method-i-add_one_source">show</a>
+                
+              </p>
+              <div id="method-i-add_one_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_one</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">rendered_resource_or_uuid</span> )
+  <span class="ruby-identifier">validate_one</span>( <span class="ruby-identifier">rendered_resource_or_uuid</span> )
+  <span class="ruby-ivar">@hash</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">rendered_resource_or_uuid</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-remove">
+            
+              <b>remove</b>( key )
+            
+            <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeddable.html#method-i-remove" name="method-i-remove" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Delete all data associated with the given key.</p>
+<dl class="rdoc-list note-list"><dt>key
+<dd>
+<p>As provided to a prior call to <a
+href="Embeddable.html#method-i-add_one">add_one</a> or <a
+href="Embeddable.html#method-i-add_many">add_many</a>. Has no side effects
+if the key has not been previously used in such a call; no error is raised
+in this case either.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-remove_source')" id="l_method-i-remove_source">show</a>
+                
+              </p>
+              <div id="method-i-remove_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 84</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remove</span>( <span class="ruby-identifier">key</span> )
+  <span class="ruby-ivar">@hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-retrieve">
+            
+              <b>retrieve</b>()
+            
+            <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeddable.html#method-i-retrieve" name="method-i-retrieve" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Returns a <a href="../Hash.html">Hash</a> where keys are the keys provided
+in calls to <a href="Embeddable.html#method-i-add_one">add_one</a> or <a
+href="Embeddable.html#method-i-add_many">add_many</a> and values are the
+values provided to those same corresponding calls. Returns an empty <a
+href="../Hash.html">Hash</a> if no such calls have been made or if all the
+keys were subsequently removed with <a
+href="Embeddable.html#method-i-remove">remove</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-retrieve_source')" id="l_method-i-retrieve_source">show</a>
+                
+              </p>
+              <div id="method-i-retrieve_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/embedding.rb, line 93</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">retrieve</span>
+  <span class="ruby-ivar">@hash</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    

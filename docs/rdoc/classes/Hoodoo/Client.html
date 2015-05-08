@@ -175,7 +175,7 @@ being contacted.</p>
               <p>Create a client instance. This is used as a factory for endpoint instances
 which communicate with Resource implementations.</p>
 
-<h1 id="method-c-new-label-Overview">Overview</h1>
+<h2 id="method-c-new-label-Overview">Overview</h2>
 
 <p>Suppose you have Resources with only <code>public_actions</code> so that no
 sessions are needed, with resource implementations running at host
@@ -257,7 +257,7 @@ else
 end
 </code></pre>
 
-<h1 id="method-c-new-label-Session+management">Session management</h1>
+<h2 id="method-c-new-label-Session+management">Session management</h2>
 
 <p>By default, the <a href="Client.html">Hoodoo::Client</a> constructor
 assumes you want automatic session management.</p>
@@ -298,7 +298,7 @@ be used in conjunction with auto-session management; in that case, the
 given session is used until it expires (a “platform.invalid_session” error
 is encountered), after which a new one will be obtained.</p>
 
-<h1 id="method-c-new-label-Discovery+parameters">Discovery parameters</h1>
+<h2 id="method-c-new-label-Discovery+parameters">Discovery parameters</h2>
 
 <p>The <a href="Client.html">Client</a> instance needs to be able to find the
 place where the requested Resource implementations are located, which it
@@ -338,7 +338,7 @@ should both be given. If the <code>base_uri</code> option is provided, both
 <code>drb_uri</code> and <code>drb_port</code> will be ignored.</p>
 </dd></dl>
 
-<h1 id="method-c-new-label-Other+parameters">Other parameters</h1>
+<h2 id="method-c-new-label-Other+parameters">Other parameters</h2>
 
 <p>The following additional <strong>named</strong> parameters are all
 optional:</p>

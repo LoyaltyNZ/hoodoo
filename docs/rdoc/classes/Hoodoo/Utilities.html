@@ -61,7 +61,29 @@
             
               
               <li>
+                <a href="#method-c-deep_dup">deep_dup</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-c-deep_merge_into">deep_merge_into</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>H</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-hash_diff">hash_diff</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-hash_key_paths">hash_key_paths</a>
               </li>
             
           </ul>
@@ -124,6 +146,60 @@
     
       <div class="sectiontitle">Class Public methods</div>
       
+        <div class="method">
+          <div class="title method-title" id="method-c-deep_dup">
+            
+              <b>deep_dup</b>( obj )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-deep_dup" name="method-c-deep_dup" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Thorough but slow deep duplication of any object (if it isn&#39;t
+duplicable, e.g. FixNum, you just get the same thing back). Usually used
+with Hashes or Arrays.</p>
+
+<p><code>obj</code>: Object to duplicate.</p>
+
+<p>Returns the duplicated object if duplicable, else returns the input
+parameter.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-deep_dup_source')" id="l_method-c-deep_dup_source">show</a>
+                
+              </p>
+              <div id="method-c-deep_dup_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 70</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">obj</span> )
+  <span class="ruby-identifier">duplicate</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">obj</span>
+
+  <span class="ruby-identifier">result</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">duplicate</span>[ <span class="ruby-identifier">k</span> ] = <span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">v</span> ) }
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+    <span class="ruby-identifier">duplicate</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">entry</span> ) }
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">duplicate</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
         <div class="method">
           <div class="title method-title" id="method-c-deep_merge_into">
             
@@ -199,7 +275,7 @@ will overwrite the value in the target hash.</p>
                 
               </p>
               <div id="method-c-deep_merge_into_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 101</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 124</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
 
   <span class="ruby-comment"># Based on:</span>
@@ -211,6 +287,156 @@ will overwrite the value in the target hash.</p>
   }
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">target_hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">inbound_hash</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-hash_diff">
+            
+              <b>hash_diff</b>( hash1, hash2 )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-hash_diff" name="method-c-hash_diff" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Deep diff two hashes. Adapted shamelessly from:</p>
+
+<p><a
+href="http://stackoverflow.com/questions/1766741/comparing-ruby-hashes">stackoverflow.com/questions/1766741/comparing-ruby-hashes</a></p>
+<dl class="rdoc-list note-list"><dt><code>hash1</code>
+<dd>
+<p>“Left hand” hash for comparison.</p>
+</dd><dt><code>hash2</code>
+<dd>
+<p>“Right hand” hash for comparison.</p>
+</dd></dl>
+
+<p>The returned result is a Hash itself, potentially nested, with any present
+key paths leading to an array describing the difference found at that key
+path. If the two input hashes had values at the path, the differing values
+are placed in the array (“left hand” value at index 0, “right hand” at
+index 1). If one input hash has a key leading to a value which the other
+omits, the array contains <code>nil</code> for the omitted entry.</p>
+
+<p>Example:</p>
+
+<pre><code>hash1 = { :foo =&gt; { :bar =&gt; 2 }, :baz =&gt; true, :boo =&gt; false }
+hash2 = { :foo =&gt; { :bar =&gt; 3 },               :boo =&gt; false }
+
+Hoodoo::Utilities.hash_diff( hash1, hash2 )
+# =&gt; { :foo =&gt; { :bar =&gt; [ 2, 3 ] }, :baz =&gt; [ true, nil ] }
+
+Hoodoo::Utilities.hash_diff( hash2, hash1 )
+# =&gt; { :foo =&gt; { :bar =&gt; [ 3, 2 ] }, :baz =&gt; [ nil, true ] }
+</code></pre>
+
+<p>Bear in mind that the difference array contains values of everything
+different from the first part of the key path where things diverge. So in
+this case:</p>
+
+<pre><code>hash1 = { :foo =&gt; { :bar =&gt; { :baz =&gt; [ 1, 2, 3 ] } } }
+hash2 = {}
+</code></pre>
+
+<p>…the difference starts all the way up at “:foo”. The result is thus
+<strong>not</strong> a Hash where just the “:baz” array is picked out as a
+difference; the entire Hash sub-tree is picked out:</p>
+
+<pre><code>diff = Hoodoo::Utilities.hash_diff( hash1, hash2 )
+# =&gt; { :foo =&gt; [ { :bar =&gt; { :baz =&gt; [ 1, 2, 3 ] } }, nil ] }
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-hash_diff_source')" id="l_method-c-hash_diff_source">show</a>
+                
+              </p>
+              <div id="method-c-hash_diff_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 177</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
+  <span class="ruby-keyword">return</span> ( <span class="ruby-identifier">hash1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">hash2</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">key</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">==</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ]
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> )
+        <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ], <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ] )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">key</span> ] = [ <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ], <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ] ]
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-hash_key_paths">
+            
+              <b>hash_key_paths</b>( hash )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-hash_key_paths" name="method-c-hash_key_paths" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Convert a (potentially nested) Hash into an array of entries which
+represent its keys, with the notation “foo.bar.baz” for nested hashes.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p>Input Hash.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre><code>hash = { :foo =&gt; 1, :bar =&gt; { :baz =&gt; 2, :boo =&gt; { :hello =&gt; :world } } }
+
+Hoodoo::Utilities.hash_key_paths( hash )
+# =&gt; [ &#39;foo&#39;, &#39;bar.baz&#39;, &#39;bar.boo.hello&#39; ]
+</code></pre>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-hash_key_paths_source')" id="l_method-c-hash_key_paths_source">show</a>
+                
+              </p>
+              <div id="method-c-hash_key_paths_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 203</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+      <span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">value</span> ).<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
+        <span class="ruby-node">&quot;#{ key }.#{ entry }&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>.<span class="ruby-identifier">flatten</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -253,7 +479,7 @@ href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-p
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 133</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
   <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-number">0</span> )
   <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-number">0</span> ) )
@@ -414,7 +640,7 @@ Time.now (yields nil, nil).</p>
                 
               </p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 120</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>

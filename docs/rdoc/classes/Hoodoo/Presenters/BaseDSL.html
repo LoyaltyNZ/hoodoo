@@ -294,10 +294,12 @@ being required. Whether or not the fields of the referenced Currency type
 are needed is up to the definition of that type. See <a
 href="BaseDSL.html#method-i-type">type</a> for more information.</p>
 
-<pre><code>class VeryWealthy &lt; Hoodoo::Presenters::Object
-  array :currencies, :required =&gt; true do
-    type :Currency
-    string :notes, :required =&gt; true, :length =&gt; 32
+<pre><code>class VeryWealthy &lt; Hoodoo::Presenters::Base
+  schema do
+    array :currencies, :required =&gt; true do
+      type :Currency
+      string :notes, :required =&gt; true, :length =&gt; 32
+    end
   end
 end
 </code></pre>
@@ -318,7 +320,7 @@ end
                 
               </p>
               <div id="method-i-array_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 78</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">array</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">ary</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_internationalised?</span>()
@@ -331,14 +333,14 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-boolean">
             
-              <b>boolean</b>(name, options = {})
+              <b>boolean</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-boolean" name="method-i-boolean" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON boolean with the supplied name and options Params</p>
+              <p>Define a JSON boolean with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -363,9 +365,9 @@ end
                 
               </p>
               <div id="method-i-boolean_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 164</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">boolean</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 177</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">boolean</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -375,14 +377,14 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-date">
             
-              <b>date</b>(name, options = {})
+              <b>date</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-date" name="method-i-date" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON date with the supplied name and options Params</p>
+              <p>Define a JSON date with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -407,9 +409,9 @@ end
                 
               </p>
               <div id="method-i-date_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 172</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">date</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 186</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">date</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -419,14 +421,14 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-datetime">
             
-              <b>datetime</b>(name, options = {})
+              <b>datetime</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-datetime" name="method-i-datetime" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON datetime with the supplied name and options Params</p>
+              <p>Define a JSON datetime with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -451,9 +453,9 @@ end
                 
               </p>
               <div id="method-i-datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 180</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">datetime</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 195</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">datetime</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -463,14 +465,14 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-decimal">
             
-              <b>decimal</b>(name, options = {})
+              <b>decimal</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-decimal" name="method-i-decimal" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON decimal with the supplied name and options Params</p>
+              <p>Define a JSON decimal with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -496,9 +498,9 @@ end
                 
               </p>
               <div id="method-i-decimal_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 156</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">decimal</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 168</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">decimal</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -508,7 +510,7 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-enum">
             
-              <b>enum</b>(name, options = {})
+              <b>enum</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-enum" name="method-i-enum" class="permalink">Link</a>
           </div>
@@ -516,7 +518,7 @@ end
           
             <div class="description">
               <p>Define a JSON string which can only have a restricted set of exactly
-matched values, with the supplied name and options Params</p>
+matched values, with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
 <p>The JSON key</p>
@@ -542,9 +544,9 @@ matched values, with the supplied name and options Params</p>
                 
               </p>
               <div id="method-i-enum_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 199</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enum</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 216</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enum</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -554,14 +556,14 @@ matched values, with the supplied name and options Params</p>
         <div class="method">
           <div class="title method-title" id="method-i-float">
             
-              <b>float</b>(name, options = {})
+              <b>float</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-float" name="method-i-float" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON float with the supplied name and options Params</p>
+              <p>Define a JSON float with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -586,9 +588,9 @@ matched values, with the supplied name and options Params</p>
                 
               </p>
               <div id="method-i-float_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 148</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">float</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 159</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">float</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -624,10 +626,12 @@ characters long and values</p>
 
 <pre><code>        must match the Hoodoo::Data::Types::Currency type.
 
-class CurrencyHash &lt; Hoodoo::Presenters::Object
-  hash :currencies do
-    keys :length =&gt; 16 do
-      type :Currency
+class CurrencyHash &lt; Hoodoo::Presenters::Base
+  schema do
+    hash :currencies do
+      keys :length =&gt; 16 do
+        type :Currency
+      end
     end
   end
 end</code></pre>
@@ -640,15 +644,17 @@ or &#39;two&#39;, each with a</p>
 
 <pre><code>        value matching the given schema.
 
-class AltCurrencyHash &lt; Hoodoo::Presenters::Object
-  hash :currencies do
-    key :one do
-      type :Currency
-    end
+class AltCurrencyHash &lt; Hoodoo::Presenters::Base
+  schema do
+    hash :currencies do
+      key :one do
+        type :Currency
+      end
 
-    key :two do
-      text :title
-      text :description
+      key :two do
+        text :title
+        text :description
+      end
     end
   end
 end</code></pre>
@@ -672,7 +678,7 @@ more information and examples.</p>
                 
               </p>
               <div id="method-i-hash_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 123</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">hash</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">is_internationalised?</span>()
@@ -685,14 +691,14 @@ more information and examples.</p>
         <div class="method">
           <div class="title method-title" id="method-i-integer">
             
-              <b>integer</b>(name, options = {})
+              <b>integer</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-integer" name="method-i-integer" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON integer with the supplied name and options Params</p>
+              <p>Define a JSON integer with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -717,9 +723,9 @@ more information and examples.</p>
                 
               </p>
               <div id="method-i-integer_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 132</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">integer</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 141</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">integer</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -747,24 +753,26 @@ the cross-referencing resource becomes itself implicitly internationalised
 href="BaseDSL.html#method-i-type">type</a>.</p>
 <dl class="rdoc-list note-list"><dt><code>options</code>
 <dd>
-<p>Optional options hash. No option keys/values defined yet.</p>
+<p>Optional options hash. No options currently defined.</p>
 </dd></dl>
 
 <p>Example - a Member resource with internationalised fields such as the
 member&#39;s name:</p>
 
-<pre><code>class Member &lt; Hoodoo::Presenters::Object
+<pre><code>class Member &lt; Hoodoo::Presenters::Base
+  schema do
 
-  # Say that Member will contain at least one field that holds
-  # human readable data, causing the Member to be subject to
-  # internationalisation rules.
+    # Say that Member will contain at least one field that holds
+    # human readable data, causing the Member to be subject to
+    # internationalisation rules.
 
-  internationalised
+    internationalised
 
-  # Declare fields as normal, for example...
+    # Declare fields as normal, for example...
 
-  text :name
+    text :name
 
+  end
 end
 </code></pre>
             </div>
@@ -784,7 +792,7 @@ end
                 
               </p>
               <div id="method-i-internationalised_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 428</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 485</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">true</span>
@@ -824,7 +832,7 @@ end
                 
               </p>
               <div id="method-i-is_internationalised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 436</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 493</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">is_internationalised?</span>
   <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@internationalised</span>
 <span class="ruby-keyword">end</span></pre>
@@ -863,10 +871,12 @@ being required. Whether or not the fields of the referenced Currency type
 are needed is up to the definition of that type. See <a
 href="BaseDSL.html#method-i-type">type</a> for more information.</p>
 
-<pre><code>class Wealthy &lt; Hoodoo::Presenters::Object
-  object :currencies, :required =&gt; true do
-    type :Currency
-    string :notes, :required =&gt; true, :length =&gt; 32
+<pre><code>class Wealthy &lt; Hoodoo::Presenters::Base
+  schema do
+    object :currencies, :required =&gt; true do
+      type :Currency
+      string :notes, :required =&gt; true, :length =&gt; 32
+    end
   end
 end
 </code></pre>
@@ -887,9 +897,9 @@ end
                 
               </p>
               <div id="method-i-object_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 42</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">object</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Hoodoo::Presenters::Object must have block&#39;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Hoodoo::Presenters::Base#Object must have block&#39;</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
 
   <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_internationalised?</span>()
@@ -902,7 +912,7 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-resource">
             
-              <b>resource</b>( resource_name, options = nil )
+              <b>resource</b>( resource_info, options = nil )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
@@ -910,23 +920,20 @@ end
           
             <div class="description">
               <p>Declare that a resource of a given name is included at this point. This is
-only normally done within the description of the schema  for an interface.
+only normally done within the description of the schema for an interface.
 The fields of the given named resource are considered to be defined inline
 at the point of declaration - essentially, it&#39;s macro expansion.</p>
-<dl class="rdoc-list note-list"><dt><code>resource_name</code>
+<dl class="rdoc-list note-list"><dt><code>resource_info</code>
 <dd>
-<p>Name of the resource as a symbol, e.g. <code>:Purchase</code>.</p>
+<p>The <a href="Base.html">Hoodoo::Presenters::Base</a> subclass for the
+Resource in question, e.g. <code>Product</code>. The deprecated form of
+this interface takes the name of the type to nest as a symbol, e.g.
+<code>:Product</code>, in which case the Resource must be declared within
+nested modules “Hoodoo::Data::Types”.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Optional options hash. See <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>.</p>
+<p>Optional options hash. No options currently defined.</p>
 </dd></dl>
-
-<p>It doesn&#39;t make sense to mark a <code>resource</code> &#39;field&#39;
-as <code>:required</code> in the options since the declaration just expands
-to the contents of the referenced resource and it is the definition of that
-resource that determines whether or not its various field(s) are optional
-or required.</p>
 
 <p>Example - an iterface takes an <code>Outlet</code> resource in its create
 action.</p>
@@ -943,9 +950,20 @@ end
 
 class OutletInterface &lt; Hoodoo::Services::Interface
   to_create do
-    resource :Outlet
+    resource Outlet
   end
 end
+</code></pre>
+
+<p>It doesn&#39;t make sense to mark a <code>resource</code> &#39;field&#39;
+as <code>:required</code> in the options since the declaration just expands
+to the contents of the referenced resource and it is the definition of that
+resource that determines whether or not its various field(s) are optional /
+required. That is, the following two declarations behave identically:</p>
+
+<pre><code>resource Outlet
+
+resource Outlet, :required =&gt; true # Pointless option!
 </code></pre>
             </div>
           
@@ -964,14 +982,18 @@ end
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 387</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 438</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
-  <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Resources</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">resource_name</span> )
-  <span class="ruby-keyword">rescue</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#resource: Unrecognised resource name &#39;#{ resource_name }&#39;&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">resource_info</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Class</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">resource_info</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">resource_info</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Resources</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">resource_info</span> )
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Base\#resource: Unrecognised resource name &#39;#{ resource_info }&#39;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">get_schema_definition</span>() )
@@ -984,14 +1006,14 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-string">
             
-              <b>string</b>(name, options = {})
+              <b>string</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-string" name="method-i-string" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON string with the supplied name and options Params</p>
+              <p>Define a JSON string with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -1016,9 +1038,9 @@ end
                 
               </p>
               <div id="method-i-string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 140</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">string</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 150</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">string</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -1048,15 +1070,15 @@ href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>.</p>
 
 <p>Example - a Product resource which supports product tagging:</p>
 
-<pre><code>class Product &lt; Hoodoo::Presenters::Object
+<pre><code>class Product &lt; Hoodoo::Presenters::Base
+  schema do
+    internationalised
 
-  internationalised
-
-  text :name
-  text :description
-  string :sku, :length =&gt; 64
-  tags :tags
-
+    text :name
+    text :description
+    string :sku, :length =&gt; 64
+    tags :tags
+  end
 end
 </code></pre>
             </div>
@@ -1076,10 +1098,10 @@ end
                 
               </p>
               <div id="method-i-tags_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 222</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 239</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span>)
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -1089,15 +1111,15 @@ end
         <div class="method">
           <div class="title method-title" id="method-i-text">
             
-              <b>text</b>(name, options = {})
+              <b>text</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-text" name="method-i-text" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>Define a JSON string of unlimited length with the supplied name and options
-Params</p>
+              <p>Define a JSON string of unlimited length with the supplied name and
+options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -1122,9 +1144,9 @@ Params</p>
                 
               </p>
               <div id="method-i-text_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 189</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">text</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">property</span>(<span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 205</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">text</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -1134,7 +1156,7 @@ Params</p>
         <div class="method">
           <div class="title method-title" id="method-i-type">
             
-              <b>type</b>( type_name, options = nil )
+              <b>type</b>( type_info, options = nil )
             
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-type" name="method-i-type" class="permalink">Link</a>
           </div>
@@ -1146,13 +1168,16 @@ is only normally done within an <code>array</code> or <code>object</code>
 declaration. The fields of the given named type are considered to be
 defined inline at the point of declaration - essentially, it&#39;s macro
 expansion.</p>
-<dl class="rdoc-list note-list"><dt><code>type_name</code>
+<dl class="rdoc-list note-list"><dt><code>type_info</code>
 <dd>
-<p>Name of the type to nest as a symbol, e.g. <code>:BasketItem</code>.</p>
+<p>The <a href="Base.html">Hoodoo::Presenters::Base</a> subclass for the Type
+in question, e.g. <code>BasketItem</code>. The deprecated form of this
+interface takes the name of the type to nest as a symbol, e.g.
+<code>:BasketItem</code>, in which case the Type must be declared within
+nested modules “Hoodoo::Data::Types”.</p>
 </dd><dt><code>options</code>
 <dd>
-<p>Optional options hash. See <a
-href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>.</p>
+<p>Optional options hash. No options currently defined.</p>
 </dd></dl>
 
 <p>It doesn&#39;t make sense to mark a <code>type</code> &#39;field&#39; as
@@ -1161,12 +1186,14 @@ the contents of the referenced type and it is the definition of that type
 that determines whether or not its various field(s) are optional or
 required.</p>
 
-<p>Example 1 - a basket includes an array of the type
-<code>BasketItems</code>.</p>
+<p>Example 1 - a basket includes an array of the Type described by class
+<code>BasketItem</code>:</p>
 
-<pre><code>class Basket &lt; Hoodoo::Presenters::Object
-  array :items do
-    type :BasketItem
+<pre><code>class Basket &lt; Hoodoo::Presenters::Base
+  schema do
+    array :items do
+      type BasketItem
+    end
   end
 end
 </code></pre>
@@ -1188,15 +1215,19 @@ end
 <p>Example 2 - a basket item refers to a product description by having its
 fields inline. So suppose we have this:</p>
 
-<pre><code>class Product &lt; Hoodoo::Presenters::Object
-  internationalised
-  text :name
-  text :description
+<pre><code>class Product &lt; Hoodoo::Presenters::Base
+  schema do
+    internationalised
+    text :name
+    text :description
+  end
 end
 
-class BasketItem &lt; Hoodoo::Presenters::Object
-  object :product_data do
-    type :Product
+class BasketItem &lt; Hoodoo::Presenters::Base
+  schema do
+    object :product_data do
+      type Product
+    end
   end
 end
 </code></pre>
@@ -1211,20 +1242,27 @@ end
 }</code></pre>
 
 <p>It is also possible to use this mechanism for inline expansions when you
-have, say, a Resource defined entirely in terms of something reused
-elsewhere as a Type. This is the case for a Currency - for example:</p>
+have, say, a Resource defined <em>entirely</em> in terms of something
+reused elsewhere as a Type. For example, suppose the product/basket
+information from above included information on a Currency that was used for
+payment. It might reuse a Type; meanwhile we might have a resource for
+managing Currencies, defined entirely through that Type:</p>
 
-<pre><code>type :Currency do
-  string :curency_code, :required =&gt; true, :length =&gt; 8
-  string :symbol, :length =&gt; 16
-  integer :multiplier, :default =&gt; 100
-  array :qualifiers do
-    string :qualifier, :length =&gt; 32
+<pre><code>class Currency &lt; Hoodoo::Presenters::Base
+  schema do
+    string :curency_code, :required =&gt; true, :length =&gt; 8
+    string :symbol, :length =&gt; 16
+    integer :multiplier, :default =&gt; 100
+    array :qualifiers do
+      string :qualifier, :length =&gt; 32
+    end
   end
 end
 
 resource :Currency do
-  type :Currency
+  schema do
+    type :Currency
+  end
 end
 </code></pre>
 
@@ -1233,7 +1271,7 @@ exactly the same fields as the <strong>Type</strong> of Currency. The
 Resource could define other fields too, though this would be risky as the
 Type might gain same-named fields in future, leading to undefined
 behaviour. At such a time, a degree of cut-and-paste and removing the
-<code>type</code> call from the Resource definition would be necessary.</p>
+<code>type</code> call from the Resource definition would probably be wise.</p>
             </div>
           
           
@@ -1251,14 +1289,18 @@ behaviour. At such a time, a degree of cut-and-paste and removing the
                 
               </p>
               <div id="method-i-type_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 343</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">type</span>( <span class="ruby-identifier">type_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 379</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">type</span>( <span class="ruby-identifier">type_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
-  <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Types</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">type_name</span> )
-  <span class="ruby-keyword">rescue</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;DocumentedObject#type: Unrecognised type name &#39;#{type_name}&#39;&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">type_info</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Class</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type_info</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">klass</span> = <span class="ruby-identifier">type_info</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">klass</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Data</span><span class="ruby-operator">::</span><span class="ruby-constant">Types</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-identifier">type_info</span> )
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Presenters::Base\#type: Unrecognised type name &#39;#{ type_info }&#39;&quot;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">get_schema_definition</span>() )
@@ -1307,11 +1349,11 @@ not something else. Optional.</p>
 <p>Example - a basket item that refers to an integer quantity of some specific
 Product resource instance:</p>
 
-<pre><code>class BasketItem &lt; Hoodoo::Presenters::Object
-
-  integer :quantity, :required =&gt; true
-  uuid :product_id, :resource =&gt; :Product
-
+<pre><code>class BasketItem &lt; Hoodoo::Presenters::Base
+  schema do
+    integer :quantity, :required =&gt; true
+    uuid :product_id, :resource =&gt; :Product
+  end
 end
 </code></pre>
             </div>
@@ -1331,7 +1373,7 @@ end
                 
               </p>
               <div id="method-i-uuid_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 255</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 272</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>, <span class="ruby-identifier">options</span>)

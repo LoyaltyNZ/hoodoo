@@ -107,7 +107,19 @@ href="../Secure.html#method-c-included">Hoodoo::ActiveRecord::Secure.included</a
           
             <div class="description">
               <p>The core of out-of-the-box <a href="../../../Hoodoo.html">Hoodoo</a> data
-access security.</p>
+access security layer.</p>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt>context
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd></dl>
+
+<h2 id="method-i-secure-label-Overview">Overview</h2>
 
 <p>In most non-trivial systems, people calling into the system under a Session
 will have limited access to resource records. Often the broad pattern is:
@@ -154,6 +166,8 @@ calls to make sure that it only dealt with database records where the
 &#39;who made me&#39; data matched up with the &#39;what can this Session
 see&#39;. That can be done but it might be error prone, especially if a lot
 of resource endpoints all have the same data access scoping rules.</p>
+
+<h2 id="method-i-secure-label-Automatic+session-based+finder+scoping">Automatic session-based finder scoping</h2>
 
 <p>That&#39;s where the <a href="../../ActiveRecord.html">ActiveRecord</a>
 secure context extension comes in. Models declare <em>mappings</em> between
@@ -206,8 +220,123 @@ href="ClassMethods.html#method-i-secure">secure</a> and you are strongly
 encouraged to use these wherever possible, rather than calling <a
 href="ClassMethods.html#method-i-secure">secure</a> directly.</p>
 
-<p><strong>Important</strong>: If you state a model must be secured by one or
-more fields, then:</p>
+<h2 id="method-i-secure-label-Rendering+resources">Rendering resources</h2>
+
+<p>Models aren&#39;t directly connected to Resource representations, but since
+the security later interfaces with session data herein, there is clearly an
+intersection of concepts. Even though fields in a Model may not map
+directly to fields in a related Resource (or many Models might contribute
+to a Resource), the security scoping rules that led to the limitations on
+data retrieval may be useful to an API caller. The API basic definitions
+support this through a <code>secured_with</code> standard (but optional)
+resource field.</p>
+
+<p>The <code>secured_with</code> field&#39;s value is an object of key/value
+pairs. Its contents depend on how the <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a> method is
+used in a model. The <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a> call actually
+supports <em>two</em> modes of operation. One is as already shown above;
+suppose we have:</p>
+
+<pre><code>secure_with( {
+  :creating_caller_uuid =&gt; :authorised_caller_uuids,
+  :programme_code       =&gt; :authorised_programme_codes
+} )
+</code></pre>
+
+<p>If <a
+href="../../Presenters/Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
+is called and an instance of a model with the above declaration is passed
+in the <code>secured_with</code> option, then the keys from the declaration
+appear in the resource representation&#39;s <code>secured_with</code>
+field&#39;s object and the values are the <em>actual</em> scoping values
+which were used, i.e. the rendered data would contain:</p>
+
+<pre><code>{
+  &quot;id&quot;: &quot;&lt;UUID&gt;&quot;,
+  &quot;kind&quot;: &quot;Example&quot;,
+  &quot;created_at&quot;: &quot;2015-04-30T16:25:17+12:00&quot;,
+  &quot;secured_with&quot;: {
+    &quot;creating_caller_uuid&quot;: &quot;&lt;UUID&gt;&quot;,
+    &quot;programme_code&quot;: &quot;&lt;code&gt;&quot;
+  },
+  ...
+}</code></pre>
+
+<p>This binds the field values in the model to the values in the rendered
+resource representation, though; and what if we only wanted (say) the
+“creating_caller_uuid” to be revealed, but did not want to show the
+“programme_code” value? To do this, instead of passing a Symbol in the
+values of the <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a> options, you
+provide a Hash of options for that particular security entry. Option keys
+are Symbols:</p>
+<dl class="rdoc-list note-list"><dt><code>session_field_name</code>
+<dd>
+<p>This is the field that&#39;s looked up in the session&#39;s scoping
+section.</p>
+</dd><dt><code>resource_field_name</code>
+<dd>
+<p>This is the name that&#39;ll appear in the rendered resource.</p>
+</dd><dt><code>hide_from_resource</code>
+<dd>
+<p>If present and set to <code>true</code>, the entry will not be shown; else
+it is shown by default (if you&#39;re passing in a model instance to a
+render call via the <code>secured_with</code> option it is assumed that you
+explicitly <em>do</em> want to include this kind of information rather than
+hide it).</p>
+</dd></dl>
+
+<p>To help clarify the above, the following two calls to <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a> have exactly
+the same effect.</p>
+
+<pre><code>secure_with( {
+  :creating_caller_uuid =&gt; :authorised_caller_uuids
+} )
+
+# ...is equivalent to...
+
+secure_with( {
+  :creating_caller_uuid =&gt; {
+    :session_field_name  =&gt; :authorised_caller_uuids,
+    :resource_field_name =&gt; :creating_caller_uuid, # (Or just omit this option)
+    :hide_from_resource  =&gt; false # (Or just omit this option)
+  }
+} )
+</code></pre>
+
+<p>Taking the previous example, let&#39;s change the name of the field shown
+in the resource and hide the “programme_code” entry:</p>
+
+<pre><code>secure_with( {
+  :creating_caller_uuid =&gt; {
+    :session_field_name  =&gt; :authorised_caller_uuids,
+    :resource_field_name =&gt; :caller_id # Note renaming of field
+  },
+  :programme_code =&gt; {
+    :session_field_name =&gt; :authorised_programme_codes,
+    :hide_from_resource =&gt; true
+  }
+} )
+</code></pre>
+
+<p>…would lead to a rendered resource looking something like this:</p>
+
+<pre><code>{
+  &quot;id&quot;: &quot;&lt;UUID&gt;&quot;,
+  &quot;kind&quot;: &quot;Example&quot;,
+  &quot;created_at&quot;: &quot;2015-04-30T16:25:17+12:00&quot;,
+  &quot;secured_with&quot;: {
+    &quot;caller_id&quot;: &quot;&lt;UUID&gt;&quot;,
+  },
+  ...
+}</code></pre>
+
+<h2 id="method-i-secure-label-Important">Important</h2>
+
+<p>If you state a model must be secured by one or more fields, then:</p>
 <ul><li>
 <p>If there is no session at all in the given context, <em>or</em></p>
 </li><li>
@@ -221,16 +350,6 @@ values describe, <em>then</em></p>
 <p>…the returned scope <strong>will</strong> <strong>find</strong>
 <strong>no</strong> <strong>results</strong>, by design. The default
 failure mode is to reveal no data at all.</p>
-
-<p>Parameters:</p>
-<dl class="rdoc-list note-list"><dt><code>context</code>
-<dd>
-<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
-instance describing a call context. This is typically a value passed to one
-of the <a
-href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
-instance methods that a resource subclass implements.</p>
-</dd></dl>
             </div>
           
           
@@ -248,7 +367,7 @@ instance methods that a resource subclass implements.</p>
                 
               </p>
               <div id="method-i-secure_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 169</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">?</span>
@@ -258,7 +377,13 @@ instance methods that a resource subclass implements.</p>
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">none</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">nil?</span>
 
-    <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">model_field_name</span>, <span class="ruby-identifier">session_scoping_key</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">model_field_name</span>, <span class="ruby-identifier">key_or_options</span> <span class="ruby-operator">|</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+        <span class="ruby-identifier">session_scoping_key</span> = <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:session_field_name</span> ]
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">session_scoping_key</span> = <span class="ruby-identifier">key_or_options</span>
+      <span class="ruby-keyword">end</span>
+
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-identifier">session_scoping_key</span> )
         <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">where</span>( {
           <span class="ruby-identifier">model_field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">session_scoping_key</span> )
@@ -300,7 +425,9 @@ examples.</p>
 details. The keys are names of fields in the model. The values are names of
 fields in the <a
 href="../../Services/Session.html#attribute-i-scoping">Hoodoo::Services::Session#scoping</a>
-object.</p>
+object, or can be a Hash of options; see <a
+href="ClassMethods.html#method-i-secure">secure</a> for full details and
+examples.</p>
 </dd></dl>
             </div>
           
@@ -319,8 +446,12 @@ object.</p>
                 
               </p>
               <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 321</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
+
+  <span class="ruby-comment"># If you change the name of the variable used here, make sure you</span>
+  <span class="ruby-comment"># update the Hoodoo::Presenters::Base#render_in implementation too.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_hoodoo_secure_with&#39;</span>, <span class="ruby-identifier">map</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>

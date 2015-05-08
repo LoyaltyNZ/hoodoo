@@ -100,7 +100,12 @@ of the schema.</p>
             
               
               <li>
-                <a href="#method-c-render">render</a>
+                <a href="#method-c-render">render</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-render_in">render_in</a>
               </li>
             
           </ul>
@@ -181,7 +186,7 @@ of the schema.</p>
                 
               </p>
               <div id="method-c-get_schema_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 147</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 238</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
@@ -218,7 +223,7 @@ of the schema.</p>
                 
               </p>
               <div id="method-c-get_schema_definition_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 154</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 245</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema_definition</span>
   <span class="ruby-ivar">@schema_definition</span>
 <span class="ruby-keyword">end</span></pre>
@@ -256,7 +261,7 @@ so, else <code>false</code>.</p>
                 
               </p>
               <div id="method-c-is_internationalised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 141</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -298,10 +303,14 @@ sanitisation.</p>
 <p>Since rendering top-level <code>nil</code> is not valid JSON, should
 <code>nil</code> be provided as input, it&#39;ll be treated as an empty
 hash (“+{}+”) instead.</p>
+
+<p>This is quite a low-level call. For a higher level renderer which <a
+href="../../Hoodoo.html">Hoodoo</a> service resource implementations will
+probably want to use for returning resource representations in responses,
+see <a href="Base.html#method-c-render_in">::render_in</a>.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
-<p><a href="Hash.html">Hash</a> or <a href="Array.html">Array</a> (depending
-on resource&#39;s top-level data container type) to be represented. <a
+<p><a href="Hash.html">Hash</a> to be represented. <a
 href="../Data.html">Data</a> within this is compared against the schema
 being called to ensure that correct information is returned and unknown
 data is ignored.</p>
@@ -338,7 +347,7 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
                 
               </p>
               <div id="method-c-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 72</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 74</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">language</span> = <span class="ruby-string">&#39;en-nz&#39;</span> )
   <span class="ruby-identifier">target</span> = {}
   <span class="ruby-identifier">data</span>   = <span class="ruby-identifier">data</span> <span class="ruby-operator">||</span> {}
@@ -366,6 +375,144 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
     <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span> ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
 
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-render_in">
+            
+              <b>render_in</b>( context, data, options = {} )
+            
+            <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-render_in" name="method-c-render_in" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>A higher level version of <a href="Base.html#method-c-render">::render</a>,
+typically called from <a href="../../Hoodoo.html">Hoodoo</a> services in
+their resource implementation code.</p>
+
+<p>As with <a href="Base.html#method-c-render">::render</a>, data is rendered
+according to the schema of the object the <a
+href="Base.html#method-c-render_in">::render_in</a> message is sent to.
+Options specify things like <a href="UUID.html">UUID</a> and created-at
+date. Language information for internationalised fields can be given, but
+if omitted comes from the given request context data.</p>
+
+<p>Additional facilites exist over and above <a
+href="Base.html#method-c-render">::render</a> - security scoping
+information in the resource via its <code>secured_with</code> field is made
+available through options (see below), along with support for embedded or
+referenced resource information.</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p>A <a href="../Services/Context.html">Hoodoo::Services::Context</a>
+instance, which is usually the value passed to a service implementation in
+calls like <a
+href="../Services/Implementation.html#method-i-list">Hoodoo::Services::Implementation#list</a>
+or <a
+href="../Services/Implementation.html#method-i-show">Hoodoo::Services::Implementation#show</a>.</p>
+</dd><dt><code>data</code>
+<dd>
+<p><a href="Hash.html">Hash</a> to be represented. <a
+href="../Data.html">Data</a> within this is compared against the schema
+being called to ensure that correct information is returned and unknown
+data is ignored.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash, see below.</p>
+</dd></dl>
+
+<p>The options keys are Symbols, used as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>uuid</code>
+<dd>
+<p>Same as the <code>uuid</code> parameter to <a
+href="Base.html#method-c-render">::render</a>, except mandatory.</p>
+</dd><dt><code>created_at</code>
+<dd>
+<p>Same as the <code>created_at</code> parameter to <a
+href="Base.html#method-c-render">::render</a>, except mandatory.</p>
+</dd><dt><code>language</code>
+<dd>
+<p>Optional value for resource&#39;s <code>language</code> field; taken from
+the <code>context</code> parameter if omitted.</p>
+</dd><dt><code>embeds</code>
+<dd>
+<p>A <a href="Embedding/Embeds.html">Hoodoo::Presenters::Embedding::Embeds</a>
+instance that contains (fully rendered) resources which are to be embedded
+in this rendered representation. Optional.</p>
+</dd><dt><code>references</code>
+<dd>
+<p>A <a
+href="Embedding/References.html">Hoodoo::Presenters::Embedding::References</a>
+instance that contains UUIDs which are to be embedded in this rendered
+representation as references. Optional.</p>
+</dd><dt><code>secured_with</code>
+<dd>
+<p>An <a href="../ActiveRecord/Base.html">ActiveRecord::Base</a> subclass
+instance where the model class includes a <code>secure_with</code>
+declaration. As per documentation for <a
+href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>
+and <a
+href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>,
+this leads (potentially) to the generation of the <code>secured_with</code>
+field and object value in the rendered resource data.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-render_in_source')" id="l_method-c-render_in_source">show</a>
+                
+              </p>
+              <div id="method-c-render_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
+  <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
+  <span class="ruby-identifier">language</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:language</span>     ] <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>
+  <span class="ruby-identifier">secured_with</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:secured_with</span> ]
+  <span class="ruby-identifier">embeds</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:embeds</span>       ]
+  <span class="ruby-identifier">references</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:references</span>   ]
+
+  <span class="ruby-identifier">target</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">created_at</span>, <span class="ruby-identifier">language</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
+    <span class="ruby-identifier">result_hash</span>     = {}
+    <span class="ruby-identifier">extra_scope_map</span> = <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">?</span>
+                           <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">:</span>
+                           <span class="ruby-keyword">nil</span>
+
+    <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">model_field_name</span>, <span class="ruby-identifier">key_or_options</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">resource_field</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:hide_from_resource</span> ] <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+        <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:resource_field_name</span> ] <span class="ruby-operator">||</span> <span class="ruby-identifier">model_field_name</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">model_field_name</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">result_hash</span>[ <span class="ruby-identifier">resource_field</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">model_field_name</span> )
+    <span class="ruby-keyword">end</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;secured_with&#39;</span> ] = <span class="ruby-identifier">result_hash</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result_hash</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ] = <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">retrieve</span>()     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ] = <span class="ruby-identifier">references</span>.<span class="ruby-identifier">retrieve</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">references</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
 <span class="ruby-keyword">end</span></pre>
@@ -459,7 +606,7 @@ Optional; default is <code>false</code>.</p>
                 
               </p>
               <div id="method-c-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 115</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 206</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
 

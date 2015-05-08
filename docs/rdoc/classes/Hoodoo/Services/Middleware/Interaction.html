@@ -74,6 +74,23 @@ object.</p>
           </ul>
         </dd>
       
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-using_test_session">using_test_session</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-using_test_session-3F">using_test_session?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
     </dl>
   
 
@@ -253,7 +270,7 @@ omitted, <code>nil</code> is used.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 91</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">find_or_generate_interaction_id</span>()
@@ -270,7 +287,89 @@ omitted, <code>nil</code> is used.</p>
             </div>
             
           </div>
-                        </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-using_test_session">
+            
+              <b>using_test_session</b>()
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-i-using_test_session" name="method-i-using_test_session" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p><a href="../../../Hoodoo.html">Hoodoo</a> middleware calls here to say
+“I&#39;m using the test session” (or not), so that this can be enquired
+about via <a
+href="Interaction.html#method-i-using_test_session-3F">using_test_session?</a>
+if need be.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-using_test_session_source')" id="l_method-i-using_test_session_source">show</a>
+                
+              </p>
+              <div id="method-i-using_test_session_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 75</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">using_test_session</span>
+  <span class="ruby-ivar">@using_test_session</span> = <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-using_test_session-3F">
+            
+              <b>using_test_session?</b>()
+            
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-i-using_test_session-3F" name="method-i-using_test_session-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Returns <code>true</code> if <a href="../../../Hoodoo.html">Hoodoo</a> has
+previously called <a
+href="Interaction.html#method-i-using_test_session">using_test_session</a>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-using_test_session-3F_source')" id="l_method-i-using_test_session-3F_source">show</a>
+                
+              </p>
+              <div id="method-i-using_test_session-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 81</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">using_test_session?</span>
+  <span class="ruby-ivar">@using_test_session</span> <span class="ruby-operator">===</span> <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
 
     </div>
   </body>

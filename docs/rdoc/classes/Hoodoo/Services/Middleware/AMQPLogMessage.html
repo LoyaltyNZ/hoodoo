@@ -196,16 +196,7 @@ this class.</p></td>
               [RW]
             </td>
             <td class='attr-name'>caller_id</td>
-            <td class='attr-desc'><p>Modern <a href="../Session.html">Session</a> parlance alias for <a
-href="AMQPLogMessage.html#attribute-i-client_id">client_id</a>.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>client_id</td>
-            <td class='attr-desc'><p>Optional calling client ID, via session data inside the payload - see
+            <td class='attr-desc'><p>Optional calling Caller ID, via session data inside the payload - see
 Hoodoo::Services::Middleware::StructuredLogger.</p></td>
           </tr>
         
@@ -246,6 +237,15 @@ href="../../UUID.html#method-c-generate">Hoodoo::UUID.generate</a>.</p></td>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>identity</td>
+            <td class='attr-desc'><p>Optional hash of identity properties from the session data inside the
+payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>interaction_id</td>
             <td class='attr-desc'><p>Optional interaction <a href="../../UUID.html">UUID</a>, via session data
 inside the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
@@ -257,24 +257,6 @@ inside the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td
             </td>
             <td class='attr-name'>level</td>
             <td class='attr-desc'><p>Logging level. See Hoodoo::Services::Middleware::StructuredLogger.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>outlet_id</td>
-            <td class='attr-desc'><p>Optional outlet <a href="../../UUID.html">UUID</a>, via session data inside
-the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>participant_id</td>
-            <td class='attr-desc'><p>Optional participant <a href="../../UUID.html">UUID</a>, via session data
-inside the payload - see Hoodoo::Services::Middleware::StructuredLogger.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -325,7 +307,7 @@ class.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 128</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 119</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
   <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
@@ -369,7 +351,7 @@ AMQEndpoint::Message#deserialize.</p>
                 
               </p>
               <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 160</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
   <span class="ruby-keyword">super</span>
   <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
@@ -464,7 +446,7 @@ AMQEndpoint::Message#serialize.</p>
                 
               </p>
               <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 138</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 129</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
   <span class="ruby-ivar">@content</span> = {
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
@@ -475,10 +457,9 @@ AMQEndpoint::Message#serialize.</p>
 
     <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
 
-    <span class="ruby-value">:client_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@client_id</span>,
     <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@interaction_id</span>,
-    <span class="ruby-value">:participant_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@participant_id</span>,
-    <span class="ruby-value">:outlet_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@outlet_id</span>,
+    <span class="ruby-value">:caller_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@caller_id</span>,
+    <span class="ruby-value">:identity</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@identity</span>
   }
 
   <span class="ruby-keyword">super</span>
@@ -517,7 +498,7 @@ attributes defined for the class.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 168</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 158</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]
@@ -527,10 +508,9 @@ attributes defined for the class.</p>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">data</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>           ]
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">client_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:client_id</span>      ]
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction_id</span> ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">participant_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:participant_id</span> ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">outlet_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:outlet_id</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>      ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:identity</span>       ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
