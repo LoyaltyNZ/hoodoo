@@ -137,9 +137,9 @@ module Hoodoo
                result.platform_errors.errors.size == 1 &&
                result.platform_errors.errors[ 0 ][ 'code' ] == 'platform.invalid_session'
 
-               session_creation_result = acquire_session_for( action )
-               return session_creation_result unless session_creation_result.nil?
-               return @wrapped_endpoint.send( action, *args )
+              session_creation_result = acquire_session_for( action )
+              return session_creation_result unless session_creation_result.nil?
+              return @wrapped_endpoint.send( action, *args )
             else
               return result
             end
