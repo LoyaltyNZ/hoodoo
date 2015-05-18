@@ -18,8 +18,6 @@ module Hoodoo
       class Refund < Hoodoo::Presenters::Base
 
         schema do
-          text   :token_identifier
-
           object :basket do
             type :Basket
           end
