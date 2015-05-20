@@ -26,6 +26,10 @@ Functionality includes:
 
 Master documentation is through RDoc (see below).
 
+## Workflow / branches
+
+Development occurs on either `master` directly, or temporary `hotfix` or `feature` branches which are subsequently merged to `master`. This model is used because Gem versions, once Hoodoo is stored in a public Gem repository, will allow other software to decide what changes to import or ignore. The Gem version is not usually altered while Hoodoo stays within a private repository.
+
 ## Tests
 
 Run the tests:
