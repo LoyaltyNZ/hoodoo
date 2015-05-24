@@ -64,19 +64,20 @@ module Hoodoo
       #       model.param_1 = 'something based on inbound creation data'
       #
       #       # ...etc., setting other parameters, then have the model run
-      #       # its own ActiveRecord-level validations, adding any errors it
-      #       # detects to the 'context.response' errors collection and exit
-      #       # if there were any added, all in a single line:
+      #       # its own ActiveRecord-level validations by saving it without
+      #       # throwing ActiveRecord exceptions. This minimises the window
+      #       # for concurrency-related validation clashes (e.g. uniqueness
+      #       # constraint violations) across multiple service processes;
+      #       # the ".save" call below can still throw database exceptions.
+      #
+      #       model.save()
+      #
+      #       # Now exit, adding mapped errors to the response, if there
+      #       # were validation failures when attempting to save.
       #
       #       return if model.adds_errors_to?( context.response.errors )
       #
-      #       # At this point 'model.valid?' must be 'true', so we can use
-      #       # the throw-exception '#save!' and rely on the middleware's
-      #       # exception handler to catch unexpected ActiveRecord failures.
-      #
-      #       model.save!
-      #
-      #       # ...then set 'context.response' data appropriately.
+      #       # ...else set 'context.response' data appropriately.
       #
       #     end
       #
