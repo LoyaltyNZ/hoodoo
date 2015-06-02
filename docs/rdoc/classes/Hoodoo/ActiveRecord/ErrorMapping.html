@@ -166,19 +166,20 @@ end
   model.param_1 = &#39;something based on inbound creation data&#39;
 
   # ...etc., setting other parameters, then have the model run
-  # its own ActiveRecord-level validations, adding any errors it
-  # detects to the &#39;context.response&#39; errors collection and exit
-  # if there were any added, all in a single line:
+  # its own ActiveRecord-level validations by saving it without
+  # throwing ActiveRecord exceptions. This minimises the window
+  # for concurrency-related validation clashes (e.g. uniqueness
+  # constraint violations) across multiple service processes;
+  # the &quot;.save&quot; call below can still throw database exceptions.
+
+  model.save()
+
+  # Now exit, adding mapped errors to the response, if there
+  # were validation failures when attempting to save.
 
   return if model.adds_errors_to?( context.response.errors )
 
-  # At this point &#39;model.valid?&#39; must be &#39;true&#39;, so we can use
-  # the throw-exception &#39;#save!&#39; and rely on the middleware&#39;s
-  # exception handler to catch unexpected ActiveRecord failures.
-
-  model.save!
-
-  # ...then set &#39;context.response&#39; data appropriately.
+  # ...else set &#39;context.response&#39; data appropriately.
 
 end
 </code></pre>
@@ -223,7 +224,7 @@ for more information.</p>
                 
               </p>
               <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 103</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">validate</span>
 
@@ -340,7 +341,7 @@ href="ErrorMapping.html#method-i-adds_errors_to-3F">adds_errors_to?</a>.</p>
                 
               </p>
               <div id="method-i-platform_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 174</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>( <span class="ruby-identifier">validate</span> = <span class="ruby-keyword">true</span> )
   <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span>, <span class="ruby-identifier">validate</span> )
