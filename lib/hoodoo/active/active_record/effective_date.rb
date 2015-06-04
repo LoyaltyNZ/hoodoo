@@ -31,8 +31,16 @@ module Hoodoo
         end
       end
 
-      #
+
       module ClassMethods
+
+        #
+        scope :effective_dated, ->( date_time ) do
+          utc_date_time = date_time.utc
+
+          where("#{effective_start_field} is null or ? >= #{effective_start_field}", utc_date_time)
+          .where("#{effective_end_field} is null or ? < #{effective_end_field}", utc_date_time)
+        end
 
         #
         def effective_date_start_field( effective_start_field_name )
@@ -46,14 +54,25 @@ module Hoodoo
 
         #
         def find_at( ident, date_time=Time.now.utc )
-          valid_date_time = date_time.utc
-          checker = where( uuid: ident )
-                    .where("#{effective_start_field} is null or ? >= #{effective_start_field}", valid_date_time)
-                    .where("#{effective_end_field} is null or ? < #{effective_end_field}", valid_date_time)
+          found = where( "#{uuid_field}" => ident ).effective_dated( date_time )
+          if found.count == 0
+            nil
+          else
+            found.first
+          end
+        end
 
-          return checker.first unless checker.count == 0
+        #
+        def list_at( date_time=Time.now.utc )
+          effective_dated( date_time )
+        end
 
-          return nil
+        def uuid_field
+          if class_variable_defined?( :@@uuid_field )
+            return class_variable_get( :@@uuid_field )
+          else
+            return :uuid
+          end
         end
 
         def effective_start_field
