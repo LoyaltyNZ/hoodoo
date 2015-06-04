@@ -51,7 +51,7 @@ module Hoodoo; module Services
   #
   # The middleware adds a STDERR stream writer logger by default and an AMQP
   # log writer on the first Rack +call+ should the Rack environment provide an
-  # Alchemy endpoint (see the Alchemy and AMQEndpoint gems).
+  # Alchemy endpoint (see the AlchemyAMQ gem).
   #
   class Middleware
 

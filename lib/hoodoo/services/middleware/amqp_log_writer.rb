@@ -12,11 +12,11 @@
 module Hoodoo; module Services
   class Middleware
 
-    # Log writer which sends structured messages to an AMQP-based queue via the
-    # Alchemy and AMQEndpoint gems. A Hoodoo::Logger::FastWriter subclass,
-    # since though talking to the queue might be comparatively slow, Alchemy
-    # itself uses an asynchronous Thread for this so there's no need to add
-    # another one for this logger.
+    # Log writer which sends structured messages to an AMQP-based queue via
+    # the AlchemyAMQ gems. A Hoodoo::Logger::FastWriter subclass, since though
+    # talking to the queue might be comparatively slow, Alchemy itself uses an
+    # asynchronous Thread for this so there's no need to add another one for
+    # this logger.
     #
     # See also Hoodoo::Logger and Hoodoo::Services::Middleware::AMQPLogMessage.
     #
