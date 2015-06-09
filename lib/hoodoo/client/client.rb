@@ -258,8 +258,6 @@ module Hoodoo
 
         @locale    = locale
 
-        if
-
         if @base_uri != nil
           @discoverer = discoverer || Hoodoo::Services::Discovery::ByConvention.new(
             :base_uri => @base_uri
