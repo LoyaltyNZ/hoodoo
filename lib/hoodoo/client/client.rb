@@ -186,7 +186,7 @@ module Hoodoo
       #     base_uri = 'https://api.test.com/'
       #
       #     discoverer = Hoodoo::Services::Discovery::ByConvention.new(
-      #       :base_uri => @base_uri,
+      #       :base_uri => base_uri,
       #       :routing  => {
       #         :Version => { 1 => '/v1/version' },
       #         :Health  => { 1 => '/v1/health'  }
