@@ -1,4 +1,4 @@
-Tue, 02 Jun 2015 14:08:55 +1200
+Wed, 10 Jun 2015 13:22:20 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/active.rb	Tue, 24 Feb 2015 13:48:01 +1300
@@ -12,7 +12,7 @@ lib/hoodoo/client.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_array.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_base.rb	Mon, 23 Mar 2015 11:00:47 +1300
 lib/hoodoo/client/augmented_hash.rb	Mon, 16 Mar 2015 09:45:31 +1300
-lib/hoodoo/client/client.rb	Tue, 05 May 2015 09:33:57 +1200
+lib/hoodoo/client/client.rb	Wed, 10 Jun 2015 13:22:14 +1200
 lib/hoodoo/client/endpoint/endpoint.rb	Tue, 07 Apr 2015 15:04:56 +1200
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Wed, 18 Mar 2015 12:57:42 +1300
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Fri, 15 May 2015 09:52:03 +1200
@@ -43,7 +43,7 @@ lib/hoodoo/data/resources/participant.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/product.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/resources/programme.rb	Thu, 02 Apr 2015 10:13:08 +1300
 lib/hoodoo/data/resources/purchase.rb	Mon, 09 Feb 2015 13:37:53 +1300
-lib/hoodoo/data/resources/refund.rb	Mon, 18 May 2015 13:02:53 +1200
+lib/hoodoo/data/resources/refund.rb	Thu, 04 Jun 2015 14:14:04 +1200
 lib/hoodoo/data/resources/session.rb	Wed, 04 Feb 2015 09:54:02 +1300
 lib/hoodoo/data/resources/token.rb	Wed, 04 Mar 2015 16:47:58 +1300
 lib/hoodoo/data/resources/version.rb	Thu, 29 Jan 2015 10:26:11 +1300
@@ -101,7 +101,7 @@ lib/hoodoo/presenters/types/text.rb	Fri, 13 Feb 2015 13:31:17 +1300
 lib/hoodoo/presenters/types/uuid.rb	Fri, 13 Feb 2015 13:31:17 +1300
 lib/hoodoo/services.rb	Tue, 17 Feb 2015 16:07:49 +1300
 lib/hoodoo/services/discovery/discoverers/by_consul.rb	Fri, 29 May 2015 13:53:07 +1200
-lib/hoodoo/services/discovery/discoverers/by_convention.rb	Fri, 29 May 2015 13:53:07 +1200
+lib/hoodoo/services/discovery/discoverers/by_convention.rb	Wed, 10 Jun 2015 13:20:59 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb	Fri, 29 May 2015 13:53:07 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb	Tue, 07 Apr 2015 15:49:03 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_start.rb	Wed, 04 Mar 2015 16:47:58 +1300
@@ -110,8 +110,8 @@ lib/hoodoo/services/discovery/results/for_amqp.rb	Mon, 16 Mar 2015 09:45:31 +130
 lib/hoodoo/services/discovery/results/for_http.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/discovery/results/for_local.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/discovery/results/for_remote.rb	Mon, 16 Mar 2015 09:45:31 +1300
-lib/hoodoo/services/middleware/amqp_log_message.rb	Tue, 28 Apr 2015 10:24:28 +1200
-lib/hoodoo/services/middleware/amqp_log_writer.rb	Wed, 22 Apr 2015 14:50:39 +1200
+lib/hoodoo/services/middleware/amqp_log_message.rb	Thu, 04 Jun 2015 14:12:31 +1200
+lib/hoodoo/services/middleware/amqp_log_writer.rb	Thu, 04 Jun 2015 14:11:17 +1200
 lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Thu, 16 Apr 2015 15:41:33 +1200
 lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -119,7 +119,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/services/middleware/interaction.rb	Thu, 16 Apr 2015 15:41:33 +1200
-lib/hoodoo/services/middleware/middleware.rb	Fri, 29 May 2015 13:53:07 +1200
+lib/hoodoo/services/middleware/middleware.rb	Thu, 04 Jun 2015 14:10:34 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 29 Jan 2015 10:39:10 +1300
 lib/hoodoo/services/services/context.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/services/services/implementation.rb	Tue, 17 Feb 2015 16:07:49 +1300

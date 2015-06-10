@@ -194,7 +194,7 @@ module Hoodoo
       #     )
       #
       #     client = Hoodoo::Client.new(
-      #       :base_uri => base_uri,
+      #       :base_uri   => base_uri,
       #       :discoverer => discoverer,
       #       # ...other options...
       #     )
