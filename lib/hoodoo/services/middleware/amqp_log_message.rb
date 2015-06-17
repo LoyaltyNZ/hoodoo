@@ -80,6 +80,10 @@ module Hoodoo; module Services
         # is formatted internally as a String via TIME_FORMATTER and reported
         # as such in subsequent calls to #reported_at.
         #
+        # Conversion from Time to String is done here, rather than by the
+        # caller setting this instance's variables, so that we can internally
+        # enforce the accuracy required for this field.
+        #
         # +time+:: The Time instance to set (and process into a string
         #          internally via TIME_FORMATTER), *or* a String instance
         #          already so formatted, *or* +nil+ to clear the value.
@@ -117,7 +121,7 @@ module Hoodoo; module Services
         # the class.
         #
         def initialize(options = {})
-          update( options )
+          update( options ) # Should be called before 'super'
           super( options )
 
           @type = AMQPLogMessage::TYPE

@@ -60,7 +60,7 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       level          = 'warn'
       component      = 'test_component'
       code           = 'test_code'
-      reported_at    = Time.now.strftime( Hoodoo::Services::Middleware::AMQPLogMessage::TIME_FORMATTER )
+      reported_at    = Time.now
       id             = Hoodoo::UUID.generate
       interaction_id = Hoodoo::UUID.generate
       data           = {

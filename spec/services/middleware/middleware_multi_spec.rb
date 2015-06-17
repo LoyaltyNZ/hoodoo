@@ -230,24 +230,23 @@ end
 
 # And Finally - the tests.
 
-describe 'DRb start timeout' do
-  context 'for test coverage purposes' do
-    it 'checks for timeouts' do
-      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( DRb::DRbConnError )
-      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( Timeout::Error )
-
-      spec_helper_http(
-        port: spec_helper_start_svc_app_in_thread_for( TestEchoService ),
-        path: '/v2/test_some_echoes'
-      )
-    end
-  end
-end
-
 describe Hoodoo::Services::Middleware do
 
   before :all do
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
+  end
+
+  context 'DRb start timeout, for test coverage purposes' do
+    it 'checks for timeouts' do
+      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( DRb::DRbConnError )
+      expect( Process ).to receive( :detach ).once
+      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( Timeout::Error )
+
+      spec_helper_http(
+        port: @port,
+        path: '/v2/test_some_echoes'
+      )
+    end
   end
 
   # Although tests can run in random order so we can't force this set to come

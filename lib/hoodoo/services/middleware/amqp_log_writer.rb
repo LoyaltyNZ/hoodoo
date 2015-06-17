@@ -73,7 +73,7 @@ module Hoodoo; module Services
         session        = data[ :session ] || {}
 
         caller_id      = session[ 'caller_id' ]
-        identity       = ( session[ 'identity'  ] || {} ).to_h
+        identity       = ( session[ 'identity' ] || {} ).to_h
 
         message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
