@@ -17,8 +17,8 @@ module Hoodoo
       class CalculatorCommon < Hoodoo::Presenters::Base
 
         schema do
-          tags :product_tags_included
-          tags :product_tags_excluded
+          array :product_tag_ids_included
+          array :product_tag_ids_excluded
         end
 
       end

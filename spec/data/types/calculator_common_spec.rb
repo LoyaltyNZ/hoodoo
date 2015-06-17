@@ -8,7 +8,7 @@ describe Hoodoo::Data::Types::CalculatorCommon do
 
     expect(schema.properties.count).to eq(2)
 
-    expect(schema.properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
-    expect(schema.properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
+    expect(schema.properties['product_tag_ids_included']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['product_tag_ids_excluded']).to be_a(Hoodoo::Presenters::Array)
   end
 end
