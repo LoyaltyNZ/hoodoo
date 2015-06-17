@@ -35,6 +35,6 @@ describe Hoodoo::Data::Types::BasketItem do
     expect(schema.properties['product_data'].properties['code']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['product_data'].properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['product_data'].properties['description']).to be_a(Hoodoo::Presenters::Text)
-    expect(schema.properties['product_data'].properties['tags']).to be_a(Hoodoo::Presenters::Tags)
+    expect(schema.properties['product_data'].properties['tag_ids']).to be_a(Hoodoo::Presenters::Array)
   end
 end

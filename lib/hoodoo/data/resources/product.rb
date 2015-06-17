@@ -16,7 +16,12 @@ module Hoodoo
       class Product < Hoodoo::Presenters::Base
 
         schema do
-          type :Product
+          internationalised
+
+          text :code
+          text :name
+          text :description
+
         end
 
       end
