@@ -1,9 +1,9 @@
 GIT
   remote: git@github.com:LoyaltyNZ/alchemy-amq.git
-  revision: 5074f1b0c41b39982c40b9c801e38fb3558b326d
+  revision: 019be840a5509a58dacc1428e2ed280eb0a403fe
   branch: master
   specs:
-    alchemy-amq (0.5.0)
+    alchemy-amq (0.5.1)
       amqp (= 1.5.0)
       eventmachine (= 1.0.7)
       msgpack (= 0.5.9)
@@ -22,14 +22,14 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.1)
-      activesupport (= 4.2.1)
+    activemodel (4.2.2)
+      activesupport (= 4.2.2)
       builder (~> 3.1)
-    activerecord (4.2.1)
-      activemodel (= 4.2.1)
-      activesupport (= 4.2.1)
+    activerecord (4.2.2)
+      activemodel (= 4.2.2)
+      activesupport (= 4.2.2)
       arel (~> 6.0)
-    activesupport (4.2.1)
+    activesupport (4.2.2)
       i18n (~> 0.7)
       json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
@@ -67,7 +67,7 @@ GEM
     le (2.6.2)
     minitest (5.7.0)
     msgpack (0.5.9)
-    multi_json (1.11.0)
+    multi_json (1.11.1)
     multi_xml (0.5.5)
     rack (1.6.0)
     rack-test (0.6.3)
@@ -79,19 +79,19 @@ GEM
       rack
     rdoc (4.2.0)
       json (~> 1.4)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rspec (3.3.0)
+      rspec-core (~> 3.3.0)
+      rspec-expectations (~> 3.3.0)
+      rspec-mocks (~> 3.3.0)
+    rspec-core (3.3.0)
+      rspec-support (~> 3.3.0)
+    rspec-expectations (3.3.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-mocks (3.2.1)
+      rspec-support (~> 3.3.0)
+    rspec-mocks (3.3.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
+      rspec-support (~> 3.3.0)
+    rspec-support (3.3.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -114,8 +114,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (~> 4.1)
-  activesupport (~> 4.1)
+  activerecord (~> 4.2)
+  activesupport (~> 4.2)
   airbrake (~> 4.1)
   alchemy-amq!
   byebug (~> 3.5)
