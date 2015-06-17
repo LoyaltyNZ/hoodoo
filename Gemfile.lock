@@ -1,13 +1,13 @@
 GIT
   remote: git@github.com:LoyaltyNZ/alchemy-amq.git
-  revision: 019be840a5509a58dacc1428e2ed280eb0a403fe
+  revision: 8920e175365a0e1a498f1a4805c7e3241c8a2e48
   branch: master
   specs:
     alchemy-amq (0.5.1)
       amqp (= 1.5.0)
       eventmachine (= 1.0.7)
       msgpack (= 0.5.9)
-      rack (= 1.6.0)
+      rack (~> 1.6)
       uuidtools (= 2.1.5)
 
 PATH
@@ -69,7 +69,7 @@ GEM
     msgpack (0.5.9)
     multi_json (1.11.1)
     multi_xml (0.5.5)
-    rack (1.6.0)
+    rack (1.6.2)
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (10.4.2)
