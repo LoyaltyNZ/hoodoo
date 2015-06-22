@@ -1792,7 +1792,9 @@ module Hoodoo; module Services
 
       if session.nil? ||
          session.respond_to?( :scoping ) == false ||
-         session.scoping.respond_to?( :authorised_http_headers ) == false
+         session.scoping.respond_to?( :authorised_http_headers ) == false ||
+         session.scoping.authorised_http_headers.nil? ||
+         session.scoping.authorised_http_headers.empty?
 
         interaction.context.response.errors.add_error( 'platform.forbidden' )
         return
@@ -2345,7 +2347,7 @@ module Hoodoo; module Services
     # * Currently, this is only ever done for a "create" action (POST); never
     #   call here for any other action / HTTP method.
     #
-    # * Secured header checking must already taken place before calling here.
+    # * Secured header checking must already have taken place before calling.
     #
     # At present this involves just the X-Resource-UUID header. If this is
     # present and the value is non-empty, it's validated as UUID and written as

@@ -394,15 +394,29 @@ describe Hoodoo::Services::Middleware do
       do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
     end
 
+    it 'rejects requests with malformed (nil) authorised header collection' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      @test_session.scoping.authorised_http_headers = nil
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
+    end
+
+    it 'rejects requests with an explicitly empty authorised header collection' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      @test_session.scoping.authorised_http_headers = []
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
+    end
+
     it 'rejects requests with mismatched authorised headers' do
       def expectations( hash )
         expect( last_response.status ).to eq( 403 )
-
-        # Check for a *generic* platform.forbidden message. It isn't even very
-        # accurate but the whole point is that we don't reveal the exact nature
-        # of the authorisation failure (use of a secure header without session
-        # permissions) because that would be an information disclosure bug.
-        #
         expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
       end
 
