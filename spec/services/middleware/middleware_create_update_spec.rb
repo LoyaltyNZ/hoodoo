@@ -1,6 +1,11 @@
 # Specific tests for behaviour around the middleware's enforcement of
 # the to_create/to_update DSL through service interfaces and validation
 # of inbound payloads.
+#
+# Since it relies upon the same test setup, the X-Resource-UUID secured
+# header is tested here - both secure headers as a mechanism, and that
+# particular header allowing in a value for a resource ID which gets
+# passed in as an "id" field in the effective body data.
 
 require 'spec_helper.rb'
 
@@ -96,10 +101,10 @@ describe Hoodoo::Services::Middleware do
     end
   end
 
-  def do_post( variant, hash ) # Variant is :a or :b
+  def do_post( variant, hash, headers = {} ) # Variant is :a or :b
     post "/v1/r_spec_to_update_to_create_test_#{ variant }/",
          hash.nil? ? '' : JSON.generate( hash ),
-         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }.merge( headers )
 
     expectations( hash )
   end
@@ -203,6 +208,13 @@ describe Hoodoo::Services::Middleware do
     def expectations( hash )
       expect( last_response.status ).to eq( 422 )
       expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Body data contains unrecognised or prohibited fields' )
+    end
+
+    # Paranoia check to ensure rejection when attempting to specify just an ID,
+    # with an otherwise entirely valid payload.
+    #
+    it 'for just "id"' do
+      do_post( :a, { 'id' => Hoodoo::UUID.generate, 'foo' => 'hello', 'bar' => 42 } )
     end
 
     it 'with many fields' do
@@ -326,6 +338,90 @@ describe Hoodoo::Services::Middleware do
       do_post( :b, 'code' => nil, 'message' => 'world', 'reference' => nil, 'errors' => [] )
       do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
       do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+    end
+  end
+
+  # Tests for the X-Resource-UUID header / authorised headers generally.
+
+  context 'with HTTP header-based IDs' do
+    before :each do
+      @test_uuid = Hoodoo::UUID.generate()
+      @old_test_session = Hoodoo::Services::Middleware.test_session()
+      @test_session = @old_test_session.dup
+      permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
+      permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
+      @test_session.permissions = permissions
+      @test_session.scoping = @test_session.scoping.dup
+      Hoodoo::Services::Middleware.set_test_session( @test_session )
+    end
+
+    after :each do
+      Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+    end
+
+    it 'accepts session-authorised and valid IDs' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 200 )
+        expect( JSON.parse( last_response.body ) ).to eq( hash.merge( 'id' => @test_uuid ) )
+      end
+
+      @test_session.scoping.authorised_http_headers = [ 'HTTP_X_RESOURCE_UUID' ]
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => @test_uuid } )
+    end
+
+    it 'rejects session-authorised but invalid IDs' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 422 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'X-Resource-UUID' )
+      end
+
+      @test_session.scoping.authorised_http_headers = [ 'HTTP_X_RESOURCE_UUID' ]
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => 'not a valid UUID' } )
+    end
+
+    it 'rejects requests with no authorised headers' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+
+        # Check for a *generic* platform.forbidden message. It isn't even very
+        # accurate but the whole point is that we don't reveal the exact nature
+        # of the authorisation failure (use of a secure header without session
+        # permissions) because that would be an information disclosure bug.
+        #
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
+    end
+
+    it 'rejects requests with malformed (nil) authorised header collection' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      @test_session.scoping.authorised_http_headers = nil
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
+    end
+
+    it 'rejects requests with an explicitly empty authorised header collection' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      @test_session.scoping.authorised_http_headers = []
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
+    end
+
+    it 'rejects requests with mismatched authorised headers' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 403 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+
+      @test_session.scoping.authorised_http_headers = [ 'HTTP_NOT_X_RESOURCE_UUID' ]
+      do_post( :a, { 'foo' => 'hello', 'bar' => 42 }, { 'HTTP_X_RESOURCE_UUID' => Hoodoo::UUID.generate } )
     end
   end
 

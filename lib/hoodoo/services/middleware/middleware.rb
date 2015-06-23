@@ -123,6 +123,33 @@ module Hoodoo; module Services
     #
     PROHIBITED_INBOUND_FIELDS = Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys
 
+    # A request will be rejected if it includes an HTTP header from this list
+    # (expressed _precisely_ as it would appear in a Rack request) unless:
+    #
+    # * There is a session in use which includes a +scoping+ section
+    # * The +scoping+ session in turn has an +authorised_http_headers+ section
+    #   consisting of an Array of Strings
+    # * At least one of those Strings matches the header name that the inbound
+    #   request is attempting to use, again in the identical Rack request
+    #   formatting.
+    #
+    # Rack request formatting means the header name is in upper case, with any
+    # hyphens converted to underscores, and with a prefix of "HTTP_" added for
+    # _most_ headers. For more information, see the Rack specification:
+    #
+    # * https://github.com/rack/rack
+    # * https://github.com/rack/rack/blob/master/SPEC
+    #
+    SECURED_HEADERS = Set.new( [
+
+      # This header is ignored except in POST (resource creation) requests. It
+      # asks that the "id" field (UUID) for the persisted resource instance is
+      # of the given value, rather than automatically generated.
+      #
+      'HTTP_X_RESOURCE_UUID',
+
+    ] )
+
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
     # DOS attempts to consume RAM.
     #
@@ -709,6 +736,11 @@ module Hoodoo; module Services
 
       local_request.body = body_hash
 
+      # The inter-resource local backend does not accept or process the
+      # equivalent of the X-Resource-UUID "set the ID to <this>" HTTP
+      # header, so we do not call "maybe_update_body_data_for()" here;
+      # we only need to validate it.
+      #
       if ( action == :create || action == :update )
         validate_body_data_for( local_interaction )
       end
@@ -1401,9 +1433,13 @@ module Hoodoo; module Services
         end
       end
 
-      # If we reach here - it's a normal request, not preflight.
+      # If we reach here - it's a normal request, not preflight. Load the
+      # session and then, in the context of a loaded session, check to see
+      # if the request includes any secured HTTP headers.
 
       load_session_into( interaction )
+      deal_with_authorised_headers( interaction )
+
       return nil
     end
 
@@ -1533,12 +1569,16 @@ module Hoodoo; module Services
       debug_log( interaction, 'Raw body data read successfully', body )
 
       if action == :create || action == :update
-        parse_body_string_into( interaction, body )
 
-        if response.halt_processing?
-          return
-        else
-          validate_body_data_for( interaction )
+        parse_body_string_into( interaction, body )
+        return if response.halt_processing?
+
+        validate_body_data_for( interaction )
+        return if response.halt_processing?
+
+        if action == :create
+          maybe_update_body_data_for( interaction )
+          return if response.halt_processing?
         end
 
       elsif body.nil? == false && body.to_s.strip.length > 0
@@ -1714,6 +1754,62 @@ module Hoodoo; module Services
 
       lang = 'en-nz' if lang.nil? || lang.empty?
       interaction.context.request.locale = lang.downcase
+    end
+
+    # Check the inbound request for anything in the SECURED_HEADERS set of
+    # HTTP headers. If there's any such header in the request, check the
+    # session. If there's no session, no session +scoping+ field or no scoping
+    # +authorised_http_headers+ array, set up a "forbidden" response. If there
+    # is an authorised list in the session, make sure it contains each of the
+    # secured headers in the request; set up a "forbidden" response if any are
+    # missing.
+    #
+    # The method has no return value, but the interaction's response's errors
+    # collection may be updated to reject the request.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Parts of this may
+    #                 be updated on exit.
+    #
+    def deal_with_authorised_headers( interaction )
+
+      # Set up some convenience variables
+
+      session  = interaction.context.session
+      rack_env = interaction.rack_request.env
+
+      # See if the request includes any secured headers
+
+      secured_headers_in_request = SECURED_HEADERS.select do | header |
+        rack_env.has_key?( header )
+      end
+
+      # Early exit for no-work-to-do or immediate-error-case. Note that we
+      # deliberately give no information on why the request was forbidden;
+      # an information disclosure bug would otherwise be present.
+
+      return if secured_headers_in_request.empty?
+
+      if session.nil? ||
+         session.respond_to?( :scoping ) == false ||
+         session.scoping.respond_to?( :authorised_http_headers ) == false ||
+         session.scoping.authorised_http_headers.nil? ||
+         session.scoping.authorised_http_headers.empty?
+
+        interaction.context.response.errors.add_error( 'platform.forbidden' )
+        return
+      end
+
+      # Make sure each header is allowed; early exit for any failure.
+
+      authorised_headers = session.scoping.authorised_http_headers
+
+      secured_headers_in_request.each do | secured_header |
+        unless authorised_headers.include?( secured_header )
+          interaction.context.response.errors.add_error( 'platform.forbidden' )
+          return
+        end
+      end
     end
 
     # Preprocessing stage that sets up common headers required in any response.
@@ -2242,6 +2338,38 @@ module Hoodoo; module Services
             )
           end
         end
+      end
+    end
+
+    # Some HTTP headers or other request features may give us reason to modify
+    # inbound body data.
+    #
+    # * Currently, this is only ever done for a "create" action (POST); never
+    #   call here for any other action / HTTP method.
+    #
+    # * Secured header checking must already have taken place before calling.
+    #
+    # At present this involves just the X-Resource-UUID header. If this is
+    # present and the value is non-empty, it's validated as UUID and written as
+    # the body's "id" field at the top-level if OK.
+    #
+    # On exit, the interaction's request's body may be updated, or the
+    # response's error collection may be updated rejecting the request on
+    # the grounds of an invalid UUID.
+    #
+    def maybe_update_body_data_for( interaction )
+      return unless interaction.rack_request.env.has_key?( 'HTTP_X_RESOURCE_UUID' )
+
+      required_item_uuid = interaction.rack_request.env[ 'HTTP_X_RESOURCE_UUID' ].to_s rescue ''
+
+      unless Hoodoo::UUID.valid?( required_item_uuid )
+        interaction.context.response.errors.add_error(
+          'generic.invalid_uuid',
+          :message   => "Value of `X-Resource-UUID` HTTP header is an invalid UUID",
+          :reference => { :field_name => 'X-Resource-UUID' }
+        )
+      else
+        interaction.context.request.body[ 'id' ] = required_item_uuid
       end
     end
 
