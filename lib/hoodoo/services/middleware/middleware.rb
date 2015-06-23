@@ -924,7 +924,7 @@ module Hoodoo; module Services
           :method  => env[ 'REQUEST_METHOD', ],
           :scheme  => env[ 'rack.url_scheme' ],
           :host    => env[ 'SERVER_NAME'     ],
-          :post    => env[ 'SERVER_PORT'     ],
+          :port    => env[ 'SERVER_PORT'     ],
           :script  => env[ 'SCRIPT_NAME'     ],
           :path    => env[ 'PATH_INFO'       ],
           :query   => env[ 'QUERY_STRING'    ],
