@@ -21,7 +21,7 @@ module Hoodoo
           array :product_tag_ids_excluded
 
           # The legacy tags are left below to allow a seamless deploy since
-          # many services are affected by the removal of tags. One they are all
+          # many services are affected by the removal of tags. Once they are all
           # deployed tags should be removed.
           array :product_tag_ids_included
           array :product_tag_ids_excluded
