@@ -25,9 +25,9 @@ module Hoodoo
         #
         ROUNDINGS = [ :down, :up, :half_down, :half_up, :half_even ]
 
-        # Defined values for the +grouping_level+ enumeration in the schema.
+        # Defined values for the +aggregated_by+ enumeration in the schema.
         #
-        GROUPING_LEVELS = [ :account, :member, :token ]
+        AGGREGATIONS = [ :account, :member, :token ]
 
         # Defined values for the +external_currency_types+ enumeration in the schema.
         # see: https://github.com/LoyaltyNZ/awg/blob/master/prototype/platform_api.md#currency.type
@@ -39,7 +39,7 @@ module Hoodoo
           array   :qualifiers
           string  :symbol,                           :length => Hoodoo::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
 
-          enum    :grouping_level,  :from => GROUPING_LEVELS
+          enum    :aggregated_by,  :from => AGGREGATIONS
           enum    :position,        :from => POSITIONS
           enum    :rounding,        :from => ROUNDINGS, :required => true
 
