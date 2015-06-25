@@ -1006,7 +1006,7 @@ module Hoodoo; module Services
       #
       return if ( context.response.halt_processing? )
 
-      # Data as per Hoodoo::Services::Middleware::StructuredLogger.
+      # Data as per Hoodoo::Logger.
 
       data = {
         :interaction_id => interaction.interaction_id,

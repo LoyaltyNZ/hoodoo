@@ -21,7 +21,7 @@ module Hoodoo; module Services
 
       # For AlchemyAMQ gem users, the AMQPLogMessage class provides an
       # AlchemyAMQ::Message subclass used for sending structured log data to
-      # the queue. Hoodoo::Services::Middleware::StructuredLogger uses this.
+      # the queue. Hoodoo::Logger uses this.
       #
       # See the AlchemyAMQ gem for more details.
       #
@@ -58,15 +58,15 @@ module Hoodoo; module Services
         #
         attr_accessor :id
 
-        # Logging level. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Logging level. See Hoodoo::Logger.
         #
         attr_accessor :level
 
-        # Logging component. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Logging component. See Hoodoo::Logger.
         #
         attr_accessor :component
 
-        # Component log code. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Component log code. See Hoodoo::Logger.
         #
         attr_accessor :code
 
@@ -98,22 +98,22 @@ module Hoodoo; module Services
           end
         end
 
-        # Log payload. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Log payload. See Hoodoo::Logger.
         #
         attr_accessor :data
 
         # Optional calling Caller ID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Hoodoo::Logger.
         #
         attr_accessor :caller_id
 
         # Optional interaction UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Hoodoo::Logger.
         #
         attr_accessor :interaction_id
 
         # Optional hash of identity properties from the session data inside the
-        # payload - see Hoodoo::Services::Middleware::StructuredLogger.
+        # payload - see Hoodoo::Logger.
         #
         attr_accessor :identity
 
