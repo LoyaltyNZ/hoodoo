@@ -237,7 +237,7 @@ independent, searchable field in the log payload.</p>
   <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
 
   <span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span> ]
-  <span class="ruby-identifier">identity</span>       = ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span>  ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
+  <span class="ruby-identifier">identity</span>       = ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
 
   <span class="ruby-identifier">message</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
