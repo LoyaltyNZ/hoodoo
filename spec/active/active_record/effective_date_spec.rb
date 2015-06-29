@@ -1,14 +1,16 @@
 require 'byebug'
 require 'spec_helper'
 require 'active_record'
+require 'timecop'
 
 describe Hoodoo::ActiveRecord::EffectiveDate do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests ) do | t |
-        t.string   :uuid
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => false ) do | t |
+        t.string   :uuid,            :null => false
+        t.string   :activerecord_id, :null => false
         t.text     :data
-        t.datetime :effective_start
+        t.datetime :effective_start, :null => false
         t.datetime :effective_end
         # t.tsrange  :effective_date_range # default tsrange(now()::timestamp, 'infinity', '[)') not null
         t.timestamps
@@ -17,10 +19,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         include Hoodoo::ActiveRecord::EffectiveDate
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_field_override_tests ) do | t |
-        t.string   :uuid
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_field_override_tests, :id => false ) do | t |
+        t.text     :uuid,       :null => false
+        t.string   :model_id,   :null => false
         t.text     :data
-        t.datetime :valid_from
+        t.datetime :valid_from, :null => false
         t.datetime :valid_until
         # t.tsrange  :effective_date_range # default tsrange(now()::timestamp, 'infinity', '[)') not null
         t.timestamps
@@ -41,6 +44,91 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     @data = 'some data'
     @other_data = 'some other data'
     @now = Time.now
+  end
+
+  context 'persisting an ActiveRecord model' do
+    it 'sets the correct activerecord_id value' do
+
+      @a.uuid = Hoodoo::UUID.generate
+      @a.save!
+
+      found = RSpecModelEffectiveDateTest.find_at(@a.uuid)
+
+      expected_activerecord_id = @a.uuid +
+        "_" +
+        Hoodoo::ActiveRecord::EffectiveDate.time_to_s_with_large_precision(
+          @a.effective_start
+        )
+
+      expect(found.activerecord_id).to eq(expected_activerecord_id)
+
+    end
+
+    it 'creates a new record when updating' do
+
+      @a.uuid = Hoodoo::UUID.generate
+      @a.data = 'original data'
+      @a.save!
+      expect(RSpecModelEffectiveDateTest.count).to eq(1)
+
+      @a.data = 'modified data'
+      @a.save!
+      expect(RSpecModelEffectiveDateTest.count).to eq(2)
+
+      @a.data = 'more modified data'
+      @a.save!
+      expect(RSpecModelEffectiveDateTest.count).to eq(3)
+
+      # Check all the data is there
+      expect(RSpecModelEffectiveDateTest.pluck(:data)).
+        to match_array([
+          'original data',
+          'modified data',
+          'more modified data'
+      ])
+    end
+  end
+
+  context 'persisting a Hoodoo::ActiveRecord model' do
+    class RSpecModelEffectiveDateTestHoodoo < Hoodoo::ActiveRecord::Base
+      include Hoodoo::ActiveRecord::EffectiveDate
+      self.table_name = 'r_spec_model_effective_date_tests'
+
+      self.primary_key = :activerecord_id
+
+      def self.uuid_column
+        :uuid
+      end
+    end
+
+    it 'sets the correct id value' do
+
+      hoodoo_model = RSpecModelEffectiveDateTestHoodoo.new
+      hoodoo_model.save!
+
+      found = RSpecModelEffectiveDateTest.find_at(hoodoo_model.uuid)
+
+      expected_activerecord_id = found.uuid +
+        "_" +
+        Hoodoo::ActiveRecord::EffectiveDate.time_to_s_with_large_precision(
+          found.effective_start
+        )
+
+      expect(found.activerecord_id).to eq(expected_activerecord_id)
+    end
+
+    it 'creates a new record when updating' do
+      hoodoo_model = RSpecModelEffectiveDateTestHoodoo.new
+
+      hoodoo_model.data = 'original data'
+      hoodoo_model.save!
+
+      expect(RSpecModelEffectiveDateTestHoodoo.count).to eq(1)
+
+      hoodoo_model.data = 'modified data'
+      hoodoo_model.save!
+      expect(RSpecModelEffectiveDateTestHoodoo.count).to eq(2)
+    end
   end
 
   context 'find_at' do
