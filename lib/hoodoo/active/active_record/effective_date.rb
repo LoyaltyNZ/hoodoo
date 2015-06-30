@@ -53,16 +53,22 @@ module Hoodoo
 
       module ClassMethods
 
+        # Return the model with the specified ident, effective at the specified
+        # date_time.
+        #
+        # +ident+:: The uuid column value of the desired record.
+        #
+        # +date_time+:: (Optional) Time at which the record is effective,
+        #               defaulting to the current time UTC.
         #
         def find_at( ident, date_time=Time.now.utc )
-          found = where( "#{uuid_column}" => ident ).effective_dated( date_time )
-          if found.count == 0
-            nil
-          else
-            found.first
-          end
+          where( "#{uuid_column}" => ident ).effective_dated( date_time ).first
         end
 
+        # Return the models which are effective at the specified date_time.
+        #
+        # +date_time+:: (Optional) Time at which the records are effective,
+        #               defaulting to the current time UTC.
         #
         def list_at( date_time=Time.now.utc )
           effective_dated( date_time )
