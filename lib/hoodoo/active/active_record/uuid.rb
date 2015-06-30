@@ -91,10 +91,10 @@ module Hoodoo
           # which some tests may rely on.
           validator_instances = [
             ::UuidValidator.new( v_opts.dup ),
-            ::ActiveRecord::Validations::UniquenessValidator.new( v_opts.dup )
+            ::ActiveRecord::Validations::PresenceValidator.new( v_opts.dup )
           ]
           if instance.class.validate_uuid_uniqueness?
-            validator_instances.insert( 1, ::ActiveRecord::Validations::PresenceValidator.new( v_opts.dup ) )
+            validator_instances.insert( 1, ::ActiveRecord::Validations::UniquenessValidator.new( v_opts.dup ) )
           end
 
           validator_instances.each do | validator_instance |
