@@ -246,6 +246,10 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
           found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now)
           expect(found.data).to eq @other_data
         end
+        it 'finds none when there are no records effective when specified' do
+          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now - 1.year)
+          expect(found).to eq nil
+        end
       end
     end
   end
@@ -253,8 +257,68 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
   # ==========================================================================
 
   context 'list' do
-    it '' do
+    before do
+      # No longer effective
+      @d = RSpecModelEffectiveDateTest.new
+      @d.data = 'first data'
+      @d.uuid = '1234'
+      @d.effective_start = @now - 3.days
+      @d.effective_end = @now
+      @d.save!
+
+      # Effective from now on
+      @e = RSpecModelEffectiveDateTest.new
+      @e.data = 'second data'
+      @e.uuid = '1234'
+      @e.effective_start = @now
+      @e.save!
+
+      # Effective from now for three days
+      @f = RSpecModelEffectiveDateTest.new
+      @f.data = 'third data'
+      @f.uuid = '5678'
+      @f.effective_start = @now
+      @f.effective_end = @now + 3.days
+      @f.save!
+
+      # Not effective for three more days
+      @g = RSpecModelEffectiveDateTest.new
+      @g.data = 'fourth data'
+      @g.uuid = '5678'
+      @g.effective_start = @now + 3.days
+      @g.save!
     end
+
+    it 'returns records that used to be effective starting at past time' do
+      expect(RSpecModelEffectiveDateTest.list_at(@now - 3.days).pluck(:data)).
+        to match_array([@d.data])
+    end
+
+    it 'returns records that used to be effective at past time' do
+      expect(RSpecModelEffectiveDateTest.list_at(@now - 2.days).pluck(:data)).
+        to match_array([@d.data])
+    end
+
+    it 'returns records effective now with no parameters to list_at' do
+      expect(RSpecModelEffectiveDateTest.list_at.pluck(:data)).
+        to match_array([@e.data, @f.data])
+    end
+
+    it 'returns records that will be effective starting at future time' do
+      expect(RSpecModelEffectiveDateTest.list_at(@now + 3.days).pluck(:data)).
+        to match_array([@e.data, @g.data])
+    end
+
+    it 'returns records that will be effective at future time' do
+      expect(RSpecModelEffectiveDateTest.list_at(@now + 1.year).pluck(:data)).
+        to match_array([@e.data, @g.data])
+    end
+
+    it 'returns no results for a time when no records were effective' do
+      expect(RSpecModelEffectiveDateTest.list_at(@now - 1.year).pluck(:data)).
+        to eq([])
+    end
+
   end
 
 end
