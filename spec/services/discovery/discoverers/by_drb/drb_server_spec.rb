@@ -75,21 +75,28 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
 
         client = nil
 
-        begin
-          Timeout::timeout( 5 ) do
-            loop do
-              begin
-                client = DRbObject.new_with_uri( described_class.uri() )
-                client.ping()
-                client.stop()
-                break
-              rescue DRb::DRbConnError
-                sleep 0.1
-              end
+        # Don't use Ruby Timeout here. Pseudorandom apparent DRb
+        # connection issues will arise, especially in Travis.
+        #
+        # https://flushentitypacket.github.io/ruby/2015/02/21/ruby-timeout-how-does-it-even-work.html
+        # https://coderwall.com/p/1novga/ruby-timeouts-are-dangerous
+
+        counter = 0
+        limit   = 50 # sleep 0.1 * 50 => roughly 5 seconds
+
+        loop do
+          begin
+            client = DRbObject.new_with_uri( described_class.uri() )
+            client.ping()
+            client.stop()
+            break
+          rescue DRb::DRbConnError
+            counter += 1
+            if counter > limit
+              raise "Timed out while waiting for DRb service on local port #{ port } to shut down"
             end
+            sleep 0.1
           end
-        rescue Timeout::Error
-          raise "Timed out while waiting for DRb service to communicate"
         end
 
         # For good measure...
