@@ -24,9 +24,6 @@ module Hoodoo
       def self.instantiate( model )
         model.extend( ClassMethods )
 
-        # Set the configured primary key
-        model.primary_key = model.primary_key_field
-
         # Force ActiveRecord to always insert instead of update
         model.send(:define_method, :new_record?, lambda { true })
 
@@ -47,37 +44,18 @@ module Hoodoo
 
         model.before_save do
 
-          # Set the effective_start field to now
-          self.send( "#{self.class.effective_start_field}=", Time.now.utc )
-
-          # Set the id field to a concatenation of the uuid field value and the
-          # effective start field value with an underscore between them.
-          self.send(
-            "#{self.class.primary_key}=",
-            self.send( self.class.uuid_field ) +
-            "_" +
-            Hoodoo::ActiveRecord::EffectiveDate.time_to_s_with_large_precision(
-              self.send( self.class.effective_start_field )
-            )
-          )
+          # Wipe the primary key field (which id always refers to) so it can be
+          # auto incremented by the database.
+          self.id = nil
 
         end
-      end
-
-      # Format time as a string with 10^-7 precision, multiplied to be a
-      # whole number and converted to a string.
-      #
-      # +time_to_convert+:: Time object to convert
-      #
-      def self.time_to_s_with_large_precision(time_to_convert)
-        (time_to_convert.to_f * 10000000).to_i.to_s
       end
 
       module ClassMethods
 
         #
         def find_at( ident, date_time=Time.now.utc )
-          found = where( "#{uuid_field}" => ident ).effective_dated( date_time )
+          found = where( "#{uuid_column}" => ident ).effective_dated( date_time )
           if found.count == 0
             nil
           else
@@ -94,22 +72,15 @@ module Hoodoo
         # Getters for effective dating field names                             #
         ########################################################################
 
-        # Get the symbolised name of the field which is used as the uuid for
-        # this model. This defaults to :id.
+        # The name of the column which stores the UUID. This can be set via
+        # #uuid_column=, defaulting to :id.
         #
-        def uuid_field
-          if class_variable_defined?( :@@effective_uuid_field )
-            return class_variable_get( :@@effective_uuid_field )
+        def uuid_column
+          if class_variable_defined?( :@@effective_uuid_column )
+            return class_variable_get( :@@effective_uuid_column )
           else
-            return :uuid
+            return :id
           end
-        end
-
-        # Get the symbolised name of the field which is used as the ActiveRecord
-        # primary key of this model. This defaults to :activerecord_id.
-        #
-        def primary_key_field
-          :activerecord_id
         end
 
         # Get the symbolised name of the field which is used as start date of
@@ -138,34 +109,21 @@ module Hoodoo
         # Setters for effective dating field names                             #
         ########################################################################
 
-        # Set the name of the UUID field for this model. This is not the primary
-        # key field as the primary key is populated with data used to ensure
-        # ActiveRecord maintains reference to the correct record in the
-        # database across updates.
+        # Set the name of the column which stores the uuid. This can be read via
+        # #uuid_column, defaulting to :id.
         #
-        # +effective_uuid_field_name+:: String or Symbol name of the field.
+        # +uuid_column_name+:: The symbolised name of the column which holds the
+        #                      UUID.
         #
-        def effective_date_uuid_field( effective_uuid_field_name )
-          class_variable_set( '@@effective_uuid_field', effective_uuid_field_name.to_sym )
-        end
-
-        # Set the name of the field which ActiveRecord should use as the
-        # primary key for this model. This field will be automatically
-        # populated with a concatenation of the id_field and the
-        # effective_start field.
-        #
-        # +effective_primary_key_field_name+:: String or Symbol name of the
-        #                                      field.
-        #
-        def effective_date_primary_key_field( effective_primary_key_field_name )
-          class_variable_set( '@@effective_primary_key_field', effective_primary_key_field_name.to_sym )
+        def uuid_column=( uuid_column_name )
+          class_variable_set( :@@effective_uuid_column, uuid_column_name )
         end
 
         # Set the name of the field which stores the start date for this model.
         #
         # +effective_start_field_name+:: String or Symbol name of the field.
         #
-        def effective_date_start_field( effective_start_field_name )
+        def effective_date_start_field=( effective_start_field_name )
           class_variable_set( '@@effective_start_field', effective_start_field_name.to_sym )
         end
 
@@ -173,7 +131,7 @@ module Hoodoo
         #
         # +effective_end_field_name+:: String or Symbol name of the field.
         #
-        def effective_date_end_field( effective_end_field_name )
+        def effective_date_end_field=( effective_end_field_name )
           class_variable_set( '@@effective_end_field', effective_end_field_name.to_sym )
         end
 
