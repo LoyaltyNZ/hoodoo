@@ -17,7 +17,7 @@ describe Hoodoo::Services::Discovery::ByDRb do
     # https://coderwall.com/p/1novga/ruby-timeouts-are-dangerous
 
     counter = 0
-    limit   = 50 # sleep 0.1 * 50 => roughly 5 seconds
+    limit   = 100 # sleep 0.1 * 100 => roughly 10 seconds
 
     loop do
       begin
