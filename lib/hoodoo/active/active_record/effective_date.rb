@@ -24,13 +24,36 @@ module Hoodoo
       def self.instantiate( model )
         model.extend( ClassMethods )
 
-        # Force ActiveRecord to always insert instead of update
-        model.send(:define_method, :new_record?, lambda { true })
+        # Redefine reload
+        model.send(:define_method, :reload) do
 
-        # Force ActiveRecord to insert every attribute on every write, otherwise
-        # it will check new_record? which is overriden to always be true, then
-        # it will do an insert but only with the attributes that are dirty.
-        model.send(:define_method, :partial_writes?, lambda { false })
+          # Find the primary key value of the effective record with this group
+          # id.
+          primary_col = self.class.primary_key_column
+          effective_primary_key = self.class.find_at(
+            self.send( self.class.group_id_column )
+          ).try( primary_col )
+
+          if effective_primary_key.present?
+
+            # An effective record was found with this model's group id. Make
+            # this model point to it.
+
+            self.send( "#{primary_col}=", effective_primary_key )
+
+          else
+
+            # There is no effective record with this group id, mark this model
+            # as destroyed.
+
+            @destroyed = true
+            freeze
+
+          end
+
+          super() unless destroyed? # TODO
+
+        end
 
         # Define a scope for the model which finds records that are effective
         # at the provided date time.
@@ -42,13 +65,18 @@ module Hoodoo
             where("#{model.effective_end_field} is null or ? < #{model.effective_end_field}", utc_date_time)
         end
 
-        model.before_save do
-
-          # Wipe the primary key field (which id always refers to) so it can be
-          # auto incremented by the database.
-          self.id = nil
-
+        # A database trigger may intercept updates and:
+        #  * End-date the existing record
+        #  * Insert a new record with the new values.
+        #
+        # This after_save hook will ensure the model instance points to the
+        # effective record with this model's group id, or mark this model as
+        # destroyed if there is no such record.
+        #
+        model.after_save do
+          reload
         end
+
       end
 
       module ClassMethods
@@ -56,13 +84,13 @@ module Hoodoo
         # Return the model with the specified ident, effective at the specified
         # date_time.
         #
-        # +ident+:: The uuid column value of the desired record.
+        # +group_id+:: The group id column value of the desired record.
         #
         # +date_time+:: (Optional) Time at which the record is effective,
         #               defaulting to the current time UTC.
         #
-        def find_at( ident, date_time=Time.now.utc )
-          where( "#{uuid_column}" => ident ).effective_dated( date_time ).first
+        def find_at( group_id, date_time=Time.now.utc )
+          where( "#{group_id_column}" => group_id ).effective_dated( date_time ).first
         end
 
         # Return the models which are effective at the specified date_time.
@@ -78,14 +106,25 @@ module Hoodoo
         # Getters for effective dating field names                             #
         ########################################################################
 
-        # The name of the column which stores the UUID. This can be set via
-        # #uuid_column=, defaulting to :id.
+        # The name of the column which stores the group id. This can be set via
+        # #group_id_column=, defaulting to :id.
         #
-        def uuid_column
-          if class_variable_defined?( :@@effective_uuid_column )
-            return class_variable_get( :@@effective_uuid_column )
+        def group_id_column
+          if class_variable_defined?( :@@effective_group_id_column )
+            return class_variable_get( :@@effective_group_id_column )
           else
             return :id
+          end
+        end
+
+        # The name of the primary key column. This can be set via
+        # #primary_key_column=, defaulting to :activerecord_id.
+        #
+        def primary_key_column
+          if class_variable_defined?( :@@effective_primary_key_column )
+            return class_variable_get( :@@effective_primary_key_column )
+          else
+            return :activerecord_id
           end
         end
 
@@ -115,14 +154,24 @@ module Hoodoo
         # Setters for effective dating field names                             #
         ########################################################################
 
-        # Set the name of the column which stores the uuid. This can be read via
-        # #uuid_column, defaulting to :id.
+        # Set the name of the column which stores the group id. This can be read
+        # via #group_id_column, defaulting to :id.
         #
-        # +uuid_column_name+:: The symbolised name of the column which holds the
-        #                      UUID.
+        # +group_id_column_name+:: The symbolised name of the column which holds
+        #                          the group_id.
         #
-        def uuid_column=( uuid_column_name )
-          class_variable_set( :@@effective_uuid_column, uuid_column_name )
+        def group_id_column=( group_id_column_name )
+          class_variable_set( :@@effective_group_id_column, group_id_column_name )
+        end
+
+        # Set the name of the column which stores the primary key. This can be
+        # read via #primary_key_column, defaulting to :activerecord_id.
+        #
+        # +primary_key_column_name+:: The symbolised name of the primary key
+        #                             column.
+        #
+        def primary_key_column=( primary_key_column_name )
+          class_variable_set( :@@effective_primary_key_column, primary_key_column_name )
         end
 
         # Set the name of the field which stores the start date for this model.

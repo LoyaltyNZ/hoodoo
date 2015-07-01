@@ -6,23 +6,36 @@ require 'timecop'
 describe Hoodoo::ActiveRecord::EffectiveDate do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests ) do | t |
-        t.text     :uuid,            :null => false
-        t.text     :data
-        t.datetime :effective_start, :null => false
-        t.datetime :effective_end
+
+      # NOTE: If you modify the below migration you may need to modify the
+      # subsequent command which adds an auto increment
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => false ) do | t |
+        t.integer     :activerecord_id, :primary_key => true
+        t.text        :id,              :null => false
+        t.text        :data
+        t.datetime    :effective_start, :null => false
+        t.datetime    :effective_end
         t.timestamps
       end
 
+      # SQLite does not support column modification and there is no way to
+      # specify auto increment from the migration. A non-id auto-increment value
+      # is required for some of the tests so the following will recreate the
+      # table under the hood with an auto increment on the activerecord_id.
+      recreate_table_sql = ActiveRecord::Base.connection.execute(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='r_spec_model_effective_date_tests'"
+      )[0]['sql'].sub!("\"activerecord_id\" integer", "\"activerecord_id\" integer primary key")
+      ActiveRecord::Base.connection.execute('DROP TABLE r_spec_model_effective_date_tests')
+      ActiveRecord::Base.connection.execute(recreate_table_sql)
+
       class RSpecModelEffectiveDateTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::EffectiveDate
-        self.uuid_column = :uuid
+        self.primary_key = :activerecord_id
       end
 
       class RSpecModelEffectiveDateTestHoodoo < Hoodoo::ActiveRecord::Base
         include Hoodoo::ActiveRecord::EffectiveDate
-        self.table_name = 'r_spec_model_effective_date_tests'
-        self.uuid_column = :uuid
+        self.table_name               = 'r_spec_model_effective_date_tests'
         self.validate_uuid_uniqueness = false
       end
 
@@ -33,105 +46,204 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         t.datetime :valid_until
         t.timestamps
       end
+
       class RSpecModelEffectiveDateFieldOverrideTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::EffectiveDate
 
-        self.uuid_column                = :unique_id
+        self.group_id_column            = :unique_id
         self.effective_date_start_field = :valid_from
         self.effective_date_end_field   = :valid_until
       end
     end
   end
 
-  before :each do
-    @a = RSpecModelEffectiveDateTest.new
-    @b = RSpecModelEffectiveDateTest.new
-
-    @data       = 'some data'
-    @other_data = 'some other data'
-    @now        = Time.now
-  end
-
   context 'persisting an ActiveRecord model' do
 
-    it 'loads back values set by the database' do
+    before :each do
+      @a = RSpecModelEffectiveDateTest.new
+      @b = RSpecModelEffectiveDateTest.new
 
-      expect(@a.id).to be_nil
+      @data       = 'some data'
+      @other_data = 'some other data'
+      @now        = Time.now.utc
+    end
+
+    it 'loads the effective model instance for the group id when saving' do
+
       @a.effective_start = @now
-      @a.uuid = Hoodoo::UUID.generate
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
       @a.save!
-      expect(@a.id).to_not be_nil
+      expect(@a.data).to eq(@data)
+
+      @b.effective_start = @now - 1.year
+      @b.effective_end   = @now
+      @b.id              = @a.id
+      @b.data            = @other_data
+      expect(@b.data).to eq(@other_data)
+      @b.save!
+      expect(@b.attributes).to eq(@a.attributes)
 
     end
 
-    it 'creates a new record when updating' do
+    it 'loads the effective model instance for the group id when reloading' do
 
-      @a.data = 'original data'
-      @a.uuid = Hoodoo::UUID.generate
+
+      @b.effective_start = @now - 1.year
+      @b.id              = Hoodoo::UUID.generate
+      @b.data            = @other_data
+      byebug
+      expect(@b.data).to eq(@other_data)
+      @b.save!
+      @b.update_columns(:effective_end => @now)
+
       @a.effective_start = @now
+      @a.id              = @b.id
+      @a.data            = @data
+      byebug
       @a.save!
-      expect(RSpecModelEffectiveDateTest.count).to eq(1)
 
-      @a.data = 'modified data'
-      @a.save!
-      expect(RSpecModelEffectiveDateTest.count).to eq(2)
+      expect(@b.attributes).to_not eq(@a.attributes)
+      @b.reload
+      expect(@b.attributes).to eq(@a.attributes)
 
-      @a.data = 'more modified data'
-      @a.save!
-      expect(RSpecModelEffectiveDateTest.count).to eq(3)
-
-      # Check all the data is there
-      expect(RSpecModelEffectiveDateTest.pluck(:id, :data)).
-        to match_array([
-          [1, 'original data'],
-          [2, 'modified data'],
-          [3, 'more modified data']
-      ])
     end
+
+
+    it 'freezes and marks the record as destroyed after saving if there is no effective record' do
+
+      @a.effective_start = @now - 1.year
+      @a.effective_end   = @now
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
+      @a.save!
+
+      expect(@a.destroyed?).to be_truthy
+
+    end
+
+    it 'freezes and marks the record as destroyed after reloading if there is no effective record' do
+
+      @a.effective_start = @now - 1.year
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
+      @a.save!
+
+      # Skip the after_save
+      @a.update_columns(:effective_end => @now)
+
+      expect(@a.destroyed?).to be_falsey
+      @a.reload
+      expect(@a.destroyed?).to be_truthy
+
+    end
+
+
+    it 'prevents subsequent updates after saving if there is no effective record' do
+
+      @a.effective_start = @now - 1.year
+      @a.effective_end   = @now
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
+      @a.save!
+
+      expect{ @a.update_attribute( :data, 'any value' ) }.
+        to raise_error(RuntimeError, "Can't modify frozen hash")
+
+    end
+
+    it 'prevents subsequent updates after reloading if there is no effective record' do
+
+      @a.effective_start = @now - 1.year
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
+      @a.save!
+
+      # Skip the after_save
+      @a.update_columns(:effective_end => @now)
+
+      expect{ @a.update_attribute( :data, 'any value' ) }.
+        to_not raise_error
+      @a.reload
+      expect{ @a.update_attribute( :data, 'any value' ) }.
+        to raise_error(RuntimeError, "Can't modify frozen hash")
+
+    end
+
+
+    it 'allows normal destroy behaviour' do
+
+      @a.effective_start = @now
+      @a.id              = Hoodoo::UUID.generate
+      @a.data            = @data
+      @a.destroy!
+
+      expect(@a.destroyed?).to be_truthy
+
+    end
+
   end
 
   context 'persisting a Hoodoo::ActiveRecord model' do
 
-    it 'loads back values set by the database' do
+    before :each do
+      @a = RSpecModelEffectiveDateTestHoodoo.new
+      @b = RSpecModelEffectiveDateTestHoodoo.new
 
-      hoodoo_model = RSpecModelEffectiveDateTestHoodoo.new
-      hoodoo_model.effective_start = @now
+      @data       = 'some data'
+      @other_data = 'some other data'
+      @now        = Time.now
+    end
 
-      expect(hoodoo_model.id).to be_nil
-      expect(hoodoo_model.uuid).to be_nil
+    it 'loads the effective model instance for the group id when saving' do
 
-      hoodoo_model.save!
+      @a.effective_start = @now
+      @a.data            = @data
+      @a.save!
+      expect(@a.data).to eq(@data)
 
-      expect(hoodoo_model.id).to eq(1)
-      expect(Hoodoo::UUID.valid?(hoodoo_model.uuid)).to be_truthy
+      @b.effective_start = @now - 1.year
+      @b.effective_end   = @now
+      @b.id              = @a.id
+      @b.data            = @other_data
+      expect(@b.data).to eq(@other_data)
+      @b.save!
+      expect(@b.attributes).to eq(@a.attributes)
 
     end
 
-    it 'creates a new record when updating' do
+    it 'freezes and marks the record as destroyed if there is no effective record' do
 
-      hoodoo_model = RSpecModelEffectiveDateTestHoodoo.new
-      hoodoo_model.data = 'original data'
-      hoodoo_model.effective_start = @now
-      hoodoo_model.save!
-      expect(RSpecModelEffectiveDateTestHoodoo.count).to eq(1)
+      @a.effective_start = @now - 1.year
+      @a.effective_end   = @now
+      @a.data            = @data
+      @a.save!
 
-      hoodoo_uuid = hoodoo_model.uuid
+      expect(@a.destroyed?).to be_truthy
 
-      hoodoo_model.data = 'modified data'
-      hoodoo_model.save!
-      expect(RSpecModelEffectiveDateTestHoodoo.count).to eq(2)
+    end
 
-      hoodoo_model.data = 'more modified data'
-      hoodoo_model.save!
-      expect(RSpecModelEffectiveDateTestHoodoo.count).to eq(3)
+    it 'prevents subsequent updates if there is no effective record' do
 
-      # Check all the data is there
-      expect(RSpecModelEffectiveDateTestHoodoo.pluck(:id, :uuid, :data)).
-        to match_array([
-          [1, hoodoo_uuid, 'original data'],
-          [2, hoodoo_uuid, 'modified data'],
-          [3, hoodoo_uuid, 'more modified data']
-      ])
+      @a.effective_start = @now - 1.year
+      @a.effective_end   = @now
+      @a.data            = @data
+      @a.save!
+
+      expect{ @a.update_attribute( :data, 'any value' ) }.
+        to raise_error(RuntimeError, "Can't modify frozen hash")
+
+    end
+
+
+    it 'allows normal destroy behaviour' do
+
+      @a.effective_start = @now
+      @a.data            = @data
+      @a.destroy!
+
+      expect(@a.destroyed?).to be_truthy
+
     end
   end
 
