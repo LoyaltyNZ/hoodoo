@@ -175,7 +175,7 @@ module Hoodoo
     #     # => { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] }
     #
     def self.hash_diff( hash1, hash2 )
-      return ( hash1.keys + hash2.keys ).uniq.inject( {} ) do | memo, key |
+      return ( hash1.keys | hash2.keys ).inject( {} ) do | memo, key |
         unless hash1[ key ] == hash2[ key ]
           if hash1[ key ].kind_of?( Hash ) && hash2[ key ].kind_of?( Hash )
             memo[ key ] = hash_diff( hash1[ key ], hash2[ key ] )
