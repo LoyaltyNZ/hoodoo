@@ -675,7 +675,6 @@ module Hoodoo; module Services
 
       local_interaction.target_interface                  = interface
       local_interaction.target_implementation             = implementation
-      local_interaction.target_resource_for_error_reports = interface.resource
       local_interaction.requested_content_type            = source_interaction.requested_content_type
       local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
 
@@ -930,6 +929,20 @@ module Hoodoo; module Services
       headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
       headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
 
+      data = {
+        :interaction_id => interaction.interaction_id,
+        :payload        => {
+          :method  => env[ 'REQUEST_METHOD', ],
+          :scheme  => env[ 'rack.url_scheme' ],
+          :host    => env[ 'SERVER_NAME'     ],
+          :port    => env[ 'SERVER_PORT'     ],
+          :script  => env[ 'SCRIPT_NAME'     ],
+          :path    => env[ 'PATH_INFO'       ],
+          :query   => env[ 'QUERY_STRING'    ],
+          :headers => headers
+        }
+      }
+
       # Deal with body data and security issues.
 
       secure = true
@@ -946,23 +959,17 @@ module Hoodoo; module Services
         # as will any other unexpected value that might get specified.
 
         secure = false if secure_type.nil? || secure_type == :response
+
+        # Fill in unrelated useful data since we know it is available here.
+
+        data[ :target ] = {
+          :resource => ( interaction.target_interface.resource || '' ).to_s,
+          :version  =>   interaction.target_interface.version,
+          :action   => ( interaction.requested_action || '' ).to_s
+        }
       end
 
-      # Compile the log payload and send it.
-
-      data = {
-        :interaction_id => interaction.interaction_id,
-        :payload        => {
-          :method  => env[ 'REQUEST_METHOD', ],
-          :scheme  => env[ 'rack.url_scheme' ],
-          :host    => env[ 'SERVER_NAME'     ],
-          :port    => env[ 'SERVER_PORT'     ],
-          :script  => env[ 'SCRIPT_NAME'     ],
-          :path    => env[ 'PATH_INFO'       ],
-          :query   => env[ 'QUERY_STRING'    ],
-          :headers => headers
-        }
-      }
+      # Compile the remaining log payload and send it.
 
       unless secure
         body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
@@ -1010,7 +1017,12 @@ module Hoodoo; module Services
 
       data = {
         :interaction_id => interaction.interaction_id,
-        :session        => ( interaction.context.session || {} ).to_h
+        :session        => ( interaction.context.session || {} ).to_h,
+        :target         => {
+          :resource => ( interface.resource || '' ).to_s,
+          :version  =>   interface.version,
+          :action   => ( action || '' ).to_s,
+        }
       }
 
       # Don't bother logging list responses - they could be huge - instead
@@ -1077,6 +1089,14 @@ module Hoodoo; module Services
         :info
       end
 
+      data = {
+        :interaction_id => interaction.interaction_id,
+        :payload        => {
+          :http_status_code => rack_data[ 0 ].to_i,
+          :http_headers     => rack_data[ 1 ]
+        }
+      }
+
       unless interaction.target_interface.nil? || interaction.requested_action.nil?
         secure_log_actions = interaction.target_interface.secure_log_for()
         secure_type = secure_log_actions[ interaction.requested_action ]
@@ -1089,15 +1109,13 @@ module Hoodoo; module Services
         # as will any other unexpected value that might get specified.
 
         secure = false if secure_type.nil? || secure_type == :request
-      end
 
-      data = {
-        :interaction_id => interaction.interaction_id,
-        :payload        => {
-          :http_status_code => rack_data[ 0 ].to_i,
-          :http_headers     => rack_data[ 1 ]
+        data[ :target ] = {
+          :resource => ( interaction.target_interface.resource || '' ).to_s,
+          :version  =>   interaction.target_interface.version,
+          :action   => ( interaction.requested_action || '' ).to_s
         }
-      }
+      end
 
       if secure == false || level == :error
         body = ''
@@ -1127,9 +1145,8 @@ module Hoodoo; module Services
         data[ :payload ][ :response_body ] = body
       end
 
-      data[ :id       ] = id unless id.nil?
-      data[ :session  ] = interaction.context.session.to_h unless interaction.context.session.nil?
-      data[ :resource ] = interaction.target_resource_for_error_reports.to_s unless interaction.target_resource_for_error_reports.nil?
+      data[ :id      ] = id unless id.nil?
+      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
 
       @@logger.report(
         level,
@@ -1498,9 +1515,8 @@ module Hoodoo; module Services
       interface                               = selected_service.interface_class
       implementation                          = selected_service.implementation_instance
 
-      interaction.target_interface                  = interface
-      interaction.target_resource_for_error_reports = interface.resource
-      interaction.target_implementation             = implementation
+      interaction.target_interface            = interface
+      interaction.target_implementation       = implementation
 
       update_response_for( interaction.context.response, interface )
 
@@ -1640,10 +1656,6 @@ module Hoodoo; module Services
           ::ActiveRecord::Base.connection_pool.with_connection( &block )
         else
           block.call
-        end
-
-        if context.response.halt_processing?
-          interaction.target_resource_for_error_reports = interface.resource
         end
 
         log_call_result( interaction )

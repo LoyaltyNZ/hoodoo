@@ -48,13 +48,6 @@ module Hoodoo; module Services; class Middleware
       #
       attr_accessor :target_implementation
 
-      # The target resource name (e.g. "Purchase" as String or Symbol)
-      # to use in error reports; this may differ from the name of the
-      # resource according to #target_interface in complex
-      # inter-resource call scenarios.
-      #
-      attr_accessor :target_resource_for_error_reports
-
       # The requested action, as a symbol; see
       # Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
       #

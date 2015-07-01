@@ -32,7 +32,8 @@ class TestLogService < Hoodoo::Services::Service
 end
 
 class TestLogInterfaceB < Hoodoo::Services::Interface
-  interface :TestLog do
+  interface :TestLogB do
+    version 2
     endpoint :test_log_b, TestLogImplementation
     actions :show, :create, :update
 
@@ -279,12 +280,34 @@ describe Hoodoo::Services::Middleware do
       end
     end
 
+    def check_common_entries( resource, version, action, *args )
+      args.each do | entry |
+        expect( entry ).to have_key( :log_level )
+        expect( entry ).to have_key( :code      )
+        expect( entry ).to have_key( :component )
+        expect( entry ).to have_key( :data      )
+
+        expect( entry[ :data ] ).to have_key( :interaction_id )
+        expect( entry[ :data ] ).to have_key( :session        )
+        expect( entry[ :data ] ).to have_key( :target         )
+
+        expect( entry[ :data ][ :target ] ).to have_key( :resource )
+        expect( entry[ :data ][ :target ] ).to have_key( :version  )
+        expect( entry[ :data ][ :target ] ).to have_key( :action   )
+
+        expect( entry[ :data ][ :target ][ :resource ] ).to eq( resource )
+        expect( entry[ :data ][ :target ][ :version  ] ).to eq( version  )
+        expect( entry[ :data ][ :target ][ :action   ] ).to eq( action   )
+      end
+    end
+
     # To test_log, 'create' says secure for 'request'
     #
     it 'does not log creation requests unexpectedly' do
       post '/v1/test_log', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       inbound, result, outbound = get_data_for( :create )
+      check_common_entries( 'TestLog', 1, 'create', inbound.last, result.first, outbound.first )
 
       entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
       entry = result.first;   expect( entry[ :data ]             ).to     have_key( :payload )
@@ -297,6 +320,7 @@ describe Hoodoo::Services::Middleware do
       patch '/v1/test_log/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       inbound, result, outbound = get_data_for( :update )
+      check_common_entries( 'TestLog', 1, 'update', inbound.last, result.first, outbound.first )
 
       entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to     have_key( :body )
       entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
@@ -306,9 +330,10 @@ describe Hoodoo::Services::Middleware do
     # To test_log_b, 'create' says secure for 'both'.
     #
     it 'does not log requests or responses unexpectedly' do
-      post '/v1/test_log_b', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      post '/v2/test_log_b', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       inbound, result, outbound = get_data_for( :create )
+      check_common_entries( 'TestLogB', 2, 'create', inbound.last, result.first, outbound.first )
 
       entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
       entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
@@ -318,9 +343,10 @@ describe Hoodoo::Services::Middleware do
     # To test_log_b, 'update' does not ask for security.
     #
     it 'does not log requests or responses unexpectedly' do
-      patch '/v1/test_log_b/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      patch '/v2/test_log_b/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       inbound, result, outbound = get_data_for( :update )
+      check_common_entries( 'TestLogB', 2, 'update', inbound.last, result.first, outbound.first )
 
       entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to have_key( :body )
       entry = result.first;   expect( entry[ :data ]             ).to have_key( :payload )
