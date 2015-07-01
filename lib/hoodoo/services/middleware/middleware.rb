@@ -1092,7 +1092,7 @@ module Hoodoo; module Services
       data = {
         :interaction_id => interaction.interaction_id,
         :payload        => {
-          :http_status_code => rack_data[ 0 ],
+          :http_status_code => rack_data[ 0 ].to_i,
           :http_headers     => rack_data[ 1 ]
         }
       }

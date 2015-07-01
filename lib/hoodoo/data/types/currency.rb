@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------
 #           23-Sep-2014 (ADH): Created.
 #           09-Oct-2014 (ADH): Updated for Preview Release 8.
+#           24-Jun-2015 (JML): Added aggregated_by enum.
 ########################################################################
 
 module Hoodoo
@@ -24,6 +25,10 @@ module Hoodoo
         #
         ROUNDINGS = [ :down, :up, :half_down, :half_up, :half_even ]
 
+        # Defined values for the +aggregated_by+ enumeration in the schema.
+        #
+        AGGREGATIONS = [ :account, :member, :token ]
+
         # Defined values for the +external_currency_types+ enumeration in the schema.
         # see: https://github.com/LoyaltyNZ/awg/blob/master/prototype/platform_api.md#currency.type
         #
@@ -34,8 +39,9 @@ module Hoodoo
           array   :qualifiers
           string  :symbol,                           :length => Hoodoo::Data::Types::CURRENCY_SYMBOL_MAX_LENGTH
 
-          enum    :position, :from => POSITIONS
-          enum    :rounding, :from => ROUNDINGS, :required => true
+          enum    :aggregated_by, :from => AGGREGATIONS
+          enum    :position,      :from => POSITIONS
+          enum    :rounding,      :from => ROUNDINGS, :required => true
 
           integer :precision, :default => 2
 
