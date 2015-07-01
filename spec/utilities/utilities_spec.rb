@@ -375,6 +375,23 @@ describe Hoodoo::Utilities do
     end
   end
 
+  describe '#collated_hash_from' do
+    it 'works for empty Arrays' do
+      array = []
+      expect( Hoodoo::Utilities.collated_hash_from( array ) ).to eq( {} )
+    end
+
+    it 'works for simple Arrays' do
+      array = [ [ 'search', 'foo=bar' ], [ 'search', 'bar=baz' ] ]
+      expect( Hoodoo::Utilities.collated_hash_from( array ) ).to eq( { 'search' => [ 'foo=bar', 'bar=baz' ] } )
+    end
+
+    it 'works for more complex Arrays' do
+      array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ], [ :two , 2 ] ]
+      expect( Hoodoo::Utilities.collated_hash_from( array ) ).to eq( { :one => [ 1, 42 ], :two => [ 2 ] } )
+    end
+  end
+
   describe '#spare_port' do
     it 'should return a port number' do
 
