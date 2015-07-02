@@ -246,9 +246,12 @@ module Hoodoo
     #          of (unique) values associated with that key. An empty Array
     #          results in an empty Hash; +nil+ is not allowed.
     #
+    # +dupes+: Optional. If omitted, duplicates are removed as described;
+    #          if present and +true+, duplicates are allowed.
+    #
     # Returns a new Hash as described. The input Array is not modified.
     #
-    def self.collated_hash_from( array )
+    def self.collated_hash_from( array, dupes = false )
       hash_of_arrays = {}
 
       array.reduce( hash_of_arrays ) do | memo, sub_array |
@@ -256,7 +259,7 @@ module Hoodoo
         memo
       end
 
-      hash_of_arrays.values.collect( &:uniq! )
+      hash_of_arrays.values.collect( &:uniq! ) unless dupes == true
       return hash_of_arrays
     end
 

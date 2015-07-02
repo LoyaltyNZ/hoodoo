@@ -390,6 +390,11 @@ describe Hoodoo::Utilities do
       array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ], [ :two , 2 ] ]
       expect( Hoodoo::Utilities.collated_hash_from( array ) ).to eq( { :one => [ 1, 42 ], :two => [ 2 ] } )
     end
+
+    it 'allows duplicates if so asked' do
+      array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ], [ :two , 2 ] ]
+      expect( Hoodoo::Utilities.collated_hash_from( array, true ) ).to eq( { :one => [ 1, 42 ], :two => [ 2, 2 ] } )
+    end
   end
 
   describe '#spare_port' do
