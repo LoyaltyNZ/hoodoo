@@ -439,8 +439,7 @@ describe Hoodoo::Services::Middleware do
           expect(request.uri_path_extension).to eq('')
           expect(request.list.offset).to eq(0)
           expect(request.list.limit).to eq(50)
-          expect(request.list.sort_key).to eq('created_at')
-          expect(request.list.sort_direction).to eq('desc')
+          expect(request.list.sort_data).to eq({'created_at'=>'desc'})
           expect(request.list.search_data).to eq({})
           expect(request.list.filter_data).to eq({})
           expect(request.embeds).to eq([])
@@ -596,8 +595,7 @@ describe Hoodoo::Services::Middleware do
 
       it 'should respond to sort query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('extra')
-          expect(context.request.list.sort_direction).to eq('up')
+          expect(context.request.list.sort_data).to eq({'extra'=>'up'})
         end
 
         get '/v2/rspec_test_service_stub?sort=extra', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -616,8 +614,7 @@ describe Hoodoo::Services::Middleware do
 
       it 'should respond to direction query parameter (1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('created_at')
-          expect(context.request.list.sort_direction).to eq('asc')
+          expect(context.request.list.sort_data).to eq({'created_at'=>'asc'})
         end
 
         get '/v2/rspec_test_service_stub?direction=asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -626,8 +623,7 @@ describe Hoodoo::Services::Middleware do
 
       it 'should respond to direction query parameter (2)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('extra')
-          expect(context.request.list.sort_direction).to eq('down')
+          expect(context.request.list.sort_data).to eq({'extra'=>'down'})
         end
 
         get '/v2/rspec_test_service_stub?sort=extra&direction=down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }

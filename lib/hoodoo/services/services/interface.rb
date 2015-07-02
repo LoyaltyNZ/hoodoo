@@ -71,7 +71,7 @@ module Hoodoo; module Services
         # embedded calls to the DSL in Interface::interface.
 
         @limit            = 50
-        @sort             = { 'created_at' => [ 'desc', 'asc' ] }
+        @sort             = { 'created_at' => Set.new( [ 'desc', 'asc' ] ) }
         @default_sort_key = 'created_at'
         @search           = []
         @filter           = []
@@ -181,12 +181,12 @@ module Hoodoo; module Services
           raise "Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got '#{ sort.class }'"
         end
 
-        # Convert hash keys to strings and values in arrays to strings too.
+        # Convert Hash keys to Strings and Arrays to Sets of Strings too.
 
-        sort = sort.inject( {} ) do | memo, (k, v ) |
-          memo[ k.to_s ] = v.map do | entry |
+        sort = sort.inject( {} ) do | memo, ( k, v ) |
+          memo[ k.to_s ] = Set.new( v.map do | entry |
             entry.to_s
-          end
+          end )
           memo
         end
 

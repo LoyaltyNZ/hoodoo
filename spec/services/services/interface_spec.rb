@@ -7,7 +7,7 @@ class RSpecTestInterfaceImplementationB < Hoodoo::Services::Implementation
 end
 
 class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
-  interface "RSpecTestInterfaceAResource" do
+  interface 'RSpecTestInterfaceAResource' do
     version 42
     endpoint :rspec_test_interface_a, RSpecTestInterfaceImplementationA
     actions :show, :create, :delete
@@ -22,7 +22,7 @@ class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
 
     to_create do
       text :foo
-      enum :bar, :from => [ "baz", :boo ]
+      enum :bar, :from => [ 'baz', :boo ]
     end
 
     to_update do
@@ -69,9 +69,8 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceDefault.public_actions).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.embeds).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_list.limit).to eq(50)
-      expect(RSpecTestInterfaceInterfaceDefault.to_list.sort).to eq({"created_at" => [ "desc", "asc" ]})
-      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_key).to eq("created_at")
-      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_direction).to eq("desc")
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.sort).to eq({'created_at' => Set.new(['desc', 'asc'])})
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_key).to eq('created_at')
       expect(RSpecTestInterfaceInterfaceDefault.to_list.search).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_list.filter).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_create).to be_nil
@@ -87,13 +86,12 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.resource).to eq(:RSpecTestInterfaceAResource)
       expect(RSpecTestInterfaceInterfaceA.implementation).to eq(RSpecTestInterfaceImplementationA)
       expect(RSpecTestInterfaceInterfaceA.actions).to eq(Set.new([:show, :create, :delete]))
-      expect(RSpecTestInterfaceInterfaceA.embeds).to eq(["embed_one", "embed_two", "embed_three"])
+      expect(RSpecTestInterfaceInterfaceA.embeds).to eq(['embed_one', 'embed_two', 'embed_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.limit).to eq(25)
-      expect(RSpecTestInterfaceInterfaceA.to_list.sort).to eq({"created_at" => [ "desc", "asc" ], "sort_one" => [ "left", "right" ], "sort_two" => [ "up", "down" ]})
-      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_key).to eq("sort_two")
-      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_direction).to eq("up")
-      expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(["search_one", "search_two", "search_three"])
-      expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(["filter_one", "filter_two", "filter_three"])
+      expect(RSpecTestInterfaceInterfaceA.to_list.sort).to eq({'created_at'=>Set.new(['desc', 'asc']), 'sort_one' => Set.new(['left', 'right']), 'sort_two' => Set.new(['up', 'down'])})
+      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_key).to eq('sort_two')
+      expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(['search_one', 'search_two', 'search_three'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(['filter_one', 'filter_two', 'filter_three'])
       expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
@@ -118,7 +116,7 @@ describe Hoodoo::Services::Interface do
       expect {
         RSpecTestInterfaceInterfaceB.interface :FooB do
         end
-      }.to raise_error(RuntimeError, "Hoodoo::Services::Interface subclass unexpectedly ran ::interface more than once")
+      }.to raise_error(RuntimeError, 'Hoodoo::Services::Interface subclass unexpectedly ran ::interface more than once')
     end
 
     it 'should complain about no endpoint' do
