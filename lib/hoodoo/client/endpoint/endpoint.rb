@@ -180,15 +180,18 @@ module Hoodoo
       #                array. Example:
       #
       #                   {
-      #                     offset: 75,
-      #                     limit:  50,
-      #                     search: {
+      #                     offset:    75,
+      #                     limit:     50,
+      #                     sort:      'created_at', # ...or an Array of sort fields
+      #                     direction: 'asc',        # ...or a matching Array of directions
+      #                     search:    {
       #                       member_id: "...some UUDI..."
       #                     },
-      #                     _embed: [
+      #                     _embed:    [
       #                       'vouchers',
       #                       'balances'
-      #                     ]
+      #                     ],
+      #                     # and/or ...filter: {}..., _reference: []...
       #                   }
       #
       #                This parameter is always optional.

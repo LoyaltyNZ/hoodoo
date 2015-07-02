@@ -51,7 +51,7 @@ module Hoodoo; module Services
       # Default sort direction.
       #
       def default_sort_direction
-        @sort[ default_sort_key() ][ 0 ]
+        @sort[ default_sort_key() ].first
       end
 
       # Array of supported search keys as Strings; empty for none defined.

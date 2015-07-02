@@ -677,10 +677,10 @@ module Hoodoo; module Services
         session
       )
 
-      local_interaction.target_interface                  = interface
-      local_interaction.target_implementation             = implementation
-      local_interaction.requested_content_type            = source_interaction.requested_content_type
-      local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
+      local_interaction.target_interface           = interface
+      local_interaction.target_implementation      = implementation
+      local_interaction.requested_content_type     = source_interaction.requested_content_type
+      local_interaction.requested_content_encoding = source_interaction.requested_content_encoding
 
       # For convenience...
 
@@ -2262,6 +2262,12 @@ module Hoodoo; module Services
 
       sort_keys       = query_hash[ 'sort'      ] || [ interface.to_list.default_sort_key ]
       sort_directions = query_hash[ 'direction' ] || []
+
+      # For inter-resource calls, historical callers might provide a sort key
+      # and/or direction as a String not Array, so promote and flatten.
+
+      sort_keys       = [ sort_keys       ] if sort_keys.is_a?( String )
+      sort_directions = [ sort_directions ] if sort_directions.is_a?( String )
 
       if sort_directions.size > sort_keys.size
         malformed << :direction

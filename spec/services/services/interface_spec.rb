@@ -71,6 +71,7 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceDefault.to_list.limit).to eq(50)
       expect(RSpecTestInterfaceInterfaceDefault.to_list.sort).to eq({'created_at' => Set.new(['desc', 'asc'])})
       expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_key).to eq('created_at')
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_direction).to eq('desc')
       expect(RSpecTestInterfaceInterfaceDefault.to_list.search).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_list.filter).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_create).to be_nil
@@ -90,6 +91,7 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.to_list.limit).to eq(25)
       expect(RSpecTestInterfaceInterfaceA.to_list.sort).to eq({'created_at'=>Set.new(['desc', 'asc']), 'sort_one' => Set.new(['left', 'right']), 'sort_two' => Set.new(['up', 'down'])})
       expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_key).to eq('sort_two')
+      expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_direction).to eq('up')
       expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(['search_one', 'search_two', 'search_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(['filter_one', 'filter_two', 'filter_three'])
       expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
