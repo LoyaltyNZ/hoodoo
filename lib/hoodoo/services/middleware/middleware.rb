@@ -2269,7 +2269,20 @@ module Hoodoo; module Services
       sort_keys       = [ sort_keys       ] if sort_keys.is_a?( String )
       sort_directions = [ sort_directions ] if sort_directions.is_a?( String )
 
-      if sort_directions.size > sort_keys.size
+      # 2015-07-03 (ADH): This used to just read "sort_directions.size >
+      # sort_keys.size", to match the big comment a few lines above. During
+      # pull request review though it was decided that we'd remove the
+      # ambiguity in mismatched sort key or direction lists entirely and
+      # require them both (when there's more than one) in equal numbers.
+      #
+      # We have to allow someone to just specify a direction without the sort
+      # key for the single-use case (i.e. change to "created_at asc") else the
+      # change would break any clients that already use such parameters.
+      #
+      # The originally intended, more permissive, default-orientated behaviour
+      # can of course be restored by just changing this "if" back.
+      #
+      if ( sort_keys.size > 1 || sort_directions.size > 1 ) && sort_directions.size != sort_keys.size
         malformed << :direction
       else
         sort_keys.each_with_index do | sort_key, index |

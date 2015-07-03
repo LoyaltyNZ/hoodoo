@@ -637,7 +637,7 @@ describe Hoodoo::Services::Middleware do
           expect(context.request.list.sort_data).to eq({'extra'=>'up', 'created_at'=>'desc'})
         end
 
-        get '/v2/rspec_test_service_stub?sort=extra,created_at', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=extra,created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
@@ -646,7 +646,7 @@ describe Hoodoo::Services::Middleware do
           expect(context.request.list.sort_data).to eq({'extra'=>'up', 'created_at'=>'desc'})
         end
 
-        get '/v2/rspec_test_service_stub?sort=extra&sort=created_at', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=extra&sort=created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
@@ -655,7 +655,7 @@ describe Hoodoo::Services::Middleware do
           expect(context.request.list.sort_data).to eq({'created_at'=>'desc', 'extra'=>'up'})
         end
 
-        get '/v2/rspec_test_service_stub?sort=extra,extra&sort=created_at&sort=extra', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=extra,extra&sort=created_at&sort=extra&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
@@ -705,22 +705,25 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should respond to multiple direction query parameters, with inferred direction' do
-        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_data).to eq({'extra'=>'down', 'created_at'=>'desc'})
-        end
-
-        get '/v2/rspec_test_service_stub?direction=down&sort=extra,created_at', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-        expect(last_response.status).to eq(200)
-      end
-
-      # When there's just one direction parameter, sort field is inferred
-      # from default. When there's more than one, we can't infer what the
-      # other sort fields were meant to be so must complain.
+      # When there's more than one sort parameter, we need a matching number
+      # of sort and direction keys. Use valid sort keys and directions so we
+      # know that the "platform.malformed" the test expects is actually
+      # coming from the count mismatch, not because the parameters are not
+      # recognised sort keys or dierctions.
       #
       it 'should complain about too many direction query parameters' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
-        get '/v2/rspec_test_service_stub?direction=foo,bar', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=created_at&direction=desc,down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('direction')
+      end
+
+      it 'should complain about too many sort query parameters' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?sort=created_at,extra&direction=desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -730,7 +733,7 @@ describe Hoodoo::Services::Middleware do
 
       it 'should complain about bad direction query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
-        get '/v2/rspec_test_service_stub?direction=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=created_at&direction=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
