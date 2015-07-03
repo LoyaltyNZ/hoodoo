@@ -155,9 +155,13 @@ module Hoodoo; module Services
     #
     MAXIMUM_PAYLOAD_SIZE = 1048576 # 1MB Should Be Enough For Anyone
 
-    # Maximum *logged* payload size.
+    # Maximum *logged* payload (inbound data) size.
     #
     MAXIMUM_LOGGED_PAYLOAD_SIZE = 1024
+
+    # Maximum *logged* response (outbound data) size.
+    #
+    MAXIMUM_LOGGED_RESPONSE_SIZE = 1024
 
     # The default test session; a Hoodoo::Services::Session instance with the
     # following characteristics:
@@ -673,10 +677,10 @@ module Hoodoo; module Services
         session
       )
 
-      local_interaction.target_interface                  = interface
-      local_interaction.target_implementation             = implementation
-      local_interaction.requested_content_type            = source_interaction.requested_content_type
-      local_interaction.requested_content_encoding        = source_interaction.requested_content_encoding
+      local_interaction.target_interface           = interface
+      local_interaction.target_implementation      = implementation
+      local_interaction.requested_content_type     = source_interaction.requested_content_type
+      local_interaction.requested_content_encoding = source_interaction.requested_content_encoding
 
       # For convenience...
 
@@ -1033,7 +1037,7 @@ module Hoodoo; module Services
       # should be included.
 
       if context.response.body.is_a?( ::Array )
-        attributes       = %i( list_offset list_limit list_sort_key list_sort_direction list_search_data list_filter_data embeds references )
+        attributes       = %i( list_offset list_limit list_sort_data list_search_data list_filter_data embeds references )
         data[ :payload ] = {}
 
         attributes.each do | attribute |
@@ -1138,7 +1142,7 @@ module Hoodoo; module Services
           end
 
         else
-          body = body[ 0 .. 1023 ] << '...' if ( body.size > 1024 )
+          body = body[ 0 .. ( MAXIMUM_LOGGED_RESPONSE_SIZE - 1 ) ] << '...' if ( body.size > MAXIMUM_LOGGED_RESPONSE_SIZE )
 
         end
 
@@ -2137,19 +2141,63 @@ module Hoodoo; module Services
       # response if necessary.
 
       query_data = URI.decode_www_form( query_string )
-      query_hash = Hash[ query_data ]
 
-      str                       = query_hash[ 'search' ]
-      query_hash[ 'search' ]    = Hash[ URI.decode_www_form( str ) ] unless str.nil?
+      # Convert to a unified Hash of non-duplicated keys yielding Arrays of
+      # *not* unique values ('true' in second parameter => allow duplicates).
 
-      str                       = query_hash[ 'filter' ]
-      query_hash[ 'filter' ]    = Hash[ URI.decode_www_form( str ) ] unless str.nil?
+      query_hash = Hoodoo::Utilities.collated_hash_from( query_data, true )
 
-      str                       = query_hash[ '_embed' ]
-      query_hash[ '_embed']     = str.split( ',' ) unless str.nil?
+      # Some query hash entries accept either multiple repeats in the query
+      # string, or comma-separated values in a single query string entry.
+      # For example:
+      #
+      #   &sort=name&sort=created_at&direction=asc&direction=asc
+      #
+      # ...versus:
+      #
+      #   &sort=name,created_at&direction=asc,desc
+      #
+      # Further, search and filter strings should have been double-encoded
+      # so still require a decode pass before we can process things as above.
 
-      str                       = query_hash[ '_reference' ]
-      query_hash[ '_reference'] = str.split( ',' ) unless str.nil?
+      # First, split any input query strings on "," for supported keys.
+
+      %w{ sort direction search filter _embed _reference }.each do | key |
+        value = query_hash[ key ]
+        unless value.nil?
+          value.map! do | possible_csv_to_split |
+            possible_csv_to_split.split( ',' )
+          end
+        end
+      end
+
+      # Flatten the resulting sub-arrays and make sure values are unique.
+
+      query_hash.each do | key, value |
+        value.flatten!
+        value.uniq!
+      end
+
+      # For search and filter strings, decode the key/value pairs as a
+      # unified string with the Hash-converted result written back.
+
+      %w{ search filter }.each do | key |
+        value = query_hash[ key ]
+        unless value.nil?
+          query_hash[ key ] = Hash[ URI::decode_www_form( value.join( '&' ) ) ]
+        end
+      end
+
+      # For some other parameters, array values just don't make sense, so
+      # take the *last* of these, so that subsequently-specified values are
+      # overriding previously-specified values, as a caller might expect.
+
+      %w{ offset limit }.each do | key |
+        value = query_hash[ key ]
+        unless value.nil?
+          query_hash[ key ] = value.last
+        end
+      end
 
       return process_query_hash( interaction, query_hash )
     end
@@ -2157,8 +2205,8 @@ module Hoodoo; module Services
     # Process a hash of URI-decoded form data in the same way as
     # #process_query_string (and used as a back-end for that). Nested search
     # and filter strings should be decoded as nested hashes. Nested _embed and
-    # _reference lists should be stored as arrays. Keys and values must be
-    # Strings.
+    # _reference lists should be stored as arrays. Other values may be Strings
+    # or Arrays. All Hash keys must be Strings.
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction.
@@ -2192,12 +2240,66 @@ module Hoodoo; module Services
       offset = Hoodoo::Utilities::to_integer?( query_hash[ 'offset' ] || 0 )
       malformed << :offset if offset.nil? || offset < 0
 
-      sort_key = query_hash[ 'sort' ] || interface.to_list.default_sort_key
-      malformed << :sort unless interface.to_list.sort.keys.include?( sort_key )
+      # In essence the code below is rationalising sort and direction lists as
+      # follows:
+      #
+      #     SORT     DIRECTION
+      #     ==================
+      #   0 created
+      #   => created with default direction for sort key 'created'
+      #
+      #   0          desc
+      #   => default sort key with 'desc' order
+      #
+      #   0 created  asc
+      #   1 name     desc
+      #   2 title
+      #   => as specified with default direction for sort key 'title'
+      #
+      #   0 created asc
+      #   1         desc
+      #   => error as there's no way to guess the sort key for the 'desc'
 
-      unless interface.to_list.sort[ sort_key ].nil?
-        direction = query_hash[ 'direction' ] || interface.to_list.sort[ sort_key ][ 0 ]
-        malformed << :direction unless interface.to_list.sort[ sort_key ].include?( direction )
+      sort_keys       = query_hash[ 'sort'      ] || [ interface.to_list.default_sort_key ]
+      sort_directions = query_hash[ 'direction' ] || []
+
+      # For inter-resource calls, historical callers might provide a sort key
+      # and/or direction as a String not Array, so promote and flatten.
+
+      sort_keys       = [ sort_keys       ] if sort_keys.is_a?( String )
+      sort_directions = [ sort_directions ] if sort_directions.is_a?( String )
+
+      # 2015-07-03 (ADH): This used to just read "sort_directions.size >
+      # sort_keys.size", to match the big comment a few lines above. During
+      # pull request review though it was decided that we'd remove the
+      # ambiguity in mismatched sort key or direction lists entirely and
+      # require them both (when there's more than one) in equal numbers.
+      #
+      # We have to allow someone to just specify a direction without the sort
+      # key for the single-use case (i.e. change to "created_at asc") else the
+      # change would break any clients that already use such parameters.
+      #
+      # The originally intended, more permissive, default-orientated behaviour
+      # can of course be restored by just changing this "if" back.
+      #
+      if ( sort_keys.size > 1 || sort_directions.size > 1 ) && sort_directions.size != sort_keys.size
+        malformed << :direction
+      else
+        sort_keys.each_with_index do | sort_key, index |
+          unless interface.to_list.sort[ sort_key ].is_a?( Set )
+            malformed << :sort
+            break
+          end
+
+          sort_direction = sort_directions[ index ] || interface.to_list.sort[ sort_key ].first
+
+          unless interface.to_list.sort[ sort_key ].include?( sort_direction )
+            malformed << :direction
+            break
+          end
+
+          sort_directions[ index ] = sort_direction
+        end
       end
 
       search = query_hash[ 'search' ] || {}
@@ -2222,14 +2324,18 @@ module Hoodoo; module Services
         'reference' => { :including => malformed.join( ', ' ) }
       ) unless malformed.empty?
 
-      request.list.offset         = offset
-      request.list.limit          = limit
-      request.list.sort_key       = sort_key
-      request.list.sort_direction = direction
-      request.list.search_data    = search
-      request.list.filter_data    = filter
-      request.embeds              = embeds.uniq
-      request.references          = references.uniq
+      sort_data = {}
+      sort_keys.each_with_index do | sort_key, index |
+        sort_data[ sort_key ] = sort_directions[ index ]
+      end
+
+      request.list.offset          = offset
+      request.list.limit           = limit
+      request.list.sort_data       = sort_data
+      request.list.search_data     = search
+      request.list.filter_data     = filter
+      request.embeds               = embeds
+      request.references           = references
     end
 
     # Safely parse the client payload in the context of the defined content
