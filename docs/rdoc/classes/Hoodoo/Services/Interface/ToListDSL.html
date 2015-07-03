@@ -468,12 +468,12 @@ href="ToListDSL.html#method-i-default">default</a> DSL method.</p>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Interface::ToListDSL\#sort requires a Hash - got &#39;#{ sort.class }&#39;&quot;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Convert hash keys to strings and values in arrays to strings too.</span>
+  <span class="ruby-comment"># Convert Hash keys to Strings and Arrays to Sets of Strings too.</span>
 
-  <span class="ruby-identifier">sort</span> = <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, (<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> ) <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-identifier">v</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
+  <span class="ruby-identifier">sort</span> = <span class="ruby-identifier">sort</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, ( <span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span> ) <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span> ] = <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">v</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span>
       <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">to_s</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span> )
     <span class="ruby-identifier">memo</span>
   <span class="ruby-keyword">end</span>
 
