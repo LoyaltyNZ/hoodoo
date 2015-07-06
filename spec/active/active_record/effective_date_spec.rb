@@ -12,7 +12,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         t.timestamps
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests_history_entries, :id => false ) do | t |
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_history_entries, :id => false ) do | t |
         t.text     :id,            :null => false
         t.text     :uuid,          :null => false
         t.text     :data

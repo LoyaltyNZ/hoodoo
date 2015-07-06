@@ -13,8 +13,8 @@ module Hoodoo
   module ActiveRecord
 
     # Effective dating support for an ActiveRecord model. Effective dating
-    # allows a history of a model to be kept and subsequently looked up.
-    # This module provides two class methods .find_at and .list_at for finding
+    # allows the history of a model to be kept and subsequently looked up.
+    # This module implements two class methods .find_at and .list_at for finding
     # records effective at a given date time.
     module EffectiveDate
 
@@ -32,7 +32,6 @@ module Hoodoo
         # Post, the history model will be PostHistoryEntry.
         history_klass = Class.new(::ActiveRecord::Base) do
           self.primary_key = :id
-          self.table_name = model.effective_history_table
         end
         Object.const_set model.history_model_name, history_klass
 
@@ -154,12 +153,7 @@ module Hoodoo
         # :posts_history_entries.
         #
         def effective_history_table
-          if !class_variable_defined?( :@@effective_history_table )
-            table_name = (self.table_name.to_s + "_history_entries").to_sym
-            class_variable_set( :@@effective_history_table, table_name )
-          end
-
-          return class_variable_get( :@@effective_history_table )
+          self.history_model_name.constantize.table_name
         end
 
         # The name of this model's primary key. This can be set via the
@@ -174,9 +168,8 @@ module Hoodoo
         # +effective_start_history_table+:: String or Symbol name of the table.
         #
         def effective_date_history_table=( effective_start_history_table )
-          history_klass = history_model_name.constantize
-          history_klass.table_name = effective_start_history_table
-          class_variable_set( '@@effective_history_table', effective_start_history_table.to_sym )
+          history_model_name.constantize.table_name =
+            effective_start_history_table
         end
 
       end
