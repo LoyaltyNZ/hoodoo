@@ -5,7 +5,7 @@ require 'timecop'
 
 describe Hoodoo::ActiveRecord::EffectiveDate do
   before :all do
-    # spec_helper_silence_stdout() do
+    spec_helper_silence_stdout() do
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => false ) do | t |
         t.text :id,  :null => false
@@ -26,227 +26,284 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         self.primary_key = :id
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_field_override_tests, :id => false ) do | t |
-        t.text     :unique_id,  :null => false
-        t.text     :data
-        # t.datetime :valid_from, :null => false
-        # t.datetime :valid_until
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => false ) do | t |
+        t.text :activerecord_id,  :null => false
+        t.text :data
         t.timestamps
       end
 
-      class RSpecModelEffectiveDateFieldOverrideTest < ActiveRecord::Base
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_history_entries, :id => false ) do | t |
+        t.text     :id,            :null => false
+        t.text     :uuid,          :null => false
+        t.text     :data
+        t.datetime :effective_end, :null => false
+        t.timestamps
+      end
+
+      class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
         include Hoodoo::ActiveRecord::EffectiveDate
-
-        self.effective_date_history_table = :r_spec_model_history
-        self.effective_date_start_column  = :valid_from
-        self.effective_date_end_column    = :valid_until
-      end
-    # end
-  end
-
-  context 'find_at' do
-
-    context 'with one effective record and one historical record' do
-
-      before(:all) do
-        @uuid = Hoodoo::UUID.generate
-        @now  = Time.now.utc
-
-        @old_data = 'old data'
-        @new_data = 'new data'
-
-        @old_record = RSpecModelEffectiveDateTestHistoryEntry.new({
-          :id            => @uuid + "_" + @now.iso8601,
-          :uuid          => @uuid,
-          :data          => @old_data,
-          :effective_end => @now
-        })
-        @old_record.save!( :validate => false )
-        @new_record = RSpecModelEffectiveDateTest.create({
-          :id   => @uuid,
-          :data => @new_data
-        })
-      end
-
-      it 'finds the effective record' do
-
-        found = RSpecModelEffectiveDateTest.find_at(@uuid)
-        expect(found.data).to eq @new_data
-
-      end
-
-    end
-    it 'finds an end dated record' do
-      @a.data = @data
-      @a.effective_start = @now
-      @a.uuid = '1234'
-      @a.effective_end = Time.now + 3.days
-      @a.save
-
-      found = RSpecModelEffectiveDateTest.find_at('1234')
-      expect(found.data).to eq @data
-    end
-
-    context "with many existing records" do
-      before do
-        @a.data = @data
-        @a.uuid = '1234'
-        @a.effective_start = @now - 3.days
-        @a.effective_end = @now
-        @a.save!
-
-        @b.data = @other_data
-        @b.effective_start = @now
-        @b.uuid = '1234'
-        @b.save!
-      end
-
-      it 'finds the default' do
-        found = RSpecModelEffectiveDateTest.find_at('1234')
-        expect(found.data).to eq @other_data
-      end
-      it 'finds the end dated one by the date' do
-        found = RSpecModelEffectiveDateTest.find_at('1234', @now-2.days)
-        expect(found.data).to eq @data
-      end
-      it 'finds the end dated one using its start date' do
-        found = RSpecModelEffectiveDateTest.find_at('1234', @now-3.days)
-        expect(found.data).to eq @data
-      end
-      it 'finds the default using its start date' do
-        found = RSpecModelEffectiveDateTest.find_at('1234', @now)
-        expect(found.data).to eq @other_data
-      end
-    end
-
-    context "when setting the field names" do
-      before do
-        @d = RSpecModelEffectiveDateFieldOverrideTest.new
-        @e = RSpecModelEffectiveDateFieldOverrideTest.new
-      end
-
-      it 'finds a default record' do
-        @d.data = @data
-        @d.valid_from = @now
-        @d.unique_id = '1234'
-        @d.save!
-
-        found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234')
-        expect(found.data).to eq @data
-      end
-
-      it 'finds an end dated record' do
-        @d.data = @data
-        @d.valid_from = @now
-        @d.unique_id = '1234'
-        @d.valid_until = Time.now + 3.days
-        @d.save!
-
-        found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234')
-        expect(found.data).to eq @data
-      end
-
-      context "with many existing records" do
-        before do
-          @d.data = @data
-          @d.unique_id = '1234'
-          @d.valid_from = @now - 3.days
-          @d.valid_until = @now
-          @d.save!
-
-          @e.data = @other_data
-          @e.valid_from = @now
-          @e.unique_id = '1234'
-          @e.save!
-        end
-
-        it 'finds the default' do
-          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234')
-          expect(found.data).to eq @other_data
-        end
-        it 'finds the end dated one by the date' do
-          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now-2.days)
-          expect(found.data).to eq @data
-        end
-        it 'finds the end dated one using its start date' do
-          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now-3.days)
-          expect(found.data).to eq @data
-        end
-        it 'finds the default using its start date' do
-          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now)
-          expect(found.data).to eq @other_data
-        end
-        it 'finds none when there are no records effective when specified' do
-          found = RSpecModelEffectiveDateFieldOverrideTest.find_at('1234', @now - 1.year)
-          expect(found).to eq nil
-        end
+        self.primary_key                  = :activerecord_id
+        self.effective_date_history_table = :r_spec_model_effective_date_history_entries
       end
     end
   end
 
-  # ==========================================================================
+  context "using default effective dating config" do
 
-  context 'list' do
-    before do
-      # No longer effective
-      @d = RSpecModelEffectiveDateTest.new
-      @d.data = 'first data'
-      @d.uuid = '1234'
-      @d.effective_start = @now - 3.days
-      @d.effective_end = @now
-      @d.save!
+    before(:all) do
 
-      # Effective from now on
-      @e = RSpecModelEffectiveDateTest.new
-      @e.data = 'second data'
-      @e.uuid = '1234'
-      @e.effective_start = @now
-      @e.save!
+      # Create some examples data for finding. The data has two different UUIDs
+      # which I'll referer to as A and B. The following tables contain the
+      # historical and current records separately with their attributes.
+      #
+      # Historical:
+      # ------------------------------------------------
+      #  uuid | data    | created_at    | effective_end
+      # ------------------------------------------------
+      #  A    | "one"   | now - 5 hours | now - 3 hours
+      #  B    | "two"   | now - 4 hours | now - 2 hours
+      #  A    | "three" | now - 3 hours | now - 1 hour
+      #  B    | "four"  | now - 2 hours | now
+      #
+      # Current:
+      # ------------------------------
+      #  uuid | data   | created_at
+      # ------------------------------
+      #  B    | "five" | now - 1 hour
+      #  A    | "six"  | now
+      #
 
-      # Effective from now for three days
-      @f = RSpecModelEffectiveDateTest.new
-      @f.data = 'third data'
-      @f.uuid = '5678'
-      @f.effective_start = @now
-      @f.effective_end = @now + 3.days
-      @f.save!
+      @uuid_a = Hoodoo::UUID.generate
+      @uuid_b = Hoodoo::UUID.generate
 
-      # Not effective for three more days
-      @g = RSpecModelEffectiveDateTest.new
-      @g.data = 'fourth data'
-      @g.uuid = '5678'
-      @g.effective_start = @now + 3.days
-      @g.save!
+      @now  = Time.now.utc
+
+      # uuid, data, created_at, effective_at
+      [
+        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours ],
+        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours ],
+        [ @uuid_a, "three", @now - 3.hours, @now - 1.hour ],
+        [ @uuid_b, "four",  @now - 2.hours, @now ]
+      ].each do | row_data |
+        RSpecModelEffectiveDateTestHistoryEntry.new({
+          :id            => row_data[0] + "-" + row_data[3].iso8601,
+          :uuid          => row_data[0],
+          :data          => row_data[1],
+          :created_at    => row_data[2],
+          :effective_end => row_data[3]
+        }).save!
+      end
+
+      # uuid, data, created_at
+      [
+        [ @uuid_b, "five", @now - 1.hour ],
+        [ @uuid_a, "six", @now ]
+      ].each do | row_data |
+        RSpecModelEffectiveDateTest.new({
+          :id         => row_data[0],
+          :data       => row_data[1],
+          :created_at => row_data[2]
+        }).save!
+      end
+
     end
 
-    it 'returns records that used to be effective starting at past time' do
-      expect(RSpecModelEffectiveDateTest.list_at(@now - 3.days).pluck(:data)).
-        to match_array([@d.data])
+    context 'find_at' do
+
+      def test_expectation(uuid, time, expected_data)
+        expect(RSpecModelEffectiveDateTest.find_at(uuid, time).try(:data)).
+          to eq(expected_data)
+      end
+
+      it 'finds current records' do
+
+        test_expectation(@uuid_b, @now, "five")
+        test_expectation(@uuid_a, @now, "six")
+
+      end
+
+      it 'finds no record where there are gaps' do
+
+        test_expectation(@uuid_a, @now - 1.hour, nil)
+
+      end
+
+      it 'finds past records' do
+
+        test_expectation(@uuid_b, @now - 2.hours, "four")
+        test_expectation(@uuid_a, @now - 3.hours, "three")
+        test_expectation(@uuid_b, @now - 3.hours, "two")
+        test_expectation(@uuid_a, @now - 4.hours, "one")
+
+      end
+
+      it 'finds no record before any were created with that UUID' do
+
+        test_expectation(@uuid_a, @now - 10.hours, nil)
+        test_expectation(@uuid_b, @now - 10.hours, nil)
+
+      end
+
     end
 
-    it 'returns records that used to be effective at past time' do
-      expect(RSpecModelEffectiveDateTest.list_at(@now - 2.days).pluck(:data)).
-        to match_array([@d.data])
+    context 'list_at' do
+
+      def test_expectation(time, expected_data)
+        expect(RSpecModelEffectiveDateTest.list_at(time).pluck(:data)).
+          to match_array(expected_data)
+      end
+
+      it 'returns no records before any were effective' do
+        test_expectation(@now - 10.hours, [])
+      end
+
+      it 'returns records that used to be effective starting at past time' do
+        test_expectation(@now - 5.hours, ["one"])
+        test_expectation(@now - 4.hours, ["one", "two"])
+        test_expectation(@now - 3.hours, ["two", "three"])
+        test_expectation(@now - 2.hours, ["three", "four"])
+        test_expectation(@now - 1.hour,  ["four", "five"])
+      end
+
+      it 'returns records that are effective now' do
+        test_expectation(@now, ["five", "six"])
+      end
+
+      it 'works with further filtering' do
+        expect(RSpecModelEffectiveDateTest.list_at(@now).where(:id => @uuid_a).pluck(:data)).
+          to eq(["six"])
+      end
+
+    end
+  end
+
+  context "overriding primary key name and history table name" do
+
+    before(:all) do
+
+      # Create some examples data for finding. The data has two different UUIDs
+      # which I'll referer to as A and B. The following tables contain the
+      # historical and current records separately with their attributes.
+      #
+      # Historical:
+      # ------------------------------------------------
+      #  uuid | data    | created_at    | effective_end
+      # ------------------------------------------------
+      #  A    | "one"   | now - 5 hours | now - 3 hours
+      #  B    | "two"   | now - 4 hours | now - 2 hours
+      #  A    | "three" | now - 3 hours | now - 1 hour
+      #  B    | "four"  | now - 2 hours | now
+      #
+      # Current:
+      # ------------------------------
+      #  uuid | data   | created_at
+      # ------------------------------
+      #  B    | "five" | now - 1 hour
+      #  A    | "six"  | now
+      #
+
+      @uuid_a = Hoodoo::UUID.generate
+      @uuid_b = Hoodoo::UUID.generate
+
+      @now  = Time.now.utc
+
+      # uuid, data, created_at, effective_at
+      [
+        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours ],
+        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours ],
+        [ @uuid_a, "three", @now - 3.hours, @now - 1.hour ],
+        [ @uuid_b, "four",  @now - 2.hours, @now ]
+      ].each do | row_data |
+        RSpecModelEffectiveDateTestOverrideHistoryEntry.new({
+          :id            => row_data[0] + "-" + row_data[3].iso8601,
+          :uuid          => row_data[0],
+          :data          => row_data[1],
+          :created_at    => row_data[2],
+          :effective_end => row_data[3]
+        }).save!
+      end
+
+      # uuid, data, created_at
+      [
+        [ @uuid_b, "five", @now - 1.hour ],
+        [ @uuid_a, "six", @now ]
+      ].each do | row_data |
+        RSpecModelEffectiveDateTestOverride.new({
+          :id         => row_data[0],
+          :data       => row_data[1],
+          :created_at => row_data[2]
+        }).save!
+      end
+
     end
 
-    it 'returns records effective now with no parameters to list_at' do
-      expect(RSpecModelEffectiveDateTest.list_at.pluck(:data)).
-        to match_array([@e.data, @f.data])
+    context 'find_at' do
+
+      def test_expectation(uuid, time, expected_data)
+        expect(RSpecModelEffectiveDateTestOverride.find_at(uuid, time).try(:data)).
+          to eq(expected_data)
+      end
+
+      it 'finds current records' do
+
+        test_expectation(@uuid_b, @now, "five")
+        test_expectation(@uuid_a, @now, "six")
+
+      end
+
+      it 'finds no record where there are gaps' do
+
+        test_expectation(@uuid_a, @now - 1.hour, nil)
+
+      end
+
+      it 'finds past records' do
+
+        test_expectation(@uuid_b, @now - 2.hours, "four")
+        test_expectation(@uuid_a, @now - 3.hours, "three")
+        test_expectation(@uuid_b, @now - 3.hours, "two")
+        test_expectation(@uuid_a, @now - 4.hours, "one")
+
+      end
+
+      it 'finds no record before any were created with that UUID' do
+
+        test_expectation(@uuid_a, @now - 10.hours, nil)
+        test_expectation(@uuid_b, @now - 10.hours, nil)
+
+      end
+
     end
 
-    it 'returns records that will be effective starting at future time' do
-      expect(RSpecModelEffectiveDateTest.list_at(@now + 3.days).pluck(:data)).
-        to match_array([@e.data, @g.data])
-    end
+    context 'list_at' do
 
-    it 'returns records that will be effective at future time' do
-      expect(RSpecModelEffectiveDateTest.list_at(@now + 1.year).pluck(:data)).
-        to match_array([@e.data, @g.data])
-    end
+      def test_expectation(time, expected_data)
+        expect(RSpecModelEffectiveDateTestOverride.list_at(time).pluck(:data)).
+          to match_array(expected_data)
+      end
 
-    it 'returns no results for a time when no records were effective' do
-      expect(RSpecModelEffectiveDateTest.list_at(@now - 1.year).pluck(:data)).
-        to eq([])
+      it 'returns no records before any were effective' do
+        test_expectation(@now - 10.hours, [])
+      end
+
+      it 'returns records that used to be effective starting at past time' do
+        test_expectation(@now - 5.hours, ["one"])
+        test_expectation(@now - 4.hours, ["one", "two"])
+        test_expectation(@now - 3.hours, ["two", "three"])
+        test_expectation(@now - 2.hours, ["three", "four"])
+        test_expectation(@now - 1.hour,  ["four", "five"])
+      end
+
+      it 'returns records that are effective now' do
+        test_expectation(@now, ["five", "six"])
+      end
+
+      it 'works with further filtering' do
+        found = RSpecModelEffectiveDateTestOverride.list_at(@now).
+          where(:activerecord_id => @uuid_a)
+        expect(found.pluck(:data)).to eq(["six"])
+      end
+
     end
 
   end
