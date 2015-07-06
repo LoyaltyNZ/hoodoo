@@ -4,20 +4,13 @@ require 'active_record'
 describe Hoodoo::ActiveRecord::UUID do
   before :all do
     spec_helper_silence_stdout() do
-
-      # Table with default uuid column (id)
       tblname = :r_spec_model_uuid_tests
 
       ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |
         t.string( :id, :limit => 32, :null => false )
       end
 
-      # Table with non-default uuid column (uuid)
-      second_tblname = :r_spec_model_uuid_test_custom_uuids
-
-      ActiveRecord::Migration.create_table( second_tblname, :id => false ) do | t |
-        t.string( :uuid, :limit => 32, :null => false )
-      end
+      ActiveRecord::Migration.add_index( tblname, :id, :unique => true )
 
       # Hoodoo::ActiveRecord::Base adds a filter to assign a uuid before
       # validation as well as validations to ensure UUID is present and is
@@ -25,125 +18,34 @@ describe Hoodoo::ActiveRecord::UUID do
       #
       class RSpecModelUUIDTest < Hoodoo::ActiveRecord::Base
       end
-
-      # As above without the requirement for a unique uuid.
-      #
-      class RSpecModelUUIDTestCustomUUID < Hoodoo::ActiveRecord::Base
-        self.uuid_column = :uuid
-      end
-
     end
   end
 
-  shared_examples "model with uuid" do
-    it 'should gain a UUID' do
-      m = model_class.new
-      m.save!
+  it 'should gain a UUID' do
+    m = RSpecModelUUIDTest.new
+    m.save
 
-      expect( m.send(uuid_column) ).to_not be_nil
-      expect( Hoodoo::UUID.valid?( m.send(uuid_column) ) ).to eq( true )
-    end
-
-    it 'should complain about a bad UUID' do
-      m = model_class.new
-      m.send("#{uuid_column}=", "hello")
-
-      expect( m.save ).to eq( false )
-      expect( Hoodoo::UUID.valid?( m.send(uuid_column) ) ).to eq( false )
-      expect( m.errors ).to_not be_empty
-      expect( m.errors.messages ).to eq( { uuid_column => [ 'is invalid' ] } )
-    end
-
-    it 'should not overwrite a good UUID' do
-      m = model_class.new
-      uuid = Hoodoo::UUID.generate()
-      m.send("#{uuid_column}=", uuid)
-      m.save!
-
-      expect( m.send(uuid_column) ).to eq( uuid )
-      expect( Hoodoo::UUID.valid?( m.send(uuid_column) ) ).to eq( true )
-    end
+    expect( m.id ).to_not be_nil
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
 
-  shared_examples "model with unique uuid" do
+  it 'should complain about a bad UUID' do
+    m = RSpecModelUUIDTest.new
+    m.id = "hello"
 
-    it 'should prevent duplicate uuid' do
-      uuid = Hoodoo::UUID.generate()
-
-      m = model_class.new
-      m.send("#{uuid_column}=", uuid)
-      m.save!
-
-      duplicate = model_class.new
-      duplicate.send("#{uuid_column}=", uuid)
-      expect(duplicate).to_not be_valid
-
-      expect( duplicate.errors[uuid_column] ).to eq( [ 'has already been taken' ] )
-    end
-
+    expect( m.save ).to eq( false )
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( false )
+    expect( m.errors ).to_not be_empty
+    expect( m.errors.messages ).to eq( { :id => [ 'is invalid' ] } )
   end
 
-  shared_examples "model with non-unique uuid" do
+  it 'should not overwrite a good UUID' do
+    m = RSpecModelUUIDTest.new
+    uuid = Hoodoo::UUID.generate()
+    m.id = uuid
+    m.save
 
-    it 'should allow a duplicate uuid if the config option is set' do
-      uuid = Hoodoo::UUID.generate()
-
-      m = model_class.new
-      m.send("#{uuid_column}=", uuid)
-      m.save!
-
-      duplicate = model_class.new
-      duplicate.send("#{uuid_column}=", uuid)
-
-      expect( duplicate ).to be_valid
-    end
-
+    expect( m.id ).to eq( uuid )
+    expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
-
-  context "default uuid model" do
-    let(:model_class) do
-      klass = RSpecModelUUIDTest
-      klass.validate_uuid_uniqueness = true
-      klass
-    end
-    let(:uuid_column){ :id }
-
-    it_behaves_like "model with uuid"
-    it_behaves_like "model with unique uuid"
-
-    context "with unique uuid disabled" do
-      let(:model_class) do
-        klass = RSpecModelUUIDTest
-        klass.validate_uuid_uniqueness = false
-        klass
-      end
-
-      it_behaves_like "model with non-unique uuid"
-    end
-
-  end
-
-  context "uuid model with custom uuid column" do
-    let(:model_class) do
-      klass = RSpecModelUUIDTestCustomUUID
-      klass.validate_uuid_uniqueness = true
-      klass
-    end
-    let(:uuid_column){ :uuid }
-
-    it_behaves_like "model with uuid"
-    it_behaves_like "model with unique uuid"
-
-    context "with unique uuid disabled" do
-      let(:model_class) do
-        klass = RSpecModelUUIDTestCustomUUID
-        klass.validate_uuid_uniqueness = false
-        klass
-      end
-
-      it_behaves_like "model with non-unique uuid"
-    end
-
-  end
-
 end
