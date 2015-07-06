@@ -1,4 +1,3 @@
-require 'byebug'
 require 'spec_helper'
 require 'active_record'
 require 'timecop'
@@ -195,11 +194,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       #  B    | "four"  | now - 2 hours | now
       #
       # Current:
-      # ------------------------------
-      #  uuid | data   | created_at
-      # ------------------------------
-      #  B    | "five" | now - 1 hour
-      #  A    | "six"  | now
+      # -----------------------------------------
+      #  activerecord_id | data   | created_at
+      # -----------------------------------------
+      #  B               | "five" | now - 1 hour
+      #  A               | "six"  | now
       #
 
       @uuid_a = Hoodoo::UUID.generate
