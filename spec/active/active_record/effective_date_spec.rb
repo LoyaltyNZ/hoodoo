@@ -138,6 +138,15 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
     end
+
+    context '.historical_and_current' do
+
+      it 'lists all historical and current records' do
+        expect( RSpecModelEffectiveDateTest.historical_and_current.pluck( :data ) ).
+          to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
+      end
+
+    end
   end
 
   context "overriding primary key name and history table name" do
@@ -232,6 +241,14 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
     end
 
+    context '.historical_and_current' do
+
+      it 'lists all historical and current records' do
+        expect( RSpecModelEffectiveDateTestOverride.historical_and_current.pluck( :data ) ).
+          to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
+      end
+
+    end
   end
 
 end

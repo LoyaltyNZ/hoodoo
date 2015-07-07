@@ -40,10 +40,8 @@ module Hoodoo
 
       module ClassMethods
 
-        # Return an ActiveRecord::Relation containing the models which are
-        # effective at the specified date_time.
-        #
-        # +primary_key+:: The primary key column value of the desired record.
+        # Return an ActiveRecord::Relation containing the models instances which
+        # are effective at the specified date_time.
         #
         # +date_time+:: (Optional) Time at which the records are effective,
         #               defaulting to the current time UTC.
@@ -73,6 +71,34 @@ module Hoodoo
               SELECT #{ self._history_column_mapping }, effective_end
               FROM #{ self.effective_history_table }
               WHERE effective_end > #{ safe_date_time } AND created_at <= #{ safe_date_time }
+            ) AS #{ self.table_name }
+          }
+
+          # Form a query which uses ActiveRecord to list effective records.
+          select( formatted_model_attributes ).from( nested_query )
+
+        end
+
+
+        # Return an ActiveRecord::Relation containing all historical and current
+        # model instances.
+        #
+        def historical_and_current
+
+          # Create a string that specifies this model's attributes joined by
+          # commas for use in a SQL query.
+          formatted_model_attributes = self.attribute_names.join( ", " )
+
+          # A query that combines historical and current records.
+          nested_query = %{
+            (
+              SELECT #{ formatted_model_attributes }
+              FROM #{ self.table_name }
+
+              UNION ALL
+
+              SELECT #{ self._history_column_mapping }
+              FROM #{ self.effective_history_table }
             ) AS #{ self.table_name }
           }
 
