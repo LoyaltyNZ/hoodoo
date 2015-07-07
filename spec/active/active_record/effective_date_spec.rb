@@ -107,11 +107,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
     end
 
-    context '.effective_at' do
+    context '.at' do
 
       def test_expectation( time, expected_data )
         expect(
-          RSpecModelEffectiveDateTest.effective_at( time ).pluck( :data )
+          RSpecModelEffectiveDateTest.at( time ).pluck( :data )
         ).to match_array( expected_data )
       end
 
@@ -133,7 +133,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
       it 'works with further filtering' do
         expect(
-          RSpecModelEffectiveDateTest.effective_at( @now ).where( :id => @uuid_a ).pluck( :data )
+          RSpecModelEffectiveDateTest.at( @now ).where( :id => @uuid_a ).pluck( :data )
         ).to eq( [ "six" ] )
       end
 
@@ -200,11 +200,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
     end
 
-    context '.effective_at' do
+    context '.at' do
 
       def test_expectation( time, expected_data )
         expect(
-          RSpecModelEffectiveDateTestOverride.effective_at( time ).pluck( :data )
+          RSpecModelEffectiveDateTestOverride.at( time ).pluck( :data )
         ).to match_array( expected_data )
       end
 
@@ -225,7 +225,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       it 'works with further filtering' do
-        found = RSpecModelEffectiveDateTestOverride.effective_at( @now ).
+        found = RSpecModelEffectiveDateTestOverride.at( @now ).
           where( :activerecord_id => @uuid_a )
         expect( found.pluck( :data ) ).to eq( [ "six" ] )
       end
