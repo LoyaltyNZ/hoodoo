@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:LoyaltyNZ/hoodoo.git
-  revision: b274bc855159f84c3e39cc35d36efbea8e60af58
+  revision: d52cef41d749e8fa5ca4cb4330298f9803215e5e
   branch: master
   specs:
     hoodoo (0.6.0)
