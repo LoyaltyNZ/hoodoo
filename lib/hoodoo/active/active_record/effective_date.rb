@@ -68,7 +68,7 @@ module Hoodoo
 
               UNION ALL
 
-              SELECT #{ self._history_column_mapping }, effective_end
+              SELECT #{ self.history_column_mapping }, effective_end
               FROM #{ self.effective_history_table }
               WHERE effective_end > #{ safe_date_time } AND created_at <= #{ safe_date_time }
             ) AS #{ self.table_name }
@@ -97,7 +97,7 @@ module Hoodoo
 
               UNION ALL
 
-              SELECT #{ self._history_column_mapping }
+              SELECT #{ self.history_column_mapping }
               FROM #{ self.effective_history_table }
             ) AS #{ self.table_name }
           }
@@ -110,21 +110,8 @@ module Hoodoo
         # The String name of the model which represents history entries for this
         # model.
         def history_model_name
+
           self.to_s << "HistoryEntry"
-        end
-
-        # Forms and returns string which maps history table column names to the
-        # primary table column names for use in SQL queries.
-        #
-        def _history_column_mapping
-
-          desired_attributes = self.attribute_names.dup
-
-          primary_key_index = desired_attributes.index( self.model_pkey )
-          desired_attributes[ primary_key_index ] =
-            "uuid as " << desired_attributes[ primary_key_index ]
-
-          desired_attributes.join( ", " )
 
         end
 
@@ -134,13 +121,17 @@ module Hoodoo
         # :posts_history_entries.
         #
         def effective_history_table
+
           self.history_model_name.constantize.table_name
+
         end
 
         # The name of this model's primary key. This can be set via the
         # ActiveRecord setter self.primary_key=(). The default is "id".
         def model_pkey
+
           self.primary_key || "id"
+
         end
 
         # Set the name of the table which stores the history entries for this
@@ -149,9 +140,27 @@ module Hoodoo
         # +effective_start_history_table+:: String or Symbol name of the table.
         #
         def effective_date_history_table=( effective_start_history_table )
-          history_model_name.constantize.table_name =
-            effective_start_history_table
+
+          history_model_name.constantize.table_name = effective_start_history_table
+
         end
+
+        protected
+
+        # Forms and returns string which maps history table column names to the
+        # primary table column names for use in SQL queries.
+        #
+        def history_column_mapping
+
+          desired_attributes = self.attribute_names.dup
+
+          primary_key_index = desired_attributes.index( self.model_pkey )
+          desired_attributes[ primary_key_index ] = "uuid as " << desired_attributes[ primary_key_index ]
+
+          desired_attributes.join( ", " )
+
+        end
+
 
       end
     end

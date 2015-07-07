@@ -110,9 +110,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     context '.at' do
 
       def test_expectation( time, expected_data )
-        expect(
-          RSpecModelEffectiveDateTest.at( time ).pluck( :data )
-        ).to match_array( expected_data )
+        expect( RSpecModelEffectiveDateTest.at( time ).pluck( :data ) ).to match_array( expected_data )
       end
 
       it 'returns no records before any were effective' do
@@ -132,9 +130,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       it 'works with further filtering' do
-        expect(
-          RSpecModelEffectiveDateTest.at( @now ).where( :id => @uuid_a ).pluck( :data )
-        ).to eq( [ "six" ] )
+        expect( RSpecModelEffectiveDateTest.at( @now ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
     end
@@ -142,8 +138,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     context '.historical_and_current' do
 
       it 'lists all historical and current records' do
-        expect( RSpecModelEffectiveDateTest.historical_and_current.pluck( :data ) ).
-          to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
+        expect( RSpecModelEffectiveDateTest.historical_and_current.pluck( :data ) ).to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
       end
 
     end
@@ -212,9 +207,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     context '.at' do
 
       def test_expectation( time, expected_data )
-        expect(
-          RSpecModelEffectiveDateTestOverride.at( time ).pluck( :data )
-        ).to match_array( expected_data )
+        expect( RSpecModelEffectiveDateTestOverride.at( time ).pluck( :data ) ).to match_array( expected_data )
       end
 
       it 'returns no records before any were effective' do
@@ -234,8 +227,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       it 'works with further filtering' do
-        found = RSpecModelEffectiveDateTestOverride.at( @now ).
-          where( :activerecord_id => @uuid_a )
+        found = RSpecModelEffectiveDateTestOverride.at( @now ).where( :activerecord_id => @uuid_a )
         expect( found.pluck( :data ) ).to eq( [ "six" ] )
       end
 
@@ -244,8 +236,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     context '.historical_and_current' do
 
       it 'lists all historical and current records' do
-        expect( RSpecModelEffectiveDateTestOverride.historical_and_current.pluck( :data ) ).
-          to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
+        expect( RSpecModelEffectiveDateTestOverride.historical_and_current.pluck( :data ) ).to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
       end
 
     end
