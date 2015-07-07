@@ -14,7 +14,7 @@ module Hoodoo
 
     # Effective dating support for an ActiveRecord model. Effective dating
     # allows the history of a model to be kept and subsequently looked up.
-    # This module implements two class methods .find_at and .list_at for finding
+    # This module implements the class method .effective_at for finding
     # records effective at a given date time.
     module EffectiveDate
 
@@ -30,7 +30,7 @@ module Hoodoo
         # Define a model for the history entries which is namespaced with the
         # original model's name. So if the original model is called
         # Post, the history model will be PostHistoryEntry.
-        history_klass = Class.new(::ActiveRecord::Base) do
+        history_klass = Class.new( ::ActiveRecord::Base ) do
           self.primary_key = :id
         end
         Object.const_set model.history_model_name, history_klass
@@ -38,50 +38,6 @@ module Hoodoo
       end
 
       module ClassMethods
-
-        # Return the model with the specified ident, effective at the specified
-        # date_time.
-        #
-        # +primary_key+:: The primary key column value of the desired record.
-        #
-        # +date_time+::   (Optional) Time at which the record is effective,
-        #                 defaulting to the current time UTC.
-        #
-        def find_at( primary_key, date_time=Time.now )
-
-          # Convert the date time to UTC
-          date_time = date_time.utc
-
-          # Create a string that specifies this model's attributes joined by
-          # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join(", ")
-
-          # Escape user provided data
-          safe_primary_key = sanitize(primary_key)
-          safe_date_time = sanitize(date_time)
-
-          nested_query = %{
-            (
-              SELECT #{formatted_model_attributes}, null AS effective_end
-              FROM #{self.table_name}
-              WHERE #{self.model_pkey} = #{safe_primary_key} AND created_at <= #{safe_date_time}
-
-              UNION ALL
-
-              SELECT #{self._history_column_mapping}, effective_end
-              FROM #{self.effective_history_table}
-              WHERE uuid = #{safe_primary_key} AND effective_end > #{safe_date_time} AND created_at <= #{safe_date_time}
-            ) AS #{self.table_name}
-          }
-
-          # Extract the effective record for the specified date_time and primary
-          # key value.
-          select(formatted_model_attributes).
-            from(nested_query).
-            order("created_at DESC").
-            limit(1).first
-
-        end
 
         # Return an ActiveRecord::Relation containing the models which are
         # effective at the specified date_time.
@@ -91,38 +47,36 @@ module Hoodoo
         # +date_time+:: (Optional) Time at which the records are effective,
         #               defaulting to the current time UTC.
         #
-        def list_at( date_time=Time.now )
+        def effective_at( date_time=Time.now )
 
           # Convert the date time to UTC
           date_time = date_time.utc
 
           # Create a string that specifies this model's attributes joined by
           # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join(", ")
+          formatted_model_attributes = self.attribute_names.join( ", " )
 
           # Escape user provided data
-          safe_date_time = sanitize(date_time)
+          safe_date_time = sanitize( date_time )
 
           # A query that combines historical and current records which are
           # effective at the specified date time.
           nested_query = %{
             (
-              SELECT #{formatted_model_attributes}, null AS effective_end
-              FROM #{self.table_name}
-              WHERE created_at <= #{safe_date_time}
+              SELECT #{ formatted_model_attributes }, null AS effective_end
+              FROM #{ self.table_name }
+              WHERE created_at <= #{ safe_date_time }
 
               UNION ALL
 
-              SELECT #{self._history_column_mapping}, effective_end
-              FROM #{self.effective_history_table}
-              WHERE effective_end > #{safe_date_time} AND created_at <= #{safe_date_time}
-            ) AS #{self.table_name}
+              SELECT #{ self._history_column_mapping }, effective_end
+              FROM #{ self.effective_history_table }
+              WHERE effective_end > #{ safe_date_time } AND created_at <= #{ safe_date_time }
+            ) AS #{ self.table_name }
           }
 
           # Form a query which uses ActiveRecord to list effective records.
-          select(formatted_model_attributes).
-            from(nested_query).
-            order("created_at DESC")
+          select( formatted_model_attributes ).from( nested_query )
 
         end
 
@@ -139,11 +93,11 @@ module Hoodoo
 
           desired_attributes = self.attribute_names.dup
 
-          primary_key_index = desired_attributes.index(self.model_pkey)
-          desired_attributes[primary_key_index] =
-            "uuid as " << desired_attributes[primary_key_index]
+          primary_key_index = desired_attributes.index( self.model_pkey )
+          desired_attributes[ primary_key_index ] =
+            "uuid as " << desired_attributes[ primary_key_index ]
 
-          desired_attributes.join(", ")
+          desired_attributes.join( ", " )
 
         end
 
