@@ -32,6 +32,7 @@ module Hoodoo
         # Post, the history model will be PostHistoryEntry.
         history_klass = Class.new( ::ActiveRecord::Base ) do
           self.primary_key = :id
+          self.table_name  = model.table_name + "_history_entries"
         end
         Object.const_set model.history_model_name, history_klass
 
