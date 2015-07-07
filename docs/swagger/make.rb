@@ -160,10 +160,17 @@ begin
     puts "Reading API version:"
 
     begin
+      class Response
+        attr_accessor :body
+        def set_resource( foo )
+          self.body=( foo )
+        end
+      end
+
       class Context
         attr_accessor :response
         def initialize
-          @response = OpenStruct.new
+          @response = ::Response.new
         end
       end
 
@@ -178,8 +185,9 @@ begin
       version = "#{ version_major }.#{ version_minor }.#{ version_patch }"
 
       puts "  #{ version }"
-    rescue
+    rescue => e
       puts "  WARNING: Attempt failed, falling back to config.yml value of '#{ @version }'"
+      puts e.inspect
     end
 
     puts
