@@ -85,11 +85,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         [ @uuid_b, "four",  @now - 2.hours, @now ]
       ].each do | row_data |
         RSpecModelEffectiveDateTestHistoryEntry.new( {
-          :id            => row_data[0] + "-" + row_data[3].iso8601,
-          :uuid          => row_data[0],
-          :data          => row_data[1],
-          :created_at    => row_data[2],
-          :effective_end => row_data[3]
+          :id            => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
+          :uuid          => row_data[ 0 ],
+          :data          => row_data[ 1 ],
+          :created_at    => row_data[ 2 ],
+          :effective_end => row_data[ 3 ]
         } ).save!
       end
 
