@@ -1,6 +1,6 @@
 # Swagger JSON generator for Hoodoo
 
-*Swagger* is a reasonably popular way of describing an API using JSON.
+*Swagger* is a reasonably popular way of describing an API using JSON - machine-readable documentation which through an appropriate toolchain can be processed to automatically create human-readable documentation and even (in theory) executable examples.
 
 * http://swagger.io
 * https://github.com/swagger-api/swagger-spec
