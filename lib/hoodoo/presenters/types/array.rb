@@ -1,26 +1,30 @@
 module Hoodoo
   module Presenters
-    # A JSON array schema member
+
+    # A JSON Array schema member.
+    #
     class Array < Hoodoo::Presenters::Field
 
       include Hoodoo::Presenters::BaseDSL
 
       # The properties of this object, an +array+ of +Field+ instances.
+      #
       attr_accessor :properties
 
-      # Check if data is a valid Array and return a Hoodoo::Errors instance
-      def validate(data, path = '')
-        errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+      # Check if data is a valid Array and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
+        errors = super( data, path )
+        return errors if errors.has_errors? || ( ! @required && data.nil? )
 
-        if data.is_a? ::Array
+        if data.is_a?( ::Array )
           # No array entry schema? No array entry validation, then.
           unless @properties.nil?
-            data.each_with_index do |item, index|
-              @properties.each do |name, property|
-                rdata = (item.is_a?(::Hash) and item.has_key?(name)) ? item[name] : nil
-                indexed_path = "#{full_path(path)}[#{index}]"
-                errors.merge!( property.validate(rdata, indexed_path ) )
+            data.each_with_index do | item, index |
+              @properties.each do | name, property |
+                rdata = ( item.is_a?( ::Hash ) && item.has_key?( name ) ) ? item[ name ] : nil
+                indexed_path = "#{ full_path( path ) }[#{ index }]"
+                errors.merge!( property.validate( rdata, indexed_path ) )
               end
             end
           end
@@ -44,7 +48,7 @@ module Hoodoo
       #            nested Hashes is built via +super()+, with the final
       #            key entry yielding the rendered array.
       #
-      def render(data, target)
+      def render( data, target )
 
         # Data provided is explicitly nil or not an array? Don't need to render
         # anything beyond 'nil' at the field (the not-array case covers nil and
@@ -81,11 +85,10 @@ module Hoodoo
             subtarget = {}
 
             @properties.each do | name, property |
-              name        = name.to_s
-              has_key     = item.has_key?( name )
-              has_default = property.has_default?()
+              name    = name.to_s
+              has_key = item.has_key?( name )
 
-              next unless has_key || has_default
+              next unless has_key || property.has_default?()
 
               property.render( has_key ? item[ name ] : property.default, subtarget )
             end
@@ -96,6 +99,19 @@ module Hoodoo
             array.push( rendered )
           end
         end
+      end
+
+      # Invoke a given block, passing this item; call recursively for any
+      # defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.
+      #
+      # &block:: Mandatory block, which is passed 'self' when called.
+      #
+      def walk( &block )
+        block.call( self )
+
+        @properties.each do | name, property |
+          property.walk( &block )
+        end unless @properties.nil?
       end
     end
   end

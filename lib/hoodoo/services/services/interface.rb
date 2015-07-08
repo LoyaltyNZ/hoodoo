@@ -466,6 +466,13 @@ module Hoodoo; module Services
     # data that doesn't validate according to your schema, it'll be rejected
     # before even getting as far as your interface implementation.
     #
+    # Default values for fields, where present, are for _rendering only_; they
+    # are not injected into the inbound body for (say) persistence at database
+    # levels. A returned, rendered representation based on the same schema
+    # would have the default values present only. If you need default values
+    # at the persistence layer too, define them there too with whatever
+    # mechanism is most appropriate for your chosen persistence approach.
+    #
     # The Hoodoo::Presenters::Object#internationalised DSL method can be
     # called within your block harmlessly, but it has no side effects. Any
     # resource interface that can take internationalised data for creation (or
@@ -500,12 +507,21 @@ module Hoodoo; module Services
     # To avoid repeating yourself, if your modification and creation parameter
     # requirements are identical, call #update_same_as_create.
     #
+    # The "required" flag is ignored for updates, because an omitted field for
+    # an update to an existing resource instance simply means "do not change
+    # the current value". As with #to_create, default values have relevance
+    # to the rendering stage only and have no effect here.
+    #
     # &block:: Block, passed to Hoodoo::Presenters::Object, describing
     #          the fields used for resource modification.
     #
     def to_update( &block )
       obj = Class.new( Hoodoo::Presenters::Base )
       obj.schema( &block )
+
+      obj.walk do | property |
+        property.required = false
+      end
 
       self.class.send( :to_update=, obj )
     end
@@ -658,6 +674,25 @@ module Hoodoo; module Services
       additional_permissions = self.class.additional_permissions() || {}
       additional_permissions[ action ] = p
       self.class.send( :additional_permissions=, additional_permissions )
+    end
+
+  private
+
+    # When updating, 'required' fields in schema aren't required; you just
+    # omit a field to avoid changing its value. Likewise, 'default' values
+    # cannot apply. Rather than slowing down the DSL processor, instead now
+    # run a pass over the to-update schema object stripping out the
+    # properties we can't allow.
+    #
+    # +schema+: Hoodoo::Presenters::Base schema to modify (e.g. the result
+    #           of a Hoodoo::Presenters::Base#get_schema call). The schema
+    #           data is modified in place.
+    #
+    def strip_inappropriate_properties_from( schema )
+
+
+      puts "*"*80
+      puts schema.inspect
     end
 
   protected

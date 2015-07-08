@@ -87,11 +87,18 @@ module Hoodoo
 
           # Field "kind" is taken from the class name; this is a class method
           # so "self.name" yields "Hoodoo::Data::Resources::..." or similar.
-          # Split on "::" and take the last part as the Resource kind.
+          # We could just use "split", but that creates an intermediate Array
+          # which uses more RAM and is about half the speed (or worse) of the
+          # following alternative (it turns out ActiveSupport 4's #demodulize
+          # uses much the same approach).
+
+          name  = self.name
+          index = ( name.rindex( '::' ) || -2 ) + 2
+          kind  = name[ index .. -1 ]
 
           target.merge!( {
             'id'         => uuid,
-            'kind'       => self.name.split( '::' ).last,
+            'kind'       => kind,
             'created_at' => Time.parse( created_at.to_s ).utc.iso8601
           } )
 
@@ -224,6 +231,13 @@ module Hoodoo
         end
 
         return errors
+      end
+
+      # Walk the schema graph and invoke the given block on each field within
+      # it, passing the field instances to the block for each call.
+      #
+      def self.walk( &block )
+        @schema.walk( &block )
       end
 
       # Does this presenter use internationalisation? Returns +true+ if so,

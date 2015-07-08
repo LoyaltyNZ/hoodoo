@@ -1176,9 +1176,8 @@ describe Hoodoo::Services::Middleware do
         patch '/v2/rspec_test_service_stub/1234', '{ "baz": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
-        expect(result['errors'].size).to eq(2)
+        expect(result['errors'].size).to eq(1)
         expect(result['errors'][0]['message']).to eq('Field `baz` is an invalid string')
-        expect(result['errors'][1]['message']).to eq('Field `foo` is required')
       end
 
       it 'should be happy with valid JSON' do

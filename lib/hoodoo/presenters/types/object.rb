@@ -1,6 +1,8 @@
 module Hoodoo
   module Presenters
-    # A JSON object schema member
+
+    # A JSON Object schema member.
+    #
     class Object < Hoodoo::Presenters::Field
 
       include Hoodoo::Presenters::BaseDSL
@@ -10,11 +12,13 @@ module Hoodoo
       #
       attr_accessor :properties
 
-      # Initialize an Object instance with the appropriate name and options
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
-      def initialize(name = nil, options = {})
-        super name, options
+      # Initialize an Object instance with the appropriate name and options.
+      #
+      # +name+::    The JSON key.
+      # +options+:: A +Hash+ of options, e.g. :required => true.
+      #
+      def initialize( name = nil, options = {} )
+        super( name, options )
 
         @properties        = {}
         @internationalised = false
@@ -32,11 +36,11 @@ module Hoodoo
       #         be at path "[ :errors ]". Validation of the contents of the
       #         object at ":foo" would be under "[ :errors, :foo ]".
       #
-      def validate(data, path = '')
-        errors = super data, path
+      def validate( data, path = '' )
+        errors = super( data, path )
         return errors if !@required and data.nil? # If there are existing errors, we carry on and validate internally too
 
-        if !data.nil? and !data.is_a? ::Hash
+        if ! data.nil? && ! data.is_a?( ::Hash )
           errors.add_error(
             'generic.invalid_object',
             :message   => "Field `#{ full_path( path ) }` is an invalid object",
@@ -44,9 +48,9 @@ module Hoodoo
           )
         end
 
-        @properties.each do |name, property|
-          rdata = (data.is_a?(::Hash) and data.has_key?(name)) ? data[name] : nil
-          errors.merge!( property.validate(rdata, full_path( path ) ) )
+        @properties.each do | name, property |
+          rdata = ( data.is_a?( ::Hash ) && data.has_key?( name ) ) ? data[ name ] : nil
+          errors.merge!( property.validate( rdata, full_path( path ) ) )
         end
 
         errors
@@ -76,11 +80,10 @@ module Hoodoo
         have_rendered_something = false
 
         @properties.each do | name, property |
-          name        = name.to_s
-          has_key     = data.has_key?( name )
-          has_default = property.has_default?()
+          name    = name.to_s
+          has_key = data.has_key?( name )
 
-          next unless has_key || has_default
+          next unless has_key || property.has_default?()
 
           have_rendered_something = true
           property.render( has_key ? data[ name ] : property.default, target )
@@ -95,6 +98,19 @@ module Hoodoo
         #
         super( {}, target ) unless have_rendered_something
 
+      end
+
+      # Invoke a given block, passing this item; call recursively for any
+      # defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.
+      #
+      # &block:: Mandatory block, which is passed 'self' when called.
+      #
+      def walk( &block )
+        block.call( self )
+
+        @properties.each do | name, property |
+          property.walk( &block )
+        end unless @properties.nil?
       end
     end
   end

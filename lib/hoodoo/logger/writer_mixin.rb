@@ -40,7 +40,7 @@ module Hoodoo
       #               code to get useful information about that specific aspect
       #               of a service implementation's behaviour.
       #
-      # data::        A Hash containing the level, component and code-dependent
+      # +data+::      A Hash containing the level, component and code-dependent
       #               payload data to be logged. Converted to a string with
       #               +inspect+ for flat output use in an unstructured context.
       #

@@ -21,6 +21,12 @@ class RSpecToUpdateToCreateTestAInterface < Hoodoo::Services::Interface
   interface :RSpecToUpdateToCreateTestA do
     endpoint :r_spec_to_update_to_create_test_a, RSpecToUpdateToCreateTestAImplementation
 
+    # Default values in to-create blocks are irrelevant as they're for
+    # rendering only. Expectations in tests for the hashes "seen" by
+    # the mock resource implementations check this because the resources
+    # return "context.response.body" as-is, so if default values were
+    # leaked into that, tests would fail.
+
     to_create do
       text :foo
       integer :bar, :required => true
@@ -29,6 +35,10 @@ class RSpecToUpdateToCreateTestAInterface < Hoodoo::Services::Interface
         text :thing
       end
     end
+
+    # Required values in to-update blocks are ignored. There is explicit
+    # test coverage for this. Default values are handled the same way as
+    # with to-create.
 
     to_update do
       boolean :foo, :required => true
@@ -311,33 +321,54 @@ describe Hoodoo::Services::Middleware do
 
   # There's coverage for ":required => true" elsewhere too, but again,
   # may as well add extra coverage for to-create/to-update here.
+  #
+  # The creation blocks expect to fault the missing required fields with
+  # a 422. The update blocks expect this to be OK (omitted field just
+  # means "don't change the value").
+  #
+  context 'required fields' do
+    context 'are required for to_create' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 422 )
+        expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'generic.required_field_missing' )
+      end
 
-  context 'requires required fields' do
-    def expectations( hash )
-      expect( last_response.status ).to eq( 422 )
-      expect( JSON.parse( last_response.body )[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'generic.required_field_missing' )
+      it 'with many fields' do
+        do_post( :a, 'foo' => 'hello' )
+        do_post( :b, 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
+      end
+
+      it 'with empty data' do
+        do_post( :a, {} )
+        do_post( :b, {} )
+      end
+
+      it 'with explicit nils' do
+        do_post( :a, 'bar' => nil )
+        do_post( :b, 'code' => nil, 'message' => 'world', 'reference' => nil, 'errors' => [] )
+      end
     end
 
-    it 'with many fields' do
-      do_post( :a, 'foo' => 'hello' )
-      do_patch( :a, 'bar' => 'foo' )
-      do_post( :b, 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
-    end
+    context 'are irrelevant for to_update' do
+      def expectations( hash )
+        expect( last_response.status ).to eq( 200 )
+      end
 
-    it 'with empty data' do
-      do_post( :a, {} )
-      do_patch( :a, {} )
-      do_post( :b, {} )
-      do_patch( :b, {} )
-    end
+      it 'with many fields' do
+        do_patch( :a, 'bar' => 'foo' )
+        do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+      end
 
-    it 'with explicit nils' do
-      do_post( :a, 'bar' => nil )
-      do_patch( :a, 'foo' => nil )
-      do_post( :b, 'code' => nil, 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
-      do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+      it 'with empty data' do
+        do_patch( :a, {} )
+        do_patch( :b, {} )
+      end
+
+      it 'with explicit nils' do
+        do_patch( :a, 'foo' => nil )
+        do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+        do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+      end
     end
   end
 

@@ -52,7 +52,7 @@ module Hoodoo
       #       }
       #     }
       #
-      def key(name, options = {}, &block)
+      def key( name, options = {}, &block )
         if @specific == false
           raise "Can't use \#keys and then \#key in the same hash definition - use one or the other"
         end
@@ -64,7 +64,8 @@ module Hoodoo
         # amalgamation up to key level is the easiest way to handle that.
 
         if options.has_key?( :default )
-          @has_default  = true
+          @has_default = true
+
           @default    ||= {}
           @default.merge!( Hoodoo::Utilities.stringify( options[ :default ] ) )
         end
@@ -162,14 +163,16 @@ module Hoodoo
       # The properties of this object, a +hash+ of +Field+ instances.
       attr_accessor :properties
 
-      # Check if data is a valid Hash and return a Hoodoo::Errors instance
-      def validate(data, path = '')
-        errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+      # Check if data is a valid Hash and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
+        errors = super( data, path )
+        return errors if errors.has_errors? || ( ! @required && data.nil? )
 
-        if data.is_a? ::Hash
+        if data.is_a?( ::Hash )
 
           # No hash entry schema? No hash entry validation, then.
+          #
           unless @properties.nil?
             if @specific == true
 
@@ -184,12 +187,12 @@ module Hoodoo
                 )
               end
 
-              data.each do |key, value|
+              data.each do | key, value |
                 property = @properties[ key ]
                 errors.merge!( property.validate( value, full_path( path ) ) ) unless property.nil?
               end
 
-              @properties.each do |name, property|
+              @properties.each do | name, property |
                 if property.required && ! data.has_key?( name )
                   local_path = full_path(path) + '.' + name
 
@@ -221,8 +224,8 @@ module Hoodoo
                 # way, errors are reported at the correct "path", including the
                 # 'dynamic' incoming hash key name.
 
-                data.each do |key, value|
-                  local_path = full_path(path)
+                data.each do | key, value |
+                  local_path = full_path( path )
 
                   # So use the "keys property" as a validator for the format
                   # (i.e. just length, in practice) of the current key we're
@@ -231,21 +234,21 @@ module Hoodoo
                   # temporarily renamed to match the key in the client data so
                   # that field paths shown in errors will be correct.
 
-                  keys_property.rename( key )
+                    keys_property.rename( key )
                   values_property.rename( key )
 
-                  errors.merge!( keys_property.validate( key, local_path ) )
+                  errors.merge!(   keys_property.validate( key, local_path ) )
                   errors.merge!( values_property.validate( value, local_path ) )
                 end
 
-                keys_property.rename( 'keys' )
+                  keys_property.rename(   'keys' )
                 values_property.rename( 'values' )
 
               end
             end
           end # 'unless @properties.nil?'
 
-        else  # 'if data.is_a? ::Hash'
+        else  # 'if data.is_a?( ::Hash )'
           errors.add_error(
             'generic.invalid_hash',
             :message   => "Field `#{ full_path( path ) }` is an invalid hash",
@@ -265,13 +268,13 @@ module Hoodoo
       #            nested Hashes is built via +super()+, with the final
       #            key entry yielding the rendered hash.
       #
-      def render(data, target)
+      def render( data, target )
 
         # Data provided is explicitly nil or not a hash? Don't need to render
         # anything beyond 'nil' at the field (the not-hash case covers nil and
         # covers invalid input, which is treated as nil).
         #
-        return super( nil, target ) if ! data.is_a?( ::Hash )
+        return super( nil, target ) unless data.is_a?( ::Hash )
 
         # This relies on pass-by-reference; we'll update 'hash' later.
 
@@ -290,12 +293,11 @@ module Hoodoo
 
           if @specific == true
 
-            @properties.each do |name, property|
-              name        = name.to_s
-              has_key     = data.has_key?( name )
-              has_default = property.has_default?()
+            @properties.each do | name, property |
+              name    = name.to_s
+              has_key = data.has_key?( name )
 
-              next unless has_key || has_default
+              next unless has_key || property.has_default?()
 
               property.render( has_key ? data[ name ] : property.default, subtarget )
             end
@@ -326,6 +328,33 @@ module Hoodoo
 
           rendered = read_at_path( subtarget, path )
           hash.merge!( rendered ) unless rendered.nil?
+        end
+      end
+
+      # Invoke a given block, passing this item; call recursively for any
+      # defined sub-fields too. See Hoodoo::Presenters::Base#walk for why.
+      #
+      # &block:: Mandatory block, which is passed 'self' when called.
+      #
+      def walk( &block )
+        block.call( self )
+
+        unless @properties.nil?
+          if @specific == true
+
+            @properties.each do | name, property |
+              property.walk( &block )
+            end
+
+          else
+
+            keys_property   = @properties[ 'keys'   ]
+            values_property = @properties[ 'values' ]
+
+              keys_property.walk( &block )
+            values_property.walk( &block )
+
+          end
         end
       end
     end

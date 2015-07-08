@@ -1,17 +1,28 @@
 module Hoodoo
   module Presenters
-    # A JSON datetime schema member
+
+    # A JSON DateTime schema member.
+    #
     class DateTime < Hoodoo::Presenters::Field
 
-      # Check if data is a valid Datetime and return a Hoodoo::Errors instance
-      def validate(data, path = '')
-        errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+      # Validation regular expression for DateTime subset selection.
+      #
+      VALIDATION_REGEXP = /(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(Z|[+-](\d{2})\:(\d{2}))/
+
+      # Check if data is a valid DateTime and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
+        errors = super( data, path )
+        return errors if errors.has_errors? || ( ! @required && data.nil? )
 
         begin
-          valid = (/(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(Z|[+-](\d{2})\:(\d{2}))/=~data.to_s) == 0 && data.size>10 && ::DateTime.parse(data).is_a?(::DateTime)
+          valid = ( VALIDATION_REGEXP =~ data.to_s ) == 0 &&
+                  data.size > 10                          &&
+                  ::DateTime.parse( data ).is_a?( ::DateTime )
+
         rescue ArgumentError
           valid = false
+
         end
 
         unless valid
