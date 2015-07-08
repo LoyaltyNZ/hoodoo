@@ -519,6 +519,10 @@ module Hoodoo; module Services
       obj = Class.new( Hoodoo::Presenters::Base )
       obj.schema( &block )
 
+      # When updating, 'required' fields in schema aren't required; you just
+      # omit a field to avoid changing its value. Walk the to-update schema
+      # graph stripping out any such problematic attributes.
+      #
       obj.walk do | property |
         property.required = false
       end
@@ -674,25 +678,6 @@ module Hoodoo; module Services
       additional_permissions = self.class.additional_permissions() || {}
       additional_permissions[ action ] = p
       self.class.send( :additional_permissions=, additional_permissions )
-    end
-
-  private
-
-    # When updating, 'required' fields in schema aren't required; you just
-    # omit a field to avoid changing its value. Likewise, 'default' values
-    # cannot apply. Rather than slowing down the DSL processor, instead now
-    # run a pass over the to-update schema object stripping out the
-    # properties we can't allow.
-    #
-    # +schema+: Hoodoo::Presenters::Base schema to modify (e.g. the result
-    #           of a Hoodoo::Presenters::Base#get_schema call). The schema
-    #           data is modified in place.
-    #
-    def strip_inappropriate_properties_from( schema )
-
-
-      puts "*"*80
-      puts schema.inspect
     end
 
   protected

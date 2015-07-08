@@ -236,6 +236,10 @@ module Hoodoo
       # Walk the schema graph and invoke the given block on each field within
       # it, passing the field instances to the block for each call.
       #
+      # All fields including the top-level "root" property (which has an empty
+      # string for a name) will be passed to the block in order of definition,
+      # recursing into nested objects, arrays and so-on as each is encountered.
+      #
       def self.walk( &block )
         @schema.walk( &block )
       end

@@ -348,11 +348,10 @@ module Hoodoo
 
           else
 
-            keys_property   = @properties[ 'keys'   ]
             values_property = @properties[ 'values' ]
-
-              keys_property.walk( &block )
-            values_property.walk( &block )
+            values_property.properties.each do | name, property |
+              property.walk( &block )
+            end unless values_property.properties.nil?
 
           end
         end
