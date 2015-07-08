@@ -135,6 +135,18 @@ of the schema.</p>
           </ul>
         </dd>
       
+        <dt>W</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-walk">walk</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
     </dl>
   
 
@@ -186,7 +198,7 @@ of the schema.</p>
                 
               </p>
               <div id="method-c-get_schema_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 238</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
@@ -223,7 +235,7 @@ of the schema.</p>
                 
               </p>
               <div id="method-c-get_schema_definition_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 245</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 263</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema_definition</span>
   <span class="ruby-ivar">@schema_definition</span>
 <span class="ruby-keyword">end</span></pre>
@@ -261,7 +273,7 @@ so, else <code>false</code>.</p>
                 
               </p>
               <div id="method-c-is_internationalised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 232</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -364,11 +376,18 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
 
     <span class="ruby-comment"># Field &quot;kind&quot; is taken from the class name; this is a class method</span>
     <span class="ruby-comment"># so &quot;self.name&quot; yields &quot;Hoodoo::Data::Resources::...&quot; or similar.</span>
-    <span class="ruby-comment"># Split on &quot;::&quot; and take the last part as the Resource kind.</span>
+    <span class="ruby-comment"># We could just use &quot;split&quot;, but that creates an intermediate Array</span>
+    <span class="ruby-comment"># which uses more RAM and is about half the speed (or worse) of the</span>
+    <span class="ruby-comment"># following alternative (it turns out ActiveSupport 4&#39;s #demodulize</span>
+    <span class="ruby-comment"># uses much the same approach).</span>
+
+    <span class="ruby-identifier">name</span>  = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-identifier">index</span> = ( <span class="ruby-identifier">name</span>.<span class="ruby-identifier">rindex</span>( <span class="ruby-string">&#39;::&#39;</span> ) <span class="ruby-operator">||</span> <span class="ruby-number">-2</span> ) <span class="ruby-operator">+</span> <span class="ruby-number">2</span>
+    <span class="ruby-identifier">kind</span>  = <span class="ruby-identifier">name</span>[ <span class="ruby-identifier">index</span> <span class="ruby-operator">..</span> <span class="ruby-number">-1</span> ]
 
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
       <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
-      <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;::&#39;</span> ).<span class="ruby-identifier">last</span>,
+      <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">kind</span>,
       <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_s</span> ).<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>
     } )
 
@@ -480,7 +499,7 @@ field and object value in the rendered resource data.</p>
                 
               </p>
               <div id="method-c-render_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 158</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 165</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
   <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
@@ -606,7 +625,7 @@ Optional; default is <code>false</code>.</p>
                 
               </p>
               <div id="method-c-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 206</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
 
@@ -628,6 +647,48 @@ Optional; default is <code>false</code>.</p>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-walk">
+            
+              <b>walk</b>( &amp;block )
+            
+            <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-walk" name="method-c-walk" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Walk the schema graph and invoke the given block on each field within it,
+passing the field instances to the block for each call.</p>
+
+<p>All fields including the top-level “root” property (which has an empty
+string for a name) will be passed to the block in order of definition,
+recursing into nested objects, arrays and so-on as each is encountered.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-walk_source')" id="l_method-c-walk_source">show</a>
+                
+              </p>
+              <div id="method-c-walk_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 243</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

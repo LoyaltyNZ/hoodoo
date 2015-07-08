@@ -361,25 +361,25 @@ module Hoodoo; module Services
     # +:response+ or +:both+. For a given action targeted at this resource:
     #
     # * A key of +:request+ means that API call-related Hoodoo automatic
-    #   logging will _exclude_ body data for the _inbound request_, but
+    #   logging will _exclude_ body data for the _inbound_ _request_, but
     #   still include body data in the response. Example: A POST to a Login
     #   resource includes a password which you don't want logged, but the
     #   response data doesn't quote the password back so is "safe". The
     #   secure log actions Hash for the Login resource's interface would
-    #   include ":create => :request".
+    #   include <tt>:create => :request</tt>.
     #
     # * A key of +:response+ means that API call-related Hoodoo automatic
-    #   logging will _exclude_ body data for the _outbound response_, but
-    #   still include body data in the request. Example: A POST to a
+    #   logging will _exclude_ body data for the _outbound_ _response_,
+    #   but still include body data in the request. Example: A POST to a
     #   Caller resource creates a Caller with a generated authentication
     #   secret that's only exposed in the POST's response. The inbound
     #   data used to create that Caller can be safely logged, but the
     #   authentication secret is sensitive and shouldn't be recorded. The
     #   secure log actions Hash for the Caller resource's interface would
-    #   include ":create => :response".
+    #   include <tt>:create => :response</tt>.
     #
-    #   _ERROR RESPONSES ARE STILL LOGGED_ because that's useful data; so
-    #   make sure that if you generate any custom errors in your service
+    #   _ERROR_ _RESPONSES_ _ARE_ _STILL_ _LOGGED_ because that's useful data;
+    #   so make sure that if you generate any custom errors in your service
     #   that secure data is not contained within them.
     #
     # * A key of +both+ has the same result as both +:request+ and
@@ -415,7 +415,7 @@ module Hoodoo; module Services
     # An array of supported embed keys (as per documentation, so singular or
     # plural as per resource interface descriptions in the Loyalty Platform
     # API). Things which can be embedded can also be referenced, via the
-    # +embed=...+ and +reference=...+ query string entries.
+    # <tt>_embed</tt> and <tt>_reference</tt> query string keys.
     #
     # The middleware uses the list to reject requests from clients which
     # ask for embedded or referenced entities that were not listed by the
@@ -466,7 +466,7 @@ module Hoodoo; module Services
     # data that doesn't validate according to your schema, it'll be rejected
     # before even getting as far as your interface implementation.
     #
-    # Default values for fields, where present, are for _rendering only_; they
+    # Default values for fields where present are for _rendering_ _only_; they
     # are not injected into the inbound body for (say) persistence at database
     # levels. A returned, rendered representation based on the same schema
     # would have the default values present only. If you need default values
@@ -627,8 +627,8 @@ module Hoodoo; module Services
     #       p.set_resource( :Audit, :create, Hoodoo::Services::Permissions::ALLOW )
     #     end
     #
-    # The call says which action in _the declaring interface's resource_ is
-    # a target. The block takes a single parameter; this is a default
+    # The call says which action in _the_ _declaring_ _interface's_ _resource_
+    # is a target. The block takes a single parameter; this is a default
     # initialisation Hoodoo::Services::Permissions instance. Use that
     # object's methods to set up whatever permissions you need in other
     # resources, to successfully process the action in question. You only
@@ -638,14 +638,14 @@ module Hoodoo; module Services
     # own set of downstream calls to further resource endpoints.
     #
     # Setting default permissions or especially the default permission
-    # fallback inside the block is possible but *VERY STRONGLY DISCOURAGED*.
-    # Instead, precisely describe the downstream resources, actions and
-    # permissions that are required.
+    # fallback inside the block is possible but *VERY* *STRONGLY*
+    # *DISCOURAGED*. Instead, precisely describe the downstream resources,
+    # actions and permissions that are required.
     #
     # Note an important restriction - public actions (see ::public_actions)
     # cannot be augmented in this way. A public action in one resource can
     # only ever call public actions in other resources. This is because no
-    # session is needed _at all_ to call a public action; calling into a
+    # session is needed _at_ _all_ to call a public action; calling into a
     # protected action in another resource from this context would require
     # invention of a full caller context which would be entirely invented
     # and could represent an accidental (and significant) security hole.
@@ -749,7 +749,7 @@ module Hoodoo; module Services
     #
     # * Instance variable: things set on individual "Foo" instances ("Foo.new")
     # * Class instance variables: things set on the "Foo" class only
-    # * Class variables: things set on the "Foo" class *and all subclasses*
+    # * Class variables: things set on the "Foo" class _and_ _all_ _subclasses_
     #
     class << self
 
@@ -799,7 +799,7 @@ module Hoodoo; module Services
 
         # Array of strings listing allowed embeddable things. Each string
         # matches the split up comma-separated value for query string
-        # "_embed" or "_reference" keys. For example:
+        # <tt>_embed</tt> or <tt>_reference</tt> keys. For example:
         #
         #     ...&_embed=foo,bar
         #

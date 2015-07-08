@@ -40,12 +40,12 @@
   
     <div class="description">
       
-<p>A JSON string schema member. An enumeration (of sorts) - a list of discrete
-string values that are permitted for the value of a field of this type.
-Matches must be exact (case sensitive, no leading/trailing white space
-etc.). Allowed values are expressed as Ruby strings or symbols (converted
-to and matched as strings) via an array under key <code>:from</code> in the
-options hash provided to the constructor.</p>
+<p>A JSON <a href="String.html">String</a> schema member. An enumeration (of
+sorts) - a list of discrete string values that are permitted for the value
+of a field of this type. Matches must be exact (case sensitive, no
+leading/trailing white space etc.). Allowed values are expressed as Ruby
+strings or symbols (converted to and matched as strings) via an array under
+key <code>:from</code> in the options hash provided to the constructor.</p>
 
     </div>
   
@@ -116,7 +116,9 @@ options hash provided to the constructor.</p>
               [RW]
             </td>
             <td class='attr-name'>from</td>
-            <td class='attr-desc'><p>Permitted values</p></td>
+            <td class='attr-desc'><p><a href="Array.html">Array</a> of permitted enumeration values. This may be
+written with non-String values but they will be converted to Strings when
+read back.</p></td>
           </tr>
         
       </table>
@@ -130,7 +132,7 @@ options hash provided to the constructor.</p>
         <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>(name, options = {})
+              <b>new</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/Enum.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
@@ -138,14 +140,14 @@ options hash provided to the constructor.</p>
           
             <div class="description">
               <p>Initialize a <a href="String.html">String</a> instance with the appropriate
-name and options</p>
+name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
-<p>The JSON key</p>
+<p>The JSON key.</p>
 </dd><dt>options
 <dd>
 <p>A <code>Hash</code> of options, e.g. :required =&gt; true, :from =&gt; [
-:array, :of, :allowed, :enum, :values ]</p>
+:array, :of, :allowed, :enum, :values ].</p>
 </dd></dl>
             </div>
           
@@ -164,16 +166,16 @@ name and options</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 18</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 25</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
 
-  <span class="ruby-ivar">@from</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:from</span>]
+  <span class="ruby-ivar">@from</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:from</span> ]
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@from</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
-    <span class="ruby-ivar">@from</span> = <span class="ruby-ivar">@from</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">entry</span><span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">to_s</span> }
+    <span class="ruby-ivar">@from</span> = <span class="ruby-ivar">@from</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">entry</span>.<span class="ruby-identifier">to_s</span> }
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Hoodoo::Presenters::Enum must have a :from array listing allowed values&#39;</span>)
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Hoodoo::Presenters::Enum must have a :from array listing allowed values&#39;</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -186,7 +188,7 @@ name and options</p>
         <div class="method">
           <div class="title method-title" id="method-i-validate">
             
-              <b>validate</b>(data, path = &#39;&#39;)
+              <b>validate</b>( data, path = &#39;&#39; )
             
             <a href="../../../classes/Hoodoo/Presenters/Enum.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
           </div>
@@ -194,7 +196,7 @@ name and options</p>
           
             <div class="description">
               <p>Check if data is a valid <a href="String.html">String</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance</p>
+href="../Errors.html">Hoodoo::Errors</a> instance.</p>
             </div>
           
           
@@ -212,12 +214,12 @@ href="../Errors.html">Hoodoo::Errors</a> instance</p>
                 
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 31</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
-  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
-  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@from</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">data</span>)
+  <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@from</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">data</span> )
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_enum&#39;</span>,
       <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` does not contain an allowed reference value from this list: `#{@from}`&quot;</span>,
