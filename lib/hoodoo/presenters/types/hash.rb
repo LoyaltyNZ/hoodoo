@@ -351,7 +351,7 @@ module Hoodoo
             values_property = @properties[ 'values' ]
             values_property.properties.each do | name, property |
               property.walk( &block )
-            end unless values_property.properties.nil?
+            end unless values_property.respond_to?( :properties ) == false || values_property.properties.nil?
 
           end
         end

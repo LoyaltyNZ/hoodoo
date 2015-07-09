@@ -93,6 +93,10 @@ describe Hoodoo::Presenters::Base do
           end
         end
 
+        hash :test_hash_4 do
+          keys :length => 4
+        end
+
       end # 'schema do'
     end   # 'class TestWalkPresenter < Hoodoo::Presenters::Base'
 
@@ -165,6 +169,7 @@ describe Hoodoo::Presenters::Base do
         test_hash_3_keys_object_1_text_1
         test_hash_3_keys_array_1
         test_hash_3_keys_array_1_text_1
+        test_hash_4
       }
 
       expect( names ).to eq( expected_names )
