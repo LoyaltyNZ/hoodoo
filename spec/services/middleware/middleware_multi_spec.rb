@@ -37,7 +37,7 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       end
     end
     def create( context )
-      context.response.body = { 'create' => to_h( context ) }
+      context.response.set_resource( { 'create' => to_h( context ) } )
     end
     def update( context )
       context.response.body = { 'update' => to_h( context ) }
@@ -87,6 +87,11 @@ class TestEchoQuietImplementation < Hoodoo::Services::Implementation
       context.response.body = { 'show' => to_h( context ) }
     end
 
+    def list( context )
+      expectable_hook( context )
+      context.response.set_resources( [ context.request.headers ], 1 )
+    end
+
   private
 
     def to_h( context )
@@ -104,12 +109,15 @@ class TestEchoQuietImplementation < Hoodoo::Services::Implementation
         'references'          => context.request.references
       }
     end
+
+    def expectable_hook( context )
+    end
 end
 
 class TestEchoQuietInterface < Hoodoo::Services::Interface
   interface :TestEchoQuiet do
     endpoint :test_echo_quiet, TestEchoQuietImplementation
-    actions :show
+    actions :show, :list
   end
 end
 
@@ -318,6 +326,32 @@ describe Hoodoo::Services::Middleware do
       list_things()
     end
 
+    it 'should be able to list quiet things too, reporting HTTP headers', :check_quiet_callbacks => true do
+
+      # Did this test give you a 500? Chances are it's the "raise" below,
+      # but checking 'test.log' or adding "puts response.body.inspect" a
+      # bit further down will let you know for sure.
+
+      expect_any_instance_of( TestEchoQuietImplementation ).to receive( :expectable_hook ) { | ignored, context |
+        raise 'Test failed as context.request.headers not frozen' unless context.request.headers.frozen?
+      }
+
+      response = spec_helper_http(
+        port: @port,
+        path: '/v1/test_echo_quiet'
+      )
+
+      expect( response.code ).to eq( '200' )
+      parsed = JSON.parse( response.body )
+
+      expect( parsed[ '_data' ] ).to eq( [ {
+        'CONTENT_TYPE'    => 'application/json; charset=utf-8',
+        'HTTP_CONNECTION' => 'close',
+        'HTTP_VERSION'    => 'HTTP/1.1',
+        'HTTP_HOST'       => "127.0.0.1:#{ @port }"
+      } ] )
+    end
+
     def show_things
       response = spec_helper_http(
         port:    @port,
@@ -489,9 +523,15 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'should get 405 for bad requests' do
+
+      # Attempt a #create (POST with body data) - service only does "show"
+      # and "list".
+
       response = spec_helper_http(
-        port: @port,
-        path: '/v1/test_echo_quiet' # I.e. "list" action, but service only does "show"
+        klass: Net::HTTP::Post,
+        port:  @port,
+        path:  '/v1/test_echo_quiet',
+        body:  { 'foo' => 'bar', 'baz' => 'boo' }.to_json
       )
 
       expect( response.code ).to eq( '405' )

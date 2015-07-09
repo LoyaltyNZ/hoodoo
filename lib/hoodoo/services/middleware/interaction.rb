@@ -106,6 +106,9 @@ module Hoodoo; module Services; class Middleware
         )
 
         @owning_middleware_instance = owning_middleware_instance
+        @context.request.headers    = env.select() do | k,v |
+          k.to_s.start_with?( 'HTTP_' ) || k == 'CONTENT_TYPE' || k == 'CONTENT_LENGTH'
+        end.freeze()
       end
 
     private
