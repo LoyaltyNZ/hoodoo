@@ -13,54 +13,82 @@ describe Hoodoo::ActiveRecord::Finder do
 
         t.timestamps
       end
+    end
 
-      class RSpecModelFinderTest < ActiveRecord::Base
-        include Hoodoo::ActiveRecord::Finder
+    class RSpecModelFinderTest < ActiveRecord::Base
+      include Hoodoo::ActiveRecord::Finder
 
-        acquire_with :uuid, :code
+      acquire_with :uuid, :code
 
-        # These forms follow quite closely the RDoc comments in
-        # the finder.rb source.
+      # These forms follow quite closely the RDoc comments in
+      # the finder.rb source.
 
-        ARRAY_MATCH = Proc.new { | attr, value |
-          [ { attr => [ value ].flatten } ]
+      ARRAY_MATCH = Proc.new { | attr, value |
+        [ { attr => [ value ].flatten } ]
+      }
+
+      # Pretend security scoping that only finds things with
+      # a UUID and code coming in from the session, for secured
+      # searches. Note intentional mix of Symbols and Strings.
+
+      secure_with(
+        'uuid' => :authorised_uuids, # Array
+        :code => 'authorised_code'   # Single item
+      )
+
+      # Deliberate mixture of symbols and strings. No ILIKE
+      # in SQLite, so just use LIKE. It's case insensitive by
+      # default anyway.
+
+      search_with(
+        'field_one' => nil,
+        :field_two => Proc.new { | attr, value |
+          [ "#{ attr } LIKE ?", value ]
+        },
+        :field_three => ARRAY_MATCH
+      )
+
+      filter_with(
+        :field_one => ARRAY_MATCH,
+        :field_two => nil,
+        'field_three' => Proc.new { | attr, value |
+          [ "#{ attr } LIKE ?", value ]
         }
+      )
+    end
 
-        # Pretend security scoping that only finds things with
-        # a UUID and code coming in from the session, for secured
-        # searches. Note intentional mix of Symbols and Strings.
+    class RSpecModelFinderTestWithHelpers < ActiveRecord::Base
+      include Hoodoo::ActiveRecord::Finder
 
-        secure_with(
-          'uuid' => :authorised_uuids, # Array
-          :code => 'authorised_code'   # Single item
-        )
+      self.table_name = :r_spec_model_finder_tests
+      sh              = Hoodoo::ActiveRecord::Finder::SearchHelper
 
-        # Deliberate mixture of symbols and strings. No ILIKE
-        # in SQLite, so just use LIKE. It's case insensitive by
-        # default anyway.
+      # Since e.g. SQLite is unlikely to be case sensitive (see above),
+      # we do test that the generic insensitive matcher works without
+      # any syntax errors but don't check that "cs_match" actually does
+      # a sensitive match - instead, make sure the values passed in for
+      # tests are in the correct case already.
 
-        search_with(
-          'field_one' => nil,
-          :field_two => Proc.new { | attr, value |
-            [ "#{ attr } LIKE ?", value ]
-          },
-          :field_three => ARRAY_MATCH
-        )
+      search_with(
+        'mapped_code'     => sh.cs_match( 'code' ),
+        :mapped_field_one => sh.ci_match_generic( 'field_one' ),
+        :field_two        => sh.cs_match_csv(),
+        'field_three'     => sh.cs_match_array()
+      )
 
-        filter_with(
-          :field_one => ARRAY_MATCH,
-          :field_two => nil,
-          'field_three' => Proc.new { | attr, value |
-            [ "#{ attr } LIKE ?", value ]
-          }
-        )
-      end
+      filter_with(
+        'mapped_code'     => sh.cs_match( 'code' ),
+        :mapped_field_one => sh.ci_match_generic( 'field_one' ),
+        :field_two        => sh.cs_match_csv(),
+        'field_three'     => sh.cs_match_array()
+      )
     end
   end
 
   before :each do
     @a = RSpecModelFinderTest.new
     @a.id = 1
+    @a.code = 'A' # Must be set else SQLite fails to find this if you search for "code != 'C'" (!)
     @a.field_one = 'group 1'
     @a.field_two = 'two a'
     @a.field_three = 'three a'
@@ -69,6 +97,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
     @b = RSpecModelFinderTest.new
     @b.uuid = Hoodoo::UUID.generate
+    @b.code = 'B'
     @b.field_one = 'group 1'
     @b.field_two = 'two b'
     @b.field_three = 'three b'
@@ -82,6 +111,10 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.field_three = 'three c'
     @c.save!
     @code = @c.code
+
+    @a_wh = RSpecModelFinderTestWithHelpers.find( @a.id )
+    @b_wh = RSpecModelFinderTestWithHelpers.find( @b.id )
+    @c_wh = RSpecModelFinderTestWithHelpers.find( @c.id )
 
     @list_params = Hoodoo::Services::Request::ListParameters.new
   end
@@ -353,6 +386,46 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
+  context 'helper-based search' do
+    it 'finds by mapped code' do
+      @list_params.search_data = {
+        'mapped_code' => @code
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh ] )
+    end
+
+    it 'finds by mapped field-one' do
+      @list_params.search_data = {
+        'mapped_field_one' => :'group 1'
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @b_wh, @a_wh ] )
+    end
+
+    it 'finds by comma-separated list' do
+      @list_params.search_data = {
+        'field_two' => 'two a,something else,two c,more'
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh, @a_wh ] )
+    end
+
+    it 'finds by Array' do
+      @list_params.search_data = {
+        'field_three' => [ 'hello', :'three b', 'three c', :there ]
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh, @b_wh ] )
+    end
+  end
+
+  # ==========================================================================
+
   context 'filter' do
     it 'filters without chain' do
       @list_params.filter_data = {
@@ -434,6 +507,51 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = constraint.list( @list_params )
       expect( finder ).to eq([])
+    end
+  end
+
+  # ==========================================================================
+
+  # This set of copy-and-modify tests based on the helper-based search tests
+  # earlier seems somewhat redundant, but should anyone accidentally decouple
+  # the search/filter back-end processing and introduce some sort of error at
+  # a finder-level, the tests here have a chance of catching that.
+
+  context 'helper-based filtering' do
+    it 'filters by mapped code' do
+      @list_params.filter_data = {
+        'mapped_code' => @code
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @b_wh, @a_wh ] )
+    end
+
+    it 'filters by mapped field-one' do
+      @list_params.filter_data = {
+        'mapped_field_one' => :'group 1'
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh ] )
+    end
+
+    it 'filters by comma-separated list' do
+      @list_params.filter_data = {
+        'field_two' => 'two a,something else,two c,more'
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @b_wh ] )
+    end
+
+    it 'filters by Array' do
+      @list_params.filter_data = {
+        'field_three' => [ 'hello', :'three b', 'three c', :there ]
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @a_wh ] )
     end
   end
 
