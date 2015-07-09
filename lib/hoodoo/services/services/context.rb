@@ -118,7 +118,7 @@ module Hoodoo; module Services
         return middleware.inter_resource_endpoint_for(
           resource,
           version,
-          @owning_interaction,
+          @owning_interaction
         )
       end
 
