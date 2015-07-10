@@ -15,11 +15,6 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
         t.string   :string, :limit => 16
         t.text     :text
         t.time     :time
-
-        # At time of writing SQLite (or at least, its ActiveRecord adapter)
-        # does not support arrays, but the test case is included here for
-        # possible future improvements.
-
         t.text     :array, :array => true
       end
 
@@ -99,18 +94,8 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
         "message" => "can't be blank",
         "reference" => "time"
       },
-
-      # As per earlier comments, SQLite's adapter doesn't support array column
-      # types at the time of writing so this ends up as "invalid_string".
-      #
-      # If tests start to fail because this is saying "invalid_array" - good!
-      # It means SQLite's adapter has caught up and this expected error
-      # message below should be fixed (by detecting the presence of the feature
-      # in ActiveRecord::ConnectionAdapters::SQLite3Column or by ensuring that
-      # a new enough adapter is definitely present).
-
       {
-        "code" => "generic.invalid_string",
+        "code" => "generic.invalid_array",
         "message" => "can't be blank",
         "reference" => "array"
       },
@@ -182,9 +167,6 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     ] )
   end
 
-  # Nasty test for code coverage - patch the model to make the column
-  # look like it really supports arrays and pass it a non-array type.
-
   it 'handles arrays' do
     m = RSpecModelErrorMappingTest.new( {
       :boolean  => true,
@@ -196,27 +178,19 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
       :string   => 'hello',
       :text     => 'world',
       :time     => Time.now,
-      :array    => 'not an array'
+      :array    => []
     } )
 
     array_col = RSpecModelErrorMappingTest.columns_hash[ 'array' ]
     expect(array_col).to receive(:array).once.and_return(true)
 
-    # So long as there's no database support for arrays, ActiveRecord
-    # won't add an error itself and the test will fail. So check first,
-    # add our own error and call adds_errors_to? with "false" so that
-    # it doesn't re-call "valid?", which doesn't add to any existing
-    # errors as you might expect - instead it clears them. Thanks for
-    # that, ActiveRecord.
-
     m.valid?
-    m.errors.add( :array, 'custom message' ) if ( m.errors.messages.empty? )
     m.adds_errors_to?( @errors, false )
 
     expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_array",
-        "message" => "custom message",
+        "message" => "can't be blank",
         "reference" => "array"
       }
     ] )
@@ -239,13 +213,7 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
 
     m.adds_errors_to?( @errors )
     expect( @errors.errors ).to eq( [] )
-
-    begin
-      m.save!
-    rescue TypeError
-      m.array = 'This version of SQLite does not support arrays'
-      m.save!
-    end
+    m.save!
 
     n = m.dup
     n.adds_errors_to?( @errors )
@@ -316,13 +284,6 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     expect( m.adds_errors_to?( @errors ) ).to eq( false )
     expect( @errors.errors ).to eq( [] )
 
-    expect {
-      begin
-        m.save!
-      rescue TypeError
-        m.array = 'This version of SQLite does not support arrays'
-        m.save!
-      end
-    }.to_not raise_error
+    expect { m.save! }.to_not raise_error
   end
 end

@@ -62,15 +62,16 @@ module Hoodoo
           # effective at the specified date time.
           nested_query = %{
             (
-              SELECT #{ formatted_model_attributes }, null AS effective_end
-              FROM #{ self.table_name }
-              WHERE created_at <= #{ safe_date_time }
+              SELECT * FROM (
+                SELECT #{ formatted_model_attributes }, updated_at as effective_start, null AS effective_end
+                FROM #{ self.table_name }
 
-              UNION ALL
+                UNION ALL
 
-              SELECT #{ self.history_column_mapping }, effective_end
-              FROM #{ self.effective_history_table }
-              WHERE effective_end > #{ safe_date_time } AND created_at <= #{ safe_date_time }
+                SELECT #{ self.history_column_mapping }, effective_start, effective_end
+                FROM #{ self.effective_history_table }
+              ) AS u
+              WHERE effective_start <= #{ safe_date_time } AND (effective_end > #{ safe_date_time } OR effective_end IS NULL)
             ) AS #{ self.table_name }
           }
 

@@ -35,14 +35,10 @@ describe Hoodoo::ActiveRecord::Finder do
           :code => 'authorised_code'   # Single item
         )
 
-        # Deliberate mixture of symbols and strings. No ILIKE
-        # in SQLite, so just use LIKE. It's case insensitive by
-        # default anyway.
-
         search_with(
           'field_one' => nil,
           :field_two => Proc.new { | attr, value |
-            [ "#{ attr } LIKE ?", value ]
+            [ "#{ attr } ILIKE ?", value ]
           },
           :field_three => ARRAY_MATCH
         )
@@ -60,7 +56,6 @@ describe Hoodoo::ActiveRecord::Finder do
 
   before :each do
     @a = RSpecModelFinderTest.new
-    @a.id = 1
     @a.field_one = 'group 1'
     @a.field_two = 'two a'
     @a.field_three = 'three a'

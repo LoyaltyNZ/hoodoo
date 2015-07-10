@@ -64,14 +64,41 @@ RSpec.configure do | config |
   #
   Kernel.srand config.seed
 
-  # Wake up ActiveRecord and DatabaseCleaner.
+  # Wake up ActiveRecord
+  database_name = 'hoodoo_test'
 
+  # Connect to postgres, no database yet
+  ActiveRecord::Base.establish_connection( :adapter  => 'postgresql' )
+
+  # Sometimes if a user force quits the spec suite, the hoodoo_test database
+  # will not be deleted. The following makes sure it is.
+  #
+  database_exists = ActiveRecord::Base.connection.execute(
+    "SELECT COUNT(*) FROM pg_database WHERE datname = '#{database_name}'"
+  ).any?
+  ActiveRecord::Base.connection.drop_database database_name if database_exists
+
+  # Create the test database ( hiding output )
+  ActiveRecord::Base.logger = Logger.new( nil )
+  ActiveRecord::Base.connection.create_database database_name
   ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+
+  # Connect to the created database
   ActiveRecord::Base.establish_connection(
-    :adapter  => 'sqlite3',
-    :database => ':memory:'
+    :adapter  => 'postgresql',
+    :database => database_name
   )
 
+  # Blow away the database afterwards.
+  config.after( :suite ) do
+    # Need to disconnect from the database first
+    ActiveRecord::Base.establish_connection( :adapter  => 'postgresql' )
+
+    # Drop database
+    ActiveRecord::Base.connection.drop_database database_name
+  end
+
+  # Wake up DatabaseCleaner.
   DatabaseCleaner.strategy = :transaction # MUST NOT be changed
 
   # Redirect $stderr before each test so a test log gets written without
@@ -162,7 +189,7 @@ require 'webrick/https'
 def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
 
   port   = Hoodoo::Utilities.spare_port()
-  thread = Thread.start do
+  Thread.start do
     app = Rack::Builder.new do
       use Hoodoo::Services::Middleware
       run app_class.new

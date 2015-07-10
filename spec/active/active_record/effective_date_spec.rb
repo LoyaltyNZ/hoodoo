@@ -13,10 +13,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests_history_entries, :id => false ) do | t |
-        t.text     :id,            :null => false
-        t.text     :uuid,          :null => false
+        t.text     :id,              :null => false
+        t.text     :uuid,            :null => false
         t.text     :data
-        t.datetime :effective_end, :null => false
+        t.datetime :effective_start, :null => false
+        t.datetime :effective_end,   :null => false
         t.timestamps
       end
 
@@ -32,10 +33,11 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_history_entries, :id => false ) do | t |
-        t.text     :id,            :null => false
-        t.text     :uuid,          :null => false
+        t.text     :id,              :null => false
+        t.text     :uuid,            :null => false
         t.text     :data
-        t.datetime :effective_end, :null => false
+        t.datetime :effective_start, :null => false
+        t.datetime :effective_end,   :null => false
         t.timestamps
       end
 
@@ -56,20 +58,20 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       # historical and current records separately with their attributes.
       #
       # Historical:
-      # ------------------------------------------------
-      #  uuid | data    | created_at    | effective_end
-      # ------------------------------------------------
-      #  A    | "one"   | now - 5 hours | now - 3 hours
-      #  B    | "two"   | now - 4 hours | now - 2 hours
-      #  A    | "three" | now - 3 hours | now - 1 hour
-      #  B    | "four"  | now - 2 hours | now
+      # -------------------------------------------------------------------
+      #  uuid | data    | created_at    | effective_end | effective_start |
+      # -------------------------------------------------------------------
+      #  A    | "one"   | now - 5 hours | now - 3 hours | now - 5 hours   |
+      #  B    | "two"   | now - 4 hours | now - 2 hours | now - 4 hours   |
+      #  A    | "three" | now - 5 hours | now - 1 hour  | now - 3 hours   |
+      #  B    | "four"  | now - 4 hours | now           | now - 2 hour    |
       #
       # Current:
-      # ------------------------------
-      #  uuid | data   | created_at
-      # ------------------------------
-      #  B    | "five" | now - 1 hour
-      #  A    | "six"  | now
+      # --------------------------------
+      #  uuid | data   | created_at    |
+      # --------------------------------
+      #  B    | "five" | now - 4 hours |
+      #  A    | "six"  | now - 5 hours |
       #
 
       @uuid_a = Hoodoo::UUID.generate
@@ -77,26 +79,27 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
       @now  = Time.now.utc
 
-      # uuid, data, created_at, effective_at
+      # uuid, data, created_at, effective_end, effective_start
       [
-        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours ],
-        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours ],
-        [ @uuid_a, "three", @now - 3.hours, @now - 1.hour ],
-        [ @uuid_b, "four",  @now - 2.hours, @now ]
+        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours , @now - 5.hours ],
+        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours , @now - 4.hours ],
+        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour  , @now - 3.hours ],
+        [ @uuid_b, "four",  @now - 4.hours, @now           , @now - 2.hours ]
       ].each do | row_data |
         RSpecModelEffectiveDateTestHistoryEntry.new( {
-          :id            => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
-          :uuid          => row_data[ 0 ],
-          :data          => row_data[ 1 ],
-          :created_at    => row_data[ 2 ],
-          :effective_end => row_data[ 3 ]
+          :id              => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
+          :uuid            => row_data[ 0 ],
+          :data            => row_data[ 1 ],
+          :created_at      => row_data[ 2 ],
+          :effective_end   => row_data[ 3 ],
+          :effective_start => row_data[ 4 ]
         } ).save!
       end
 
       # uuid, data, created_at
       [
-        [ @uuid_b, "five", @now - 1.hour ],
-        [ @uuid_a, "six", @now ]
+        [ @uuid_b, "five", @now - 4.hours, @now ],
+        [ @uuid_a, "six",  @now - 5.hours, @now - 1.hour ]
       ].each do | row_data |
         RSpecModelEffectiveDateTest.new( {
           :id         => row_data[ 0 ],
@@ -122,7 +125,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         test_expectation( @now - 4.hours, [ "one", "two" ] )
         test_expectation( @now - 3.hours, [ "two", "three" ] )
         test_expectation( @now - 2.hours, [ "three", "four" ] )
-        test_expectation( @now - 1.hour,  [ "four", "five" ] )
+        test_expectation( @now - 1.hour,  [ "four" ] )
       end
 
       it 'returns records that are effective now' do
@@ -153,20 +156,20 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       # historical and current records separately with their attributes.
       #
       # Historical:
-      # ------------------------------------------------
-      #  uuid | data    | created_at    | effective_end
-      # ------------------------------------------------
-      #  A    | "one"   | now - 5 hours | now - 3 hours
-      #  B    | "two"   | now - 4 hours | now - 2 hours
-      #  A    | "three" | now - 3 hours | now - 1 hour
-      #  B    | "four"  | now - 2 hours | now
+      # -------------------------------------------------------------------
+      #  uuid | data    | created_at    | effective_end | effective_start |
+      # -------------------------------------------------------------------
+      #  A    | "one"   | now - 5 hours | now - 3 hours | now - 5 hours   |
+      #  B    | "two"   | now - 4 hours | now - 2 hours | now - 4 hours   |
+      #  A    | "three" | now - 5 hours | now - 1 hour  | now - 3 hours   |
+      #  B    | "four"  | now - 4 hours | now           | now - 2 hours   |
       #
       # Current:
-      # -----------------------------------------
-      #  activerecord_id | data   | created_at
-      # -----------------------------------------
-      #  B               | "five" | now - 1 hour
-      #  A               | "six"  | now
+      # -------------------------------------------
+      #  activerecord_id | data   | created_at    |
+      # -------------------------------------------
+      #  B               | "five" | now - 4 hours |
+      #  A               | "six"  | now - 5 hours |
       #
 
       @uuid_a = Hoodoo::UUID.generate
@@ -176,24 +179,25 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
       # uuid, data, created_at, effective_at
       [
-        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours ],
-        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours ],
-        [ @uuid_a, "three", @now - 3.hours, @now - 1.hour ],
-        [ @uuid_b, "four",  @now - 2.hours, @now ]
+        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours, @now - 5.hours ],
+        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours, @now - 4.hours ],
+        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour,  @now - 3.hours ],
+        [ @uuid_b, "four",  @now - 4.hours, @now,           @now - 2.hours ]
       ].each do | row_data |
         RSpecModelEffectiveDateTestOverrideHistoryEntry.new( {
-          :id            => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
-          :uuid          => row_data[ 0 ],
-          :data          => row_data[ 1 ],
-          :created_at    => row_data[ 2 ],
-          :effective_end => row_data[ 3 ]
+          :id                => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
+          :uuid            => row_data[ 0 ],
+          :data            => row_data[ 1 ],
+          :created_at      => row_data[ 2 ],
+          :effective_end   => row_data[ 3 ],
+          :effective_start => row_data[ 4 ]
         } ).save!
       end
 
       # uuid, data, created_at
       [
-        [ @uuid_b, "five", @now - 1.hour ],
-        [ @uuid_a, "six", @now ]
+        [ @uuid_b, "five", @now - 4.hours ],
+        [ @uuid_a, "six",  @now - 5.hours ]
       ].each do | row_data |
         RSpecModelEffectiveDateTestOverride.new( {
           :id         => row_data[ 0 ],
