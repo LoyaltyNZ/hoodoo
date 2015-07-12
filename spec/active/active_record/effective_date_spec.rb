@@ -96,7 +96,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         } ).save!
       end
 
-      # uuid, data, created_at
+      # uuid, data, created_at, updated_at
       [
         [ @uuid_b, "five", @now - 4.hours, @now ],
         [ @uuid_a, "six",  @now - 5.hours, @now - 1.hour ]
@@ -104,7 +104,8 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         RSpecModelEffectiveDateTest.new( {
           :id         => row_data[ 0 ],
           :data       => row_data[ 1 ],
-          :created_at => row_data[ 2 ]
+          :created_at => row_data[ 2 ],
+          :updated_at => row_data[ 3 ]
         } ).save!
       end
 
@@ -125,7 +126,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         test_expectation( @now - 4.hours, [ "one", "two" ] )
         test_expectation( @now - 3.hours, [ "two", "three" ] )
         test_expectation( @now - 2.hours, [ "three", "four" ] )
-        test_expectation( @now - 1.hour,  [ "four" ] )
+        test_expectation( @now - 1.hour,  [ "four", "six" ] )
       end
 
       it 'returns records that are effective now' do
@@ -196,13 +197,14 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
       # uuid, data, created_at
       [
-        [ @uuid_b, "five", @now - 4.hours ],
-        [ @uuid_a, "six",  @now - 5.hours ]
+        [ @uuid_b, "five", @now - 4.hours, @now ],
+        [ @uuid_a, "six",  @now - 5.hours, @now - 1.hour ]
       ].each do | row_data |
         RSpecModelEffectiveDateTestOverride.new( {
           :id         => row_data[ 0 ],
           :data       => row_data[ 1 ],
-          :created_at => row_data[ 2 ]
+          :created_at => row_data[ 2 ],
+          :updated_at => row_data[ 3 ]
         } ).save!
       end
 
@@ -223,7 +225,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
         test_expectation( @now - 4.hours, [ "one", "two" ] )
         test_expectation( @now - 3.hours, [ "two", "three" ] )
         test_expectation( @now - 2.hours, [ "three", "four" ] )
-        test_expectation( @now - 1.hour,  [ "four", "five" ] )
+        test_expectation( @now - 1.hour,  [ "four", "six" ] )
       end
 
       it 'returns records that are effective now' do
