@@ -96,7 +96,10 @@ RSpec.configure do | config |
   # Blow away the database afterwards.
   config.after( :suite ) do
     # Need to disconnect from the database first
-    ActiveRecord::Base.establish_connection( :adapter  => 'postgresql' )
+    ActiveRecord::Base.establish_connection(
+      :adapter  => 'postgresql',
+      :username => ENV['DATABASE_USER']
+    )
 
     # Drop database
     ActiveRecord::Base.connection.drop_database database_name
