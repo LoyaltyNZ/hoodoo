@@ -146,9 +146,6 @@ module Hoodoo
             # approach rather than higher level AREL, causing a string-like SQL
             # query on all adapters which SQL handles just fine for varying
             # field data types.
-            #
-            # # TODO document weirdness around different types for identifier
-            # fields (can have one type only, not string and integer)
 
             checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
             return checker.first unless checker.count == 0
