@@ -4,7 +4,8 @@ require 'active_record'
 describe Hoodoo::ActiveRecord::Finder do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests ) do | t |
+      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => false ) do | t |
+        t.text :id
         t.text :uuid
         t.text :code
         t.text :field_one
@@ -16,6 +17,8 @@ describe Hoodoo::ActiveRecord::Finder do
 
       class RSpecModelFinderTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Finder
+
+        self.primary_key = :id
 
         acquire_with :uuid, :code
 
@@ -56,6 +59,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   before :each do
     @a = RSpecModelFinderTest.new
+    @a.id = "one"
     @a.field_one = 'group 1'
     @a.field_two = 'two a'
     @a.field_three = 'three a'
@@ -63,6 +67,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @id = @a.id
 
     @b = RSpecModelFinderTest.new
+    @b.id = "two"
     @b.uuid = Hoodoo::UUID.generate
     @b.field_one = 'group 1'
     @b.field_two = 'two b'
@@ -71,6 +76,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @uuid = @b.uuid
 
     @c = RSpecModelFinderTest.new
+    @c.id = "three"
     @c.code = 'C'
     @c.field_one = 'group 2'
     @c.field_two = 'two c'
@@ -114,20 +120,23 @@ describe Hoodoo::ActiveRecord::Finder do
   context 'acquire_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
-      @scoped_1.uuid        = 'uuid 1'
-      @scoped_1.code        = 'code 1'
+      @scoped_1.id        = 'id 1'
+      @scoped_1.uuid      = 'uuid 1'
+      @scoped_1.code      = 'code 1'
       @scoped_1.field_one = 'scoped 1'
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
-      @scoped_2.uuid        = 'uuid 1'
-      @scoped_2.code        = 'code 2'
+      @scoped_2.id        = 'id 2'
+      @scoped_2.uuid      = 'uuid 1'
+      @scoped_2.code      = 'code 2'
       @scoped_2.field_one = 'scoped 2'
       @scoped_2.save!
 
       @scoped_3 = RSpecModelFinderTest.new
-      @scoped_3.uuid        = 'uuid 2'
-      @scoped_3.code        = 'code 2'
+      @scoped_3.id        = 'id 3'
+      @scoped_3.uuid      = 'uuid 2'
+      @scoped_3.code      = 'code 2'
       @scoped_3.field_one = 'scoped 3'
       @scoped_3.save!
 
@@ -437,18 +446,21 @@ describe Hoodoo::ActiveRecord::Finder do
   context 'list_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
+      @scoped_1.id   = 'id 1'
       @scoped_1.uuid = 'uuid 1'
       @scoped_1.code = 'code 1'
       @scoped_1.field_one = 'scoped 1'
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
+      @scoped_2.id   = 'id 2'
       @scoped_2.uuid = 'uuid 1'
       @scoped_2.code = 'code 2'
       @scoped_2.field_one = 'scoped 2'
       @scoped_2.save!
 
       @scoped_3 = RSpecModelFinderTest.new
+      @scoped_3.id   = 'id 3'
       @scoped_3.uuid = 'uuid 2'
       @scoped_3.code = 'code 2'
       @scoped_3.field_one = 'scoped 3'
