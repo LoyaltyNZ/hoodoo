@@ -71,6 +71,13 @@ module Hoodoo
         # support finding a resource instance by +id+ _and_ one or more
         # other model fields. Otherwise, just use +find_by_id+.
         #
+        # This can only be used <i>if your searched fields are strings</i> in
+        # the database. This includes, for example, the +id+ column; Hoodoo
+        # usually expects to be a string field holding a 32-character UUID. If
+        # any of the fields contain non-string types, attempts to use the
+        # #acquire mechanism (or a related one) may result in database errors
+        # due to type mismatches, depending upon the database engine in use.
+        #
         # For secured data access, use #acquire_in instead, or only call
         # #acquire with a secure scope from e.g. a call to
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure.
@@ -148,6 +155,14 @@ module Hoodoo
             # approach rather than higher level AREL, causing a string-like SQL
             # query on all adapters which SQL handles just fine for varying
             # field data types.
+            #
+            # The caveat is that should the database object to mismatched type
+            # comparisions it will actually raise an error - we see this on
+            # for example PostgreSQL where a column is an integer but we try
+            # to match it against a string that cannot be cleanly converted to
+            # one (e.g. trying to find an integer column 'id' based on a text
+            # UUID value containing alphabetic characters). That is still
+            # preferable to looking up the wrong record!
 
             checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
             return checker.first unless checker.count == 0
