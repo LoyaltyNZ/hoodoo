@@ -17,6 +17,12 @@ module Hoodoo
       class CalculatorCommon < Hoodoo::Presenters::Base
 
         schema do
+          array :product_tag_ids_included
+          array :product_tag_ids_excluded
+
+          # The legacy tags are left below to allow a seamless deploy since
+          # many services are affected by the removal of tags. Once they are all
+          # deployed tags should be removed.
           tags :product_tags_included
           tags :product_tags_excluded
         end

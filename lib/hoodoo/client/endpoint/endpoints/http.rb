@@ -132,7 +132,7 @@ module Hoodoo
             begin
               http_response = http.request( request )
 
-              description_of_response.http_status_code = http_response.code
+              description_of_response.http_status_code = http_response.code.to_i
               description_of_response.raw_body_data    = http_response.body
 
             rescue Errno::ECONNREFUSED => e

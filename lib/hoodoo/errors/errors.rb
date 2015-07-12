@@ -48,7 +48,8 @@ module Hoodoo
     #
     attr_reader( :errors )
 
-    # HTTP status code associated with the first error in the #errors array.
+    # HTTP status code associated with the first error in the #errors array,
+    # _as an Integer_.
     #
     attr_reader( :http_status_code )
 
@@ -142,7 +143,7 @@ module Hoodoo
 
       # All good!
 
-      @http_status_code = description[ 'status' ] || 500 if @errors.empty? # Use first in collection for overall HTTP status code
+      @http_status_code = ( description[ 'status' ] || 500 ).to_i if @errors.empty? # Use first in collection for overall HTTP status code
 
       error = {
         'code'    => code,
@@ -175,7 +176,7 @@ module Hoodoo
     # first stored error. If this is omitted, 500 is kept as the default.
     #
     def add_precompiled_error( code, message, reference, http_status = 500 )
-      @http_status_code = http_status if @errors.empty?
+      @http_status_code = http_status.to_i if @errors.empty?
 
       error = {
         'code'    => code,

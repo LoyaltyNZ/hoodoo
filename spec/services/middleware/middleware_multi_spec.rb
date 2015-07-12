@@ -56,8 +56,7 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
         'uri_path_extension'  => context.request.uri_path_extension,
         'list_offset'         => context.request.list.offset,
         'list_limit'          => context.request.list.limit,
-        'list_sort_key'       => context.request.list.sort_key,
-        'list_sort_direction' => context.request.list.sort_direction,
+        'list_sort_data'      => context.request.list.sort_data,
         'list_search_data'    => context.request.list.search_data,
         'list_filter_data'    => context.request.list.filter_data,
         'embeds'              => context.request.embeds,
@@ -98,8 +97,7 @@ class TestEchoQuietImplementation < Hoodoo::Services::Implementation
         'uri_path_extension'  => context.request.uri_path_extension,
         'list_offset'         => context.request.list.offset,
         'list_limit'          => context.request.list.limit,
-        'list_sort_key'       => context.request.list.sort_key,
-        'list_sort_direction' => context.request.list.sort_direction,
+        'list_sort_data'      => context.request.list.sort_data,
         'list_search_data'    => context.request.list.search_data,
         'list_filter_data'    => context.request.list.filter_data,
         'embeds'              => context.request.embeds,
@@ -128,8 +126,8 @@ class TestCallImplementation < Hoodoo::Services::Implementation
       {
         'offset'     => context.request.list.offset,
         'limit'      => context.request.list.limit,
-        'sort'       => context.request.list.sort_key,
-        'direction'  => context.request.list.sort_direction,
+        'sort'       => context.request.list.sort_data.keys.first,
+        'direction'  => context.request.list.sort_data.values.first,
         'search'     => context.request.list.search_data,
         'filter'     => context.request.list.filter_data,
         '_embed'     => context.request.embeds,
@@ -230,24 +228,40 @@ end
 
 # And Finally - the tests.
 
-describe 'DRb start timeout' do
-  context 'for test coverage purposes' do
-    it 'checks for timeouts' do
-      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( DRb::DRbConnError )
-      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( Timeout::Error )
-
-      spec_helper_http(
-        port: spec_helper_start_svc_app_in_thread_for( TestEchoService ),
-        path: '/v2/test_some_echoes'
-      )
-    end
-  end
-end
-
 describe Hoodoo::Services::Middleware do
 
   before :all do
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
+  end
+
+  context 'DRb start timeout, for test coverage purposes' do
+    it 'checks for timeouts' do
+
+      # Send an HTTP request. The WEBRick server catch this and creates a
+      # new middleware instance which runs service discovery over DRb. We
+      # mock this to simulate continued DRb failures until the timeout
+      # trigger happens. A 500 is raised which, since the middleware blew
+      # up during instantiation, is caught by WEBRick itself as an
+      # Internal Server Error.
+      #
+      # Just have to put up with this one taking the full timeout duration.
+      #
+      # 1 time for first pass, 50 times for the retries during the sleep counter,
+      # 1 more time for the final attempt that triggers the timeout RuntimeError.
+      #
+      expect( DRbObject ).to receive( :new_with_uri ).exactly( 52 ).times.and_raise( DRb::DRbConnError )
+      expect( Process ).to receive( :detach ).once
+
+      response = spec_helper_http(
+        port: @port,
+        path: '/v2/test_some_echoes'
+      )
+
+      # Check the Internal Server Error body for the expected exception text.
+
+      expect( response.code ).to eq( '500' )
+      expect( response.body ).to include( 'Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start on local port ' )
+    end
   end
 
   # Although tests can run in random order so we can't force this set to come
@@ -286,8 +300,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => 'tar.gz',
           'list_offset'         => 75,
           'list_limit'          => 25,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -323,8 +336,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => 'tar.gz',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -359,8 +371,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -388,8 +399,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => 'json',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [ 'embed_one', 'embed_two' ],
@@ -426,8 +436,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => 'json',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [ 'embed_one' ],
@@ -462,8 +471,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => 'xml.gz',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [ 'embed_two' ],
@@ -545,8 +553,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '',
           'list_offset'         => 75,
           'list_limit'          => 25,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -614,8 +621,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '', # This is the *inner* inter-resource call's state and no filename extensions are used internally
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -651,8 +657,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -688,8 +693,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
@@ -726,8 +730,7 @@ describe Hoodoo::Services::Middleware do
           'uri_path_extension'  => '',
           'list_offset'         => 0,
           'list_limit'          => 50,
-          'list_sort_key'       => 'created_at',
-          'list_sort_direction' => 'desc',
+          'list_sort_data'      => { 'created_at' => 'desc' },
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],

@@ -3,16 +3,23 @@ module Hoodoo
     # A JSON schema member
     class Field
 
-      # The name of the field
+      # The name of the field.
+      #
       attr_accessor :name
-      # +true+ if the field is required
+
+      # +true+ if the field is required.
+      #
       attr_accessor :required
-      # Default value, if supplied
+
+      # Default value, if supplied.
+      #
       attr_accessor :default
 
-      # Initialize a Field instance with the appropriate name and options
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # Initialize a Field instance with the appropriate name and options.
+      #
+      # +name+::    The JSON key.
+      # +options+:: A +Hash+ of options, e.g. :required => true.
+      #
       def initialize(name, options = {})
         @name     = name.to_s
         @required = options.has_key?( :required ) ? options[ :required ] : false
@@ -35,11 +42,12 @@ module Hoodoo
         !! @has_default
       end
 
-      # Check if data is required and return a Hoodoo::Errors instance
-      def validate(data, path = '')
+      # Check if data is required and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
         errors = Hoodoo::Errors.new
 
-        if data.nil? and @required
+        if data.nil? && @required
           errors.add_error(
             'generic.required_field_missing',
             :message   => "Field `#{ full_path( path ) }` is required",
@@ -54,7 +62,7 @@ module Hoodoo
       # entries if necessary at each path level until the last one. At that
       # last level, assign the given object.
       #
-      # +data::     The object to build at the final path entry - usually an
+      # +data+::    The object to build at the final path entry - usually an
       #             empty Array or Hash.
       #
       # +target+::  The Hash (may be initially empty) in which to build the
@@ -62,8 +70,7 @@ module Hoodoo
       #
       # Returns the full path array that was used (a clone of +@path+).
       #
-      def render(data, target)
-
+      def render( data, target )
         return if @name.empty?
 
         root  = target
@@ -80,12 +87,22 @@ module Hoodoo
         return path << final
       end
 
+      # Invoke a given block, passing this item. See
+      # Hoodoo::Presenters::Base#walk for why.
+      #
+      # &block:: Mandatory block, which is passed 'self' when called.
+      #
+      def walk( &block )
+        block.call( self )
+      end
+
       # Return the full path and name of this field
       # +path+:: The JSON path or nil, e.g. 'one.two'
-      def full_path(path)
+      #
+      def full_path( path )
         return @name.to_s if path.nil? or path.empty?
         return path.to_s if @name.nil? or @name.empty?
-        path+'.'+@name.to_s
+        path + '.' + @name.to_s
       end
 
     protected

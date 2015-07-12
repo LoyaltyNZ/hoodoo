@@ -41,7 +41,7 @@ host: 'api.onloyaltynz.com'
 # and "patch" fields, then that will be used instead and the config value
 # bellow will BE IGNORED.
 
-version: '1.0.0'
+version: '1.5.3'
 
 # Collection (array) of supported inbound/outbound content types.
 
@@ -56,19 +56,22 @@ content_types:
 #
 # If you specify repositories, the paths configuration IS IGNORED.
 
-paths:
- - '../service_utility'
- - '../service_financial'
+# paths:
+#  - '../service_utility'
+#  - '../service_financial'
 
 repositories:
-  - 'develop git@github.com:LoyaltyNZ/service_financial.git'
-  - 'develop git@github.com:LoyaltyNZ/service_member.git'
-  - 'develop git@github.com:LoyaltyNZ/service_purchase.git'
-  - 'develop git@github.com:LoyaltyNZ/service_utility.git'
-  - 'develop git@github.com:LoyaltyNZ/service_programme.git'
-  - 'develop git@github.com:LoyaltyNZ/service_logging.git'
-  - 'develop git@github.com:LoyaltyNZ/service_authentication.git'
-  - 'develop git@github.com:LoyaltyNZ/service_product.git'
+  - 'release/9 git@github.com:LoyaltyNZ/service_financial.git'
+  - 'release/5 git@github.com:LoyaltyNZ/service_member.git'
+  - 'release/7 git@github.com:LoyaltyNZ/service_purchase.git'
+  - 'release/1 git@github.com:LoyaltyNZ/service_utility.git'
+  - 'release/6 git@github.com:LoyaltyNZ/service_programme.git'
+  - 'release/1 git@github.com:LoyaltyNZ/service_logging.git'
+  - 'release/1 git@github.com:LoyaltyNZ/service_authentication.git'
+  - 'release/2 git@github.com:LoyaltyNZ/service_product.git'
+  - 'release/0 git@github.com:LoyaltyNZ/service_tag.git'
+  - 'release/2 git@github.com:LoyaltyNZ/service_pod.git'
+  - 'release/2 git@github.com:LoyaltyNZ/service_platformification.git'
 
 # Default output filename.
 

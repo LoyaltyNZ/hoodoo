@@ -199,7 +199,7 @@ sort field.</p></td>
   <span class="ruby-comment"># embedded calls to the DSL in Interface::interface.</span>
 
   <span class="ruby-ivar">@limit</span>            = <span class="ruby-number">50</span>
-  <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] }
+  <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] ) }
   <span class="ruby-ivar">@default_sort_key</span> = <span class="ruby-string">&#39;created_at&#39;</span>
   <span class="ruby-ivar">@search</span>           = []
   <span class="ruby-ivar">@filter</span>           = []
@@ -241,7 +241,7 @@ sort field.</p></td>
               <div id="method-i-default_sort_direction_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">default_sort_direction</span>
-  <span class="ruby-ivar">@sort</span>[ <span class="ruby-identifier">default_sort_key</span>() ][ <span class="ruby-number">0</span> ]
+  <span class="ruby-ivar">@sort</span>[ <span class="ruby-identifier">default_sort_key</span>() ].<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

@@ -4,5 +4,5 @@ source 'https://rubygems.org'
 gem 'hoodoo', :git     => 'git@github.com:LoyaltyNZ/hoodoo.git',
               :branch  => 'master'
 
-gem 'activesupport', '~> 4.1', :require => 'active_support'
+gem 'activesupport', '~> 4.2', :require => 'active_support'
 gem 'json-schema',   '~> 2.4'

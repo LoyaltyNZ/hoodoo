@@ -55,6 +55,18 @@
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-collated_hash_from">collated_hash_from</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>D</dt>
         <dd>
           <ul>
@@ -146,6 +158,97 @@
     
       <div class="sectiontitle">Class Public methods</div>
       
+        <div class="method">
+          <div class="title method-title" id="method-c-collated_hash_from">
+            
+              <b>collated_hash_from</b>( array, dupes = false )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-collated_hash_from" name="method-c-collated_hash_from" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>A very single-purpose method which converts an Array of specifc form into a
+Hash.</p>
+
+<p>The Hash class can already build itself from an Array of tuples, thus:</p>
+
+<pre><code>array = [ [ :one, 1 ], [ :two, 2 ] ]
+hash  = Hash[ array ]
+# =&gt; { :one =&gt; 1, :two =&gt; 2 }
+</code></pre>
+
+<p>This is fine, but what if the array contains the same key twice?</p>
+
+<pre><code>array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ] ]
+hash  = Hash[ array ]
+# =&gt; { :one =&gt; 42, :two =&gt; 2 }
+</code></pre>
+
+<p>The later duplicates simply override any former entries. This Array
+collation method is designed to instead take the tuples and set up a Hash
+where each key leads to an Array of unique values found in the original,
+thus:</p>
+
+<pre><code>array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ] ]
+Hoodoo::Utilities.collated_hash_from( array )
+# =&gt; { :one =&gt; [ 1, 42 ], :two =&gt; [ 2 ] }
+</code></pre>
+
+<p>Note that:</p>
+<ul><li>
+<p>The Hash values are always Arrays, even if they only have one value.</p>
+</li><li>
+<p>The Array values are unique; duplicates are removed via <code>uniq!</code>.</p>
+</li></ul>
+
+<p><code>array</code>: Array of two-element Arrays. The first element becomes
+a key</p>
+
+<pre><code>in the returned Hash. The last element is added to an Array
+of (unique) values associated with that key. An empty Array
+results in an empty Hash; +nil+ is not allowed.</code></pre>
+
+<p><code>dupes</code>: Optional. If omitted, duplicates are removed as
+described;</p>
+
+<pre><code>if present and +true+, duplicates are allowed.</code></pre>
+
+<p>Returns a new Hash as described. The input Array is not modified.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-collated_hash_from_source')" id="l_method-c-collated_hash_from_source">show</a>
+                
+              </p>
+              <div id="method-c-collated_hash_from_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 254</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">collated_hash_from</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dupes</span> = <span class="ruby-keyword">false</span> )
+  <span class="ruby-identifier">hash_of_arrays</span> = {}
+
+  <span class="ruby-identifier">array</span>.<span class="ruby-identifier">reduce</span>( <span class="ruby-identifier">hash_of_arrays</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">sub_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">first</span> ] = ( <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">first</span> ] <span class="ruby-operator">||</span> [] ) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">sub_array</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-identifier">memo</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">hash_of_arrays</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">collect</span>( <span class="ruby-operator">&amp;</span><span class="ruby-value">:uniq!</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dupes</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash_of_arrays</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
         <div class="method">
           <div class="title method-title" id="method-c-deep_dup">
             
@@ -368,7 +471,7 @@ difference; the entire Hash sub-tree is picked out:</p>
               <div id="method-c-hash_diff_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 177</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
-  <span class="ruby-keyword">return</span> ( <span class="ruby-identifier">hash1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">hash2</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">uniq</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">key</span> <span class="ruby-operator">|</span>
+  <span class="ruby-keyword">return</span> ( <span class="ruby-identifier">hash1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash2</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">key</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">==</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ]
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> )
         <span class="ruby-identifier">memo</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ], <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ] )
@@ -479,7 +582,7 @@ href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-p
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 234</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 285</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
   <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-number">0</span> )
   <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-number">0</span> ) )
@@ -640,7 +743,7 @@ Time.now (yields nil, nil).</p>
                 
               </p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 221</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 272</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>

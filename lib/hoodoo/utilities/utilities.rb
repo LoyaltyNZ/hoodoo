@@ -175,7 +175,7 @@ module Hoodoo
     #     # => { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] }
     #
     def self.hash_diff( hash1, hash2 )
-      return ( hash1.keys + hash2.keys ).uniq.inject( {} ) do | memo, key |
+      return ( hash1.keys | hash2.keys ).inject( {} ) do | memo, key |
         unless hash1[ key ] == hash2[ key ]
           if hash1[ key ].kind_of?( Hash ) && hash2[ key ].kind_of?( Hash )
             memo[ key ] = hash_diff( hash1[ key ], hash2[ key ] )
@@ -210,6 +210,57 @@ module Hoodoo
           key.to_s
         end
       end.flatten
+    end
+
+    # A very single-purpose method which converts an Array of specifc form
+    # into a Hash.
+    #
+    # The Hash class can already build itself from an Array of tuples, thus:
+    #
+    #    array = [ [ :one, 1 ], [ :two, 2 ] ]
+    #    hash  = Hash[ array ]
+    #    # => { :one => 1, :two => 2 }
+    #
+    # This is fine, but what if the array contains the same key twice?
+    #
+    #    array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ] ]
+    #    hash  = Hash[ array ]
+    #    # => { :one => 42, :two => 2 }
+    #
+    # The later duplicates simply override any former entries. This Array
+    # collation method is designed to instead take the tuples and set up a
+    # Hash where each key leads to an Array of unique values found in the
+    # original, thus:
+    #
+    #    array = [ [ :one, 1 ], [ :two, 2 ], [ :one, 42 ] ]
+    #    Hoodoo::Utilities.collated_hash_from( array )
+    #    # => { :one => [ 1, 42 ], :two => [ 2 ] }
+    #
+    # Note that:
+    #
+    # * The Hash values are always Arrays, even if they only have one value.
+    # * The Array values are unique; duplicates are removed via +uniq!+.
+    #
+    # +array+: Array of two-element Arrays. The first element becomes a key
+    #          in the returned Hash. The last element is added to an Array
+    #          of (unique) values associated with that key. An empty Array
+    #          results in an empty Hash; +nil+ is not allowed.
+    #
+    # +dupes+: Optional. If omitted, duplicates are removed as described;
+    #          if present and +true+, duplicates are allowed.
+    #
+    # Returns a new Hash as described. The input Array is not modified.
+    #
+    def self.collated_hash_from( array, dupes = false )
+      hash_of_arrays = {}
+
+      array.reduce( hash_of_arrays ) do | memo, sub_array |
+        memo[ sub_array.first ] = ( memo[ sub_array.first ] || [] ) << sub_array.last
+        memo
+      end
+
+      hash_of_arrays.values.collect( &:uniq! ) unless dupes == true
+      return hash_of_arrays
     end
 
     # Is a parameter convertable to an integer cleanly? Returns the integer

@@ -255,7 +255,7 @@ messages and machine-readable reference data, where appropriate.</p></td>
             </td>
             <td class='attr-name'>http_status_code</td>
             <td class='attr-desc'><p>HTTP status code associated with the first error in the <a
-href="Errors.html#attribute-i-errors">errors</a> array.</p></td>
+href="Errors.html#attribute-i-errors">errors</a> array, _as an Integer_.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -312,7 +312,7 @@ a default instance describing <code>platform</code> and
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 70</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">descriptions</span> = <span class="ruby-constant">DEFAULT_ERROR_DESCRIPTIONS</span> )
   <span class="ruby-ivar">@uuid</span>             = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
   <span class="ruby-ivar">@descriptions</span>     = <span class="ruby-identifier">descriptions</span>
@@ -401,7 +401,7 @@ Platform API.</p>
                 
               </p>
               <div id="method-i-add_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 120</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 121</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">options</span>   = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> <span class="ruby-operator">||</span> {} )
@@ -427,7 +427,7 @@ Platform API.</p>
 
   <span class="ruby-comment"># All good!</span>
 
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-string">&#39;status&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">500</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment"># Use first in collection for overall HTTP status code</span>
+  <span class="ruby-ivar">@http_status_code</span> = ( <span class="ruby-identifier">description</span>[ <span class="ruby-string">&#39;status&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">500</span> ).<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment"># Use first in collection for overall HTTP status code</span>
 
   <span class="ruby-identifier">error</span> = {
     <span class="ruby-string">&#39;code&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
@@ -491,9 +491,9 @@ stored error. If this is omitted, 500 is kept as the default.</p>
                 
               </p>
               <div id="method-i-add_precompiled_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 177</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 178</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-number">500</span> )
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-identifier">http_status</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-identifier">http_status</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-identifier">error</span> = {
     <span class="ruby-string">&#39;code&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
@@ -539,7 +539,7 @@ return <code>false</code>.</p>
                 
               </p>
               <div id="method-i-clear_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 226</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 227</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">clear_errors</span>
   <span class="ruby-ivar">@errors</span>           = []
   <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">500</span>
@@ -578,7 +578,7 @@ else <code>false</code>.</p>
                 
               </p>
               <div id="method-i-has_errors-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 219</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 220</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">has_errors?</span>
   <span class="ruby-operator">!</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -616,7 +616,7 @@ represent itself more concisely.</p>
                 
               </p>
               <div id="method-i-inspect_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 257</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 258</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inspect</span>
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
@@ -664,7 +664,7 @@ collection of &#39;this&#39; target object.</p>
                 
               </p>
               <div id="method-i-merge-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 201</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 202</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">merge!</span>( <span class="ruby-identifier">source</span> )
   <span class="ruby-identifier">source_errors</span> = <span class="ruby-identifier">source</span>.<span class="ruby-identifier">errors</span>
 
@@ -719,7 +719,7 @@ with</p>
                 
               </p>
               <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 237</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 238</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">interaction_id</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">interaction_id</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Errors\#render must be given a valid Interaction ID (got &#39;#{ interaction_id.inspect }&#39;)&quot;</span>
@@ -780,7 +780,7 @@ separate individual values.</p>
                 
               </p>
               <div id="method-i-unjoin_and_unescape_commas_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 277</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">unjoin_and_unescape_commas</span>( <span class="ruby-identifier">str</span> )
 
   <span class="ruby-comment"># In Ruby regular expressions, &#39;(?&lt;!pat)&#39; is a negative lookbehind</span>

@@ -439,8 +439,7 @@ describe Hoodoo::Services::Middleware do
           expect(request.uri_path_extension).to eq('')
           expect(request.list.offset).to eq(0)
           expect(request.list.limit).to eq(50)
-          expect(request.list.sort_key).to eq('created_at')
-          expect(request.list.sort_direction).to eq('desc')
+          expect(request.list.sort_data).to eq({'created_at'=>'desc'})
           expect(request.list.search_data).to eq({})
           expect(request.list.filter_data).to eq({})
           expect(request.embeds).to eq([])
@@ -544,6 +543,16 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
+      it 'should take the last limit query parameter if several are given' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.offset).to eq(0)
+          expect(context.request.list.limit).to eq(9)
+        end
+
+        get '/v2/rspec_test_service_stub?limit=15&limit=42&limit=9', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
       def test_with_limit( limit )
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get "/v2/rspec_test_service_stub?limit=#{ limit }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -576,6 +585,16 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
+      it 'should take the last offset query parameter if several are given' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.offset).to eq(24)
+          expect(context.request.list.limit).to eq(50)
+        end
+
+        get '/v2/rspec_test_service_stub?offset=4&offset=42&offset=24', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
       def test_with_offset( offset )
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get "/v2/rspec_test_service_stub?offset=#{ offset }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -594,13 +613,49 @@ describe Hoodoo::Services::Middleware do
         test_with_offset( -1 )
       end
 
+      it 'should take the last offset and last query parameter if several are given' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.offset).to eq(24)
+          expect(context.request.list.limit).to eq(23)
+        end
+
+        get '/v2/rspec_test_service_stub?limit=2&offset=42&limit=14&limit=23&offset=24', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
       it 'should respond to sort query parameter' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('extra')
-          expect(context.request.list.sort_direction).to eq('up')
+          expect(context.request.list.sort_data).to eq({'extra'=>'up'})
         end
 
         get '/v2/rspec_test_service_stub?sort=extra', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to several sort query parameters (form 1)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'extra'=>'up', 'created_at'=>'desc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra,created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to several sort query parameters (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'extra'=>'up', 'created_at'=>'desc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra&sort=created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to several sort query parameters, with duplicates' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'created_at'=>'desc', 'extra'=>'up'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra,extra&sort=created_at&sort=extra&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
@@ -614,29 +669,51 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('sort')
       end
 
-      it 'should respond to direction query parameter (1)' do
+      it 'should respond to direction query parameter, with infered sort' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('created_at')
-          expect(context.request.list.sort_direction).to eq('asc')
+          expect(context.request.list.sort_data).to eq({'created_at'=>'asc'})
         end
 
         get '/v2/rspec_test_service_stub?direction=asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
-      it 'should respond to direction query parameter (2)' do
+      it 'should respond to direction query parameter, with explicit sort' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_key).to eq('extra')
-          expect(context.request.list.sort_direction).to eq('down')
+          expect(context.request.list.sort_data).to eq({'extra'=>'down'})
         end
 
         get '/v2/rspec_test_service_stub?sort=extra&direction=down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
-      it 'should complain about bad direction query parameter' do
+      it 'should respond to multiple direction query parameters (form 1)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'extra'=>'down', 'created_at'=>'asc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=extra,created_at&direction=down,asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to multiple direction query parameters (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'extra'=>'down', 'created_at'=>'asc'})
+        end
+
+        get '/v2/rspec_test_service_stub?direction=down&sort=extra,created_at&direction=asc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      # When there's more than one sort parameter, we need a matching number
+      # of sort and direction keys. Use valid sort keys and directions so we
+      # know that the "platform.malformed" the test expects is actually
+      # coming from the count mismatch, not because the parameters are not
+      # recognised sort keys or dierctions.
+      #
+      it 'should complain about too many direction query parameters' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
-        get '/v2/rspec_test_service_stub?direction=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=created_at&direction=desc,down', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -644,7 +721,27 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('direction')
       end
 
-      it 'should respond to search query parameter' do
+      it 'should complain about too many sort query parameters' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?sort=created_at,extra&direction=desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('direction')
+      end
+
+      it 'should complain about bad direction query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?sort=created_at&direction=foo', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('direction')
+      end
+
+      it 'should respond to search query parameter (form 1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
           expect(context.request.list.search_data).to eq({'foo' => 'val', 'bar' => 'more'})
         end
@@ -653,7 +750,25 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should complain about bad search query parameter' do
+      it 'should respond to search query parameter (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.search_data).to eq({'foo' => 'val', 'bar' => 'more'})
+        end
+
+        get '/v2/rspec_test_service_stub?search=foo%3Dval&search=bar%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to search query parameter, resolving duplicates' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.search_data).to eq({'foo' => 'override', 'bar' => 'more'})
+        end
+
+        get '/v2/rspec_test_service_stub?search=foo%3Dval&search=bar%3Dmore%26foo%3Doverride', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad search query parameter (form 1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get '/v2/rspec_test_service_stub?search=thing%3Dval%26thang%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
@@ -663,7 +778,17 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('search: thing\\, thang')
       end
 
-      it 'should respond to filter query parameter' do
+      it 'should complain about bad search query parameter (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?search=thing%3Dval&search=thang%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: thing\\, thang')
+      end
+
+      it 'should respond to filter query parameter (form 1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
           expect(context.request.list.filter_data).to eq({'baz' => 'more', 'boo' => 'val'})
         end
@@ -672,9 +797,47 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should complain about bad filter query parameter' do
+      it 'should respond to filter query parameter (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.filter_data).to eq({'baz' => 'more', 'boo' => 'val'})
+        end
+
+        get '/v2/rspec_test_service_stub?filter=boo%3Dval&filter=baz%3Dmore', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should respond to filter query parameter, resolving duplicates' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.filter_data).to eq({'boo' => 'override1', 'baz' => 'override2'})
+        end
+
+        get '/v2/rspec_test_service_stub?filter=boo%3Dval&filter=baz%3Dmore&filter=baz%3Doverride2%26boo%3Doverride1', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should complain about bad filter query parameter (form 1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get '/v2/rspec_test_service_stub?filter=thung%3Dval%26theng%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('filter: thung\\, theng')
+      end
+
+      it 'should complain about bad search and filter query parameter' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?search=thung%3Dval&filter=theng%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: thung\\, filter: theng')
+      end
+
+      it 'should complain about bad filter query parameter (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get '/v2/rspec_test_service_stub?filter=thung%3Dval&filter=theng%3Dval', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
         expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -1013,9 +1176,8 @@ describe Hoodoo::Services::Middleware do
         patch '/v2/rspec_test_service_stub/1234', '{ "baz": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
-        expect(result['errors'].size).to eq(2)
+        expect(result['errors'].size).to eq(1)
         expect(result['errors'][0]['message']).to eq('Field `baz` is an invalid string')
-        expect(result['errors'][1]['message']).to eq('Field `foo` is required')
       end
 
       it 'should be happy with valid JSON' do
@@ -1449,6 +1611,7 @@ class RSpecTestInterResourceCallsAInterface < Hoodoo::Services::Interface
 
     to_list do
       search :offset, :limit
+      sort :extra => [ :up, :down ]
     end
 
     # Most of the to-create/to-update options are tested already; just use this
@@ -1477,9 +1640,12 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
     # Call RSpecTestInterResourceCallsAImplementation#list, with a query string
     # that 'searches' for offset and limit quantities that we get from the
-    # inbound request.
+    # inbound request. The sort parameter tests non-Array sorting, with the
+    # direction parameter testing Array-based sorting.
 
     qd = {
+      :sort => 'extra',
+      :direction => [ 'down' ],
       :search => {
         :offset => context.request.list.offset,
         :limit  => context.request.list.limit
@@ -1634,6 +1800,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.uri_path_extension).to eq('')
         expect(context.request.list.offset).to eq(0)
         expect(context.request.list.limit).to eq(50)
+        expect(context.request.list.sort_data).to eq({'extra'=>'down'})
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |

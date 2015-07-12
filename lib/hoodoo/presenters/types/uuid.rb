@@ -14,24 +14,30 @@
 
 module Hoodoo
   module Presenters
-    # A JSON UUID schema member
+
+    # A JSON UUID schema member.
+    #
     class UUID < Hoodoo::Presenters::Field
 
       # The optional associated resource kind, as a symbol (e.g. ':Product').
+      #
       attr_accessor :resource
 
-      # Initialize a UUID instance with the appropriate name and options
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :resource => :Product, :required => true
-      def initialize(name, options = {})
+      # Initialize a UUID instance with the appropriate name and options.
+      #
+      # +name+::    The JSON key.
+      # +options+:: A +Hash+ of options, e.g. :resource => :Product, :required => true.
+      #
+      def initialize( name, options = {} )
         @resource = options.delete( :resource )
         super name, options
       end
 
-      # Check if data is a valid UUID and return a Hoodoo::Errors instance
-      def validate(data, path = '')
-        errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+      # Check if data is a valid UUID and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
+        errors = super( data, path )
+        return errors if errors.has_errors? || ( ! @required && data.nil? )
 
         unless Hoodoo::UUID.valid?( data )
           errors.add_error(

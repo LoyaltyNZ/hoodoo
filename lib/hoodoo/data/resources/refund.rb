@@ -22,8 +22,7 @@ module Hoodoo
             type :Basket
           end
 
-          text   :pos_reference
-          uuid   :purchase_id, :resource => :Purchase
+          uuid   :purchase_id,  :required => true, :resource => :Purchase
         end
 
       end

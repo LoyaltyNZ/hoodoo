@@ -680,7 +680,7 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
-  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( { <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_key</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_direction</span>.<span class="ruby-identifier">to_sym</span> } )
+  <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_data</span> )
 
   <span class="ruby-comment"># DRY up the &#39;each&#39; loops below. Use a Proc not a method because any</span>
   <span class="ruby-comment"># methods we define will end up being defined on the including Model,</span>

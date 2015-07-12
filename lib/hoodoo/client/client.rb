@@ -167,6 +167,38 @@ module Hoodoo
       #                           +base_uri+ option is provided, both
       #                           +drb_uri+ and +drb_port+ will be ignored.
       #
+      # +discoverer+::            Use of any of the above options causes
+      #                           automatic selection of a Discoverer class
+      #                           for routing requests. If required, you can
+      #                           create a Hoodoo::Services::Discovery
+      #                           subclass instance customised to your own
+      #                           requirements and pass this instance here.
+      #
+      # As an example of using a custom Discoverer, consider a simple HTTP
+      # case with the +base_uri+ parameter. The default "by convention"
+      # discoverer pluralises all paths, but let's say you have exceptions
+      # for Version and Health singleton resources which you've elected to
+      # place on singular, not plural, paths. You will need to construct a
+      # custom discoverer with these exceptions. See the documentation for
+      # Hoodoo::Services::Discovery::ByConvention to understand the options
+      # passed in for the custom routing information.
+      #
+      #     base_uri = 'https://api.test.com/'
+      #
+      #     discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+      #       :base_uri => base_uri,
+      #       :routing  => {
+      #         :Version => { 1 => '/v1/version' },
+      #         :Health  => { 1 => '/v1/health'  }
+      #       }
+      #     )
+      #
+      #     client = Hoodoo::Client.new(
+      #       :base_uri   => base_uri,
+      #       :discoverer => discoverer,
+      #       # ...other options...
+      #     )
+      #
       # == Other parameters
       #
       # The following additional *named* parameters are all optional:
@@ -208,6 +240,7 @@ module Hoodoo
       def initialize( base_uri:              nil,
                       drb_uri:               nil,
                       drb_port:              nil,
+                      discoverer:            nil,
 
                       locale:                nil,
 
@@ -226,11 +259,11 @@ module Hoodoo
         @locale    = locale
 
         if @base_uri != nil
-          @discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          @discoverer = discoverer || Hoodoo::Services::Discovery::ByConvention.new(
             :base_uri => @base_uri
           )
         elsif @drb_uri != nil || @drb_port != nil
-          @discoverer = Hoodoo::Services::Discovery::ByDRb.new(
+          @discoverer = discoverer || Hoodoo::Services::Discovery::ByDRb.new(
             :drb_uri  => @drb_uri,
             :drb_port => @drb_port
           )

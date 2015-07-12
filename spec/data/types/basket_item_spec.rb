@@ -31,10 +31,11 @@ describe Hoodoo::Data::Types::BasketItem do
     # Nested Product type
 
     expect(schema.properties['product_data']).to be_a(Hoodoo::Presenters::Object)
-    expect(schema.properties['product_data'].properties.count).to eq(4)
+    expect(schema.properties['product_data'].properties.count).to eq(5)
     expect(schema.properties['product_data'].properties['code']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['product_data'].properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['product_data'].properties['description']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['product_data'].properties['tag_ids']).to be_a(Hoodoo::Presenters::Array)
     expect(schema.properties['product_data'].properties['tags']).to be_a(Hoodoo::Presenters::Tags)
   end
 end

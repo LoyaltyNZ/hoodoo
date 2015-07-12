@@ -174,7 +174,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
                 
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 58</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 91</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -207,7 +207,40 @@ Parameters:</p>
 be found. The protocol (HTTP or HTTPS), host and port are of interest. The
 path will be overwritten with by-convention values for individual
 resources.</p>
+</dd><dt><code>routing</code>
+<dd>
+<p>An optional parameter which gives custom routing for exception cases where
+the by-convention map doesn&#39;t work. This is usually because there is a
+resource singleton which lives logically at a singular named route rather
+than plural route, e.g. “/v1/health” rather than “/v1/healths”.</p>
 </dd></dl>
+
+<p>The <code>routing</code> parameter is a Hash of Resource names <em>as</em>
+<em>Symbols</em>, then values which are Hash of API Version <em>as</em>
+<em>Integers</em> with values that are the Strings giving the full
+alternative routing path.</p>
+
+<p>For example, by convention API version 2 of a Health resource would be
+routed to “/v2/healths”. You would override this to a singular route with
+this <code>routing</code> parameter Hash:</p>
+
+<pre><code>{
+  :Health =&gt; {
+    2 =&gt; &#39;/v2/health&#39;
+  }
+}
+</code></pre>
+
+<p>This would leave version 1 of the endpoint (or any other version for that
+matter) still at the by-convention “v&lt;x&gt;/healths” path.</p>
+
+<p>Changing the “v&lt;x&gt;” convention for the version part of the path will
+break <a href="../../../Hoodoo.html">Hoodoo</a> compatibility, but this is
+still allowed in the override in case you have unusual configurations or
+HTTP layer rewrites that redirect requests to paths that do map down to <a
+href="../../../Hoodoo.html">Hoodoo</a>, or perhaps map to a Hoodoo-like
+system that&#39;s not actually <a href="../../../Hoodoo.html">Hoodoo</a>
+itself but implemented in a compatible fashion.</p>
             </div>
           
           
@@ -225,9 +258,10 @@ resources.</p>
                 
               </p>
               <div id="method-i-configure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 45</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@base_uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span> ] )
+  <span class="ruby-ivar">@routing</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span> ] <span class="ruby-operator">||</span> {}
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -258,12 +292,13 @@ path. For example:</p>
 instance.</p>
 
 <p>The use of ActiveSupport means that pluralisation is subject to the well
-known Rails limitations and quirks.</p>
+known Rails limitations and quirks. The behaviour can be overridden using
+the optional <code>routing</code> parameter in the constructor.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#discover.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
-<p>Resource name as a String.</p>
+<p>Resource name as a <em>String</em>.</p>
 </dd><dt><code>version</code>
 <dd>
 <p>Endpoint version as an Integer.</p>
@@ -285,9 +320,15 @@ known Rails limitations and quirks.</p>
                 
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 82</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
-  <span class="ruby-identifier">path</span> = <span class="ruby-node">&quot;/v#{ version }/#{ resource.to_s.underscore.pluralize }&quot;</span>
+  <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
+
+  <span class="ruby-identifier">path</span> = <span class="ruby-keyword">unless</span> <span class="ruby-identifier">custom_routes</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">custom_routes</span>[ <span class="ruby-identifier">version</span> ]
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">path</span> <span class="ruby-operator">||=</span> <span class="ruby-node">&quot;/v#{ version }/#{ resource.to_s.underscore.pluralize }&quot;</span>
 
   <span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-ivar">@base_uri</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>

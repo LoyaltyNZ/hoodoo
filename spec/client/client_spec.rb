@@ -179,11 +179,28 @@ describe Hoodoo::Client do
       Hoodoo::Services::Middleware.set_test_session( nil )
     end
 
-    context 'and by drb' do
+    context 'and by DRb' do
       before :each do
         set_vars_for(
           drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
           auto_session: false
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+
+    context 'and by DRb with custom discoverer' do
+      before :each do
+        drb_port   = URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port
+        discoverer = Hoodoo::Services::Discovery::ByDRb.new( drb_port: drb_port )
+
+        expect( discoverer ).to receive( :discover ).at_least( :once ).and_call_original
+
+        set_vars_for(
+          drb_port:     drb_port,
+          auto_session: false,
+          discoverer:   discoverer
         )
       end
 
@@ -195,6 +212,24 @@ describe Hoodoo::Client do
         set_vars_for(
           base_uri:     "http://localhost:#{ @port }",
           auto_session: false
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+
+    context 'and by convention with custom discoverer' do
+      before :each do
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new( base_uri: base_uri )
+
+        expect( discoverer ).to receive( :discover ).at_least( :once ).and_call_original
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
         )
       end
 
@@ -265,7 +300,7 @@ describe Hoodoo::Client do
       Hoodoo::Services::Middleware.set_test_session( @old_test_session )
     end
 
-    context 'and by drb' do
+    context 'and by DRb' do
       before :each do
         set_vars_for(
           drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
@@ -386,7 +421,7 @@ describe Hoodoo::Client do
       Hoodoo::Services::Middleware.set_test_session( nil )
     end
 
-    context 'and by drb' do
+    context 'and by DRb' do
       before :each do
         set_vars_for(
           drb_port:              URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,

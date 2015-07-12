@@ -23,12 +23,12 @@ require 'database_cleaner'
 require 'active_record'
 require 'logger'
 
-# Include AMQEndpoint for testing only.
+# Include AlchemyAMQ for testing only.
 
 begin
-  require 'amq-endpoint'
+  require 'alchemy-amq'
 rescue LoadError
-  raise 'Cannot load amq-endpoint; did you run me with "bundle exec..." ?'
+  raise 'Cannot load alchemy-amq; did you run me with "bundle exec..." ?'
 end
 
 # Now it's safe to require Rack test code and Hoodoo itself.

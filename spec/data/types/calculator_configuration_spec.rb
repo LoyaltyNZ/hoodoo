@@ -14,6 +14,8 @@ describe Hoodoo::Data::Types::CalculatorConfiguration do
     #
     expect(schema.properties['calculator_data'].properties['earn_currency']).to be_a(Hoodoo::Presenters::Object)
 
+    expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tag_ids_included']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tag_ids_excluded']).to be_a(Hoodoo::Presenters::Array)
     expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['calculator_data'].properties['earn_currency'].properties['currency_earner']).to be_a(Hoodoo::Presenters::Object)
@@ -35,8 +37,10 @@ describe Hoodoo::Data::Types::CalculatorConfiguration do
     #
     expect(schema.properties['calculator_data'].properties['earn_vouchers']).to be_a(Hoodoo::Presenters::Object)
 
-    expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
-    expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
+    expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['product_tag_ids_included']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['product_tag_ids_excluded']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
+    expect(schema.properties['calculator_data'].properties['earn_currency'].properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['voucher_earners']).to be_a(Hoodoo::Presenters::Array)
     expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['voucher_earners'].properties['earned_via']).to be_a(Hoodoo::Presenters::Object)
     expect(schema.properties['calculator_data'].properties['earn_vouchers'].properties['voucher_earners'].properties['build_with']).to be_a(Hoodoo::Presenters::Object)

@@ -40,7 +40,7 @@
   
     <div class="description">
       
-<p>A JSON string schema member</p>
+<p>A JSON <a href="String.html">String</a> schema member.</p>
 
     </div>
   
@@ -111,7 +111,7 @@
               [RW]
             </td>
             <td class='attr-name'>length</td>
-            <td class='attr-desc'><p>The maximum length of the string</p></td>
+            <td class='attr-desc'><p>The maximum length of the <a href="String.html">String</a>.</p></td>
           </tr>
         
       </table>
@@ -125,7 +125,7 @@
         <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>(name, options = {})
+              <b>new</b>( name, options = {} )
             
             <a href="../../../classes/Hoodoo/Presenters/String.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
@@ -133,13 +133,14 @@
           
             <div class="description">
               <p>Initialize a <a href="String.html">String</a> instance with the appropriate
-name and options</p>
+name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
-<p>The JSON key</p>
+<p>The JSON key.</p>
 </dd><dt>options
 <dd>
-<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :length =&gt; 10</p>
+<p>A <code>Hash</code> of options, e.g. :required =&gt; true, :length =&gt;
+10.</p>
 </dd></dl>
             </div>
           
@@ -158,11 +159,15 @@ name and options</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/string.rb, line 12</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
-  <span class="ruby-keyword">super</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span>
-  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;Hoodoo::Presenters::String must have a :length&#39;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-value">:length</span>)
-  <span class="ruby-ivar">@length</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:length</span>]
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/string.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:length</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Hoodoo::Presenters::String must have a :length&#39;</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@length</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:length</span> ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -174,7 +179,7 @@ name and options</p>
         <div class="method">
           <div class="title method-title" id="method-i-validate">
             
-              <b>validate</b>(data, path = &#39;&#39;)
+              <b>validate</b>( data, path = &#39;&#39; )
             
             <a href="../../../classes/Hoodoo/Presenters/String.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
           </div>
@@ -182,7 +187,7 @@ name and options</p>
           
             <div class="description">
               <p>Check if data is a valid <a href="String.html">String</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance</p>
+href="../Errors.html">Hoodoo::Errors</a> instance.</p>
             </div>
           
           
@@ -200,12 +205,12 @@ href="../Errors.html">Hoodoo::Errors</a> instance</p>
                 
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/string.rb, line 19</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span>)
-  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> (<span class="ruby-operator">!</span><span class="ruby-ivar">@required</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/string.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-operator">::</span><span class="ruby-constant">String</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> )
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@length</span>
       <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
         <span class="ruby-string">&#39;generic.invalid_string&#39;</span>,

@@ -259,8 +259,8 @@ describing extended permissions for the related action. See
             </td>
             <td class='attr-name'>embeds</td>
             <td class='attr-desc'><p>Array of strings listing allowed embeddable things. Each string matches the
-split up comma-separated value for query string “_embed” or “_reference”
-keys. For example:</p>
+split up comma-separated value for query string <code>_embed</code> or
+<code>_reference</code> keys. For example:</p>
 
 <pre><code>...&amp;_embed=foo,bar</code></pre>
 
@@ -410,7 +410,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
                 
               </p>
               <div id="method-c-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 801</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 821</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
@@ -490,7 +490,7 @@ call.</p>
                 
               </p>
               <div id="method-c-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 701</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 721</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
@@ -652,29 +652,31 @@ specific inter-service case:</p>
 end
 </code></pre>
 
-<p>The call says which action in _the declaring interface&#39;s resource_ is a
-target. The block takes a single parameter; this is a default
-initialisation <a href="Permissions.html">Hoodoo::Services::Permissions</a>
-instance. Use that object&#39;s methods to set up whatever permissions you
-need in other resources, to successfully process the action in question.
-You only need to describe the resources you immediately call, not the whole
-chain - if “this” resource calls another, then it&#39;s up to the other
-resource to in turn describe additional permissions should it make its own
-set of downstream calls to further resource endpoints.</p>
+<p>The call says which action in <em>the</em> <em>declaring</em>
+_interface&#39;s_ <em>resource</em> is a target. The block takes a single
+parameter; this is a default initialisation <a
+href="Permissions.html">Hoodoo::Services::Permissions</a> instance. Use
+that object&#39;s methods to set up whatever permissions you need in other
+resources, to successfully process the action in question. You only need to
+describe the resources you immediately call, not the whole chain - if
+“this” resource calls another, then it&#39;s up to the other resource to in
+turn describe additional permissions should it make its own set of
+downstream calls to further resource endpoints.</p>
 
 <p>Setting default permissions or especially the default permission fallback
-inside the block is possible but *VERY STRONGLY DISCOURAGED*. Instead,
-precisely describe the downstream resources, actions and permissions that
-are required.</p>
+inside the block is possible but <strong>VERY</strong>
+<strong>STRONGLY</strong> <strong>DISCOURAGED</strong>. Instead, precisely
+describe the downstream resources, actions and permissions that are
+required.</p>
 
 <p>Note an important restriction - public actions (see <a
 href="Interface.html#attribute-c-public_actions">::public_actions</a>)
 cannot be augmented in this way. A public action in one resource can only
 ever call public actions in other resources. This is because no session is
-needed _at all_ to call a public action; calling into a protected action in
-another resource from this context would require invention of a full caller
-context which would be entirely invented and could represent an accidental
-(and significant) security hole.</p>
+needed <em>at</em> <em>all</em> to call a public action; calling into a
+protected action in another resource from this context would require
+invention of a full caller context which would be entirely invented and
+could represent an accidental (and significant) security hole.</p>
 
 <p>If you call this method for the same action more than once, the last call
 will be the one that takes effect - each call overwrites the results of any
@@ -709,7 +711,7 @@ method calls on this instance to describe the required permissions.</p>
                 
               </p>
               <div id="method-i-additional_permissions_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 648</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 668</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">action</span> = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>
 
@@ -741,8 +743,8 @@ method calls on this instance to describe the required permissions.</p>
             <div class="description">
               <p>An array of supported embed keys (as per documentation, so singular or
 plural as per resource interface descriptions in the Loyalty Platform API).
-Things which can be embedded can also be referenced, via the +embed=…+ and
-+reference=…+ query string entries.</p>
+Things which can be embedded can also be referenced, via the
+<code>_embed</code> and <code>_reference</code> query string keys.</p>
 
 <p>The middleware uses the list to reject requests from clients which ask for
 embedded or referenced entities that were not listed by the interface. If
@@ -916,7 +918,7 @@ end
                 
               </p>
               <div id="method-i-errors_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 545</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 565</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
@@ -1017,25 +1019,27 @@ at this resource:</p>
 <ul><li>
 <p>A key of <code>:request</code> means that API call-related <a
 href="../../Hoodoo.html">Hoodoo</a> automatic logging will <em>exclude</em>
-body data for the _inbound request_, but still include body data in the
-response. Example: A POST to a Login resource includes a password which you
-don&#39;t want logged, but the response data doesn&#39;t quote the password
-back so is “safe”. The secure log actions Hash for the Login resource&#39;s
-interface would include “:create =&gt; :request”.</p>
+body data for the <em>inbound</em> <em>request</em>, but still include body
+data in the response. Example: A POST to a Login resource includes a
+password which you don&#39;t want logged, but the response data doesn&#39;t
+quote the password back so is “safe”. The secure log actions Hash for the
+Login resource&#39;s interface would include <code>:create =&gt;
+:request</code>.</p>
 </li><li>
 <p>A key of <code>:response</code> means that API call-related <a
 href="../../Hoodoo.html">Hoodoo</a> automatic logging will <em>exclude</em>
-body data for the _outbound response_, but still include body data in the
-request. Example: A POST to a Caller resource creates a Caller with a
-generated authentication secret that&#39;s only exposed in the POST&#39;s
-response. The inbound data used to create that Caller can be safely logged,
-but the authentication secret is sensitive and shouldn&#39;t be recorded.
-The secure log actions Hash for the Caller resource&#39;s interface would
-include “:create =&gt; :response”.</p>
+body data for the <em>outbound</em> <em>response</em>, but still include
+body data in the request. Example: A POST to a Caller resource creates a
+Caller with a generated authentication secret that&#39;s only exposed in
+the POST&#39;s response. The inbound data used to create that Caller can be
+safely logged, but the authentication secret is sensitive and shouldn&#39;t
+be recorded. The secure log actions Hash for the Caller resource&#39;s
+interface would include <code>:create =&gt; :response</code>.</p>
 
-<p>_ERROR RESPONSES ARE STILL LOGGED_ because that&#39;s useful data; so make
-sure that if you generate any custom errors in your service that secure
-data is not contained within them.</p>
+<p><em>ERROR</em> <em>RESPONSES</em> <em>ARE</em> <em>STILL</em>
+<em>LOGGED</em> because that&#39;s useful data; so make sure that if you
+generate any custom errors in your service that secure data is not
+contained within them.</p>
 </li><li>
 <p>A key of <code>both</code> has the same result as both
 <code>:request</code> and <code>:response</code>, so body data is never
@@ -1113,6 +1117,14 @@ things like <code>type</code> or <code>resource</code>.</p>
 that doesn&#39;t validate according to your schema, it&#39;ll be rejected
 before even getting as far as your interface implementation.</p>
 
+<p>Default values for fields where present are for <em>rendering</em>
+<em>only</em>; they are not injected into the inbound body for (say)
+persistence at database levels. A returned, rendered representation based
+on the same schema would have the default values present only. If you need
+default values at the persistence layer too, define them there too with
+whatever mechanism is most appropriate for your chosen persistence
+approach.</p>
+
 <p>The <a
 href="../Presenters/BaseDSL.html#method-i-internationalised">Hoodoo::Presenters::BaseDSL#internationalised</a>
 DSL method can be called within your block harmlessly, but it has no side
@@ -1158,7 +1170,7 @@ the fields used for resource creation.</p>
                 
               </p>
               <div id="method-i-to_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 492</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 499</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -1235,6 +1247,12 @@ when modifying existing resource instances. To avoid repeating yourself, if
 your modification and creation parameter requirements are identical, call
 <a
 href="Interface.html#method-i-update_same_as_create">update_same_as_create</a>.</p>
+
+<p>The “required” flag is ignored for updates, because an omitted field for an
+update to an existing resource instance simply means “do not change the
+current value”. As with <a
+href="Interface.html#method-i-to_create">to_create</a>, default values have
+relevance to the rendering stage only and have no effect here.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block, passed to <a
@@ -1258,10 +1276,18 @@ the fields used for resource modification.</p>
                 
               </p>
               <div id="method-i-to_update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 506</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 518</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-comment"># When updating, &#39;required&#39; fields in schema aren&#39;t required; you just</span>
+  <span class="ruby-comment"># omit a field to avoid changing its value. Walk the to-update schema</span>
+  <span class="ruby-comment"># graph stripping out any such problematic attributes.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">walk</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">required</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-identifier">obj</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1307,7 +1333,7 @@ those required for modifying resources too.</p>
                 
               </p>
               <div id="method-i-update_same_as_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 522</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 542</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span> )
 <span class="ruby-keyword">end</span></pre>

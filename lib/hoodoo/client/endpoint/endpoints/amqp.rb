@@ -167,7 +167,7 @@ module Hoodoo
               alchemy_options
             )
 
-            description_of_response.http_status_code = amqp_response.status_code
+            description_of_response.http_status_code = amqp_response.status_code.to_i
             description_of_response.raw_body_data    = amqp_response.body
 
             return get_data_for_response( description_of_response )

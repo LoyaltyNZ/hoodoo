@@ -6,8 +6,10 @@ describe Hoodoo::Data::Types::VoucherEarner do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(3)
+    expect(schema.properties.count).to eq(5)
 
+    expect(schema.properties['product_tag_ids_included']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['product_tag_ids_excluded']).to be_a(Hoodoo::Presenters::Array)
     expect(schema.properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['voucher_earners']).to be_a(Hoodoo::Presenters::Array)

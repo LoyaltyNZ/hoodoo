@@ -42,8 +42,41 @@ module Hoodoo
             #              interest. The path will be overwritten with
             #              by-convention values for individual resources.
             #
+            # +routing+::  An optional parameter which gives custom routing
+            #              for exception cases where the by-convention map
+            #              doesn't work. This is usually because there is a
+            #              resource singleton which lives logically at a
+            #              singular named route rather than plural route,
+            #              e.g. "/v1/health" rather than "/v1/healths".
+            #
+            # The +routing+ parameter is a Hash of Resource names _as_
+            # _Symbols_, then values which are Hash of API Version _as_
+            # _Integers_ with values that are the Strings giving the
+            # full alternative routing path.
+            #
+            # For example, by convention API version 2 of a Health resource
+            # would be routed to "/v2/healths". You would override this to a
+            # singular route with this +routing+ parameter Hash:
+            #
+            #     {
+            #       :Health => {
+            #         2 => '/v2/health'
+            #       }
+            #     }
+            #
+            # This would leave version 1 of the endpoint (or any other version
+            # for that matter) still at the by-convention "v<x>/healths" path.
+            #
+            # Changing the "v<x>" convention for the version part of the path
+            # will break Hoodoo compatibility, but this is still allowed in
+            # the override in case you have unusual configurations or HTTP
+            # layer rewrites that redirect requests to paths that do map down
+            # to Hoodoo, or perhaps map to a Hoodoo-like system that's not
+            # actually Hoodoo itself but implemented in a compatible fashion.
+            #
             def configure_with( options )
               @base_uri = URI.parse( options[ :base_uri ] )
+              @routing  = options[ :routing ] || {}
             end
 
             # Announce the location of an instance. This is really a no-op
@@ -71,16 +104,24 @@ module Hoodoo
             #
             # Returns a Hoodoo::Services::Discovery::ForHTTP instance.
             #
-            # The use of ActiveSupport means that pluralisation is subject
-            # to the well known Rails limitations and quirks.
+            # The use of ActiveSupport means that pluralisation is subject to
+            # the well known Rails limitations and quirks. The behaviour can
+            # be overridden using the optional +routing+ parameter in the
+            # constructor.
             #
             # Call via Hoodoo::Services::Discovery::Base#discover.
             #
-            # +resource+:: Resource name as a String.
+            # +resource+:: Resource name as a _String_.
             # +version+::  Endpoint version as an Integer.
             #
             def discover_remote( resource, version )
-              path = "/v#{ version }/#{ resource.to_s.underscore.pluralize }"
+              custom_routes = @routing[ resource.to_sym ]
+
+              path = unless custom_routes.nil?
+                custom_routes[ version ]
+              end
+
+              path ||= "/v#{ version }/#{ resource.to_s.underscore.pluralize }"
 
               endpoint_uri      = @base_uri.dup
               endpoint_uri.path = path

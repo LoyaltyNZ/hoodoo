@@ -316,7 +316,7 @@ module Hoodoo
         #
         def list( list_parameters )
           finder = all.offset( list_parameters.offset ).limit( list_parameters.limit )
-          finder = finder.order( { list_parameters.sort_key => list_parameters.sort_direction.to_sym } )
+          finder = finder.order( list_parameters.sort_data )
 
           # DRY up the 'each' loops below. Use a Proc not a method because any
           # methods we define will end up being defined on the including Model,

@@ -71,6 +71,7 @@ unless @repositories.nil? || @repositories.empty?
   puts "Cloning repositories:"
 
   @paths = []
+  @names = []
 
   @repositories.each_with_index do | repository, index  |
 
@@ -84,6 +85,7 @@ unless @repositories.nil? || @repositories.empty?
       $stderr.puts "WARNING: #{ repository } failed, skipping: #{ $? }"
     else
       @paths << path
+      @names << File.basename( repository, '.*' )
     end
   end
 end
@@ -93,33 +95,47 @@ end
 ###############################################################################
 
 # Load implementation classes, in order to load interface definitions that
-# refer to the implementation classes.
+# refer to the implementation classes. Load custom types, resources and
+# library components in case the implementation or interface declarations
+# need them, but suppress exceptions-upon-loading for such cases as they
+# might be non-essential or refer to complex external dependencies we cannot
+# deal with here (e.g. service-specific extra gems).
+#
+# There is quite a strong degree of "cross fingers and hope" here. Simple
+# services will work fine, but complex services with code factored out into
+# libraries, local custom types and resources and extra library code with
+# unusual external dependencies may well fail.
 
 begin
 
-  puts
-  puts "Loading implementations:"
+  def load_stuff( things, ignore_exceptions, *path_components )
+    puts
+    puts "Loading #{things}:"
 
-  @paths.each do | path |
-    implementations = File.join( path, 'service', 'implementations', '*.rb' )
+    @paths.each_with_index do | path, index |
+      $LOAD_PATH.unshift( path )
 
-    Dir[ implementations ].sort.each do | implementation |
-      puts "  #{ Pathname.new( implementation ).basename() }"
-      load implementation
+      things = File.join( path, *path_components )
+
+      Dir[ things ].sort.each do | thing |
+        puts "  #{ @names[ index ] }: #{ Pathname.new( thing ).basename() }"
+        begin
+          load( thing )
+        rescue => e
+          raise( e ) unless ignore_exceptions == true
+        end
+      end
+
+      $LOAD_PATH.shift()
     end
   end
 
-  puts
-  puts "Loading interfaces:"
+  load_stuff( 'libraries',        true,  'lib',     '**',              '*.rb' )
+  load_stuff( 'custom types',     true,  'service', 'types',           '*.rb' )
+  load_stuff( 'custom resources', true,  'service', 'resources',       '*.rb' )
 
-  @paths.each do | path |
-    interfaces = File.join( path, 'service', 'interfaces', '*.rb' )
-
-    Dir[ interfaces ].sort.each do | interface |
-      puts "  #{ Pathname.new( interface ).basename() }"
-      load interface
-    end
-  end
+  load_stuff( 'implementations',  false, 'service', 'implementations', '*.rb' )
+  load_stuff( 'interfaces',       false, 'service', 'interfaces',      '*.rb' )
 
   # Collect the unique interface classes into 'interfaces'.
 
@@ -144,10 +160,17 @@ begin
     puts "Reading API version:"
 
     begin
+      class Response
+        attr_accessor :body
+        def set_resource( foo )
+          self.body=( foo )
+        end
+      end
+
       class Context
         attr_accessor :response
         def initialize
-          @response = OpenStruct.new
+          @response = ::Response.new
         end
       end
 
@@ -162,8 +185,9 @@ begin
       version = "#{ version_major }.#{ version_minor }.#{ version_patch }"
 
       puts "  #{ version }"
-    rescue
+    rescue => e
       puts "  WARNING: Attempt failed, falling back to config.yml value of '#{ @version }'"
+      puts e.inspect
     end
 
     puts
@@ -246,8 +270,12 @@ def to_json_schema( resource, properties, json = nil )
         to_json_schema( resource, property.properties, ret )
         ret.delete( :properties )
       end
-      # Assumption; *something* needs to be put here, so this has to suffice.
-      items = { :type => 'string' } if items.nil? || items.empty?
+      if items.nil? || items.empty?
+        items = { :type => 'string' }
+      else
+        items = { :type => 'object', :properties => items }
+        items[ :required ] = ret.delete( :required ) if ret.has_key?( :required )
+      end
       ret[ :items ] = items
       ret
     elsif property.is_a?( Hoodoo::Presenters::Boolean )
@@ -434,7 +462,7 @@ interfaces.each do | interface |
           default = interface.to_list.default_sort_direction
           values  = []
           interface.to_list.sort.each do | sort, directions |
-            values << "#{ sort } => #{ directions.join( ', ' ) }"
+            values << "#{ sort } => #{ directions.to_a.join( ', ' ) }"
           end
           "Valid values depend on 'sort': #{ values.join( ', ' ) }"
 

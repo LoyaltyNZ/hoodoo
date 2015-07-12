@@ -6,8 +6,10 @@ describe Hoodoo::Data::Types::CurrencyEarner do
 
     expect(schema.is_internationalised?()).to eq(false)
 
-    expect(schema.properties.count).to eq(3)
+    expect(schema.properties.count).to eq(5)
 
+    expect(schema.properties['product_tag_ids_included']).to be_a(Hoodoo::Presenters::Array)
+    expect(schema.properties['product_tag_ids_excluded']).to be_a(Hoodoo::Presenters::Array)
     expect(schema.properties['product_tags_included']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['product_tags_excluded']).to be_a(Hoodoo::Presenters::Tags)
     expect(schema.properties['currency_earner']).to be_a(Hoodoo::Presenters::Object)

@@ -39,13 +39,10 @@ module Hoodoo; module Services
       #
       attr_accessor :limit
 
-      # List sort key, for index views; a string; always defined.
+      # A Hash of String keys and values, where each key is a field for
+      # sorting and each value is the direction to sort that field.
       #
-      attr_accessor :sort_key
-
-      # List sort direction, for index views; a string; always defined.
-      #
-      attr_accessor :sort_direction
+      attr_accessor :sort_data
 
       # List search key/value pairs as a hash, all keys/values strings; {}
       # if there's no search data in the request URI query string.
@@ -60,12 +57,11 @@ module Hoodoo; module Services
       # Set up defaults in this instance.
       #
       def initialize
-        self.offset         = 0
-        self.limit          = 50
-        self.sort_key       = 'created_at'
-        self.sort_direction = 'desc'
-        self.search_data    = {}
-        self.filter_data    = {}
+        self.offset      = 0
+        self.limit       = 50
+        self.sort_data   = { 'created_at' => 'desc' }
+        self.search_data = {}
+        self.filter_data = {}
       end
     end
 
@@ -139,8 +135,7 @@ module Hoodoo; module Services
     %i{
       offset
       limit
-      sort_key
-      sort_direction
+      sort_data
       search_data
       filter_data
     }.each do | method |

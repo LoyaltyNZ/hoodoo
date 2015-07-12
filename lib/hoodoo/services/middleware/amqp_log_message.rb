@@ -3,8 +3,8 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Structured logging onto an AMQP-based queue, via the
-#           AMQEndpoint gem. Optional; class is defined only if the
-#           supporting AMQEndpoint gem's classes are defined.
+#           AlchemyAMQ gem. Optional; class is defined only if the
+#           supporting AlchemyAMQ gem's classes are defined.
 #
 #           The middleware uses this to put log and error messages
 #           on the queue. Interested services use this to read such
@@ -17,17 +17,17 @@ module Hoodoo; module Services
   class Middleware
 
     begin
-      require 'amq-endpoint' # Optional
+      require 'alchemy-amq' # Optional
 
-      # For AMQEndpoint gem users, the AMQPLogMessage class provides an
-      # AMQEndpoint::Message subclass used for sending structured log data to
-      # the queue. Hoodoo::Services::Middleware::StructuredLogger uses this.
+      # For AlchemyAMQ gem users, the AMQPLogMessage class provides an
+      # AlchemyAMQ::Message subclass used for sending structured log data to
+      # the queue. Hoodoo::Logger uses this.
       #
-      # See the AMQEndpoint gem for more details.
+      # See the AlchemyAMQ gem for more details.
       #
-      class AMQPLogMessage < ::AMQEndpoint::Message
+      class AMQPLogMessage < ::AlchemyAMQ::Message
 
-        # The named "type" of this message, to be registered with AMQEndpoint.
+        # The named "type" of this message, to be registered with AlchemyAMQ.
         #
         TYPE = 'hoodoo_service_middleware_amqp_log_message'
 
@@ -36,12 +36,12 @@ module Hoodoo; module Services
         #
         TIME_FORMATTER = '%Y-%m-%d %H:%M:%S.%12N %Z'
 
-        # This line of code registers wth AMQEndpoint, but also makes RDoc
+        # This line of code registers wth AlchemyAMQ, but also makes RDoc
         # screw up. RDoc decides that we have a new module,
-        # Hoodoo::Services::Middleware::AMQPLogMessage::AMQEndpoint. Very
+        # Hoodoo::Services::Middleware::AMQPLogMessage::AlchemyAMQ. Very
         # strange...
         #
-        ::AMQEndpoint::Message.register_type( TYPE, self )
+        ::AlchemyAMQ::Message.register_type( TYPE, self )
 
         # ...so do _this_ purely so that we can get 100% real documentation
         # coverage without it being clouded by RDoc's hiccups.
@@ -51,22 +51,22 @@ module Hoodoo; module Services
         #
         # See file "services/middleware/amqp_log_message.rb" for details.
         #
-        module AMQEndpoint
+        module AlchemyAMQ
         end
 
         # A UUID to assign to this log message. See Hoodoo::UUID::generate.
         #
         attr_accessor :id
 
-        # Logging level. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Logging level. See Hoodoo::Logger.
         #
         attr_accessor :level
 
-        # Logging component. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Logging component. See Hoodoo::Logger.
         #
         attr_accessor :component
 
-        # Component log code. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Component log code. See Hoodoo::Logger.
         #
         attr_accessor :code
 
@@ -79,6 +79,10 @@ module Hoodoo; module Services
         # Set the time read back by #reported_at using a Time instance. This
         # is formatted internally as a String via TIME_FORMATTER and reported
         # as such in subsequent calls to #reported_at.
+        #
+        # Conversion from Time to String is done here, rather than by the
+        # caller setting this instance's variables, so that we can internally
+        # enforce the accuracy required for this field.
         #
         # +time+:: The Time instance to set (and process into a string
         #          internally via TIME_FORMATTER), *or* a String instance
@@ -94,22 +98,22 @@ module Hoodoo; module Services
           end
         end
 
-        # Log payload. See Hoodoo::Services::Middleware::StructuredLogger.
+        # Log payload. See Hoodoo::Logger.
         #
         attr_accessor :data
 
         # Optional calling Caller ID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Hoodoo::Logger.
         #
         attr_accessor :caller_id
 
         # Optional interaction UUID, via session data inside the payload - see
-        # Hoodoo::Services::Middleware::StructuredLogger.
+        # Hoodoo::Logger.
         #
         attr_accessor :interaction_id
 
         # Optional hash of identity properties from the session data inside the
-        # payload - see Hoodoo::Services::Middleware::StructuredLogger.
+        # payload - see Hoodoo::Logger.
         #
         attr_accessor :identity
 
@@ -117,14 +121,14 @@ module Hoodoo; module Services
         # the class.
         #
         def initialize(options = {})
-          update( options )
+          update( options ) # Should be called before 'super'
           super( options )
 
           @type = AMQPLogMessage::TYPE
         end
 
-        # Seralize this instance. See the AMQEndpoint gem and
-        # AMQEndpoint::Message#serialize.
+        # Seralize this instance. See the AlchemyAMQ gem and
+        # AlchemyAMQ::Message#serialize.
         #
         def serialize
           @content = {
@@ -145,7 +149,7 @@ module Hoodoo; module Services
         end
 
         # Unpack a serialized representation into this instance. See the
-        # AMQEndpoint gem and AMQEndpoint::Message#deserialize.
+        # AlchemyAMQ gem and AlchemyAMQ::Message#deserialize.
         #
         def deserialize
           super
@@ -170,7 +174,7 @@ module Hoodoo; module Services
         end
       end
 
-    rescue LoadError # Optional file 'amq-endpoint' is absent
+    rescue LoadError # Optional file 'alchemy-amq' is absent
     end
 
   end

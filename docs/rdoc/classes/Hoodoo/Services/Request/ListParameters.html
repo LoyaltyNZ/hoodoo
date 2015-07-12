@@ -134,16 +134,9 @@ there&#39;s no search data in the request URI query string.</p></td>
             <td class='attr-rw'>
               [RW]
             </td>
-            <td class='attr-name'>sort_direction</td>
-            <td class='attr-desc'><p>List sort direction, for index views; a string; always defined.</p></td>
-          </tr>
-        
-          <tr valign='top'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>sort_key</td>
-            <td class='attr-desc'><p>List sort key, for index views; a string; always defined.</p></td>
+            <td class='attr-name'>sort_data</td>
+            <td class='attr-desc'><p>A Hash of String keys and values, where each key is a field for sorting and
+each value is the direction to sort that field.</p></td>
           </tr>
         
       </table>
@@ -182,14 +175,13 @@ there&#39;s no search data in the request URI query string.</p></td>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 62</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>         = <span class="ruby-number">0</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>          = <span class="ruby-number">50</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_key</span>       = <span class="ruby-string">&#39;created_at&#39;</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_direction</span> = <span class="ruby-string">&#39;desc&#39;</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span>    = {}
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span>    = {}
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>      = <span class="ruby-number">0</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>       = <span class="ruby-number">50</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>   = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;desc&#39;</span> }
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> = {}
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> = {}
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

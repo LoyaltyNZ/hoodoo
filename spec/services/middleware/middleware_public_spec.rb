@@ -85,6 +85,14 @@ describe Hoodoo::Services::Middleware do
 
   context 'with only secure actions' do
 
+    # Middleware maintains class-level record of whether or not any interfaces
+    # had public actions for efficiency; in case any other test dirtied this by
+    # accident, clean out the record here.
+    #
+    before :all do
+      Hoodoo::Services::Middleware.class_variable_set( '@@interfaces_have_public_methods', false )
+    end
+
     def app
       Rack::Builder.new do
         use Hoodoo::Services::Middleware
@@ -120,6 +128,14 @@ describe Hoodoo::Services::Middleware do
   # -------------------------------------------------------------------------
 
   context 'with a public action' do
+
+    # Middleware maintains class-level record of whether or not any interfaces
+    # had public actions for efficiency; ensure this is cleared after all these
+    # tests run, so it's a clean slate for the next set.
+    #
+    after :all do
+      Hoodoo::Services::Middleware::class_variable_set( '@@interfaces_have_public_methods', false )
+    end
 
     def app
       Rack::Builder.new do

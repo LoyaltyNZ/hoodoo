@@ -102,7 +102,7 @@ use such codes yourself.</p>
 <p>The middleware adds a STDERR stream writer logger by default and an AMQP
 log writer on the first <a href="../../Rack.html">Rack</a>
 <code>call</code> should the <a href="../../Rack.html">Rack</a> environment
-provide an Alchemy endpoint (see the Alchemy and AMQEndpoint gems).</p>
+provide an Alchemy endpoint (see the AlchemyAMQ gem).</p>
 
     </div>
   
@@ -387,7 +387,7 @@ end
                 
               </p>
               <div id="method-c-environment_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 177</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">environment</span>
   <span class="ruby-identifier">@@environment</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">StringInquirer</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;RACK_ENV&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;development&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -427,7 +427,7 @@ internally and (where required) inform the DRb process of the endpoints.</p>
                 
               </p>
               <div id="method-c-flush_services_for_test_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 330</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 361</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
   <span class="ruby-identifier">@@services</span> = []
 
@@ -471,7 +471,7 @@ ever need to check this.</p>
                 
               </p>
               <div id="method-c-has_memcached-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 185</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcached?</span>
   <span class="ruby-identifier">m</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -565,7 +565,7 @@ security considerations when using logs.</p>
                 
               </p>
               <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 244</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 275</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
 <span class="ruby-keyword">end</span></pre>
@@ -607,7 +607,7 @@ Memcached host available.</p>
                 
               </p>
               <div id="method-c-memcached_host_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 197</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 228</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">memcached_host</span>
   <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -647,7 +647,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 343</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -746,7 +746,7 @@ calls should be passed.</p>
                 
               </p>
               <div id="method-c-on_queue-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 203</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 234</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ENDPOINT&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -790,7 +790,7 @@ recorded.</p>
                 
               </p>
               <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 319</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 350</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
@@ -845,7 +845,7 @@ href="Middleware.html#method-c-environment">::environment</a>).</p>
                 
               </p>
               <div id="method-c-set_log_folder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 284</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 315</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -897,7 +897,7 @@ class method.</p>
                 
               </p>
               <div id="method-c-set_logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 261</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 292</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
@@ -948,7 +948,7 @@ session ID had been supplied.</p>
                 
               </p>
               <div id="method-c-set_test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 306</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 337</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -994,7 +994,7 @@ used.</p>
                 
               </p>
               <div id="method-c-test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 295</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 326</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">test_session</span>
   <span class="ruby-identifier">@@test_session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1037,7 +1037,7 @@ protocol requirements.</p>
                 
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 414</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 445</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -1156,7 +1156,7 @@ an endpoint implementation.</p>
                 
               </p>
               <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 498</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 529</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1306,7 +1306,7 @@ ignore inter-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 609</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 640</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">action</span>,,
@@ -1347,11 +1347,10 @@ ignore inter-resource call errors.</p>
     <span class="ruby-identifier">session</span>
   )
 
-  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">target_interface</span>                  = <span class="ruby-identifier">interface</span>
-  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">target_implementation</span>             = <span class="ruby-identifier">implementation</span>
-  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">target_resource_for_error_reports</span> = <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">resource</span>
-  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">requested_content_type</span>            = <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">requested_content_type</span>
-  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">requested_content_encoding</span>        = <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">requested_content_encoding</span>
+  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">target_interface</span>           = <span class="ruby-identifier">interface</span>
+  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">target_implementation</span>      = <span class="ruby-identifier">implementation</span>
+  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">requested_content_type</span>     = <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">requested_content_type</span>
+  <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">requested_content_encoding</span> = <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">requested_content_encoding</span>
 
   <span class="ruby-comment"># For convenience...</span>
 
@@ -1410,6 +1409,11 @@ ignore inter-resource call errors.</p>
 
   <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">body_hash</span>
 
+  <span class="ruby-comment"># The inter-resource local backend does not accept or process the</span>
+  <span class="ruby-comment"># equivalent of the X-Resource-UUID &quot;set the ID to &lt;this&gt;&quot; HTTP</span>
+  <span class="ruby-comment"># header, so we do not call &quot;maybe_update_body_data_for()&quot; here;</span>
+  <span class="ruby-comment"># we only need to validate it.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">action</span> <span class="ruby-operator">==</span> <span class="ruby-value">:create</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">action</span> <span class="ruby-operator">==</span> <span class="ruby-value">:update</span> )
     <span class="ruby-identifier">validate_body_data_for</span>( <span class="ruby-identifier">local_interaction</span> )
   <span class="ruby-keyword">end</span>
@@ -1600,6 +1604,50 @@ class and its described field schema, so see that for details.</p></td>
           
         
           <tr valign='top'>
+            <td class="attr-name">SECURED_HEADERS</td>
+            <td>=</td>
+            <td class="attr-value">Set.new( [
+
+# This header is ignored except in POST (resource creation) requests. It
+# asks that the &quot;id&quot; field (UUID) for the persisted resource instance is
+# of the given value, rather than automatically generated.
+#
+&#39;HTTP_X_RESOURCE_UUID&#39;,
+
+] )</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>A request will be rejected if it includes an HTTP header from this list
+(expressed <em>precisely</em> as it would appear in a <a
+href="../../Rack.html">Rack</a> request) unless:</p>
+<ul><li>
+<p>There is a session in use which includes a <code>scoping</code> section</p>
+</li><li>
+<p>The <code>scoping</code> session in turn has an
+<code>authorised_http_headers</code> section consisting of an Array of
+Strings</p>
+</li><li>
+<p>At least one of those Strings matches the header name that the inbound
+request is attempting to use, again in the identical <a
+href="../../Rack.html">Rack</a> request formatting.</p>
+</li></ul>
+
+<p><a href="../../Rack.html">Rack</a> request formatting means the header name
+is in upper case, with any hyphens converted to underscores, and with a
+prefix of “HTTP_” added for <em>most</em> headers. For more information,
+see the <a href="../../Rack.html">Rack</a> specification:</p>
+<ul><li>
+<p><a href="https://github.com/rack/rack">github.com/rack/rack</a></p>
+</li><li>
+<p><a
+href="https://github.com/rack/rack/blob/master/SPEC">github.com/rack/rack/blob/master/SPEC</a></p>
+</li></ul></td>
+            </tr>
+          
+        
+          <tr valign='top'>
             <td class="attr-name">MAXIMUM_PAYLOAD_SIZE</td>
             <td>=</td>
             <td class="attr-value">1048576</td>
@@ -1620,7 +1668,19 @@ attempts to consume RAM.</p></td>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload size.</p></td>
+              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload (inbound data) size.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">MAXIMUM_LOGGED_RESPONSE_SIZE</td>
+            <td>=</td>
+            <td class="attr-value">1024</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> response (outbound data) size.</p></td>
             </tr>
           
         

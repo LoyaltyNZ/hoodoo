@@ -30,7 +30,7 @@ module Hoodoo
           text :product_code
 
           object :product_data do
-            type :Product
+            type :BasketProduct
           end
 
           enum :accrual, :from => ACCRUALS

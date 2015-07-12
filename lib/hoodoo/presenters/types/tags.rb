@@ -13,7 +13,9 @@
 
 module Hoodoo
   module Presenters
-    # A JSON UUID schema member
+
+    # A JSON string-like schema member intended to hold tag data.
+    #
     class Tags < Hoodoo::Presenters::Text
       # TODO: Note inheritance from "...::Text" not "...::Field"
       # TODO: Future validations to ensure string looks tag-like?

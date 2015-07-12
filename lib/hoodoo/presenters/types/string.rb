@@ -1,26 +1,36 @@
 module Hoodoo
   module Presenters
-    # A JSON string schema member
+
+    # A JSON String schema member.
+    #
     class String < Hoodoo::Presenters::Field
 
-      # The maximum length of the string
+      # The maximum length of the String.
+      #
       attr_accessor :length
 
-      # Initialize a String instance with the appropriate name and options
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
-      def initialize(name, options = {})
-        super name, options
-        raise ArgumentError.new('Hoodoo::Presenters::String must have a :length') unless options.has_key?(:length)
-        @length = options[:length]
+      # Initialize a String instance with the appropriate name and options.
+      #
+      # +name+::    The JSON key.
+      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10.
+      #
+      def initialize( name, options = {} )
+        super( name, options )
+
+        unless options.has_key?( :length )
+          raise ArgumentError.new( 'Hoodoo::Presenters::String must have a :length' )
+        end
+
+        @length = options[ :length ]
       end
 
-      # Check if data is a valid String and return a Hoodoo::Errors instance
-      def validate(data, path = '')
-        errors = super data, path
-        return errors if errors.has_errors? || (!@required and data.nil?)
+      # Check if data is a valid String and return a Hoodoo::Errors instance.
+      #
+      def validate( data, path = '' )
+        errors = super( data, path )
+        return errors if errors.has_errors? || ( ! @required && data.nil? )
 
-        if data.is_a? ::String
+        if data.is_a?( ::String )
           if data.size > @length
             errors.add_error(
               'generic.invalid_string',

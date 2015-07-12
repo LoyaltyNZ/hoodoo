@@ -62,7 +62,7 @@ module Hoodoo
 
       # A Hoodoo::Services::Permissions instance.
       #
-      # The instance describes "what the session session is allowed to do".
+      # The instance describes "what the session is allowed to do".
       #
       attr_accessor :permissions
 
