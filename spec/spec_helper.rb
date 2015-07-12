@@ -68,7 +68,10 @@ RSpec.configure do | config |
   database_name = 'hoodoo_test'
 
   # Connect to postgres, no database yet
-  ActiveRecord::Base.establish_connection( :adapter  => 'postgresql' )
+  ActiveRecord::Base.establish_connection(
+    :adapter  => 'postgresql',
+    :username => ENV['DATABASE_USER']
+  )
 
   # Sometimes if a user force quits the spec suite, the hoodoo_test database
   # will not be deleted. The following makes sure it is.
@@ -86,7 +89,8 @@ RSpec.configure do | config |
   # Connect to the created database
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
-    :database => database_name
+    :database => database_name,
+    :username => ENV['DATABASE_USER']
   )
 
   # Blow away the database afterwards.
