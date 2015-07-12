@@ -1,11 +1,11 @@
-Fri, 10 Jul 2015 12:25:14 +1200
+Mon, 13 Jul 2015 10:29:36 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Thu, 09 Jul 2015 13:44:03 +1200
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/active/active_record/base.rb	Tue, 24 Feb 2015 13:48:01 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Tue, 02 Jun 2015 14:08:49 +1200
-lib/hoodoo/active/active_record/finder.rb	Fri, 10 Jul 2015 11:06:56 +1200
+lib/hoodoo/active/active_record/finder.rb	Mon, 13 Jul 2015 10:29:02 +1200
 lib/hoodoo/active/active_record/search_helper.rb	Fri, 10 Jul 2015 11:06:56 +1200
 lib/hoodoo/active/active_record/secure.rb	Tue, 05 May 2015 09:33:57 +1200
 lib/hoodoo/active/active_record/uuid.rb	Tue, 24 Feb 2015 13:48:01 +1300
