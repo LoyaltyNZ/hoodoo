@@ -1,4 +1,4 @@
-Mon, 13 Jul 2015 15:03:29 +1200
+Mon, 13 Jul 2015 15:06:25 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Thu, 09 Jul 2015 13:44:03 +1200
@@ -134,6 +134,6 @@ lib/hoodoo/services/services/service.rb	Fri, 13 Feb 2015 13:31:17 +1300
 lib/hoodoo/services/services/session.rb	Mon, 13 Jul 2015 14:59:44 +1200
 lib/hoodoo/utilities.rb	Thu, 29 Jan 2015 10:40:15 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/utilities/utilities.rb	Mon, 13 Jul 2015 15:03:06 +1200
+lib/hoodoo/utilities/utilities.rb	Mon, 13 Jul 2015 15:06:19 +1200
 lib/hoodoo/utilities/uuid.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/version.rb	Tue, 10 Mar 2015 13:02:03 +1300

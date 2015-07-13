@@ -114,10 +114,8 @@ module Hoodoo
     #
     def self.deep_merge_into( target_hash, inbound_hash )
 
-      # Based on:
-      #
       # http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash
-
+      #
       merger = proc { | key, v1, v2 |
         Hash === v1 && Hash === v2 ? v1.merge( v2, &merger ) : v2.nil? ? v1 : v2
       }
@@ -125,9 +123,7 @@ module Hoodoo
       return target_hash.merge( inbound_hash, &merger )
     end
 
-    # Deep diff two hashes. Adapted shamelessly from:
-    #
-    # http://stackoverflow.com/questions/1766741/comparing-ruby-hashes
+    # Deep diff two hashes.
     #
     # +hash1+:: "Left hand" hash for comparison.
     # +hash2+:: "Right hand" hash for comparison.
@@ -166,6 +162,9 @@ module Hoodoo
     #     # => { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] }
     #
     def self.hash_diff( hash1, hash2 )
+
+      # http://stackoverflow.com/questions/1766741/comparing-ruby-hashes
+      #
       return ( hash1.keys | hash2.keys ).inject( {} ) do | memo, key |
         unless hash1[ key ] == hash2[ key ]
           if hash1[ key ].kind_of?( Hash ) && hash2[ key ].kind_of?( Hash )
@@ -271,9 +270,10 @@ module Hoodoo
     # for it and it being returned. This utility method is usually therefore
     # used for test environments only.
     #
-    # http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
-    #
     def self.spare_port
+
+      # http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
+      #
       socket = Socket.new( :INET, :STREAM, 0 )
       socket.bind( Addrinfo.tcp( '127.0.0.1', 0 ) )
       port = socket.local_address.ip_port
