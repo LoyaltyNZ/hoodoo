@@ -260,7 +260,8 @@ module Hoodoo
     #           "hello", Time.now (yields nil, nil).
     #
     def self.to_integer?( value )
-      value.to_s.to_i if value.to_s.to_i.to_s == value.to_s
+      value = value.to_s
+      value.to_i if value.to_i.to_s == value
     end
 
     # Return a spare TCP port on localhost. This is free at the instant of
