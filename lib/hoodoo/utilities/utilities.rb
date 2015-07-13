@@ -62,7 +62,7 @@ module Hoodoo
     # duplicable, e.g. FixNum, you just get the same thing back). Usually
     # used with Hashes or Arrays.
     #
-    # +obj+: Object to duplicate.
+    # +obj+:: Object to duplicate.
     #
     # Returns the duplicated object if duplicable, else returns the input
     # parameter.
@@ -241,13 +241,13 @@ module Hoodoo
     # * The Hash values are always Arrays, even if they only have one value.
     # * The Array values are unique; duplicates are removed via +uniq!+.
     #
-    # +array+: Array of two-element Arrays. The first element becomes a key
-    #          in the returned Hash. The last element is added to an Array
-    #          of (unique) values associated with that key. An empty Array
-    #          results in an empty Hash; +nil+ is not allowed.
+    # +array+:: Array of two-element Arrays. The first element becomes a key
+    #           in the returned Hash. The last element is added to an Array
+    #           of (unique) values associated with that key. An empty Array
+    #           results in an empty Hash; +nil+ is not allowed.
     #
-    # +dupes+: Optional. If omitted, duplicates are removed as described;
-    #          if present and +true+, duplicates are allowed.
+    # +dupes+:: Optional. If omitted, duplicates are removed as described;
+    #           if present and +true+, duplicates are allowed.
     #
     # Returns a new Hash as described. The input Array is not modified.
     #

@@ -232,8 +232,8 @@ module Hoodoo
     # Return a Hash rendered through the Hoodoo::Data::Resources::Errors
     # collection representing the formalised resource.
     #
-    # +interaction_id+: Mandatory Interaction ID (UUID) to associate with
-    #                   the collection.
+    # +interaction_id+:: Mandatory Interaction ID (UUID) to associate with
+    #                    the collection.
     #
     def render( interaction_id )
       unless Hoodoo::UUID.valid?( interaction_id )
