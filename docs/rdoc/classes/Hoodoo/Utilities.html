@@ -201,18 +201,17 @@ Hoodoo::Utilities.collated_hash_from( array )
 </li><li>
 <p>The Array values are unique; duplicates are removed via <code>uniq!</code>.</p>
 </li></ul>
-
-<p><code>array</code>: Array of two-element Arrays. The first element becomes
-a key</p>
-
-<pre><code>in the returned Hash. The last element is added to an Array
-of (unique) values associated with that key. An empty Array
-results in an empty Hash; +nil+ is not allowed.</code></pre>
-
-<p><code>dupes</code>: Optional. If omitted, duplicates are removed as
-described;</p>
-
-<pre><code>if present and +true+, duplicates are allowed.</code></pre>
+<dl class="rdoc-list note-list"><dt><code>array</code>
+<dd>
+<p>Array of two-element Arrays. The first element becomes a key in the
+returned Hash. The last element is added to an Array of (unique) values
+associated with that key. An empty Array results in an empty Hash;
+<code>nil</code> is not allowed.</p>
+</dd><dt><code>dupes</code>
+<dd>
+<p>Optional. If omitted, duplicates are removed as described; if present and
+<code>true</code>, duplicates are allowed.</p>
+</dd></dl>
 
 <p>Returns a new Hash as described. The input Array is not modified.</p>
             </div>
@@ -262,8 +261,10 @@ described;</p>
               <p>Thorough but slow deep duplication of any object (if it isn&#39;t
 duplicable, e.g. FixNum, you just get the same thing back). Usually used
 with Hashes or Arrays.</p>
-
-<p><code>obj</code>: Object to duplicate.</p>
+<dl class="rdoc-list note-list"><dt><code>obj</code>
+<dd>
+<p>Object to duplicate.</p>
+</dd></dl>
 
 <p>Returns the duplicated object if duplicable, else returns the input
 parameter.</p>

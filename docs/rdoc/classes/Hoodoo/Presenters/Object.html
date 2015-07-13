@@ -224,15 +224,15 @@ appropriate name and options.</p>
               <p>Render inbound data into a target hash according to the schema, applying
 defaults where defined for fields with no value supplied in the inbound
 data.</p>
-
-<p><code>data</code>:   Inbound data to render.</p>
-
-<p><code>target</code>: For internal callers only in theory. The target hash
-into</p>
-
-<pre><code>which rendering should occur. This may then be merged into
-outer level hashes as part of nested items defined in the
-schema.</code></pre>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>Inbound data to render.</p>
+</dd><dt><code>target</code>
+<dd>
+<p>For internal callers only in theory. The target hash into which rendering
+should occur. This may then be merged into outer level hashes as part of
+nested items defined in the schema.</p>
+</dd></dl>
             </div>
           
           
@@ -301,19 +301,19 @@ schema.</code></pre>
               <p>Check if data is a valid <a href="Object.html">Object</a> and return a <a
 href="../Errors.html">Hoodoo::Errors</a> instance with zero (valid) or more
 (has validation problems) errors inside.</p>
-
-<p><code>data</code>: <a href="../Data.html">Data</a> to check (and check
-nested properties therein). Expected</p>
-
-<pre><code>to be nil (unless field is required) or a Hash.</code></pre>
-
-<p><code>path</code>: For internal callers only in theory. The nesting
-human-readable</p>
-
-<pre><code>path to this &quot;level&quot;, as an array. Omitted at the top level.
-In :errors =&gt; { :foo =&gt; { ... } }, validation of &quot;:foo&quot; would
-be at path &quot;[ :errors ]&quot;. Validation of the contents of the
-object at &quot;:foo&quot; would be under &quot;[ :errors, :foo ]&quot;.</code></pre>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p><a href="../Data.html">Data</a> to check (and check nested properties
+therein). Expected to be nil (unless field is required) or a <a
+href="Hash.html">Hash</a>.</p>
+</dd><dt><code>path</code>
+<dd>
+<p>For internal callers only in theory - the human-readable nesting path to
+this “level”, as an array. Omitted at the top level. In :errors =&gt; {
+:foo =&gt; { … } }, validation of “:foo” would be at path “[ :errors ]”.
+Validation of the contents of the object at “:foo” would be under “[
+:errors, :foo ]”.</p>
+</dd></dl>
             </div>
           
           

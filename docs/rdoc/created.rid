@@ -1,4 +1,4 @@
-Mon, 13 Jul 2015 10:29:36 +1200
+Mon, 13 Jul 2015 15:00:13 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Thu, 09 Jul 2015 13:44:03 +1200
@@ -70,7 +70,7 @@ lib/hoodoo/data/types/voucher_earner.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/discovery.rb	Tue, 30 Jun 2015 14:50:03 +1200
 lib/hoodoo/errors.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/errors/error_descriptions.rb	Fri, 13 Feb 2015 13:31:17 +1300
-lib/hoodoo/errors/errors.rb	Tue, 30 Jun 2015 17:10:41 +1200
+lib/hoodoo/errors/errors.rb	Mon, 13 Jul 2015 14:57:53 +1200
 lib/hoodoo/generator.rb	Thu, 29 Jan 2015 09:44:38 +1300
 lib/hoodoo/logger.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/fast_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -97,7 +97,7 @@ lib/hoodoo/presenters/types/field.rb	Fri, 10 Jul 2015 10:59:13 +1200
 lib/hoodoo/presenters/types/float.rb	Wed, 08 Jul 2015 11:26:33 +1200
 lib/hoodoo/presenters/types/hash.rb	Fri, 10 Jul 2015 11:05:48 +1200
 lib/hoodoo/presenters/types/integer.rb	Wed, 08 Jul 2015 11:11:20 +1200
-lib/hoodoo/presenters/types/object.rb	Wed, 08 Jul 2015 13:22:57 +1200
+lib/hoodoo/presenters/types/object.rb	Mon, 13 Jul 2015 14:58:58 +1200
 lib/hoodoo/presenters/types/string.rb	Wed, 08 Jul 2015 11:54:36 +1200
 lib/hoodoo/presenters/types/tags.rb	Wed, 08 Jul 2015 11:05:00 +1200
 lib/hoodoo/presenters/types/text.rb	Wed, 08 Jul 2015 11:07:50 +1200
@@ -105,7 +105,7 @@ lib/hoodoo/presenters/types/uuid.rb	Wed, 08 Jul 2015 11:54:24 +1200
 lib/hoodoo/services.rb	Tue, 17 Feb 2015 16:07:49 +1300
 lib/hoodoo/services/discovery/discoverers/by_consul.rb	Fri, 29 May 2015 13:53:07 +1200
 lib/hoodoo/services/discovery/discoverers/by_convention.rb	Wed, 10 Jun 2015 13:20:59 +1200
-lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb	Tue, 30 Jun 2015 16:55:07 +1200
+lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb	Mon, 13 Jul 2015 14:59:04 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb	Tue, 07 Apr 2015 15:49:03 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_start.rb	Wed, 04 Mar 2015 16:47:58 +1300
 lib/hoodoo/services/discovery/discovery.rb	Fri, 29 May 2015 13:53:07 +1200
@@ -129,11 +129,11 @@ lib/hoodoo/services/services/implementation.rb	Tue, 17 Feb 2015 16:07:49 +1300
 lib/hoodoo/services/services/interface.rb	Wed, 08 Jul 2015 15:11:40 +1200
 lib/hoodoo/services/services/permissions.rb	Wed, 18 Feb 2015 09:14:41 +1300
 lib/hoodoo/services/services/request.rb	Fri, 10 Jul 2015 09:29:50 +1200
-lib/hoodoo/services/services/response.rb	Tue, 30 Jun 2015 17:08:08 +1200
+lib/hoodoo/services/services/response.rb	Mon, 13 Jul 2015 14:59:11 +1200
 lib/hoodoo/services/services/service.rb	Fri, 13 Feb 2015 13:31:17 +1300
-lib/hoodoo/services/services/session.rb	Mon, 06 Jul 2015 15:54:19 +1200
+lib/hoodoo/services/services/session.rb	Mon, 13 Jul 2015 14:59:44 +1200
 lib/hoodoo/utilities.rb	Thu, 29 Jan 2015 10:40:15 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/utilities/utilities.rb	Thu, 02 Jul 2015 13:13:08 +1200
+lib/hoodoo/utilities/utilities.rb	Mon, 13 Jul 2015 14:59:30 +1200
 lib/hoodoo/utilities/uuid.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/version.rb	Tue, 10 Mar 2015 13:02:03 +1300
