@@ -578,7 +578,7 @@ for test environments only.</p>
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 273</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
 
   <span class="ruby-comment"># http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</span>
@@ -732,7 +732,8 @@ Time.now (yields nil, nil).</p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 262</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
-  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
