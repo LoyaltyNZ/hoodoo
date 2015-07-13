@@ -148,6 +148,11 @@ module Hoodoo; module Services
       #
       'HTTP_X_RESOURCE_UUID',
 
+      # This header is ignored except in GET requests. It asks that the returned
+      # resource representation(s) are as they were at the provided date time.
+      #
+      'HTTP_X_DATED_AT'
+
     ] )
 
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted

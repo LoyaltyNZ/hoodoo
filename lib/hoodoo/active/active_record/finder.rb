@@ -154,6 +154,20 @@ module Hoodoo
           return nil
         end
 
+        def dated_in( context )
+
+          finder =
+            if context.request.headers[ 'HTTP_X_DATED_AT' ]
+              self.class.dated( Time.parse(context.request.headers[ 'HTTP_X_DATED_AT' ]).utc )
+              # TODO rescue the whoops scenario
+            else
+              self.class
+            end
+
+          return finder.secure( context )
+
+        end
+
         # Implicily secure version of #acquire.
         #
         # Assuming you are using or at some point intend to use the
