@@ -18,9 +18,6 @@ module Hoodoo
     # support methods to handle common +show+ and +list+ filtering actions
     # based on inbound data.
     #
-    # Requires Hoodoo::ActiveRecord::Secure, which is automatically included
-    # if necessary.
-    #
     # See also:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
