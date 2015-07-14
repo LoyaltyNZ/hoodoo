@@ -71,17 +71,6 @@ module Hoodoo
         # support finding a resource instance by +id+ _and_ one or more
         # other model fields. Otherwise, just use +find_by_id+.
         #
-        # This can only be used <i>if your searched fields are strings</i> in
-        # the database. This includes, for example, the +id+ column; Hoodoo
-        # usually expects to be a string field holding a 32-character UUID. If
-        # any of the fields contain non-string types, attempts to use the
-        # #acquire mechanism (or a related one) may result in database errors
-        # due to type mismatches, depending upon the database engine in use.
-        #
-        # For secured data access, use #acquire_in instead, or only call
-        # #acquire with a secure scope from e.g. a call to
-        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure.
-        #
         # In the model, you declare the list of fields _in_ _addition_ _to_
         # +id+ by calling #acquire_with thus:
         #
@@ -118,11 +107,23 @@ module Hoodoo
         # each of the fields in turn. It starts with +id+ then runs through
         # any other fields in the order given through #acquire_with.
         #
+        # This can only be used <i>if your searched fields are strings</i> in
+        # the database. This includes, for example, the +id+ column; Hoodoo
+        # usually expects to be a string field holding a 32-character UUID. If
+        # any of the fields contain non-string types, attempts to use the
+        # #acquire mechanism (or a related one) may result in database errors
+        # due to type mismatches, depending upon the database engine in use.
+        #
         # In more complex scenarious, you can just call #acquire at the end
         # of any chain of AREL queries just as you would call ActiveRecord's
         # own #find_by_id method, e.g.:
         #
         #     SomeModel.where( :foo => :bar ).acquire( context.request.ident )
+        #
+        # Usually for convenience you should use #acquire_in instead, or only
+        # call #acquire with (say) a secure scope via for example a call to
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. Other scopes may
+        # be needed depending on the mixins your model uses.
         #
         # +ident+:: The value to search for in the fields (attributes)
         #           specified via #acquire_with, matched using calls to
@@ -171,16 +172,20 @@ module Hoodoo
           return nil
         end
 
-        # Implicily secure version of #acquire.
+        # Implicily secure, translated, dated etc. etc. version of #acquire,
+        # according to which modules are mixed into your model class. See
+        # Hoodoo::ActiveRecord::Support#full_scope_for to see the list of
+        # things that get included in the scope according to the mixins
+        # that are in use.
         #
-        # Assuming you are using or at some point intend to use the
-        # mechanism described by
+        # For example, if you are using or at some point intend to mix in and
+        # use the mechanism described by the likes of
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, call here as a
         # convenience to both obtain a secure context and find a record
         # (with or without additional find-by fields other than +id+) in one
         # go. Building on the example from
-        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, we might have
-        # an Audit model as follows:
+        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure, we might have an
+        # Audit model as follows:
         #
         #     class Audit < ActiveRecord::Base
         #       include Hoodoo::ActiveRecord::Secure
@@ -221,6 +226,10 @@ module Hoodoo
         #
         #     SomeModel.acquire_in( context )
         #
+        # The same applies to forgetting dated scopes, translated scopes, or
+        # anything else that Hoodoo::ActiveRecord::Support#full_scope_for
+        # might include for you.
+        #
         # Parameters:
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -249,8 +258,8 @@ module Hoodoo
         # count, retrieve or further refine a list of model instances from
         # the database.
         #
-        # For secured data access, use #list_in instead, or only call
-        # #acquire with a secure scope from e.g. a call to
+        # Usually for convenience you should use #list_in instead, or only
+        # call #acquire with (say) a secure scope via for example a call to
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. An example of
         # this second option is shown below.
         #
@@ -367,12 +376,17 @@ module Hoodoo
           return finder
         end
 
-        # Implicily secure version of #list.
+        # Implicily secure, translated, dated etc. etc. version of #list,
+        # according to which modules are mixed into your model class. See
+        # Hoodoo::ActiveRecord::Support#full_scope_for to see the list of
+        # things that get included in the scope according to the mixins
+        # that are in use.
         #
-        # Read the documentation on #acquire_in versus #acquire for information
-        # on the use of secure scopes.
-        #
-        # As with #acquire_in, this method is for convenience and safety - you
+        # For example, if you have included Hoodoo::ActiveRecord::Secure,
+        # this method provides you with an implicitly secure query. Read the
+        # documentation on #acquire_in versus #acquire for information
+        # on the use of secure scopes; as with #acquire_in and the "Secure"
+        # mixin, this method becomes for convenience and safety - you
         # can't accidentally forget the secure scope:
         #
         #     SomeModel.secure( context ).list( context.request.list )
@@ -380,6 +394,10 @@ module Hoodoo
         #     # ...has the same result as...
         #
         #     SomeModel.list_in( context )
+        #
+        # The same applies to forgetting dated scopes, translated scopes, or
+        # anything else that Hoodoo::ActiveRecord::Support#full_scope_for
+        # might include for you.
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
         #             context. This is typically a value passed to one of
