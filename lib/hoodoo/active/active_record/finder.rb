@@ -231,7 +231,8 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match.
         #
         def acquire_in( context )
-          return secure( context ).acquire( context.request.ident )
+          scope = Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
+          return scope.acquire( context.request.ident )
         end
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
@@ -389,7 +390,8 @@ module Hoodoo
         # query methods like +where+ or fetching from the database with +all+.
         #
         def list_in( context )
-          return secure( context ).list( context.request.list )
+          scope = Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
+          return scope.list( context.request.list )
         end
 
         # Given some scope - typically that obtained from a prior call to
@@ -485,7 +487,10 @@ module Hoodoo
         #         which assist with filling in non-nil values for this Hash.
         #
         def search_with( hash )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_search_with', process_to_map( hash ) )
+          class_variable_set(
+            '@@nz_co_loyalty_hoodoo_search_with',
+            Hoodoo::ActiveRecord::Support.process_to_map( hash )
+          )
         end
 
         # As #search_with, but used in +where.not+ queries.
@@ -493,7 +498,10 @@ module Hoodoo
         # +map+:: As #search_with.
         #
         def filter_with( hash )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_filter_with', process_to_map( hash ) )
+          class_variable_set(
+            '@@nz_co_loyalty_hoodoo_filter_with',
+            Hoodoo::ActiveRecord::Support.process_to_map( hash )
+          )
         end
 
         # Deprecated interface replaced by #acquire. Instead of:
@@ -552,29 +560,6 @@ module Hoodoo
         def list_filter_map( map )
           $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to "#filter_with"' )
           filter_with( map )
-        end
-
-        # ====================================================================
-        private
-        # ====================================================================
-
-        # Takes a Hash of possibly-non-String keys and with +nil+ values or
-        # Proc instances appropriate for #search_with / #filter_with. Returns
-        # a similar Hash with all-String keys and a Proc for every value.
-        #
-        # +hash+:: Hash Symbol or String keys and Proc instance or +nil+
-        #          values.
-        #
-        def process_to_map( hash )
-          map = Hoodoo::Utilities.stringify( hash )
-
-          map.each do | attr, proc_or_nil |
-            if proc_or_nil.nil?
-              map[ attr ] = Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( attr )
-            end
-          end
-
-          return map
         end
       end
     end
