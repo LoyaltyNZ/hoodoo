@@ -15,6 +15,14 @@ module Hoodoo
   #
   module Utilities
 
+    # Validation regular expression for DateTime subset selection.
+    #
+    DATETIME_ISO8601_SUBSET_REGEXP = /(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(\.\d+)?(Z|[+-](\d{2})\:(\d{2}))/
+
+    # Validation regular expression for Date subset selection.
+    #
+    DATE_ISO8601_SUBSET_REGEXP = /(\d{4})-(\d{2})-(\d{2})/
+
     # Given a hash, returns the same hash with keys converted to symbols.
     # Works with nested hashes.
     #
@@ -281,6 +289,87 @@ module Hoodoo
       socket.close
 
       return port
+    end
+
+    # Is the given String a valid ISO 8601 subset date and time as accepted by
+    # (for example) Hoodoo API calls?
+    #
+    # +str+:: Value to check
+    #
+    # Returns +true+ if a valid ISO 8601 subset date and time, else +false+.
+    #
+    def self.valid_iso8601_subset_datetime?( str )
+      begin
+        valid = ( DATETIME_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
+                str.size > 10                                       &&
+                ::DateTime.parse( str ).is_a?( ::DateTime )
+
+      rescue ArgumentError
+        valid = false
+
+      end
+
+      return valid
+    end
+
+    # Is the given String a valid ISO 8601 subset date (no time) as accepted
+    # by (for example) Hoodoo API calls?
+    #
+    # +str+:: Value to check
+    #
+    # Returns +true+ if a valid ISO 8601 subset date, else +false+.
+    #
+    def self.valid_iso8601_subset_date?( str )
+      begin
+        valid = ( DATE_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
+                str.size == 10                                  &&
+                ::Date.parse( str ).is_a?( ::Date )
+
+      rescue ArgumentError
+        valid = false
+
+      end
+
+      return valid
+    end
+
+    # Returns an ISO 8601 String equivalent of the given Time or DateTime
+    # instance, with nanosecond precision (subject to Ruby port / OS support).
+    # This is nothing more than a standardised central interface on calling
+    # Ruby's <tt>Time/DateTime#iso8601( 9 )</tt>, to avoid the risk of lots of
+    # variable length precision times floating around by authors picking their
+    # own arbitrary precision parameters.
+    #
+    # +date_time+:: Ruby Time or DateTime instance to convert to an ISO 8601
+    #               String with nanosecond precision.
+    #
+    def self.nanosecond_iso8601( time_or_date_time )
+      time_or_date_time.iso8601( 9 )
+    end
+
+    # Turn a given value of various types into a DateTime instance or +nil+.
+    # If the input value is not +nil+, a DateTime instance, a Time instance
+    # or something that <tt>DateTime.parse</tt> can handle, the method will
+    # throw a RuntimeError exception.
+    #
+    # +input+:: A Time or DateTime instance, or a String that can be
+    #           converted to a DateTime instance; in these cases, an
+    #           equivalent DateTime is returned. If +nil+, returns +nil+.
+    #
+    def self.rationalise_datetime( input )
+      begin
+        if input.nil? || input.is_a( DateTime )
+          input
+        elsif input.is_a( Time )
+          input.to_datetime
+        else
+          DateTime.parse( input )
+        end
+
+      rescue
+        raise "Hoodoo::Utilities\#rationalise_datetime: Invalid parameter '#{ input }'"
+
+      end
     end
   end
 end

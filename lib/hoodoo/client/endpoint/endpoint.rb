@@ -55,6 +55,13 @@ module Hoodoo
       # +locale+::         Locale string for request/response, e.g. "en-gb".
       #                    Optional. If omitted, defaults to "en-nz".
       #
+      # +dated_at+::       Time instance, DateTime instance or String which
+      #                    Ruby can parse into a DateTime instance used for
+      #                    show/list calls to resource endpoints that support
+      #                    historical representation, via an X-Dated-At HTTP
+      #                    header or equivalent. If omitted, defaults to +nil+
+      #                    (no historical representation requested).
+      #
       # +interaction+::    A Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
       #                    hand. This is a middleware concept and most of the
@@ -130,6 +137,14 @@ module Hoodoo
       #
       attr_accessor :locale
 
+      # A DateTime instance equivalent to the ISO 8601 representation given
+      # in the X-Dated-At HTTP header or equivalent, used for calls to show
+      # or list resources that support historical representation. If +nil+,
+      # the instantaneous internal endpoint target processing time of
+      # 'now' is implied.
+      #
+      attr_accessor :dated_at
+
       # Create an endpoint instance that will be used to make requests to
       # a given resource.
       #
@@ -158,9 +173,12 @@ module Hoodoo
       #
       # +locale+::           As in the options for #endpoint_for.
       #
+      # +dated_at+::         As in the options for #endpoint_for.
+      #
       # The out-of-the box initialiser sets up the data for the #resource,
-      # #version, #discovery_result, #interaction, #session_id and #locale
-      # accessors using this data, so subclass authors don't need to.
+      # #version, #discovery_result, #interaction, #session_id, #locale and
+      # #dated_at accessors using this data, so subclass authors don't need
+      # to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
@@ -202,6 +220,7 @@ module Hoodoo
       def initialize( resource, version = 1, options )
         @resource         = resource.to_sym
         @version          = version.to_i
+        @dated_at         = Hoodoo::Utilities.rationalise_datetime( options[ :dated_at ] )
         @discovery_result = options[ :discovery_result ]
         @session_id       = options[ :session_id       ]
         @locale           = options[ :locale           ]
