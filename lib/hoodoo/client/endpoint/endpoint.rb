@@ -185,7 +185,7 @@ module Hoodoo
       #                     sort:      'created_at', # ...or an Array of sort fields
       #                     direction: 'asc',        # ...or a matching Array of directions
       #                     search:    {
-      #                       member_id: "...some UUDI..."
+      #                       member_id: "...some UUID..."
       #                     },
       #                     _embed:    [
       #                       'vouchers',

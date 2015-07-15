@@ -74,8 +74,8 @@ module Hoodoo; module Services
     # Create a new instance, ready to take on a response. The service
     # middleware is responsible for doing this.
     #
-    # +interaction_id+: The UUID of the interaction taking place for which a
-    #                   response is required.
+    # +interaction_id+:: The UUID of the interaction taking place for which a
+    #                    response is required.
     #
     def initialize( interaction_id )
 

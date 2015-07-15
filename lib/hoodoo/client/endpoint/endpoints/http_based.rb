@@ -117,7 +117,7 @@ module Hoodoo
           # Preprocess a high level request description, returning HTTP
           # orientated compiled data as a DataForRequest instance.
           #
-          # +description_of_request+: DescriptionOfRequest instance.
+          # +description_of_request+:: DescriptionOfRequest instance.
           #
           def get_data_for_request( description_of_request )
             body_hash  = Hoodoo::Utilities.stringify( description_of_request.body_hash  )
@@ -209,7 +209,7 @@ module Hoodoo
           # Hoodoo::Client::AugmentedArray or Hoodoo::Client::AugmentedHash
           # with either processed body data inside, or error data associated.
           #
-          # +description_of_response+: DescriptionOfResponse instance.
+          # +description_of_response+:: DescriptionOfResponse instance.
           #
           def get_data_for_response( description_of_response )
             code = description_of_response.http_status_code

@@ -27,14 +27,14 @@ module Hoodoo
       # Check if data is a valid Object and return a Hoodoo::Errors instance
       # with zero (valid) or more (has validation problems) errors inside.
       #
-      # +data+: Data to check (and check nested properties therein). Expected
-      #         to be nil (unless field is required) or a Hash.
+      # +data+:: Data to check (and check nested properties therein). Expected
+      #          to be nil (unless field is required) or a Hash.
       #
-      # +path+: For internal callers only in theory. The nesting human-readable
-      #         path to this "level", as an array. Omitted at the top level.
-      #         In :errors => { :foo => { ... } }, validation of ":foo" would
-      #         be at path "[ :errors ]". Validation of the contents of the
-      #         object at ":foo" would be under "[ :errors, :foo ]".
+      # +path+:: For internal callers only in theory - the human-readable
+      #          nesting path to this "level", as an array. Omitted at the top
+      #          level. In :errors => { :foo => { ... } }, validation of ":foo"
+      #          would be at path "[ :errors ]". Validation of the contents of
+      #          the object at ":foo" would be under "[ :errors, :foo ]".
       #
       def validate( data, path = '' )
         errors = super( data, path )
@@ -60,12 +60,12 @@ module Hoodoo
       # applying defaults where defined for fields with no value supplied
       # in the inbound data.
       #
-      # +data+:   Inbound data to render.
+      # +data+::   Inbound data to render.
       #
-      # +target+: For internal callers only in theory. The target hash into
-      #           which rendering should occur. This may then be merged into
-      #           outer level hashes as part of nested items defined in the
-      #           schema.
+      # +target+:: For internal callers only in theory. The target hash into
+      #            which rendering should occur. This may then be merged into
+      #            outer level hashes as part of nested items defined in the
+      #            schema.
       #
       def render( data, target )
 

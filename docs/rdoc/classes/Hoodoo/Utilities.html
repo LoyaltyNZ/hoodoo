@@ -201,18 +201,17 @@ Hoodoo::Utilities.collated_hash_from( array )
 </li><li>
 <p>The Array values are unique; duplicates are removed via <code>uniq!</code>.</p>
 </li></ul>
-
-<p><code>array</code>: Array of two-element Arrays. The first element becomes
-a key</p>
-
-<pre><code>in the returned Hash. The last element is added to an Array
-of (unique) values associated with that key. An empty Array
-results in an empty Hash; +nil+ is not allowed.</code></pre>
-
-<p><code>dupes</code>: Optional. If omitted, duplicates are removed as
-described;</p>
-
-<pre><code>if present and +true+, duplicates are allowed.</code></pre>
+<dl class="rdoc-list note-list"><dt><code>array</code>
+<dd>
+<p>Array of two-element Arrays. The first element becomes a key in the
+returned Hash. The last element is added to an Array of (unique) values
+associated with that key. An empty Array results in an empty Hash;
+<code>nil</code> is not allowed.</p>
+</dd><dt><code>dupes</code>
+<dd>
+<p>Optional. If omitted, duplicates are removed as described; if present and
+<code>true</code>, duplicates are allowed.</p>
+</dd></dl>
 
 <p>Returns a new Hash as described. The input Array is not modified.</p>
             </div>
@@ -232,7 +231,7 @@ described;</p>
                 
               </p>
               <div id="method-c-collated_hash_from_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 254</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 244</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">collated_hash_from</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dupes</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">hash_of_arrays</span> = {}
 
@@ -262,8 +261,10 @@ described;</p>
               <p>Thorough but slow deep duplication of any object (if it isn&#39;t
 duplicable, e.g. FixNum, you just get the same thing back). Usually used
 with Hashes or Arrays.</p>
-
-<p><code>obj</code>: Object to duplicate.</p>
+<dl class="rdoc-list note-list"><dt><code>obj</code>
+<dd>
+<p>Object to duplicate.</p>
+</dd></dl>
 
 <p>Returns the duplicated object if duplicable, else returns the input
 parameter.</p>
@@ -284,7 +285,7 @@ parameter.</p>
                 
               </p>
               <div id="method-c-deep_dup_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 70</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">obj</span> )
   <span class="ruby-identifier">duplicate</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">obj</span>
 
@@ -378,13 +379,11 @@ will overwrite the value in the target hash.</p>
                 
               </p>
               <div id="method-c-deep_merge_into_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 124</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 115</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
 
-  <span class="ruby-comment"># Based on:</span>
-  <span class="ruby-comment">#</span>
   <span class="ruby-comment"># http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash</span>
-
+  <span class="ruby-comment">#</span>
   <span class="ruby-identifier">merger</span> = <span class="ruby-identifier">proc</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">v1</span>, <span class="ruby-identifier">v2</span> <span class="ruby-operator">|</span>
     <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">v1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">Hash</span> <span class="ruby-operator">===</span> <span class="ruby-identifier">v2</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">v2</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">merger</span> ) <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">v1</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">v2</span>
   }
@@ -406,14 +405,11 @@ will overwrite the value in the target hash.</p>
           
           
             <div class="description">
-              <p>Deep diff two hashes. Adapted shamelessly from:</p>
-
-<p><a
-href="http://stackoverflow.com/questions/1766741/comparing-ruby-hashes">stackoverflow.com/questions/1766741/comparing-ruby-hashes</a></p>
-<dl class="rdoc-list note-list"><dt><code>hash1</code>
+              <p>Deep diff two hashes.</p>
+<dl class="rdoc-list note-list"><dt>hash1
 <dd>
 <p>“Left hand” hash for comparison.</p>
-</dd><dt><code>hash2</code>
+</dd><dt>hash2
 <dd>
 <p>“Right hand” hash for comparison.</p>
 </dd></dl>
@@ -469,8 +465,11 @@ difference; the entire Hash sub-tree is picked out:</p>
                 
               </p>
               <div id="method-c-hash_diff_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 177</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/1766741/comparing-ruby-hashes</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">return</span> ( <span class="ruby-identifier">hash1</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">hash2</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>, <span class="ruby-identifier">key</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">==</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ]
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash1</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash2</span>[ <span class="ruby-identifier">key</span> ].<span class="ruby-identifier">kind_of?</span>( <span class="ruby-constant">Hash</span> )
@@ -529,7 +528,7 @@ Hoodoo::Utilities.hash_key_paths( hash )
                 
               </p>
               <div id="method-c-hash_key_paths_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 203</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 193</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
@@ -562,9 +561,6 @@ processes/threads running which might start using ports at any moment,
 there&#39;s a chance of the free port getting claimed in between you asking
 for it and it being returned. This utility method is usually therefore used
 for test environments only.</p>
-
-<p><a
-href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby">stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</a></p>
             </div>
           
           
@@ -582,8 +578,11 @@ href="http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-p
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 285</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-identifier">socket</span> = <span class="ruby-constant">Socket</span>.<span class="ruby-identifier">new</span>( <span class="ruby-value">:INET</span>, <span class="ruby-value">:STREAM</span>, <span class="ruby-number">0</span> )
   <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">bind</span>( <span class="ruby-constant">Addrinfo</span>.<span class="ruby-identifier">tcp</span>( <span class="ruby-string">&#39;127.0.0.1&#39;</span>, <span class="ruby-number">0</span> ) )
   <span class="ruby-identifier">port</span> = <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">local_address</span>.<span class="ruby-identifier">ip_port</span>
@@ -634,7 +633,7 @@ an Array of Symbols).</p>
                 
               </p>
               <div id="method-c-stringify_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 55</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">obj</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>         <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
@@ -656,23 +655,8 @@ an Array of Symbols).</p>
           
             <div class="description">
               <p>Given a hash, returns the same hash with keys converted to symbols. Works
-with nested hashes. Taken from:</p>
-
-<p><a
-href="http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash">stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</a></p>
-
-<p><strong>WARNING!</strong> In Ruby, Symbols are not garbage collected and
-will stay in RAM forever. <strong>DO</strong> <strong>NOT</strong>
-symbolize hashes containing data provided by an API caller (or any
-generalised external data) unless you&#39;ve already made sure that the
-things you are turning into Symbols are white listed. Otherwise, a
-malicious (or accidentally misbehaving) caller could cause your code to
-symbolize a Hash with lots of different strings, filling up memory. Related
-to:</p>
-
-<p><a
-href="https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269">www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269</a>/</p>
-<dl class="rdoc-list note-list"><dt><code>obj</code>
+with nested hashes.</p>
+<dl class="rdoc-list note-list"><dt>obj
 <dd>
 <p>Hash or Array of Hashes. Will recursively convert keys in Hashes to
 symbols. Hashes with values that are Arrays of Hashes will be dealt with
@@ -698,8 +682,11 @@ an Array of Strings).</p>
                 
               </p>
               <div id="method-c-symbolize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 40</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">obj</span>)
+
+  <span class="ruby-comment"># http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_sym</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>                <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>
@@ -743,9 +730,10 @@ Time.now (yields nil, nil).</p>
                 
               </p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 272</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 262</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
-  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

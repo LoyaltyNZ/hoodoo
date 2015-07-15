@@ -72,9 +72,9 @@ module Hoodoo
           # +host+:: Host name as a string for location of service endpoint,
           #          over HTTP (usually, local development is assumed).
           #
-          # +port+:  Port number of service endpoint.
+          # +port+:: Port number of service endpoint.
           #
-          # +path+:  Path on the above host and port of service endpoint.
+          # +path+:: Path on the above host and port of service endpoint.
           #
           def announce_remote( resource, version, options = {} )
 

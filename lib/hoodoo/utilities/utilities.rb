@@ -16,19 +16,7 @@ module Hoodoo
   module Utilities
 
     # Given a hash, returns the same hash with keys converted to symbols.
-    # Works with nested hashes. Taken from:
-    #
-    # http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
-    #
-    # *WARNING!* In Ruby, Symbols are not garbage collected and will stay in
-    # RAM forever. *DO* *NOT* symbolize hashes containing data provided by an
-    # API caller (or any generalised external data) unless you've already
-    # made sure that the things you are turning into Symbols are white
-    # listed. Otherwise, a malicious (or accidentally misbehaving) caller
-    # could cause your code to symbolize a Hash with lots of different strings,
-    # filling up memory. Related to:
-    #
-    # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
+    # Works with nested hashes.
     #
     # +obj+:: Hash or Array of Hashes. Will recursively convert keys in Hashes
     #         to symbols. Hashes with values that are Arrays of Hashes will be
@@ -38,6 +26,9 @@ module Hoodoo
     # Returns a copy of your input object with keys converted to symbols.
     #
     def self.symbolize(obj)
+
+      # http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash
+      #
       return obj.inject({}){|memo,(k,v)| memo[k.to_s.to_sym] =  self.symbolize(v); memo} if obj.is_a?(::Hash)
       return obj.inject([]){|memo,v    | memo                << self.symbolize(v); memo} if obj.is_a?(::Array)
       return obj
@@ -62,7 +53,7 @@ module Hoodoo
     # duplicable, e.g. FixNum, you just get the same thing back). Usually
     # used with Hashes or Arrays.
     #
-    # +obj+: Object to duplicate.
+    # +obj+:: Object to duplicate.
     #
     # Returns the duplicated object if duplicable, else returns the input
     # parameter.
@@ -123,10 +114,8 @@ module Hoodoo
     #
     def self.deep_merge_into( target_hash, inbound_hash )
 
-      # Based on:
-      #
       # http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash
-
+      #
       merger = proc { | key, v1, v2 |
         Hash === v1 && Hash === v2 ? v1.merge( v2, &merger ) : v2.nil? ? v1 : v2
       }
@@ -134,9 +123,7 @@ module Hoodoo
       return target_hash.merge( inbound_hash, &merger )
     end
 
-    # Deep diff two hashes. Adapted shamelessly from:
-    #
-    # http://stackoverflow.com/questions/1766741/comparing-ruby-hashes
+    # Deep diff two hashes.
     #
     # +hash1+:: "Left hand" hash for comparison.
     # +hash2+:: "Right hand" hash for comparison.
@@ -175,6 +162,9 @@ module Hoodoo
     #     # => { :foo => [ { :bar => { :baz => [ 1, 2, 3 ] } }, nil ] }
     #
     def self.hash_diff( hash1, hash2 )
+
+      # http://stackoverflow.com/questions/1766741/comparing-ruby-hashes
+      #
       return ( hash1.keys | hash2.keys ).inject( {} ) do | memo, key |
         unless hash1[ key ] == hash2[ key ]
           if hash1[ key ].kind_of?( Hash ) && hash2[ key ].kind_of?( Hash )
@@ -241,13 +231,13 @@ module Hoodoo
     # * The Hash values are always Arrays, even if they only have one value.
     # * The Array values are unique; duplicates are removed via +uniq!+.
     #
-    # +array+: Array of two-element Arrays. The first element becomes a key
-    #          in the returned Hash. The last element is added to an Array
-    #          of (unique) values associated with that key. An empty Array
-    #          results in an empty Hash; +nil+ is not allowed.
+    # +array+:: Array of two-element Arrays. The first element becomes a key
+    #           in the returned Hash. The last element is added to an Array
+    #           of (unique) values associated with that key. An empty Array
+    #           results in an empty Hash; +nil+ is not allowed.
     #
-    # +dupes+: Optional. If omitted, duplicates are removed as described;
-    #          if present and +true+, duplicates are allowed.
+    # +dupes+:: Optional. If omitted, duplicates are removed as described;
+    #           if present and +true+, duplicates are allowed.
     #
     # Returns a new Hash as described. The input Array is not modified.
     #
@@ -270,7 +260,8 @@ module Hoodoo
     #           "hello", Time.now (yields nil, nil).
     #
     def self.to_integer?( value )
-      value.to_s.to_i if value.to_s.to_i.to_s == value.to_s
+      value = value.to_s
+      value.to_i if value.to_i.to_s == value
     end
 
     # Return a spare TCP port on localhost. This is free at the instant of
@@ -280,9 +271,10 @@ module Hoodoo
     # for it and it being returned. This utility method is usually therefore
     # used for test environments only.
     #
-    # http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
-    #
     def self.spare_port
+
+      # http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby
+      #
       socket = Socket.new( :INET, :STREAM, 0 )
       socket.bind( Addrinfo.tcp( '127.0.0.1', 0 ) )
       port = socket.local_address.ip_port
