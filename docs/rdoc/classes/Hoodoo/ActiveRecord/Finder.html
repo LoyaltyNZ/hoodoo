@@ -27,6 +27,8 @@
             
             <li><a href="../../../files/lib/hoodoo/active/active_record/finder_rb.html">lib/hoodoo/active/active_record/finder.rb</a></li>
             
+            <li><a href="../../../files/lib/hoodoo/active/active_record/search_helper_rb.html">lib/hoodoo/active/active_record/search_helper.rb</a></li>
+            
         </ul>
     </div>
     <div id="bodyContent">
@@ -67,6 +69,11 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
         <li>
           <span class="type">MODULE</span>
           <a href="Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Finder/SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
         </li>
       
     </ul>
@@ -159,7 +166,7 @@ this module.</p>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 40</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
     <span class="ruby-identifier">model</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:include</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )
@@ -211,7 +218,7 @@ this module.</p>
                 
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 57</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>

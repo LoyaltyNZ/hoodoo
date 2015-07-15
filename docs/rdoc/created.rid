@@ -1,11 +1,12 @@
-Wed, 08 Jul 2015 15:11:43 +1200
+Mon, 13 Jul 2015 10:29:36 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
-lib/hoodoo/active.rb	Tue, 24 Feb 2015 13:48:01 +1300
+lib/hoodoo/active.rb	Thu, 09 Jul 2015 13:44:03 +1200
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/active/active_record/base.rb	Tue, 24 Feb 2015 13:48:01 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Tue, 02 Jun 2015 14:08:49 +1200
-lib/hoodoo/active/active_record/finder.rb	Fri, 03 Jul 2015 15:25:28 +1200
+lib/hoodoo/active/active_record/finder.rb	Mon, 13 Jul 2015 10:29:02 +1200
+lib/hoodoo/active/active_record/search_helper.rb	Fri, 10 Jul 2015 11:06:56 +1200
 lib/hoodoo/active/active_record/secure.rb	Tue, 05 May 2015 09:33:57 +1200
 lib/hoodoo/active/active_record/uuid.rb	Tue, 24 Feb 2015 13:48:01 +1300
 lib/hoodoo/client.rb	Mon, 16 Mar 2015 09:45:31 +1300
@@ -54,7 +55,7 @@ lib/hoodoo/data/types/basket.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/data/types/basket_item.rb	Wed, 24 Jun 2015 13:18:43 +1200
 lib/hoodoo/data/types/basket_product.rb	Wed, 24 Jun 2015 13:18:43 +1200
 lib/hoodoo/data/types/calculator_common.rb	Fri, 03 Jul 2015 15:25:28 +1200
-lib/hoodoo/data/types/calculator_configuration.rb	Tue, 27 Jan 2015 13:33:38 +1300
+lib/hoodoo/data/types/calculator_configuration.rb	Wed, 08 Jul 2015 16:19:31 +1200
 lib/hoodoo/data/types/constraints.rb	Wed, 28 Jan 2015 17:24:50 +1300
 lib/hoodoo/data/types/currency.rb	Mon, 29 Jun 2015 17:15:47 +1200
 lib/hoodoo/data/types/currency_amount.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -92,9 +93,9 @@ lib/hoodoo/presenters/types/date.rb	Wed, 08 Jul 2015 11:52:25 +1200
 lib/hoodoo/presenters/types/date_time.rb	Wed, 08 Jul 2015 11:52:39 +1200
 lib/hoodoo/presenters/types/decimal.rb	Wed, 08 Jul 2015 11:56:34 +1200
 lib/hoodoo/presenters/types/enum.rb	Wed, 08 Jul 2015 11:56:27 +1200
-lib/hoodoo/presenters/types/field.rb	Wed, 08 Jul 2015 13:57:51 +1200
+lib/hoodoo/presenters/types/field.rb	Fri, 10 Jul 2015 10:59:13 +1200
 lib/hoodoo/presenters/types/float.rb	Wed, 08 Jul 2015 11:26:33 +1200
-lib/hoodoo/presenters/types/hash.rb	Wed, 08 Jul 2015 14:51:26 +1200
+lib/hoodoo/presenters/types/hash.rb	Fri, 10 Jul 2015 11:05:48 +1200
 lib/hoodoo/presenters/types/integer.rb	Wed, 08 Jul 2015 11:11:20 +1200
 lib/hoodoo/presenters/types/object.rb	Wed, 08 Jul 2015 13:22:57 +1200
 lib/hoodoo/presenters/types/string.rb	Wed, 08 Jul 2015 11:54:36 +1200
@@ -120,14 +121,14 @@ lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Tue, 27 Jan 
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Wed, 17 Jun 2015 11:25:50 +1200
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Wed, 17 Jun 2015 11:33:10 +1200
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/services/middleware/interaction.rb	Thu, 02 Jul 2015 10:48:51 +1200
-lib/hoodoo/services/middleware/middleware.rb	Fri, 03 Jul 2015 15:25:28 +1200
+lib/hoodoo/services/middleware/interaction.rb	Fri, 10 Jul 2015 09:29:50 +1200
+lib/hoodoo/services/middleware/middleware.rb	Thu, 09 Jul 2015 17:28:11 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 29 Jan 2015 10:39:10 +1300
-lib/hoodoo/services/services/context.rb	Mon, 16 Mar 2015 09:45:31 +1300
+lib/hoodoo/services/services/context.rb	Fri, 10 Jul 2015 09:29:50 +1200
 lib/hoodoo/services/services/implementation.rb	Tue, 17 Feb 2015 16:07:49 +1300
 lib/hoodoo/services/services/interface.rb	Wed, 08 Jul 2015 15:11:40 +1200
 lib/hoodoo/services/services/permissions.rb	Wed, 18 Feb 2015 09:14:41 +1300
-lib/hoodoo/services/services/request.rb	Fri, 03 Jul 2015 15:25:28 +1200
+lib/hoodoo/services/services/request.rb	Fri, 10 Jul 2015 09:29:50 +1200
 lib/hoodoo/services/services/response.rb	Tue, 30 Jun 2015 17:08:08 +1200
 lib/hoodoo/services/services/service.rb	Fri, 13 Feb 2015 13:31:17 +1300
 lib/hoodoo/services/services/session.rb	Mon, 06 Jul 2015 15:54:19 +1200

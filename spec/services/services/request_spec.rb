@@ -43,6 +43,9 @@ describe Hoodoo::Services::Request do
       expect( @r.list.filter_data    ).to eq( {}                         )
       expect( @r.embeds              ).to eq( []                         )
       expect( @r.references          ).to eq( []                         )
+      expect( @r.headers             ).to eq( {}                         )
+
+      expect( @r.headers.frozen? ).to eq( true )
     end
 
     it 'supports deprecated accessors' do

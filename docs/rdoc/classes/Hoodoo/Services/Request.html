@@ -146,6 +146,22 @@ requested.</p></td>
         
           <tr valign='top'>
             <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>headers</td>
+            <td class='attr-desc'><p>Hash of HTTP headers <em>in</em> <em>Rack</em> <em>format</em> - e.g.
+<code>HTTP_X_INTERACTION_ID</code> for the “X-Interaction-ID” header, for
+read-only use. All keys are in upper case, are Strings, have “HTTP_” at the
+start and use underscores where the original request might&#39;ve used an
+underscore or hyphen. The usual curious <a href="../../Rack.html">Rack</a>
+exceptions of <code>CONTENT_TYPE</code> and <code>CONTENT_LENGTH</code> do
+apply, though. This is a superset of header values including those sent by
+the client in its request and anything <a href="../../Rack.html">Rack</a>
+itself might have added.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
               [R]
             </td>
             <td class='attr-name'>ident</td>
@@ -260,7 +276,7 @@ so for example this URI:</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 163</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 173</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>              = <span class="ruby-string">&#39;en-nz&#39;</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_components</span> = []
@@ -268,6 +284,7 @@ so for example this URI:</p>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list</span>                = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span><span class="ruby-operator">::</span><span class="ruby-constant">ListParameters</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">embeds</span>              = []
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">references</span>          = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">headers</span>             = {}.<span class="ruby-identifier">freeze</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

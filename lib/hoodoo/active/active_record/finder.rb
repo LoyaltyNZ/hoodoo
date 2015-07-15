@@ -9,6 +9,8 @@
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
 
+require 'hoodoo/active/active_record/search_helper'
+
 module Hoodoo
   module ActiveRecord
 
@@ -68,6 +70,13 @@ module Hoodoo
         # just like you'd use +find_by_id+ and only bother with it if you
         # support finding a resource instance by +id+ _and_ one or more
         # other model fields. Otherwise, just use +find_by_id+.
+        #
+        # This can only be used <i>if your searched fields are strings</i> in
+        # the database. This includes, for example, the +id+ column; Hoodoo
+        # usually expects to be a string field holding a 32-character UUID. If
+        # any of the fields contain non-string types, attempts to use the
+        # #acquire mechanism (or a related one) may result in database errors
+        # due to type mismatches, depending upon the database engine in use.
         #
         # For secured data access, use #acquire_in instead, or only call
         # #acquire with a secure scope from e.g. a call to
@@ -146,6 +155,14 @@ module Hoodoo
             # approach rather than higher level AREL, causing a string-like SQL
             # query on all adapters which SQL handles just fine for varying
             # field data types.
+            #
+            # The caveat is that should the database object to mismatched type
+            # comparisions it will actually raise an error - we see this on
+            # for example PostgreSQL where a column is an integer but we try
+            # to match it against a string that cannot be cleanly converted to
+            # one (e.g. trying to find an integer column 'id' based on a text
+            # UUID value containing alphabetic characters). That is still
+            # preferable to looking up the wrong record!
 
             checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
             return checker.first unless checker.count == 0
@@ -334,14 +351,8 @@ module Hoodoo
           # increasing the chance of a name collision.
           #
           dry_proc = Proc.new do | data, attr, proc |
-            value = data[ attr.to_s ]
-            next if value.nil?
-
-            if ( proc.nil? )
-              [ { attr => value } ]
-            else
-              proc.call( attr, value )
-            end
+            value = data[ attr ]
+            proc.call( attr, value ) unless value.nil?
           end
 
           search_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_search_with ) ?
@@ -411,15 +422,21 @@ module Hoodoo
         # Specify a search mapping for use by #list_finder to automatically
         # restrict list results.
         #
-        # Simple example which just looks for verbatim field matches on
-        # fields +name+ and +colour+:
+        # In the simplest case, search query string entries and model field
+        # (attribute) names are assumed to be the same; if you wanted to
+        # search for values of model attributes +name+ and +colour+ using
+        # query string entries of +name+ and +colour+ you would just do this:
         #
         #     class SomeModel < ActiveRecord::Base
         #       search_with(
-        #         :name => nil,
+        #         :name   => nil,
         #         :colour => nil
         #       )
         #     end
+        #
+        # The +nil+ values mean a default, case sensitive match is performed
+        # with the query string keys and values mapping directly to model
+        # query attribute names and values.
         #
         # More complex example where +colour+ is matched verbatim, but +name+
         # is matched case-insensitive, assuming PostgreSQL's ILIKE is there:
@@ -457,29 +474,40 @@ module Hoodoo
         # Note the returned *array* (see input parameter details) inside which
         # the usual hash syntax for AREL +.where+-style queries is present.
         #
-        # +map+:: A Hash. Keys are attribute names. Values of +nil+ are used
+        # To help out with common cases other than just specifying +nil+, the
+        # Hoodoo::ActiveRecord::Finder::SearchHelper class provides a method
+        # chaining approach which builds up the Hash used by #search_with and
+        # filter_with. See that class's API documentation for details.
+        #
+        # *args:: A Hash. Keys are both search field names and model attribute
+        #         names, unless overridden by values; values of +nil+ are used
         #         for simple cases - "where( { attr_name => value } )" will be
         #         the resulting query modification. Alternatively, pass a
         #         callable Proc/Lambda. This is pased the attribute under
-        #         consideration and the context-caller-supplied value to search
-        #         on for that attribute. Return *AN* *ARRAY* of parameters to
-        #         pass to +where+. For parameters to +where+, see:
+        #         consideration (and so you can ignore that and query against
+        #         one or more different-named model attributes) and the
+        #         context-caller-supplied value to search for. Return *AN*
+        #         *ARRAY* of parameters to pass to +where+. For parameters to
+        #         +where+, see:
         #
         #         http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-where
         #
         #         The Hash keys giving the search attribute names can be
         #         specified as Strings or Symbols.
         #
-        def search_with( map )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_search_with', map )
+        #         See Hoodoo::ActiveRecord::Finder::SearchHelper for methods
+        #         which assist with filling in non-nil values for this Hash.
+        #
+        def search_with( hash )
+          class_variable_set( '@@nz_co_loyalty_hoodoo_search_with', process_to_map( hash ) )
         end
 
         # As #search_with, but used in +where.not+ queries.
         #
         # +map+:: As #search_with.
         #
-        def filter_with( map )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_filter_with', map )
+        def filter_with( hash )
+          class_variable_set( '@@nz_co_loyalty_hoodoo_filter_with', process_to_map( hash ) )
         end
 
         # Deprecated interface replaced by #acquire. Instead of:
@@ -538,6 +566,29 @@ module Hoodoo
         def list_filter_map( map )
           $stderr.puts( 'Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to "#filter_with"' )
           filter_with( map )
+        end
+
+        # ====================================================================
+        private
+        # ====================================================================
+
+        # Takes a Hash of possibly-non-String keys and with +nil+ values or
+        # Proc instances appropriate for #search_with / #filter_with. Returns
+        # a similar Hash with all-String keys and a Proc for every value.
+        #
+        # +hash+:: Hash Symbol or String keys and Proc instance or +nil+
+        #          values.
+        #
+        def process_to_map( hash )
+          map = Hoodoo::Utilities.stringify( hash )
+
+          map.each do | attr, proc_or_nil |
+            if proc_or_nil.nil?
+              map[ attr ] = Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( attr )
+            end
+          end
+
+          return map
         end
       end
     end
