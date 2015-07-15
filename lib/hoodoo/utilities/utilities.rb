@@ -358,9 +358,9 @@ module Hoodoo
     #
     def self.rationalise_datetime( input )
       begin
-        if input.nil? || input.is_a( DateTime )
+        if input.nil? || input.is_a?( DateTime )
           input
-        elsif input.is_a( Time )
+        elsif input.is_a?( Time )
           input.to_datetime
         else
           DateTime.parse( input )
