@@ -12,6 +12,10 @@ SimpleCov.start do
   add_filter '_spec'
 end
 
+# a bit of debugging
+
+require 'byebug';
+
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
 # far from 'the real thing' for my liking. Instead, we use SQLite in memory

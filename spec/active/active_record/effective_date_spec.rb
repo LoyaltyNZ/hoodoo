@@ -112,6 +112,10 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     end
 
     context '.at' do
+      it 'returns counts correctly' do
+        expect( RSpecModelEffectiveDateTest.at( @now - 10.hours ).count ).to be 0
+        expect( RSpecModelEffectiveDateTest.at( @now ).count ).to_not be 0
+      end
 
       def test_expectation( time, expected_data )
         expect( RSpecModelEffectiveDateTest.at( time ).pluck( :data ) ).to match_array( expected_data )
@@ -140,6 +144,10 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
     end
 
     context '.historical_and_current' do
+
+      it 'returns counts correctly' do
+        expect( RSpecModelEffectiveDateTest.historical_and_current.count ).to_not be 0
+      end
 
       it 'lists all historical and current records' do
         expect( RSpecModelEffectiveDateTest.historical_and_current.pluck( :data ) ).to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )

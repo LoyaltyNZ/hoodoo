@@ -62,7 +62,7 @@ module Hoodoo
           # effective at the specified date time.
           nested_query = %{
             (
-              SELECT * FROM (
+              SELECT #{ formatted_model_attributes } FROM (
                 SELECT #{ formatted_model_attributes }, updated_at as effective_start, null AS effective_end
                 FROM #{ self.table_name }
 
@@ -76,7 +76,8 @@ module Hoodoo
           }
 
           # Form a query which uses ActiveRecord to list effective records.
-          select( formatted_model_attributes ).from( nested_query )
+
+          from( nested_query )
 
         end
 
@@ -104,7 +105,7 @@ module Hoodoo
           }
 
           # Form a query which uses ActiveRecord to list effective records.
-          select( formatted_model_attributes ).from( nested_query )
+          from( nested_query )
 
         end
 

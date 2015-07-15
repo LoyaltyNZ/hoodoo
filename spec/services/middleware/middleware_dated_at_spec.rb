@@ -14,11 +14,9 @@ class RSpecDatedAtTestImplementation < Hoodoo::Services::Implementation
     }
   end
   def show( context )
-    require 'byebug'; byebug
     context.response.body = backdate_in_hash( context )
   end
   def list( context )
-    require 'byebug'; byebug
     context.response.body = backdate_in_hash( context )
   end
 end
