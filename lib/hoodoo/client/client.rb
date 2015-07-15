@@ -314,7 +314,6 @@ module Hoodoo
       #                    header or equivalent. If omitted, defaults to +nil+
       #                    (no historical representation requested).
       #
-      #
       def resource( resource, version = 1, options = {} )
 
         locale   = options[ :locale   ] || @locale

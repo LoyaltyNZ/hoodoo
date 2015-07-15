@@ -62,7 +62,7 @@ module Hoodoo
       #                    header or equivalent. If omitted, defaults to +nil+
       #                    (no historical representation requested).
       #
-      # +interaction+::    A Hoodoo::Services::Middleware::Interaction
+      # +interaction+::    Optional Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
       #                    hand. This is a middleware concept and most of the
       #                    time, only the middleware would use this; the
