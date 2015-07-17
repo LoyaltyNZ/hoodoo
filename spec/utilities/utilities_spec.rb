@@ -498,4 +498,40 @@ describe Hoodoo::Utilities do
       expect( Hoodoo::Utilities.nanosecond_iso8601( now ) ).to eq( iso )
     end
   end
+
+  describe '#rationalise_datetime' do
+    it 'accepts and returns nil' do
+      expect( Hoodoo::Utilities.rationalise_datetime( nil ) ).to eq( nil )
+    end
+
+    it 'accepts and returns a DateTime' do
+      now = DateTime.now
+      expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now )
+    end
+
+    it 'accepts a Time and returns a DateTime' do
+      now = Time.now
+      expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now.to_datetime )
+    end
+
+    # If this fails your system might report time to beyond-nanosecond
+    # precision, so the str-to-DateTime result mismatches the original
+    # DateTime in the fractional seconds.
+    #
+    it 'accepts a parseable String and returns a DateTime' do
+      now = DateTime.now
+      str = Hoodoo::Utilities.nanosecond_iso8601( now )
+      expect( Hoodoo::Utilities.rationalise_datetime( str ) ).to eq( now )
+    end
+
+    it 'rejects invalid input with an exception' do
+      expect {
+        Hoodoo::Utilities.rationalise_datetime( "hello" )
+      }.to raise_exception
+
+      expect {
+        Hoodoo::Utilities.rationalise_datetime( Array.new )
+      }.to raise_exception
+    end
+  end
 end

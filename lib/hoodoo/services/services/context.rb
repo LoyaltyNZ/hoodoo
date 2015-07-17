@@ -57,7 +57,6 @@ module Hoodoo; module Services
         @request            = request
         @response           = response
         @owning_interaction = owning_interaction
-        @endpoints          = {}
       end
 
       # Request (and lazy-initialize) a new resource endpoint instance for
@@ -99,27 +98,36 @@ module Hoodoo; module Services
       # +version+::  Optional required implemented version for the endpoint,
       #              as an Integer - defaults to 1.
       #
-      def resource( resource, version = 1 )
-        @endpoints[ resource ] ||= {}
-        @endpoints[ resource ][ version ] ||= endpoint_for( resource, version )
-      end
-
-    private
-
-      # Back-end for #resource which asks the owning middleware to give an
-      # inter-resource (local or remote) endpoint.
+      # +options+::  Optional options Hash (see below).
       #
-      # +resource+:: Resource name for the endpoint, String or Symbol.
-      # +version+::  Required implemented version for the endpoint, Integer.
+      # The options Hash key/values are as follows:
       #
-      def endpoint_for( resource, version )
+      # +locale+::   Locale string for request/response, e.g. "en-gb".
+      #              Optional. If omitted, defaults to the locale set in this
+      #              Client instance's constructor.
+      #
+      # +dated_at+:: Time instance, DateTime instance or String which Ruby can
+      #              parse into a DateTime instance used for show/list calls
+      #              to resource endpoints that support historical
+      #              representation, via an <tt>X-Dated-At</tt> HTTP header or
+      #              equivalent. If omitted, defaults to +nil+ (no historical
+      #              representation requested).
+      #
+      def resource( resource, version = 1, options = {} )
         middleware = @owning_interaction.owning_middleware_instance
-
-        return middleware.inter_resource_endpoint_for(
+        endpoint   = middleware.inter_resource_endpoint_for(
           resource,
           version,
           @owning_interaction
         )
+
+        locale   = options[ :locale   ]
+        dated_at = options[ :dated_at ]
+
+        endpoint.locale   = locale unless locale.nil?
+        endpoint.dated_at = Hoodoo::Utilities.rationalise_datetime( dated_at ) unless dated_at.nil?
+
+        return endpoint
       end
 
   end

@@ -58,9 +58,10 @@ module Hoodoo
       # +dated_at+::       Time instance, DateTime instance or String which
       #                    Ruby can parse into a DateTime instance used for
       #                    show/list calls to resource endpoints that support
-      #                    historical representation, via an X-Dated-At HTTP
-      #                    header or equivalent. If omitted, defaults to +nil+
-      #                    (no historical representation requested).
+      #                    historical representation, via an
+      #                    <tt>X-Dated-At</tt> HTTP header or equivalent. If
+      #                    omitted, defaults to +nil+ (no historical
+      #                    representation requested).
       #
       # +interaction+::    Optional Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
@@ -119,11 +120,6 @@ module Hoodoo
       # constructor. See the constructor and #endpoint_for for more.
       #
       attr_reader :interaction
-
-      # The locale passed to the constructor or some value provided later; a
-      # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
-      #
-      attr_accessor :locale
 
       # The session UUID passed to the constructor or some value provided
       # later; used for the calls to the target resource via the X-Session-ID
@@ -283,6 +279,25 @@ module Hoodoo
           )
 
           return data
+        end
+
+        # Copy the current value of writable options in this Endpoint
+        # instance, to another Endpoint instance. This is useful when one
+        # is wrapping another, but to the external user of the wrapping
+        # endpoint, they should just be able to set options in that item
+        # and have it act as if they'd set them on the thing which it is
+        # (not that the caller would know) wrapping.
+        #
+        # This includes copying over a +session_id+ field value, though
+        # often it'll subsequently be rewritten by the wrapping endpoint as
+        # it's wrapping something to provide special session management.
+        #
+        # WARNING: Any +nil+ internal state values will _not_ be copied.
+        #
+        def copy_updated_options_to( target_endpoint )
+          target_endpoint.session_id = @session_id unless @session_id.nil?
+          target_endpoint.locale     = @locale     unless @locale.nil?
+          target_endpoint.dated_at   = @dated_at   unless @dated_at.nil?
         end
 
       public

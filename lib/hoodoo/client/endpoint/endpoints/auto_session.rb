@@ -109,9 +109,9 @@ module Hoodoo
 
         private
 
-          # Try to perform an action through the wrapped endpoint,
-          # acquiring a session first if need be or if necessary
-          # reacquiring a session and retrying the request.
+          # Try to perform an action through the wrapped endpoint, acquiring a
+          # session first if need be or if necessary reacquiring a session and
+          # retrying the request.
           #
           # +action+:: The name of the method to call in the wrapped endpoint
           #            - see Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
@@ -119,6 +119,8 @@ module Hoodoo
           # *args::    Any other arguments to pass to +action+.
           #
           def auto_retry( action, *args )
+
+            copy_updated_options_to( @wrapped_endpoint )
 
             # We use the session endpoint as a session ID cache, in essence,
             # storing the acquired ID there and passing it into the wrapped

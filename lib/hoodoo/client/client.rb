@@ -303,16 +303,16 @@ module Hoodoo
       #
       # The options Hash key/values are as follows:
       #
-      # +locale+::         Locale string for request/response, e.g. "en-gb".
-      #                    Optional. If omitted, defaults to the locale set
-      #                    in this Client instance's constructor.
+      # +locale+::   Locale string for request/response, e.g. "en-gb".
+      #              Optional. If omitted, defaults to the locale set in this
+      #              Client instance's constructor.
       #
-      # +dated_at+::       Time instance, DateTime instance or String which
-      #                    Ruby can parse into a DateTime instance used for
-      #                    show/list calls to resource endpoints that support
-      #                    historical representation, via an X-Dated-At HTTP
-      #                    header or equivalent. If omitted, defaults to +nil+
-      #                    (no historical representation requested).
+      # +dated_at+:: Time instance, DateTime instance or String which Ruby can
+      #              parse into a DateTime instance used for show/list calls
+      #              to resource endpoints that support historical
+      #              representation, via an <tt>X-Dated-At</tt> HTTP header or
+      #              equivalent. If omitted, defaults to +nil+ (no historical
+      #              representation requested).
       #
       def resource( resource, version = 1, options = {} )
 
