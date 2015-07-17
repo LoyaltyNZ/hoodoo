@@ -21,7 +21,9 @@ module Hoodoo
       class Base < ::ActiveRecord::Base
 
         include Hoodoo::ActiveRecord::UUID
+        include Hoodoo::ActiveRecord::Dated
         include Hoodoo::ActiveRecord::Secure
+        include Hoodoo::ActiveRecord::Translated
         include Hoodoo::ActiveRecord::Finder
         include Hoodoo::ActiveRecord::ErrorMapping
 
@@ -38,7 +40,9 @@ module Hoodoo
         def self.inherited( model )
 
           Hoodoo::ActiveRecord::UUID.instantiate( model )
+          Hoodoo::ActiveRecord::Dated.instantiate( model )
           Hoodoo::ActiveRecord::Secure.instantiate( model )
+          Hoodoo::ActiveRecord::Translated.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
 
           super
