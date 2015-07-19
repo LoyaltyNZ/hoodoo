@@ -56,6 +56,7 @@ module Hoodoo; module Services
           return @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
+            :endpoint           => self,
 
             :action             => :list,
 
@@ -69,6 +70,7 @@ module Hoodoo; module Services
           return @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
+            :endpoint           => self,
 
             :action             => :show,
 
@@ -83,6 +85,7 @@ module Hoodoo; module Services
           return @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
+            :endpoint           => self,
 
             :action             => :create,
 
@@ -97,6 +100,7 @@ module Hoodoo; module Services
           return @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
+            :endpoint           => self,
 
             :action             => :update,
 
@@ -112,6 +116,7 @@ module Hoodoo; module Services
           return @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
+            :endpoint           => self,
 
             :action             => :delete,
 

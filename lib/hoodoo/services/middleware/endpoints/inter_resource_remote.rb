@@ -116,6 +116,8 @@ module Hoodoo
           #
           def preprocess( action )
 
+            copy_updated_options_to( @wrapped_endpoint )
+
             # Interaction ID comes from Endpoint superclass.
             #
             session = self.interaction().context.session

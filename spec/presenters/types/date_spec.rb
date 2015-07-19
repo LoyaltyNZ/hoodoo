@@ -6,6 +6,11 @@ describe Hoodoo::Presenters::Date do
     @inst = Hoodoo::Presenters::Date.new('one',:required => false)
   end
 
+  # At the time of writing, the Date type code calls through
+  # to Utility for the back-end validation. In case that ever
+  # changes, though, many of these tests are replicated in
+  # utility_spec.rb.
+  #
   describe '#validate' do
     it 'should return [] when valid date' do
       expect(@inst.validate('2014-12-11').errors).to eq([])
@@ -20,13 +25,6 @@ describe Hoodoo::Presenters::Date do
       expect(@inst.validate(nil).errors).to eq([
         {'code'=>"generic.required_field_missing", 'message'=>"Field `one` is required", 'reference'=>"one"}
       ])
-    end
-
-    it 'should return correct error when data is not a date' do
-      errors = @inst.validate('adskncasc')
-
-      err = [  {'code'=>"generic.invalid_date", 'message'=>"Field `one` is an invalid ISO8601 date", 'reference'=>"one"}]
-      expect(errors.errors).to eq(err)
     end
 
     it 'should return correct error when date is invalid' do

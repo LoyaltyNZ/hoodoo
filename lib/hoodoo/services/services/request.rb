@@ -70,6 +70,22 @@ module Hoodoo; module Services
     #
     attr_accessor :locale
 
+    # Requested date-time for historical representation retrieval, should
+    # a resource representation support it; DateTime instance; +nil+ if
+    # no special historical time is requested.
+    #
+    attr_accessor :dated_at
+
+    # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
+    # for the "X-Interaction-ID" header, for read-only use. All keys are in
+    # upper case, are Strings, have "HTTP_" at the start and use underscores
+    # where the original request might've used an underscore or hyphen. The
+    # usual curious Rack exceptions of +CONTENT_TYPE+ and +CONTENT_LENGTH+ do
+    # apply, though. This is a superset of header values including those sent
+    # by the client in its request and anything Rack itself might have added.
+    #
+    attr_accessor :headers
+
     # Parsed payload hash, for create and update actions only; else +nil+.
     #
     attr_accessor :body
@@ -157,16 +173,6 @@ module Hoodoo; module Services
     # none requested.
     #
     attr_accessor :references
-
-    # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
-    # for the "X-Interaction-ID" header, for read-only use. All keys are in
-    # upper case, are Strings, have "HTTP_" at the start and use underscores
-    # where the original request might've used an underscore or hyphen. The
-    # usual curious Rack exceptions of +CONTENT_TYPE+ and +CONTENT_LENGTH+ do
-    # apply, though. This is a superset of header values including those sent
-    # by the client in its request and anything Rack itself might have added.
-    #
-    attr_accessor :headers
 
     # Set up defaults in this instance.
     #
