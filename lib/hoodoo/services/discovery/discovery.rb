@@ -138,12 +138,14 @@ module Hoodoo
         # Discovery instance users do not call this method directly.
         # Call #announce instead.
         #
-        # Subclasses must return a
-        # Hoodoo::Services::Discovery::ForHTTP or
-        # Hoodoo::Services::Discovery::ForAMQP instance in response to
-        # this call, giving the HTTP details required to contact the
-        # endpoint, or AMQP (on-queue) details required to contact the
-        # endpoint, respectively.
+        # Subclasses must return one of the Discovery "For" class instances,
+        # e.g. a Hoodoo::Services::Discovery::ForHTTP or
+        # Hoodoo::Services::Discovery::ForAMQP instance. This encapsulates
+        # the HTTP details required to contact the endpoint, or AMQP (queue)
+        # details required to contact the endpoint, respectively.
+        #
+        # Subclasses must return +nil+ if it has a problem announcing and
+        # cannot provide information for the given resource / version.
         #
         # +resource+:: Resource name as a String.
         # +version+::  Endpoint version as an Integer.
@@ -151,7 +153,7 @@ module Hoodoo
         #
         def announce_remote( resource, version, options = {} )
           # Implementation is optional and up to subclasses to do.
-          true
+          nil
         end
 
         # Discover the location of a resource endpoint. Subclasses _must_
@@ -161,11 +163,14 @@ module Hoodoo
         # Discovery instance users do not call this method directly.
         # Call #discover instead.
         #
-        # Subclasses must return either +nil+ if the endpoint is not
-        # found, or a Hoodoo::Services::Discovery::ForHTTP or
-        # Hoodoo::Services::Discovery::ForAMQP instance giving the HTTP
-        # details required to contact the endpoint, or AMQP (on-queue)
+        # Subclasses must return one of the Discovery "For" class instances,
+        # e.g. a Hoodoo::Services::Discovery::ForHTTP or
+        # Hoodoo::Services::Discovery::ForAMQP instance. This encapsulates
+        # the HTTP details required to contact the endpoint, or AMQP (queue)
         # details required to contact the endpoint, respectively.
+        #
+        # If the requested endpoint is not found, subclasses must return
+        # +nil+.
         #
         # +resource+:: Resource name as a String.
         # +version+::  Endpoint version as an Integer.
