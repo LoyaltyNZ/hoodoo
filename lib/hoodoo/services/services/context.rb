@@ -124,8 +124,8 @@ module Hoodoo; module Services
         locale   = options[ :locale   ]
         dated_at = options[ :dated_at ]
 
-        endpoint.locale   = locale unless locale.nil?
-        endpoint.dated_at = Hoodoo::Utilities.rationalise_datetime( dated_at ) unless dated_at.nil?
+        endpoint.locale   = locale   unless locale.nil?
+        endpoint.dated_at = dated_at unless dated_at.nil?
 
         return endpoint
       end

@@ -139,7 +139,24 @@ module Hoodoo
       # the instantaneous internal endpoint target processing time of
       # 'now' is implied.
       #
-      attr_accessor :dated_at
+      attr_reader :dated_at
+
+      # Writer for #dated_at which accepts a Time instance, DateTime instance
+      # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
+      # the given input parameter is run through this processing function.
+      #
+      # Invalid date/time strings can lead to an exception. If you want to
+      # avoid catching an exception, use
+      # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
+      # input type before calling here.
+      #
+      # +input+:: Time, DateTime or String - run through
+      #           Hoodoo::Utilities#rationalise_datetime to generate a
+      #           DateTime instance or raise an exception.
+      #
+      def dated_at=( input )
+        @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+      end
 
       # Create an endpoint instance that will be used to make requests to
       # a given resource.
@@ -216,11 +233,13 @@ module Hoodoo
       def initialize( resource, version = 1, options )
         @resource         = resource.to_sym
         @version          = version.to_i
-        @dated_at         = Hoodoo::Utilities.rationalise_datetime( options[ :dated_at ] )
+
         @discovery_result = options[ :discovery_result ]
-        @session_id       = options[ :session_id       ]
-        @locale           = options[ :locale           ]
         @interaction      = options[ :interaction      ]
+
+        self.session_id   = options[ :session_id       ]
+        self.locale       = options[ :locale           ]
+        self.dated_at     = options[ :dated_at         ]
 
         configure_with( @resource, @version, options )
       end
@@ -295,9 +314,9 @@ module Hoodoo
         # WARNING: Any +nil+ internal state values will _not_ be copied.
         #
         def copy_updated_options_to( target_endpoint )
-          target_endpoint.session_id = @session_id unless @session_id.nil?
-          target_endpoint.locale     = @locale     unless @locale.nil?
-          target_endpoint.dated_at   = @dated_at   unless @dated_at.nil?
+          target_endpoint.session_id = self.session_id unless self.session_id.nil?
+          target_endpoint.locale     = self.locale     unless self.locale.nil?
+          target_endpoint.dated_at   = self.dated_at   unless self.dated_at.nil?
         end
 
       public

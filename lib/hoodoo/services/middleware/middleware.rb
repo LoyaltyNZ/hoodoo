@@ -1798,7 +1798,7 @@ module Hoodoo; module Services
       str = interaction.rack_request.env[ 'HTTP_X_DATED_AT' ]
 
       begin
-        interaction.context.request.dated_at = Hoodoo::Utilities.rationalise_datetime( str )
+        interaction.context.request.dated_at = str
       rescue
         interaction.context.response.errors.add_error(
           'platform.malformed',

@@ -74,7 +74,24 @@ module Hoodoo; module Services
     # a resource representation support it; DateTime instance; +nil+ if
     # no special historical time is requested.
     #
-    attr_accessor :dated_at
+    attr_reader :dated_at
+
+    # Writer for #dated_at which accepts a Time instance, DateTime instance
+    # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
+    # the given input parameter is run through this processing function.
+    #
+    # Invalid date/time strings can lead to an exception. If you want to
+    # avoid catching an exception, use
+    # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
+    # input type before calling here.
+    #
+    # +input+:: Time, DateTime or String - run through
+    #           Hoodoo::Utilities#rationalise_datetime to generate a
+    #           DateTime instance or raise an exception.
+    #
+    def dated_at=( input )
+      @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+    end
 
     # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
     # for the "X-Interaction-ID" header, for read-only use. All keys are in
