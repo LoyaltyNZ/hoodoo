@@ -20,13 +20,14 @@ module Hoodoo
       REFERENCE_KINDS = [ :Purchase ]
 
         schema do
-          uuid  :calculator_id,           :required => false,   :resource => :Calculator
-          text  :token_identifier,        :required => true
-          text  :programme_code,          :required => true
-          enum  :reference_kind,          :required => false,  :from     => REFERENCE_KINDS
-          uuid  :reference_id,            :required => false
-          type  :CalculatorConfiguration, :required => false
-          array :currency_amounts,        :required => true do
+          uuid     :calculator_id,           :required => false,   :resource => :Calculator
+          text     :token_identifier,        :required => true
+          datetime :backdated_to,            :required => true
+          text     :programme_code,          :required => true
+          enum     :reference_kind,          :required => false,  :from     => REFERENCE_KINDS
+          uuid     :reference_id,            :required => false
+          type     :CalculatorConfiguration, :required => false
+          array    :currency_amounts,        :required => true do
             type :CurrencyAmount
           end
         end

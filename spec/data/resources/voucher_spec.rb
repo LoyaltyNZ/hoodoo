@@ -6,7 +6,7 @@ describe Hoodoo::Data::Resources::Voucher do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(9)
+    expect(schema.properties.count).to eq(10)
 
     expect(schema.properties['state']).to be_a(Hoodoo::Presenters::Enum)
     expect(schema.properties['state'].from).to eq(['earned', 'burned'])
@@ -14,6 +14,9 @@ describe Hoodoo::Data::Resources::Voucher do
 
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['token_identifier'].required).to eq(true)
+
+    expect(schema.properties['backdated_to']).to be_a(Hoodoo::Presenters::DateTime)
+    expect(schema.properties['backdated_to'].required).to eq(true)
 
     expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['name'].required).to eq(true)
