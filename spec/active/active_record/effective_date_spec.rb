@@ -111,14 +111,14 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
     end
 
-    context '.at' do
+    context '.dated' do
       it 'returns counts correctly' do
-        expect( RSpecModelEffectiveDateTest.at( @now - 10.hours ).count ).to be 0
-        expect( RSpecModelEffectiveDateTest.at( @now ).count ).to_not be 0
+        expect( RSpecModelEffectiveDateTest.dated( @now - 10.hours ).count ).to be 0
+        expect( RSpecModelEffectiveDateTest.dated( @now ).count ).to_not be 0
       end
 
       def test_expectation( time, expected_data )
-        expect( RSpecModelEffectiveDateTest.at( time ).pluck( :data ) ).to match_array( expected_data )
+        expect( RSpecModelEffectiveDateTest.dated( time ).pluck( :data ) ).to match_array( expected_data )
       end
 
       it 'returns no records before any were effective' do
@@ -138,7 +138,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       it 'works with further filtering' do
-        expect( RSpecModelEffectiveDateTest.at( @now ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
+        expect( RSpecModelEffectiveDateTest.dated( @now ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
     end
@@ -218,10 +218,10 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
 
     end
 
-    context '.at' do
+    context '.dated' do
 
       def test_expectation( time, expected_data )
-        expect( RSpecModelEffectiveDateTestOverride.at( time ).pluck( :data ) ).to match_array( expected_data )
+        expect( RSpecModelEffectiveDateTestOverride.dated( time ).pluck( :data ) ).to match_array( expected_data )
       end
 
       it 'returns no records before any were effective' do
@@ -241,7 +241,7 @@ describe Hoodoo::ActiveRecord::EffectiveDate do
       end
 
       it 'works with further filtering' do
-        found = RSpecModelEffectiveDateTestOverride.at( @now ).where( :activerecord_id => @uuid_a )
+        found = RSpecModelEffectiveDateTestOverride.dated( @now ).where( :activerecord_id => @uuid_a )
         expect( found.pluck( :data ) ).to eq( [ "six" ] )
       end
 

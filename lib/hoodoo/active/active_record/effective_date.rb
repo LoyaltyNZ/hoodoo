@@ -46,7 +46,7 @@ module Hoodoo
         # +date_time+:: (Optional) Time at which the records are effective,
         #               defaulting to the current time UTC.
         #
-        def at( date_time=Time.now )
+        def dated( date_time=Time.now )
 
           # Convert the date time to UTC
           date_time = date_time.utc
