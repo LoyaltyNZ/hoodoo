@@ -67,7 +67,12 @@ href="../Secure.html#method-c-included">Hoodoo::ActiveRecord::Secure.included</a
             
               
               <li>
-                <a href="#method-i-secure_with">secure_with</a>
+                <a href="#method-i-secure_with">secure_with</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-secured_with">secured_with</a>
               </li>
             
           </ul>
@@ -370,9 +375,7 @@ failure mode is to reveal no data at all.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
-  <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">?</span>
-                          <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">:</span>
-                          <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">none</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">nil?</span>
@@ -394,8 +397,6 @@ failure mode is to reveal no data at all.</p>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># TODO: I18n via context.request.locale.</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">prevailing_scope</span>
 <span class="ruby-keyword">end</span></pre>
@@ -446,13 +447,53 @@ examples.</p>
                 
               </p>
               <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 321</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 317</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
-
-  <span class="ruby-comment"># If you change the name of the variable used here, make sure you</span>
-  <span class="ruby-comment"># update the Hoodoo::Presenters::Base#render_in implementation too.</span>
-  <span class="ruby-comment">#</span>
   <span class="ruby-identifier">class_variable_set</span>( <span class="ruby-string">&#39;@@nz_co_loyalty_hoodoo_secure_with&#39;</span>, <span class="ruby-identifier">map</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-secured_with">
+            
+              <b>secured_with</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secured_with" name="method-i-secured_with" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Retrieve the mapping declared between database columns and Session scoping
+entries via <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a>. Returns a
+map as passed to <a
+href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
+<code>nil</code> if no such declaration has been made.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-secured_with_source')" id="l_method-i-secured_with_source">show</a>
+                
+              </p>
+              <div id="method-i-secured_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 325</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secured_with</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">?</span>
+              <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_secure_with</span> ) <span class="ruby-operator">:</span>
+              <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

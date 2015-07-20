@@ -443,12 +443,11 @@ code.</p>
                 <span class="ruby-identifier">caller_id</span><span class="ruby-operator">:</span>             <span class="ruby-keyword">nil</span>,
                 <span class="ruby-identifier">caller_secret</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span> )
 
-  <span class="ruby-ivar">@endpoints</span> = {}
-  <span class="ruby-ivar">@base_uri</span>  = <span class="ruby-identifier">base_uri</span>
-  <span class="ruby-ivar">@drb_uri</span>   = <span class="ruby-identifier">drb_uri</span>
-  <span class="ruby-ivar">@drb_port</span>  = <span class="ruby-identifier">drb_port</span>
+  <span class="ruby-ivar">@base_uri</span> = <span class="ruby-identifier">base_uri</span>
+  <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">drb_uri</span>
+  <span class="ruby-ivar">@drb_port</span> = <span class="ruby-identifier">drb_port</span>
 
-  <span class="ruby-ivar">@locale</span>    = <span class="ruby-identifier">locale</span>
+  <span class="ruby-ivar">@locale</span>   = <span class="ruby-identifier">locale</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@base_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-ivar">@discoverer</span> = <span class="ruby-identifier">discoverer</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
@@ -489,7 +488,7 @@ code.</p>
         <div class="method">
           <div class="title method-title" id="method-i-resource">
             
-              <b>resource</b>( resource, version = 1 )
+              <b>resource</b>( resource, version = 1, options = {} )
             
             <a href="../../classes/Hoodoo/Client.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
@@ -510,6 +509,24 @@ contacted, you will only get a 404 (&#39;platform.not_found&#39;) or 408
 <dd>
 <p><a href="Client/Endpoint.html">Endpoint</a> version as an Integer;
 optional; default is 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options Hash (see below).</p>
+</dd></dl>
+
+<p>The options Hash key/values are as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>locale</code>
+<dd>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
+defaults to the locale set in this <a href="Client.html">Client</a>
+instance&#39;s constructor.</p>
+</dd><dt><code>dated_at</code>
+<dd>
+<p>Time instance, DateTime instance or String which Ruby can parse into a
+DateTime instance used for show/list calls to resource endpoints that
+support historical representation, via an <code>X-Dated-At</code> HTTP
+header or equivalent. If omitted, defaults to <code>nil</code> (no
+historical representation requested).</p>
 </dd></dl>
             </div>
           
@@ -528,15 +545,11 @@ optional; default is 1.</p>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 303</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
-  <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
-  <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 317</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
 
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ] <span class="ruby-operator">||=</span> {}
-
-  <span class="ruby-identifier">endpoint</span> = <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ][ <span class="ruby-identifier">version</span> ]
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>   ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
+  <span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:dated_at</span> ]
 
   <span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">endpoint_for</span>(
     <span class="ruby-identifier">resource</span>,
@@ -544,7 +557,8 @@ optional; default is 1.</p>
     {
       <span class="ruby-value">:discoverer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span>,
       <span class="ruby-value">:session_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@session_id</span>,
-      <span class="ruby-value">:locale</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@locale</span>
+      <span class="ruby-value">:locale</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">locale</span>,
+      <span class="ruby-value">:dated_at</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">dated_at</span>
     }
   )
 
@@ -565,7 +579,6 @@ optional; default is 1.</p>
     )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ][ <span class="ruby-identifier">version</span> ] = <span class="ruby-identifier">endpoint</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>
               </div>

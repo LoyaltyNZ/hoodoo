@@ -87,25 +87,6 @@
     
 
     
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-        
-          <tr valign='top'>
-            <td class="attr-name">VALIDATION_REGEXP</td>
-            <td>=</td>
-            <td class="attr-value">/(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(Z|[+-](\d{2})\:(\d{2}))/</td>
-          </tr>
-          
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Validation regular expression for <a href="DateTime.html">DateTime</a>
-subset selection.</p></td>
-            </tr>
-          
-        
-      </table>
-    
 
 
     
@@ -144,22 +125,12 @@ subset selection.</p></td>
                 
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/date_time.rb, line 14</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/date_time.rb, line 10</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
-  <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">valid</span> = ( <span class="ruby-constant">VALIDATION_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">to_s</span> ) <span class="ruby-operator">==</span> <span class="ruby-number">0</span> <span class="ruby-operator">&amp;&amp;</span>
-            <span class="ruby-identifier">data</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">10</span>                          <span class="ruby-operator">&amp;&amp;</span>
-            <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">data</span> ).<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span> )
-
-  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
-    <span class="ruby-identifier">valid</span> = <span class="ruby-keyword">false</span>
-
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">valid</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">valid_iso8601_subset_datetime?</span>( <span class="ruby-identifier">data</span> )
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_datetime&#39;</span>,
       <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid ISO8601 datetime&quot;</span>,

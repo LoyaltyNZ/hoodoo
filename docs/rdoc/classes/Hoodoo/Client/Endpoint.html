@@ -124,6 +124,11 @@ class instance variables recording a reference to a single endpoint object.</p>
             
               
               <li>
+                <a href="#method-i-copy_updated_options_to">copy_updated_options_to</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-i-create">create</a>
               </li>
             
@@ -133,6 +138,11 @@ class instance variables recording a reference to a single endpoint object.</p>
         <dt>D</dt>
         <dd>
           <ul>
+            
+              
+              <li>
+                <a href="#method-i-dated_at-3D">dated_at=</a>,
+              </li>
             
               
               <li>
@@ -251,6 +261,18 @@ class instance variables recording a reference to a single endpoint object.</p>
             <td class='attr-rw'>
               [R]
             </td>
+            <td class='attr-name'>dated_at</td>
+            <td class='attr-desc'><p>A DateTime instance equivalent to the ISO 8601 representation given in the
+X-Dated-At <a href="Endpoint/HTTP.html">HTTP</a> header or equivalent, used
+for calls to show or list resources that support historical representation.
+If <code>nil</code>, the instantaneous internal endpoint target processing
+time of &#39;now&#39; is implied.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
             <td class='attr-name'>interaction</td>
             <td class='attr-desc'><p>The value of the <code>interaction</code> option key passed to the
 constructor. See the constructor and endpoint_for for more.</p></td>
@@ -350,9 +372,16 @@ if omitted, only public resource actions will be accessible.</p>
 <dd>
 <p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
 defaults to “en-nz”.</p>
+</dd><dt><code>dated_at</code>
+<dd>
+<p>Time instance, DateTime instance or String which Ruby can parse into a
+DateTime instance used for show/list calls to resource endpoints that
+support historical representation, via an <code>X-Dated-At</code> <a
+href="Endpoint/HTTP.html">HTTP</a> header or equivalent. If omitted,
+defaults to <code>nil</code> (no historical representation requested).</p>
 </dd><dt><code>interaction</code>
 <dd>
-<p>A <a
+<p>Optional <a
 href="../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
 instance which describes a <strong>source</strong> interaction at hand.
 This is a middleware concept and most of the time, only the middleware
@@ -393,7 +422,7 @@ instantiate an endpoint.</p>
                 
               </p>
               <div id="method-c-endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 80</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">discoverer</span>       = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:discoverer</span> )
   <span class="ruby-identifier">discovery_result</span> = <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span> )
@@ -465,14 +494,18 @@ see its documentation for details.</p>
 </dd><dt><code>locale</code>
 <dd>
 <p>As in the options for endpoint_for.</p>
+</dd><dt><code>dated_at</code>
+<dd>
+<p>As in the options for endpoint_for.</p>
 </dd></dl>
 
 <p>The out-of-the box initialiser sets up the data for the <a
 href="Endpoint.html#attribute-i-resource">resource</a>, <a
 href="Endpoint.html#attribute-i-version">version</a>, discovery_result, <a
 href="Endpoint.html#attribute-i-interaction">interaction</a>, <a
-href="Endpoint.html#attribute-i-session_id">session_id</a> and <a
-href="Endpoint.html#attribute-i-locale">locale</a> accessors using this
+href="Endpoint.html#attribute-i-session_id">session_id</a>, <a
+href="Endpoint.html#attribute-i-locale">locale</a> and <a
+href="Endpoint.html#attribute-i-dated_at">dated_at</a> accessors using this
 data, so subclass authors don&#39;t need to.</p>
 
 <p>The endpoint is then used with <a
@@ -503,7 +536,7 @@ reference data uses an array. Example:</p>
   sort:      &#39;created_at&#39;, # ...or an Array of sort fields
   direction: &#39;asc&#39;,        # ...or a matching Array of directions
   search:    {
-    member_id: &quot;...some UUDI...&quot;
+    member_id: &quot;...some UUID...&quot;
   },
   _embed:    [
     &#39;vouchers&#39;,
@@ -536,14 +569,17 @@ href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 202</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@resource</span>         = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-ivar">@version</span>          = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+
   <span class="ruby-ivar">@discovery_result</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:discovery_result</span> ]
-  <span class="ruby-ivar">@session_id</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>       ]
-  <span class="ruby-ivar">@locale</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>           ]
   <span class="ruby-ivar">@interaction</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction</span>      ]
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>       ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>           ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:dated_at</span>         ]
 
   <span class="ruby-identifier">configure_with</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -601,9 +637,59 @@ instead) on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 332</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_at-3D">
+            
+              <b>dated_at=</b>( input )
+            
+            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-dated_at-3D" name="method-i-dated_at-3D" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Writer for <a href="Endpoint.html#attribute-i-dated_at">dated_at</a> which
+accepts a Time instance, DateTime instance or a String; see
+Hoodoo::Utilities#rationalise_datetime for details - the given input
+parameter is run through this processing function.</p>
+
+<p>Invalid date/time strings can lead to an exception. If you want to avoid
+catching an exception, use Hoodoo::Utilities#valid_iso8601_subset_datetime?
+to check a String input type before calling here.</p>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>Time, DateTime or String - run through
+Hoodoo::Utilities#rationalise_datetime to generate a DateTime instance or
+raise an exception.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_at-3D_source')" id="l_method-i-dated_at-3D_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_at-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 157</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_at=</span>( <span class="ruby-identifier">input</span> )
+  <span class="ruby-ivar">@dated_at</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -658,7 +744,7 @@ instead) on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 373</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 426</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -715,7 +801,7 @@ errors.</p>
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 292</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 345</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -771,7 +857,7 @@ instead) on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 312</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 365</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -830,7 +916,7 @@ instead) on the returned instance to detect and resolve error conditions
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 353</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 406</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -881,9 +967,61 @@ want and validate any required options, raising errors if need be.</p>
                 
               </p>
               <div id="method-i-configure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 232</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#configure_with&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-copy_updated_options_to">
+            
+              <b>copy_updated_options_to</b>( target_endpoint )
+            
+            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-copy_updated_options_to" name="method-i-copy_updated_options_to" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Copy the current value of writable options in this <a
+href="Endpoint.html">Endpoint</a> instance, to another <a
+href="Endpoint.html">Endpoint</a> instance. This is useful when one is
+wrapping another, but to the external user of the wrapping endpoint, they
+should just be able to set options in that item and have it act as if
+they&#39;d set them on the thing which it is (not that the caller would
+know) wrapping.</p>
+
+<p>This includes copying over a <code>session_id</code> field value, though
+often it&#39;ll subsequently be rewritten by the wrapping endpoint as
+it&#39;s wrapping something to provide special session management.</p>
+
+<p>WARNING: Any <code>nil</code> internal state values will <em>not</em> be
+copied.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-copy_updated_options_to_source')" id="l_method-i-copy_updated_options_to_source">show</a>
+                
+              </p>
+              <div id="method-i-copy_updated_options_to_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 316</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
+  <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">session_id</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">locale</span>     = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>     <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">dated_at</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>   <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>.<span class="ruby-identifier">nil?</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -928,7 +1066,7 @@ Found&#39; for the target resource, version and given action.</p>
                 
               </p>
               <div id="method-i-generate_404_response_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 259</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 293</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
@@ -980,7 +1118,7 @@ references, not instances).</p>
                 
               </p>
               <div id="method-i-response_class_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 245</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 279</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">response_class_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span> <span class="ruby-operator">===</span> <span class="ruby-value">:list</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
 <span class="ruby-keyword">end</span></pre>

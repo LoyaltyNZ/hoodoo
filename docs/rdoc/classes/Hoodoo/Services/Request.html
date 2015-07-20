@@ -81,6 +81,18 @@ would report <code>nil</code>).</p>
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
       
+        <dt>D</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-dated_at-3D">dated_at=</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>N</dt>
         <dd>
           <ul>
@@ -133,6 +145,16 @@ would report <code>nil</code>).</p>
             <td class='attr-name'>body</td>
             <td class='attr-desc'><p>Parsed payload hash, for create and update actions only; else
 <code>nil</code>.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>dated_at</td>
+            <td class='attr-desc'><p>Requested date-time for historical representation retrieval, should a
+resource representation support it; DateTime instance; <code>nil</code> if
+no special historical time is requested.</p></td>
           </tr>
         
           <tr valign='top'>
@@ -276,7 +298,7 @@ so for example this URI:</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 173</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>              = <span class="ruby-string">&#39;en-nz&#39;</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_components</span> = []
@@ -293,6 +315,56 @@ so for example this URI:</p>
                   
       <div class="sectiontitle">Instance Public methods</div>
       
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_at-3D">
+            
+              <b>dated_at=</b>( input )
+            
+            <a href="../../../classes/Hoodoo/Services/Request.html#method-i-dated_at-3D" name="method-i-dated_at-3D" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Writer for <a href="Request.html#attribute-i-dated_at">dated_at</a> which
+accepts a Time instance, DateTime instance or a String; see
+Hoodoo::Utilities#rationalise_datetime for details - the given input
+parameter is run through this processing function.</p>
+
+<p>Invalid date/time strings can lead to an exception. If you want to avoid
+catching an exception, use Hoodoo::Utilities#valid_iso8601_subset_datetime?
+to check a String input type before calling here.</p>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>Time, DateTime or String - run through
+Hoodoo::Utilities#rationalise_datetime to generate a DateTime instance or
+raise an exception.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_at-3D_source')" id="l_method-i-dated_at-3D_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_at-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 92</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_at=</span>( <span class="ruby-identifier">input</span> )
+  <span class="ruby-ivar">@dated_at</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
         <div class="method">
           <div class="title method-title" id="method-i-uri_path_components-3D">
             
@@ -331,7 +403,7 @@ and <a href="Request.html#attribute-i-ident">ident</a>.</p>
                 
               </p>
               <div id="method-i-uri_path_components-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 98</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uri_path_components=</span>( <span class="ruby-identifier">ary</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-identifier">ary</span>
