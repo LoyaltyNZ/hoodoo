@@ -105,6 +105,21 @@ class RSpecClientTestTargetInterface < Hoodoo::Services::Interface
   end
 end
 
+# This resource is just here for the custom routing tests.
+#
+class RSpecClientTestTargetCustomRoutingImplementation < Hoodoo::Services::Implementation
+  def show( context )
+    context.response.set_resource( { 'id' => context.request.ident } )
+  end
+end
+
+class RSpecClientTestTargetCustomRoutingInterface < Hoodoo::Services::Interface
+  interface :RSpecClientTestTargetCustomRouting do
+    endpoint :r_spec_client_test_targets_with_custom_route, RSpecClientTestTargetCustomRoutingImplementation
+    public_actions :show
+  end
+end
+
 ##############################################################################
 # One endpoint for both resources
 #
@@ -116,7 +131,8 @@ end
 
 class RSpecClientTestService < Hoodoo::Services::Service
   comprised_of RSpecClientTestSessionInterface,
-               RSpecClientTestTargetInterface
+               RSpecClientTestTargetInterface,
+               RSpecClientTestTargetCustomRoutingInterface
 end
 
 ##############################################################################
@@ -289,6 +305,32 @@ describe Hoodoo::Client do
       end
 
       it_behaves_like Hoodoo::Client
+    end
+
+    context 'and with custom routing' do
+      it 'obeys the routes' do
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          :base_uri => base_uri,
+          :routing  => {
+            :RSpecClientTestTargetCustomRouting => {
+              1 => '/v1/r_spec_client_test_targets_with_custom_route'
+            }
+          }
+        )
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+
+        mock_ident = Hoodoo::UUID.generate()
+        result     = @client.resource( :RSpecClientTestTargetCustomRouting, 1 ).show( mock_ident )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( mock_ident )
+      end
     end
   end
 
