@@ -48,6 +48,12 @@ module Hoodoo
             #
             attr_accessor :endpoint_uri
 
+            # Full URI (as a URI object) of an HTTP proxy to use as an
+            # override to <tt>ENV['HTTP_PROXY']</tt> which Ruby itself
+            # will otherwise read. Will be +nil+ for no proxy override.
+            #
+            attr_accessor :proxy_uri
+
             # Optional Hash of query data.
             #
             attr_accessor :query_hash

@@ -257,6 +257,39 @@ describe Hoodoo::Client do
 
       it_behaves_like Hoodoo::Client
     end
+
+    context 'and with an HTTP proxy via custom discoverer' do
+      before :each do
+        base_uri   = "http://localhost:#{ @port }"
+        proxy_uri  = 'http://foo:bar@proxyhost:1234'
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:  base_uri,
+          proxy_uri: proxy_uri
+        )
+
+        original_new = Net::HTTP.method( :new )
+
+        expect( Net::HTTP ).to receive( :new ).at_least( :once ) do | host, port, proxy_host, proxy_port, proxy_user, proxy_pass |
+          expect( host       ).to eq( 'localhost' )
+          expect( port       ).to eq( @port       )
+          expect( proxy_host ).to eq( 'proxyhost' )
+          expect( proxy_port ).to eq( 1234        )
+          expect( proxy_user ).to eq( 'foo'       )
+          expect( proxy_pass ).to eq( 'bar'       )
+
+          original_new.call( host, port )
+        end
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
   end
 
   ##############################################################################

@@ -4,14 +4,14 @@ describe Hoodoo::Services::Discovery do
   context 'alone' do
     it 'supports announcement directly' do
       d = described_class.new
-      expect( d.announce( 'Foo', 3 ) ).to eq( true )
+      expect( d.announce( 'Foo', 3 ) ).to eq( nil )
     end
 
     # Note intentional mixed Symbol / String usage.
 
     it 'records local announcements' do
       d = described_class.new
-      expect( d.announce( 'Foo', 3 ) ).to eq( true )
+      expect( d.announce( 'Foo', 3 ) ).to eq( nil )
       expect( d.is_local?( :Foo, 3 ) ).to eq( true )
       expect( d.is_local?( 'Foo', 2 ) ).to eq( false )
       expect( d.is_local?( 'Bar', 3 ) ).to eq( false )
