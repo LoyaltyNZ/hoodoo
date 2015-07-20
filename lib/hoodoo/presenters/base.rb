@@ -174,9 +174,7 @@ module Hoodoo
 
         if secured_with.is_a?( ::ActiveRecord::Base )
           result_hash     = {}
-          extra_scope_map = secured_with.class.class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
-                                 secured_with.class.class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
-                                 nil
+          extra_scope_map = secured_with.class.secured_with()
 
           extra_scope_map.each do | model_field_name, key_or_options |
             resource_field = if key_or_options.is_a?( ::Hash )

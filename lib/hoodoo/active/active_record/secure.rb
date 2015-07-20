@@ -1,5 +1,5 @@
 ########################################################################
-# File::    finder.rb
+# File::    secure.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Support mixin for models subclassed from ActiveRecord::Base
@@ -277,9 +277,7 @@ module Hoodoo
         #
         def secure( context )
           prevailing_scope = all() # "Model.all" -> returns anonymous scope
-          extra_scope_map  = class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
-                                  class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
-                                  nil
+          extra_scope_map  = secured_with()
 
           unless extra_scope_map.nil?
             return none() if context.session.nil? || context.session.scoping.nil?
@@ -302,8 +300,6 @@ module Hoodoo
             end
           end
 
-          # TODO: I18n via context.request.locale.
-
           return prevailing_scope
         end
 
@@ -319,11 +315,17 @@ module Hoodoo
         #         of options; see #secure for full details and examples.
         #
         def secure_with( map )
-
-          # If you change the name of the variable used here, make sure you
-          # update the Hoodoo::Presenters::Base#render_in implementation too.
-          #
           class_variable_set( '@@nz_co_loyalty_hoodoo_secure_with', map )
+        end
+
+        # Retrieve the mapping declared between database columns and
+        # Session scoping entries via #secure_with. Returns a map as passed
+        # to #secure_with, or +nil+ if no such declaration has been made.
+        #
+        def secured_with
+          return class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
+                      class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
+                      nil
         end
       end
     end

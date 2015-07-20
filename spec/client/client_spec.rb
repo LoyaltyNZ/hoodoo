@@ -90,7 +90,8 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
         'kind'       => 'RSpecClientTestTarget',
         'language'   => context.request.locale,
         'embeds'     => context.request.embeds,
-        'body_hash'  => context.request.body
+        'body_hash'  => context.request.body,
+        'dated_at'   => context.request.dated_at.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at )
       }
     end
 end
@@ -134,14 +135,33 @@ describe Hoodoo::Client do
   end
 
   # Set @locale, @expected_locale (latter for 'to eq(...)' matching),
-  # @client and callable @endpoint up, passing the given options to
-  # the Hoodoo::Client constructor, with randomised locale merged in.
+  # @dated_at, @expected_data_at (same deal), @client and callable @endpoint
+  # up, passing the given options to the Hoodoo::Client constructor, with
+  # randomised locale merged in. Conversion to lower case is checked
+  # implicitly, with a mixed case locale generated (potentially) by random
+  # but the 'downcase' version being used for 'expect's.
+  #
+  # Through the use of random switches, we (eventually!) get test coverage
+  # on locale specified (or not) given to the Client, plus override locale
+  # (or not) and a dated-at date/time (or not) given to the Endpoint.
   #
   def set_vars_for( opts )
-    @locale          = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
-    @expected_locale = @locale.nil? ? 'en-nz' : @locale.downcase
-    @client          = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
-    @endpoint        = @client.resource( :RSpecClientTestTarget )
+    @locale            = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
+    @expected_locale   = @locale.nil? ? 'en-nz' : @locale.downcase
+    @client            = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
+
+    @dated_at          = rand( 2 ) == 0 ? nil : DateTime.now
+    @expected_dated_at = @dated_at.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at )
+
+    endpoint_opts = { :dated_at => @dated_at }
+
+    if rand( 2 ) == 0
+      override_locale          = SecureRandom.urlsafe_base64(2)
+      endpoint_opts[ :locale ] = override_locale
+      @expected_locale         = override_locale.downcase
+    end
+
+    @endpoint = @client.resource( :RSpecClientTestTarget, 1, endpoint_opts )
   end
 
   ##############################################################################
@@ -160,12 +180,14 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
         expect( result[ 'embeds' ] ).to eq( [] )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
 
         result = @endpoint.show( mock_ident, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result[ 'id' ] ).to eq( mock_ident )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
       end
 
       it 'cannot contact protected actions' do
@@ -261,6 +283,7 @@ describe Hoodoo::Client do
         expect( result.dataset_size ).to eq( result.size )
         expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -271,6 +294,7 @@ describe Hoodoo::Client do
         expect( result[ 'body_hash' ] ).to eq( body_hash )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -283,6 +307,7 @@ describe Hoodoo::Client do
         expect( result[ 'body_hash' ] ).to eq( body_hash )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -293,6 +318,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
       end
     end
 
@@ -349,6 +375,7 @@ describe Hoodoo::Client do
         expect( result.dataset_size ).to eq( result.size )
         expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -359,6 +386,7 @@ describe Hoodoo::Client do
         expect( result[ 'body_hash' ] ).to eq( body_hash )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -371,6 +399,7 @@ describe Hoodoo::Client do
         expect( result[ 'body_hash' ] ).to eq( body_hash )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -381,6 +410,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
       end
 
       it 'automatically retries' do

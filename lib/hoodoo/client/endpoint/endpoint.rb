@@ -55,7 +55,15 @@ module Hoodoo
       # +locale+::         Locale string for request/response, e.g. "en-gb".
       #                    Optional. If omitted, defaults to "en-nz".
       #
-      # +interaction+::    A Hoodoo::Services::Middleware::Interaction
+      # +dated_at+::       Time instance, DateTime instance or String which
+      #                    Ruby can parse into a DateTime instance used for
+      #                    show/list calls to resource endpoints that support
+      #                    historical representation, via an
+      #                    <tt>X-Dated-At</tt> HTTP header or equivalent. If
+      #                    omitted, defaults to +nil+ (no historical
+      #                    representation requested).
+      #
+      # +interaction+::    Optional Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
       #                    hand. This is a middleware concept and most of the
       #                    time, only the middleware would use this; the
@@ -113,11 +121,6 @@ module Hoodoo
       #
       attr_reader :interaction
 
-      # The locale passed to the constructor or some value provided later; a
-      # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
-      #
-      attr_accessor :locale
-
       # The session UUID passed to the constructor or some value provided
       # later; used for the calls to the target resource via the X-Session-ID
       # HTTP header or an equivalent. If +nil+, only public actions in the
@@ -129,6 +132,31 @@ module Hoodoo
       # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
       #
       attr_accessor :locale
+
+      # A DateTime instance equivalent to the ISO 8601 representation given
+      # in the X-Dated-At HTTP header or equivalent, used for calls to show
+      # or list resources that support historical representation. If +nil+,
+      # the instantaneous internal endpoint target processing time of
+      # 'now' is implied.
+      #
+      attr_reader :dated_at
+
+      # Writer for #dated_at which accepts a Time instance, DateTime instance
+      # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
+      # the given input parameter is run through this processing function.
+      #
+      # Invalid date/time strings can lead to an exception. If you want to
+      # avoid catching an exception, use
+      # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
+      # input type before calling here.
+      #
+      # +input+:: Time, DateTime or String - run through
+      #           Hoodoo::Utilities#rationalise_datetime to generate a
+      #           DateTime instance or raise an exception.
+      #
+      def dated_at=( input )
+        @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+      end
 
       # Create an endpoint instance that will be used to make requests to
       # a given resource.
@@ -158,9 +186,12 @@ module Hoodoo
       #
       # +locale+::           As in the options for #endpoint_for.
       #
+      # +dated_at+::         As in the options for #endpoint_for.
+      #
       # The out-of-the box initialiser sets up the data for the #resource,
-      # #version, #discovery_result, #interaction, #session_id and #locale
-      # accessors using this data, so subclass authors don't need to.
+      # #version, #discovery_result, #interaction, #session_id, #locale and
+      # #dated_at accessors using this data, so subclass authors don't need
+      # to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
@@ -202,10 +233,13 @@ module Hoodoo
       def initialize( resource, version = 1, options )
         @resource         = resource.to_sym
         @version          = version.to_i
+
         @discovery_result = options[ :discovery_result ]
-        @session_id       = options[ :session_id       ]
-        @locale           = options[ :locale           ]
         @interaction      = options[ :interaction      ]
+
+        self.session_id   = options[ :session_id       ]
+        self.locale       = options[ :locale           ]
+        self.dated_at     = options[ :dated_at         ]
 
         configure_with( @resource, @version, options )
       end
@@ -264,6 +298,25 @@ module Hoodoo
           )
 
           return data
+        end
+
+        # Copy the current value of writable options in this Endpoint
+        # instance, to another Endpoint instance. This is useful when one
+        # is wrapping another, but to the external user of the wrapping
+        # endpoint, they should just be able to set options in that item
+        # and have it act as if they'd set them on the thing which it is
+        # (not that the caller would know) wrapping.
+        #
+        # This includes copying over a +session_id+ field value, though
+        # often it'll subsequently be rewritten by the wrapping endpoint as
+        # it's wrapping something to provide special session management.
+        #
+        # WARNING: Any +nil+ internal state values will _not_ be copied.
+        #
+        def copy_updated_options_to( target_endpoint )
+          target_endpoint.session_id = self.session_id unless self.session_id.nil?
+          target_endpoint.locale     = self.locale     unless self.locale.nil?
+          target_endpoint.dated_at   = self.dated_at   unless self.dated_at.nil?
         end
 
       public

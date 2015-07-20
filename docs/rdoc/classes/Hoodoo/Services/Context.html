@@ -210,7 +210,6 @@ context instance this provides.</p>
   <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
   <span class="ruby-ivar">@response</span>           = <span class="ruby-identifier">response</span>
   <span class="ruby-ivar">@owning_interaction</span> = <span class="ruby-identifier">owning_interaction</span>
-  <span class="ruby-ivar">@endpoints</span>          = {}
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -222,7 +221,7 @@ context instance this provides.</p>
         <div class="method">
           <div class="title method-title" id="method-i-resource">
             
-              <b>resource</b>( resource, version = 1 )
+              <b>resource</b>( resource, version = 1, options = {} )
             
             <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
@@ -273,6 +272,24 @@ symbol.</p>
 <dd>
 <p>Optional required implemented version for the endpoint, as an Integer -
 defaults to 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options Hash (see below).</p>
+</dd></dl>
+
+<p>The options Hash key/values are as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>locale</code>
+<dd>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
+defaults to the locale set in this <a href="../Client.html">Client</a>
+instance&#39;s constructor.</p>
+</dd><dt><code>dated_at</code>
+<dd>
+<p>Time instance, DateTime instance or String which Ruby can parse into a
+DateTime instance used for show/list calls to resource endpoints that
+support historical representation, via an <code>X-Dated-At</code> HTTP
+header or equivalent. If omitted, defaults to <code>nil</code> (no
+historical representation requested).</p>
 </dd></dl>
             </div>
           
@@ -291,10 +308,22 @@ defaults to 1.</p>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 102</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span> )
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ] <span class="ruby-operator">||=</span> {}
-  <span class="ruby-ivar">@endpoints</span>[ <span class="ruby-identifier">resource</span> ][ <span class="ruby-identifier">version</span> ] <span class="ruby-operator">||=</span> <span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 116</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
+  <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
+    <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span>,
+    <span class="ruby-ivar">@owning_interaction</span>
+  )
+
+  <span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>   ]
+  <span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:dated_at</span> ]
+
+  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">locale</span>   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">dated_at</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dated_at</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

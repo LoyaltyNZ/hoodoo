@@ -1180,6 +1180,8 @@ an endpoint implementation.</p>
       <span class="ruby-identifier">version</span>,
       {
         <span class="ruby-value">:interaction</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>,
+        <span class="ruby-value">:locale</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>,
+        <span class="ruby-value">:dated_at</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span>,
         <span class="ruby-value">:discovery_result</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">discovery_result</span>
       }
     )
@@ -1201,7 +1203,8 @@ an endpoint implementation.</p>
         <span class="ruby-value">:discoverer</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span>,
         <span class="ruby-value">:interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>,
         <span class="ruby-value">:session</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>,
-        <span class="ruby-value">:locale</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>
+        <span class="ruby-value">:locale</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>,
+        <span class="ruby-value">:dated_at</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span>
       }
     )
 
@@ -1238,7 +1241,7 @@ an endpoint implementation.</p>
         <div class="method">
           <div class="title method-title" id="method-i-inter_resource_local">
             
-              <b>inter_resource_local</b>( source_interaction:, discovery_result:, action:, ident: nil, body_hash: nil, query_hash: nil )
+              <b>inter_resource_local</b>( source_interaction:, discovery_result:, endpoint:, action:, ident: nil, body_hash: nil, query_hash: nil )
             
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-inter_resource_local" name="method-i-inter_resource_local" class="permalink">Link</a>
           </div>
@@ -1262,6 +1265,10 @@ processing;</p>
 <p>A <a
 href="Discovery/ForLocal.html">Hoodoo::Services::Discovery::ForLocal</a>
 instance describing the target of the inter-resource call;</p>
+</dd><dt><code>endpoint</code>
+<dd>
+<p>The calling <a href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a>
+subclass instance (used for e.g. locale, dated-at);</p>
 </dd><dt><code>action</code>
 <dd>
 <p>A Hoodoo::Services::Middleware::ALLOWED_ACTIONS entry;</p>
@@ -1306,9 +1313,10 @@ ignore inter-resource call errors.</p>
                 
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 640</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 646</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
+                          <span class="ruby-identifier">endpoint</span>,,
                           <span class="ruby-identifier">action</span>,,
                           <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-keyword">nil</span>,
                           <span class="ruby-identifier">body_hash</span><span class="ruby-operator">:</span>  <span class="ruby-keyword">nil</span>,
@@ -1356,6 +1364,13 @@ ignore inter-resource call errors.</p>
 
   <span class="ruby-identifier">local_request</span>  = <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>
   <span class="ruby-identifier">local_response</span> = <span class="ruby-identifier">local_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">response</span>
+
+  <span class="ruby-comment"># Carry through any endpoint-specified request orientated attributes.</span>
+
+  <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">locale</span>
+  <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">dated_at</span>
+
+  <span class="ruby-comment"># Initialise the response data.</span>
 
   <span class="ruby-identifier">set_common_response_headers</span>( <span class="ruby-identifier">local_interaction</span> )
   <span class="ruby-identifier">update_response_for</span>( <span class="ruby-identifier">local_response</span>, <span class="ruby-identifier">interface</span> )

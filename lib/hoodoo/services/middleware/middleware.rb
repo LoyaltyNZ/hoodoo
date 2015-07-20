@@ -554,6 +554,8 @@ module Hoodoo; module Services
           version,
           {
             :interaction      => interaction,
+            :locale           => interaction.context.request.locale,
+            :dated_at         => interaction.context.request.dated_at,
             :discovery_result => discovery_result
           }
         )
@@ -575,7 +577,8 @@ module Hoodoo; module Services
             :discoverer  => @discoverer,
             :interaction => interaction,
             :session     => interaction.context.session,
-            :locale      => interaction.context.request.locale
+            :locale      => interaction.context.request.locale,
+            :dated_at    => interaction.context.request.dated_at
           }
         )
 
@@ -621,6 +624,9 @@ module Hoodoo; module Services
     # +discovery_result+::   A Hoodoo::Services::Discovery::ForLocal instance
     #                        describing the target of the inter-resource call;
     #
+    # +endpoint+::           The calling Hoodoo::Client::Endpoint subclass
+    #                        instance (used for e.g. locale, dated-at);
+    #
     # +action+::             A Hoodoo::Services::Middleware::ALLOWED_ACTIONS
     #                        entry;
     #
@@ -644,6 +650,7 @@ module Hoodoo; module Services
     #
     def inter_resource_local( source_interaction:,
                               discovery_result:,
+                              endpoint:,
                               action:,
                               ident:      nil,
                               body_hash:  nil,
@@ -691,6 +698,13 @@ module Hoodoo; module Services
 
       local_request  = local_interaction.context.request
       local_response = local_interaction.context.response
+
+      # Carry through any endpoint-specified request orientated attributes.
+
+      local_request.locale   = endpoint.locale
+      local_request.dated_at = endpoint.dated_at
+
+      # Initialise the response data.
 
       set_common_response_headers( local_interaction )
       update_response_for( local_response, interface )
@@ -1427,6 +1441,7 @@ module Hoodoo; module Services
       log_inbound_request( interaction )
       deal_with_content_type_header( interaction )
       deal_with_language_header( interaction )
+      deal_with_x_dated_at_header( interaction )
       set_common_response_headers( interaction )
 
       # Simplisitic CORS preflight handler. We might exit early here.
@@ -1775,6 +1790,26 @@ module Hoodoo; module Services
 
       lang = 'en-nz' if lang.nil? || lang.empty?
       interaction.context.request.locale = lang.downcase
+    end
+
+    # Extract the +X-Dated-At+ header value from the client and (if present)
+    # store this as a DateTime instance in the request data.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
+    #
+    def deal_with_x_dated_at_header( interaction )
+      interaction.context.request.dated_at = nil
+      str = interaction.rack_request.env[ 'HTTP_X_DATED_AT' ]
+
+      begin
+        interaction.context.request.dated_at = str
+      rescue
+        interaction.context.response.errors.add_error(
+          'platform.malformed',
+          'message' => "X-Dated-At header value '#{ str }' is an invalid ISO8601 datetime"
+        )
+      end
     end
 
     # Check the inbound request for anything in the SECURED_HEADERS set of
@@ -2334,13 +2369,13 @@ module Hoodoo; module Services
         sort_data[ sort_key ] = sort_directions[ index ]
       end
 
-      request.list.offset          = offset
-      request.list.limit           = limit
-      request.list.sort_data       = sort_data
-      request.list.search_data     = search
-      request.list.filter_data     = filter
-      request.embeds               = embeds
-      request.references           = references
+      request.list.offset      = offset
+      request.list.limit       = limit
+      request.list.sort_data   = sort_data
+      request.list.search_data = search
+      request.list.filter_data = filter
+      request.embeds           = embeds
+      request.references       = references
     end
 
     # Safely parse the client payload in the context of the defined content

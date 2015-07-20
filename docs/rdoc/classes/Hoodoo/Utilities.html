@@ -101,6 +101,30 @@
           </ul>
         </dd>
       
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-nanosecond_iso8601">nanosecond_iso8601</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-rationalise_datetime">rationalise_datetime</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
         <dt>S</dt>
         <dd>
           <ul>
@@ -135,6 +159,23 @@
           </ul>
         </dd>
       
+        <dt>V</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-valid_iso8601_subset_date-3F">valid_iso8601_subset_date?</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-valid_iso8601_subset_datetime-3F">valid_iso8601_subset_datetime?</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
     </dl>
   
 
@@ -148,6 +189,36 @@
 
     
 
+    
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">DATETIME_ISO8601_SUBSET_REGEXP</td>
+            <td>=</td>
+            <td class="attr-value">/(\d{4})-(\d{2})-(\d{2})T(\d{2})\:(\d{2})\:(\d{2})(\.\d+)?(Z|[+-](\d{2})\:(\d{2}))/</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Validation regular expression for DateTime subset selection.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">DATE_ISO8601_SUBSET_REGEXP</td>
+            <td>=</td>
+            <td class="attr-value">/(\d{4})-(\d{2})-(\d{2})/</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Validation regular expression for Date subset selection.</p></td>
+            </tr>
+          
+        
+      </table>
     
 
 
@@ -231,7 +302,7 @@ associated with that key. An empty Array results in an empty Hash;
                 
               </p>
               <div id="method-c-collated_hash_from_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 244</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 252</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">collated_hash_from</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dupes</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">hash_of_arrays</span> = {}
 
@@ -285,7 +356,7 @@ parameter.</p>
                 
               </p>
               <div id="method-c-deep_dup_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 61</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">obj</span> )
   <span class="ruby-identifier">duplicate</span> = <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">dup</span> <span class="ruby-keyword">rescue</span> <span class="ruby-identifier">obj</span>
 
@@ -379,7 +450,7 @@ will overwrite the value in the target hash.</p>
                 
               </p>
               <div id="method-c-deep_merge_into_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 115</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deep_merge_into</span>( <span class="ruby-identifier">target_hash</span>, <span class="ruby-identifier">inbound_hash</span> )
 
   <span class="ruby-comment"># http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash</span>
@@ -465,7 +536,7 @@ difference; the entire Hash sub-tree is picked out:</p>
                 
               </p>
               <div id="method-c-hash_diff_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 164</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 172</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_diff</span>( <span class="ruby-identifier">hash1</span>, <span class="ruby-identifier">hash2</span> )
 
   <span class="ruby-comment"># http://stackoverflow.com/questions/1766741/comparing-ruby-hashes</span>
@@ -528,7 +599,7 @@ Hoodoo::Utilities.hash_key_paths( hash )
                 
               </p>
               <div id="method-c-hash_key_paths_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 193</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">hash_key_paths</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
@@ -539,6 +610,111 @@ Hoodoo::Utilities.hash_key_paths( hash )
       <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>.<span class="ruby-identifier">flatten</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-nanosecond_iso8601">
+            
+              <b>nanosecond_iso8601</b>( time_or_date_time )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-nanosecond_iso8601" name="method-c-nanosecond_iso8601" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Returns an ISO 8601 String equivalent of the given Time or DateTime
+instance, with nanosecond precision (subject to Ruby port / OS support).
+This is nothing more than a standardised central interface on calling
+Ruby&#39;s <code>Time/DateTime#iso8601( 9 )</code>, to avoid the risk of
+lots of variable length precision times floating around by authors picking
+their own arbitrary precision parameters.</p>
+<dl class="rdoc-list note-list"><dt><code>date_time</code>
+<dd>
+<p>Ruby Time or DateTime instance to convert to an ISO 8601 String with
+nanosecond precision.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-nanosecond_iso8601_source')" id="l_method-c-nanosecond_iso8601_source">show</a>
+                
+              </p>
+              <div id="method-c-nanosecond_iso8601_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 346</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">nanosecond_iso8601</span>( <span class="ruby-identifier">time_or_date_time</span> )
+  <span class="ruby-identifier">time_or_date_time</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-number">9</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-rationalise_datetime">
+            
+              <b>rationalise_datetime</b>( input )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-rationalise_datetime" name="method-c-rationalise_datetime" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Turn a given value of various types into a DateTime instance or
+<code>nil</code>. If the input value is not <code>nil</code>, a DateTime
+instance, a Time instance or something that <code>DateTime.parse</code> can
+handle, the method will throw a RuntimeError exception.</p>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>A Time or DateTime instance, or a String that can be converted to a
+DateTime instance; in these cases, an equivalent DateTime is returned. If
+<code>nil</code>, returns <code>nil</code>.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-rationalise_datetime_source')" id="l_method-c-rationalise_datetime_source">show</a>
+                
+              </p>
+              <div id="method-c-rationalise_datetime_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 359</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
+      <span class="ruby-identifier">input</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Time</span> )
+      <span class="ruby-identifier">input</span>.<span class="ruby-identifier">to_datetime</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">input</span> )
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Utilities\#rationalise_datetime: Invalid parameter &#39;#{ input }&#39;&quot;</span>
+
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -578,7 +754,7 @@ for test environments only.</p>
                 
               </p>
               <div id="method-c-spare_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 274</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">spare_port</span>
 
   <span class="ruby-comment"># http://stackoverflow.com/questions/5985822/how-do-you-find-a-random-open-port-in-ruby</span>
@@ -633,7 +809,7 @@ an Array of Symbols).</p>
                 
               </p>
               <div id="method-c-stringify_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 46</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">obj</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>({}){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,(<span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span>)<span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>] =  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">inject</span>([]){<span class="ruby-operator">|</span><span class="ruby-identifier">memo</span>,<span class="ruby-identifier">v</span>    <span class="ruby-operator">|</span> <span class="ruby-identifier">memo</span>         <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">stringify</span>(<span class="ruby-identifier">v</span>); <span class="ruby-identifier">memo</span>} <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-operator">::</span><span class="ruby-constant">Array</span>)
@@ -682,7 +858,7 @@ an Array of Strings).</p>
                 
               </p>
               <div id="method-c-symbolize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 28</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">symbolize</span>(<span class="ruby-identifier">obj</span>)
 
   <span class="ruby-comment"># http://stackoverflow.com/questions/800122/best-way-to-convert-strings-to-symbols-in-hash</span>
@@ -730,10 +906,120 @@ Time.now (yields nil, nil).</p>
                 
               </p>
               <div id="method-c-to_integer-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 262</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 270</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">to_integer?</span>( <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-valid_iso8601_subset_date-3F">
+            
+              <b>valid_iso8601_subset_date?</b>( str )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-valid_iso8601_subset_date-3F" name="method-c-valid_iso8601_subset_date-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Is the given String a valid ISO 8601 subset date (no time) as accepted by
+(for example) <a href="../Hoodoo.html">Hoodoo</a> API calls?</p>
+<dl class="rdoc-list note-list"><dt><code>str</code>
+<dd>
+<p>Value to check</p>
+</dd></dl>
+
+<p>Returns <code>true</code> if a valid ISO 8601 subset date, else
+<code>false</code>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-valid_iso8601_subset_date-3F_source')" id="l_method-c-valid_iso8601_subset_date-3F_source">show</a>
+                
+              </p>
+              <div id="method-c-valid_iso8601_subset_date-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 322</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">valid_iso8601_subset_date?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">valid</span> = ( <span class="ruby-constant">DATE_ISO8601_SUBSET_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_s</span> ) <span class="ruby-operator">==</span> <span class="ruby-number">0</span> <span class="ruby-operator">&amp;&amp;</span>
+            <span class="ruby-identifier">str</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">==</span> <span class="ruby-number">10</span>                                  <span class="ruby-operator">&amp;&amp;</span>
+            <span class="ruby-operator">::</span><span class="ruby-constant">Date</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">str</span> ).<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Date</span> )
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
+    <span class="ruby-identifier">valid</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">valid</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-valid_iso8601_subset_datetime-3F">
+            
+              <b>valid_iso8601_subset_datetime?</b>( str )
+            
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-valid_iso8601_subset_datetime-3F" name="method-c-valid_iso8601_subset_datetime-3F" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Is the given String a valid ISO 8601 subset date and time as accepted by
+(for example) <a href="../Hoodoo.html">Hoodoo</a> API calls?</p>
+<dl class="rdoc-list note-list"><dt><code>str</code>
+<dd>
+<p>Value to check</p>
+</dd></dl>
+
+<p>Returns <code>true</code> if a valid ISO 8601 subset date and time, else
+<code>false</code>.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-valid_iso8601_subset_datetime-3F_source')" id="l_method-c-valid_iso8601_subset_datetime-3F_source">show</a>
+                
+              </p>
+              <div id="method-c-valid_iso8601_subset_datetime-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 301</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">valid_iso8601_subset_datetime?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">valid</span> = ( <span class="ruby-constant">DATETIME_ISO8601_SUBSET_REGEXP</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">to_s</span> ) <span class="ruby-operator">==</span> <span class="ruby-number">0</span> <span class="ruby-operator">&amp;&amp;</span>
+            <span class="ruby-identifier">str</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">10</span>                                       <span class="ruby-operator">&amp;&amp;</span>
+            <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">str</span> ).<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span> )
+
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>
+    <span class="ruby-identifier">valid</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">valid</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

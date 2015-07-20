@@ -190,11 +190,21 @@ module Hoodoo
             #       calling client which would be stripped by an Alchemy
             #       architecture but not by conventional HTTP servers?
             #
-            headers[ 'X-Interaction-ID' ] = self.interaction().interaction_id unless self.interaction().nil?
+            unless self.interaction().nil?
+              headers[ 'X-Interaction-ID' ] = self.interaction().interaction_id
+            end
 
             # Session ID comes from Endpoint superclass.
             #
-            headers[ 'X-Session-ID'] = self.session_id() unless self.session_id().nil?
+            unless self.session_id().nil?
+              headers[ 'X-Session-ID'] = self.session_id()
+            end
+
+            # Historical dating comes from the Endpoint superclass.
+            #
+            unless self.dated_at().nil?
+              headers[ 'X-Dated-At' ] = Hoodoo::Utilities.nanosecond_iso8601( self.dated_at() )
+            end
 
             data             = DataForRequest.new
             data.full_uri    = remote_uri

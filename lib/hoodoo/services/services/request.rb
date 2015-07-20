@@ -70,6 +70,39 @@ module Hoodoo; module Services
     #
     attr_accessor :locale
 
+    # Requested date-time for historical representation retrieval, should
+    # a resource representation support it; DateTime instance; +nil+ if
+    # no special historical time is requested.
+    #
+    attr_reader :dated_at
+
+    # Writer for #dated_at which accepts a Time instance, DateTime instance
+    # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
+    # the given input parameter is run through this processing function.
+    #
+    # Invalid date/time strings can lead to an exception. If you want to
+    # avoid catching an exception, use
+    # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
+    # input type before calling here.
+    #
+    # +input+:: Time, DateTime or String - run through
+    #           Hoodoo::Utilities#rationalise_datetime to generate a
+    #           DateTime instance or raise an exception.
+    #
+    def dated_at=( input )
+      @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+    end
+
+    # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
+    # for the "X-Interaction-ID" header, for read-only use. All keys are in
+    # upper case, are Strings, have "HTTP_" at the start and use underscores
+    # where the original request might've used an underscore or hyphen. The
+    # usual curious Rack exceptions of +CONTENT_TYPE+ and +CONTENT_LENGTH+ do
+    # apply, though. This is a superset of header values including those sent
+    # by the client in its request and anything Rack itself might have added.
+    #
+    attr_accessor :headers
+
     # Parsed payload hash, for create and update actions only; else +nil+.
     #
     attr_accessor :body
@@ -157,16 +190,6 @@ module Hoodoo; module Services
     # none requested.
     #
     attr_accessor :references
-
-    # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
-    # for the "X-Interaction-ID" header, for read-only use. All keys are in
-    # upper case, are Strings, have "HTTP_" at the start and use underscores
-    # where the original request might've used an underscore or hyphen. The
-    # usual curious Rack exceptions of +CONTENT_TYPE+ and +CONTENT_LENGTH+ do
-    # apply, though. This is a superset of header values including those sent
-    # by the client in its request and anything Rack itself might have added.
-    #
-    attr_accessor :headers
 
     # Set up defaults in this instance.
     #

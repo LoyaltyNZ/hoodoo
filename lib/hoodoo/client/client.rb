@@ -251,12 +251,11 @@ module Hoodoo
                       caller_id:             nil,
                       caller_secret:         nil )
 
-        @endpoints = {}
-        @base_uri  = base_uri
-        @drb_uri   = drb_uri
-        @drb_port  = drb_port
+        @base_uri = base_uri
+        @drb_uri  = drb_uri
+        @drb_port = drb_port
 
-        @locale    = locale
+        @locale   = locale
 
         if @base_uri != nil
           @discoverer = discoverer || Hoodoo::Services::Discovery::ByConvention.new(
@@ -300,14 +299,25 @@ module Hoodoo
       #
       # +version+::  Endpoint version as an Integer; optional; default is 1.
       #
-      def resource( resource, version = 1 )
-        resource = resource.to_sym
-        version  = version.to_i
+      # +options+::  Optional options Hash (see below).
+      #
+      # The options Hash key/values are as follows:
+      #
+      # +locale+::   Locale string for request/response, e.g. "en-gb".
+      #              Optional. If omitted, defaults to the locale set in this
+      #              Client instance's constructor.
+      #
+      # +dated_at+:: Time instance, DateTime instance or String which Ruby can
+      #              parse into a DateTime instance used for show/list calls
+      #              to resource endpoints that support historical
+      #              representation, via an <tt>X-Dated-At</tt> HTTP header or
+      #              equivalent. If omitted, defaults to +nil+ (no historical
+      #              representation requested).
+      #
+      def resource( resource, version = 1, options = {} )
 
-        @endpoints[ resource ] ||= {}
-
-        endpoint = @endpoints[ resource ][ version ]
-        return endpoint unless endpoint.nil?
+        locale   = options[ :locale   ] || @locale
+        dated_at = options[ :dated_at ]
 
         endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
@@ -315,7 +325,8 @@ module Hoodoo
           {
             :discoverer => @discoverer,
             :session_id => @session_id,
-            :locale     => @locale
+            :locale     => locale,
+            :dated_at   => dated_at
           }
         )
 
@@ -336,7 +347,6 @@ module Hoodoo
           )
         end
 
-        @endpoints[ resource ][ version ] = endpoint
         return endpoint
       end
 

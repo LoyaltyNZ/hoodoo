@@ -30,8 +30,23 @@ describe Hoodoo::Services::Request do
       expect(@r.ident).to be_nil
     end
 
+    it 'rationalises date/time' do
+      now = DateTime.now
+      @r.dated_at = now
+      expect( @r.dated_at ).to eq( now )
+
+      now = DateTime.now + 10
+      @r.dated_at = now.to_time
+      expect( @r.dated_at ).to eq( now )
+
+      now = DateTime.now + 20
+      @r.dated_at = Hoodoo::Utilities::nanosecond_iso8601( now )
+      expect( @r.dated_at ).to eq( now )
+    end
+
     it 'has correct default values' do
       expect( @r.locale              ).to eq( 'en-nz'                    )
+      expect( @r.dated_at            ).to eq( nil                        )
       expect( @r.body                ).to eq( nil                        )
       expect( @r.uri_path_components ).to eq( []                         )
       expect( @r.ident               ).to eq( nil                        )

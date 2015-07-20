@@ -409,17 +409,129 @@ describe Hoodoo::Utilities do
     end
   end
 
-  describe 'to_integer?' do
+  describe '#to_integer?' do
     it 'should return integer equivalents for valid values' do
-      expect(Hoodoo::Utilities.to_integer?(21)).to eq(21)
-      expect(Hoodoo::Utilities.to_integer?('21')).to eq(21)
-      expect(Hoodoo::Utilities.to_integer?(:'21')).to eq(21)
+      expect( Hoodoo::Utilities.to_integer?( 21    ) ).to eq( 21 )
+      expect( Hoodoo::Utilities.to_integer?( '21'  ) ).to eq( 21 )
+      expect( Hoodoo::Utilities.to_integer?( :'21' ) ).to eq( 21 )
     end
 
     it 'should return nil for invalid values' do
-      expect(Hoodoo::Utilities.to_integer?(2.1)).to eq(nil)
-      expect(Hoodoo::Utilities.to_integer?('hello')).to eq(nil)
-      expect(Hoodoo::Utilities.to_integer?(Time.now)).to eq(nil)
+      expect( Hoodoo::Utilities.to_integer?( 2.1      ) ).to eq( nil )
+      expect( Hoodoo::Utilities.to_integer?( 'hello'  ) ).to eq( nil )
+      expect( Hoodoo::Utilities.to_integer?( Time.now ) ).to eq( nil )
+    end
+  end
+
+  # Much of this is similar at the time of writing to the code in
+  # types/date_time_spec.rb, but kept here as independent tests in
+  # case the DateTime type code stops calling the Utility validation
+  # code in future for any reason.
+  #
+  describe '#valid_iso8601_subset_datetime?' do
+    it 'accepts valid' do
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T00:00:00Z'           ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00Z'           ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0Z'         ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0000Z'      ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.000000000Z' ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00+12:30'      ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00-12:30'      ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0+12:30'    ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0-12:30'    ) ).to eq( true )
+    end
+
+    it 'rejects invalid' do
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T12:12:61Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T12:60:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T25:00:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-02-29T00:00:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-13-01T00:00:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-99-99T00:00:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( 'asckn'                ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11'           ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( 34534.234              ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( 38247                  ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( true                   ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( {}                     ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( []                     ) ).to eq( false )
+    end
+  end
+
+  # Much of this is similar at the time of writing to the code in
+  # types/date_spec.rb, but kept here as independent tests in case
+  # the Date type code stops calling the Utility validation code
+  # in future for any reason.
+  #
+  describe '#valid_iso8601_subset_date?' do
+    it 'accepts valid' do
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-12-11' ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2012-02-29' ) ).to eq( true )
+    end
+
+    it 'rejects invalid' do
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-02-29'           ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-13-01'           ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-99-99'           ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( 'asckn'                ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-12-11T00:00:00Z' ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( 34534.234              ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( 38247                  ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( true                   ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( {}                     ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( []                     ) ).to eq( false )
+    end
+  end
+
+  describe '#nanosecond_iso8601' do
+    it 'should convert DateTime to a nanosecond precision String' do
+      now  = DateTime.now()
+      iso  = now.iso8601( 9 )
+
+      expect( Hoodoo::Utilities.nanosecond_iso8601( now ) ).to eq( iso )
+    end
+
+    it 'should convert Time to a nanosecond precision String' do
+      now  = Time.now()
+      iso  = now.iso8601( 9 )
+
+      expect( Hoodoo::Utilities.nanosecond_iso8601( now ) ).to eq( iso )
+    end
+  end
+
+  describe '#rationalise_datetime' do
+    it 'accepts and returns nil' do
+      expect( Hoodoo::Utilities.rationalise_datetime( nil ) ).to eq( nil )
+    end
+
+    it 'accepts and returns a DateTime' do
+      now = DateTime.now
+      expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now )
+    end
+
+    it 'accepts a Time and returns a DateTime' do
+      now = Time.now
+      expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now.to_datetime )
+    end
+
+    # If this fails your system might report time to beyond-nanosecond
+    # precision, so the str-to-DateTime result mismatches the original
+    # DateTime in the fractional seconds.
+    #
+    it 'accepts a parseable String and returns a DateTime' do
+      now = DateTime.now
+      str = Hoodoo::Utilities.nanosecond_iso8601( now )
+      expect( Hoodoo::Utilities.rationalise_datetime( str ) ).to eq( now )
+    end
+
+    it 'rejects invalid input with an exception' do
+      expect {
+        Hoodoo::Utilities.rationalise_datetime( "hello" )
+      }.to raise_exception
+
+      expect {
+        Hoodoo::Utilities.rationalise_datetime( Array.new )
+      }.to raise_exception
     end
   end
 end

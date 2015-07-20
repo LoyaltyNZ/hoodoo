@@ -12,11 +12,8 @@ describe Hoodoo::ActiveRecord::UUID do
 
       ActiveRecord::Migration.add_index( tblname, :id, :unique => true )
 
-      # Hoodoo::ActiveRecord::Base adds a filter to assign a uuid before
-      # validation as well as validations to ensure UUID is present and is
-      # a valid UUID.
-      #
-      class RSpecModelUUIDTest < Hoodoo::ActiveRecord::Base
+      class RSpecModelUUIDTest < ActiveRecord::Base
+        include Hoodoo::ActiveRecord::UUID
       end
     end
   end
