@@ -63,35 +63,44 @@ module Hoodoo
             v    = "/v#{ version }/"
             data = {
 
-              :Health      => { :queue => 'service.utility',   :path => v + 'health'       },
-              :Version     => { :queue => 'service.utility',   :path => v + 'version'      },
+              :Caller       => { :queue => 'service.utility',   :path => v + 'callers'         },
+              :Session      => { :queue => 'service.utility',   :path => v + 'sessions'        },
 
-              :Log         => { :queue => 'service.logging',   :path => v + 'logs'         },
-              :Errors      => { :queue => 'service.logging',   :path => v + 'errors'       },
-              :Statistic   => { :queue => 'service.logging',   :path => v + 'statistics'   },
+              :Log          => { :queue => 'service.logging',   :path => v + 'logs'            },
+              :Errors       => { :queue => 'service.logging',   :path => v + 'errors'          },
+              :Statistic    => { :queue => 'service.logging',   :path => v + 'statistics'      },
 
-              :Account     => { :queue => 'service.member',    :path => v + 'accounts'     },
-              :Member      => { :queue => 'service.member',    :path => v + 'members'      },
-              :Membership  => { :queue => 'service.member',    :path => v + 'memberships'  },
-              :Token       => { :queue => 'service.member',    :path => v + 'tokens'       },
+              :Tag          => { :queue => 'service.tag',       :path => v + 'tags'            },
+              :MassTagEvent => { :queue => 'service.tag',       :path => v + 'mass_tag_events' },
+              :Metadata     => { :queue => 'service.tag',       :path => v + 'metadata'        },
 
-              :Participant => { :queue => 'service.programme', :path => v + 'participants' },
-              :Outlet      => { :queue => 'service.programme', :path => v + 'outlets'      },
-              :Involvement => { :queue => 'service.programme', :path => v + 'involvements' },
-              :Programme   => { :queue => 'service.programme', :path => v + 'programmes'   },
+              :Balance      => { :queue => 'service.financial', :path => v + 'balances'        },
+              :Currency     => { :queue => 'service.financial', :path => v + 'currencies'      },
+              :Voucher      => { :queue => 'service.financial', :path => v + 'vouchers'        },
+              :Calculation  => { :queue => 'service.financial', :path => v + 'calculations'    },
+              :Accumulation => { :queue => 'service.financial', :path => v + 'accumulations'   },
+              :Credit       => { :queue => 'service.financial', :path => v + 'credits'         },
+              :Debit        => { :queue => 'service.financial', :path => v + 'debits'          },
+              :Ledger       => { :queue => 'service.financial', :path => v + 'ledgers'         },
 
-              :Product     => { :queue => 'service.product',   :path => v + 'products'     },
+              :Programme    => { :queue => 'service.programme', :path => v + 'programmes'      },
+              :Participant  => { :queue => 'service.programme', :path => v + 'participants'    },
+              :Outlet       => { :queue => 'service.programme', :path => v + 'outlets'         },
+              :Involvement  => { :queue => 'service.programme', :path => v + 'involvements'    },
 
-              :Balance     => { :queue => 'service.financial', :path => v + 'balances'     },
-              :Currency    => { :queue => 'service.financial', :path => v + 'currencies'   },
-              :Voucher     => { :queue => 'service.financial', :path => v + 'vouchers'     },
-              :Calculation => { :queue => 'service.financial', :path => v + 'calculations' },
-              :Calculator  => { :queue => 'service.financial', :path => v + 'calculators'  },
-              :Transaction => { :queue => 'service.financial', :path => v + 'transactions' },
+              :Account      => { :queue => 'service.member',    :path => v + 'accounts'        },
+              :Member       => { :queue => 'service.member',    :path => v + 'members'         },
+              :Token        => { :queue => 'service.member',    :path => v + 'tokens'          },
+              :Membership   => { :queue => 'service.member',    :path => v + 'memberships'     },
 
-              :Estimation  => { :queue => 'service.purchase',  :path => v + 'estimations'  },
-              :Purchase    => { :queue => 'service.purchase',  :path => v + 'purchases'    },
-              :Refund      => { :queue => 'service.purchase',  :path => v + 'refunds'      },
+              :Product      => { :queue => 'service.product',   :path => v + 'products'        },
+
+              :Estimation   => { :queue => 'service.purchase',  :path => v + 'estimations'     },
+              :Purchase     => { :queue => 'service.purchase',  :path => v + 'purchases'       },
+              :Refund       => { :queue => 'service.purchase',  :path => v + 'refunds'         },
+
+              :Health       => { :queue => 'service.utility',   :path => v + 'health'          },
+              :Version      => { :queue => 'service.utility',   :path => v + 'version'         },
 
             }[ resource.to_sym ]
 
