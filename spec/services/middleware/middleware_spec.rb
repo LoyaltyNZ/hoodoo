@@ -1867,7 +1867,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'lists things with a custom locale and dated-at time' do
+    @old_session = Hoodoo::Services::Middleware.test_session
+    @new_session = @old_session.dup
+    @new_session.scoping = @old_session.scoping.dup
+    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
+    Hoodoo::Services::Middleware.set_test_session( @new_session )
+
     list_things('foo', DateTime.now)
+
+    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   it 'should report middleware level errors from the secondary service' do
@@ -1926,7 +1934,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'shows things with a custom locale and dated-at time' do
+    @old_session = Hoodoo::Services::Middleware.test_session
+    @new_session = @old_session.dup
+    @new_session.scoping = @old_session.scoping.dup
+    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
+    Hoodoo::Services::Middleware.set_test_session( @new_session )
+
     show_things('bar', DateTime.now)
+
+    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   def create_things(locale = nil, dated_at = nil)
@@ -1980,7 +1996,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'creates things with a custom locale and passes through dated-at' do
+    @old_session = Hoodoo::Services::Middleware.test_session
+    @new_session = @old_session.dup
+    @new_session.scoping = @old_session.scoping.dup
+    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
+    Hoodoo::Services::Middleware.set_test_session( @new_session )
+
     create_things('baz', DateTime.now)
+
+    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   it 'refuses to create things when the inner service gets invalid data, with callbacks' do
@@ -2030,7 +2054,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'updates things with a custom locale and passes through dated-at' do
+    @old_session = Hoodoo::Services::Middleware.test_session
+    @new_session = @old_session.dup
+    @new_session.scoping = @old_session.scoping.dup
+    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
+    Hoodoo::Services::Middleware.set_test_session( @new_session )
+
     update_things('boo', DateTime.now)
+
+    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   def delete_things(locale = nil, dated_at = nil)
@@ -2069,7 +2101,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'deletes things, passing through custom locale and dated-at' do
+    @old_session = Hoodoo::Services::Middleware.test_session
+    @new_session = @old_session.dup
+    @new_session.scoping = @old_session.scoping.dup
+    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
+    Hoodoo::Services::Middleware.set_test_session( @new_session )
+
     delete_things('bye', DateTime.now)
+
+    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   it 'should see errors from the inner call correctly' do
