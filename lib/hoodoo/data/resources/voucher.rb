@@ -5,6 +5,7 @@
 # Purpose:: Define documented Platform API Resource 'Voucher'.
 # ----------------------------------------------------------------------
 #           11-Nov-2014 (JML): Created.
+#           22-Jul-2015 (JML): Added backdated_to.
 ########################################################################
 
 module Hoodoo

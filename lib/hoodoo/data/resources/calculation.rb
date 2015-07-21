@@ -5,6 +5,7 @@
 # Purpose:: Define documented Platform API Resource 'Calculation'.
 # ----------------------------------------------------------------------
 #           17-Nov-2014 (DAM): Created.
+#           22-Jul-2015 (JML): Added backdated_to.
 ########################################################################
 
 module Hoodoo

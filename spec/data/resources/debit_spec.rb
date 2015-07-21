@@ -5,10 +5,13 @@ describe Hoodoo::Data::Resources::Debit do
     schema = described_class.get_schema()
 
     expect( schema.is_internationalised?() ).to eq( true )
-    expect( schema.properties.count ).to eq( 4 )
+    expect( schema.properties.count ).to eq( 5 )
 
     expect( schema.properties[ 'token_identifier' ] ).to be_a( Hoodoo::Presenters::Text )
     expect( schema.properties[ 'token_identifier' ].required ).to eq( true )
+
+    expect( schema.properties[ 'backdated_to' ] ).to be_a( Hoodoo::Presenters::DateTime )
+    expect( schema.properties[ 'backdated_to' ].required ).to eq( true )
 
     expect( schema.properties[ 'caller_reference' ] ).to be_a( Hoodoo::Presenters::Text )
     expect( schema.properties[ 'caller_reference' ].required ).to eq( true )

@@ -5,6 +5,7 @@
 # Purpose:: Define documented Platform API Resource 'Ledger'.
 # ----------------------------------------------------------------------
 #           08-Jan-2015 (DAM): Created.
+#           22-Jul-2015 (JML): Added backdated_to.
 ########################################################################
 
 module Hoodoo
