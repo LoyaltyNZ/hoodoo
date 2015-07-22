@@ -11,7 +11,7 @@ describe Hoodoo::Data::Resources::Credit do
     expect( schema.properties[ 'token_identifier' ].required ).to eq( true )
 
     expect( schema.properties[ 'backdated_to' ] ).to be_a( Hoodoo::Presenters::DateTime )
-    expect( schema.properties[ 'backdated_to' ].required ).to eq( true )
+    expect( schema.properties[ 'backdated_to' ].required ).to eq( false )
 
     expect( schema.properties[ 'caller_reference' ] ).to be_a( Hoodoo::Presenters::Text )
     expect( schema.properties[ 'caller_reference' ].required ).to eq( true )

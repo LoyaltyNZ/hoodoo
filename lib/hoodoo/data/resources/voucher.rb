@@ -29,7 +29,7 @@ module Hoodoo
 
           enum     :state,            :required => true, :from => STATES
           text     :token_identifier, :required => true
-          datetime :backdated_to,     :required => true
+          datetime :backdated_to,     :required => false
           text     :name,             :required => true
           text     :programme_code,   :required => true
           enum     :reference_kind,   :required => false,  :from     => REFERENCE_KINDS

@@ -23,7 +23,7 @@ module Hoodoo
           text      :description,      :required => false
 
           text      :token_identifier, :required => true
-          datetime  :backdated_to,     :required => true
+          datetime  :backdated_to,     :required => false
           object    :currency_amount,  :required => true do
             type    :CurrencyAmount
           end

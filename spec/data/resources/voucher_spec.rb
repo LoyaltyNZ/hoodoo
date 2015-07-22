@@ -16,7 +16,7 @@ describe Hoodoo::Data::Resources::Voucher do
     expect(schema.properties['token_identifier'].required).to eq(true)
 
     expect(schema.properties['backdated_to']).to be_a(Hoodoo::Presenters::DateTime)
-    expect(schema.properties['backdated_to'].required).to eq(true)
+    expect(schema.properties['backdated_to'].required).to eq(false)
 
     expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['name'].required).to eq(true)
