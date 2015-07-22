@@ -124,7 +124,7 @@ module Hoodoo
             query_hash = Hoodoo::Utilities.stringify( description_of_request.query_hash )
             ident      = description_of_request.ident.to_s
 
-            body_data  = body_hash.nil? ? '' : body_hash.to_json
+            body_data  = body_hash.nil? ? '' : JSON.fast_generate( body_hash )
 
             # Amazingly, there's no fast way to deep clone a URI. Long story
             # short - Marshal.load(Marshal.dump(uri)) takes, astonishingly,
