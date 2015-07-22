@@ -13,6 +13,7 @@
 
 require 'set'
 require 'uri'
+require 'json'
 require 'benchmark'
 
 require 'hoodoo/services/services/permissions'
@@ -1150,7 +1151,7 @@ module Hoodoo; module Services
             # UUID and include that in structured log data to make sure any
             # persistence layers store the item as an error with the correct ID.
 
-            body = JSON.parse( body )
+            body = ::JSON.parse( body )
             id   = body[ 'id' ]
           rescue
           end
@@ -2394,7 +2395,7 @@ module Hoodoo; module Services
             # Hoodoo requires Ruby 2.1 or later, else:
             # https://www.ruby-lang.org/en/news/2013/02/22/json-dos-cve-2013-0269/
             #
-            payload_hash = JSON.parse( body )
+            payload_hash = ::JSON.parse( body )
 
         end
 

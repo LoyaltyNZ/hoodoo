@@ -7,6 +7,8 @@
 #           05-Mar-2015 (ADH): Created.
 ########################################################################
 
+require 'json'
+
 module Hoodoo
   class Client     # Just used as a namespace here
     class Endpoint # Just used as a namespace here
@@ -124,7 +126,7 @@ module Hoodoo
             query_hash = Hoodoo::Utilities.stringify( description_of_request.query_hash )
             ident      = description_of_request.ident.to_s
 
-            body_data  = body_hash.nil? ? '' : JSON.fast_generate( body_hash )
+            body_data  = body_hash.nil? ? '' : ::JSON.generate( body_hash )
 
             # Amazingly, there's no fast way to deep clone a URI. Long story
             # short - Marshal.load(Marshal.dump(uri)) takes, astonishingly,
@@ -226,7 +228,7 @@ module Hoodoo
             body = description_of_response.raw_body_data
 
             begin
-              parsed = JSON.parse(
+              parsed = ::JSON.parse(
                 body,
                 :object_class => Hoodoo::Client::AugmentedHash,
                 :array_class  => Hoodoo::Client::AugmentedArray
