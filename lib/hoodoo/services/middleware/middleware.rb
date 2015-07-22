@@ -146,12 +146,7 @@ module Hoodoo; module Services
       # asks that the "id" field (UUID) for the persisted resource instance is
       # of the given value, rather than automatically generated.
       #
-      'HTTP_X_RESOURCE_UUID',
-
-      # This header is ignored except in GET requests. It asks that the returned
-      # resource representation(s) are as they were at the provided date time.
-      #
-      'HTTP_X_DATED_AT'
+      'HTTP_X_RESOURCE_UUID'
 
     ] )
 

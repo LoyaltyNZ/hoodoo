@@ -58,7 +58,7 @@ module Hoodoo
           self.primary_key = :id
           self.table_name  = model.table_name + "_history_entries"
         end
-        Object.const_set model.history_model_name, history_klass
+        Object.const_set( model.dated_history_model_name, history_klass )
 
       end
 
@@ -68,7 +68,7 @@ module Hoodoo
       module ClassMethods
 
         # Return an ActiveRecord::Relation containing the model instances which
-        # are effective at context.request.dated_at. If this value is nil the
+        # are effective at +context.request.dated_at+. If this value is nil the
         # current time in UTC is used.
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -77,31 +77,28 @@ module Hoodoo
         #             that a resource subclass implements.
         #
         def dated( context )
-
-          date_time = context.request.dated_at || Time.now.utc
-
+          date_time = context.request.dated_at || Time.now
           return self.dated_at( date_time )
-
         end
 
         # Return an ActiveRecord::Relation containing the models instances which
         # are effective at the specified date_time.
         #
-        # +date_time+:: (Optional) The Date/Time (as a Ruby Date, Time or
-        #               DateTime instance) for which the "effective dated" scope
-        #               is to be constructed.
+        # +date_time+:: A Time or DateTime instance, or a String that can be
+        #               converted to a DateTime instance, for which the
+        #               "effective dated" scope is to be constructed.
         #
         def dated_at( date_time = Time.now )
 
-          # Convert the date time to UTC
-          date_time = date_time.utc
+          # Rationalise and convert the date time to UTC
+          date_time = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
 
           # Create a string that specifies this model's attributes joined by
           # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join( ", " )
+          formatted_model_attributes = self.attribute_names.join( "," )
 
-          # Escape user provided data
-          safe_date_time = sanitize( date_time )
+          # Convert date_time to a String suitable for an SQL query
+          string_date_time = sanitize( date_time )
 
           # A query that combines historical and current records which are
           # effective at the specified date time.
@@ -114,9 +111,9 @@ module Hoodoo
                 UNION ALL
 
                 SELECT #{ self.history_column_mapping }, effective_start, effective_end
-                FROM #{ self.effective_history_table }
+                FROM #{ self.dated_history_table_name }
               ) AS u
-              WHERE effective_start <= #{ safe_date_time } AND (effective_end > #{ safe_date_time } OR effective_end IS NULL)
+              WHERE effective_start <= #{ string_date_time } AND (effective_end > #{ string_date_time } OR effective_end IS NULL)
             ) AS #{ self.table_name }
           }
 
@@ -132,7 +129,7 @@ module Hoodoo
 
           # Create a string that specifies this model's attributes joined by
           # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join( ", " )
+          formatted_model_attributes = self.attribute_names.join( "," )
 
           # A query that combines historical and current records.
           nested_query = %{
@@ -143,7 +140,7 @@ module Hoodoo
               UNION ALL
 
               SELECT #{ self.history_column_mapping }
-              FROM #{ self.effective_history_table }
+              FROM #{ self.dated_history_table_name }
             ) AS #{ self.table_name }
           }
 
@@ -154,20 +151,20 @@ module Hoodoo
 
         # The String name of the model which represents history entries for this
         # model.
-        def history_model_name
+        def dated_history_model_name
 
-          self.to_s << "HistoryEntry"
+          "NzCoLoyaltyHoodoo#{self.to_s}HistoryEntry"
 
         end
 
         # Get the symbolised name of the history table for model. This defaults
-        # to the name of the model's table concatenated with _history_entries.
-        # So if the table name is :posts, the history table would be
+        # to the name of the model's table concatenated with +_history_entries+.
+        # If the table name is :posts, the history table would be
         # :posts_history_entries.
         #
-        def effective_history_table
+        def dated_history_table_name
 
-          self.history_model_name.constantize.table_name
+          self.dated_history_model_name.constantize.table_name
 
         end
 
@@ -184,9 +181,9 @@ module Hoodoo
         #
         # +effective_start_history_table+:: String or Symbol name of the table.
         #
-        def effective_date_history_table=( effective_start_history_table )
+        def dated_history_table_name=( effective_start_history_table )
 
-          history_model_name.constantize.table_name = effective_start_history_table
+          dated_history_model_name.constantize.table_name = effective_start_history_table
 
         end
 

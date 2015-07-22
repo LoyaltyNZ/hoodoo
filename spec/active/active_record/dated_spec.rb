@@ -44,7 +44,7 @@ describe Hoodoo::ActiveRecord::Dated do
       class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
         self.primary_key                  = :activerecord_id
-        self.effective_date_history_table = :r_spec_model_effective_date_history_entries
+        self.dated_history_table_name = :r_spec_model_effective_date_history_entries
       end
     end
   end
@@ -81,12 +81,12 @@ describe Hoodoo::ActiveRecord::Dated do
 
       # uuid, data, created_at, effective_end, effective_start
       [
-        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours , @now - 5.hours ],
-        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours , @now - 4.hours ],
-        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour  , @now - 3.hours ],
-        [ @uuid_b, "four",  @now - 4.hours, @now           , @now - 2.hours ]
+        [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours, @now - 5.hours ],
+        [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours, @now - 4.hours ],
+        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour, @now - 3.hours ],
+        [ @uuid_b, "four",  @now - 4.hours, @now,           @now - 2.hours ]
       ].each do | row_data |
-        RSpecModelEffectiveDateTestHistoryEntry.new( {
+        NzCoLoyaltyHoodooRSpecModelEffectiveDateTestHistoryEntry.new( {
           :id              => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
           :uuid            => row_data[ 0 ],
           :data            => row_data[ 1 ],
@@ -246,7 +246,7 @@ describe Hoodoo::ActiveRecord::Dated do
         [ @uuid_a, "three", @now - 5.hours, @now - 1.hour,  @now - 3.hours ],
         [ @uuid_b, "four",  @now - 4.hours, @now,           @now - 2.hours ]
       ].each do | row_data |
-        RSpecModelEffectiveDateTestOverrideHistoryEntry.new( {
+        NzCoLoyaltyHoodooRSpecModelEffectiveDateTestOverrideHistoryEntry.new( {
           :id                => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
           :uuid            => row_data[ 0 ],
           :data            => row_data[ 1 ],
