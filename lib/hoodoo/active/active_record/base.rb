@@ -14,15 +14,21 @@ module Hoodoo
       require 'active_record'
 
       # While individual ActiveRecord mixins can be included as and
-      # when needed, if you want everything, just define a model which
+      # when needed, if you want the set of mixins, just define a model which
       # subclasses from this Hoodoo::ActiveRecord::Base class instead
       # of ActiveRecord::Base.
+      #
+      # This will include:
+      #
+      # * Hoodoo::ActiveRecord::UUID
+      # * Hoodoo::ActiveRecord::Secure
+      # * Hoodoo::ActiveRecord::Finder
+      # * Hoodoo::ActiveRecord::ErrorMapping
       #
       class Base < ::ActiveRecord::Base
 
         include Hoodoo::ActiveRecord::UUID
         include Hoodoo::ActiveRecord::Secure
-        include Hoodoo::ActiveRecord::Translated
         include Hoodoo::ActiveRecord::Finder
         include Hoodoo::ActiveRecord::ErrorMapping
 
@@ -40,7 +46,6 @@ module Hoodoo
 
           Hoodoo::ActiveRecord::UUID.instantiate( model )
           Hoodoo::ActiveRecord::Secure.instantiate( model )
-          Hoodoo::ActiveRecord::Translated.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
 
           super

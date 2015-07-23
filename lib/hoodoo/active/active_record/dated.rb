@@ -13,12 +13,41 @@ module Hoodoo
   module ActiveRecord
 
     # Support mixin for models subclassed from ActiveRecord::Base providing
-    # as-per-API-standard dating support. See
-    # Hoodoo::ActiveRecord::Dated::ClassMethods#dated for details.
+    # as-per-API-standard dating support.
     #
-    # See also:
+    # This mixin adds finder methods to the model it is applied to (see
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#dated and
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at). These finders require
+    # two database tables in order to function correctly, the primary table
+    # (the model table) and a history table. When a record is updated it should
+    # be moved to the history table and a new record inserted with the new
+    # values. When a record is deleted the it should be moved to the history
+    # table.
     #
-    # * http://guides.rubyonrails.org/active_record_basics.html
+    # The primary table must have a unique column named +id+ and a
+    # timestamp column named +updated_at+ which both need to be set by
+    # application code.
+    #
+    # The history table requires the same columns as the primary table with two
+    # differences:
+    #
+    # 1. The history table's +id+ column must be populated with any unique
+    #    value whilst the history table's +uuid+ column must be populated with
+    #    the primary table's +id+ value.
+    #
+    # 2. The history table must have two additional columns, +effective_start+
+    #    and +effective_end+. The +effective_start+ column determines when the
+    #    history entry becomes effective (inclusive) whilst the +effective_end+
+    #    determines when the history entry is effective to (exclusive). A record
+    #    is considered to be effective at a particular time if that time is the
+    #    same or after the +effective_start+ and before the +effective_end+.
+    #
+    # Compatible database migration generators are included in Service_Shell
+    # which will create the history table and add database triggers (PostgreSQL
+    # specific) to create the appropriate history entry when a record is deleted
+    # or updated. See
+    # https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb
+    # for more information.
     #
     module Dated
 
@@ -42,18 +71,18 @@ module Hoodoo
       # Hoodoo::ActiveRecord::Dated::ClassMethods methods are defined as
       # class methods on the including class.
       #
-      # Additionally a history model is created for interacting with the
-      # history records.
-      #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.instantiate( model )
         model.extend( ClassMethods )
 
-        # Define a model for the history entries which is namespaced with the
-        # original model's name. So if the original model is called
-        # Post, the history model will be PostHistoryEntry.
+        # Define a model for the history entries which is namespaced with a
+        # fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and the
+        # original model's name followed by the suffix HistoryEntry. If the
+        # original model is called Post, the history model will be
+        # NzCoLoyaltyHoodooPostHistoryEntry.
+        #
         history_klass = Class.new( ::ActiveRecord::Base ) do
           self.primary_key = :id
           self.table_name  = model.table_name + "_history_entries"
