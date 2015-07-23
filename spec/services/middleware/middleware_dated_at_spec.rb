@@ -92,27 +92,6 @@ end
 ###############################################################################
 
 describe Hoodoo::Services::Middleware do
-
-  before :each do
-
-    @test_uuid = Hoodoo::UUID.generate()
-    @old_test_session = Hoodoo::Services::Middleware.test_session()
-    @test_session = @old_test_session.dup
-    permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
-    permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
-    @test_session.permissions = permissions
-    @test_session.scoping = @test_session.scoping.dup
-    @test_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
-    Hoodoo::Services::Middleware.set_test_session( @test_session )
-
-  end
-
-  after :each do
-
-    Hoodoo::Services::Middleware.set_test_session( @old_test_session )
-
-  end
-
   context 'deep local calls' do
     after :all do
       Hoodoo::Services::Middleware.flush_services_for_test()

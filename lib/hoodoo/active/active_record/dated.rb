@@ -58,8 +58,17 @@ module Hoodoo
           self.primary_key = :id
           self.table_name  = model.table_name + "_history_entries"
         end
-        Object.const_set( model.dated_history_model_name, history_klass )
+        Object.const_set( model.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME, history_klass )
 
+      end
+
+      # Forms a String containing the specified +model_klass+'s attribute names
+      # escaped and joined with commas.
+      #
+      # +model_klass+ Class which responds to .attribute_names
+      #
+      def self.sanitised_column_string( model_klass )
+        model_klass.attribute_names.map{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }.join( ',' )
       end
 
       # Collection of class methods that get defined on an including class via
@@ -84,8 +93,8 @@ module Hoodoo
         # Return an ActiveRecord::Relation containing the models instances which
         # are effective at the specified date_time.
         #
-        # +date_time+:: A Time or DateTime instance, or a String that can be
-        #               converted to a DateTime instance, for which the
+        # +date_time+:: (Optional) A Time or DateTime instance, or a String that
+        #               can be converted to a DateTime instance, for which the
         #               "effective dated" scope is to be constructed.
         #
         def dated_at( date_time = Time.now )
@@ -93,9 +102,9 @@ module Hoodoo
           # Rationalise and convert the date time to UTC
           date_time = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
 
-          # Create a string that specifies this model's attributes joined by
-          # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join( "," )
+          # Create a string that specifies this model's attributes escaped and
+          # joined by commas for use in a SQL query.
+          formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
 
           # Convert date_time to a String suitable for an SQL query
           string_date_time = sanitize( date_time )
@@ -111,7 +120,7 @@ module Hoodoo
                 UNION ALL
 
                 SELECT #{ self.history_column_mapping }, effective_start, effective_end
-                FROM #{ self.dated_history_table_name }
+                FROM #{ self.dated_with_table_name }
               ) AS u
               WHERE effective_start <= #{ string_date_time } AND (effective_end > #{ string_date_time } OR effective_end IS NULL)
             ) AS #{ self.table_name }
@@ -125,11 +134,11 @@ module Hoodoo
         # Return an ActiveRecord::Relation containing all historical and current
         # model instances.
         #
-        def historical_and_current
+        def dated_historical_and_current
 
-          # Create a string that specifies this model's attributes joined by
-          # commas for use in a SQL query.
-          formatted_model_attributes = self.attribute_names.join( "," )
+          # Create a string that specifies this model's attributes escaped and
+          # joined by commas for use in a SQL query.
+          formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
 
           # A query that combines historical and current records.
           nested_query = %{
@@ -140,7 +149,7 @@ module Hoodoo
               UNION ALL
 
               SELECT #{ self.history_column_mapping }
-              FROM #{ self.dated_history_table_name }
+              FROM #{ self.dated_with_table_name }
             ) AS #{ self.table_name }
           }
 
@@ -151,7 +160,8 @@ module Hoodoo
 
         # The String name of the model which represents history entries for this
         # model.
-        def dated_history_model_name
+        #
+        def NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME
 
           "NzCoLoyaltyHoodoo#{self.to_s}HistoryEntry"
 
@@ -162,28 +172,20 @@ module Hoodoo
         # If the table name is :posts, the history table would be
         # :posts_history_entries.
         #
-        def dated_history_table_name
+        def dated_with_table_name
 
-          self.dated_history_model_name.constantize.table_name
-
-        end
-
-        # The name of this model's primary key. This can be set via the
-        # ActiveRecord setter self.primary_key=(). The default is "id".
-        def model_pkey
-
-          self.primary_key || "id"
+          self.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME.constantize.table_name
 
         end
 
         # Set the name of the table which stores the history entries for this
         # model.
         #
-        # +effective_start_history_table+:: String or Symbol name of the table.
+        # +dated_with_history_table+:: String or Symbol name of the table.
         #
-        def dated_history_table_name=( effective_start_history_table )
+        def dated_with_table_name=( dated_with_history_table )
 
-          dated_history_model_name.constantize.table_name = effective_start_history_table
+          self.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME.constantize.table_name = dated_with_history_table
 
         end
 
@@ -196,10 +198,16 @@ module Hoodoo
 
           desired_attributes = self.attribute_names.dup
 
-          primary_key_index = desired_attributes.index( self.model_pkey )
+          # Locate the primary key field
+          primary_key_index = desired_attributes.index( self.primary_key || "id" )
+
+          # Sanitise the attribute names
+          desired_attributes.map!{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }
+
+          # Map the primary key
           desired_attributes[ primary_key_index ] = "uuid as " << desired_attributes[ primary_key_index ]
 
-          desired_attributes.join( ", " )
+          desired_attributes.join( ',' )
 
         end
 

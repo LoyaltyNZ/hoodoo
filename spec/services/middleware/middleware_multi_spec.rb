@@ -240,17 +240,7 @@ end
 describe Hoodoo::Services::Middleware do
 
   before :all do
-    @old_session = Hoodoo::Services::Middleware.test_session
-    @new_session = @old_session.dup
-    @new_session.scoping = @old_session.scoping.dup
-    @new_session.scoping.authorised_http_headers = [ 'HTTP_X_DATED_AT' ]
-    Hoodoo::Services::Middleware.set_test_session( @new_session )
-
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
-  end
-
-  after :all do
-    Hoodoo::Services::Middleware.set_test_session( @old_session )
   end
 
   context 'DRb start timeout, for test coverage purposes' do
