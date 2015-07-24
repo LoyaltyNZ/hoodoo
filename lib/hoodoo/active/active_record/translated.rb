@@ -66,7 +66,7 @@ module Hoodoo
         end
 
         # def translated_with( map )
-        #   class_variable_set( '@@nz_co_loyalty_hoodoo_translated_with', map )
+        #   class_variable_set( :@@nz_co_loyalty_hoodoo_translated_with, map )
         # end
       end
     end

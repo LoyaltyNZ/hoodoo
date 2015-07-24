@@ -248,7 +248,7 @@ module Hoodoo
         # *args:: One or more field names as Strings or Symbols.
         #
         def acquire_with( *args )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_show_id_fields', args )
+          class_variable_set( :@@nz_co_loyalty_hoodoo_show_id_fields, args )
         end
 
         # Generate an ActiveRecord::Relation instance which can be used to
@@ -503,7 +503,7 @@ module Hoodoo
         #
         def search_with( hash )
           class_variable_set(
-            '@@nz_co_loyalty_hoodoo_search_with',
+            :@@nz_co_loyalty_hoodoo_search_with,
             Hoodoo::ActiveRecord::Support.process_to_map( hash )
           )
         end
@@ -514,7 +514,7 @@ module Hoodoo
         #
         def filter_with( hash )
           class_variable_set(
-            '@@nz_co_loyalty_hoodoo_filter_with',
+            :@@nz_co_loyalty_hoodoo_filter_with,
             Hoodoo::ActiveRecord::Support.process_to_map( hash )
           )
         end
