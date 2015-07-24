@@ -42,6 +42,17 @@ module Hoodoo
     #    is considered to be effective at a particular time if that time is the
     #    same or after the +effective_start+ and before the +effective_end+.
     #
+    # The history table name defaults to the name of the primary table
+    # concatenated with +_history_entries+. This can be overriden using
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#dated_with_table_name=.
+    #
+    # Example:
+    #
+    #     class Post < ActiveRecord::Base
+    #       include Hoodoo::ActiveRecord::Dated
+    #       self.dated_with_table_name = :historical_posts
+    #     end
+    #
     # Compatible database migration generators are included in Service_Shell
     # which will create the history table and add database triggers (PostgreSQL
     # specific) to create the appropriate history entry when a record is deleted
@@ -227,8 +238,8 @@ module Hoodoo
 
           desired_attributes = self.attribute_names.dup
 
-          # Locate the primary key field
-          primary_key_index = desired_attributes.index( self.primary_key || "id" )
+          # Locate the primary key field which is required to be called id.
+          primary_key_index = desired_attributes.index( "id" )
 
           # Sanitise the attribute names
           desired_attributes.map!{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }

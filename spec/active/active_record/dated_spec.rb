@@ -26,7 +26,7 @@ describe Hoodoo::ActiveRecord::Dated do
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => false ) do | t |
-        t.text :activerecord_id,  :null => false
+        t.text :id,  :null => false
         t.text :data
         t.timestamps
       end
@@ -42,7 +42,6 @@ describe Hoodoo::ActiveRecord::Dated do
 
       class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
-        self.primary_key           = :activerecord_id
         self.dated_with_table_name = :r_spec_model_effective_date_history_entries
       end
     end
@@ -82,7 +81,7 @@ describe Hoodoo::ActiveRecord::Dated do
       [
         [ @uuid_a, "one",   @now - 5.hours, @now - 3.hours, @now - 5.hours ],
         [ @uuid_b, "two",   @now - 4.hours, @now - 2.hours, @now - 4.hours ],
-        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour, @now - 3.hours  ],
+        [ @uuid_a, "three", @now - 5.hours, @now - 1.hour,  @now - 3.hours ],
         [ @uuid_b, "four",  @now - 4.hours, @now,           @now - 2.hours ]
       ].each do | row_data |
         history_klass.new( {
@@ -101,9 +100,9 @@ describe Hoodoo::ActiveRecord::Dated do
         [ @uuid_a, "six",  @now - 5.hours, @now - 1.hour ]
       ].each do | row_data |
         model_klass.new( {
-          primary_key => row_data[ 0 ],
-          :data                     => row_data[ 1 ],
-          :created_at               => row_data[ 2 ],
+          :id         => row_data[ 0 ],
+          :data       => row_data[ 1 ],
+          :created_at => row_data[ 2 ],
           :updated_at => row_data[ 3 ]
         } ).save!
       end
@@ -137,7 +136,7 @@ describe Hoodoo::ActiveRecord::Dated do
       end
 
       it 'works with further filtering' do
-        expect( model_klass.dated_at( @now ).where( primary_key => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
+        expect( model_klass.dated_at( @now ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
     end
@@ -190,7 +189,7 @@ describe Hoodoo::ActiveRecord::Dated do
         context = Hoodoo::Services::Context.new( nil, request, nil, nil )
         context.request.dated_at = @now
 
-        expect( model_klass.dated( context ).where( primary_key => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
+        expect( model_klass.dated( context ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
       it 'works with dating last' do
@@ -201,7 +200,7 @@ describe Hoodoo::ActiveRecord::Dated do
         context = Hoodoo::Services::Context.new( nil, request, nil, nil )
         context.request.dated_at = @now
 
-        expect( model_klass.where( primary_key => @uuid_a ).dated( context ).pluck( :data ) ).to eq( [ "six" ] )
+        expect( model_klass.where( :id => @uuid_a ).dated( context ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
     end
@@ -222,6 +221,9 @@ describe Hoodoo::ActiveRecord::Dated do
 
   context "using default effective dating config" do
 
+    # Must be defined as methods rathern than using a let statement as let
+    # statement values cannot be used in before blocks.
+
     def history_klass
       NzCoLoyaltyHoodooRSpecModelEffectiveDateTestHistoryEntry
     end
@@ -230,15 +232,14 @@ describe Hoodoo::ActiveRecord::Dated do
       RSpecModelEffectiveDateTest
     end
 
-    def primary_key
-      :id
-    end
-
     it_behaves_like Hoodoo::ActiveRecord::Dated
 
   end
 
-  context "overriding primary key name and history table name" do
+  context "overriding history table name" do
+
+    # Must be defined as methods rathern than using a let statement as let
+    # statement values cannot be used in before blocks.
 
     def history_klass
       NzCoLoyaltyHoodooRSpecModelEffectiveDateTestOverrideHistoryEntry
@@ -246,10 +247,6 @@ describe Hoodoo::ActiveRecord::Dated do
 
     def model_klass
       RSpecModelEffectiveDateTestOverride
-    end
-
-    def primary_key
-      :activerecord_id
     end
 
     it_behaves_like Hoodoo::ActiveRecord::Dated
