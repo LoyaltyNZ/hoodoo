@@ -42,6 +42,22 @@ module Hoodoo
     #    is considered to be effective at a particular time if that time is the
     #    same or after the +effective_start+ and before the +effective_end+.
     #
+    #    The +effective_start+ should be set to the +effective_end+ of the last
+    #    record with same +uuid+, or to the +created_at+ of the record if there
+    #    is no previous record with the same +uuid+.
+    #
+    #    The +effective_end+ should be set to the current time when deleting a
+    #    record or to the updated record's +updated_at+ when updating a record.
+    #
+    # Additionally there are two constraints on the history table that must not
+    # be broken for the finder methods to function correctly:
+    #
+    # 1. When adding a record to the history table its +effective_end+ must be
+    #    after all other records in the history table with the same +uuid+.
+    #
+    # 2. When inserting a new record to the primary table its +id+ must not
+    #    exist in the history table.
+    #
     # The history table name defaults to the name of the primary table
     # concatenated with +_history_entries+. This can be overriden using
     # Hoodoo::ActiveRecord::Dated::ClassMethods#dated_with_table_name=.
@@ -53,10 +69,11 @@ module Hoodoo
     #       self.dated_with_table_name = :historical_posts
     #     end
     #
-    # Compatible database migration generators are included in +service_shell+
-    # which will create the history table and add database triggers (PostgreSQL
-    # specific) to create the appropriate history entry when a record is deleted
-    # or updated. See
+    # Compatible database migration generators are included in +service_shell+.
+    # These migrations create the history table and add database triggers
+    # (PostgreSQL specific) which will handle the creation of the appropriate
+    # history entry when a record is deleted or updated without breaking the
+    # history table constraints. See
     # https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb
     # for more information.
     #
