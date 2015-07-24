@@ -84,7 +84,7 @@ describe Hoodoo::ActiveRecord::Dated do
         [ @uuid_a, "three", @now - 5.hours, @now - 1.hour,  @now - 3.hours ],
         [ @uuid_b, "four",  @now - 4.hours, @now,           @now - 2.hours ]
       ].each do | row_data |
-        history_klass.new( {
+        model_klass.dated_with.new( {
           :id              => row_data[ 0 ] + "-" + row_data[ 3 ].iso8601,
           :uuid            => row_data[ 0 ],
           :data            => row_data[ 1 ],
@@ -221,13 +221,8 @@ describe Hoodoo::ActiveRecord::Dated do
 
   context "using default effective dating config" do
 
-    # Must be defined as methods rathern than using a let statement as let
+    # Must be defined as a method rather than using a let statement as let
     # statement values cannot be used in before blocks.
-
-    def history_klass
-      NzCoLoyaltyHoodooRSpecModelEffectiveDateTestHistoryEntry
-    end
-
     def model_klass
       RSpecModelEffectiveDateTest
     end
@@ -238,13 +233,8 @@ describe Hoodoo::ActiveRecord::Dated do
 
   context "overriding history table name" do
 
-    # Must be defined as methods rathern than using a let statement as let
+    # Must be defined as a method rather than using a let statement as let
     # statement values cannot be used in before blocks.
-
-    def history_klass
-      NzCoLoyaltyHoodooRSpecModelEffectiveDateTestOverrideHistoryEntry
-    end
-
     def model_klass
       RSpecModelEffectiveDateTestOverride
     end

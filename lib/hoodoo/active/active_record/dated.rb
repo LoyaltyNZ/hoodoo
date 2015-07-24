@@ -98,7 +98,7 @@ module Hoodoo
           self.primary_key = :id
           self.table_name  = model.table_name + "_history_entries"
         end
-        Object.const_set( model.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME, history_klass )
+        model.class_variable_set( :@@nz_co_loyalty_hoodoo_dated_with, history_klass )
 
       end
 
@@ -198,13 +198,10 @@ module Hoodoo
 
         end
 
-        # The String name of the model which represents history entries for this
-        # model.
-        #
-        def NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME
-
-          "NzCoLoyaltyHoodoo#{self.to_s}HistoryEntry"
-
+        def dated_with
+          return class_variable_defined?( :@@nz_co_loyalty_hoodoo_dated_with ) ?
+                      class_variable_get( :@@nz_co_loyalty_hoodoo_dated_with ) :
+                      nil
         end
 
         # Get the symbolised name of the history table for model. This defaults
@@ -213,9 +210,7 @@ module Hoodoo
         # :posts_history_entries.
         #
         def dated_with_table_name
-
-          self.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME.constantize.table_name
-
+          self.dated_with.table_name
         end
 
         # Set the name of the table which stores the history entries for this
@@ -224,9 +219,7 @@ module Hoodoo
         # +dated_with_history_table+:: String or Symbol name of the table.
         #
         def dated_with_table_name=( dated_with_history_table )
-
-          self.NZ_CO_LOYALTY_HOODOO_DATED_HISTORY_MODEL_NAME.constantize.table_name = dated_with_history_table
-
+          self.dated_with.table_name = dated_with_history_table
         end
 
         protected
