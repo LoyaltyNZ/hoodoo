@@ -46,8 +46,9 @@ module Hoodoo
     #    record with same +uuid+, or to the +created_at+ of the record if there
     #    is no previous record with the same +uuid+.
     #
-    #    The +effective_end+ should be set to the current time when deleting a
-    #    record or to the updated record's +updated_at+ when updating a record.
+    #    The +effective_end+ should be set to the current time (UTC) when
+    #    deleting a record or to the updated record's +updated_at+ when updating
+    #    a record.
     #
     # Additionally there are two constraints on the history table that must not
     # be broken for the finder methods to function correctly:
