@@ -11,6 +11,8 @@
 #           24-Sep-2014 (ADH): Created.
 ########################################################################
 
+require 'json'
+
 module Hoodoo; module Services
 
   # The service middleware creates a Hoodoo::Services::Response instance for
@@ -287,7 +289,7 @@ module Hoodoo; module Services
         response_hash = body_data
       end
 
-      rack_response.write( JSON.generate( response_hash ) )
+      rack_response.write( ::JSON.generate( response_hash ) )
 
       # Finally, sort out the headers
 

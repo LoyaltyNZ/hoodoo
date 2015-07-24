@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.1.5'
 
-  s.add_runtime_dependency     'json_builder',     '~> 3.1'
   s.add_runtime_dependency     'uuidtools',        '~> 2.1'
   s.add_runtime_dependency     'kgio',             '~> 2.9' # Speeds up Dalli
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client

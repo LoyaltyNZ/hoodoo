@@ -72,7 +72,7 @@ module Hoodoo
       @uuid             = Hoodoo::UUID.generate()
       @descriptions     = descriptions
       @errors           = []
-      @http_status_code = 500
+      @http_status_code = 200
       @created_at       = nil # See #persist!
     end
 
@@ -143,7 +143,7 @@ module Hoodoo
 
       # All good!
 
-      @http_status_code = ( description[ 'status' ] || 500 ).to_i if @errors.empty? # Use first in collection for overall HTTP status code
+      @http_status_code = ( description[ 'status' ] || 200 ).to_i if @errors.empty? # Use first in collection for overall HTTP status code
 
       error = {
         'code'    => code,
@@ -226,7 +226,7 @@ module Hoodoo
     #
     def clear_errors
       @errors           = []
-      @http_status_code = 500
+      @http_status_code = 200
     end
 
     # Return a Hash rendered through the Hoodoo::Data::Resources::Errors

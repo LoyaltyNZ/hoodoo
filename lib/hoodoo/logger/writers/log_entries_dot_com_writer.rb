@@ -7,6 +7,8 @@
 #           08-Jan-2015 (ADH): Created.
 ########################################################################
 
+require 'json'
+
 module Hoodoo
   class Logger
 
@@ -51,7 +53,7 @@ module Hoodoo
           # additional messages accidentally.
 
           @@logger.level = ::Logger::DEBUG
-          @@logger.send( method, JSON.generate( message ) )
+          @@logger.send( method, ::JSON.generate( message ) )
         end
       end
 

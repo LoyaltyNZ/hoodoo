@@ -315,7 +315,7 @@ module Hoodoo
         #         of options; see #secure for full details and examples.
         #
         def secure_with( map )
-          class_variable_set( '@@nz_co_loyalty_hoodoo_secure_with', map )
+          class_variable_set( :@@nz_co_loyalty_hoodoo_secure_with, map )
         end
 
         # Retrieve the mapping declared between database columns and

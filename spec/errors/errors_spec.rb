@@ -24,10 +24,10 @@ describe Hoodoo::Errors do
       expect(@errors.instance_variable_get('@descriptions').instance_variable_get('@descriptions')).to eq(@desc.instance_variable_get('@descriptions'))
     end
 
-    it 'should have a UUID, empty errors and a 500 code' do
+    it 'should have a UUID, empty errors and a 200 code' do
       expect(@errors.uuid.size).to eq(32)
       expect(@errors.errors).to be_empty
-      expect(@errors.http_status_code).to eq(500)
+      expect(@errors.http_status_code).to eq(200)
     end
 
     it 'should inspect elegantly' do
@@ -292,10 +292,12 @@ describe Hoodoo::Errors do
 
     it 'should acquire the source status code when it has none itself' do
       @errors.clear_errors
+      expect(@errors.http_status_code).to eq(200) # Default; collection is empty
+
       source = Hoodoo::Errors.new
       source.add_error('platform.method_not_allowed')
-      expect(@errors.http_status_code).to eq(500) # Default; collection is empty
       expect(source.http_status_code).to eq(405)
+
       @errors.merge!(source)
       expect(@errors.http_status_code).to eq(405) # Acquires the 405 from the merged collection
     end
