@@ -198,6 +198,8 @@ module Hoodoo
 
         end
 
+        # The Class for this model's history entries.
+        #
         def dated_with
           return class_variable_defined?( :@@nz_co_loyalty_hoodoo_dated_with ) ?
                       class_variable_get( :@@nz_co_loyalty_hoodoo_dated_with ) :
