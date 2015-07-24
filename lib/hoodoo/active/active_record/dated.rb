@@ -21,7 +21,7 @@ module Hoodoo
     # two database tables in order to function correctly, the primary table
     # (the model table) and a history table. When a record is updated it should
     # be moved to the history table and a new record inserted with the new
-    # values. When a record is deleted the it should be moved to the history
+    # values. When a record is deleted it should be moved to the history
     # table.
     #
     # The primary table must have a unique column named +id+ and a
@@ -53,7 +53,7 @@ module Hoodoo
     #       self.dated_with_table_name = :historical_posts
     #     end
     #
-    # Compatible database migration generators are included in Service_Shell
+    # Compatible database migration generators are included in +service_shell+
     # which will create the history table and add database triggers (PostgreSQL
     # specific) to create the appropriate history entry when a record is deleted
     # or updated. See
@@ -159,7 +159,7 @@ module Hoodoo
 
                 UNION ALL
 
-                SELECT #{ self.history_column_mapping }, effective_start, effective_end
+                SELECT #{ self.dated_with_history_column_mapping }, effective_start, effective_end
                 FROM #{ self.dated_with_table_name }
               ) AS u
               WHERE effective_start <= #{ string_date_time } AND (effective_end > #{ string_date_time } OR effective_end IS NULL)
@@ -188,7 +188,7 @@ module Hoodoo
 
               UNION ALL
 
-              SELECT #{ self.history_column_mapping }
+              SELECT #{ self.dated_with_history_column_mapping }
               FROM #{ self.dated_with_table_name }
             ) AS #{ self.table_name }
           }
@@ -229,7 +229,7 @@ module Hoodoo
         # Forms and returns string which maps history table column names to the
         # primary table column names for use in SQL queries.
         #
-        def history_column_mapping
+        def dated_with_history_column_mapping
 
           desired_attributes = self.attribute_names.dup
 
