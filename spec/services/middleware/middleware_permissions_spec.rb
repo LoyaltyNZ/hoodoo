@@ -346,7 +346,7 @@ describe Hoodoo::Services::Middleware do
     Hoodoo::Services::Session::MockDalliClient.reset()
 
     result = @session.save_to_memcached
-    raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+    raise "Can't save to mock Memcached (result = #{result})" unless result == true
   end
 
   after :each do
@@ -399,7 +399,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -433,7 +433,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -489,7 +489,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -579,7 +579,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -646,7 +646,7 @@ describe Hoodoo::Services::Middleware do
         #
         it 'can deal with inter-resource session errors (2)' do
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
-          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( :outdated )
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( false )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
           get '/v1/rspec_add_perm_test_clocks/any',
@@ -663,7 +663,7 @@ describe Hoodoo::Services::Middleware do
         #
         it 'can deal with inter-resource session errors (3)' do
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :show ).once.and_call_original
-          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( :fail )
+          expect_any_instance_of(Hoodoo::Services::Session).to receive( :save_to_memcached ).once.and_return( nil )
           expect_any_instance_of(RSpecAddPermTestDateImplementation).to_not receive( :show )
 
           get '/v1/rspec_add_perm_test_clocks/any',
@@ -684,7 +684,7 @@ describe Hoodoo::Services::Middleware do
           @session.permissions = nil
 
           result = @session.save_to_memcached
-          raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
 
@@ -702,7 +702,7 @@ describe Hoodoo::Services::Middleware do
           @session.permissions = Hoodoo::Services::Permissions.new( {} )
 
           result = @session.save_to_memcached
-          raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show )
 
@@ -720,7 +720,7 @@ describe Hoodoo::Services::Middleware do
           @session.permissions.set_resource( :RSpecAddPermTestClock, :show, Hoodoo::Services::Permissions::ASK )
 
           result = @session.save_to_memcached
-          raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+          raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
           expect_any_instance_of(Hoodoo::Services::Implementation).to receive( :verify ).once.and_call_original
           expect_any_instance_of(RSpecAddPermTestClockImplementation).to_not receive( :show ).once.and_call_original
@@ -803,7 +803,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -835,7 +835,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -880,7 +880,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockCallsDateNoPermsImplementation).to receive( :show ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
@@ -955,7 +955,7 @@ describe Hoodoo::Services::Middleware do
         )
 
         result = @session.save_to_memcached
-        raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
+        raise "Can't save to mock Memcached (result = #{result})" unless result == true
 
         expect_any_instance_of(RSpecAddPermTestClockImplementation).to receive( :list ).once.and_call_original
         expect_any_instance_of(RSpecAddPermTestDateImplementation).to receive( :show ).once.and_call_original
