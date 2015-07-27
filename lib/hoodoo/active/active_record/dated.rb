@@ -38,17 +38,19 @@ module Hoodoo
     # 2. The history table must have two additional columns, +effective_start+
     #    and +effective_end+. The +effective_start+ column determines when the
     #    history entry becomes effective (inclusive) whilst the +effective_end+
-    #    determines when the history entry is effective to (exclusive). A record
+    #    determines when the history entry was effective to (exclusive). A record
     #    is considered to be effective at a particular time if that time is the
     #    same or after the +effective_start+ and before the +effective_end+.
     #
-    #    The +effective_start+ should be set to the +effective_end+ of the last
+    #    The +effective_start+ must be set to the +effective_end+ of the last
     #    record with same +uuid+, or to the +created_at+ of the record if there
-    #    is no previous record with the same +uuid+.
+    #    is no previous records with the same +uuid+.
     #
     #    The +effective_end+ should be set to the current time (UTC) when
     #    deleting a record or to the updated record's +updated_at+ when updating
     #    a record.
+    #
+    #    All datetime values must be stored as UTC.
     #
     # Additionally there are two constraints on the history table that must not
     # be broken for the finder methods to function correctly:
