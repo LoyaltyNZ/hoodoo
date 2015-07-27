@@ -1366,7 +1366,7 @@ module Hoodoo; module Services
         )
 
         result = session.load_from_memcached!( session_id )
-        session = nil if result != true
+        session = nil if result != :ok
       elsif ( self.class.environment.test? || self.class.environment.development? )
         interaction.using_test_session()
         session = self.class.test_session()
