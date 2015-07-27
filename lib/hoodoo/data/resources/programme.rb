@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------
 #           23-Oct-2014 (JML): Created.
 #           01-Apr-2015 (JML): Added CalculatorConfiguration.
+#           17-Jul-2015 (JML): Removed calculator_id.
 ########################################################################
 
 module Hoodoo
@@ -21,7 +22,6 @@ module Hoodoo
 
           text  :code,                    :required => :true
           text  :name
-          uuid  :calculator_id,           :resource => :Calculator
           type  :CalculatorConfiguration, :required => false
         end
 
