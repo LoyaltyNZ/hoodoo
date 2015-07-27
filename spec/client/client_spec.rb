@@ -166,7 +166,6 @@ describe Hoodoo::Client do
     @expected_locale   = @locale.nil? ? 'en-nz' : @locale.downcase
     @client            = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
 
-    @dated_at          = rand( 2 ) == 0 ? nil : DateTime.now
     @expected_dated_at = @dated_at.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at )
 
     endpoint_opts = { :dated_at => @dated_at }

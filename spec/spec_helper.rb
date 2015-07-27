@@ -12,6 +12,10 @@ SimpleCov.start do
   add_filter '_spec'
 end
 
+# a bit of debugging
+
+require 'byebug';
+
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
 # far from 'the real thing' for my liking. Instead, we use SQLite in memory
@@ -64,14 +68,48 @@ RSpec.configure do | config |
   #
   Kernel.srand config.seed
 
-  # Wake up ActiveRecord and DatabaseCleaner.
+  # Wake up ActiveRecord
+  database_name = 'hoodoo_test'
 
-  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+  # Connect to postgres, no database yet
   ActiveRecord::Base.establish_connection(
-    :adapter  => 'sqlite3',
-    :database => ':memory:'
+    :adapter  => 'postgresql',
+    :username => ENV['DATABASE_USER']
   )
 
+  # Sometimes if a user force quits the spec suite, the hoodoo_test database
+  # will not be deleted. The following makes sure it is.
+  #
+  database_exists = ActiveRecord::Base.connection.execute(
+    "SELECT COUNT(*) FROM pg_database WHERE datname = '#{database_name}'"
+  ).any?
+  ActiveRecord::Base.connection.drop_database database_name if database_exists
+
+  # Create the test database ( hiding output )
+  ActiveRecord::Base.logger = Logger.new( nil )
+  ActiveRecord::Base.connection.create_database database_name
+  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+
+  # Connect to the created database
+  ActiveRecord::Base.establish_connection(
+    :adapter  => 'postgresql',
+    :database => database_name,
+    :username => ENV['DATABASE_USER']
+  )
+
+  # Blow away the database afterwards.
+  config.after( :suite ) do
+    # Need to disconnect from the database first
+    ActiveRecord::Base.establish_connection(
+      :adapter  => 'postgresql',
+      :username => ENV['DATABASE_USER']
+    )
+
+    # Drop database
+    ActiveRecord::Base.connection.drop_database database_name
+  end
+
+  # Wake up DatabaseCleaner.
   DatabaseCleaner.strategy = :transaction # MUST NOT be changed
 
   # Redirect $stderr before each test so a test log gets written without
@@ -162,7 +200,7 @@ require 'webrick/https'
 def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
 
   port   = Hoodoo::Utilities.spare_port()
-  thread = Thread.start do
+  Thread.start do
     app = Rack::Builder.new do
       use Hoodoo::Services::Middleware
       run app_class.new

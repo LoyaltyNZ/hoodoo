@@ -25,10 +25,6 @@ describe Hoodoo::ActiveRecord::Base do
     expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
 
-  it 'is dated' do
-    expect { RSpecModelBaseTest.dated_at( DateTime.now ) }.to_not raise_exception()
-  end
-
   it 'is secure' do
     expect { RSpecModelBaseTest.secure_with( {} ) }.to_not raise_exception()
   end
@@ -50,8 +46,6 @@ describe Hoodoo::ActiveRecord::Base do
 
   it 'acquires context from all included modules' do
     expect( RSpecModelBaseTest ).to receive( :secure     ).and_return( RSpecModelBaseTest.all() )
-    expect( RSpecModelBaseTest ).to receive( :dated      ).and_return( RSpecModelBaseTest.all() )
-    expect( RSpecModelBaseTest ).to receive( :translated ).and_return( RSpecModelBaseTest.all() )
 
     m = RSpecModelBaseTest.new
     m.save

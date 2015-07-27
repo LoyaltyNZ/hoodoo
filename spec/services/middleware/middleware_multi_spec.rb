@@ -4,7 +4,6 @@
 
 require 'spec_helper'
 require 'json'
-require 'byebug'
 
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.

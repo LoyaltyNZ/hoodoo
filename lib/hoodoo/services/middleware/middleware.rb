@@ -147,7 +147,7 @@ module Hoodoo; module Services
       # asks that the "id" field (UUID) for the persisted resource instance is
       # of the given value, rather than automatically generated.
       #
-      'HTTP_X_RESOURCE_UUID',
+      'HTTP_X_RESOURCE_UUID'
 
     ] )
 

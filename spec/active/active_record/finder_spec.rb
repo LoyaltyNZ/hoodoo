@@ -4,7 +4,8 @@ require 'active_record'
 describe Hoodoo::ActiveRecord::Finder do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests ) do | t |
+      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => false ) do | t |
+        t.text :id
         t.text :uuid
         t.text :code
         t.text :field_one
@@ -18,6 +19,7 @@ describe Hoodoo::ActiveRecord::Finder do
     class RSpecModelFinderTest < ActiveRecord::Base
       include Hoodoo::ActiveRecord::Finder
 
+      self.primary_key = :id
       acquire_with :uuid, :code
 
       # These forms follow quite closely the RDoc comments in
@@ -26,6 +28,7 @@ describe Hoodoo::ActiveRecord::Finder do
       ARRAY_MATCH = Proc.new { | attr, value |
         [ { attr => [ value ].flatten } ]
       }
+
 
       # Pretend security scoping that only finds things with
       # a UUID and code coming in from the session, for secured
@@ -36,14 +39,12 @@ describe Hoodoo::ActiveRecord::Finder do
         :code => 'authorised_code'   # Single item
       )
 
-      # Deliberate mixture of symbols and strings. No ILIKE
-      # in SQLite, so just use LIKE. It's case insensitive by
-      # default anyway.
+      # Deliberate mixture of symbols and strings.
 
       search_with(
         'field_one' => nil,
         :field_two => Proc.new { | attr, value |
-          [ "#{ attr } LIKE ?", value ]
+          [ "#{ attr } ILIKE ?", value ]
         },
         :field_three => ARRAY_MATCH
       )
@@ -52,7 +53,7 @@ describe Hoodoo::ActiveRecord::Finder do
         :field_one => ARRAY_MATCH,
         :field_two => nil,
         'field_three' => Proc.new { | attr, value |
-          [ "#{ attr } LIKE ?", value ]
+          [ "#{ attr } ILIKE ?", value ]
         }
       )
     end
@@ -60,14 +61,10 @@ describe Hoodoo::ActiveRecord::Finder do
     class RSpecModelFinderTestWithHelpers < ActiveRecord::Base
       include Hoodoo::ActiveRecord::Finder
 
+      self.primary_key = :id
+
       self.table_name = :r_spec_model_finder_tests
       sh              = Hoodoo::ActiveRecord::Finder::SearchHelper
-
-      # Since e.g. SQLite is unlikely to be case sensitive (see above),
-      # we do test that the generic insensitive matcher works without
-      # any syntax errors but don't check that "cs_match" actually does
-      # a sensitive match - instead, make sure the values passed in for
-      # tests are in the correct case already.
 
       search_with(
         'mapped_code'     => sh.cs_match( 'code' ),
@@ -87,7 +84,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   before :each do
     @a = RSpecModelFinderTest.new
-    @a.id = 1
+    @a.id = "one"
     @a.code = 'A' # Must be set else SQLite fails to find this if you search for "code != 'C'" (!)
     @a.field_one = 'group 1'
     @a.field_two = 'two a'
@@ -96,6 +93,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @id = @a.id
 
     @b = RSpecModelFinderTest.new
+    @b.id = "two"
     @b.uuid = Hoodoo::UUID.generate
     @b.code = 'B'
     @b.field_one = 'group 1'
@@ -105,6 +103,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @uuid = @b.uuid
 
     @c = RSpecModelFinderTest.new
+    @c.id = "three"
     @c.code = 'C'
     @c.field_one = 'group 2'
     @c.field_two = 'two c'
@@ -152,20 +151,23 @@ describe Hoodoo::ActiveRecord::Finder do
   context 'acquire_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
-      @scoped_1.uuid        = 'uuid 1'
-      @scoped_1.code        = 'code 1'
+      @scoped_1.id        = 'id 1'
+      @scoped_1.uuid      = 'uuid 1'
+      @scoped_1.code      = 'code 1'
       @scoped_1.field_one = 'scoped 1'
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
-      @scoped_2.uuid        = 'uuid 1'
-      @scoped_2.code        = 'code 2'
+      @scoped_2.id        = 'id 2'
+      @scoped_2.uuid      = 'uuid 1'
+      @scoped_2.code      = 'code 2'
       @scoped_2.field_one = 'scoped 2'
       @scoped_2.save!
 
       @scoped_3 = RSpecModelFinderTest.new
-      @scoped_3.uuid        = 'uuid 2'
-      @scoped_3.code        = 'code 2'
+      @scoped_3.id        = 'id 3'
+      @scoped_3.uuid      = 'uuid 2'
+      @scoped_3.code      = 'code 2'
       @scoped_3.field_one = 'scoped 3'
       @scoped_3.save!
 
@@ -560,18 +562,21 @@ describe Hoodoo::ActiveRecord::Finder do
   context 'list_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
+      @scoped_1.id   = 'id 1'
       @scoped_1.uuid = 'uuid 1'
       @scoped_1.code = 'code 1'
       @scoped_1.field_one = 'scoped 1'
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
+      @scoped_2.id   = 'id 2'
       @scoped_2.uuid = 'uuid 1'
       @scoped_2.code = 'code 2'
       @scoped_2.field_one = 'scoped 2'
       @scoped_2.save!
 
       @scoped_3 = RSpecModelFinderTest.new
+      @scoped_3.id   = 'id 3'
       @scoped_3.uuid = 'uuid 2'
       @scoped_3.code = 'code 2'
       @scoped_3.field_one = 'scoped 3'
