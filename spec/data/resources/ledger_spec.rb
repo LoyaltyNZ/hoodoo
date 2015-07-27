@@ -5,10 +5,13 @@ describe Hoodoo::Data::Resources::Ledger do
     schema = described_class.get_schema()
 
     expect(schema.is_internationalised?()).to eq(false)
-    expect(schema.properties.count).to eq(8)
+    expect(schema.properties.count).to eq(9)
 
     expect(schema.properties['token_identifier']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['token_identifier'].required).to eq(true)
+
+    expect(schema.properties['backdated_to']).to be_a(Hoodoo::Presenters::DateTime)
+    expect(schema.properties['backdated_to'].required).to eq(true)
 
     expect(schema.properties['participant_id']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['participant_id'].resource).to eq(:Participant)

@@ -5,6 +5,7 @@
 # Purpose:: Define documented Platform API Resource 'Ledger'.
 # ----------------------------------------------------------------------
 #           08-Jan-2015 (DAM): Created.
+#           22-Jul-2015 (JML): Added backdated_to.
 ########################################################################
 
 module Hoodoo
@@ -24,18 +25,19 @@ module Hoodoo
         REFERENCE_KINDS = [ :Calculation, :Credit, :Debit ]
 
         schema do
-          text   :token_identifier, :required => true
-          uuid   :participant_id,   :required => true,  :resource => :Participant
-          uuid   :outlet_id,        :required => true,  :resource => :Outlet
-          enum   :reason,           :required => true,  :from     => REASONS
+          text     :token_identifier, :required => true
+          datetime :backdated_to,     :required => true
+          uuid     :participant_id,   :required => true,  :resource => :Participant
+          uuid     :outlet_id,        :required => true,  :resource => :Outlet
+          enum     :reason,           :required => true,  :from     => REASONS
 
-          enum   :reference_kind,   :required => false, :from     => REFERENCE_KINDS
-          uuid   :reference_id,     :required => false
+          enum     :reference_kind,   :required => false, :from     => REFERENCE_KINDS
+          uuid     :reference_id,     :required => false
 
-          object :debit,            :required => false do
+          object   :debit,            :required => false do
             type :CurrencyAmount
           end
-          object :credit,           :required => false do
+          object   :credit,           :required => false do
             type :CurrencyAmount
           end
         end
