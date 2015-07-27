@@ -30,19 +30,28 @@ module Hoodoo
         #
         attr_accessor :endpoint_uri
 
+        # Full URI (as a URI object) of an HTTP proxy to use as an
+        # override to <tt>ENV['HTTP_PROXY']</tt> which Ruby itself
+        # will otherwise read. Will be +nil+ for no proxy override.
+        #
+        attr_accessor :proxy_uri
+
         # Create an instance with named parameters as follows:
         #
         # +resource+::     See #resource.
         # +version+::      See #version.
         # +endpoint_uri+:: See #endpoint_uri.
+        # +proxy_uri+::    See #proxy_uri.
         #
         def initialize( resource:,
                         version:,
-                        endpoint_uri: )
+                        endpoint_uri:,
+                        proxy_uri: nil )
 
           self.resource     = resource.to_sym
           self.version      = version.to_i
           self.endpoint_uri = endpoint_uri
+          self.proxy_uri    = proxy_uri
         end
       end
     end

@@ -36,18 +36,24 @@ module Hoodoo
             #
             # Options are:
             #
-            # +base_uri+:: A String giving the base URI at which resource
-            #              endpoint implementations can be found. The
-            #              protocol (HTTP or HTTPS), host and port are of
-            #              interest. The path will be overwritten with
-            #              by-convention values for individual resources.
+            # +base_uri+::  A String giving the base URI at which resource
+            #               endpoint implementations can be found. The
+            #               protocol (HTTP or HTTPS), host and port are of
+            #               interest. The path will be overwritten with
+            #               by-convention values for individual resources.
             #
-            # +routing+::  An optional parameter which gives custom routing
-            #              for exception cases where the by-convention map
-            #              doesn't work. This is usually because there is a
-            #              resource singleton which lives logically at a
-            #              singular named route rather than plural route,
-            #              e.g. "/v1/health" rather than "/v1/healths".
+            # +proxy_uri+:: An optional full URI of an HTTP proxy to use if
+            #               the base URI commands use of HTTP or HTTPS. Ruby
+            #               will itself read <tt>ENV['HTTP_PROXY']</tt> if
+            #               set; this option will _override_ that variable.
+            #               Set as a String, as with +base_uri+.
+            #
+            # +routing+::   An optional parameter which gives custom routing
+            #               for exception cases where the by-convention map
+            #               doesn't work. This is usually because there is a
+            #               resource singleton which lives logically at a
+            #               singular named route rather than plural route,
+            #               e.g. "/v1/health" rather than "/v1/healths".
             #
             # The +routing+ parameter is a Hash of Resource names _as_
             # _Symbols_, then values which are Hash of API Version _as_
@@ -75,8 +81,9 @@ module Hoodoo
             # actually Hoodoo itself but implemented in a compatible fashion.
             #
             def configure_with( options )
-              @base_uri = URI.parse( options[ :base_uri ] )
-              @routing  = options[ :routing ] || {}
+              @base_uri  = URI.parse( options[ :base_uri  ] )
+              @proxy_uri = URI.parse( options[ :proxy_uri ] ) unless options[ :proxy_uri ].nil?
+              @routing   = options[ :routing ] || {}
             end
 
             # Announce the location of an instance. This is really a no-op
@@ -129,7 +136,8 @@ module Hoodoo
               return Hoodoo::Services::Discovery::ForHTTP.new(
                 resource:     resource,
                 version:      version,
-                endpoint_uri: endpoint_uri
+                endpoint_uri: endpoint_uri,
+                proxy_uri:    @proxy_uri
               )
             end
 

@@ -36,6 +36,7 @@ module Hoodoo
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
             @description.discovery_result = @discovery_result
             @description.endpoint_uri     = @discovery_result.endpoint_uri
+            @description.proxy_uri        = @discovery_result.proxy_uri
           end
 
         public
@@ -101,7 +102,26 @@ module Hoodoo
 
             action = description_of_request.action
             data   = get_data_for_request( description_of_request )
-            http   = Net::HTTP.new( data.full_uri.host, data.full_uri.port )
+            proxy  = description_of_request.proxy_uri
+
+            proxy_host = :ENV
+            proxy_port = proxy_user = proxy_pass = nil
+
+            unless proxy.nil?
+              proxy_host = proxy.host
+              proxy_port = proxy.port
+              proxy_user = proxy.user
+              proxy_pass = proxy.password
+            end
+
+            http = Net::HTTP.new(
+              data.full_uri.host,
+              data.full_uri.port,
+              proxy_host,
+              proxy_port,
+              proxy_user,
+              proxy_pass
+            )
 
             if data.full_uri.scheme == 'https'
               http.use_ssl = true

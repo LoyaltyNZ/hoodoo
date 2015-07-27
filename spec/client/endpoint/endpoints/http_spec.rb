@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # Much of this class gets nontrivial coverage from middleware tests, which
-# existed before the refactor of code from there, into endpoints.
+# existed before the refactor of code from there, into Endpoints.
 #
 # This file just picks up the loose ends.
 
