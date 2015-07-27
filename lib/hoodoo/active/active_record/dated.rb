@@ -24,9 +24,11 @@ module Hoodoo
     # values. When a record is deleted it should be moved to the history
     # table.
     #
-    # The primary table must have a unique column named +id+ and a
-    # timestamp column named +updated_at+ which both need to be set by
-    # application code.
+    # All datetime values must be stored as UTC.
+    #
+    # The primary table must have a unique column named +id+ and two
+    # timestamp columns named +updated_at+ and +created_at+ which both need
+    # to be set by the application code.
     #
     # The history table requires the same columns as the primary table with two
     # differences:
@@ -46,11 +48,9 @@ module Hoodoo
     #    record with same +uuid+, or to the +created_at+ of the record if there
     #    is no previous records with the same +uuid+.
     #
-    #    The +effective_end+ should be set to the current time (UTC) when
+    #    The +effective_end+ must be set to the current time (UTC) when
     #    deleting a record or to the updated record's +updated_at+ when updating
     #    a record.
-    #
-    #    All datetime values must be stored as UTC.
     #
     # Additionally there are two constraints on the history table that must not
     # be broken for the finder methods to function correctly:
