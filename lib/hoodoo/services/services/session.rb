@@ -151,17 +151,17 @@ module Hoodoo
       # The Hoodoo::Services::Session::TTL constant determines how long the
       # key lives in Memcached.
       #
-      # Returns a symbol:
+      # Return values are:
       #
-      # * +:ok+: The session data was saved OK and is valid. There was either
-      #   a Caller record with an earlier or matching value in Memcached, or
-      #   no preexisting record of the Caller.
+      # * +true+: The session data was saved OK and is valid. There was
+      #   either a Caller record with an earlier or matching value in
+      #   Memcached, or no preexisting record of the Caller.
       #
-      # * +:outdated+: The session data could not be saved because an existing
+      # * +false+: The session data could not be saved because an existing
       #   Caller record was found in Memcached with a _newer_ version than
       #   'this' session, implying that the session is already outdated.
       #
-      # * +:fail+: The session data could not be saved (Memcached problem).
+      # * +nil+: The session data could not be saved (Memcached problem).
       #
       def save_to_memcached
         if self.caller_id.nil?
@@ -179,7 +179,7 @@ module Hoodoo
                                                        self.caller_version,
                                                        mclient )
 
-          return result unless result === :ok
+          return result unless result == true
 
           # Must set this before saving, even though the delay between
           # setting this value and Memcached actually saving the value
@@ -188,9 +188,11 @@ module Hoodoo
 
           @expires_at = ( ::Time.now + TTL ).utc()
 
-          return :ok if mclient.set( self.session_id,
-                                     self.to_h(),
-                                     TTL )
+          success = mclient.set( self.session_id,
+                                 self.to_h(),
+                                 TTL )
+
+          return success ? true : nil
 
         rescue Exception => exception
 
@@ -201,9 +203,8 @@ module Hoodoo
             exception.to_s
           )
 
+          return nil
         end
-
-        return :fail
       end
 
       # Load session data into this instance, overwriting instance values
@@ -213,17 +214,16 @@ module Hoodoo
       #
       # +sid+:: The Session UUID to look up.
       #
-      # Returns a symbol:
+      # Returns:
       #
-      # * +:ok+: The session data was loaded OK and is valid.
+      # * +true+: The session data was loaded OK and is valid.
       #
-      # * +:outdated+: The session data was loaded, but is outdated; either
+      # * +false+: The session data was loaded, but is not valid; either
       #   the session has expired, or its Caller version mismatches the
       #   associated stored Caller version in Memcached.
       #
-      # * +:not_found+: The session was not found.
-      #
-      # * +:fail+: The session data could not be loaded (Memcached problem).
+      # * +nil+: The session data could not be loaded (session not found
+      #   or Memcached problem).
       #
       def load_from_memcached!( sid )
         begin
@@ -231,18 +231,15 @@ module Hoodoo
           session_hash = mclient.get( sid )
 
           if session_hash.nil?
-            return :not_found
+            return nil
           else
             self.from_h!( session_hash )
-            return :outdated if self.expired?
+            return false if self.expired?
 
             cv = load_caller_version_from_memcached( mclient, self.caller_id )
+            return false if cv.nil? || cv > self.caller_version
 
-            if cv == nil || cv > self.caller_version
-              return :outdated
-            else
-              return :ok
-            end
+            return true
           end
 
         rescue Exception => exception
@@ -254,20 +251,14 @@ module Hoodoo
             exception.to_s
           )
 
+          return nil
         end
-
-        return :fail
       end
 
       # Update the version of a given Caller in Memcached. This is done
       # automatically when Sessions are saved to Memcached, but if external
       # code alters any Callers independently, it *MUST* call here to keep
       # Memcached records up to date.
-      #
-      # If no cached version is in Memcached for the Caller, the method
-      # assumes it is being called for the first time for that Caller and
-      # writes the version it has to hand, rather than considering it an
-      # error condition.
       #
       # +cid+::     Caller UUID of the Caller record to update.
       #
@@ -279,27 +270,25 @@ module Hoodoo
       #             code which already has established a connection and
       #             wants to avoid creating another unnecessarily.
       #
-      # Returns a Symbol:
+      # Return values are:
       #
-      # * +:ok+: The Caller record was updated successfully.
+      # * +true+: The Caller record was updated successfully.
       #
-      # * +:outdated+: The Caller was already present in Memcached with a
-      #   _higher version_ than the one you wanted to save. Your own local
-      #   Caller data must therefore already be out of date.
+      # * +false+: The Caller was already present in Memcached with a
+      #   _higher version_ than the one you wanted to save. Your own
+      #   local Caller data must therefore already be out of date.
       #
-      # * +:fail+: The Caller could not be updated (Memcached problem).
+      # * +nil+: The Caller could not be updated (Memcached problem).
       #
       def update_caller_version_in_memcached( cid, cv, mclient = nil )
         begin
           mclient ||= self.class.connect_to_memcached( self.memcached_host() )
 
           cached_version = load_caller_version_from_memcached( mclient, cid )
+          return false if cached_version != nil && cached_version > cv
 
-          if cached_version != nil && cached_version > cv
-            return :outdated
-          elsif save_caller_version_to_memcached( mclient, cid, cv ) == true
-            return :ok
-          end
+          success = save_caller_version_to_memcached( mclient, cid, cv )
+          return success ? true : nil
 
         rescue Exception => exception
 
@@ -310,32 +299,28 @@ module Hoodoo
             exception.to_s
           )
 
+          return nil
         end
 
-        return :fail
       end
 
       # Delete this session from Memcached. The Session object is not
       # modified.
       #
-      # Returns a symbol:
+      # Return values are:
       #
-      # * +:ok+: The Session was deleted from Memcached successfully.
+      # * +true+:  The Session was deleted from Memcached successfully.
       #
-      # * +:not_found+: This session was not found in Memcached.
+      # * +false+: This session was not found in Memcached.
       #
-      # * +:fail+: The session data could not be deleted (Memcached problem).
+      # * +nil+:   An error occured whilst deleting from Memcached.
       #
       def delete_from_memcached
         begin
 
           mclient = self.class.connect_to_memcached( self.memcached_host() )
 
-          if mclient.delete( self.session_id )
-            return :ok
-          else
-            return :not_found
-          end
+          return mclient.delete( self.session_id ).present?
 
         rescue Exception => exception
 
@@ -346,7 +331,7 @@ module Hoodoo
             exception.to_s
           )
 
-          return :fail
+          return nil
         end
 
       end
@@ -475,6 +460,8 @@ module Hoodoo
       #
       # Returns:
       #
+      # * +nil+ if given +nil+ as an input session.
+      #
       # * Hoodoo::Services::Session instance if everything works OK; this
       #   may be the same as, or different from, the input session depending
       #   on whether or not there were any permissions that needed adding.
@@ -518,10 +505,10 @@ module Hoodoo
         local_session.permissions = local_permissions
 
         case local_session.save_to_memcached()
-          when :ok
+          when true
             return local_session
 
-          when :outdated
+          when false
             # Caller version mismatch; original session is now outdated and invalid
             return false
 
@@ -575,10 +562,8 @@ module Hoodoo
         end
       end
 
-      # Try to read a cached Caller version from Memcached. Returns the
-      # cached version if available, or +nil+ if the record isn't found.
-      #
-      # May raise an exception for e.g. Memcached failures, via Dalli.
+      # Return the Caller version for a given Caller ID via Memcached.
+      # Returns "nil" if there are any errors or no version is stored.
       #
       # TODO: As a temporary measure, compatibility bridge code in Authsome
       #       may call this private interface via ".send". Until that is
@@ -591,8 +576,14 @@ module Hoodoo
       # +cid+::     Caller UUID of interest.
       #
       def load_caller_version_from_memcached( mclient, cid )
-        version_hash = mclient.get( cid )
-        return version_hash.nil? ? nil : version_hash[ 'version' ]
+        cv = begin
+          version_hash = mclient.get( cid )
+          version_hash[ 'version' ] # Exception if version_hash is nil => will be rescued
+        rescue
+          nil
+        end
+
+        return cv
       end
 
       # Save the Caller version for a given Caller ID to Memcached.
@@ -611,7 +602,7 @@ module Hoodoo
       # +cv+::      Version to save for that Caller UUID.
       #
       def save_caller_version_to_memcached( mclient, cid, cv )
-        return !! mclient.set(
+        return mclient.set(
           cid,
           { 'version' => cv }
         )
@@ -702,18 +693,12 @@ module Hoodoo
           }
 
           @@store[ key ] = data
-          true
         end
 
         # Remove data for the given key.
         #
         def delete( key )
-          if @@store.has_key?( key )
-            @@store.delete( key )
-            true
-          else
-            false
-          end
+          @@store.delete( key )
         end
       end
     end
