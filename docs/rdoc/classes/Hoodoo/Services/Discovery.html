@@ -477,12 +477,16 @@ subclass-implemented mechanism.</p>
 method directly. Call <a
 href="Discovery.html#method-i-announce">announce</a> instead.</p>
 
-<p>Subclasses must return a <a
+<p>Subclasses must return one of the <a href="Discovery.html">Discovery</a>
+“For” class instances, e.g. a <a
 href="Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a> or
 <a href="Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
-instance in response to this call, giving the HTTP details required to
-contact the endpoint, or AMQP (on-queue) details required to contact the
-endpoint, respectively.</p>
+instance. This encapsulates the HTTP details required to contact the
+endpoint, or AMQP (queue) details required to contact the endpoint,
+respectively.</p>
+
+<p>Subclasses must return <code>nil</code> if it has a problem announcing and
+cannot provide information for the given resource / version.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name as a String.</p>
@@ -510,10 +514,10 @@ endpoint, respectively.</p>
                 
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 152</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-comment"># Implementation is optional and up to subclasses to do.</span>
-  <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -581,12 +585,16 @@ resource endpoints by some subclass-implemented mechanism.</p>
 method directly. Call <a
 href="Discovery.html#method-i-discover">discover</a> instead.</p>
 
-<p>Subclasses must return either <code>nil</code> if the endpoint is not
-found, or a <a
+<p>Subclasses must return one of the <a href="Discovery.html">Discovery</a>
+“For” class instances, e.g. a <a
 href="Discovery/ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a> or
 <a href="Discovery/ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
-instance giving the HTTP details required to contact the endpoint, or AMQP
-(on-queue) details required to contact the endpoint, respectively.</p>
+instance. This encapsulates the HTTP details required to contact the
+endpoint, or AMQP (queue) details required to contact the endpoint,
+respectively.</p>
+
+<p>If the requested endpoint is not found, subclasses must return
+<code>nil</code>.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
 <dd>
 <p>Resource name as a String.</p>
@@ -611,7 +619,7 @@ instance giving the HTTP details required to contact the endpoint, or AMQP
                 
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 173</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discovery.rb, line 178</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Discovery::Base subclass does not implement remote discovery required for resource &#39;#{ resource }&#39; / version &#39;#{ version }&#39;&quot;</span>
 <span class="ruby-keyword">end</span></pre>

@@ -317,7 +317,7 @@ a default instance describing <code>platform</code> and
   <span class="ruby-ivar">@uuid</span>             = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
   <span class="ruby-ivar">@descriptions</span>     = <span class="ruby-identifier">descriptions</span>
   <span class="ruby-ivar">@errors</span>           = []
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">500</span>
+  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">200</span>
   <span class="ruby-ivar">@created_at</span>       = <span class="ruby-keyword">nil</span> <span class="ruby-comment"># See #persist!</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -427,7 +427,7 @@ Platform API.</p>
 
   <span class="ruby-comment"># All good!</span>
 
-  <span class="ruby-ivar">@http_status_code</span> = ( <span class="ruby-identifier">description</span>[ <span class="ruby-string">&#39;status&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">500</span> ).<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment"># Use first in collection for overall HTTP status code</span>
+  <span class="ruby-ivar">@http_status_code</span> = ( <span class="ruby-identifier">description</span>[ <span class="ruby-string">&#39;status&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">200</span> ).<span class="ruby-identifier">to_i</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment"># Use first in collection for overall HTTP status code</span>
 
   <span class="ruby-identifier">error</span> = {
     <span class="ruby-string">&#39;code&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
@@ -542,7 +542,7 @@ return <code>false</code>.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/errors/errors.rb, line 227</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">clear_errors</span>
   <span class="ruby-ivar">@errors</span>           = []
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">500</span>
+  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">200</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

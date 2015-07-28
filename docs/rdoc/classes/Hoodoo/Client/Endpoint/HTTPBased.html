@@ -168,13 +168,13 @@ instance.</p>
                 
               </p>
               <div id="method-i-get_data_for_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 122</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 130</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
   <span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">ident</span>.<span class="ruby-identifier">to_s</span>
 
-  <span class="ruby-identifier">body_data</span>  = <span class="ruby-identifier">body_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">body_hash</span>.<span class="ruby-identifier">to_json</span>
+  <span class="ruby-identifier">body_data</span>  = <span class="ruby-identifier">body_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">body_hash</span> )
 
   <span class="ruby-comment"># Amazingly, there&#39;s no fast way to deep clone a URI. Long story</span>
   <span class="ruby-comment"># short - Marshal.load(Marshal.dump(uri)) takes, astonishingly,</span>
@@ -306,13 +306,13 @@ instance.</p>
                 
               </p>
               <div id="method-i-get_data_for_response_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 224</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 232</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
 
   <span class="ruby-keyword">begin</span>
-    <span class="ruby-identifier">parsed</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
       <span class="ruby-identifier">body</span>,
       <span class="ruby-value">:object_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
       <span class="ruby-value">:array_class</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>

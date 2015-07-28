@@ -174,7 +174,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
                 
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 91</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 98</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -207,6 +207,12 @@ Parameters:</p>
 be found. The protocol (HTTP or HTTPS), host and port are of interest. The
 path will be overwritten with by-convention values for individual
 resources.</p>
+</dd><dt><code>proxy_uri</code>
+<dd>
+<p>An optional full URI of an HTTP proxy to use if the base URI commands use
+of HTTP or HTTPS. Ruby will itself read <code>ENV['HTTP_PROXY']</code> if
+set; this option will <em>override</em> that variable. Set as a String, as
+with <code>base_uri</code>.</p>
 </dd><dt><code>routing</code>
 <dd>
 <p>An optional parameter which gives custom routing for exception cases where
@@ -258,10 +264,11 @@ itself but implemented in a compatible fashion.</p>
                 
               </p>
               <div id="method-i-configure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 77</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
-  <span class="ruby-ivar">@base_uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span> ] )
-  <span class="ruby-ivar">@routing</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-ivar">@base_uri</span>  = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
+  <span class="ruby-ivar">@proxy_uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@routing</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span> ] <span class="ruby-operator">||</span> {}
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -320,7 +327,7 @@ the optional <code>routing</code> parameter in the constructor.</p>
                 
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 117</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 124</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
 
@@ -336,7 +343,8 @@ the optional <code>routing</code> parameter in the constructor.</p>
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForHTTP</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>     <span class="ruby-identifier">resource</span>,
     <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">version</span>,
-    <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">endpoint_uri</span>
+    <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">endpoint_uri</span>,
+    <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>    <span class="ruby-ivar">@proxy_uri</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>

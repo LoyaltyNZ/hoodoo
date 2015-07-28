@@ -36,15 +36,81 @@
       
 <p><a href="Support.html">Support</a> mixin for models subclassed from <a
 href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
-internationalisation support. See <a
-href="Dated/ClassMethods.html#method-i-dated">Hoodoo::ActiveRecord::Dated::ClassMethods#dated</a>
-for details.</p>
+dating support.</p>
 
-<p>See also:</p>
-<ul><li>
-<p><a
-href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
-</li></ul>
+<p>This mixin adds finder methods to the model it is applied to (see <a
+href="Dated/ClassMethods.html#method-i-dated">Hoodoo::ActiveRecord::Dated::ClassMethods#dated</a>
+and <a
+href="Dated/ClassMethods.html#method-i-dated_at">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at</a>).
+These finders require two database tables in order to function correctly,
+the primary table (the model table) and a history table. When a record is
+updated it should be moved to the history table and a new record inserted
+with the new values. When a record is deleted it should be moved to the
+history table.</p>
+
+<p>All datetime values must be stored as UTC.</p>
+
+<p>The primary table must have a unique column named <code>id</code> and two
+timestamp columns named <code>updated_at</code> and <code>created_at</code>
+which both need to be set by the application code.</p>
+
+<p>The history table requires the same columns as the primary table with two
+differences:</p>
+<ol><li>
+<p>The history table&#39;s <code>id</code> column must be populated with any
+unique value whilst the history table&#39;s <code>uuid</code> column must
+be populated with the primary table&#39;s <code>id</code> value.</p>
+</li><li>
+<p>The history table must have two additional columns,
+<code>effective_start</code> and <code>effective_end</code>. The
+<code>effective_start</code> column determines when the history entry
+becomes effective (inclusive) whilst the <code>effective_end</code>
+determines when the history entry was effective to (exclusive). A record is
+considered to be effective at a particular time if that time is the same or
+after the <code>effective_start</code> and before the
+<code>effective_end</code>.</p>
+
+<p>The <code>effective_start</code> must be set to the
+<code>effective_end</code> of the last record with same <code>uuid</code>,
+or to the <code>created_at</code> of the record if there is no previous
+records with the same <code>uuid</code>.</p>
+
+<p>The <code>effective_end</code> must be set to the current time (UTC) when
+deleting a record or to the updated record&#39;s <code>updated_at</code>
+when updating a record.</p>
+</li></ol>
+
+<p>Additionally there are two constraints on the history table that must not
+be broken for the finder methods to function correctly:</p>
+<ol><li>
+<p>When adding a record to the history table its <code>effective_end</code>
+must be after all other records in the history table with the same
+<code>uuid</code>.</p>
+</li><li>
+<p>When inserting a new record to the primary table its <code>id</code> must
+not exist in the history table.</p>
+</li></ol>
+
+<p>The history table name defaults to the name of the primary table
+concatenated with <code>_history_entries</code>. This can be overriden
+using <a
+href="Dated/ClassMethods.html#method-i-dated_with_table_name-3D">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_with_table_name=</a>.</p>
+
+<p>Example:</p>
+
+<pre><code>class Post &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Dated
+  self.dated_with_table_name = :historical_posts
+end
+</code></pre>
+
+<p>Compatible database migration generators are included in
+<code>service_shell</code>. These migrations create the history table and
+add database triggers (PostgreSQL specific) which will handle the creation
+of the appropriate history entry when a record is deleted or updated
+without breaking the history table constraints. See <a
+href="https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb">github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb</a>
+for more information.</p>
 
     </div>
   
@@ -88,6 +154,18 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
               
               <li>
                 <a href="#method-c-instantiate">instantiate</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-sanitised_column_string">sanitised_column_string</a>
               </li>
             
           </ul>
@@ -157,7 +235,7 @@ this module.</p>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 36</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 97</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
 <span class="ruby-keyword">end</span></pre>
@@ -202,9 +280,62 @@ this module.</p>
                 
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 47</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
+
+  <span class="ruby-comment"># Define a model for the history entries which is namespaced with a</span>
+  <span class="ruby-comment"># fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and</span>
+  <span class="ruby-comment"># the original model&#39;s name followed by the suffix HistoryEntry. If</span>
+  <span class="ruby-comment"># the original model is called Post, the history model will be</span>
+  <span class="ruby-comment"># NzCoLoyaltyHoodooPostHistoryEntry.</span>
+
+  <span class="ruby-identifier">history_klass</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> ) <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">primary_key</span> = <span class="ruby-value">:id</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">table_name</span>  = <span class="ruby-identifier">model</span>.<span class="ruby-identifier">table_name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;_history_entries&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_variable_set</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_dated_with</span>, <span class="ruby-identifier">history_klass</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-sanitised_column_string">
+            
+              <b>sanitised_column_string</b>( model_klass )
+            
+            <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-sanitised_column_string" name="method-c-sanitised_column_string" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Forms a String containing the specified <code>model_klass</code>&#39;s
+attribute names escaped and joined with commas.</p>
+
+<p><code>model_klass</code> Class which responds to .attribute_names</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-sanitised_column_string_source')" id="l_method-c-sanitised_column_string_source">show</a>
+                
+              </p>
+              <div id="method-c-sanitised_column_string_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 130</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-identifier">model_klass</span> )
+  <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

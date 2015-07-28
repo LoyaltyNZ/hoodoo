@@ -67,7 +67,32 @@ href="../Dated.html#method-c-included">Hoodoo::ActiveRecord::Dated.included</a>.
             
               
               <li>
-                <a href="#method-i-dated_at">dated_at</a>
+                <a href="#method-i-dated_at">dated_at</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-dated_historical_and_current">dated_historical_and_current</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-dated_with">dated_with</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-dated_with_history_column_mapping">dated_with_history_column_mapping</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-dated_with_table_name">dated_with_table_name</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-dated_with_table_name-3D">dated_with_table_name=</a>
               </li>
             
           </ul>
@@ -106,8 +131,10 @@ href="../Dated.html#method-c-included">Hoodoo::ActiveRecord::Dated.included</a>.
           
           
             <div class="description">
-              <p>TODO: Placeholder</p>
-<dl class="rdoc-list note-list"><dt>context
+              <p>Return an ActiveRecord::Relation containing the model instances which are
+effective at <code>context.request.dated_at</code>. If this value is nil
+the current time in UTC is used.</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
 <dd>
 <p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
 instance describing a call context. This is typically a value passed to one
@@ -132,10 +159,10 @@ instance methods that a resource subclass implements.</p>
                 
               </p>
               <div id="method-i-dated_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 63</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 148</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated</span>( <span class="ruby-identifier">context</span> )
-  <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">prevailing_scope</span>
+  <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>( <span class="ruby-identifier">date_time</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -145,18 +172,20 @@ instance methods that a resource subclass implements.</p>
         <div class="method">
           <div class="title method-title" id="method-i-dated_at">
             
-              <b>dated_at</b>( date_time )
+              <b>dated_at</b>( date_time = Time.now )
             
             <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_at" name="method-i-dated_at" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              <p>TODO: Placeholder</p>
-<dl class="rdoc-list note-list"><dt>date_time
+              <p>Return an ActiveRecord::Relation containing the models instances which are
+effective at the specified date_time.</p>
+<dl class="rdoc-list note-list"><dt><code>date_time</code>
 <dd>
-<p>The Date/Time (as a Ruby Date, Time or DateTime instance) for which the
-“effective dated” scope is to be constructed.</p>
+<p>(Optional) A Time or DateTime instance, or a String that can be converted
+to a DateTime instance, for which the “effective dated” scope is to be
+constructed.</p>
 </dd></dl>
             </div>
           
@@ -175,10 +204,279 @@ instance methods that a resource subclass implements.</p>
                 
               </p>
               <div id="method-i-dated_at_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 74</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_at</span>( <span class="ruby-identifier">date_time</span> )
-  <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">prevailing_scope</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 160</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> )
+
+  <span class="ruby-comment"># Rationalise and convert the date time to UTC.</span>
+
+  <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">date_time</span> ).<span class="ruby-identifier">utc</span>
+
+  <span class="ruby-comment"># Create a string that specifies this model&#39;s attributes escaped and</span>
+  <span class="ruby-comment"># joined by commas for use in a SQL query.</span>
+
+  <span class="ruby-identifier">formatted_model_attributes</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-keyword">self</span> )
+
+  <span class="ruby-comment"># Convert date_time to a String suitable for an SQL query.</span>
+
+  <span class="ruby-identifier">string_date_time</span> = <span class="ruby-identifier">sanitize</span>( <span class="ruby-identifier">date_time</span> )
+
+  <span class="ruby-comment"># A query that combines historical and current records which are</span>
+  <span class="ruby-comment"># effective at the specified date time.</span>
+
+  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%Q{
+    (
+      SELECT #{ formatted_model_attributes } FROM (
+        SELECT #{ formatted_model_attributes }, updated_at as effective_start, null AS effective_end
+        FROM #{ self.table_name }
+
+        UNION ALL
+
+        SELECT #{ self.dated_with_history_column_mapping }, effective_start, effective_end
+        FROM #{ self.dated_with_table_name }
+      ) AS u
+      WHERE effective_start &lt;= #{ string_date_time } AND (effective_end &gt; #{ string_date_time } OR effective_end IS NULL)
+    ) AS #{ self.table_name }
+  }</span>
+
+  <span class="ruby-comment"># Form a query which uses ActiveRecord to list a dated or current</span>
+  <span class="ruby-comment"># record.</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">from</span>( <span class="ruby-identifier">nested_query</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_historical_and_current">
+            
+              <b>dated_historical_and_current</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_historical_and_current" name="method-i-dated_historical_and_current" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Return an ActiveRecord::Relation containing all historical and current
+model instances.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_historical_and_current_source')" id="l_method-i-dated_historical_and_current_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_historical_and_current_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 202</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_historical_and_current</span>
+
+  <span class="ruby-comment"># Create a string that specifies this model&#39;s attributes escaped and</span>
+  <span class="ruby-comment"># joined by commas for use in a SQL query.</span>
+
+  <span class="ruby-identifier">formatted_model_attributes</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-keyword">self</span> )
+
+  <span class="ruby-comment"># A query that combines historical and current records.</span>
+
+  <span class="ruby-identifier">nested_query</span> = <span class="ruby-node">%Q{
+    (
+      SELECT #{ formatted_model_attributes }
+      FROM #{ self.table_name }
+
+      UNION ALL
+
+      SELECT #{ self.dated_with_history_column_mapping }
+      FROM #{ self.dated_with_table_name }
+    ) AS #{ self.table_name }
+  }</span>
+
+  <span class="ruby-comment"># Form a query which uses ActiveRecord to list current and dated</span>
+  <span class="ruby-comment"># records.</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">from</span>( <span class="ruby-identifier">nested_query</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_with">
+            
+              <b>dated_with</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_with" name="method-i-dated_with" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>The Class for this model&#39;s history entries.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_with_source')" id="l_method-i-dated_with_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 231</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">class_variable_defined?</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_dated_with</span> ) <span class="ruby-operator">?</span>
+              <span class="ruby-identifier">class_variable_get</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_dated_with</span> ) <span class="ruby-operator">:</span>
+              <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_with_table_name">
+            
+              <b>dated_with_table_name</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_with_table_name" name="method-i-dated_with_table_name" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Get the symbolised name of the history table for model. This defaults to
+the name of the model&#39;s table concatenated with
+<code>_history_entries</code>. If the table name is :posts, the history
+table would be :posts_history_entries.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_with_table_name_source')" id="l_method-i-dated_with_table_name_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_with_table_name_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 242</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with_table_name</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>.<span class="ruby-identifier">table_name</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_with_table_name-3D">
+            
+              <b>dated_with_table_name=</b>( dated_with_history_table )
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_with_table_name-3D" name="method-i-dated_with_table_name-3D" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Set the name of the table which stores the history entries for this model.</p>
+<dl class="rdoc-list note-list"><dt>dated_with_history_table
+<dd>
+<p>String or Symbol name of the table.</p>
+</dd></dl>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_with_table_name-3D_source')" id="l_method-i-dated_with_table_name-3D_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_with_table_name-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 251</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with_table_name=</span>( <span class="ruby-identifier">dated_with_history_table</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>.<span class="ruby-identifier">table_name</span> = <span class="ruby-identifier">dated_with_history_table</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+              
+      <div class="sectiontitle">Instance Protected methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-dated_with_history_column_mapping">
+            
+              <b>dated_with_history_column_mapping</b>()
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dated_with_history_column_mapping" name="method-i-dated_with_history_column_mapping" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Forms and returns string which maps history table column names to the
+primary table column names for use in SQL queries.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-dated_with_history_column_mapping_source')" id="l_method-i-dated_with_history_column_mapping_source">show</a>
+                
+              </p>
+              <div id="method-i-dated_with_history_column_mapping_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 260</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with_history_column_mapping</span>
+  <span class="ruby-identifier">desired_attributes</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">dup</span>
+
+  <span class="ruby-comment"># Locate the primary key field, which must be called &quot;id&quot;.</span>
+
+  <span class="ruby-identifier">primary_key_index</span> = <span class="ruby-identifier">desired_attributes</span>.<span class="ruby-identifier">index</span>( <span class="ruby-string">&#39;id&#39;</span> )
+
+  <span class="ruby-comment"># Sanitise the attribute names.</span>
+
+  <span class="ruby-identifier">desired_attributes</span>.<span class="ruby-identifier">map!</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }
+
+  <span class="ruby-comment"># Map the primary key.</span>
+
+  <span class="ruby-identifier">desired_attributes</span>[ <span class="ruby-identifier">primary_key_index</span> ] = <span class="ruby-string">&#39;uuid as &#39;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">desired_attributes</span>[ <span class="ruby-identifier">primary_key_index</span> ]
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">desired_attributes</span>.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

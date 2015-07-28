@@ -183,7 +183,7 @@ href="../Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#create</a>.</p>
                 
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 66</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:create</span>
@@ -226,7 +226,7 @@ href="../Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delete</a>.</p>
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 89</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:delete</span>
@@ -269,7 +269,7 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
                 
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 45</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span> <span class="ruby-comment"># This does NOT dup the objects to which @description points</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:list</span>
@@ -311,7 +311,7 @@ href="../Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a>.</p>
                 
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 55</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:show</span>
@@ -354,7 +354,7 @@ href="../Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#update</a>.</p>
                 
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 77</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http.rb, line 78</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">d</span>            = <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:update</span>
@@ -414,6 +414,7 @@ instance in the <code>discovery_result</code> field of the
   <span class="ruby-ivar">@description</span>                  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPBased</span><span class="ruby-operator">::</span><span class="ruby-constant">DescriptionOfRequest</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">discovery_result</span> = <span class="ruby-ivar">@discovery_result</span>
   <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">endpoint_uri</span>     = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">endpoint_uri</span>
+  <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">proxy_uri</span>        = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">proxy_uri</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

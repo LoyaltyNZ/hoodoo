@@ -41,10 +41,21 @@
     <div class="description">
       
 <p>While individual <a href="../ActiveRecord.html">ActiveRecord</a> mixins can
-be included as and when needed, if you want everything, just define a model
-which subclasses from this <a
+be included as and when needed, if you want the set of mixins, just define
+a model which subclasses from this <a
 href="Base.html">Hoodoo::ActiveRecord::Base</a> class instead of <a
 href="Base.html">ActiveRecord::Base</a>.</p>
+
+<p>This will include:</p>
+<ul><li>
+<p><a href="UUID.html">Hoodoo::ActiveRecord::UUID</a></p>
+</li><li>
+<p><a href="Secure.html">Hoodoo::ActiveRecord::Secure</a></p>
+</li><li>
+<p><a href="Finder.html">Hoodoo::ActiveRecord::Finder</a></p>
+</li><li>
+<p><a href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a></p>
+</li></ul>
 
     </div>
   
@@ -95,24 +106,8 @@ href="Base.html">ActiveRecord::Base</a>.</p>
       
         <li>
           
-            <a href="Dated.html">
-              Hoodoo::ActiveRecord::Dated
-            </a>
-          
-        </li>
-      
-        <li>
-          
             <a href="Secure.html">
               Hoodoo::ActiveRecord::Secure
-            </a>
-          
-        </li>
-      
-        <li>
-          
-            <a href="Translated.html">
-              Hoodoo::ActiveRecord::Translated
             </a>
           
         </li>
@@ -188,13 +183,11 @@ this module.</p>
                 
               </p>
               <div id="method-c-inherited_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 40</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
-  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
-  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-keyword">super</span>

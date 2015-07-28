@@ -328,7 +328,7 @@ which a response is required.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 80</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">interaction_id</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">interaction_id</span> )
@@ -410,7 +410,7 @@ API.</p>
                 
               </p>
               <div id="method-i-add_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 207</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
@@ -457,7 +457,7 @@ error collection of &#39;this&#39; response object.</p>
                 
               </p>
               <div id="method-i-add_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 241</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 243</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors</span>( <span class="ruby-identifier">errors_object</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -511,7 +511,7 @@ overwrites.</p>
                 
               </p>
               <div id="method-i-add_header_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 144</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">overwrite</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">dname</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span>
@@ -577,7 +577,7 @@ stored error. If this is omitted, 500 is kept as the default.</p>
                 
               </p>
               <div id="method-i-add_precompiled_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 227</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-number">500</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
@@ -620,7 +620,7 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
                 
               </p>
               <div id="method-i-for_rack_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 264</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
 
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
@@ -647,7 +647,7 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
     <span class="ruby-identifier">response_hash</span> = <span class="ruby-identifier">body_data</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> ) )
+  <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> ) )
 
   <span class="ruby-comment"># Finally, sort out the headers</span>
 
@@ -700,7 +700,7 @@ href="Response.html#method-i-add_header">add_header</a> call, or
                 
               </p>
               <div id="method-i-get_header_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 165</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_header</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-identifier">value_hash</span> = <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value_hash</span>.<span class="ruby-identifier">nil?</span>
@@ -742,7 +742,7 @@ will just continue to accumulate).</p>
                 
               </p>
               <div id="method-i-halt_processing-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 100</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">halt_processing?</span>
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -779,7 +779,7 @@ will just continue to accumulate).</p>
                 
               </p>
               <div id="method-i-headers_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 173</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">headers</span>
   <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">result</span>, <span class="ruby-identifier">kv_array</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">result</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">kv_array</span>[ <span class="ruby-number">1</span> ] )
@@ -828,7 +828,7 @@ durning a &#39;show&#39; call when the requested resource does not exist.</p>
                 
               </p>
               <div id="method-i-not_found_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 255</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 257</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">not_found</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;generic.not_found&#39;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:ident</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -888,7 +888,7 @@ via offset and limit parameters.</p>
                 
               </p>
               <div id="method-i-set_resources_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 123</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 125</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resources</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dataset_size</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">array</span>
   <span class="ruby-ivar">@dataset_size</span> = <span class="ruby-identifier">dataset_size</span>

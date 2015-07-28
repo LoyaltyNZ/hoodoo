@@ -108,6 +108,16 @@ can be contacted.</p></td>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>proxy_uri</td>
+            <td class='attr-desc'><p>Full URI (as a URI object) of an HTTP proxy to use as an override to
+<code>ENV['HTTP_PROXY']</code> which Ruby itself will otherwise read. Will
+be <code>nil</code> for no proxy override.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
           </tr>
@@ -131,7 +141,7 @@ can be contacted.</p></td>
         <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>( resource:, version:, endpoint_uri: )
+              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil )
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForHTTP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
@@ -148,6 +158,9 @@ can be contacted.</p></td>
 </dd><dt><code>endpoint_uri</code>
 <dd>
 <p>See <a href="ForHTTP.html#attribute-i-endpoint_uri">endpoint_uri</a>.</p>
+</dd><dt><code>proxy_uri</code>
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-proxy_uri">proxy_uri</a>.</p>
 </dd></dl>
             </div>
           
@@ -166,14 +179,16 @@ can be contacted.</p></td>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 39</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
-                <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span> )
+                <span class="ruby-identifier">endpoint_uri</span>,,
+                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_uri</span> = <span class="ruby-identifier">endpoint_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">proxy_uri</span>    = <span class="ruby-identifier">proxy_uri</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
