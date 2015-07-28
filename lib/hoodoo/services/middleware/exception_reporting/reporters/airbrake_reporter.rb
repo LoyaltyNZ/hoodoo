@@ -32,7 +32,7 @@ module Hoodoo; module Services
       #
       #     Hoodoo::Services::Middleware::ExceptionReporting.add(
       #       Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter
-      #     )
+      #     ) unless Service.config.env.test? || Service.config.env.development?
       #
       # Services and the Hoodoo middleware do not pass Rails-like params
       # around in forms or query strings, but do beware of search or filter
