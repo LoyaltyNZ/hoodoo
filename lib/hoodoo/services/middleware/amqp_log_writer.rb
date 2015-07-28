@@ -91,6 +91,26 @@ module Hoodoo; module Services
           :routing_key    => @queue_name,
         )
 
+        # Broken services can attempt to log invalid datatypes such as
+        # BigDecimal, which Msgpack can't serialize. At the time of writing,
+        # Alchemy AMQ would thus encounter a serialization exception *within
+        # its EventMachine sending loop*, so in a different *native* thread.
+        # This exception could not be caught by Ruby / Hoodoo in "this"
+        # native thread, so instead the uncaught exception kills the service.
+        # Although Alchemy could catch that itself, there is no way for it to
+        # report the failure to Hoodoo in a way that a log reporting caller
+        # could understand; it's async and in the wrong native thread anyway.
+        #
+        # Solution: In non-production environments only (due to the potential
+        # performance hit), manually serialize the message before sending it.
+        # If this call blows up, the Hoodoo exception handler will catch it
+        # and report the result as a properly formed 500, including the
+        # Msgpack (or other exception) details on exactly what was wrong.
+        #
+        unless Hoodoo::Services::Middleware.environment.production?
+          message.serialize()
+        end
+
         @alchemy.send_message( message )
       end
     end
