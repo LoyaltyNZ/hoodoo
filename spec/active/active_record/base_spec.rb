@@ -40,7 +40,7 @@ describe Hoodoo::ActiveRecord::Base do
   end
 
   it 'acquires context from all included modules' do
-    expect( RSpecModelBaseTest ).to receive( :secure     ).and_return( RSpecModelBaseTest.all() )
+    expect( RSpecModelBaseTest ).to receive( :secure ).and_return( RSpecModelBaseTest.all() )
 
     m = RSpecModelBaseTest.new
     m.save

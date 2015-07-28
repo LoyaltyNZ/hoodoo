@@ -1,3 +1,6 @@
+require 'webrick'
+require 'webrick/https'
+
 # Set the correct environment for testing
 
 ENV[ 'RACK_ENV' ] = 'test'
@@ -50,7 +53,7 @@ RSpec.configure do | config |
   #
   # Use color in STDOUT,
   # use color not only in STDOUT but also in pagers and files.
-  #
+
   config.color = true
   config.tty   = true
 
@@ -58,40 +61,45 @@ RSpec.configure do | config |
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  #
+
   config.order = :random
 
   # Seed global randomization in this process using the `--seed` CLI option.
   # Setting this allows you to use `--seed` to deterministically reproduce
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
-  #
+
   Kernel.srand config.seed
 
-  # Wake up ActiveRecord
+  # Connect to PostgreSQL; no database yet
+
   database_name = 'hoodoo_test'
 
-  # Connect to postgres, no database yet
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
-    :username => ENV['DATABASE_USER'],
+    :username => ENV[ 'DATABASE_USER' ],
     :database => 'postgres'
   )
 
   # Sometimes if a user force quits the spec suite, the hoodoo_test database
   # will not be deleted. The following makes sure it is.
-  #
+
   database_exists = ActiveRecord::Base.connection.execute(
-    "SELECT COUNT(*) FROM pg_database WHERE datname = '#{database_name}'"
+    "SELECT COUNT(*) FROM pg_database WHERE datname = '#{ database_name }'"
   ).any?
-  ActiveRecord::Base.connection.drop_database database_name if database_exists
 
-  # Create the test database ( hiding output )
+  if database_exists
+    ActiveRecord::Base.connection.drop_database( database_name )
+  end
+
+  # Create the test database, hiding output.
+
   ActiveRecord::Base.logger = Logger.new( nil )
-  ActiveRecord::Base.connection.create_database database_name
-  ActiveRecord::Base.logger = Logger.new( STDERR ) # See redirection code below
+  ActiveRecord::Base.connection.create_database( database_name )
+  ActiveRecord::Base.logger = Logger.new( STDERR )
 
-  # Connect to the created database
+  # Connect to the created database.
+
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
     :database => database_name,
@@ -99,18 +107,22 @@ RSpec.configure do | config |
   )
 
   # Blow away the database afterwards.
+
   config.after( :suite ) do
-    # Need to disconnect from the database first
+
+    # Need to disconnect from the hoodoo_test database first.
+
     ActiveRecord::Base.establish_connection(
       :adapter  => 'postgresql',
-      :username => ENV['DATABASE_USER']
+      :username => ENV[ 'DATABASE_USER' ]
     )
 
-    # Drop database
-    ActiveRecord::Base.connection.drop_database database_name
+    ActiveRecord::Base.connection.drop_database( database_name )
+
   end
 
-  # Wake up DatabaseCleaner.
+  # Wake up Database Cleaner.
+
   DatabaseCleaner.strategy = :transaction # MUST NOT be changed
 
   # Redirect $stderr before each test so a test log gets written without
@@ -194,10 +206,7 @@ end
 #               verification is bypassed. Optional; default is +false+, which
 #               uses normal HTTP.
 #
-
-require 'webrick'
-require 'webrick/https'
-
+#
 def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
 
   port   = Hoodoo::Utilities.spare_port()

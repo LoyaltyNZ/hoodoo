@@ -109,17 +109,17 @@ module Hoodoo
         model.extend( ClassMethods )
 
         # Define a model for the history entries which is namespaced with a
-        # fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and the
-        # original model's name followed by the suffix HistoryEntry. If the
-        # original model is called Post, the history model will be
+        # fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and
+        # the original model's name followed by the suffix HistoryEntry. If
+        # the original model is called Post, the history model will be
         # NzCoLoyaltyHoodooPostHistoryEntry.
-        #
+
         history_klass = Class.new( ::ActiveRecord::Base ) do
           self.primary_key = :id
-          self.table_name  = model.table_name + "_history_entries"
+          self.table_name  = model.table_name + '_history_entries'
         end
-        model.class_variable_set( :@@nz_co_loyalty_hoodoo_dated_with, history_klass )
 
+        model.class_variable_set( :@@nz_co_loyalty_hoodoo_dated_with, history_klass )
       end
 
       # Forms a String containing the specified +model_klass+'s attribute names
@@ -159,18 +159,22 @@ module Hoodoo
         #
         def dated_at( date_time = Time.now )
 
-          # Rationalise and convert the date time to UTC
+          # Rationalise and convert the date time to UTC.
+
           date_time = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
 
           # Create a string that specifies this model's attributes escaped and
           # joined by commas for use in a SQL query.
+
           formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
 
-          # Convert date_time to a String suitable for an SQL query
+          # Convert date_time to a String suitable for an SQL query.
+
           string_date_time = sanitize( date_time )
 
           # A query that combines historical and current records which are
           # effective at the specified date time.
+
           nested_query = %{
             (
               SELECT #{ formatted_model_attributes } FROM (
@@ -186,9 +190,10 @@ module Hoodoo
             ) AS #{ self.table_name }
           }
 
-          # Form a query which uses ActiveRecord to list effective records.
-          from( nested_query )
+          # Form a query which uses ActiveRecord to list a dated or current
+          # record.
 
+          return from( nested_query )
         end
 
         # Return an ActiveRecord::Relation containing all historical and current
@@ -198,9 +203,11 @@ module Hoodoo
 
           # Create a string that specifies this model's attributes escaped and
           # joined by commas for use in a SQL query.
+
           formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
 
           # A query that combines historical and current records.
+
           nested_query = %{
             (
               SELECT #{ formatted_model_attributes }
@@ -213,9 +220,10 @@ module Hoodoo
             ) AS #{ self.table_name }
           }
 
-          # Form a query which uses ActiveRecord to list effective records.
-          from( nested_query )
+          # Form a query which uses ActiveRecord to list current and dated
+          # records.
 
+          return from( nested_query )
         end
 
         # The Class for this model's history entries.
@@ -250,20 +258,21 @@ module Hoodoo
         # primary table column names for use in SQL queries.
         #
         def dated_with_history_column_mapping
-
           desired_attributes = self.attribute_names.dup
 
-          # Locate the primary key field which is required to be called id.
-          primary_key_index = desired_attributes.index( "id" )
+          # Locate the primary key field, which must be called "id".
 
-          # Sanitise the attribute names
+          primary_key_index = desired_attributes.index( 'id' )
+
+          # Sanitise the attribute names.
+
           desired_attributes.map!{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }
 
-          # Map the primary key
-          desired_attributes[ primary_key_index ] = "uuid as " << desired_attributes[ primary_key_index ]
+          # Map the primary key.
 
-          desired_attributes.join( ',' )
+          desired_attributes[ primary_key_index ] = 'uuid as ' << desired_attributes[ primary_key_index ]
 
+          return desired_attributes.join( ',' )
         end
 
       end
