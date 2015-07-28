@@ -29,11 +29,6 @@ describe Hoodoo::ActiveRecord::Base do
     expect { RSpecModelBaseTest.secure_with( {} ) }.to_not raise_exception()
   end
 
-  pending 'is translatable' do
-    expect { RSpecModelBaseTest.translated( nil ) }.to_not raise_exception()
-    raise "Implement me one day"
-  end
-
   it 'finds things' do
     m = RSpecModelBaseTest.new
     m.save
