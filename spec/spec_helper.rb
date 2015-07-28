@@ -74,7 +74,8 @@ RSpec.configure do | config |
   # Connect to postgres, no database yet
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
-    :username => ENV['DATABASE_USER']
+    :username => ENV['DATABASE_USER'],
+    :database => 'postgres'
   )
 
   # Sometimes if a user force quits the spec suite, the hoodoo_test database
