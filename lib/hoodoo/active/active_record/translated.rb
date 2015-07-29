@@ -45,6 +45,15 @@ module Hoodoo
       #           this module.
       #
       def self.instantiate( model )
+
+        model.class_attribute(
+          :nz_co_loyalty_hoodoo_translate_with,
+          {
+            :instance_predicate => false,
+            :instance_accessor  => false
+          }
+        )
+
         model.extend( ClassMethods )
       end
 
@@ -65,8 +74,12 @@ module Hoodoo
           return prevailing_scope
         end
 
-        # def translated_with( map )
-        #   class_variable_set( :@@nz_co_loyalty_hoodoo_translated_with, map )
+        # def translate_with( map )
+        #   self.nz_co_loyalty_hoodoo_translate_with = map
+        # end
+        #
+        # def translated_with
+        #   self.nz_co_loyalty_hoodoo_translate_with
         # end
       end
     end
