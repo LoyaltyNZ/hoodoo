@@ -15,20 +15,29 @@ module Hoodoo
     # Support mixin for models subclassed from ActiveRecord::Base providing
     # as-per-API-standard dating support.
     #
+    # == Overview
+    #
     # This mixin adds finder methods to the model it is applied to (see
     # Hoodoo::ActiveRecord::Dated::ClassMethods#dated and
     # Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at). These finders require
-    # two database tables in order to function correctly, the primary table
+    # two database tables in order to function correctly - the primary table
     # (the model table) and a history table. When a record is updated it should
     # be moved to the history table and a new record inserted with the new
     # values. When a record is deleted it should be moved to the history
-    # table.
+    # table. This can be done manually with application code, or by things like
+    # SQL triggers (see later).
     #
-    # All datetime values must be stored as UTC.
+    # Dating is only enabled if the including class explicitly calls the
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#date_enabled method.
     #
-    # The primary table must have a unique column named +id+ and two
+    # == Database table requirements
+    #
+    # In all related tables, all date-time values must be stored as UTC.
+    #
+    # The primary table _must_ have a unique column named +id+ and two
     # timestamp columns named +updated_at+ and +created_at+ which both need
-    # to be set by the application code.
+    # to be set by the application code (the ActiveRecord +timestamps+ macro
+    # in a migration file defines appropriate columns).
     #
     # The history table requires the same columns as the primary table with two
     # differences:
@@ -62,15 +71,17 @@ module Hoodoo
     #    exist in the history table.
     #
     # The history table name defaults to the name of the primary table
-    # concatenated with +_history_entries+. This can be overriden using
-    # Hoodoo::ActiveRecord::Dated::ClassMethods#dated_with_table_name=.
+    # concatenated with +_history_entries+. This can be overriden when calling
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#date_enabled.
     #
     # Example:
     #
     #     class Post < ActiveRecord::Base
     #       include Hoodoo::ActiveRecord::Dated
-    #       self.dated_with_table_name = :historical_posts
+    #       date_enabled( history_table_name: 'historical_posts' )
     #     end
+    #
+    # == Migration assistance
     #
     # Compatible database migration generators are included in +service_shell+.
     # These migrations create the history table and add database triggers
@@ -107,17 +118,6 @@ module Hoodoo
       #
       def self.instantiate( model )
 
-        # Define a model for the history entries which is namespaced with a
-        # fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and
-        # the original model's name followed by the suffix HistoryEntry. If
-        # the original model is called Post, the history model will be
-        # NzCoLoyaltyHoodooPostHistoryEntry.
-
-        history_klass = Class.new( ::ActiveRecord::Base ) do
-          self.primary_key = :id
-          self.table_name  = model.table_name + '_history_entries'
-        end
-
         model.class_attribute(
           :nz_co_loyalty_hoodoo_dated_with,
           {
@@ -126,7 +126,6 @@ module Hoodoo
           }
         )
 
-        model.nz_co_loyalty_hoodoo_dated_with = history_klass
         model.extend( ClassMethods )
       end
 
@@ -144,9 +143,42 @@ module Hoodoo
       #
       module ClassMethods
 
+        # Activate historic dating for this model.
+        #
+        # See the module documentation for Hoodoo::ActiveRecord::Dated for
+        # full information on dating, table requirements, default table names
+        # and so forth.
+        #
+        # *Named* parameters are:
+        #
+        # +history_table_name+:: Optional String or Symbol name of the table
+        #                        which stores the history entries for this
+        #                        model. If omitted, defaults to the value
+        #                        described by the documentation for
+        #                        Hoodoo::ActiveRecord::Dated.
+        #
+        def date_enabled( history_table_name: self.table_name + '_history_entries' )
+
+          # Define an anonymous model for the history entries.
+
+          history_klass = Class.new( ::ActiveRecord::Base ) do
+            self.primary_key = :id
+            self.table_name  = history_table_name
+          end
+
+          # Record the anonymous model class in a namespaced class attribute
+          # for reference in the rest of the dating code via #dated_with().
+
+          self.nz_co_loyalty_hoodoo_dated_with = history_klass
+
+        end
+
         # Return an ActiveRecord::Relation containing the model instances which
         # are effective at +context.request.dated_at+. If this value is nil the
         # current time in UTC is used.
+        #
+        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # then the default 'all' scope is returned instead.
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
         #             context. This is typically a value passed to one of
@@ -158,14 +190,20 @@ module Hoodoo
           return self.dated_at( date_time )
         end
 
-        # Return an ActiveRecord::Relation containing the models instances which
-        # are effective at the specified date_time.
+        # Return an ActiveRecord::Relation scoping a query to include only model
+        # instances that are relevant/effective at the specified date_time.
+        #
+        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # then the default 'all' scope is returned instead.
         #
         # +date_time+:: (Optional) A Time or DateTime instance, or a String that
         #               can be converted to a DateTime instance, for which the
         #               "effective dated" scope is to be constructed.
         #
         def dated_at( date_time = Time.now )
+
+          dating_table_name = dated_with_table_name()
+          return all() if dating_table_name.nil? # "Model.all" -> returns anonymous scope
 
           # Rationalise and convert the date time to UTC.
 
@@ -192,7 +230,7 @@ module Hoodoo
                 UNION ALL
 
                 SELECT #{ self.dated_with_history_column_mapping }, effective_start, effective_end
-                FROM #{ self.dated_with_table_name }
+                FROM #{ dating_table_name }
               ) AS u
               WHERE effective_start <= #{ string_date_time } AND (effective_end > #{ string_date_time } OR effective_end IS NULL)
             ) AS #{ self.table_name }
@@ -204,10 +242,16 @@ module Hoodoo
           return from( nested_query )
         end
 
-        # Return an ActiveRecord::Relation containing all historical and current
-        # model instances.
+        # Return an ActiveRecord::Relation scoping a query that would include
+        # all historical and current model instances.
+        #
+        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # then the default 'all' scope is returned instead.
         #
         def dated_historical_and_current
+
+          dating_table_name = dated_with_table_name()
+          return all() if dating_table_name.nil? # "Model.all" -> returns anonymous scope
 
           # Create a string that specifies this model's attributes escaped and
           # joined by commas for use in a SQL query.
@@ -224,7 +268,7 @@ module Hoodoo
               UNION ALL
 
               SELECT #{ self.dated_with_history_column_mapping }
-              FROM #{ self.dated_with_table_name }
+              FROM #{ dating_table_name }
             ) AS #{ self.table_name }
           }
 
@@ -234,7 +278,11 @@ module Hoodoo
           return from( nested_query )
         end
 
-        # The Class for this model's history entries.
+        # The anonymous ActiveRecord::Base instance used this model's history
+        # entries.
+        #
+        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # returns +nil+.
         #
         def dated_with
           return self.nz_co_loyalty_hoodoo_dated_with
@@ -242,20 +290,15 @@ module Hoodoo
 
         # Get the symbolised name of the history table for model. This defaults
         # to the name of the model's table concatenated with +_history_entries+.
-        # If the table name is :posts, the history table would be
-        # :posts_history_entries.
+        # If the table name is +:posts+, the history table would be
+        # +:posts_history_entries+.
+        #
+        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # returns +nil+.
         #
         def dated_with_table_name
-          self.dated_with.table_name
-        end
-
-        # Set the name of the table which stores the history entries for this
-        # model.
-        #
-        # +dated_with_history_table+:: String or Symbol name of the table.
-        #
-        def dated_with_table_name=( dated_with_history_table )
-          self.dated_with.table_name = dated_with_history_table
+          instance = self.dated_with()
+          instance.nil? ? nil : instance.table_name
         end
 
         protected
