@@ -922,11 +922,11 @@ describe Hoodoo::Services::Middleware do
     # equivalent of "kill -9" and the likes of "#exit!" are long gone - so
     # the WEBrick server thread, which never returns to the Ruby interpreter
     # after the Rack::Server.start() call (or equivalent) can't die. Instead
-    # we are forced to write a weak test that simulates a connection failure
-    # to the endpoint.
+    # we are forced to write a fragile test that simulates a connection
+    # failure to the endpoint.
     #
     it 'should get a 404 for no-longer-running endpoints' do
-      expect_any_instance_of(Net::HTTP).to receive(:request).once.and_raise(Errno::ECONNREFUSED)
+      expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( Errno::ECONNREFUSED )
 
       get(
         '/v1/test_call/show_something',
@@ -935,6 +935,21 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 404 )
+    end
+
+    # Similarly shaky test for simulating arbitrary other failure kinds.
+    #
+    it 'should get a 500 for arbitrary failures' do
+      expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( 'some connection error' )
+
+      get(
+        '/v1/test_call/show_something',
+        nil,
+        { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      )
+
+      expect( last_response.status ).to eq( 500 )
+      expect( last_response.body ).to include( 'some connection error' )
     end
   end
 end
