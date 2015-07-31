@@ -149,11 +149,9 @@ RSpec.configure do | config |
 
   config.after( :suite ) do
     begin
-      DRb.start_service
       drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri()
       drb_service = DRbObject.new_with_uri( drb_uri )
       drb_service.stop()
-      DRb.stop_service
     rescue
       # Ignore exceptions. For test subsets or depending on test order,
       # there might not be a DRb service to shut down.
