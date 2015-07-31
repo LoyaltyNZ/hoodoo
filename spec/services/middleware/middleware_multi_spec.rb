@@ -237,40 +237,23 @@ end
 
 # And Finally - the tests.
 
+describe 'DRb start timeout' do
+  context 'for test coverage purposes' do
+    it 'checks for timeouts' do
+      expect( DRbObject ).to receive( :new_with_uri ).once.and_raise( DRb::DRbConnError )
+      expect( DRbObject ).to receive( :new_with_uri ).at_least( :once ).and_raise( Timeout::Error )
+
+      spec_helper_http(
+        port: spec_helper_start_svc_app_in_thread_for( TestEchoService ),
+        path: '/v2/test_some_echoes'
+      )
+    end
+  end
+end
 describe Hoodoo::Services::Middleware do
 
   before :all do
     @port = spec_helper_start_svc_app_in_thread_for( TestEchoService )
-  end
-
-  context 'DRb start timeout, for test coverage purposes' do
-    it 'checks for timeouts' do
-
-      # Send an HTTP request. The WEBRick server catch this and creates a
-      # new middleware instance which runs service discovery over DRb. We
-      # mock this to simulate continued DRb failures until the timeout
-      # trigger happens. A 500 is raised which, since the middleware blew
-      # up during instantiation, is caught by WEBRick itself as an
-      # Internal Server Error.
-      #
-      # Just have to put up with this one taking the full timeout duration.
-      #
-      # 1 time for first pass, 50 times for the retries during the sleep counter,
-      # 1 more time for the final attempt that triggers the timeout RuntimeError.
-      #
-      expect( DRbObject ).to receive( :new_with_uri ).exactly( 52 ).times.and_raise( DRb::DRbConnError )
-      expect( Process ).to receive( :detach ).once
-
-      response = spec_helper_http(
-        port: @port,
-        path: '/v2/test_some_echoes'
-      )
-
-      # Check the Internal Server Error body for the expected exception text.
-
-      expect( response.code ).to eq( '500' )
-      expect( response.body ).to include( 'Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start on local port ' )
-    end
   end
 
   # Although tests can run in random order so we can't force this set to come

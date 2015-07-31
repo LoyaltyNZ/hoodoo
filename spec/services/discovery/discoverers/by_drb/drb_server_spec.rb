@@ -35,20 +35,6 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
     it '#ping' do
       expect( @inst.ping() ).to eq( true )
     end
-    #
-    # (See #ping above).
-    #
-    it '#stop' do
-
-      # Ensure DRb.thread.exit() is called by the 'stop' method, without
-      # needing to have that code actually execute (since this requires an
-      # active DRb thread and RCov doesn't report the code as covered).
-
-      drb_thread = double()
-      expect( DRb ).to receive( :thread ).once.and_return( drb_thread )
-      expect( drb_thread ).to receive( :exit ).once
-      @inst.stop()
-    end
   end
 
   context "via DRb" do
@@ -75,28 +61,21 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
 
         client = nil
 
-        # Don't use Ruby Timeout here. Pseudorandom apparent DRb
-        # connection issues will arise, especially in Travis.
-        #
-        # https://flushentitypacket.github.io/ruby/2015/02/21/ruby-timeout-how-does-it-even-work.html
-        # https://coderwall.com/p/1novga/ruby-timeouts-are-dangerous
-
-        counter = 0
-        limit   = 100 # sleep 0.1 * 100 => roughly 10 seconds
-
-        loop do
-          begin
-            client = DRbObject.new_with_uri( described_class.uri() )
-            client.ping()
-            client.stop()
-            break
-          rescue DRb::DRbConnError
-            counter += 1
-            if counter > limit
-              raise "Timed out while waiting for DRb service on local port #{ port } to shut down"
+        begin
+          Timeout::timeout( 5 ) do
+            loop do
+              begin
+                drb_service = DRbObject.new_with_uri( described_class.uri() )
+                drb_service.ping()
+                drb_service.stop()
+                break
+              rescue DRb::DRbConnError
+                sleep 0.1
+              end
             end
-            sleep 0.1
           end
+        rescue Timeout::Error
+          raise "Timed out while waiting for DRb service to communicat"
         end
 
         # For good measure...
@@ -113,7 +92,6 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
         @drb_server.add( :FooS2, 2, 'http://localhost:3030/v2/foo_s2' )
 
         Thread.new do
-          DRb.start_service
           @drb_client = DRbObject.new_with_uri( @drb_uri )
           @drb_client.add( :FooC, 2, 'http://localhost:3030/v2/foo_c' )
         end.join
@@ -131,7 +109,6 @@ describe Hoodoo::Services::Discovery::ByDRb::DRbServer do
       @drb_server.add( :Foo1, 1, 'http://127.0.0.1:3031/v1/foo_1' )
 
       one = Thread.new do
-        DRb.start_service
         @drb_client = DRbObject.new_with_uri( @drb_uri )
         @drb_client.add( :Bar1, 1, 'http://0.0.0.0:3032/v1/bar_1' )
 

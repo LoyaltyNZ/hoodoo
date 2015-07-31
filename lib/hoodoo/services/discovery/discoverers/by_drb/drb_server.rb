@@ -58,16 +58,46 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
       # server is already running, expect an "address in use" connection
       # exception from DRb.
       #
+      # $SAFE will be set to 1 (unless it is already higher) in this thread.
+      #
       # +port+:: Passed to ::uri method.
       #
       def self.start( port = nil )
-        drb_uri = self.uri( port )
 
-        DRb.start_service( drb_uri,
-                           FRONT_OBJECT,
-                           :tcp_acl => LOCAL_ACL )
+        uri = self.uri( port )
 
-        DRb.thread.join()
+        # For security, "disable eval() and friends":
+        #
+        # http://www.ruby-doc.org/stdlib-2.1.6/libdoc/drb/rdoc/DRb.html
+        # https://ruby-hacking-guide.github.io/security.html
+        # http://blog.recurity-labs.com/archives/2011/05/12/druby_for_penetration_testers/
+
+        $SAFE = 1
+
+        # Have to allow a tained port string from "outside" just to be able
+        # to start the service on a given port; so untaint that deliberately.
+        #
+        # http://ruby-doc.com/docs/ProgrammingRuby/html/taint.html
+
+        uri.untaint()
+        $stop_queue = ::Queue.new
+
+        ::DRb.start_service( uri,
+                             FRONT_OBJECT,
+                             :tcp_acl => LOCAL_ACL )
+
+        # DRB.thread.exit() does not reliably work; sometimes, it just hangs
+        # up. I don't know why. On OS X and under Travis, sporadic failures
+        # to return from the "stop()" method would result. Instead, we use a
+        # relatively elaborate queue; sit here waiting for a message to be
+        # pushed onto it, then just let this method exit naturally, ignoring
+        # the value that appeared on the queue.
+        #
+        # The sleep makes it more reliable too, indicating some kind of nasty
+        # race condition on start-vs-wait-to-shutdown.
+
+        sleep( 1 )
+        $stop_queue.pop()
       end
 
       # Create an instance ready for use as a DRb "front object".
@@ -115,16 +145,9 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
       # Shut down this DRb service.
       #
       def stop
-        DRb.thread.exit
+        $stop_queue.push( true )
       end
     end
-
-    # For local development, a DRb service is used. We thus must
-    # "disable eval() and friends":
-    #
-    # http://www.ruby-doc.org/stdlib-1.9.3/libdoc/drb/rdoc/DRb.html
-    #
-    $SAFE = 1
 
     # Singleton "Front object" for the DRB service used in local development.
     #
@@ -132,7 +155,12 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
 
     # Only allow connections from 127.0.0.1.
     #
-    LOCAL_ACL = ACL.new( [ 'deny', 'all', 'allow', '127.0.0.1' ] )
+    LOCAL_ACL = ACL.new( %w[
+      deny all
+      allow ::1
+      allow fe80::1%lo0
+      allow 127.0.0.1
+    ] )
 
   end
 end; end; end

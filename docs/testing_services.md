@@ -124,10 +124,8 @@ ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().
 
 ```ruby
 config.after( :suite ) do
-  DRb.start_service
   drb_uri = Hoodoo::Services::Discovery::ByDRb::DRbServer.uri()
   drb_service = DRbObject.new_with_uri( drb_uri )
   drb_service.stop()
-  DRb.stop_service
 end
 ```

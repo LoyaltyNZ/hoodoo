@@ -19,10 +19,6 @@ module Hoodoo
       #
       class ByDRb < Hoodoo::Services::Discovery
 
-        # DRb must be available.
-        #
-        DRb.start_service
-
         public
 
           # Intended for testing only - flushes the records held in the
@@ -166,27 +162,22 @@ module Hoodoo
 
                 Process.detach( spawn( command ) )
 
-                # Don't use Ruby Timeout here. Pseudorandom apparent DRb
-                # connection issues will arise, especially in Travis.
-                #
-                # https://flushentitypacket.github.io/ruby/2015/02/21/ruby-timeout-how-does-it-even-work.html
-                # https://coderwall.com/p/1novga/ruby-timeouts-are-dangerous
-
-                counter = 0
-                limit   = 50 # sleep 0.1 * 50 => roughly 5 seconds
-
-                loop do
-                  begin
-                    drb_service = DRbObject.new_with_uri( drb_uri )
-                    drb_service.ping()
-                    break
-                  rescue DRb::DRbConnError
-                    counter += 1
-                    if counter > limit
-                      raise "Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start on local port #{ @drb_port }"
+                begin
+                  Timeout::timeout( 5 ) do
+                    loop do
+                      begin
+                        drb_service = DRbObject.new_with_uri( drb_uri )
+                        drb_service.ping()
+                        break
+                      rescue DRb::DRbConnError
+                        sleep 0.1
+                      end
                     end
-                    sleep 0.1
                   end
+
+                rescue Timeout::Error
+                  raise "Hoodoo::Services::Discovery::ByDRb timed out while waiting for DRb service registry to start on local port #{ @drb_port }"
+
                 end
 
               else
