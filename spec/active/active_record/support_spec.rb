@@ -58,7 +58,7 @@ describe Hoodoo::ActiveRecord::Support do
 
         self.table_name = :r_spec_full_scope_for_test_subclasses
         secure_with( :foo => :foo )
-        date_enabled( :history_table_name => TEST_HISTORY_TABLE_NAME )
+        dating_enabled( :history_table_name => TEST_HISTORY_TABLE_NAME )
       end
 
       spec_helper_silence_stdout() do

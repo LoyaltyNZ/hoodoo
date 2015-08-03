@@ -28,7 +28,7 @@ module Hoodoo
     # SQL triggers (see later).
     #
     # Dating is only enabled if the including class explicitly calls the
-    # Hoodoo::ActiveRecord::Dated::ClassMethods#date_enabled method.
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled method.
     #
     # == Database table requirements
     #
@@ -72,13 +72,13 @@ module Hoodoo
     #
     # The history table name defaults to the name of the primary table
     # concatenated with +_history_entries+. This can be overriden when calling
-    # Hoodoo::ActiveRecord::Dated::ClassMethods#date_enabled.
+    # Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled.
     #
     # Example:
     #
     #     class Post < ActiveRecord::Base
     #       include Hoodoo::ActiveRecord::Dated
-    #       date_enabled( history_table_name: 'historical_posts' )
+    #       dating_enabled( history_table_name: 'historical_posts' )
     #     end
     #
     # == Migration assistance
@@ -157,7 +157,7 @@ module Hoodoo
         #                        described by the documentation for
         #                        Hoodoo::ActiveRecord::Dated.
         #
-        def date_enabled( history_table_name: self.table_name + '_history_entries' )
+        def dating_enabled( history_table_name: self.table_name + '_history_entries' )
 
           # Define an anonymous model for the history entries.
 
@@ -177,7 +177,7 @@ module Hoodoo
         # are effective at +context.request.dated_at+. If this value is nil the
         # current time in UTC is used.
         #
-        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # If historic dating hasn't been enabled via a call to #dating_enabled,
         # then the default 'all' scope is returned instead.
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -193,7 +193,7 @@ module Hoodoo
         # Return an ActiveRecord::Relation scoping a query to include only model
         # instances that are relevant/effective at the specified date_time.
         #
-        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # If historic dating hasn't been enabled via a call to #dating_enabled,
         # then the default 'all' scope is returned instead.
         #
         # +date_time+:: (Optional) A Time or DateTime instance, or a String that
@@ -245,7 +245,7 @@ module Hoodoo
         # Return an ActiveRecord::Relation scoping a query that would include
         # all historical and current model instances.
         #
-        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # If historic dating hasn't been enabled via a call to #dating_enabled,
         # then the default 'all' scope is returned instead.
         #
         def dated_historical_and_current
@@ -278,11 +278,9 @@ module Hoodoo
           return from( nested_query )
         end
 
-        # The anonymous ActiveRecord::Base instance used this model's history
-        # entries.
-        #
-        # If historic dating hasn't been enabled via a call to #date_enabled,
-        # returns +nil+.
+        # Returns the anonymous ActiveRecord::Base instance used for this
+        # model's history entries, or +nil+ if historic dating has not been
+        # enabled via a prior call to #dating_enabled.
         #
         def dated_with
           return self.nz_co_loyalty_hoodoo_dated_with
@@ -293,7 +291,7 @@ module Hoodoo
         # If the table name is +:posts+, the history table would be
         # +:posts_history_entries+.
         #
-        # If historic dating hasn't been enabled via a call to #date_enabled,
+        # If historic dating hasn't been enabled via a call to #dating_enabled,
         # returns +nil+.
         #
         def dated_with_table_name
