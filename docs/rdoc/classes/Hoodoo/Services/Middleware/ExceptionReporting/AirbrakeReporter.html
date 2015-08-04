@@ -64,7 +64,7 @@ end
 
 Hoodoo::Services::Middleware::ExceptionReporting.add(
   Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter
-)
+) unless Service.config.env.test? || Service.config.env.development?
 </code></pre>
 
 <p><a href="../../../Services.html">Services</a> and the <a

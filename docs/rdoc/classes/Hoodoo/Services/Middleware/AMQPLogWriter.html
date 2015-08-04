@@ -255,6 +255,26 @@ independent, searchable field in the log payload.</p>
     <span class="ruby-value">:routing_key</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@queue_name</span>,
   )
 
+  <span class="ruby-comment"># Broken services can attempt to log invalid datatypes such as</span>
+  <span class="ruby-comment"># BigDecimal, which Msgpack can&#39;t serialize. At the time of writing,</span>
+  <span class="ruby-comment"># Alchemy AMQ would thus encounter a serialization exception *within</span>
+  <span class="ruby-comment"># its EventMachine sending loop*, so in a different *native* thread.</span>
+  <span class="ruby-comment"># This exception could not be caught by Ruby / Hoodoo in &quot;this&quot;</span>
+  <span class="ruby-comment"># native thread, so instead the uncaught exception kills the service.</span>
+  <span class="ruby-comment"># Although Alchemy could catch that itself, there is no way for it to</span>
+  <span class="ruby-comment"># report the failure to Hoodoo in a way that a log reporting caller</span>
+  <span class="ruby-comment"># could understand; it&#39;s async and in the wrong native thread anyway.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Solution: In non-production environments only (due to the potential</span>
+  <span class="ruby-comment"># performance hit), manually serialize the message before sending it.</span>
+  <span class="ruby-comment"># If this call blows up, the Hoodoo exception handler will catch it</span>
+  <span class="ruby-comment"># and report the result as a properly formed 500, including the</span>
+  <span class="ruby-comment"># Msgpack (or other exception) details on exactly what was wrong.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">environment</span>.<span class="ruby-identifier">production?</span>
+    <span class="ruby-identifier">message</span>.<span class="ruby-identifier">serialize</span>()
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">send_message</span>( <span class="ruby-identifier">message</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>

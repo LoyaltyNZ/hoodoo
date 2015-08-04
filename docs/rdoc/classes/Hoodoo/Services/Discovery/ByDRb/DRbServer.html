@@ -197,7 +197,7 @@ respects.</p>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 75</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -219,6 +219,8 @@ respects.</p>
               <p>Start the DRb server. Does not return (joins the DRb thread). If the server
 is already running, expect an “address in use” connection exception from
 DRb.</p>
+
+<p>$SAFE will be set to 1 (unless it is already higher) in this thread.</p>
 <dl class="rdoc-list note-list"><dt><code>port</code>
 <dd>
 <p>Passed to <a href="DRbServer.html#method-c-uri">::uri</a> method.</p>
@@ -240,15 +242,43 @@ DRb.</p>
                 
               </p>
               <div id="method-c-start_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 63</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">start</span>( <span class="ruby-identifier">port</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-identifier">drb_uri</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri</span>( <span class="ruby-identifier">port</span> )
 
-  <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">start_service</span>( <span class="ruby-identifier">drb_uri</span>,
-                     <span class="ruby-constant">FRONT_OBJECT</span>,
-                     <span class="ruby-value">:tcp_acl</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">LOCAL_ACL</span> )
+  <span class="ruby-identifier">uri</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri</span>( <span class="ruby-identifier">port</span> )
 
-  <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">thread</span>.<span class="ruby-identifier">join</span>()
+  <span class="ruby-comment"># For security, &quot;disable eval() and friends&quot;:</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># http://www.ruby-doc.org/stdlib-2.1.6/libdoc/drb/rdoc/DRb.html</span>
+  <span class="ruby-comment"># https://ruby-hacking-guide.github.io/security.html</span>
+  <span class="ruby-comment"># http://blog.recurity-labs.com/archives/2011/05/12/druby_for_penetration_testers/</span>
+
+  <span class="ruby-identifier">$SAFE</span> = <span class="ruby-number">1</span>
+
+  <span class="ruby-comment"># Have to allow a tained port string from &quot;outside&quot; just to be able</span>
+  <span class="ruby-comment"># to start the service on a given port; so untaint that deliberately.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># http://ruby-doc.com/docs/ProgrammingRuby/html/taint.html</span>
+
+  <span class="ruby-identifier">uri</span>.<span class="ruby-identifier">untaint</span>()
+  <span class="ruby-identifier">$stop_queue</span> = <span class="ruby-operator">::</span><span class="ruby-constant">Queue</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-operator">::</span><span class="ruby-constant">DRb</span>.<span class="ruby-identifier">start_service</span>( <span class="ruby-identifier">uri</span>,
+                       <span class="ruby-constant">FRONT_OBJECT</span>,
+                       <span class="ruby-value">:tcp_acl</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">LOCAL_ACL</span> )
+
+  <span class="ruby-comment"># DRB.thread.exit() does not reliably work; sometimes, it just hangs</span>
+  <span class="ruby-comment"># up. I don&#39;t know why. On OS X and under Travis, sporadic failures</span>
+  <span class="ruby-comment"># to return from the &quot;stop()&quot; method would result. Instead, we use a</span>
+  <span class="ruby-comment"># relatively elaborate queue; sit here waiting for a message to be</span>
+  <span class="ruby-comment"># pushed onto it, then just let this method exit naturally, ignoring</span>
+  <span class="ruby-comment"># the value that appeared on the queue.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># The sleep makes it more reliable too, indicating some kind of nasty</span>
+  <span class="ruby-comment"># race condition on start-vs-wait-to-shutdown.</span>
+
+  <span class="ruby-identifier">sleep</span>( <span class="ruby-number">1</span> )
+  <span class="ruby-identifier">$stop_queue</span>.<span class="ruby-identifier">pop</span>()
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -356,7 +386,7 @@ as a String.</p>
                 
               </p>
               <div id="method-i-add_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 94</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 124</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">uri</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ] = <span class="ruby-identifier">uri</span>
 <span class="ruby-keyword">end</span></pre>
@@ -401,7 +431,7 @@ accessed as a String, or &#39;nil&#39; if not found.</p>
                 
               </p>
               <div id="method-i-find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 104</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 134</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-ivar">@repository</span>[ <span class="ruby-node">&quot;#{ resource }/#{ version }&quot;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -439,7 +469,7 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-flush_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 111</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 141</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">flush</span>
   <span class="ruby-ivar">@repository</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -476,7 +506,7 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-ping_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 81</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 111</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">ping</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -513,9 +543,9 @@ usually for test purposes only.</p>
                 
               </p>
               <div id="method-i-stop_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 117</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb, line 147</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stop</span>
-  <span class="ruby-constant">DRb</span>.<span class="ruby-identifier">thread</span>.<span class="ruby-identifier">exit</span>
+  <span class="ruby-identifier">$stop_queue</span>.<span class="ruby-identifier">push</span>( <span class="ruby-keyword">true</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
