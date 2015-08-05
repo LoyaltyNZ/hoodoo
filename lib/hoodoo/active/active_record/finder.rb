@@ -14,9 +14,9 @@ require 'hoodoo/active/active_record/search_helper'
 module Hoodoo
   module ActiveRecord
 
-    # Support mixin for models subclassed from ActiveRecord::Base providing
-    # support methods to handle common +show+ and +list+ filtering actions
-    # based on inbound data.
+    # Mixin for models subclassed from ActiveRecord::Base providing support
+    # methods to handle common +show+ and +list+ filtering actions based on
+    # inbound data.
     #
     # See also:
     #
@@ -54,6 +54,17 @@ module Hoodoo
       #           this module.
       #
       def self.instantiate( model )
+
+        model.class_attribute(
+          :nz_co_loyalty_hoodoo_show_id_fields,
+          :nz_co_loyalty_hoodoo_search_with,
+          :nz_co_loyalty_hoodoo_filter_with,
+          {
+            :instance_predicate => false,
+            :instance_accessor  => false
+          }
+        )
+
         model.extend( ClassMethods )
       end
 
@@ -129,11 +140,9 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match.
         #
         def acquire( ident )
-          extra_fields = class_variable_defined?( :@@nz_co_loyalty_hoodoo_show_id_fields ) ?
-                              class_variable_get( :@@nz_co_loyalty_hoodoo_show_id_fields ) :
-                              nil
+          extra_fields = self.nz_co_loyalty_hoodoo_show_id_fields || []
 
-          id_fields = [ :id ] + ( extra_fields || [] )
+          id_fields = [ :id ] + extra_fields
           id_fields.each do | field |
 
             # This is fiddly.
@@ -248,7 +257,7 @@ module Hoodoo
         # *args:: One or more field names as Strings or Symbols.
         #
         def acquire_with( *args )
-          class_variable_set( :@@nz_co_loyalty_hoodoo_show_id_fields, args )
+          self.nz_co_loyalty_hoodoo_show_id_fields = args
         end
 
         # Generate an ActiveRecord::Relation instance which can be used to
@@ -348,13 +357,7 @@ module Hoodoo
             proc.call( attr, value ) unless value.nil?
           end
 
-          search_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_search_with ) ?
-                            class_variable_get( :@@nz_co_loyalty_hoodoo_search_with ) :
-                            nil
-
-          filter_map = class_variable_defined?( :@@nz_co_loyalty_hoodoo_filter_with ) ?
-                            class_variable_get( :@@nz_co_loyalty_hoodoo_filter_with ) :
-                            nil
+          search_map = self.nz_co_loyalty_hoodoo_search_with
 
           unless search_map.nil?
             search_map.each do | attr, proc |
@@ -362,6 +365,8 @@ module Hoodoo
               finder = finder.where( *args ) unless args.nil?
             end
           end
+
+          filter_map = self.nz_co_loyalty_hoodoo_filter_with
 
           unless filter_map.nil?
             filter_map.each do | attr, proc |
@@ -502,10 +507,7 @@ module Hoodoo
         #         which assist with filling in non-nil values for this Hash.
         #
         def search_with( hash )
-          class_variable_set(
-            :@@nz_co_loyalty_hoodoo_search_with,
-            Hoodoo::ActiveRecord::Support.process_to_map( hash )
-          )
+          self.nz_co_loyalty_hoodoo_search_with = Hoodoo::ActiveRecord::Support.process_to_map( hash )
         end
 
         # As #search_with, but used in +where.not+ queries.
@@ -513,10 +515,7 @@ module Hoodoo
         # +map+:: As #search_with.
         #
         def filter_with( hash )
-          class_variable_set(
-            :@@nz_co_loyalty_hoodoo_filter_with,
-            Hoodoo::ActiveRecord::Support.process_to_map( hash )
-          )
+          self.nz_co_loyalty_hoodoo_filter_with = Hoodoo::ActiveRecord::Support.process_to_map( hash )
         end
 
         # Deprecated interface replaced by #acquire. Instead of:

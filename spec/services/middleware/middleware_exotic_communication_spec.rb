@@ -422,7 +422,7 @@ describe Hoodoo::Services::Middleware do
         expect( errors[ 'errors' ] ).to be_a( Array )
         expect( errors[ 'errors' ][ 0 ] ).to have_key( 'code' )
         expect( errors[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
-        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Unexpected raw HTTP status code 499 during inter-resource call' )
+        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Unexpected raw HTTP status code 499 with non-JSON response - 499 Invented' )
       end
 
       it 'calls #show over Alchemy and handles 200 status but bad JSON' do

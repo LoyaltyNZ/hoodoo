@@ -25,8 +25,16 @@ describe Hoodoo::ActiveRecord::Base do
     expect( Hoodoo::UUID.valid?( m.id ) ).to eq( true )
   end
 
-  it 'is secure' do
-    expect { RSpecModelBaseTest.secure_with( {} ) }.to_not raise_exception()
+  it 'has security capability' do
+    expect( RSpecModelBaseTest ).to respond_to( :secure )
+  end
+
+  it 'has dating capability' do
+    expect( RSpecModelBaseTest ).to respond_to( :dated )
+  end
+
+  it 'has internationalisation capability' do
+    expect( RSpecModelBaseTest ).to respond_to( :translated )
   end
 
   it 'finds things' do
@@ -37,24 +45,5 @@ describe Hoodoo::ActiveRecord::Base do
 
   it 'allows error mapping' do
     expect( RSpecModelBaseTest.new.platform_errors.has_errors? ).to eq( false )
-  end
-
-  it 'acquires context from all included modules' do
-    expect( RSpecModelBaseTest ).to receive( :secure ).and_return( RSpecModelBaseTest.all() )
-
-    m = RSpecModelBaseTest.new
-    m.save
-
-    # Fragile test relies upon knowing *exactly* what stuff 'acquire_in' pulls
-    # from 'context', in conjunction with the mocking of the various scope
-    # mechanisms above in the "expect" calls.
-
-    context = OpenStruct.new
-    context.request = OpenStruct.new
-    context.request.ident = m.id
-
-    # Implicit test of Hoodoo::ActiveRecord::Support#full_scope_for here.
-
-    RSpecModelBaseTest.acquire_in( context )
   end
 end
