@@ -38,21 +38,33 @@
 href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
 dating support.</p>
 
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Overview">Overview</h2>
+
 <p>This mixin adds finder methods to the model it is applied to (see <a
 href="Dated/ClassMethods.html#method-i-dated">Hoodoo::ActiveRecord::Dated::ClassMethods#dated</a>
 and <a
 href="Dated/ClassMethods.html#method-i-dated_at">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at</a>).
-These finders require two database tables in order to function correctly,
+These finders require two database tables in order to function correctly -
 the primary table (the model table) and a history table. When a record is
 updated it should be moved to the history table and a new record inserted
 with the new values. When a record is deleted it should be moved to the
-history table.</p>
+history table. This can be done manually with application code, or by
+things like SQL triggers (see later).</p>
 
-<p>All datetime values must be stored as UTC.</p>
+<p>Dating is only enabled if the including class explicitly calls the <a
+href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>
+method.</p>
 
-<p>The primary table must have a unique column named <code>id</code> and two
-timestamp columns named <code>updated_at</code> and <code>created_at</code>
-which both need to be set by the application code.</p>
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Database+table+requirements">Database table requirements</h2>
+
+<p>In all related tables, all date-time values must be stored as UTC.</p>
+
+<p>The primary table <em>must</em> have a unique column named <code>id</code>
+and two timestamp columns named <code>updated_at</code> and
+<code>created_at</code> which both need to be set by the application code
+(the <a href="../ActiveRecord.html">ActiveRecord</a>
+<code>timestamps</code> macro in a migration file defines appropriate
+columns).</p>
 
 <p>The history table requires the same columns as the primary table with two
 differences:</p>
@@ -92,17 +104,19 @@ not exist in the history table.</p>
 </li></ol>
 
 <p>The history table name defaults to the name of the primary table
-concatenated with <code>_history_entries</code>. This can be overriden
-using <a
-href="Dated/ClassMethods.html#method-i-dated_with_table_name-3D">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_with_table_name=</a>.</p>
+concatenated with <code>_history_entries</code>. This can be overriden when
+calling <a
+href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>.</p>
 
 <p>Example:</p>
 
 <pre><code>class Post &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Dated
-  self.dated_with_table_name = :historical_posts
+  dating_enabled( history_table_name: &#39;historical_posts&#39; )
 end
 </code></pre>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Migration+assistance">Migration assistance</h2>
 
 <p>Compatible database migration generators are included in
 <code>service_shell</code>. These migrations create the history table and
@@ -235,7 +249,7 @@ this module.</p>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 97</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 108</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
 <span class="ruby-keyword">end</span></pre>
@@ -280,22 +294,18 @@ this module.</p>
                 
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 108</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 119</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_dated_with</span>,
+    {
+      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
+    }
+  )
+
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
-
-  <span class="ruby-comment"># Define a model for the history entries which is namespaced with a</span>
-  <span class="ruby-comment"># fixed prefix, NzCoLoyaltyHoodoo, to avoid namespace collisions and</span>
-  <span class="ruby-comment"># the original model&#39;s name followed by the suffix HistoryEntry. If</span>
-  <span class="ruby-comment"># the original model is called Post, the history model will be</span>
-  <span class="ruby-comment"># NzCoLoyaltyHoodooPostHistoryEntry.</span>
-
-  <span class="ruby-identifier">history_klass</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> ) <span class="ruby-keyword">do</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">primary_key</span> = <span class="ruby-value">:id</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">table_name</span>  = <span class="ruby-identifier">model</span>.<span class="ruby-identifier">table_name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&#39;_history_entries&#39;</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_variable_set</span>( <span class="ruby-value">:@@nz_co_loyalty_hoodoo_dated_with</span>, <span class="ruby-identifier">history_klass</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -333,7 +343,7 @@ attribute names escaped and joined with commas.</p>
                 
               </p>
               <div id="method-c-sanitised_column_string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 130</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-identifier">model_klass</span> )
   <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
 <span class="ruby-keyword">end</span></pre>

@@ -38,10 +38,9 @@
   
     <div class="description">
       
-<p><a href="Support.html">Support</a> mixin for models subclassed from <a
-href="Base.html">ActiveRecord::Base</a> providing support methods to handle
-common <code>show</code> and <code>list</code> filtering actions based on
-inbound data.</p>
+<p>Mixin for models subclassed from <a href="Base.html">ActiveRecord::Base</a>
+providing support methods to handle common <code>show</code> and
+<code>list</code> filtering actions based on inbound data.</p>
 
 <p>See also:</p>
 <ul><li>
@@ -219,6 +218,17 @@ this module.</p>
               <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 56</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_fields</span>,
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_search_with</span>,
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_filter_with</span>,
+    {
+      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
+    }
+  )
+
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>

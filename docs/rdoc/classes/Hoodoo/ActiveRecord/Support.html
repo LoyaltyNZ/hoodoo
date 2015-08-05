@@ -183,7 +183,7 @@ scope for use with subsequent query refinements.</p>
                 
               </p>
               <div id="method-c-full_scope_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 82</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">modules</span>          = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">included_modules</span>()
@@ -245,7 +245,7 @@ every value.</p>
                 
               </p>
               <div id="method-c-process_to_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 45</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 

@@ -114,6 +114,22 @@ href="Base.html">ActiveRecord::Base</a>.</p>
       
         <li>
           
+            <a href="Dated.html">
+              Hoodoo::ActiveRecord::Dated
+            </a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="Translated.html">
+              Hoodoo::ActiveRecord::Translated
+            </a>
+          
+        </li>
+      
+        <li>
+          
             <a href="Finder.html">
               Hoodoo::ActiveRecord::Finder
             </a>
@@ -183,11 +199,13 @@ this module.</p>
                 
               </p>
               <div id="method-c-inherited_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 45</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-keyword">super</span>

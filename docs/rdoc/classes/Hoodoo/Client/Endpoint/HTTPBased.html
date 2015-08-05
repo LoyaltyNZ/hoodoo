@@ -334,7 +334,7 @@ instance.</p>
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
           <span class="ruby-string">&#39;platform.fault&#39;</span>,
-          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ code } during inter-resource call&quot;</span> ) }
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ code } with non-JSON response - #{ body }&quot;</span> ) }
         )
     <span class="ruby-keyword">end</span>
 
