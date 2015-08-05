@@ -63,44 +63,44 @@ module Hoodoo
             v    = "/v#{ version }/"
             data = {
 
-              :Caller       => { :queue => 'service.utility',   :path => v + 'callers'         },
-              :Session      => { :queue => 'service.utility',   :path => v + 'sessions'        },
+              :Caller       => { :queue => 'service.authentication', :path => v + 'callers'         },
+              :Session      => { :queue => 'service.authentication', :path => v + 'sessions'        },
 
-              :Log          => { :queue => 'service.logging',   :path => v + 'logs'            },
-              :Errors       => { :queue => 'service.logging',   :path => v + 'errors'          },
-              :Statistic    => { :queue => 'service.logging',   :path => v + 'statistics'      },
+              :Log          => { :queue => 'service.logging',        :path => v + 'logs'            },
+              :Errors       => { :queue => 'service.logging',        :path => v + 'errors'          },
+              :Statistic    => { :queue => 'service.logging',        :path => v + 'statistics'      },
 
-              :Tag          => { :queue => 'service.tag',       :path => v + 'tags'            },
-              :MassTagEvent => { :queue => 'service.tag',       :path => v + 'mass_tag_events' },
-              :Metadata     => { :queue => 'service.tag',       :path => v + 'metadata'        },
+              :Tag          => { :queue => 'service.tag',            :path => v + 'tags'            },
+              :MassTagEvent => { :queue => 'service.tag',            :path => v + 'mass_tag_events' },
+              :Metadata     => { :queue => 'service.tag',            :path => v + 'metadata'        },
 
-              :Balance      => { :queue => 'service.financial', :path => v + 'balances'        },
-              :Currency     => { :queue => 'service.financial', :path => v + 'currencies'      },
-              :Voucher      => { :queue => 'service.financial', :path => v + 'vouchers'        },
-              :Calculation  => { :queue => 'service.financial', :path => v + 'calculations'    },
-              :Accumulation => { :queue => 'service.financial', :path => v + 'accumulations'   },
-              :Credit       => { :queue => 'service.financial', :path => v + 'credits'         },
-              :Debit        => { :queue => 'service.financial', :path => v + 'debits'          },
-              :Ledger       => { :queue => 'service.financial', :path => v + 'ledgers'         },
+              :Balance      => { :queue => 'service.financial',      :path => v + 'balances'        },
+              :Currency     => { :queue => 'service.financial',      :path => v + 'currencies'      },
+              :Voucher      => { :queue => 'service.financial',      :path => v + 'vouchers'        },
+              :Calculation  => { :queue => 'service.financial',      :path => v + 'calculations'    },
+              :Accumulation => { :queue => 'service.financial',      :path => v + 'accumulations'   },
+              :Credit       => { :queue => 'service.financial',      :path => v + 'credits'         },
+              :Debit        => { :queue => 'service.financial',      :path => v + 'debits'          },
+              :Ledger       => { :queue => 'service.financial',      :path => v + 'ledgers'         },
 
-              :Programme    => { :queue => 'service.programme', :path => v + 'programmes'      },
-              :Participant  => { :queue => 'service.programme', :path => v + 'participants'    },
-              :Outlet       => { :queue => 'service.programme', :path => v + 'outlets'         },
-              :Involvement  => { :queue => 'service.programme', :path => v + 'involvements'    },
+              :Programme    => { :queue => 'service.programme',      :path => v + 'programmes'      },
+              :Participant  => { :queue => 'service.programme',      :path => v + 'participants'    },
+              :Outlet       => { :queue => 'service.programme',      :path => v + 'outlets'         },
+              :Involvement  => { :queue => 'service.programme',      :path => v + 'involvements'    },
 
-              :Account      => { :queue => 'service.member',    :path => v + 'accounts'        },
-              :Member       => { :queue => 'service.member',    :path => v + 'members'         },
-              :Token        => { :queue => 'service.member',    :path => v + 'tokens'          },
-              :Membership   => { :queue => 'service.member',    :path => v + 'memberships'     },
+              :Account      => { :queue => 'service.member',         :path => v + 'accounts'        },
+              :Member       => { :queue => 'service.member',         :path => v + 'members'         },
+              :Token        => { :queue => 'service.member',         :path => v + 'tokens'          },
+              :Membership   => { :queue => 'service.member',         :path => v + 'memberships'     },
 
-              :Product      => { :queue => 'service.product',   :path => v + 'products'        },
+              :Product      => { :queue => 'service.product',        :path => v + 'products'        },
 
-              :Estimation   => { :queue => 'service.purchase',  :path => v + 'estimations'     },
-              :Purchase     => { :queue => 'service.purchase',  :path => v + 'purchases'       },
-              :Refund       => { :queue => 'service.purchase',  :path => v + 'refunds'         },
+              :Estimation   => { :queue => 'service.purchase',       :path => v + 'estimations'     },
+              :Purchase     => { :queue => 'service.purchase',       :path => v + 'purchases'       },
+              :Refund       => { :queue => 'service.purchase',       :path => v + 'refunds'         },
 
-              :Health       => { :queue => 'service.utility',   :path => v + 'health'          },
-              :Version      => { :queue => 'service.utility',   :path => v + 'version'         },
+              :Health       => { :queue => 'service.utility',        :path => v + 'health'          },
+              :Version      => { :queue => 'service.utility',        :path => v + 'version'         },
 
             }[ resource.to_sym ]
 
