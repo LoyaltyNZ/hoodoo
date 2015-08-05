@@ -46,6 +46,15 @@ module Hoodoo
       #           this module.
       #
       def self.instantiate( model )
+
+        model.class_attribute(
+          :nz_co_loyalty_hoodoo_secure_with,
+          {
+            :instance_predicate => false,
+            :instance_accessor  => false
+          }
+        )
+
         model.extend( ClassMethods )
       end
 
@@ -315,7 +324,7 @@ module Hoodoo
         #         of options; see #secure for full details and examples.
         #
         def secure_with( map )
-          class_variable_set( :@@nz_co_loyalty_hoodoo_secure_with, map )
+          self.nz_co_loyalty_hoodoo_secure_with = map
         end
 
         # Retrieve the mapping declared between database columns and
@@ -323,9 +332,7 @@ module Hoodoo
         # to #secure_with, or +nil+ if no such declaration has been made.
         #
         def secured_with
-          return class_variable_defined?( :@@nz_co_loyalty_hoodoo_secure_with ) ?
-                      class_variable_get( :@@nz_co_loyalty_hoodoo_secure_with ) :
-                      nil
+          self.nz_co_loyalty_hoodoo_secure_with
         end
       end
     end

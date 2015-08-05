@@ -23,6 +23,7 @@ describe Hoodoo::ActiveRecord::Dated do
 
       class RSpecModelEffectiveDateTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
+        dating_enabled()
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => false ) do | t |
@@ -42,7 +43,8 @@ describe Hoodoo::ActiveRecord::Dated do
 
       class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
-        self.dated_with_table_name = :r_spec_model_effective_date_history_entries
+
+        dating_enabled( :history_table_name => :r_spec_model_effective_date_history_entries )
       end
     end
   end

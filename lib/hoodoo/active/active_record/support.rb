@@ -36,8 +36,9 @@ module Hoodoo
     class Support
 
       # Takes a Hash of possibly-non-String keys and with +nil+ values or
-      # Proc instances appropriate for Hoodoo::ActiveRecord::Finder#search_with / #filter_with. Returns
-      # a similar Hash with all-String keys and a Proc for every value.
+      # Proc instances appropriate for Hoodoo::ActiveRecord::Finder#search_with
+      # / #filter_with. Returns a similar Hash with all-String keys and a Proc
+      # for every value.
       #
       # +hash+:: Hash Symbol or String keys and Proc instance or +nil+
       #          values.

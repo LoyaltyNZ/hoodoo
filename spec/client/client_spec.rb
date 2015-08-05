@@ -519,6 +519,27 @@ describe Hoodoo::Client do
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
       end
+
+      # This is a fragile test due to the way it is forced to simulate a
+      # connection fault; see similar test in middleware_multi_spec.rb
+      # for details.
+      #
+      it 'handles explicit connection errors as 404' do
+        expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( Errno::ECONNREFUSED )
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.not_found' )
+      end
+
+      # As above, this is a fragile test.
+      #
+      it 'handles arbitrary communication errors as 500' do
+        expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( 'some connection error' )
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.fault' )
+        expect( result.platform_errors.errors[ 0 ][ 'reference' ] ).to include( 'some connection error' )
+      end
     end
 
     before :each do

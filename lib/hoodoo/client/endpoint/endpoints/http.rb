@@ -159,6 +159,10 @@ module Hoodoo
               description_of_response.http_status_code = 404
               description_of_response.raw_body_data    = ''
 
+            rescue => e
+              description_of_response.http_status_code = 500
+              description_of_response.raw_body_data    = e.message
+
             end
 
             return get_data_for_response( description_of_response )

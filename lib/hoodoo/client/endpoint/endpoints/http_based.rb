@@ -256,7 +256,7 @@ module Hoodoo
                 else
                   data.platform_errors.add_error(
                     'platform.fault',
-                    :reference => { :exception => RuntimeError.new( "Unexpected raw HTTP status code #{ code } during inter-resource call" ) }
+                    :reference => { :exception => RuntimeError.new( "Unexpected raw HTTP status code #{ code } with non-JSON response - #{ body }" ) }
                   )
               end
 

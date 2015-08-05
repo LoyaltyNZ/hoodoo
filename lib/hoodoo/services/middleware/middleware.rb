@@ -1612,7 +1612,7 @@ module Hoodoo; module Services
         validate_body_data_for( interaction )
         return if response.halt_processing?
 
-        if action == :create
+        if action == :create # Important! For-create-only.
           maybe_update_body_data_for( interaction )
           return if response.halt_processing?
         end
