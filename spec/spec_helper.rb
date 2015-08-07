@@ -12,7 +12,7 @@ require 'simplecov-rcov'
 
 SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
 SimpleCov.start do
-  add_filter '_spec'
+  add_filter '/spec/'
 end
 
 # a bit of debugging
