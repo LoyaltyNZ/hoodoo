@@ -69,13 +69,15 @@ describe Hoodoo::ActiveRecord::Finder do
       search_with(
         'mapped_code'     => sh.cs_match( 'code' ),
         :mapped_field_one => sh.ci_match_generic( 'field_one' ),
+        :wild_field_one   => sh.ciaw_match_generic( 'field_one '),
         :field_two        => sh.cs_match_csv(),
         'field_three'     => sh.cs_match_array()
       )
 
       filter_with(
         'mapped_code'     => sh.cs_match( 'code' ),
-        :mapped_field_one => sh.ci_match_generic( 'field_one' ),
+        :mapped_field_one => sh.ci_match_postgres( 'field_one' ),
+        :wild_field_one   => sh.ciaw_match_postgres( 'field_one '),
         :field_two        => sh.cs_match_csv(),
         'field_three'     => sh.cs_match_array()
       )
@@ -400,11 +402,27 @@ describe Hoodoo::ActiveRecord::Finder do
 
     it 'finds by mapped field-one' do
       @list_params.search_data = {
-        'mapped_field_one' => :'group 1'
+        'mapped_field_one' => :'grOUp 1'
       }
 
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @b_wh, @a_wh ] )
+    end
+
+    it 'finds by mapped, wildcard field-one' do
+      @list_params.search_data = {
+        'wild_field_one' => :'oUP '
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh, @b_wh, @a_wh ] )
+
+      @list_params.search_data = {
+        'wild_field_one' => :'o!p '
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [] )
     end
 
     it 'finds by comma-separated list' do
@@ -531,12 +549,29 @@ describe Hoodoo::ActiveRecord::Finder do
 
     it 'filters by mapped field-one' do
       @list_params.filter_data = {
-        'mapped_field_one' => :'group 1'
+        'mapped_field_one' => :'grOUp 1'
       }
 
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @c_wh ] )
     end
+
+    it 'filters by mapped, wildcard field-one' do
+      @list_params.filter_data = {
+        'wild_field_one' => :'oUP '
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [] )
+
+      @list_params.filter_data = {
+        'wild_field_one' => :'o!p '
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh, @b_wh, @a_wh ] )
+    end
+
 
     it 'filters by comma-separated list' do
       @list_params.filter_data = {

@@ -60,6 +60,18 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
     end
   end
 
+  context '#ciaw_match_generic' do
+    it 'generates expected no-input-parameter output' do
+      result = described_class.ciaw_match_generic()
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'lower(a) LIKE ?', '%b%' ] )
+    end
+
+    it 'generates expected one-input-parameter output' do
+      result = described_class.ciaw_match_generic( :bar )
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'lower(bar) LIKE ?', '%b%' ] )
+    end
+  end
+
   context '#ci_match_postgres' do
     it 'generates expected no-input-parameter output' do
       result = described_class.ci_match_postgres()
@@ -69,6 +81,18 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
     it 'generates expected one-input-parameter output' do
       result = described_class.ci_match_postgres( :bar )
       expect( result.call( 'a', 'b' ) ).to eq( [ 'bar ILIKE ?', 'b' ] )
+    end
+  end
+
+  context '#ciaw_match_postgres' do
+    it 'generates expected no-input-parameter output' do
+      result = described_class.ciaw_match_postgres()
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'a ILIKE ?', '%b%' ] )
+    end
+
+    it 'generates expected one-input-parameter output' do
+      result = described_class.ciaw_match_postgres( :bar )
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'bar ILIKE ?', '%b%' ] )
     end
   end
 end

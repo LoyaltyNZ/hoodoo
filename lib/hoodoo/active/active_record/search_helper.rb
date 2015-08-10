@@ -120,6 +120,15 @@ module Hoodoo
           }
         end
 
+        # As #ci_match_generic, but adds wildcards at the front and end of
+        # the string for a case-insensitive-all-wildcard match.
+        #
+        def self.ciaw_match_generic( model_field_name = nil )
+          Proc.new { | attr, value |
+            [ "lower(#{ model_field_name || attr }) LIKE ?", "%#{ ( value || '' ).to_s.downcase }%" ]
+          }
+        end
+
         # Case-insensitive match which requires PostgreSQL but should run
         # quickly. If you need a database agnostic solution, consider using
         # the slower #ci_match_generic method instead.
@@ -137,6 +146,15 @@ module Hoodoo
         def self.ci_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
             [ "#{ model_field_name || attr } ILIKE ?", value ]
+          }
+        end
+
+        # As #ci_match_postgres, but adds wildcards at the front and end of
+        # the string for a case-insensitive-all-wildcard match.
+        #
+        def self.ciaw_match_postgres( model_field_name = nil )
+          Proc.new { | attr, value |
+            [ "#{ model_field_name || attr } ILIKE ?", "%#{ value }%" ]
           }
         end
       end
