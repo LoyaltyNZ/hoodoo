@@ -252,6 +252,9 @@ module Hoodoo
         #                         include this kind of information rather than
         #                         hide it).
         #
+        # +using+::               See the _Advanced_ _query_ _conditions_
+        #                         section later for details.
+        #
         # To help clarify the above, the following two calls to #secure_with
         # have exactly the same effect.
         #

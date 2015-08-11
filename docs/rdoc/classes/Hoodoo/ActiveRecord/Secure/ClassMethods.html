@@ -333,6 +333,10 @@ it is shown by default (if you&#39;re passing in a model instance to a
 render call via the <code>secured_with</code> option it is assumed that you
 explicitly <em>do</em> want to include this kind of information rather than
 hide it).</p>
+</dd><dt><code>using</code>
+<dd>
+<p>See the <em>Advanced</em> <em>query</em> <em>conditions</em> section later
+for details.</p>
 </dd></dl>
 
 <p>To help clarify the above, the following two calls to <a
@@ -476,7 +480,7 @@ the wider query chain.</p>
                 
               </p>
               <div id="method-i-secure_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 372</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 375</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
@@ -557,7 +561,7 @@ examples.</p>
                 
               </p>
               <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 417</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 420</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
@@ -599,7 +603,7 @@ href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
                 
               </p>
               <div id="method-i-secured_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 425</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 428</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>
