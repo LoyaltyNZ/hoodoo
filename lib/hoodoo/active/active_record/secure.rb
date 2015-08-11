@@ -63,6 +63,14 @@ module Hoodoo
       #
       module ClassMethods
 
+        # Internal.
+        #
+        # See #secure for details - this is the Proc used by default if no
+        # alternative argument generator is given in the longhand form's
+        # value Hash's +:using+ key.
+        #
+        DEFAULT_SECURE_PROC = Proc.new { | model_class, database_column_name, session_field_value | [ { database_column_name => session_field_value } ] }
+
         # The core of out-of-the-box Hoodoo data access security layer.
         #
         # Parameters:
@@ -168,6 +176,21 @@ module Hoodoo
         # you are strongly encouraged to use these wherever possible, rather
         # than calling #secure directly.
         #
+        # For more advanced query conditions that a single database column
+        # checked against a session value with an implicit +AND+, see later.
+        #
+        # == Important!
+        #
+        # If you state a model must be secured by one or more fields, then:
+        #
+        # * If there is no session at all in the given context, _or_
+        # * The session has no scoping data, _or_
+        # * The session scoping data does not have one or more of the
+        #   fields that the #secure_with map's values describe, _then_
+        #
+        # ...the returned scope *will* *find* *no* *results*, by design.
+        # The default failure mode is to reveal no data at all.
+        #
         # == Rendering resources
         #
         # Models aren't directly connected to Resource representations, but
@@ -272,17 +295,79 @@ module Hoodoo
         #       ...
         #     }
         #
-        # == Important
+        # == Advanced query conditions
         #
-        # If you state a model must be secured by one or more fields, then:
+        # A simple implicit +AND+ clause on a single database column might
+        # not be sufficient for your scoping. In this case, the "longhand"
+        # Hash form described for rendering is used, this time including the
+        # key +:using+ to specify a Proc that is executed to return an array
+        # of parameters for <tt>where</tt>. For example:
         #
-        # * If there is no session at all in the given context, _or_
-        # * The session has no scoping data, _or_
-        # * The session scoping data does not have one or more of the
-        #   fields that the #secure_with map's values describe, _then_
+        #     secure_with( {
+        #       :creating_caller_uuid => :authorised_caller_uuids
+        #     } )
         #
-        # ...the returned scope *will* *find* *no* *results*, by design.
-        # The default failure mode is to reveal no data at all.
+        #     # ...has this minimal longhand equivalent...
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name => :authorised_caller_uuids
+        #       }
+        #     } )
+        #
+        # This leads to SQL along the following lines:
+        #
+        #    AND ("model_table"."creating_caller_uuid" = '[val]')
+        #
+        # ...where <tt>val</tt> is from the Session +authorised_caller_uuids+
+        # data in the +scoping+ section (so this might be an SQL +IN+ rather
+        # than <tt>=</tt> if that data is a multi-element array). Suppose you
+        # need to change this to check that value _or_ something else? Use the
+        # +:using+ key and a Proc. Since ActiveRecord at the time of writing
+        # lacks a high level way to do 'OR' via methods, it's easiest and most
+        # flexible just to give up and fall to an SQL string:
+        #
+        #     or_matcher = Proc.new do | model_class, database_column_name, session_field_value |
+        #
+        #       # This example works for non-array and array field values.
+        #       #
+        #       session_field_value = [ session_field_value ].flatten
+        #       session_field_value = session_field_value.join( ', ' )
+        #
+        #       [
+        #         "\"#{ database_column_name }\" IN (?) OR \"other_column_name\" IN (?)",
+        #         session_field_value,
+        #         session_field_value
+        #       ]
+        #     end
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name => :authorised_caller_uuids,
+        #         :using              => or_matcher
+        #       }
+        #     } )
+        #
+        # ...yields something like:
+        #
+        #     AND ( "model_table"."creating_caller_uuid" = '[val]' OR "model_table"."other_column_name" = '[val'] )
+        #
+        # _If your session data contains Arrays, obviously you
+        #
+        # A Proc specified with +:using+ is called with:
+        #
+        # * The model class which is involved in the query.
+        #
+        # * The name of the database column specified in the +secure_with+
+        #   Hash as the top-level key (e.g. +creating_called_uuid+ above).
+        #
+        # * The session field _value_ that was recovered under the given key -
+        #   the value of +session.scoping.authorised_caller_uuids+ in the
+        #   example above.
+        #
+        # You must return _AN ARRAY_ of arguments that will be passed to
+        # +where+ via <tt>where( *returned_values )</tt> as part of the wider
+        # query chain.
         #
         def secure( context )
           prevailing_scope = all() # "Model.all" -> returns anonymous scope
@@ -292,16 +377,22 @@ module Hoodoo
             return none() if context.session.nil? || context.session.scoping.nil?
 
             extra_scope_map.each do | model_field_name, key_or_options |
+              params_proc = DEFAULT_SECURE_PROC
+
               if key_or_options.is_a?( Hash )
                 session_scoping_key = key_or_options[ :session_field_name ]
+                params_proc         = key_or_options[ :using ] if key_or_options.has_key?( :using )
               else
                 session_scoping_key = key_or_options
               end
 
               if context.session.scoping.respond_to?( session_scoping_key )
-                prevailing_scope = prevailing_scope.where( {
-                  model_field_name => context.session.scoping.send( session_scoping_key )
-                } )
+                args = params_proc.call(
+                  self,
+                  model_field_name,
+                  context.session.scoping.send( session_scoping_key )
+                )
+                prevailing_scope = prevailing_scope.where( *args )
               else
                 prevailing_scope = none()
                 break
