@@ -18,7 +18,7 @@ module Hoodoo
     # methods to handle common +show+ and +list+ filtering actions based on
     # inbound data and create instances in a request context aware fashion.
     #
-    # It is _STRONGLY RECOMMENDED_ that service authors use the likes of:
+    # It is _STRONGLY RECOMMENDED_ that you use the likes of:
     #
     # * Hoodoo::ActiveRecord::Finder::ClassMethods::new_in
     # * Hoodoo::ActiveRecord::Finder::ClassMethods::acquire_in
@@ -92,9 +92,17 @@ module Hoodoo
         #
         # You use this exactly as you would for ActiveRecord::Core#new, but an
         # additional, mandatory first parameter providing the request context
-        # must be supplied. See also:
+        # must be supplied. For example, instead of this:
         #
-        #   http://api.rubyonrails.org/classes/ActiveRecord/Base.html
+        #     instance = SomeActiveRecordSubclass.new
+        #
+        # ...you'd do this inside a resource implementation:
+        #
+        #     instance = SomeActiveRecordSubclass.new_in( context )
+        #
+        # See also:
+        #
+        # * http://api.rubyonrails.org/classes/ActiveRecord/Base.html
         #
         # Parameters:
         #
