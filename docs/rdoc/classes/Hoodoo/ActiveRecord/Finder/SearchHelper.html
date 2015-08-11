@@ -98,6 +98,16 @@ out “by hand”.</p>
             
               
               <li>
+                <a href="#method-c-ciaw_match_generic">ciaw_match_generic</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-c-ciaw_match_postgres">ciaw_match_postgres</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-c-cs_match">cs_match</a>,
               </li>
             
@@ -231,10 +241,90 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-ci_match_postgres_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 137</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 146</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ci_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
     [ <span class="ruby-node">&quot;#{ model_field_name || attr } ILIKE ?&quot;</span>, <span class="ruby-identifier">value</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-ciaw_match_generic">
+            
+              <b>ciaw_match_generic</b>( model_field_name = nil )
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SearchHelper.html#method-c-ciaw_match_generic" name="method-c-ciaw_match_generic" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>As ci_match_generic, but adds wildcards at the front and end of the string
+for a case-insensitive-all-wildcard match.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-ciaw_match_generic_source')" id="l_method-c-ciaw_match_generic_source">show</a>
+                
+              </p>
+              <div id="method-c-ciaw_match_generic_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 126</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ciaw_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    [ <span class="ruby-node">&quot;lower(#{ model_field_name || attr }) LIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{ ( value || &#39;&#39; ).to_s.downcase }%&quot;</span> ]
+  }
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-ciaw_match_postgres">
+            
+              <b>ciaw_match_postgres</b>( model_field_name = nil )
+            
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SearchHelper.html#method-c-ciaw_match_postgres" name="method-c-ciaw_match_postgres" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>As ci_match_postgres, but adds wildcards at the front and end of the string
+for a case-insensitive-all-wildcard match.</p>
+            </div>
+          
+          
+          
+
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-ciaw_match_postgres_source')" id="l_method-c-ciaw_match_postgres_source">show</a>
+                
+              </p>
+              <div id="method-c-ciaw_match_postgres_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 155</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ciaw_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    [ <span class="ruby-node">&quot;#{ model_field_name || attr } ILIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>

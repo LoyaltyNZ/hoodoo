@@ -1,17 +1,17 @@
-Thu, 06 Aug 2015 11:25:42 +1200
+Tue, 11 Aug 2015 13:50:10 +1200
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Wed, 22 Jul 2015 16:20:19 +1200
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 27 Jan 2015 13:33:38 +1300
-lib/hoodoo/active/active_record/base.rb	Thu, 06 Aug 2015 11:25:04 +1200
-lib/hoodoo/active/active_record/dated.rb	Thu, 06 Aug 2015 11:25:04 +1200
+lib/hoodoo/active/active_record/base.rb	Tue, 11 Aug 2015 13:33:48 +1200
+lib/hoodoo/active/active_record/dated.rb	Tue, 11 Aug 2015 13:32:44 +1200
 lib/hoodoo/active/active_record/error_mapping.rb	Tue, 02 Jun 2015 14:08:49 +1200
-lib/hoodoo/active/active_record/finder.rb	Thu, 06 Aug 2015 11:25:04 +1200
-lib/hoodoo/active/active_record/search_helper.rb	Fri, 10 Jul 2015 11:06:56 +1200
-lib/hoodoo/active/active_record/secure.rb	Thu, 06 Aug 2015 11:25:04 +1200
-lib/hoodoo/active/active_record/support.rb	Thu, 06 Aug 2015 11:25:04 +1200
-lib/hoodoo/active/active_record/translated.rb	Thu, 06 Aug 2015 11:25:04 +1200
-lib/hoodoo/active/active_record/uuid.rb	Tue, 24 Feb 2015 13:48:01 +1300
+lib/hoodoo/active/active_record/finder.rb	Tue, 11 Aug 2015 13:32:34 +1200
+lib/hoodoo/active/active_record/search_helper.rb	Mon, 10 Aug 2015 14:49:58 +1200
+lib/hoodoo/active/active_record/secure.rb	Tue, 11 Aug 2015 13:33:38 +1200
+lib/hoodoo/active/active_record/support.rb	Tue, 11 Aug 2015 13:34:13 +1200
+lib/hoodoo/active/active_record/translated.rb	Tue, 11 Aug 2015 13:32:02 +1200
+lib/hoodoo/active/active_record/uuid.rb	Tue, 11 Aug 2015 13:04:50 +1200
 lib/hoodoo/client.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_array.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_base.rb	Mon, 23 Mar 2015 11:00:47 +1300
@@ -73,7 +73,7 @@ lib/hoodoo/data/types/voucher_earner.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/discovery.rb	Tue, 30 Jun 2015 14:50:03 +1200
 lib/hoodoo/errors.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/errors/error_descriptions.rb	Fri, 13 Feb 2015 13:31:17 +1300
-lib/hoodoo/errors/errors.rb	Fri, 24 Jul 2015 13:42:03 +1200
+lib/hoodoo/errors/errors.rb	Fri, 07 Aug 2015 12:15:55 +1200
 lib/hoodoo/generator.rb	Thu, 29 Jan 2015 09:44:38 +1300
 lib/hoodoo/logger.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/logger/fast_writer.rb	Tue, 27 Jan 2015 13:33:38 +1300
