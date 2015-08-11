@@ -82,20 +82,19 @@ module Hoodoo
       #
       def self.full_scope_for( klass, context )
         prevailing_scope = klass.all() # "Model.all" -> returns anonymous scope
-        modules          = klass.included_modules()
 
         # Due to the mechanism used, dating scope must be done first or the
         # rest of the query may be invalid.
         #
-        if modules.include?( Hoodoo::ActiveRecord::Dated )
+        if klass.include?( Hoodoo::ActiveRecord::Dated )
           prevailing_scope = prevailing_scope.dated( context )
         end
 
-        if modules.include?( Hoodoo::ActiveRecord::Secure )
+        if klass.include?( Hoodoo::ActiveRecord::Secure )
           prevailing_scope = prevailing_scope.secure( context )
         end
 
-        if modules.include?( Hoodoo::ActiveRecord::Translated )
+        if klass.include?( Hoodoo::ActiveRecord::Translated )
           prevailing_scope = prevailing_scope.translated( context )
         end
 
