@@ -126,13 +126,12 @@ module Hoodoo
             if data.full_uri.scheme == 'https'
               http.use_ssl = true
 
-              # TODO:  Urgent
-              # FIXME: Urgent
-              # http://mislav.uniqpath.com/2013/07/ruby-openssl/
-              # http://notetoself.vrensk.com/2008/09/verified-https-in-ruby/
-              # http://stackoverflow.com/questions/2507902/how-to-validate-ssl-certificate-chain-in-ruby-with-net-http
-              #
-              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+              # TODO: we may want to add tests to ensure the peer verification happens
+              if ENV['RACK_ENV'] == 'test'
+                http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+              else
+                http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+              end
             end
 
             request_class = {
