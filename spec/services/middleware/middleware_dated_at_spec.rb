@@ -10,6 +10,9 @@ require 'spec_helper'
 # * Resource A calls resource B with a dated-at specifier
 # * Resource B calls resource C without an explicit specifier
 # * Resource C should inherit the dated-at context from B.
+#
+# Since the corresponding "dated-from" feature is *not* automaticalled passed
+# through, there's no additional coverage for that here.
 
 ###############################################################################
 

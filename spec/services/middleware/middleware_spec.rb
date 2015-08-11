@@ -1697,7 +1697,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
     unless result.adds_errors_to?( context.response.errors )
       expectable_hook( result )
-      context.response.body = { result: result }
+      context.response.body = { result: result, dated_from: context.request.dated_from }
     end
   end
 
@@ -1788,7 +1788,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :after ).once
   end
 
-  def headers_for(locale, dated_at)
+  def headers_for(locale, dated_at = nil, dated_from = nil)
     headers = {
       'HTTP_X_INTERACTION_ID' => @interaction_id,
       'CONTENT_TYPE'          => 'application/json; charset=utf-8'
@@ -1800,6 +1800,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     headers[ 'HTTP_ACCEPT_LANGUAGE' ] = locale unless locale.nil?
     headers[ 'HTTP_X_DATED_AT'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+    headers[ 'HTTP_X_DATED_FROM'    ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
 
     return headers
   end
@@ -1819,6 +1820,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.list.sort_data).to eq({'extra'=>'down'})
         expect(context.request.locale).to eq(locale || 'en-nz')
         expect(context.request.dated_at).to eq(dated_at)
+        expect(context.request.dated_from).to eq(nil)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1902,6 +1904,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.list.limit).to eq(50)
         expect(context.request.locale).to eq(locale || 'en-nz')
         expect(context.request.dated_at).to eq(dated_at)
+        expect(context.request.dated_from).to eq(nil)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1929,7 +1932,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     show_things('bar', DateTime.now)
   end
 
-  def create_things(locale = nil, dated_at = nil)
+  def create_things(locale = nil, dated_from = nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:create).once.and_call_original
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
@@ -1940,7 +1943,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.uri_path_components).to eq([])
         expect(context.request.ident).to be_nil
         expect(context.request.locale).to eq(locale || 'en-nz')
-        expect(context.request.dated_at).to eq(dated_at)
+        expect(context.request.dated_at).to eq(nil)
+        expect(context.request.dated_from).to eq(nil) # No auto-passthrough of dated_from
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -1949,11 +1953,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     post '/v1/rspec_test_inter_resource_calls_b/',
          '{"foo": "required"}',
-         headers_for(locale, dated_at)
+         headers_for(locale, nil, dated_from)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'created'}})
+    expect(result).to eq({'result' => {'inner' => 'created'}, 'dated_from' => (dated_from.nil? ? nil : dated_from.to_s)})
   end
 
   def fail_to_create_things
@@ -1971,6 +1975,20 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result['errors'][0]['message']).to eq('Field `foo` is required')
   end
 
+  it 'complains about a bad X-Dated-From header' do
+    headers = headers_for('en-nz', DateTime.now)
+    headers['HTTP_X_DATED_FROM'] = 'not-a-date'
+
+    post '/v1/rspec_test_inter_resource_calls_b',
+         '{"foo": "required"}',
+         headers
+
+    expect(last_response.status).to eq(422)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
+    expect(result['errors'][0]['message']).to include('not-a-date')
+  end
+
   it 'creates things with callbacks', :check_callbacks => true do
     create_things()
   end
@@ -1979,7 +1997,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     create_things()
   end
 
-  it 'creates things with a custom locale and passes through dated-at' do
+  it 'creates things with a custom locale and passes through dated-from' do
     create_things('baz', DateTime.now)
   end
 
@@ -1998,7 +2016,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     fail_to_create_things()
   end
 
-  def update_things(locale = nil, dated_at = nil)
+  def update_things(locale = nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:update).once.and_call_original
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update).once.and_call_original
@@ -2009,7 +2027,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
         expect(context.request.locale).to eq(locale || 'en-nz')
-        expect(context.request.dated_at).to eq(dated_at)
+        expect(context.request.dated_at).to eq(nil)
+        expect(context.request.dated_at).to eq(nil)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -2018,7 +2037,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     patch '/v1/rspec_test_inter_resource_calls_b/world',
           '{"sum": 70}',
-          headers_for(locale, dated_at)
+          headers_for(locale)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -2029,11 +2048,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     update_things()
   end
 
-  it 'updates things with a custom locale and passes through dated-at' do
-    update_things('boo', DateTime.now)
+  it 'updates things with a custom locale' do
+    update_things('boo')
   end
 
-  def delete_things(locale = nil, dated_at = nil)
+  def delete_things(locale = nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:delete).once.and_call_original
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete).once.and_call_original
@@ -2044,7 +2063,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.uri_path_components).to eq(['helloworld'])
         expect(context.request.ident).to eq('helloworld')
         expect(context.request.locale).to eq(locale || 'en-nz')
-        expect(context.request.dated_at).to eq(dated_at)
+        expect(context.request.dated_at).to eq(nil)
+        expect(context.request.dated_at).to eq(nil)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |
@@ -2053,7 +2073,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     delete '/v1/rspec_test_inter_resource_calls_b/world',
            nil,
-           headers_for(locale, dated_at)
+           headers_for(locale)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -2068,8 +2088,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     delete_things()
   end
 
-  it 'deletes things, passing through custom locale and dated-at' do
-    delete_things('bye', DateTime.now)
+  it 'deletes things, passing through custom locale' do
+    delete_things('bye')
   end
 
   it 'should see errors from the inner call correctly' do
