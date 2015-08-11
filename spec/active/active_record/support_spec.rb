@@ -76,6 +76,9 @@ describe Hoodoo::ActiveRecord::Support do
         end
       end
 
+      # Note inheritance from plain ActiveRecord::Base, important for
+      # additional coverage. Module inclusions are thus done manually.
+
       class RSpecFullScopeForTestBase < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Secure
         include Hoodoo::ActiveRecord::Dated
@@ -89,6 +92,9 @@ describe Hoodoo::ActiveRecord::Support do
         secure_with( :foo => :foo )
         dating_enabled( :history_table_name => TEST_HISTORY_TABLE_NAME )
       end
+
+      # Note inheritance from Hoodoo::ActiveRecord::Base, important for
+      # additional coverage. Module inclusions are automatic.
 
       class RSpecFullScopeForTestBaseWithDirectives < Hoodoo::ActiveRecord::Base
         TEST_HISTORY_TABLE_NAME = 'r_spec_full_scope_for_test_with_directives_foo_history'
