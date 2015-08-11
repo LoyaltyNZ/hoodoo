@@ -101,9 +101,10 @@ module Hoodoo
     # Hoodoo::ActiveRecord::Finder::ClassMethods::new_in to create new resource
     # instances when using Dating. You _could_ just manually read the
     # `context.request.dated_from` value to ensure that an appropriate creation
-    # time is set; presently, `created_at` is set with the `dated_from` value.
-    # However, using `new_in` for this isolates your code from any possible
-    # under-the-hood implementation changes therein and future-proof your code.
+    # time is set; presently, `created_at` and `updated_at` are set from the
+    # `dated_from` value. However, using `new_in` for this isolates your code
+    # from any possible under-the-hood implementation changes therein and
+    # future-proof your code.
     #
     module Dated
 

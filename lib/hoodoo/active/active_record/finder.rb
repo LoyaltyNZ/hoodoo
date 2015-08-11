@@ -135,7 +135,7 @@ module Hoodoo
           #
           if self.include?( Hoodoo::ActiveRecord::Dated)
             unless context.request.dated_from.nil?
-              instance.created_at = context.request.dated_from
+              instance.created_at = instance.updated_at = context.request.dated_from
             end
           end
 
