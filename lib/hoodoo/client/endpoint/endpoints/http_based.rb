@@ -213,6 +213,9 @@ module Hoodoo
             unless self.dated_at().nil?
               headers[ 'X-Dated-At' ] = Hoodoo::Utilities.nanosecond_iso8601( self.dated_at() )
             end
+            unless self.dated_from().nil?
+              headers[ 'X-Dated-From' ] = Hoodoo::Utilities.nanosecond_iso8601( self.dated_from() )
+            end
 
             data             = DataForRequest.new
             data.full_uri    = remote_uri

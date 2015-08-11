@@ -70,11 +70,29 @@ module Hoodoo; module Services
     #
     attr_accessor :locale
 
-    # Requested date-time for historical representation retrieval, should
-    # a resource representation support it; DateTime instance; +nil+ if
-    # no special historical time is requested.
+    # The requested date-time supplied by the caller for calls to show
+    # or list resources that support historical representation. If +nil+,
+    # the instantaneous internal endpoint target processing time of
+    # 'now' is implied.
     #
     attr_reader :dated_at
+
+    # The requested date-time supplied by the caller for calls to create
+    # resources, for any resource which supports historical representation
+    # retrieval.
+    #
+    # The historical retrieval code (see method #dated_at in this class, and
+    # module Hoodoo::ActiveRecord::Dated) will be able to find the database
+    # record for any requested time on or after this date _but not before_.
+    # The date may be in the past or future; a record might exist in the
+    # database, but not be visible until the dated-from creation time comes
+    # to pass.
+    #
+    # The value is +nil+ if no special creation time is requested - implies
+    # whatever value of "now" applies at instant of processing the resource
+    # creation action at whatever persistence layer is in use.
+    #
+    attr_reader :dated_from
 
     # Writer for #dated_at which accepts a Time instance, DateTime instance
     # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
@@ -91,6 +109,14 @@ module Hoodoo; module Services
     #
     def dated_at=( input )
       @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+    end
+
+    # As #dated_at=, but used to set the value returned by #dated_from.
+    #
+    # +input+:: As for #dated_at=
+    #
+    def dated_from=( input )
+      @dated_from = Hoodoo::Utilities.rationalise_datetime( input )
     end
 
     # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+

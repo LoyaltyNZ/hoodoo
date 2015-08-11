@@ -545,6 +545,11 @@ module Hoodoo; module Services
           raise "Hoodoo::Services::Middleware\#inter_resource_endpoint_for: Internal error - version #{ version } of resource #{ resource } endpoint is local according to the discovery engine, but no local service discovery record can be found"
         end
 
+        # Note that we automatically cascade dated_at (for reading data
+        # at a given historical date) but don't automatically cascade
+        # dated_from (for creating data with a specified date). It does
+        # not make sense in most cases to do so.
+
         return Hoodoo::Services::Middleware::InterResourceLocal.new(
           resource,
           version,
@@ -565,6 +570,8 @@ module Hoodoo; module Services
         # (e.g. session permission augmentation) and the result needs
         # extra processing before it is returned to the caller (e.g.
         # delete an augmented session, annotate any errors from call).
+        #
+        # As with local calls, dated_at is cascaded but dated_from is not.
 
         wrapped_endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
@@ -697,8 +704,9 @@ module Hoodoo; module Services
 
       # Carry through any endpoint-specified request orientated attributes.
 
-      local_request.locale   = endpoint.locale
-      local_request.dated_at = endpoint.dated_at
+      local_request.locale     = endpoint.locale
+      local_request.dated_at   = endpoint.dated_at
+      local_request.dated_from = endpoint.dated_from
 
       # Initialise the response data.
 
@@ -1437,7 +1445,7 @@ module Hoodoo; module Services
       log_inbound_request( interaction )
       deal_with_content_type_header( interaction )
       deal_with_language_header( interaction )
-      deal_with_x_dated_at_header( interaction )
+      deal_with_dating_headers( interaction )
       set_common_response_headers( interaction )
 
       # Simplisitic CORS preflight handler. We might exit early here.
@@ -1788,22 +1796,34 @@ module Hoodoo; module Services
       interaction.context.request.locale = lang.downcase
     end
 
-    # Extract the +X-Dated-At+ header value from the client and (if present)
-    # store this as a DateTime instance in the request data.
+    # Extract the +X-Dated-At+ and +X-Dated-From+ headers from the client and
+    # (if present) store relevant DateTime instances in the request data.
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Updated on exit.
     #
-    def deal_with_x_dated_at_header( interaction )
-      interaction.context.request.dated_at = nil
-      str = interaction.rack_request.env[ 'HTTP_X_DATED_AT' ]
+    def deal_with_dating_headers( interaction )
+      interaction.context.request.dated_at   = nil
+      interaction.context.request.dated_from = nil
+
+      dated_at   = interaction.rack_request.env[ 'HTTP_X_DATED_AT'   ]
+      dated_from = interaction.rack_request.env[ 'HTTP_X_DATED_FROM' ]
 
       begin
-        interaction.context.request.dated_at = str
+        interaction.context.request.dated_at = dated_at
       rescue
         interaction.context.response.errors.add_error(
           'platform.malformed',
-          'message' => "X-Dated-At header value '#{ str }' is an invalid ISO8601 datetime"
+          'message' => "X-Dated-At header value '#{ dated_at }' is an invalid ISO8601 datetime"
+        )
+      end
+
+      begin
+        interaction.context.request.dated_from = dated_from
+      rescue
+        interaction.context.response.errors.add_error(
+          'platform.malformed',
+          'message' => "X-Dated-From header value '#{ dated_from }' is an invalid ISO8601 datetime"
         )
       end
     end

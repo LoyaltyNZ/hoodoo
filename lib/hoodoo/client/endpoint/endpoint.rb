@@ -63,6 +63,16 @@ module Hoodoo
       #                    omitted, defaults to +nil+ (no historical
       #                    representation requested).
       #
+      # +dated_from+::     Time instance, DateTime instance or String that Ruby
+      #                    can parse into a DateTime instance used for creation
+      #                    calls to resource endpoints that support creation
+      #                    time specification via an <tt>X-Dated-From</tt> HTTP
+      #                    header or equivalent, as part of their support for
+      #                    historical representation via a <tt>X-Dated-At</tt>
+      #                    HTTP header or equivalent. If omitted, defaults to
+      #                    the created resource being created at and thus valid
+      #                    from the server's value of "now".
+      #
       # +interaction+::    Optional Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
       #                    hand. This is a middleware concept and most of the
@@ -133,13 +143,31 @@ module Hoodoo
       #
       attr_accessor :locale
 
-      # A DateTime instance equivalent to the ISO 8601 representation given
-      # in the X-Dated-At HTTP header or equivalent, used for calls to show
+      # A DateTime instance equivalent to the ISO 8601 subset representation
+      # in an X-Dated-At HTTP header or equivalent, used for calls to show
       # or list resources that support historical representation. If +nil+,
       # the instantaneous internal endpoint target processing time of
       # 'now' is implied.
       #
       attr_reader :dated_at
+
+      # A DateTime instance equivalent to the ISO 8601 subset representation
+      # in an X-Dated-From HTTP header or equivalent, used for calls to
+      # create resources, for any resource which supports historical
+      # representation retrieval.
+      #
+      # The historical retrieval code (see method #dated_at in this class, and
+      # module Hoodoo::ActiveRecord::Dated) will be able to find the database
+      # record for any requested time on or after this date _but not before_.
+      # The date may be in the past or future; a record might exist in the
+      # database, but not be visible until the dated-from creation time comes
+      # to pass.
+      #
+      # The value is +nil+ if no special creation time is requested - implies
+      # whatever value of "now" applies at instant of processing the resource
+      # creation action at whatever persistence layer is in use.
+      #
+      attr_reader :dated_from
 
       # Writer for #dated_at which accepts a Time instance, DateTime instance
       # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
@@ -156,6 +184,14 @@ module Hoodoo
       #
       def dated_at=( input )
         @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
+      end
+
+      # As #dated_at=, but used to set the value returned by #dated_from.
+      #
+      # +input+:: As for #dated_at=
+      #
+      def dated_from=( input )
+        @dated_from = Hoodoo::Utilities.rationalise_datetime( input )
       end
 
       # Create an endpoint instance that will be used to make requests to
@@ -188,10 +224,12 @@ module Hoodoo
       #
       # +dated_at+::         As in the options for #endpoint_for.
       #
+      # +dated_from+::       As in the options for #endpoint_for.
+      #
       # The out-of-the box initialiser sets up the data for the #resource,
-      # #version, #discovery_result, #interaction, #session_id, #locale and
-      # #dated_at accessors using this data, so subclass authors don't need
-      # to.
+      # #version, #discovery_result, #interaction, #session_id, #locale,
+      # #dated_at and #dated_from accessors using this data, so subclass
+      # authors don't need to.
       #
       # The endpoint is then used with #list, #show, #create, #update or
       # #delete methods to perform operations on the target resource. See
@@ -240,6 +278,7 @@ module Hoodoo
         self.session_id   = options[ :session_id       ]
         self.locale       = options[ :locale           ]
         self.dated_at     = options[ :dated_at         ]
+        self.dated_from   = options[ :dated_from       ]
 
         configure_with( @resource, @version, options )
       end
@@ -317,6 +356,7 @@ module Hoodoo
           target_endpoint.session_id = self.session_id unless self.session_id.nil?
           target_endpoint.locale     = self.locale     unless self.locale.nil?
           target_endpoint.dated_at   = self.dated_at   unless self.dated_at.nil?
+          target_endpoint.dated_from = self.dated_from unless self.dated_from.nil?
         end
 
       public
