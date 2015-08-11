@@ -41,6 +41,7 @@ module Hoodoo
       #
       def self.included( model )
         instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
+        super( model )
       end
 
       # When called, this method:

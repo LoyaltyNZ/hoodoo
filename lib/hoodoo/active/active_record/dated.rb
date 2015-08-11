@@ -106,7 +106,16 @@ module Hoodoo
       #           this module.
       #
       def self.included( model )
+        model.class_attribute(
+          :nz_co_loyalty_hoodoo_dated_with,
+          {
+            :instance_predicate => false,
+            :instance_accessor  => false
+          }
+        )
+
         instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
+        super( model )
       end
 
       # When instantiated in an ActiveRecord::Base subclass, all of the
@@ -117,15 +126,6 @@ module Hoodoo
       #           this module.
       #
       def self.instantiate( model )
-
-        model.class_attribute(
-          :nz_co_loyalty_hoodoo_dated_with,
-          {
-            :instance_predicate => false,
-            :instance_accessor  => false
-          }
-        )
-
         model.extend( ClassMethods )
       end
 

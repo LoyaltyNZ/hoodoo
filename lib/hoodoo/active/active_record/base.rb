@@ -52,7 +52,7 @@ module Hoodoo
           Hoodoo::ActiveRecord::Translated.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
 
-          super
+          super( model )
 
         end
       end
