@@ -1232,10 +1232,17 @@ module Hoodoo; module Services
     #                 valid 'response' object if you're using that for
     #                 the response data.
     #
+    # +preflight+::   Optional. If +true+, this is a CORS preflight
+    #                 requires and should contain no body data; else it
+    #                 is a normal response and must contain body data.
+    #                 Default is +false+.
+    #
     # Returns data suitable for giving directly back to Rack.
     #
-    def respond_for( interaction )
-      rack_data = interaction.context.response.for_rack()
+    def respond_for( interaction, preflight = false )
+      interaction.context.response.body = '' if preflight
+
+      rack_data = interaction.context.response.for_rack( preflight )
       log_outbound_response( interaction, rack_data )
 
       return rack_data
@@ -1435,9 +1442,6 @@ module Hoodoo; module Services
       # the inbound payload (if any).
 
       log_inbound_request( interaction )
-      deal_with_content_type_header( interaction )
-      deal_with_language_header( interaction )
-      deal_with_x_dated_at_header( interaction )
       set_common_response_headers( interaction )
 
       # Simplisitic CORS preflight handler. We might exit early here.
@@ -1449,30 +1453,45 @@ module Hoodoo; module Services
       origin  = headers[ 'HTTP_ORIGIN' ]
 
       unless ( origin.nil? )
-        ok = false
-
         if interaction.rack_request.request_method == 'OPTIONS'
           requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
           requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
 
-          if ALLOWED_HTTP_METHODS.include?( requested_method ) && ( requested_headers.nil? || requested_headers.strip.empty? )
-            set_cors_preflight_response_headers( interaction, origin )
-            interaction.context.response.set_resources( [] )
+          if ALLOWED_HTTP_METHODS.include?( requested_method )
 
-            # Log the CORS inbound request without body data, just in
-            # case anything daft is in there which would count as
-            # secure information.
+            # We just parrot back the origin and requested headers as
+            # any are theoretically possible. Other security layers
+            # deal with, ignore, or reject interesting HTTP headers.
 
-            return respond_for( interaction )
+            set_cors_preflight_response_headers( interaction, origin, requested_headers )
+
+            # The early exit means only secure logging (earlier) is
+            # done. Insecure logging with body data is not performed,
+            # just in case the CORS inbound request contains anything
+            # daft which could count as secure information.
+
+            return respond_for( interaction, true )
           end
         else
           set_cors_normal_response_headers( interaction, origin )
         end
       end
 
-      # If we reach here - it's a normal request, not preflight. Load the
-      # session and then, in the context of a loaded session, check to see
-      # if the request includes any secured HTTP headers.
+      # If we reach here - it's a normal request, not preflight. Deal
+      # with unsecured HTTP headers first.
+      #
+      # IF YOU ADD SUPPORT FOR NEW HEADERS, BE SURE TO UPDATE THE
+      # set_cors_preflight_response_headers METHOD.
+
+      deal_with_content_type_header( interaction )
+      deal_with_language_header( interaction )
+      deal_with_x_dated_at_header( interaction )
+
+      # Load the session and then, in the context of a loaded session,
+      # check to see if the request includes any secured HTTP headers.
+      #
+      # IF YOU ADD SUPPORT FOR NEW HEADERS, BE SURE TO UPDATE THE
+      # set_cors_preflight_response_headers METHOD.
 
       load_session_into( interaction )
       deal_with_authorised_headers( interaction )
@@ -1904,7 +1923,10 @@ module Hoodoo; module Services
     #
     # +origin+::      Value of inbound request's "Origin" HTTP header.
     #
-    def set_cors_preflight_response_headers( interaction, origin )
+    # +headers+::     Value of inbound request's
+    #                 "Access-Control-Request-Headers" HTTP header.
+    #
+    def set_cors_preflight_response_headers( interaction, origin, headers )
 
       set_cors_normal_response_headers( interaction, origin )
 
@@ -1914,16 +1936,20 @@ module Hoodoo; module Services
 
       interaction.context.response.add_header(
         'Access-Control-Allow-Methods',
-        'GET, POST, PATCH, DELETE'
+        ALLOWED_HTTP_METHODS.to_a.join( ', ' )
       )
 
-      # Only allow X-Session-ID inbound. Don't let any of the custom headers
-      # be exposed to JavaScript (no "Access-Control-Expose-Headers" is set).
+      # Same for HTTP headers. Just allow whatever was requested. Other layers
+      # will read, ignore, or reject interesting HTTP headers.
 
       interaction.context.response.add_header(
         'Access-Control-Allow-Headers',
-        'X-Session-ID'
+        headers
       )
+
+      # No "Access-Control-Expose-Headers" is set. We don't expose *any* of
+      # the custom response headers to untrusted JavaScript code - not even
+      # the Interaction ID.
 
     end
 

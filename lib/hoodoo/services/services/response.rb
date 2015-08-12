@@ -263,7 +263,13 @@ module Hoodoo; module Services
     # middleware or applications. Usually, this is only called directly by
     # Hoodoo::Services::Middleware.
     #
-    def for_rack
+    # +preencoded+:: Optional. If +true+, this object's body data is already
+    #                encoded into the required format - JSON, XML etc.
+    #                encoding of an Array or Hash is bypassed. Ignored if the
+    #                response contains errors, as those override body data.
+    #                Default is +false+ - body data requires encoding.
+    #
+    def for_rack( preencoded = false )
 
       rack_response = Rack::Response.new
 
@@ -272,6 +278,7 @@ module Hoodoo; module Services
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
         body_data        = @errors.render( @interaction_id )
+        preencoded       = false
       else
         http_status_code = @http_status_code
         body_data        = @body
@@ -289,7 +296,11 @@ module Hoodoo; module Services
         response_hash = body_data
       end
 
-      rack_response.write( ::JSON.generate( response_hash ) )
+      if preencoded
+        rack_response.write( body_data )
+      else
+        rack_response.write( ::JSON.generate( response_hash ) )
+      end
 
       # Finally, sort out the headers
 
