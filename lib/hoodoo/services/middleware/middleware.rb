@@ -1444,44 +1444,13 @@ module Hoodoo; module Services
       log_inbound_request( interaction )
       set_common_response_headers( interaction )
 
-      # Simplisitic CORS preflight handler. We might exit early here.
-      #
-      # http://www.html5rocks.com/en/tutorials/cors/
-      # http://www.html5rocks.com/static/images/cors_server_flowchart.png
-      #
-      headers = interaction.rack_request.env
-      origin  = headers[ 'HTTP_ORIGIN' ]
+      # Potential special-case early exit for CORS preflight.
 
-      unless ( origin.nil? )
-        if interaction.rack_request.request_method == 'OPTIONS'
-          requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
-          requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
+      early_exit = deal_with_cors( interaction )
+      return early_exit unless early_exit.nil?
 
-          if ALLOWED_HTTP_METHODS.include?( requested_method )
-
-            # We just parrot back the origin and requested headers as
-            # any are theoretically possible. Other security layers
-            # deal with, ignore, or reject interesting HTTP headers.
-
-            set_cors_preflight_response_headers( interaction, origin, requested_headers )
-
-            # The early exit means only secure logging (earlier) is
-            # done. Insecure logging with body data is not performed,
-            # just in case the CORS inbound request contains anything
-            # daft which could count as secure information.
-
-            return respond_for( interaction, true )
-          end
-        else
-          set_cors_normal_response_headers( interaction, origin )
-        end
-      end
-
-      # If we reach here - it's a normal request, not preflight. Deal
+      # If we reach here it's a normal request, not CORS preflight. Deal
       # with unsecured HTTP headers first.
-      #
-      # IF YOU ADD SUPPORT FOR NEW HEADERS, BE SURE TO UPDATE THE
-      # set_cors_preflight_response_headers METHOD.
 
       deal_with_content_type_header( interaction )
       deal_with_language_header( interaction )
@@ -1489,9 +1458,6 @@ module Hoodoo; module Services
 
       # Load the session and then, in the context of a loaded session,
       # check to see if the request includes any secured HTTP headers.
-      #
-      # IF YOU ADD SUPPORT FOR NEW HEADERS, BE SURE TO UPDATE THE
-      # set_cors_preflight_response_headers METHOD.
 
       load_session_into( interaction )
       deal_with_authorised_headers( interaction )
@@ -1897,11 +1863,59 @@ module Hoodoo; module Services
       interaction.context.response.add_header( 'Content-Type', "#{ interaction.requested_content_type || 'application/json' }; charset=#{ interaction.requested_content_encoding || 'utf-8' }" )
     end
 
+    # Simplisitic CORS preflight handler.
+    #
+    # * http://www.w3.org/TR/cors/
+    # * http://www.w3.org/TR/cors/#preflight-request
+    # * http://enable-cors.org
+    # * https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
+    # Returns +nil+ if the request can continue to be processed, else an early
+    # exit CORS response has already been generated; processing should stop now.
+    #
+    def deal_with_cors( interaction )
+      headers = interaction.rack_request.env
+      origin  = headers[ 'HTTP_ORIGIN' ]
+
+      unless ( origin.nil? )
+        if interaction.rack_request.request_method == 'OPTIONS'
+          requested_method  = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_METHOD' ]
+          requested_headers = headers[ 'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' ]
+
+          if ALLOWED_HTTP_METHODS.include?( requested_method )
+
+            # We just parrot back the origin and requested headers as
+            # any are theoretically possible. Other security layers
+            # deal with, ignore, or reject interesting HTTP headers.
+
+            set_cors_preflight_response_headers( interaction, origin, requested_headers )
+
+          else
+            interaction.context.response.errors.add_error( 'platform.method_not_allowed' )
+
+          end
+
+          # The early exit means only secure logging (earlier) is
+          # done. Insecure logging with body data is not performed,
+          # just in case the CORS inbound request contains anything
+          # daft which could count as secure information.
+
+          return respond_for( interaction, true )
+
+        else
+          set_cors_normal_response_headers( interaction, origin )
+
+        end
+      end
+
+      return nil
+    end
+
     # Preprocessing stage that sets up CORS response headers in response to a
     # normal (or preflight) CORS response.
-    #
-    # http://www.html5rocks.com/en/tutorials/cors/
-    # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction.
@@ -1914,9 +1928,6 @@ module Hoodoo; module Services
 
     # Preprocessing stage that sets up CORS response headers in response to a
     # preflight CORS response, based on given inbound headers.
-    #
-    # http://www.html5rocks.com/en/tutorials/cors/
-    # http://www.html5rocks.com/static/images/cors_server_flowchart.png
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction.

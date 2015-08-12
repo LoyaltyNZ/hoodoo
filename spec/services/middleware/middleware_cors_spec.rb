@@ -43,7 +43,14 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'refuses preflight without an Origin header' do
+
+      # Without an Origin this doesn't look like a CORS request, but in that
+      # case the Content-Type 422 will normally get us. Provide a Content-Type
+      # here just to make sure that the "invalid HTTP method" code gets a
+      # chance to catch it.
+
       options '/v1/test_cors/hello', nil, {
+        'CONTENT_TYPE' => 'application/json; charset=utf-8',
         'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET'
       }
 
@@ -54,16 +61,6 @@ describe Hoodoo::Services::Middleware do
       options '/v1/test_cors/hello', nil, {
         'HTTP_ORIGIN' => 'http://localhost',
         'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'PUT' # We use PATCH not PUT
-      }
-
-      expect(last_response.status).to eq(405)
-    end
-
-    it 'refuses requests for any special headers' do
-      options '/v1/test_cors/hello', nil, {
-        'HTTP_ORIGIN' => 'http://localhost',
-        'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET',
-        'HTTP_ACCESS_CONTROL_REQUEST_HEADERS' => 'X-Anything'
       }
 
       expect(last_response.status).to eq(405)
