@@ -51,12 +51,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#cs_match' do
     it 'generates expected no-input-parameter output' do
       result = described_class.cs_match
-      expect( result.call( 'a', 'b' ) ).to eq( [ 'a = ? AND a IS NOT ?', 'b', nil ] )
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'a = ? AND a IS NOT NULL', 'b' ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.cs_match( :bar )
-      expect( result.call( 'a', 'b' ) ).to eq( [ 'bar = ? AND bar IS NOT ?', 'b', nil ] )
+      expect( result.call( 'a', 'b' ) ).to eq( [ 'bar = ? AND bar IS NOT NULL', 'b' ] )
     end
 
     it 'finds expected things' do
@@ -99,12 +99,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#cs_match_csv' do
     it 'generates expected no-input-parameter output' do
       result = described_class.cs_match_csv()
-      expect( result.call( 'a', 'b,c,d' ) ).to eq( [ 'a IN (?) AND a IS NOT ?', [ 'b', 'c', 'd' ], nil ] )
+      expect( result.call( 'a', 'b,c,d' ) ).to eq( [ 'a IN (?) AND a IS NOT NULL', [ 'b', 'c', 'd' ] ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.cs_match_csv( :bar )
-      expect( result.call( 'a', 'b,c,d' ) ).to eq( [ 'bar IN (?) AND bar IS NOT ?', [ 'b', 'c', 'd' ], nil ] )
+      expect( result.call( 'a', 'b,c,d' ) ).to eq( [ 'bar IN (?) AND bar IS NOT NULL', [ 'b', 'c', 'd' ] ] )
     end
 
     it 'finds expected things' do
@@ -147,12 +147,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#cs_match_array' do
     it 'generates expected no-input-parameter output' do
       result = described_class.cs_match_array()
-      expect( result.call( 'a', [ 'b', 'c', 'd' ] ) ).to eq( [ 'a IN (?) AND a IS NOT ?', [ 'b', 'c', 'd' ], nil ] )
+      expect( result.call( 'a', [ 'b', 'c', 'd' ] ) ).to eq( [ 'a IN (?) AND a IS NOT NULL', [ 'b', 'c', 'd' ] ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.cs_match_array( :bar )
-      expect( result.call( 'a', [ 'b', 'c', 'd' ] ) ).to eq( [ 'bar IN (?) AND bar IS NOT ?', [ 'b', 'c', 'd' ], nil ] )
+      expect( result.call( 'a', [ 'b', 'c', 'd' ] ) ).to eq( [ 'bar IN (?) AND bar IS NOT NULL', [ 'b', 'c', 'd' ] ] )
     end
 
     it 'finds expected things' do
@@ -195,12 +195,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#ci_match_generic' do
     it 'generates expected no-input-parameter output' do
       result = described_class.ci_match_generic()
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(a) = ? AND a IS NOT ?', 'b', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(a) = ? AND a IS NOT NULL', 'b' ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.ci_match_generic( :bar )
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(bar) = ? AND bar IS NOT ?', 'b', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(bar) = ? AND bar IS NOT NULL', 'b' ] )
     end
 
     it 'finds expected things' do
@@ -243,12 +243,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#ciaw_match_generic' do
     it 'generates expected no-input-parameter output' do
       result = described_class.ciaw_match_generic()
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(a) LIKE ? AND a IS NOT ?', '%b%', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(a) LIKE ? AND a IS NOT NULL', '%b%' ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.ciaw_match_generic( :bar )
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(bar) LIKE ? AND bar IS NOT ?', '%b%', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'lower(bar) LIKE ? AND bar IS NOT NULL', '%b%' ] )
     end
 
     it 'finds expected things' do
@@ -291,12 +291,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#ci_match_postgres' do
     it 'generates expected no-input-parameter output' do
       result = described_class.ci_match_postgres()
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'a ILIKE ? AND a IS NOT ?', 'B', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'a ILIKE ? AND a IS NOT NULL', 'B' ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.ci_match_postgres( :bar )
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'bar ILIKE ? AND bar IS NOT ?', 'B', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'bar ILIKE ? AND bar IS NOT NULL', 'B' ] )
     end
 
     it 'finds expected things' do
@@ -339,12 +339,12 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
   context '#ciaw_match_postgres' do
     it 'generates expected no-input-parameter output' do
       result = described_class.ciaw_match_postgres()
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'a ILIKE ? AND a IS NOT ?', '%B%', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'a ILIKE ? AND a IS NOT NULL', '%B%' ] )
     end
 
     it 'generates expected one-input-parameter output' do
       result = described_class.ciaw_match_postgres( :bar )
-      expect( result.call( 'a', 'B' ) ).to eq( [ 'bar ILIKE ? AND bar IS NOT ?', '%B%', nil ] )
+      expect( result.call( 'a', 'B' ) ).to eq( [ 'bar ILIKE ? AND bar IS NOT NULL', '%B%' ] )
     end
 
     it 'finds expected things' do

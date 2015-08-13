@@ -62,11 +62,7 @@ module Hoodoo
           Proc.new { | attr, value |
             column = model_field_name || attr
 
-            [
-              "#{ column } = ? AND #{ column } IS NOT ?",
-              value,
-              nil
-            ]
+            [ "#{ column } = ? AND #{ column } IS NOT NULL", value ]
           }
         end
 
@@ -89,11 +85,7 @@ module Hoodoo
             column = model_field_name || attr
             value  = value.split( ',' )
 
-            [
-              "#{ column } IN (?) AND #{ column } IS NOT ?",
-              value,
-              nil
-            ]
+            [ "#{ column } IN (?) AND #{ column } IS NOT NULL", value ]
           }
         end
 
@@ -117,11 +109,7 @@ module Hoodoo
             column = model_field_name || attr
             value  = [ value ].flatten
 
-            [
-              "#{ column } IN (?) AND #{ column } IS NOT ?",
-              value,
-              nil
-            ]
+            [ "#{ column } IN (?) AND #{ column } IS NOT NULL", value ]
           }
         end
 
@@ -146,11 +134,7 @@ module Hoodoo
             column = model_field_name || attr
             value  = ( value || '' ).to_s.downcase
 
-            [
-              "lower(#{ column }) = ? AND #{ column } IS NOT ?",
-              value,
-              nil
-            ]
+            [ "lower(#{ column }) = ? AND #{ column } IS NOT NULL", value ]
           }
         end
 
@@ -162,11 +146,7 @@ module Hoodoo
             column = model_field_name || attr
             value  = ( value || '' ).to_s.downcase
 
-            [
-              "lower(#{ column }) LIKE ? AND #{ column } IS NOT ?",
-              "%#{ value }%",
-              nil
-            ]
+            [ "lower(#{ column }) LIKE ? AND #{ column } IS NOT NULL", "%#{ value }%" ]
           }
         end
 
@@ -188,11 +168,7 @@ module Hoodoo
           Proc.new { | attr, value |
             column = model_field_name || attr
 
-            [
-              "#{ column } ILIKE ? AND #{ column } IS NOT ?",
-              value,
-              nil
-            ]
+            [ "#{ column } ILIKE ? AND #{ column } IS NOT NULL", value ]
           }
         end
 
@@ -203,11 +179,7 @@ module Hoodoo
           Proc.new { | attr, value |
             column = model_field_name || attr
 
-            [
-              "#{ column } ILIKE ? AND #{ column } IS NOT ?",
-              "%#{ value }%",
-              nil
-            ]
+            [ "#{ column } ILIKE ? AND #{ column } IS NOT NULL", "%#{ value }%" ]
           }
         end
       end
