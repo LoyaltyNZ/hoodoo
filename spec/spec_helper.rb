@@ -205,12 +205,12 @@ end
 #               uses normal HTTP.
 #
 #
-def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false )
+def spec_helper_start_svc_app_in_thread_for( app_class, use_ssl = false, app_options = {} )
 
   port   = Hoodoo::Utilities.spare_port()
   Thread.start do
     app = Rack::Builder.new do
-      use Hoodoo::Services::Middleware
+      use Hoodoo::Services::Middleware unless app_options[:skip_hoodoo_middleware]
       run app_class.new
     end
 
