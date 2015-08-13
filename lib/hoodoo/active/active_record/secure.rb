@@ -335,7 +335,6 @@ module Hoodoo
         #       # This example works for non-array and array field values.
         #       #
         #       session_field_value = [ session_field_value ].flatten
-        #       session_field_value = session_field_value.join( ', ' )
         #
         #       [
         #         "\"#{ database_column_name }\" IN (?) OR \"other_column_name\" IN (?)",
