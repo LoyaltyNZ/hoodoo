@@ -26,10 +26,10 @@ describe Hoodoo::ActiveRecord::Support do
       # expected.
 
       expect( map[ 'foo' ] ).to be_a( Proc )
-      expect( map[ 'foo' ].call( 'ignored', 'val1' ) ).to eq( [ { 'foo' => 'val1' } ] )
+      expect( map[ 'foo' ].call( 'ignored', 'val1' ) ).to eq( [ 'foo = ? AND foo IS NOT NULL', 'val1' ] )
 
       expect( map[ 'bar' ] ).to be_a( Proc )
-      expect( map[ 'bar' ].call( 'ignored', 'val2' ) ).to eq( [ { 'bar' => 'val2' } ] )
+      expect( map[ 'bar' ].call( 'ignored', 'val2' ) ).to eq( [ 'bar = ? AND bar IS NOT NULL', 'val2' ] )
 
       expect( map[ 'baz' ] ).to eq( proc1 )
 
