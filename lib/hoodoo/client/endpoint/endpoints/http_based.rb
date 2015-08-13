@@ -56,6 +56,14 @@ module Hoodoo
             #
             attr_accessor :proxy_uri
 
+            # String - relative or absolute path to a CA-File that will
+            # be used for validating the SSL Cert presented by the server
+            # by Hoodoo::Client when making calls over https. leave as nil
+            # to let ruby default to the standard ca-certs provided by the
+            # operating system.
+            #
+            attr_accessor :ca_file
+
             # Optional Hash of query data.
             #
             attr_accessor :query_hash

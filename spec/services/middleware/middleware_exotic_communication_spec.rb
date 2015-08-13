@@ -507,9 +507,10 @@ describe Hoodoo::Services::Middleware do
       # it to build an HTTP(S) endpoint.
 
       mock_wrapped_discovery_result = Hoodoo::Services::Discovery::ForHTTP.new(
-        resource: 'Version',
-        version: 2,
-        endpoint_uri: URI.parse( "https://127.0.0.1:#{ @port }/v2/version" )
+        resource:     'Version',
+        version:      2,
+        endpoint_uri: URI.parse( "https://127.0.0.1:#{ @port }/v2/version" ),
+        ca_file:      'spec/files/ca/ca-cert.pem'
       )
 
       mock_wrapped_endpoint = Hoodoo::Client::Endpoint::HTTP.new(

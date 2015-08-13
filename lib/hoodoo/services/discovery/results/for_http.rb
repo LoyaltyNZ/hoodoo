@@ -36,6 +36,14 @@ module Hoodoo
         #
         attr_accessor :proxy_uri
 
+        # String - relative or absolute path to a CA-File that will
+        # be used for validating the SSL Cert presented by the server
+        # by Hoodoo::Client when making calls over https. leave as nil
+        # to let ruby default to the standard ca-certs provided by the
+        # operating system.
+        #
+        attr_accessor :ca_file
+
         # Create an instance with named parameters as follows:
         #
         # +resource+::     See #resource.
@@ -46,12 +54,14 @@ module Hoodoo
         def initialize( resource:,
                         version:,
                         endpoint_uri:,
-                        proxy_uri: nil )
+                        proxy_uri: nil,
+                        ca_file: nil )
 
           self.resource     = resource.to_sym
           self.version      = version.to_i
           self.endpoint_uri = endpoint_uri
           self.proxy_uri    = proxy_uri
+          self.ca_file      = ca_file
         end
       end
     end
