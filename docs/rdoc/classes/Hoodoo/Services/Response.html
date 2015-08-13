@@ -590,7 +590,7 @@ stored error. If this is omitted, 500 is kept as the default.</p>
         <div class="method">
           <div class="title method-title" id="method-i-for_rack">
             
-              <b>for_rack</b>()
+              <b>for_rack</b>( preencoded = false )
             
             <a href="../../../classes/Hoodoo/Services/Response.html#method-i-for_rack" name="method-i-for_rack" class="permalink">Link</a>
           </div>
@@ -603,6 +603,14 @@ can be passed back to <a href="../../Rack.html">Rack</a> from <a
 href="../../Rack.html">Rack</a> middleware or applications. Usually, this
 is only called directly by <a
 href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>preencoded</code>
+<dd>
+<p>Optional. If <code>true</code>, this object&#39;s body data is already
+encoded into the required format - JSON, XML etc. encoding of an Array or
+Hash is bypassed. Ignored if the response contains errors, as those
+override body data. Default is <code>false</code> - body data requires
+encoding.</p>
+</dd></dl>
             </div>
           
           
@@ -620,8 +628,8 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
                 
               </p>
               <div id="method-i-for_rack_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 266</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 272</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>( <span class="ruby-identifier">preencoded</span> = <span class="ruby-keyword">false</span> )
 
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
 
@@ -630,6 +638,7 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
     <span class="ruby-identifier">http_status_code</span> = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">http_status_code</span>
     <span class="ruby-identifier">body_data</span>        = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">render</span>( <span class="ruby-ivar">@interaction_id</span> )
+    <span class="ruby-identifier">preencoded</span>       = <span class="ruby-keyword">false</span>
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">http_status_code</span> = <span class="ruby-ivar">@http_status_code</span>
     <span class="ruby-identifier">body_data</span>        = <span class="ruby-ivar">@body</span>
@@ -647,7 +656,11 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
     <span class="ruby-identifier">response_hash</span> = <span class="ruby-identifier">body_data</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> ) )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">preencoded</span>
+    <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-identifier">body_data</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> ) )
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Finally, sort out the headers</span>
 

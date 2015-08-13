@@ -425,7 +425,6 @@ string:</p>
   # This example works for non-array and array field values.
   #
   session_field_value = [ session_field_value ].flatten
-  session_field_value = session_field_value.join( &#39;, &#39; )
 
   [
     &quot;\&quot;#{ database_column_name }\&quot; IN (?) OR \&quot;other_column_name\&quot; IN (?)&quot;,
@@ -480,7 +479,7 @@ the wider query chain.</p>
                 
               </p>
               <div id="method-i-secure_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 375</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
@@ -561,7 +560,7 @@ examples.</p>
                 
               </p>
               <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 420</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 419</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
@@ -603,7 +602,7 @@ href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
                 
               </p>
               <div id="method-i-secured_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 428</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 427</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>
