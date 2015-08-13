@@ -545,6 +545,7 @@ describe Hoodoo::Services::Middleware do
 
       expect( mock_result ).to eq( Hoodoo::Client::AugmentedArray.new )
       expect( mock_result.dataset_size ).to eq(99)
+      expect( mock_result.platform_errors.has_errors? ).to eq( false )
     end
   end
 end
