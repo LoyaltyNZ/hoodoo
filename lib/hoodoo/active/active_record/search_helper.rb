@@ -35,6 +35,13 @@ module Hoodoo
       # they're optional and compatible with calls that write it out "by
       # hand".
       #
+      # In all cases, in normal use the generated SQL _will not_ match +null+
+      # values; if negated for a filter ("<tt>where.not</tt>"), the generated
+      # SQL _will_ match +null+ values. As a result, passing in explicit
+      # searches for +nil+ won't work - but that's never expected as a use
+      # case here since search values are coming in via e.g. query
+      # string information from a URI.
+      #
       class SearchHelper
 
         # Case-sensitive match (default-style matching). *WARNING:* This
@@ -53,7 +60,13 @@ module Hoodoo
         #
         def self.cs_match( model_field_name = nil )
           Proc.new { | attr, value |
-            [ { model_field_name || attr => value } ]
+            column = model_field_name || attr
+
+            [
+              "#{ column } = ? AND #{ column } IS NOT ?",
+              value,
+              nil
+            ]
           }
         end
 
@@ -73,7 +86,14 @@ module Hoodoo
         #
         def self.cs_match_csv( model_field_name = nil )
           Proc.new { | attr, value |
-            [ { model_field_name || attr => value.split( ',' ) } ]
+            column = model_field_name || attr
+            value  = value.split( ',' )
+
+            [
+              "#{ column } IN (?) AND #{ column } IS NOT ?",
+              value,
+              nil
+            ]
           }
         end
 
@@ -94,7 +114,14 @@ module Hoodoo
         #
         def self.cs_match_array( model_field_name = nil )
           Proc.new { | attr, value |
-            [ { model_field_name || attr => [ value ].flatten } ]
+            column = model_field_name || attr
+            value  = [ value ].flatten
+
+            [
+              "#{ column } IN (?) AND #{ column } IS NOT ?",
+              value,
+              nil
+            ]
           }
         end
 
@@ -116,7 +143,14 @@ module Hoodoo
         #
         def self.ci_match_generic( model_field_name = nil )
           Proc.new { | attr, value |
-            [ "lower(#{ model_field_name || attr }) = ?", ( value || '' ).to_s.downcase ]
+            column = model_field_name || attr
+            value  = ( value || '' ).to_s.downcase
+
+            [
+              "lower(#{ column }) = ? AND #{ column } IS NOT ?",
+              value,
+              nil
+            ]
           }
         end
 
@@ -125,7 +159,14 @@ module Hoodoo
         #
         def self.ciaw_match_generic( model_field_name = nil )
           Proc.new { | attr, value |
-            [ "lower(#{ model_field_name || attr }) LIKE ?", "%#{ ( value || '' ).to_s.downcase }%" ]
+            column = model_field_name || attr
+            value  = ( value || '' ).to_s.downcase
+
+            [
+              "lower(#{ column }) LIKE ? AND #{ column } IS NOT ?",
+              "%#{ value }%",
+              nil
+            ]
           }
         end
 
@@ -141,11 +182,17 @@ module Hoodoo
         #
         # Returns a value that can be asssigned to a URI query string key in
         # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # Hoodoo::ActiveRefinderscord::Finder#filter_with.
         #
         def self.ci_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
-            [ "#{ model_field_name || attr } ILIKE ?", value ]
+            column = model_field_name || attr
+
+            [
+              "#{ column } ILIKE ? AND #{ column } IS NOT ?",
+              value,
+              nil
+            ]
           }
         end
 
@@ -154,7 +201,13 @@ module Hoodoo
         #
         def self.ciaw_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
-            [ "#{ model_field_name || attr } ILIKE ?", "%#{ value }%" ]
+            column = model_field_name || attr
+
+            [
+              "#{ column } ILIKE ? AND #{ column } IS NOT ?",
+              "%#{ value }%",
+              nil
+            ]
           }
         end
       end
