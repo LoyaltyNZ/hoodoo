@@ -15,7 +15,29 @@ describe Hoodoo::Client::Endpoint::HTTP do
 
   context 'SSL Cert chain verification' do
 
-    class DataBreachError < RuntimeError
+    before(:all) do
+      # Start a service listenting on https 127.0.0.1 with a self-signed cert.
+      @https_port = spec_helper_start_svc_app_in_thread_for(SslSelfSignedApp, true, skip_hoodoo_middleware: true)
+    end
+
+    it 'should successfuly connect with valid certificate chain' do
+      endpoint = connect_to_real_https_endpoint('127.0.0.1', 'spec/files/ca/ca-cert.pem')
+      response = endpoint.list()
+      expect(response["message"]).to eq("This data is a secret")
+    end
+
+    it "should fail when certificate doesn't match the hostname" do
+      endpoint = connect_to_real_https_endpoint('localhost', 'spec/files/ca/ca-cert.pem')
+      response = endpoint.list()
+      expect(response.platform_errors.has_errors?).to eq(true)
+      expect(response.platform_errors.errors.first["code"]).to eq("platform.fault")
+    end
+
+    it "should fail when the certificate isn't in the ca_file" do
+      endpoint = connect_to_real_https_endpoint('127.0.0.1', nil)
+      response = endpoint.list()
+      expect(response.platform_errors.has_errors?).to eq(true)
+      expect(response.platform_errors.errors.first["code"]).to eq("platform.fault")
     end
 
     class SslSelfSignedApp
@@ -24,13 +46,7 @@ describe Hoodoo::Client::Endpoint::HTTP do
       end
     end
 
-    let(:ca_file) { 'spec/files/ca/ca-cert.pem' }
-    let(:hostname) { '127.0.0.1' }
-
-    before(:each) do
-      # Start a service listenting on https 127.0.0.1 with a self-signed cert.
-      @https_port = spec_helper_start_svc_app_in_thread_for(SslSelfSignedApp, true, skip_hoodoo_middleware: true)
-
+    def connect_to_real_https_endpoint(hostname, ca_file)
       mw = SslSelfSignedApp.new
       interaction = Hoodoo::Services::Middleware::Interaction.new(
         {},
@@ -62,7 +78,7 @@ describe Hoodoo::Client::Endpoint::HTTP do
         :wrapped_endpoint => mock_wrapped_endpoint
       )
 
-      @endpoint = Hoodoo::Services::Middleware::InterResourceRemote.new(
+      endpoint = Hoodoo::Services::Middleware::InterResourceRemote.new(
         'SecureData',
         2,
         {
@@ -70,31 +86,7 @@ describe Hoodoo::Client::Endpoint::HTTP do
           :discovery_result => discovery_result
         }
       )
-    end
-
-    it 'should verify correctly' do
-      response = @endpoint.list()
-      expect(response["message"]).to eq("This data is a secret")
-    end
-
-    context "when cert doesn't match the hostname" do
-      let(:hostname) { "localhost" } # localhost doesn't match the cert valid for 127.0.0.1
-
-      it 'should raise an error' do
-        response = @endpoint.list()
-        expect(response.platform_errors.has_errors?).to eq(true)
-        expect(response.platform_errors.errors.first["code"]).to eq("platform.fault")
-      end
-    end
-
-    context "when the cert isn't in the ca_file trust store" do
-      let(:ca_file) { nil } # Validation should fail, when we use the default trust-store
-
-      it 'should raise an error' do
-        response = @endpoint.list()
-        expect(response.platform_errors.has_errors?).to eq(true)
-        expect(response.platform_errors.errors.first["code"]).to eq("platform.fault")
-      end
+      return endpoint
     end
 
   end
