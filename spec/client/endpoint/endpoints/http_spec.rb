@@ -16,7 +16,16 @@ describe Hoodoo::Client::Endpoint::HTTP do
   context 'SSL Cert chain verification' do
 
     before(:all) do
-      # Start a service listenting on https 127.0.0.1 with a self-signed cert.
+      # Start a service listening on https 127.0.0.1 with a self-signed cert.
+      #
+      # Note: we are skipping hoodoo middleware with +skip_hoodoo_middleware+
+      # because this test is about verifying SSL on the client, and we need
+      # to be certain that any errors thrown are from client, and not from
+      # middleware (e.g. server).
+      #
+      # This test effectively ensures we aren't vulnerable to a MiTM attack, and malicious parties
+      # won't be good upstanding Hoodoo::Middleware using citizens.
+      #
       @https_port = spec_helper_start_svc_app_in_thread_for(SslSelfSignedApp, true, skip_hoodoo_middleware: true)
     end
 
