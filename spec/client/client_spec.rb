@@ -317,9 +317,6 @@ describe Hoodoo::Client do
           ca_file:   ca_file
         )
 
-        # expect( Net::HTTP.any_instance ).to receive( :use_ssl= ).at_least( :once ).with(true)
-        # expect( Net::HTTP.any_instance ).to receive( :ca_file= ).at_least( :once ).with(ca_file)
-
         set_vars_for(
           base_uri:     base_uri,
           auto_session: false,

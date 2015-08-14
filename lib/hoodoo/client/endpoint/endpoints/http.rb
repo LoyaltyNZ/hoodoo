@@ -133,7 +133,7 @@ module Hoodoo
               # self-signed cert, but this setting should not be changed
               http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-              if ca_file #&& File.exist?(ca_file)
+              if ca_file
                 http.ca_file = ca_file
               end
             end
