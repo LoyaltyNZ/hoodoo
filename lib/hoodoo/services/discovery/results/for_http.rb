@@ -36,11 +36,17 @@ module Hoodoo
         #
         attr_accessor :proxy_uri
 
-        # String - relative or absolute path to a CA-File that will
-        # be used for validating the SSL Cert presented by the server
-        # by Hoodoo::Client when making calls over https. leave as nil
-        # to let ruby default to the standard ca-certs provided by the
-        # operating system.
+        # An optional String indicating a relative or absolute file
+        # path to the location of a .pem format Certificate
+        # Authority file (trust store), which may include multliple
+        # certificates. The certificates in the file will be used
+        # by Net::HTTP to validate the SSL Ceritificate Chain
+        # presented by remote servers, when calling endpoints over
+        # HTTPS with Hoodoo::Client.
+        #
+        # Default +nil+ value should be used in nearly all cases
+        # and uses Ruby OpenSSL defaults which are generally
+        # Operating System provided.
         #
         attr_accessor :ca_file
 
@@ -55,7 +61,7 @@ module Hoodoo
                         version:,
                         endpoint_uri:,
                         proxy_uri: nil,
-                        ca_file: nil )
+                        ca_file:   nil )
 
           self.resource     = resource.to_sym
           self.version      = version.to_i

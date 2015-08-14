@@ -47,11 +47,19 @@ module Hoodoo
             #               will itself read <tt>ENV['HTTP_PROXY']</tt> if
             #               set; this option will _override_ that variable.
             #               Set as a String, as with +base_uri+.
-            # +ca_file+::   A String with a relative or absolute file path
-            #               to the location of a .pem format CA-Cert file
-            #               which will be used to validate the SSL-Cert
-            #               presented by remote servers called over https
-            #               by Hoodoo::Client.
+            #
+            # +ca_file+::   An optional String indicating a relative or
+            #               absolute file path to the location of a .pem
+            #               format Certificate Authority file (trust store),
+            #               which may include multliple certificates. The
+            #               certificates in the file will be used by
+            #               Net::HTTP to validate the SSL Ceritificate Chain
+            #               presented by remote servers, when calling
+            #               endpoints over HTTPS with Hoodoo::Client.
+            #
+            #               Default +nil+ value should be used in nearly all
+            #               cases and uses Ruby OpenSSL defaults which are
+            #               generally Operating System provided.
             #
             # +routing+::   An optional parameter which gives custom routing
             #               for exception cases where the by-convention map
@@ -88,7 +96,7 @@ module Hoodoo
             def configure_with( options )
               @base_uri  = URI.parse( options[ :base_uri  ] )
               @proxy_uri = URI.parse( options[ :proxy_uri ] ) unless options[ :proxy_uri ].nil?
-              @ca_file   = options[:ca_file]
+              @ca_file   = options[ :ca_file ]
               @routing   = options[ :routing ] || {}
             end
 

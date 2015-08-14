@@ -128,9 +128,13 @@ module Hoodoo
             if data.full_uri.scheme == 'https'
               http.use_ssl = true
 
-              # the verify_mode is *important* - VERIFY_PEER ensures that we always validate the CA cert.
-              # To use a self-signed cert, you may configure the ca_file to a CA that includes the
-              # self-signed cert, but this setting should not be changed
+              # The verify_mode is *important* - VERIFY_PEER ensures that we always validate
+              # the connection, *and* that the presented SSL Certificate by the endpoint is
+              # verifiable through our CA certificate trust store.
+              #
+              # To use a self-signed cert, you may configure the ca_file to a CA that
+              # includes the self-signed cert, but the verify_mode setting should remain.
+              #
               http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
               if ca_file
