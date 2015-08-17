@@ -162,7 +162,7 @@ module Hoodoo
         #
         # Returns a value that can be asssigned to a URI query string key in
         # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRefinderscord::Finder#filter_with.
+        # Hoodoo::ActiveRecord::Finder#filter_with.
         #
         def self.ci_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
