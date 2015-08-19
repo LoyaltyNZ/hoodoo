@@ -581,6 +581,19 @@ module Hoodoo
 
         # As #search_with, but used in +where.not+ queries.
         #
+        # <b><i>IMPORTANT:</i></b> Beware +null+ column values and filters
+        # given SQL's strange behaviour with such things. The search helpers
+        # in Hoodoo::ActiveRecord::Finder::SearchHelper class will work as
+        # logically expected ("field not 'foo'" will find fields with a null
+        # value), though if you're expecting SQL-like behaviour it might come
+        # as a surprise! Using <tt>...AND field IS NOT NULL</tt> in queries
+        # for +filter_with+ tends to work reasonably when the query is
+        # negated for filter use via <tt>...NOT(...)...</tt>. Examining the
+        # implementation of Hoodoo::ActiveRecord::Finder::SearchHelper may
+        # help if confused. See also:
+        #
+        # * https://en.wikipedia.org/wiki/Null_(SQL)
+        #
         # +map+:: As #search_with.
         #
         def filter_with( hash )

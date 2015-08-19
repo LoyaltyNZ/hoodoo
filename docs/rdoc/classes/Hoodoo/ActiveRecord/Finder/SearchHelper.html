@@ -63,6 +63,14 @@ search/fitler <a href="../Finder.html">Hoodoo::ActiveRecord::Finder</a>
 methods, so they&#39;re optional and compatible with calls that write it
 out “by hand”.</p>
 
+<p>In all cases, in normal use the generated SQL _will not_ match
+<code>null</code> values; if negated for a filter
+(“<code>where.not</code>”), the generated SQL <em>will</em> match
+<code>null</code> values. As a result, passing in explicit searches for
+<code>nil</code> won&#39;t work - but that&#39;s never expected as a use
+case here since search values are coming in via e.g. query string
+information from a URI.</p>
+
     </div>
   
 
@@ -189,10 +197,13 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-ci_match_generic_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 117</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ci_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ <span class="ruby-node">&quot;lower(#{ model_field_name || attr }) = ?&quot;</span>, ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span> ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
+
+    [ <span class="ruby-node">&quot;lower(#{ column }) = ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -223,7 +234,7 @@ the URI, give the model attribute name here, else omit.</p>
 
 <p>Returns a value that can be asssigned to a URI query string key in the Hash
 given to Hoodoo::ActiveRecord::Finder#search_with or
-Hoodoo::ActiveRecord::Finder#filter_with.</p>
+Hoodoo::ActiveRefinderscord::Finder#filter_with.</p>
             </div>
           
           
@@ -241,10 +252,12 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-ci_match_postgres_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 146</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 167</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ci_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ <span class="ruby-node">&quot;#{ model_field_name || attr } ILIKE ?&quot;</span>, <span class="ruby-identifier">value</span> ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } ILIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -281,10 +294,13 @@ for a case-insensitive-all-wildcard match.</p>
                 
               </p>
               <div id="method-c-ciaw_match_generic_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 126</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ciaw_match_generic</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ <span class="ruby-node">&quot;lower(#{ model_field_name || attr }) LIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{ ( value || &#39;&#39; ).to_s.downcase }%&quot;</span> ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = ( <span class="ruby-identifier">value</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>
+
+    [ <span class="ruby-node">&quot;lower(#{ column }) LIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -321,10 +337,12 @@ for a case-insensitive-all-wildcard match.</p>
                 
               </p>
               <div id="method-c-ciaw_match_postgres_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 155</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 178</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">ciaw_match_postgres</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ <span class="ruby-node">&quot;#{ model_field_name || attr } ILIKE ?&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } ILIKE ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-node">&quot;%#{ value }%&quot;</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -373,10 +391,12 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-cs_match_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 54</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ { <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> } ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+
+    [ <span class="ruby-node">&quot;#{ column } = ? AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -425,10 +445,13 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-cs_match_array_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 95</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">cs_match_array</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ { <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span> =<span class="ruby-operator">&gt;</span> [ <span class="ruby-identifier">value</span> ].<span class="ruby-identifier">flatten</span> } ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = [ <span class="ruby-identifier">value</span> ].<span class="ruby-identifier">flatten</span>
+
+    [ <span class="ruby-node">&quot;#{ column } IN (?) AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -476,10 +499,13 @@ Hoodoo::ActiveRecord::Finder#filter_with.</p>
                 
               </p>
               <div id="method-c-cs_match_csv_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 74</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/search_helper.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">cs_match_csv</span>( <span class="ruby-identifier">model_field_name</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
-    [ { <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> ) } ]
+    <span class="ruby-identifier">column</span> = <span class="ruby-identifier">model_field_name</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">attr</span>
+    <span class="ruby-identifier">value</span>  = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">split</span>( <span class="ruby-string">&#39;,&#39;</span> )
+
+    [ <span class="ruby-node">&quot;#{ column } IN (?) AND #{ column } IS NOT NULL&quot;</span>, <span class="ruby-identifier">value</span> ]
   }
 <span class="ruby-keyword">end</span></pre>
               </div>

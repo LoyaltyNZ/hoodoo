@@ -92,6 +92,28 @@ href="../Secure.html#method-c-included">Hoodoo::ActiveRecord::Secure.included</a
     
 
     
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">DEFAULT_SECURE_PROC</td>
+            <td>=</td>
+            <td class="attr-value">Proc.new { | model_class, database_column_name, session_field_value | [ { database_column_name =&gt; session_field_value } ] }</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Internal.</p>
+
+<p>See <a href="ClassMethods.html#method-i-secure">secure</a> for details -
+this is the Proc used by default if no alternative argument generator is
+given in the longhand form&#39;s value Hash&#39;s <code>:using</code> key.</p></td>
+            </tr>
+          
+        
+      </table>
+    
 
 
     
@@ -225,6 +247,26 @@ href="ClassMethods.html#method-i-secure">secure</a> and you are strongly
 encouraged to use these wherever possible, rather than calling <a
 href="ClassMethods.html#method-i-secure">secure</a> directly.</p>
 
+<p>For more advanced query conditions that a single database column checked
+against a session value with an implicit <code>AND</code>, see later.</p>
+
+<h2 id="method-i-secure-label-Important-21">Important!</h2>
+
+<p>If you state a model must be secured by one or more fields, then:</p>
+<ul><li>
+<p>If there is no session at all in the given context, <em>or</em></p>
+</li><li>
+<p>The session has no scoping data, <em>or</em></p>
+</li><li>
+<p>The session scoping data does not have one or more of the fields that the
+<a href="ClassMethods.html#method-i-secure_with">secure_with</a> map&#39;s
+values describe, <em>then</em></p>
+</li></ul>
+
+<p>…the returned scope <strong>will</strong> <strong>find</strong>
+<strong>no</strong> <strong>results</strong>, by design. The default
+failure mode is to reveal no data at all.</p>
+
 <h2 id="method-i-secure-label-Rendering+resources">Rendering resources</h2>
 
 <p>Models aren&#39;t directly connected to Resource representations, but since
@@ -291,6 +333,10 @@ it is shown by default (if you&#39;re passing in a model instance to a
 render call via the <code>secured_with</code> option it is assumed that you
 explicitly <em>do</em> want to include this kind of information rather than
 hide it).</p>
+</dd><dt><code>using</code>
+<dd>
+<p>See the <em>Advanced</em> <em>query</em> <em>conditions</em> section later
+for details.</p>
 </dd></dl>
 
 <p>To help clarify the above, the following two calls to <a
@@ -339,22 +385,83 @@ in the resource and hide the “programme_code” entry:</p>
   ...
 }</code></pre>
 
-<h2 id="method-i-secure-label-Important">Important</h2>
+<h2 id="method-i-secure-label-Advanced+query+conditions">Advanced query conditions</h2>
 
-<p>If you state a model must be secured by one or more fields, then:</p>
+<p>A simple implicit <code>AND</code> clause on a single database column might
+not be sufficient for your scoping. In this case, the “longhand” Hash form
+described for rendering is used, this time including the key
+<code>:using</code> to specify a Proc that is executed to return an array
+of parameters for <code>where</code>. For example:</p>
+
+<pre><code>secure_with( {
+  :creating_caller_uuid =&gt; :authorised_caller_uuids
+} )
+
+# ...has this minimal longhand equivalent...
+
+secure_with( {
+  :creating_caller_uuid =&gt; {
+    :session_field_name =&gt; :authorised_caller_uuids
+  }
+} )
+</code></pre>
+
+<p>This leads to SQL along the following lines:</p>
+
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;[val]&#39;)</code></pre>
+
+<p>…where <code>val</code> is from the Session
+<code>authorised_caller_uuids</code> data in the <code>scoping</code>
+section (so this might be an SQL <code>IN</code> rather than <code>=</code>
+if that data is a multi-element array). Suppose you need to change this to
+check that value <em>or</em> something else? Use the <code>:using</code>
+key and a Proc. Since <a href="../../ActiveRecord.html">ActiveRecord</a> at
+the time of writing lacks a high level way to do &#39;OR&#39; via methods,
+it&#39;s easiest and most flexible just to give up and fall to an SQL
+string:</p>
+
+<pre><code>or_matcher = Proc.new do | model_class, database_column_name, session_field_value |
+
+  # This example works for non-array and array field values.
+  #
+  session_field_value = [ session_field_value ].flatten
+
+  [
+    &quot;\&quot;#{ database_column_name }\&quot; IN (?) OR \&quot;other_column_name\&quot; IN (?)&quot;,
+    session_field_value,
+    session_field_value
+  ]
+end
+
+secure_with( {
+  :creating_caller_uuid =&gt; {
+    :session_field_name =&gt; :authorised_caller_uuids,
+    :using              =&gt; or_matcher
+  }
+} )
+</code></pre>
+
+<p>…yields something like:</p>
+
+<pre><code>AND ( &quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;[val]&#39; OR &quot;model_table&quot;.&quot;other_column_name&quot; = &#39;[val&#39;] )</code></pre>
+
+<p>_If your session data contains Arrays, obviously you</p>
+
+<p>A Proc specified with <code>:using</code> is called with:</p>
 <ul><li>
-<p>If there is no session at all in the given context, <em>or</em></p>
+<p>The model class which is involved in the query.</p>
 </li><li>
-<p>The session has no scoping data, <em>or</em></p>
+<p>The name of the database column specified in the <code>secure_with</code>
+Hash as the top-level key (e.g. <code>creating_called_uuid</code> above).</p>
 </li><li>
-<p>The session scoping data does not have one or more of the fields that the
-<a href="ClassMethods.html#method-i-secure_with">secure_with</a> map&#39;s
-values describe, <em>then</em></p>
+<p>The session field <em>value</em> that was recovered under the given key -
+the value of <code>session.scoping.authorised_caller_uuids</code> in the
+example above.</p>
 </li></ul>
 
-<p>…the returned scope <strong>will</strong> <strong>find</strong>
-<strong>no</strong> <strong>results</strong>, by design. The default
-failure mode is to reveal no data at all.</p>
+<p>You must return _AN ARRAY_ of arguments that will be passed to
+<code>where</code> via <code>where( *returned_values )</code> as part of
+the wider query chain.</p>
             </div>
           
           
@@ -372,7 +479,7 @@ failure mode is to reveal no data at all.</p>
                 
               </p>
               <div id="method-i-secure_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 287</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 374</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
@@ -381,16 +488,22 @@ failure mode is to reveal no data at all.</p>
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">none</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">nil?</span>
 
     <span class="ruby-identifier">extra_scope_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">model_field_name</span>, <span class="ruby-identifier">key_or_options</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">params_proc</span> = <span class="ruby-constant">DEFAULT_SECURE_PROC</span>
+
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
         <span class="ruby-identifier">session_scoping_key</span> = <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:session_field_name</span> ]
+        <span class="ruby-identifier">params_proc</span>         = <span class="ruby-identifier">key_or_options</span>[ <span class="ruby-value">:using</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">key_or_options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:using</span> )
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">session_scoping_key</span> = <span class="ruby-identifier">key_or_options</span>
       <span class="ruby-keyword">end</span>
 
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-identifier">session_scoping_key</span> )
-        <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">where</span>( {
-          <span class="ruby-identifier">model_field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">session_scoping_key</span> )
-        } )
+        <span class="ruby-identifier">args</span> = <span class="ruby-identifier">params_proc</span>.<span class="ruby-identifier">call</span>(
+          <span class="ruby-keyword">self</span>,
+          <span class="ruby-identifier">model_field_name</span>,
+          <span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span>.<span class="ruby-identifier">scoping</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">session_scoping_key</span> )
+        )
+        <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">where</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
       <span class="ruby-keyword">else</span>
         <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">none</span>()
         <span class="ruby-keyword">break</span>
@@ -447,7 +560,7 @@ examples.</p>
                 
               </p>
               <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 326</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 419</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
@@ -489,7 +602,7 @@ href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
                 
               </p>
               <div id="method-i-secured_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 334</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 427</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>
