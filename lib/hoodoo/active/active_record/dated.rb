@@ -15,6 +15,10 @@ module Hoodoo
     # Support mixin for models subclassed from ActiveRecord::Base providing
     # as-per-API-standard dating support.
     #
+    # The facilities provided here are powerful but relatively complex, so
+    # please read through this documentation section in full to understand
+    # everything you need to do.
+    #
     # == Overview
     #
     # This mixin adds finder methods to the model it is applied to (see
@@ -90,6 +94,17 @@ module Hoodoo
     # history table constraints. See
     # https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb
     # for more information.
+    #
+    # == Model instance creation
+    #
+    # It is _VERY IMPORTANT_ that you use
+    # Hoodoo::ActiveRecord::Finder::ClassMethods::new_in to create new resource
+    # instances when using Dating. You _could_ just manually read the
+    # `context.request.dated_from` value to ensure that an appropriate creation
+    # time is set; presently, `created_at` and `updated_at` are set from the
+    # `dated_from` value. However, using `new_in` for this isolates your code
+    # from any possible under-the-hood implementation changes therein and
+    # future-proof your code.
     #
     module Dated
 

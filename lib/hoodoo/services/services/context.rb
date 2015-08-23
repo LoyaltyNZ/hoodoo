@@ -102,16 +102,31 @@ module Hoodoo; module Services
       #
       # The options Hash key/values are as follows:
       #
-      # +locale+::   Locale string for request/response, e.g. "en-gb".
-      #              Optional. If omitted, defaults to the locale set in this
-      #              Client instance's constructor.
+      # +locale+::     Locale string for request/response, e.g. "en-gb".
+      #                Optional. If omitted, defaults to the locale set in this
+      #                Client instance's constructor.
       #
-      # +dated_at+:: Time instance, DateTime instance or String which Ruby can
-      #              parse into a DateTime instance used for show/list calls
-      #              to resource endpoints that support historical
-      #              representation, via an <tt>X-Dated-At</tt> HTTP header or
-      #              equivalent. If omitted, defaults to +nil+ (no historical
-      #              representation requested).
+      # +dated_at+::   Time instance, DateTime instance or String which Ruby
+      #                can parse into a DateTime instance used for show/list
+      #                calls to resource endpoints that support historical
+      #                representation, via an <tt>X-Dated-At</tt> HTTP header
+      #                or equivalent. If omitted, acquires whatever "dated_at"
+      #                value exists in the current request - historic dating
+      #                requests propagate automatically from one endpoint to
+      #                another. If you wish to explicitly override this, you
+      #                _MUST_ include the option key with an explicit value of
+      #                 +nil+.
+      #
+      # +dated_from+:: Time instance, DateTime instance or String that Ruby
+      #                can parse into a DateTime instance used for creation
+      #                calls to resource endpoints that support creation time
+      #                specification via an <tt>X-Dated-From</tt> HTTP header
+      #                or equivalent, as part of their support for historical
+      #                representation via a <tt>X-Dated-At</tt> HTTP header or
+      #                equivalent. If omitted, defaults to the created resource
+      #                being created at and thus valid from the server's value
+      #                of "now"; unlike "dated_at", this property does not
+      #                automatically propagage from one endpoint to another.
       #
       def resource( resource, version = 1, options = {} )
         middleware = @owning_interaction.owning_middleware_instance
@@ -121,11 +136,18 @@ module Hoodoo; module Services
           @owning_interaction
         )
 
-        locale   = options[ :locale   ]
-        dated_at = options[ :dated_at ]
+        locale     = options[ :locale     ]
+        dated_at   = options[ :dated_at   ]
+        dated_from = options[ :dated_from ]
 
-        endpoint.locale   = locale   unless locale.nil?
-        endpoint.dated_at = dated_at unless dated_at.nil?
+        # 'unless' for things where 'nil' makes no sense or no value is set
+        # by default, so overriding is unnecessray; key presence check for
+        # things where 'nil' has a meaning and non-nil values may require
+        # overriding.
+
+        endpoint.locale     = locale     unless locale.nil?
+        endpoint.dated_from = dated_from unless dated_from.nil?
+        endpoint.dated_at   = dated_at   if options.has_key?( :dated_at )
 
         return endpoint
       end

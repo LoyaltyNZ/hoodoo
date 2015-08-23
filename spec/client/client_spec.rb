@@ -91,7 +91,7 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
         'language'   => context.request.locale,
         'embeds'     => context.request.embeds,
         'body_hash'  => context.request.body,
-        'dated_at'   => context.request.dated_at.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at )
+        'dated_at'   => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at ),
       }
     end
 end
@@ -151,9 +151,9 @@ describe Hoodoo::Client do
   end
 
   # Set @locale, @expected_locale (latter for 'to eq(...)' matching),
-  # @dated_at, @expected_data_at (same deal), @client and callable @endpoint
-  # up, passing the given options to the Hoodoo::Client constructor, with
-  # randomised locale merged in. Conversion to lower case is checked
+  # @dated_at/from, @expected_data_at/from (same deal), @client and callable
+  # @endpoint up, passing the given options to the Hoodoo::Client constructor,
+  # with randomised locale merged in. Conversion to lower case is checked
   # implicitly, with a mixed case locale generated (potentially) by random
   # but the 'downcase' version being used for 'expect's.
   #
@@ -162,13 +162,16 @@ describe Hoodoo::Client do
   # (or not) and a dated-at date/time (or not) given to the Endpoint.
   #
   def set_vars_for( opts )
-    @locale            = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
-    @expected_locale   = @locale.nil? ? 'en-nz' : @locale.downcase
-    @client            = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
+    @locale              = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
+    @expected_locale     = @locale.nil? ? 'en-nz' : @locale.downcase
+    @client              = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
 
-    @expected_dated_at = @dated_at.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at )
+    @expected_dated_at   = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
+    @expected_dated_from = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
 
-    endpoint_opts = { :dated_at => @dated_at }
+    endpoint_opts = {}
+    endpoint_opts[ :dated_at   ] = @dated_at   unless @dated_at.nil?
+    endpoint_opts[ :dated_from ] = @dated_from unless @dated_from.nil?
 
     if rand( 2 ) == 0
       override_locale          = SecureRandom.urlsafe_base64(2)
@@ -196,6 +199,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( [] )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
 
         result = @endpoint.show( mock_ident, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
@@ -203,6 +207,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
       end
 
       it 'cannot contact protected actions' do
@@ -358,6 +363,7 @@ describe Hoodoo::Client do
         expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
         expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 0 ][ 'dated_from' ] ).to eq( @expected_dated_from )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -369,6 +375,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -382,6 +389,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -393,6 +401,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
       end
     end
 
@@ -450,6 +459,7 @@ describe Hoodoo::Client do
         expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
         expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 0 ][ 'dated_from' ] ).to eq( @expected_dated_from )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -461,6 +471,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -474,6 +485,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -485,6 +497,7 @@ describe Hoodoo::Client do
         expect( result[ 'embeds' ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
         expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
+        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
       end
 
       it 'automatically retries' do

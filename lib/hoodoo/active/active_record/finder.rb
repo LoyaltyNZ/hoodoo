@@ -16,7 +16,18 @@ module Hoodoo
 
     # Mixin for models subclassed from ActiveRecord::Base providing support
     # methods to handle common +show+ and +list+ filtering actions based on
-    # inbound data.
+    # inbound data and create instances in a request context aware fashion.
+    #
+    # It is _STRONGLY RECOMMENDED_ that you use the likes of:
+    #
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods::new_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods::acquire_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods::list_in
+    #
+    # ...to create and retrieve model data related directly to resource
+    # instances and participate "for free" in whatever plug-in ActiveRecord
+    # modules are mixed into the model classes, such as
+    # Hoodoo::ActiveRecord::Secure and Hoodoo::ActiveRecord::Dated.
     #
     # See also:
     #
@@ -73,6 +84,63 @@ module Hoodoo
       # Hoodoo::ActiveRecord::Finder::included.
       #
       module ClassMethods
+
+        # Create an instance of this model with knowledge of the wider request
+        # context. This may lead to important things like support of inbound
+        # "dated_from" values, automatic idempotency protection and so-on,
+        # depending upon the Hoodoo mixins included (or not) by this class.
+        #
+        # You use this exactly as you would for ActiveRecord::Core#new, but an
+        # additional, mandatory first parameter providing the request context
+        # must be supplied. For example, instead of this:
+        #
+        #     instance = SomeActiveRecordSubclass.new
+        #
+        # ...you'd do this inside a resource implementation:
+        #
+        #     instance = SomeActiveRecordSubclass.new_in( context )
+        #
+        # See also:
+        #
+        # * http://api.rubyonrails.org/classes/ActiveRecord/Base.html
+        #
+        # Parameters:
+        #
+        # +context+::    Hoodoo::Services::Context instance describing a call
+        #                context. This is typically a value passed to one of
+        #                the Hoodoo::Services::Implementation instance methods
+        #                that a resource subclass implements.
+        #
+        # +attributes+:: Optional model attributes Hash, passed through to
+        #                ActiveRecord::Core#new.
+        #
+        # &block::       Optional block for initialisation, passed through to
+        #                ActiveRecord::Core#new.
+        #
+        # Returns a new model instance which may have context-derived values
+        # set for some attributes, in addition to anything set through the
+        # +attributes+ or <tt>&block</tt> parameters, if present.
+        #
+        # Note that context-dependent data is set _AFTER_ attribute or block
+        # based values, so takes precedence over anything you might set up
+        # using those parameters.
+        #
+        def new_in( context, attributes = nil, &block )
+
+          instance = self.new( attributes, &block )
+
+          # TODO: Refactor this to use the scope chain plugin approach in due
+          #       course, but for now, pragmatic implementation does the only
+          #       thing we currently need to do - set "created_at".
+          #
+          if self.include?( Hoodoo::ActiveRecord::Dated)
+            unless context.request.dated_from.nil?
+              instance.created_at = instance.updated_at = context.request.dated_from
+            end
+          end
+
+          return instance
+        end
 
         # "Polymorphic" find - support for finding a model by fields other
         # than just +:id+, based on a single unique identifier. Use #acquire

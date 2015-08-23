@@ -31,17 +31,20 @@ describe Hoodoo::Services::Request do
     end
 
     it 'rationalises date/time' do
-      now = DateTime.now
-      @r.dated_at = now
-      expect( @r.dated_at ).to eq( now )
+      [ :dated_at, :dated_from ].each do | attr |
+        now = DateTime.now
+        @r.send( "#{ attr }=", now )
+        expect( @r.send( attr ) ).to eq( now )
 
-      now = DateTime.now + 10
-      @r.dated_at = now.to_time
-      expect( @r.dated_at ).to eq( now )
+        now = DateTime.now + 10
+        @r.send( "#{ attr }=", now.to_time )
+        expect( @r.send( attr ) ).to eq( now )
 
-      now = DateTime.now + 20
-      @r.dated_at = Hoodoo::Utilities::nanosecond_iso8601( now )
-      expect( @r.dated_at ).to eq( now )
+        now = DateTime.now + 20
+
+        @r.send( "#{ attr }=", Hoodoo::Utilities::nanosecond_iso8601( now ) )
+        expect( @r.send( attr ) ).to eq( now )
+      end
     end
 
     it 'has correct default values' do

@@ -303,21 +303,32 @@ module Hoodoo
       #
       # The options Hash key/values are as follows:
       #
-      # +locale+::   Locale string for request/response, e.g. "en-gb".
-      #              Optional. If omitted, defaults to the locale set in this
-      #              Client instance's constructor.
+      # +locale+::     Locale string for request/response, e.g. "en-gb".
+      #                Optional. If omitted, defaults to the locale set in this
+      #                Client instance's constructor.
       #
-      # +dated_at+:: Time instance, DateTime instance or String which Ruby can
-      #              parse into a DateTime instance used for show/list calls
-      #              to resource endpoints that support historical
-      #              representation, via an <tt>X-Dated-At</tt> HTTP header or
-      #              equivalent. If omitted, defaults to +nil+ (no historical
-      #              representation requested).
+      # +dated_at+::   Time instance, DateTime instance or String that Ruby can
+      #                parse into a DateTime instance used for show/list calls
+      #                to resource endpoints that support historical
+      #                representation via an <tt>X-Dated-At</tt> HTTP header or
+      #                equivalent. If omitted, defaults to +nil+ (no historical
+      #                representation requested).
+      #
+      # +dated_from+:: Time instance, DateTime instance or String that Ruby can
+      #                parse into a DateTime instance used for creation calls
+      #                to resource endpoints that support creation time
+      #                specification via an <tt>X-Dated-From</tt> HTTP header
+      #                or equivalent, as part of their support for historical
+      #                representation via a <tt>X-Dated-At</tt> HTTP header or
+      #                equivalent. If omitted, defaults to the created resource
+      #                being created at and thus valid from the server's value
+      #                of "now".
       #
       def resource( resource, version = 1, options = {} )
 
-        locale   = options[ :locale   ] || @locale
-        dated_at = options[ :dated_at ]
+        locale     = options[ :locale   ] || @locale
+        dated_at   = options[ :dated_at ]
+        dated_from = options[ :dated_from ]
 
         endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
@@ -326,7 +337,8 @@ module Hoodoo
             :discoverer => @discoverer,
             :session_id => @session_id,
             :locale     => locale,
-            :dated_at   => dated_at
+            :dated_at   => dated_at,
+            :dated_from => dated_from
           }
         )
 

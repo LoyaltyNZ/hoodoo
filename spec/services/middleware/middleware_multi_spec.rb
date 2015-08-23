@@ -51,6 +51,7 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       {
         'locale'              => context.request.locale,
         'dated_at'            => context.request.dated_at.to_s,
+        'dated_from'          => context.request.dated_from.to_s,
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
         'uri_path_extension'  => context.request.uri_path_extension,
@@ -98,6 +99,7 @@ class TestEchoQuietImplementation < Hoodoo::Services::Implementation
       {
         'locale'              => context.request.locale,
         'dated_at'            => context.request.dated_at.to_s,
+        'dated_from'          => context.request.dated_from.to_s,
         'body'                => context.request.body,
         'uri_path_components' => context.request.uri_path_components,
         'uri_path_extension'  => context.request.uri_path_extension,
@@ -185,7 +187,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
   end
 
   def create( context )
-    resource = context.resource( :TestEcho, 2 )
+    resource = context.resource( :TestEcho, 2, dated_from: context.request.dated_from )
     result   = resource.create(
       context.request.body,
       {
@@ -293,6 +295,7 @@ describe Hoodoo::Services::Middleware do
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
           'dated_at'            => dated_at.to_s,
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [],
           'uri_path_extension'  => 'tar.gz',
@@ -364,6 +367,7 @@ describe Hoodoo::Services::Middleware do
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
           'dated_at'            => dated_at.to_s,
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [ 'one', 'two' ],
           'uri_path_extension'  => 'tar.gz',
@@ -404,6 +408,7 @@ describe Hoodoo::Services::Middleware do
         {
           'locale'              => 'en-nz',
           'dated_at'            => '',
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [ 'some_uuid' ],
           'uri_path_extension'  => '',
@@ -418,10 +423,10 @@ describe Hoodoo::Services::Middleware do
       )
     end
 
-    def create_things( locale = nil, dated_at = nil )
+    def create_things( locale = nil, dated_from = nil )
       headers = {}
       headers[ 'Accept-Language' ] = locale unless locale.nil?
-      headers[ 'X-Dated-At'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+      headers[ 'X-Dated-From'    ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
 
       response = spec_helper_http(
         klass:   Net::HTTP::Post,
@@ -437,7 +442,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'create' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => dated_from.to_s,
           'body'                => { 'foo' => 'bar', 'baz' => 'boo' },
           'uri_path_components' => [],
           'uri_path_extension'  => 'json',
@@ -460,14 +466,13 @@ describe Hoodoo::Services::Middleware do
       create_things()
     end
 
-    it 'creates things with a custom locale and passes through dated-at' do
+    it 'creates things with a custom locale and passes through dated-from' do
       create_things( 'baz', DateTime.now )
     end
 
-    def update_things( locale = nil, dated_at = nil )
+    def update_things( locale = nil )
       headers = {}
       headers[ 'Accept-Language' ] = locale unless locale.nil?
-      headers[ 'X-Dated-At'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
 
       response = spec_helper_http(
         klass:   Net::HTTP::Patch,
@@ -483,7 +488,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'update' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => '',
           'body'                => { 'foo' => 'boo', 'baz' => 'bar' },
           'uri_path_components' => [ 'a', 'b' ],
           'uri_path_extension'  => 'json',
@@ -506,14 +512,13 @@ describe Hoodoo::Services::Middleware do
       update_things()
     end
 
-    it 'updates things with a custom locale and passes through dated-at' do
-      update_things( 'boo', DateTime.now )
+    it 'updates things with a custom locale' do
+      update_things( 'boo' )
     end
 
-    def delete_things( locale = nil, dated_at = nil )
+    def delete_things( locale = nil )
       headers = {}
       headers[ 'Accept-Language' ] = locale unless locale.nil?
-      headers[ 'X-Dated-At'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
 
       response = spec_helper_http(
         klass:   Net::HTTP::Delete,
@@ -528,7 +533,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'delete' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [ 'aa', 'bb' ],
           'uri_path_extension'  => 'xml.gz',
@@ -551,8 +557,8 @@ describe Hoodoo::Services::Middleware do
       delete_things()
     end
 
-    it 'deletes things, passing through custom locale and dated-at' do
-      delete_things( 'bye', DateTime.now )
+    it 'deletes things, passing through custom locale' do
+      delete_things( 'bye' )
     end
 
     it 'should get 405 for bad requests' do
@@ -597,7 +603,7 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( TestCallImplementation ).to receive( :after ).once
     end
 
-    def headers_for( locale, dated_at )
+    def headers_for( locale, dated_at = nil, dated_from = nil )
       headers = {
         'CONTENT_TYPE' => 'application/json; charset=utf-8'
       }
@@ -608,6 +614,7 @@ describe Hoodoo::Services::Middleware do
 
       headers[ 'HTTP_ACCEPT_LANGUAGE' ] = locale unless locale.nil?
       headers[ 'HTTP_X_DATED_AT'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+      headers[ 'HTTP_X_DATED_FROM'    ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
 
       return headers
     end
@@ -636,6 +643,7 @@ describe Hoodoo::Services::Middleware do
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
           'dated_at'            => dated_at.to_s,
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [],
           'uri_path_extension'  => '',
@@ -709,6 +717,7 @@ describe Hoodoo::Services::Middleware do
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
           'dated_at'            => dated_at.to_s,
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [ 'one,two' ],
           'uri_path_extension'  => '', # This is the *inner* inter-resource call's state and no filename extensions are used internally
@@ -735,11 +744,11 @@ describe Hoodoo::Services::Middleware do
       show_things( 'bar', DateTime.now )
     end
 
-    def create_things( locale = nil, dated_at = nil )
+    def create_things( locale = nil, dated_from = nil )
       post(
         '/v1/test_call.tar.gz',
         { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
-        headers_for( locale, dated_at )
+        headers_for( locale, nil, dated_from )
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -749,7 +758,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'create' ][ 'create' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => dated_from.to_s,
           'body'                => { 'foo' => 'bar', 'baz' => 'boo' },
           'uri_path_components' => [],
           'uri_path_extension'  => '',
@@ -772,15 +782,15 @@ describe Hoodoo::Services::Middleware do
       create_things()
     end
 
-    it 'creates things with a custom locale and passes through dated-at' do
+    it 'creates things with a custom locale and passes through dated-from' do
       create_things( 'baz', DateTime.now )
     end
 
-    def update_things( locale = nil, dated_at = nil )
+    def update_things( locale = nil )
       patch(
         '/v1/test_call/aa/bb.tar.gz',
         { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
-        headers_for( locale, dated_at )
+        headers_for( locale )
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -790,7 +800,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'update' ][ 'update' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => '',
           'body'                => { 'foo' => 'boo', 'baz' => 'bar' },
           'uri_path_components' => [ 'aa,bb' ],
           'uri_path_extension'  => '',
@@ -813,15 +824,15 @@ describe Hoodoo::Services::Middleware do
       update_things()
     end
 
-    it 'updates things with a custom locale and passes through dated-at' do
-      update_things( 'boo', DateTime.now )
+    it 'updates things with a custom locale' do
+      update_things( 'boo' )
     end
 
-    def delete_things( locale = nil, dated_at = nil )
+    def delete_things( locale = nil )
       delete(
         '/v1/test_call/aone/btwo.tar.gz',
         nil,
-        headers_for( locale, dated_at )
+        headers_for( locale )
       )
 
       expect( last_response.status ).to eq( 200 )
@@ -831,7 +842,8 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'delete' ][ 'delete' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => dated_at.to_s,
+          'dated_at'            => '',
+          'dated_from'          => '',
           'body'                => nil,
           'uri_path_components' => [ 'aone,btwo' ],
           'uri_path_extension'  => '',
@@ -854,8 +866,8 @@ describe Hoodoo::Services::Middleware do
       delete_things()
     end
 
-    it 'deletes things, passing through custom locale and dated-at' do
-      delete_things( 'bye', DateTime.now )
+    it 'deletes things, passing through custom locale' do
+      delete_things( 'bye' )
     end
 
     it 'should receive errors from remote service as if from the local call' do
