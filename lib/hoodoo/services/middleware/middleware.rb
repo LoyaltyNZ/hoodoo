@@ -1794,7 +1794,7 @@ module Hoodoo; module Services
       dated_at   = interaction.rack_request.env[ 'HTTP_X_DATED_AT'   ]
       dated_from = interaction.rack_request.env[ 'HTTP_X_DATED_FROM' ]
 
-      if dated_at.present?
+      unless dated_at.nil?
         if  Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_at )
           interaction.context.request.dated_at = dated_at
         else
@@ -1805,7 +1805,7 @@ module Hoodoo; module Services
         end
       end
 
-      if dated_from.present?
+      unless dated_from.nil?
         if Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_from )
           interaction.context.request.dated_from = dated_from
         else
