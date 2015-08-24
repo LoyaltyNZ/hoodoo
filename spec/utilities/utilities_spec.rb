@@ -532,6 +532,10 @@ describe Hoodoo::Utilities do
       expect {
         Hoodoo::Utilities.rationalise_datetime( Array.new )
       }.to raise_exception
+
+      expect {
+
+      }
     end
   end
 end

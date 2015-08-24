@@ -1846,18 +1846,31 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     list_things()
   end
 
-  it 'complains about a bad X-Dated-At header' do
-    headers = headers_for('en-nz', DateTime.now)
-    headers['HTTP_X_DATED_AT'] = 'not-a-date'
+  context 'when dated_at is an invalid datetime' do
+    datetimes = [
+              "2015-01-01T01:00:00+0100",
+              "2015-01-01T01:00:00-0100",
+              "2015-01T01:00:00+01:00",
+              "2015-001-01T01:00:00-32:00",
+              "2015-01T01:00:00-2900",
+              "2015-01-01",
+              "not-a-date"
+             ]
+    datetimes.each do |datetime|
+      it "complains about a bad X-Dated-At header of #{datetime}" do
+        headers = headers_for('en-nz', DateTime.now)
+        headers['HTTP_X_DATED_AT'] = datetime
 
-    get '/v1/rspec_test_inter_resource_calls_b',
-        nil,
-        headers
+        get '/v1/rspec_test_inter_resource_calls_b',
+            nil,
+            headers
 
-    expect(last_response.status).to eq(422)
-    result = JSON.parse(last_response.body)
-    expect(result['errors'][0]['code']).to eq('platform.malformed')
-    expect(result['errors'][0]['message']).to include('not-a-date')
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to include("header value '#{ datetime }' is an invalid ISO8601 datetime")
+      end
+    end
   end
 
   it 'lists things with callbacks', :check_callbacks => true do
@@ -1975,18 +1988,31 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result['errors'][0]['message']).to eq('Field `foo` is required')
   end
 
-  it 'complains about a bad X-Dated-From header' do
-    headers = headers_for('en-nz', DateTime.now)
-    headers['HTTP_X_DATED_FROM'] = 'not-a-date'
+  context 'when dated_from is an invalid datetime' do
+    datetimes = [
+              "2015-01-01T01:00:00+0100",
+              "2015-01-01T01:00:00-0100",
+              "2015-01T01:00:00+01:00",
+              "2015-001-01T01:00:00-32:00",
+              "2015-01T01:00:00-2900",
+              "2015-01-01",
+              "not-a-date"
+             ]
+    datetimes.each do |datetime|
+      it "complains about a bad X-Dated-At header of #{datetime}" do
+        headers = headers_for('en-nz', DateTime.now)
+        headers['HTTP_X_DATED_FROM'] = datetime
 
-    post '/v1/rspec_test_inter_resource_calls_b',
-         '{"foo": "required"}',
-         headers
+        post '/v1/rspec_test_inter_resource_calls_b',
+             '{"foo": "required"}',
+             headers
 
-    expect(last_response.status).to eq(422)
-    result = JSON.parse(last_response.body)
-    expect(result['errors'][0]['code']).to eq('platform.malformed')
-    expect(result['errors'][0]['message']).to include('not-a-date')
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to include("header value '#{ datetime }' is an invalid ISO8601 datetime")
+      end
+    end
   end
 
   it 'creates things with callbacks', :check_callbacks => true do
