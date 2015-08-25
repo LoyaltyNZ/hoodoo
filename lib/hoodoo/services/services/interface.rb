@@ -540,7 +540,7 @@ module Hoodoo; module Services
     # ...and that's all. There are no parameters or blocks needed.
     #
     def update_same_as_create
-      self.class.send( :to_update=, self.class.to_create )
+      self.send( :to_update, & self.class.to_create().get_schema_definition() )
     end
 
     # Declares custom errors that are part of this defined interface. This

@@ -42,7 +42,7 @@ class RSpecTestInterfaceInterfaceB < Hoodoo::Services::Interface
 
     to_create do
       text :one
-      text :two
+      text :two, :required => true
     end
 
     update_same_as_create
@@ -104,12 +104,23 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.errors_for.describe('transaction.duplicate_transaction')).to eq({'status' => 409, 'message' => 'Duplicate transaction', 'required' => [ :client_uid ]})
     end
 
-    # This is just testing #update_same_as_create
-    #
     it 'should be correctly configured (B)' do
+
+      # Check that to_create has 'required' fields present.
+      #
+      expect(RSpecTestInterfaceInterfaceB.to_create).to_not be_nil
+      expect(RSpecTestInterfaceInterfaceB.to_create.get_schema().properties['two'].required).to be(true)
+
+      # Test #update_same_as_create.
+      #
       expect(RSpecTestInterfaceInterfaceB.to_update).to_not be_nil
       expect(RSpecTestInterfaceInterfaceB.to_update.get_schema().properties['one']).to be_a(Hoodoo::Presenters::Text)
       expect(RSpecTestInterfaceInterfaceB.to_update.get_schema().properties['two']).to be_a(Hoodoo::Presenters::Text)
+
+      # Tests both to_update / update_same_as_create not having 'required'
+      # fields enforced.
+      #
+      expect(RSpecTestInterfaceInterfaceB.to_update.get_schema().properties['two'].required).to be(false)
     end
   end
 
