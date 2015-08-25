@@ -1794,22 +1794,26 @@ module Hoodoo; module Services
       dated_at   = interaction.rack_request.env[ 'HTTP_X_DATED_AT'   ]
       dated_from = interaction.rack_request.env[ 'HTTP_X_DATED_FROM' ]
 
-      begin
-        interaction.context.request.dated_at = dated_at
-      rescue
-        interaction.context.response.errors.add_error(
-          'platform.malformed',
-          'message' => "X-Dated-At header value '#{ dated_at }' is an invalid ISO8601 datetime"
-        )
+      unless dated_at.nil?
+        if  Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_at )
+          interaction.context.request.dated_at = dated_at
+        else
+          interaction.context.response.errors.add_error(
+            'platform.malformed',
+            'message' => "X-Dated-At header value '#{ dated_at }' is an invalid ISO8601 datetime"
+          )
+        end
       end
 
-      begin
-        interaction.context.request.dated_from = dated_from
-      rescue
-        interaction.context.response.errors.add_error(
-          'platform.malformed',
-          'message' => "X-Dated-From header value '#{ dated_from }' is an invalid ISO8601 datetime"
-        )
+      unless dated_from.nil?
+        if Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_from )
+          interaction.context.request.dated_from = dated_from
+        else
+          interaction.context.response.errors.add_error(
+            'platform.malformed',
+            'message' => "X-Dated-From header value '#{ dated_from }' is an invalid ISO8601 datetime"
+          )
+        end
       end
     end
 
