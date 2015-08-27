@@ -37,6 +37,7 @@ module Hoodoo
             @description.discovery_result = @discovery_result
             @description.endpoint_uri     = @discovery_result.endpoint_uri
             @description.proxy_uri        = @discovery_result.proxy_uri
+            @description.ca_file          = @discovery_result.ca_file
           end
 
         public
@@ -100,9 +101,10 @@ module Hoodoo
 
           def do_http( description_of_request )
 
-            action = description_of_request.action
-            data   = get_data_for_request( description_of_request )
-            proxy  = description_of_request.proxy_uri
+            action  = description_of_request.action
+            data    = get_data_for_request( description_of_request )
+            proxy   = description_of_request.proxy_uri
+            ca_file = description_of_request.ca_file
 
             proxy_host = :ENV
             proxy_port = proxy_user = proxy_pass = nil
@@ -126,13 +128,18 @@ module Hoodoo
             if data.full_uri.scheme == 'https'
               http.use_ssl = true
 
-              # TODO:  Urgent
-              # FIXME: Urgent
-              # http://mislav.uniqpath.com/2013/07/ruby-openssl/
-              # http://notetoself.vrensk.com/2008/09/verified-https-in-ruby/
-              # http://stackoverflow.com/questions/2507902/how-to-validate-ssl-certificate-chain-in-ruby-with-net-http
+              # The verify_mode is *important* - VERIFY_PEER ensures that we always validate
+              # the connection, *and* that the presented SSL Certificate by the endpoint is
+              # verifiable through our CA certificate trust store.
               #
-              http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+              # To use a self-signed cert, you may configure the ca_file to a CA that
+              # includes the self-signed cert, but the verify_mode setting should remain.
+              #
+              http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+
+              if ca_file
+                http.ca_file = ca_file
+              end
             end
 
             request_class = {

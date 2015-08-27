@@ -56,6 +56,20 @@ module Hoodoo
             #
             attr_accessor :proxy_uri
 
+            # An optional String indicating a relative or absolute file
+            # path to the location of a .pem format Certificate
+            # Authority file (trust store), which may include multliple
+            # certificates. The certificates in the file will be used
+            # by Net::HTTP to validate the SSL Ceritificate Chain
+            # presented by remote servers, when calling endpoints over
+            # HTTPS with Hoodoo::Client.
+            #
+            # Default +nil+ value should be used in nearly all cases
+            # and uses Ruby OpenSSL defaults which are generally
+            # Operating System provided.
+            #
+            attr_accessor :ca_file
+
             # Optional Hash of query data.
             #
             attr_accessor :query_hash

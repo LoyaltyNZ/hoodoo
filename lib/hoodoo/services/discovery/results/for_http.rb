@@ -36,6 +36,20 @@ module Hoodoo
         #
         attr_accessor :proxy_uri
 
+        # An optional String indicating a relative or absolute file
+        # path to the location of a .pem format Certificate
+        # Authority file (trust store), which may include multliple
+        # certificates. The certificates in the file will be used
+        # by Net::HTTP to validate the SSL Ceritificate Chain
+        # presented by remote servers, when calling endpoints over
+        # HTTPS with Hoodoo::Client.
+        #
+        # Default +nil+ value should be used in nearly all cases
+        # and uses Ruby OpenSSL defaults which are generally
+        # Operating System provided.
+        #
+        attr_accessor :ca_file
+
         # Create an instance with named parameters as follows:
         #
         # +resource+::     See #resource.
@@ -46,12 +60,14 @@ module Hoodoo
         def initialize( resource:,
                         version:,
                         endpoint_uri:,
-                        proxy_uri: nil )
+                        proxy_uri: nil,
+                        ca_file:   nil )
 
           self.resource     = resource.to_sym
           self.version      = version.to_i
           self.endpoint_uri = endpoint_uri
           self.proxy_uri    = proxy_uri
+          self.ca_file      = ca_file
         end
       end
     end

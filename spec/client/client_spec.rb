@@ -144,6 +144,7 @@ describe Hoodoo::Client do
   before :all do
     @old_test_session = Hoodoo::Services::Middleware.test_session()
     @port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService )
+    @https_port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService, true )
   end
 
   after :all do
@@ -299,6 +300,27 @@ describe Hoodoo::Client do
 
           original_new.call( host, port )
         end
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+      end
+
+      it_behaves_like Hoodoo::Client
+    end
+
+    context 'and with a custom ca_file' do
+      before :each do
+        # Note: the ssl-cert is for 127.0.0.1, localhost doesn't match it
+        base_uri   = "https://127.0.0.1:#{ @https_port }"
+        ca_file    = 'spec/files/ca/ca-cert.pem'
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:  base_uri,
+          ca_file:   ca_file
+        )
 
         set_vars_for(
           base_uri:     base_uri,
