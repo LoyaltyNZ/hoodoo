@@ -1250,7 +1250,7 @@ module Hoodoo; module Services
     def respond_for( interaction, preflight = false )
       interaction.context.response.body = '' if preflight
 
-      rack_data = interaction.context.response.for_rack( preflight )
+      rack_data = interaction.context.response.for_rack()
       log_outbound_response( interaction, rack_data )
 
       return rack_data

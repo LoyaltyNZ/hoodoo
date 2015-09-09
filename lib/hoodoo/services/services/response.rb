@@ -55,7 +55,9 @@ module Hoodoo; module Services
     # API call response body data using this #body / #body= accessor. This is
     # converted to a client-facing representation automatically (e.g. to JSON).
     #
-    # The response body *MUST* be either a *Ruby Array* or a *Ruby Hash*.
+    # The response body *MUST* be either a Ruby +Array+ or a Ruby +Hash+.
+    # For *internal* *use* *only* a Ruby +String+ of pre-encoded response data
+    # is also accepted.
     #
     # This method is aliased as #set_resource, for semantic use when you want
     # to set the response body to a representation (as a Hash) of a resource.
@@ -263,13 +265,7 @@ module Hoodoo; module Services
     # middleware or applications. Usually, this is only called directly by
     # Hoodoo::Services::Middleware.
     #
-    # +preencoded+:: Optional. If +true+, this object's body data is already
-    #                encoded into the required format - JSON, XML etc.
-    #                encoding of an Array or Hash is bypassed. Ignored if the
-    #                response contains errors, as those override body data.
-    #                Default is +false+ - body data requires encoding.
-    #
-    def for_rack( preencoded = false )
+    def for_rack
 
       rack_response = Rack::Response.new
 
@@ -278,7 +274,6 @@ module Hoodoo; module Services
       if @errors.has_errors?
         http_status_code = @errors.http_status_code
         body_data        = @errors.render( @interaction_id )
-        preencoded       = false
       else
         http_status_code = @http_status_code
         body_data        = @body
@@ -292,15 +287,16 @@ module Hoodoo; module Services
       if body_data.is_a?( ::Array )
         response_hash = { '_data' => body_data }
         response_hash[ '_dataset_size' ] = @dataset_size unless @dataset_size.nil?
+        response_string = ::JSON.generate( response_hash )
+      elsif body_data.is_a?( ::Hash )
+        response_string = ::JSON.generate( body_data )
+      elsif body_data.is_a?( ::String )
+        response_string = body_data
       else
-        response_hash = body_data
+        raise "Hoodoo::Services::Response\#for_rack given unrecognised body data class '#{ body_data.class.name }'"
       end
 
-      if preencoded
-        rack_response.write( body_data )
-      else
-        rack_response.write( ::JSON.generate( response_hash ) )
-      end
+      rack_response.write( response_string )
 
       # Finally, sort out the headers
 

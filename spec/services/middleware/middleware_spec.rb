@@ -1150,6 +1150,30 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('_reference: one\\, two')
       end
+
+      context 'with X-Instance-Might-Exist' do
+        before(:each) do
+          expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:create).once do | ignored_rspec_mock_instance, context |
+            context.response.add_error(
+              'generic.invalid_duplication',
+              {
+                :message   => 'testing duplication',
+                :reference => { :field_name => 'test_field' }
+              }
+            )
+          end
+        end
+
+        it 'handles "yes"' do
+          post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                                                                                   'HTTP_X_INSTANCE_MIGHT_EXIST' => 'yes' }
+
+          expect(last_response.status).to eq(204)
+          expect(last_response.headers['X-Instance-Did-Exist']).to eq ('yes')
+          expect(last_response.body).to be_empty
+        end
+      end
+
     end
 
     # -------------------------------------------------------------------------
