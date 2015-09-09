@@ -14,24 +14,36 @@ module Hoodoo
       require 'active_record'
 
       # While individual ActiveRecord mixins can be included as and
-      # when needed, if you want the set of mixins, just define a model which
-      # subclasses from this Hoodoo::ActiveRecord::Base class instead
-      # of ActiveRecord::Base.
+      # when needed, if you want the set of mixins, just define a model
+      # which subclasses from this Hoodoo::ActiveRecord::Base class
+      # instead of ActiveRecord::Base.
       #
       # This will include:
       #
-      # * Hoodoo::ActiveRecord::UUID
       # * Hoodoo::ActiveRecord::Secure
+      # * Hoodoo::ActiveRecord::Dated
+      # * Hoodoo::ActiveRecord::Translated
       # * Hoodoo::ActiveRecord::Finder
+      # * Hoodoo::ActiveRecord::UUID
+      # * Hoodoo::ActiveRecord::Writer
       # * Hoodoo::ActiveRecord::ErrorMapping
       #
       class Base < ::ActiveRecord::Base
 
-        include Hoodoo::ActiveRecord::UUID
+        # Reading data.
+        #
         include Hoodoo::ActiveRecord::Secure
         include Hoodoo::ActiveRecord::Dated
         include Hoodoo::ActiveRecord::Translated
         include Hoodoo::ActiveRecord::Finder
+
+        # Writing data.
+        #
+        include Hoodoo::ActiveRecord::UUID
+        include Hoodoo::ActiveRecord::Writer
+
+        # Other features.
+        #
         include Hoodoo::ActiveRecord::ErrorMapping
 
         # Tells ActiveRecord this is not a model that is persisted.
@@ -51,6 +63,8 @@ module Hoodoo
           Hoodoo::ActiveRecord::Dated.instantiate( model )
           Hoodoo::ActiveRecord::Translated.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
+
+          Hoodoo::ActiveRecord::Writer.instantiate( model )
 
           super( model )
 

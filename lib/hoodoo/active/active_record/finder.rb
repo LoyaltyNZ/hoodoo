@@ -87,8 +87,8 @@ module Hoodoo
 
         # Create an instance of this model with knowledge of the wider request
         # context. This may lead to important things like support of inbound
-        # "dated_from" values, automatic idempotency protection and so-on,
-        # depending upon the Hoodoo mixins included (or not) by this class.
+        # "dated_from" values, depending upon the Hoodoo mixins included (or
+        # not) by this class.
         #
         # You use this exactly as you would for ActiveRecord::Core#new, but an
         # additional, mandatory first parameter providing the request context
