@@ -103,7 +103,7 @@ RSpec.configure do | config |
   ActiveRecord::Base.establish_connection(
     :adapter  => 'postgresql',
     :database => database_name,
-    :username => ENV['DATABASE_USER']
+    :username => ENV[ 'DATABASE_USER' ]
   )
 
   # Blow away the database afterwards.
