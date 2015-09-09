@@ -1256,6 +1256,32 @@ module Hoodoo; module Services
       return rack_data
     end
 
+    # When a request includes an <tt>X-Instance-Might-Exist</tt> header
+    # and a service returns a result that includes any errors, we detect
+    # any in the collection without a code of +generic.invalid_duplication+.
+    #
+    # If we find any then normal error handling continues, otherwise the
+    # errors are cleared, an HTTP response code of 204 is setup in the
+    # +response+ object and body data is cleared.
+    #
+    def remove_duplication_errors_from_response( interaction )
+      other_errors = interaction.context.response.errors.errors.detect do | error_hash |
+        error_hash[ 'code' ] != 'generic.invalid_duplication'
+      end
+
+      if other_errors.nil?
+        interaction.context.response.errors           = Hoodoo::Errors.new()
+        interaction.context.response.http_status_code = 204
+        interaction.context.response.body             = ''
+
+        interaction.context.response.add_header(
+          'X-Instance-Did-Exist',
+          "yes",
+          true # Overwrite
+        )
+      end
+    end
+
     # Announce the presence of the service endpoints to known interested
     # parties.
     #
@@ -1463,6 +1489,7 @@ module Hoodoo; module Services
       deal_with_content_type_header( interaction )
       deal_with_language_header( interaction )
       deal_with_dating_headers( interaction )
+      deal_with_utility_headers( interaction )
 
       # Load the session and then, in the context of a loaded session,
       # check to see if the request includes any secured HTTP headers.
@@ -1671,6 +1698,10 @@ module Hoodoo; module Services
           block.call
         end
 
+        if context.request.instance_might_exist && context.response.halt_processing?
+          remove_duplication_errors_from_response( interaction )
+        end
+
         log_call_result( interaction )
 
       end # "Benchmark.realtime do"
@@ -1815,6 +1846,16 @@ module Hoodoo; module Services
           )
         end
       end
+    end
+
+    # Extract various general utility headers from the client and
+    # (if present) store relevant information in the request data.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
+    #
+    def deal_with_utility_headers( interaction )
+      interaction.context.request.instance_might_exist = interaction.rack_request.env[ 'HTTP_X_INSTANCE_MIGHT_EXIST' ] == 'yes'
     end
 
     # Check the inbound request for anything in the SECURED_HEADERS set of
