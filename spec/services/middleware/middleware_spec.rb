@@ -1169,8 +1169,18 @@ describe Hoodoo::Services::Middleware do
                                                                                    'HTTP_X_INSTANCE_MIGHT_EXIST' => 'yes' }
 
           expect(last_response.status).to eq(204)
-          expect(last_response.headers['X-Instance-Did-Exist']).to eq ('yes')
+          expect(last_response.headers['X-Instance-Did-Exist']).to eq('yes')
           expect(last_response.body).to be_empty
+        end
+
+        ['Yes', 'No', 'no', 'foo', 'bar', 'yes '].each do | invalid_value |
+          it "ignores values of any kind that are not #{invalid_value}" do
+            post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                                                                                     'HTTP_X_INSTANCE_MIGHT_EXIST' => invalid_value }
+
+            expect(last_response.status).to eq(422)
+            expect(last_response.headers).to_not include('X-Instance-Did-Exist')
+          end
         end
       end
 
