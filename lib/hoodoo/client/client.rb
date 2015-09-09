@@ -326,8 +326,8 @@ module Hoodoo
       #
       def resource( resource, version = 1, options = {} )
 
-        locale     = options[ :locale   ] || @locale
-        dated_at   = options[ :dated_at ]
+        locale     = options[ :locale     ] || @locale
+        dated_at   = options[ :dated_at   ]
         dated_from = options[ :dated_from ]
 
         endpoint = Hoodoo::Client::Endpoint.endpoint_for(

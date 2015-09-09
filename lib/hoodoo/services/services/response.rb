@@ -66,7 +66,7 @@ module Hoodoo; module Services
     # in addition to just the Array containing a page of list data.
     #
     attr_accessor :body
-    alias_method  :set_resource,:body=
+    alias_method  :set_resource, :body=
 
     # Read back a the dataset size given by a prior call to #set_resources,
     # or +nil+ if none has been provided (either the response contains no
