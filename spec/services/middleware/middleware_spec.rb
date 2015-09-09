@@ -1174,7 +1174,7 @@ describe Hoodoo::Services::Middleware do
         end
 
         ['Yes', 'No', 'no', 'foo', 'bar', 'yes '].each do | invalid_value |
-          it "ignores values of any kind that are not #{invalid_value}" do
+          it "ignores invalid value #{invalid_value}" do
             post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
                                                                                      'HTTP_X_INSTANCE_MIGHT_EXIST' => invalid_value }
 
