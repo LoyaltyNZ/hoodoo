@@ -1882,14 +1882,14 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   context 'when dated_at is an invalid datetime' do
     datetimes = [
-              "2015-01-01T01:00:00+0100",
-              "2015-01-01T01:00:00-0100",
-              "2015-01T01:00:00+01:00",
-              "2015-001-01T01:00:00-32:00",
-              "2015-01T01:00:00-2900",
-              "2015-01-01",
-              "not-a-date"
-             ]
+                  "2015-01-01T01:00:00+0100",
+                  "2015-01-01T01:00:00-0100",
+                  "2015-01T01:00:00+01:00",
+                  "2015-001-01T01:00:00-32:00",
+                  "2015-01T01:00:00-2900",
+                  "2015-01-01",
+                  "not-a-date"
+                ]
     datetimes.each do |datetime|
       it "complains about a bad X-Dated-At header of #{datetime}" do
         headers = headers_for('en-nz', DateTime.now)
@@ -2024,14 +2024,14 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   context 'when dated_from is an invalid datetime' do
     datetimes = [
-              "2015-01-01T01:00:00+0100",
-              "2015-01-01T01:00:00-0100",
-              "2015-01T01:00:00+01:00",
-              "2015-001-01T01:00:00-32:00",
-              "2015-01T01:00:00-2900",
-              "2015-01-01",
-              "not-a-date"
-             ]
+                  "2015-01-01T01:00:00+0100",
+                  "2015-01-01T01:00:00-0100",
+                  "2015-01T01:00:00+01:00",
+                  "2015-001-01T01:00:00-32:00",
+                  "2015-01T01:00:00-2900",
+                  "2015-01-01",
+                  "not-a-date"
+                ]
     datetimes.each do |datetime|
       it "complains about a bad X-Dated-At header of #{datetime}" do
         headers = headers_for('en-nz', DateTime.now)
