@@ -608,13 +608,10 @@ describe Hoodoo::Services::Middleware do
         'CONTENT_TYPE' => 'application/json; charset=utf-8'
       }
 
-      # This arguably should be "Accept-Language" for reading vs
-      # "Content-Language" for writing, but Hoodoo just reads either
-      # regardless so we don't need to worry for the tests here.
-
-      headers[ 'HTTP_ACCEPT_LANGUAGE' ] = locale unless locale.nil?
-      headers[ 'HTTP_X_DATED_AT'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
-      headers[ 'HTTP_X_DATED_FROM'    ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
+      headers[ 'HTTP_CONTENT_LANGUAGE' ] = locale unless locale.nil?
+      headers[ 'HTTP_ACCEPT_LANGUAGE'  ] = locale unless locale.nil?
+      headers[ 'HTTP_X_DATED_AT'       ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+      headers[ 'HTTP_X_DATED_FROM'     ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
 
       return headers
     end

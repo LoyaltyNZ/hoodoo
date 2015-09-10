@@ -70,53 +70,22 @@ module Hoodoo; module Services
     #
     attr_accessor :locale
 
-    # The requested date-time supplied by the caller for calls to show
-    # or list resources that support historical representation. If +nil+,
-    # the instantaneous internal endpoint target processing time of
-    # 'now' is implied.
+    # Define a series of read and custom write accessors according to the
+    # HTTP_HEADER_OPTIONS_MAP above. For example, a property of "dated_at"
+    # results in a "dated_at" reader, a "dated_at=" writer which calls
+    # Hoodoo::Utilities.rationalise_datetime to clean up the input value
+    # and sets the result into the "@dated_at" instance variable which the
+    # read accessor is expecting to find.
     #
-    attr_reader :dated_at
+    Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
+      attr_reader( description[ :property ] )
 
-    # The requested date-time supplied by the caller for calls to create
-    # resources, for any resource which supports historical representation
-    # retrieval.
-    #
-    # The historical retrieval code (see method #dated_at in this class, and
-    # module Hoodoo::ActiveRecord::Dated) will be able to find the database
-    # record for any requested time on or after this date _but not before_.
-    # The date may be in the past or future; a record might exist in the
-    # database, but not be visible until the dated-from creation time comes
-    # to pass.
-    #
-    # The value is +nil+ if no special creation time is requested - implies
-    # whatever value of "now" applies at instant of processing the resource
-    # creation action at whatever persistence layer is in use.
-    #
-    attr_reader :dated_from
-
-    # Writer for #dated_at which accepts a Time instance, DateTime instance
-    # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
-    # the given input parameter is run through this processing function.
-    #
-    # Invalid date/time strings can lead to an exception. If you want to
-    # avoid catching an exception, use
-    # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
-    # input type before calling here.
-    #
-    # +input+:: Time, DateTime or String - run through
-    #           Hoodoo::Utilities#rationalise_datetime to generate a
-    #           DateTime instance or raise an exception.
-    #
-    def dated_at=( input )
-      @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
-    end
-
-    # As #dated_at=, but used to set the value returned by #dated_from.
-    #
-    # +input+:: As for #dated_at=
-    #
-    def dated_from=( input )
-      @dated_from = Hoodoo::Utilities.rationalise_datetime( input )
+      define_method( "#{ description[ :property ] }=" ) do | parameter |
+        instance_variable_set(
+          "@#{ description[ :property ] }",
+          description[ :property_proc ].call( parameter )
+        )
+      end
     end
 
     # When a caller provides an <tt>X-Instance-Might-Exist</tt> header this

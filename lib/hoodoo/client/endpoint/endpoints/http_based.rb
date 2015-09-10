@@ -202,7 +202,8 @@ module Hoodoo
 
             headers = {
               'Content-Type'     => 'application/json; charset=utf-8',
-              'Content-Language' => self.locale() || 'en-nz' # Locale comes from Endpoint superclass
+              'Content-Language' => self.locale() || 'en-nz', # Locale comes from Endpoint superclass
+              'Accept-Language'  => self.locale() || 'en-nz'
             }
 
             # Interaction comes from Endpoint superclass.
@@ -222,13 +223,19 @@ module Hoodoo
               headers[ 'X-Session-ID'] = self.session_id()
             end
 
-            # Historical dating comes from the Endpoint superclass.
+            # A suite of options is defined by a constant in the Endpoint
+            # superclass.
             #
-            unless self.dated_at().nil?
-              headers[ 'X-Dated-At' ] = Hoodoo::Utilities.nanosecond_iso8601( self.dated_at() )
-            end
-            unless self.dated_from().nil?
-              headers[ 'X-Dated-From' ] = Hoodoo::Utilities.nanosecond_iso8601( self.dated_from() )
+            HEADER_TO_PROPERTY.each do | rack_header, description |
+              header_name = description[ :header      ]
+              header_proc = description[ :header_proc ]
+              property    = description[ :property    ]
+
+              property_value = self.send( property )
+
+              unless property_value.nil?
+                headers[ header_name ] = header_proc.call( property_value )
+              end
             end
 
             data             = DataForRequest.new

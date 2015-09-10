@@ -1828,13 +1828,10 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       'CONTENT_TYPE'          => 'application/json; charset=utf-8'
     }
 
-    # This arguably should be "Accept-Language" for reading vs
-    # "Content-Language" for writing, but Hoodoo just reads either
-    # regardless so we don't need to worry for the tests here.
-
-    headers[ 'HTTP_ACCEPT_LANGUAGE' ] = locale unless locale.nil?
-    headers[ 'HTTP_X_DATED_AT'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
-    headers[ 'HTTP_X_DATED_FROM'    ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
+    headers[ 'HTTP_CONTENT_LANGUAGE' ] = locale unless locale.nil?
+    headers[ 'HTTP_ACCEPT_LANGUAGE'  ] = locale unless locale.nil?
+    headers[ 'HTTP_X_DATED_AT'       ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+    headers[ 'HTTP_X_DATED_FROM'     ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
 
     return headers
   end
@@ -1991,7 +1988,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.ident).to be_nil
         expect(context.request.locale).to eq(locale || 'en-nz')
         expect(context.request.dated_at).to eq(nil)
-        expect(context.request.dated_from).to eq(nil) # No auto-passthrough of dated_from
+        expect(context.request.dated_from).to eq(dated_from)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, result |

@@ -371,5 +371,8 @@ module Hoodoo
 
       end
     end
+
+    def self.rationalise_uuid( input )
+    end
   end
 end

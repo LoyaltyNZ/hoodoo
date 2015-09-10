@@ -531,6 +531,23 @@ module Hoodoo; module Services
       resource = resource.to_sym
       version  = version.to_i
 
+      # Build a Hash of any options which should be transferred from one
+      # endpoint to another for inter-resource calls, along with other
+      # options common to local and remote endpoints.
+
+      endpoint_options = {
+        :interaction => interaction,
+        :locale      => interaction.context.request.locale,
+      }
+
+      Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+
+        if description[ :auto_transfer ] == true
+          endpoint_options[ property ] = interaction.context.request.send( property )
+        end
+      end
+
       if @discoverer.is_local?( resource, version )
 
         # For local inter-resource calls, return the middleware's endpoint
@@ -545,20 +562,12 @@ module Hoodoo; module Services
           raise "Hoodoo::Services::Middleware\#inter_resource_endpoint_for: Internal error - version #{ version } of resource #{ resource } endpoint is local according to the discovery engine, but no local service discovery record can be found"
         end
 
-        # Note that we automatically cascade dated_at (for reading data
-        # at a given historical date) but don't automatically cascade
-        # dated_from (for creating data with a specified date). It does
-        # not make sense in most cases to do so.
+        endpoint_options[ :discovery_result ] = discovery_result
 
         return Hoodoo::Services::Middleware::InterResourceLocal.new(
           resource,
           version,
-          {
-            :interaction      => interaction,
-            :locale           => interaction.context.request.locale,
-            :dated_at         => interaction.context.request.dated_at,
-            :discovery_result => discovery_result
-          }
+          endpoint_options
         )
 
       else
@@ -570,19 +579,14 @@ module Hoodoo; module Services
         # (e.g. session permission augmentation) and the result needs
         # extra processing before it is returned to the caller (e.g.
         # delete an augmented session, annotate any errors from call).
-        #
-        # As with local calls, dated_at is cascaded but dated_from is not.
+
+        endpoint_options[ :discoverer ] = @discoverer
+        endpoint_options[ :session    ] = interaction.context.session
 
         wrapped_endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
           version,
-          {
-            :discoverer  => @discoverer,
-            :interaction => interaction,
-            :session     => interaction.context.session,
-            :locale      => interaction.context.request.locale,
-            :dated_at    => interaction.context.request.dated_at
-          }
+          endpoint_options
         )
 
         if wrapped_endpoint.is_a?( Hoodoo::Client::Endpoint::AMQP ) && defined?( @@alchemy )
@@ -659,17 +663,13 @@ module Hoodoo; module Services
                               body_hash:  nil,
                               query_hash: nil )
 
-      interface      = discovery_result.interface_class
-      implementation = discovery_result.implementation_instance
-
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
       # parsed an inbound HTTP request and a response object that contains
       # the usual default data.
 
-      env = {
-        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
-      }
+      interface      = discovery_result.interface_class
+      implementation = discovery_result.implementation_instance
 
       # Need to possibly augment the caller's session - same rationale
       # as #local_service_remote, so see that for details.
@@ -686,8 +686,12 @@ module Hoodoo; module Services
         return hash
       end
 
+      mock_rack_env = {
+        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
+      }
+
       local_interaction = Hoodoo::Services::Middleware::Interaction.new(
-        env,
+        mock_rack_env,
         self,
         session
       )
@@ -704,9 +708,11 @@ module Hoodoo; module Services
 
       # Carry through any endpoint-specified request orientated attributes.
 
-      local_request.locale     = endpoint.locale
-      local_request.dated_at   = endpoint.dated_at
-      local_request.dated_from = endpoint.dated_from
+      local_request.locale = endpoint.locale
+
+      Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each_key do | property |
+        local_request.send( "#{ property }=", endpoint.send( property ) )
+      end
 
       # Initialise the response data.
 
@@ -730,6 +736,27 @@ module Hoodoo; module Services
 
       local_interaction.requested_action = action
       authorisation                      = determine_authorisation( local_interaction )
+
+      # In addition, check security on any would-have-been-a-secured-header
+      # property.
+
+      return add_local_errors.call() if local_response.halt_processing?
+
+      Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
+        next if description[ :secured ] != true
+        next if endpoint.send( description[ :property ] ).nil?
+
+        if session.nil? ||
+           session.respond_to?( :scoping ) == false ||
+           session.scoping.respond_to?( :authorised_http_headers ) == false ||
+           session.scoping.authorised_http_headers.nil? ||
+           session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
+           session.scoping.authorised_http_headers.include?( rack_header ) == false
+
+          local_response.errors.add_error( 'platform.forbidden' )
+          return
+        end
+      end
 
       return add_local_errors.call() if local_response.halt_processing?
 
@@ -1896,7 +1923,7 @@ module Hoodoo; module Services
          session.respond_to?( :scoping ) == false ||
          session.scoping.respond_to?( :authorised_http_headers ) == false ||
          session.scoping.authorised_http_headers.nil? ||
-         session.scoping.authorised_http_headers.empty?
+         session.scoping.authorised_http_headers.respond_to?( :include? ) == false
 
         interaction.context.response.errors.add_error( 'platform.forbidden' )
         return
