@@ -112,10 +112,6 @@ module Hoodoo
         error 'invalid_array',          status: 422, message: 'Invalid array',                 reference: [ :field_name ]
         error 'invalid_object',         status: 422, message: 'Invalid object',                reference: [ :field_name ]
         error 'invalid_hash',           status: 422, message: 'Invalid hash',                  reference: [ :field_name ]
-        # In the case of a invalid_duplication error and the X-Instance-Might-Exist set to yes in the header we will
-        # return a 204 instead of a 422.
-        #
-        # Please see Hoodoo::Services::Middleware#remove_duplication_errors_from_response for implementation.
         error 'invalid_duplication',    status: 422, message: 'Duplicates not allowed',        reference: [ :field_name ]
         error 'invalid_state',          status: 422, message: 'State transition not allowed',  reference: [ :destination_state ]
         error 'invalid_parameters',     status: 422, message: 'Invalid parameters'
