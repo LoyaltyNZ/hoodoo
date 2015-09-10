@@ -1877,7 +1877,6 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect( ActiveRecord::Base ).to receive( :connection_pool ).twice.and_call_original
     expect( pool               ).to receive( :with_connection ).twice.and_call_original
 
-
     list_things()
   end
 
