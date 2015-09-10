@@ -99,6 +99,17 @@ module Hoodoo
 
         private
 
+          # Make real HTTP(S) request to a target resource and return the
+          # result as a Hoodoo::Client::AugmentedArray (for 'list' calls) or
+          # Hoodoo::Client::AugumentedHash (for all other calls) instance.
+          #
+          # +description_of_request+:: A Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest
+          #                            instance with all the request details
+          #                            set inside. The +discovery_data+ field
+          #                            must refer to a
+          #                            Hoodoo::Services::Discovery::ForHTTP
+          #                            instance (not re-checked internally).
+          #
           def do_http( description_of_request )
 
             action  = description_of_request.action
