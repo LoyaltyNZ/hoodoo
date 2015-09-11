@@ -226,12 +226,12 @@ module Hoodoo
             # A suite of options is defined by a constant in the Endpoint
             # superclass.
             #
-            HEADER_TO_PROPERTY.each do | rack_header, description |
+            Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
               header_name = description[ :header      ]
               header_proc = description[ :header_proc ]
               property    = description[ :property    ]
 
-              property_value = self.send( property )
+              property_value  = self.send( property )
 
               unless property_value.nil?
                 headers[ header_name ] = header_proc.call( property_value )

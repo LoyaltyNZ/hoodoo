@@ -124,33 +124,6 @@ module Hoodoo; module Services
     #
     PROHIBITED_INBOUND_FIELDS = Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys
 
-    # A request will be rejected if it includes an HTTP header from this list
-    # (expressed _precisely_ as it would appear in a Rack request) unless:
-    #
-    # * There is a session in use which includes a +scoping+ section
-    # * The +scoping+ session in turn has an +authorised_http_headers+ section
-    #   consisting of an Array of Strings
-    # * At least one of those Strings matches the header name that the inbound
-    #   request is attempting to use, again in the identical Rack request
-    #   formatting.
-    #
-    # Rack request formatting means the header name is in upper case, with any
-    # hyphens converted to underscores, and with a prefix of "HTTP_" added for
-    # _most_ headers. For more information, see the Rack specification:
-    #
-    # * https://github.com/rack/rack
-    # * https://github.com/rack/rack/blob/master/SPEC
-    #
-    SECURED_HEADERS = Set.new( [
-
-      # This header is ignored except in POST (resource creation) requests. It
-      # asks that the "id" field (UUID) for the persisted resource instance is
-      # of the given value, rather than automatically generated.
-      #
-      'HTTP_X_RESOURCE_UUID'
-
-    ] )
-
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
     # DOS attempts to consume RAM.
     #
@@ -195,6 +168,136 @@ module Hoodoo; module Services
         'default' => { 'else' => Hoodoo::Services::Permissions::ALLOW }
       } ).to_h
     } )
+
+    # Various "X-Foo"-style HTTP headers specified in the Hoodoo API
+    # Specification have special meanings and values for those need to be
+    # set up in request data and Hoodoo::Client endpoints. Processing
+    # around these is data driven by this mapping Hash.
+    #
+    # Keys are the HTTP header names in Rack (upper case, "HTTP_"-prefix)
+    # format. Values are options bundles as follows:
+    #
+    # +property+::        The property name to be associated with the header,
+    #                     as a Symbol.
+    #
+    # +property_proc+::   A Proc that's called to clean up an input
+    #                     value if +property+ is written to, which is given
+    #                     the input value and returns a cleaned up value or
+    #                     *raises* *an* *exception* if it thinks the input is
+    #                     invalid and unrecoverable.
+    #
+    # +validation_proc+:: A Proc that's called to validate an input value
+    #                     to make sure that it's basically sound. Is passed
+    #                     a raw inbound header value and must return +true+
+    #                     or +false+.
+    #
+    # +header+::          For speed in lookups where it's needed, this is the
+    #                     "real" (not Rack format) HTTP header name.
+    #
+    # +header_proc+::     A Proc that's called to convert a cleaned-up value
+    #                     set in the +property+ by its +property_proc+. It
+    #                     is called with this value and returns an equivalent
+    #                     appropriate value for use with the HTTP header
+    #                     given in +header+. This _MUST_ always be a String.
+    #
+    # +secured+::         Optional, default +nil+. If +true+, marks that
+    #                     this header and its associated value can only be
+    #                     processed if there is a Session with a Caller that
+    #                     has an +authorised_http_headers+ entry for this
+    #                     header.
+    #
+    # +auto_transfer+::   Optional, default +nil+. Only relevant to
+    #                     inter-resource call scenarios. If +true+, when one
+    #                     resource calls another, the value of this property
+    #                     is automatically transferred to the downstream
+    #                     resource. Otherwise, it is not, and the downstream
+    #                     resource will operate under whatever defaults are
+    #                     present. An inter-resource call endpoint which
+    #                     inherits an auto-transfer property can always have
+    #                     this property explicitly overwritten before any
+    #                     calls are made through it.
+    #
+    # An additional key of +:property_writer+ will be set up automatically
+    # which contains the value of the +:property+ key with an "=" sign added,
+    # resulting in the name of a write accessor method for that property.
+    #
+    HEADER_TO_PROPERTY =
+    {
+      # Take care not to define any property name which clashes with an
+      # option in any other part of this entire system where these "other
+      # options" get merged in. A project search for
+      # 'HEADER_TO_PROPERTY' in comments should find those.
+
+      'HTTP_X_RESOURCE_UUID' => {
+        :property        => :resource_uuid,
+        :property_proc   => -> ( value ) { Hoodoo::Utilities.rationalise_uuid( value ) },
+        :validation_proc => -> ( value ) { Hoodoo::UUID.valid?( value ) },
+        :header          => 'X-Resource-UUID',
+        :header_proc     => -> ( value ) { value.to_s },
+
+        :secured         => true
+      },
+
+      'HTTP_X_DATED_AT' => {
+        :property        => :dated_at,
+        :property_proc   => -> ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) },
+        :validation_proc => -> ( value ) { Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) },
+        :header          => 'X-Dated-At',
+        :header_proc     => -> ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) },
+
+        :auto_transfer   => true,
+      },
+
+      'HTTP_X_DATED_FROM' => {
+        :property        => :dated_from,
+        :property_proc   => -> ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) },
+        :validation_proc => -> ( value ) { Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) },
+        :header          => 'X-Dated-From',
+        :header_proc     => -> ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) },
+
+        :auto_transfer   => true,
+      },
+
+      'HTTP_X_INSTANCE_MIGHT_EXIST' => {
+        :property        => :instance_might_exist,
+        :property_proc   => -> ( value ) { value == 'yes' || value == true ? true : false },
+        :validation_proc => -> ( value ) { true }, # Anything is valid
+        :header          => 'X-Instance-Might-Exist',
+        :header_proc     => -> ( value ) { value == true ? 'yes' : 'no' },
+      },
+    }
+
+    # For speed, fill in a "property_writer" value, where "foo" becomes
+    # "foo=" - otherwise this has to be done in lots of speed-sensitive
+    # code sections.
+    #
+    HEADER_TO_PROPERTY.each_value do | value |
+      value[ :property_writer ] = "#{ value[ :property ] }="
+    end
+
+    # Define a series of read and custom write accessors according to the
+    # HTTP_HEADER_OPTIONS_MAP. For example, a property of "dated_at" results
+    # in a <tt>dated_at</tt> reader, a <tt>dated_at=</tt> writer which calls
+    # Hoodoo::Utilities.rationalise_datetime to clean up the input value
+    # and sets the result into the <tt>@dated_at</tt> instance variable which
+    # the read accessor will be expecting to use.
+    #
+    # +klass+:: The Class to which the instance methods will be added.
+    #
+    def self.define_accessors_for_header_equivalents( klass )
+      klass.class_eval do
+        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+          attr_reader( description[ :property ] )
+
+          define_method( "#{ description[ :property ] }=" ) do | parameter |
+            instance_variable_set(
+              "@#{ description[ :property ] }",
+              description[ :property_proc ].call( parameter )
+            )
+          end
+        end
+      end
+    end
 
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
@@ -540,7 +643,7 @@ module Hoodoo; module Services
         :locale      => interaction.context.request.locale,
       }
 
-      Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
         property = description[ :property ]
 
         if description[ :auto_transfer ] == true
@@ -710,8 +813,13 @@ module Hoodoo; module Services
 
       local_request.locale = endpoint.locale
 
-      Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
-        local_request.send( "#{ property }=", endpoint.send( property ) )
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property        = description[ :property        ]
+        property_writer = description[ :property_writer ]
+
+        value = endpoint.send( property )
+
+        local_request.send( property_writer, value ) unless value.nil?
       end
 
       # Initialise the response data.
@@ -742,18 +850,24 @@ module Hoodoo; module Services
 
       return add_local_errors.call() if local_response.halt_processing?
 
-      Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+
         next if description[ :secured ] != true
         next if endpoint.send( description[ :property ] ).nil?
 
-        if session.nil? ||
-           session.respond_to?( :scoping ) == false ||
-           session.scoping.respond_to?( :authorised_http_headers ) == false ||
-           session.scoping.authorised_http_headers.nil? ||
-           session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
-           session.scoping.authorised_http_headers.include?( rack_header ) == false
+        real_header = description[ :header ]
 
-          local_response.errors.add_error( 'platform.forbidden' )
+        if (
+             session.respond_to?( :scoping ) == false ||
+             session.scoping.respond_to?( :authorised_http_headers ) == false ||
+             session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
+             (
+               session.scoping.authorised_http_headers.include?( rack_header ) == false &&
+               session.scoping.authorised_http_headers.include?( real_header ) == false
+             )
+           )
+
+           local_response.errors.add_error( 'platform.forbidden' )
           return
         end
       end
@@ -1510,19 +1624,17 @@ module Hoodoo; module Services
       early_exit = deal_with_cors( interaction )
       return early_exit unless early_exit.nil?
 
-      # If we reach here it's a normal request, not CORS preflight. Deal
-      # with unsecured HTTP headers first.
+      # If we reach here it's a normal request, not CORS preflight.
 
       deal_with_content_type_header( interaction )
-      deal_with_language_header( interaction )
-      deal_with_dating_headers( interaction )
-      deal_with_utility_headers( interaction )
+      deal_with_language_headers( interaction )
 
-      # Load the session and then, in the context of a loaded session,
-      # check to see if the request includes any secured HTTP headers.
+      # Load the session and then, in the context of a loaded session, process
+      # any remaining extension ("X-...") HTTP headers, checking up on secured
+      # headers in passing.
 
       load_session_into( interaction )
-      deal_with_authorised_headers( interaction )
+      deal_with_x_headers( interaction )
 
       return nil
     end
@@ -1825,7 +1937,7 @@ module Hoodoo; module Services
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Updated on exit.
     #
-    def deal_with_language_header( interaction )
+    def deal_with_language_headers( interaction )
       lang = interaction.rack_request.env[ 'HTTP_CONTENT_LANGUAGE' ]
       lang = interaction.rack_request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
 
@@ -1839,105 +1951,69 @@ module Hoodoo; module Services
       interaction.context.request.locale = lang.downcase
     end
 
-    # Extract the +X-Dated-At+ and +X-Dated-From+ headers from the client and
-    # (if present) store relevant DateTime instances in the request data.
+    # Extract all +X-Foo+ headers from HEADER_TO_PROPERTY and store relevant
+    # information in the request data based on the header mappings. Security
+    # checks are done for secured headers. Validation is performed according
+    # to validation Procs in the mappings.
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Updated on exit.
     #
-    def deal_with_dating_headers( interaction )
-      interaction.context.request.dated_at   = nil
-      interaction.context.request.dated_from = nil
-
-      dated_at   = interaction.rack_request.env[ 'HTTP_X_DATED_AT'   ]
-      dated_from = interaction.rack_request.env[ 'HTTP_X_DATED_FROM' ]
-
-      unless dated_at.nil?
-        if  Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_at )
-          interaction.context.request.dated_at = dated_at
-        else
-          interaction.context.response.errors.add_error(
-            'platform.malformed',
-            'message' => "X-Dated-At header value '#{ dated_at }' is an invalid ISO8601 datetime"
-          )
-        end
-      end
-
-      unless dated_from.nil?
-        if Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_from )
-          interaction.context.request.dated_from = dated_from
-        else
-          interaction.context.response.errors.add_error(
-            'platform.malformed',
-            'message' => "X-Dated-From header value '#{ dated_from }' is an invalid ISO8601 datetime"
-          )
-        end
-      end
-    end
-
-    # Extract various general utility headers from the client and
-    # (if present) store relevant information in the request data.
-    #
-    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
-    #                 describing the current interaction. Updated on exit.
-    #
-    def deal_with_utility_headers( interaction )
-      interaction.context.request.instance_might_exist = interaction.rack_request.env[ 'HTTP_X_INSTANCE_MIGHT_EXIST' ] == 'yes'
-    end
-
-    # Check the inbound request for anything in the SECURED_HEADERS set of
-    # HTTP headers. If there's any such header in the request, check the
-    # session. If there's no session, no session +scoping+ field or no scoping
-    # +authorised_http_headers+ array, set up a "forbidden" response. If there
-    # is an authorised list in the session, make sure it contains each of the
-    # secured headers in the request; set up a "forbidden" response if any are
-    # missing.
-    #
-    # The method has no return value, but the interaction's response's errors
-    # collection may be updated to reject the request.
-    #
-    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
-    #                 describing the current interaction. Parts of this may
-    #                 be updated on exit.
-    #
-    def deal_with_authorised_headers( interaction )
+    def deal_with_x_headers( interaction )
 
       # Set up some convenience variables
 
       session  = interaction.context.session
       rack_env = interaction.rack_request.env
+      request  = interaction.context.request
 
-      # See if the request includes any secured headers
+      HEADER_TO_PROPERTY.each do | rack_header, description |
 
-      secured_headers_in_request = SECURED_HEADERS.select do | header |
-        rack_env.has_key?( header )
-      end
+        header_value = rack_env[ rack_header ]
+        next if header_value.nil?
 
-      # Early exit for no-work-to-do or immediate-error-case. Note that we
-      # deliberately give no information on why the request was forbidden;
-      # an information disclosure bug would otherwise be present.
+        # Don't do anything else if this header is secured but prohibited.
 
-      return if secured_headers_in_request.empty?
+        real_header = description[ :header ]
 
-      if session.nil? ||
-         session.respond_to?( :scoping ) == false ||
-         session.scoping.respond_to?( :authorised_http_headers ) == false ||
-         session.scoping.authorised_http_headers.nil? ||
-         session.scoping.authorised_http_headers.respond_to?( :include? ) == false
+        if description[ :secured ] == true &&
+           (
+             session.respond_to?( :scoping ) == false ||
+             session.scoping.respond_to?( :authorised_http_headers ) == false ||
+             session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
+             (
+               session.scoping.authorised_http_headers.include?( rack_header ) == false &&
+               session.scoping.authorised_http_headers.include?( real_header ) == false
+             )
+           )
 
-        interaction.context.response.errors.add_error( 'platform.forbidden' )
-        return
-      end
-
-      # Make sure each header is allowed; early exit for any failure.
-
-      authorised_headers = session.scoping.authorised_http_headers
-
-      secured_headers_in_request.each do | secured_header |
-        unless authorised_headers.include?( secured_header )
           interaction.context.response.errors.add_error( 'platform.forbidden' )
           return
         end
+
+        # If we reach here the header is either not secured, or is permitted.
+        # Check to see if the value is OK.
+
+        validation_proc = description[ :validation_proc ]
+
+        if validation_proc.call( header_value ) == false
+          interaction.context.response.errors.add_error(
+            'generic.malformed',
+            {
+              :message   => "#{ real_header } header value '#{ header_value }' is invalid",
+              :reference => { :header_name => real_header }
+            }
+          )
+          return
+        end
+
+        # All good!
+
+        property_writer = description[ :property_writer ]
+        property_value  = description[ :property_proc   ].call( header_value )
+
+        request.send( property_writer, property_value )
+
       end
     end
 

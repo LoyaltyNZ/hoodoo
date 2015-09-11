@@ -70,23 +70,10 @@ module Hoodoo; module Services
     #
     attr_accessor :locale
 
-    # Define a series of read and custom write accessors according to the
-    # HTTP_HEADER_OPTIONS_MAP above. For example, a property of "dated_at"
-    # results in a "dated_at" reader, a "dated_at=" writer which calls
-    # Hoodoo::Utilities.rationalise_datetime to clean up the input value
-    # and sets the result into the "@dated_at" instance variable which the
-    # read accessor is expecting to find.
+    # Define read/write accessors for properties related to "X-Foo"
+    # headers. See the Middleware for details.
     #
-    Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
-      attr_reader( description[ :property ] )
-
-      define_method( "#{ description[ :property ] }=" ) do | parameter |
-        instance_variable_set(
-          "@#{ description[ :property ] }",
-          description[ :property_proc ].call( parameter )
-        )
-      end
-    end
+    Hoodoo::Services::Middleware.define_accessors_for_header_equivalents( self )
 
     # When a caller provides an <tt>X-Instance-Might-Exist</tt> header this
     # will be set to +true+ otherwise it will be +false+.

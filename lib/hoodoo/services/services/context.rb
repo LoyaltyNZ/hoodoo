@@ -106,7 +106,7 @@ module Hoodoo; module Services
       #            If omitted, defaults to the locale set in this Client
       #            instance's constructor.
       #
-      # Others::   See Hoodoo::Client::Endpoint's HEADER_TO_PROPERTY.
+      # Others::   See Hoodoo::Services::Middleware's HEADER_TO_PROPERTY.
       #            For any options in that map which describe themselves as
       #            being automatically transferred from one endpoint to
       #            another, you can prevent this by explicitly pasisng a
@@ -124,9 +124,10 @@ module Hoodoo; module Services
 
         endpoint.locale = options[ :locale ] unless options[ :locale ].nil?
 
-        Hoodoo::Client::Endpoint::HEADER_TO_PROPERTY.each do | rack_header, description |
-          property      = description[ :property      ]
-          auto_transfer = description[ :auto_transfer ]
+        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+          property        = description[ :property        ]
+          property_writer = description[ :property_writer ]
+          auto_transfer   = description[ :auto_transfer   ]
 
           # For automatically transferred options there's no way to stop the
           # auto transfer unless explicitly stating 'nil' to overwrite any
@@ -136,13 +137,12 @@ module Hoodoo; module Services
           # For other properties, 'nil' has no meaning and there's no need to
           # override anything, so use "unless nil?" in that case.
 
-          setter = "#{ property }="
-          value  = options[ property ]
+          value = options[ property ]
 
           if auto_transfer == true
-            endpoint.send( setter, value ) if options.has_key?( property )
+            endpoint.send( property_writer, value ) if options.has_key?( property )
           else
-            endpoint.send( setter, value ) unless value.nil?
+            endpoint.send( property_writer, value ) unless value.nil?
           end
         end
 

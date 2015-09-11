@@ -65,7 +65,8 @@ module Hoodoo
       # +locale+::         Locale string for request/response, e.g. "en-gb".
       #                    Optional. If omitted, defaults to "en-nz".
       #
-      # Others::           See HEADER_TO_PROPERTY.
+      # OTHERS::           See Hoodoo::Services::Middleware's
+      #                    HEADER_TO_PROPERTY.
       #
       # Returns a Hoodoo::Services::Discovery "For..." family member
       # instance (e.g. Hoodoo::Services::Discovery::ForHTTP) which can be
@@ -102,119 +103,10 @@ module Hoodoo
         end
       end
 
-      # A lot of endpoints are based on HTTP. Certain HTTP headers specified
-      # in the Hoodoo API Specification have special meanings and values for
-      # those need to be set up in endpoints. Since some endpoints are *not*
-      # HTTP-based, though, we set this data up using high level constructs
-      # and clean up data, with this map describing how to get from one to
-      # the other.
+      # Define read/write accessors for properties related to "X-Foo"
+      # headers. See the Middleware for details.
       #
-      # Keys are the HTTP header names in Rack (upper case, HTTP-prefix)
-      # format. Values are options bundles as follows:
-      #
-      # +property+::      The property name to be associated with the header,
-      #                   as a Symbol.
-      #
-      # +property_proc+:: A Proc that's called to clean up an input
-      #                   value if +property+ is written to, which is given
-      #                   the input value and returns a cleaned up value or
-      #                   *raises* *an* *exception* if it thinks the input is
-      #                   invalid and unrecoverable.
-      #
-      # +header+::        For speed in lookups where it's needed, this is the
-      #                   "real" (not Rack format) HTTP header name.
-      #
-      # +header_proc+::   A Proc that's called to convert a cleaned-up value
-      #                   set in the +property+ by its +property_proc+. It
-      #                   is called with this value and returns an equivalent
-      #                   appropriate value for use with the HTTP header
-      #                   given in +header+. This _MUST_ always be a String.
-      #
-      # +secured+::       Optional, default +nil+. If +true+, marks that
-      #                   this header and its associated value can only be
-      #                   processed if there is a Session with a Caller that
-      #                   has an +authorised_http_headers+ entry for this
-      #                   header.
-      #
-      # +auto_transfer+:: Optional, default +nil+. Only relevant to
-      #                   inter-resource call scenarios. If +true+, when one
-      #                   resource calls another, the value of this property
-      #                   is automatically transferred to the downstream
-      #                   resource. Otherwise, it is not, and the downstream
-      #                   resource will operate under whatever defaults are
-      #                   present. An inter-resource call endpoint which
-      #                   inherits an auto-transfer property can always have
-      #                   this property explicitly overwritten before any
-      #                   calls are made through it.
-      #
-      HEADER_TO_PROPERTY =
-      {
-        # Take care not to define any property name which clashes with an
-        # option in any other part of this entire system where these "other
-        # options" get merged in. A project search for
-        # 'HEADER_TO_PROPERTY' in comments should find those.
-
-        'HTTP_X_RESOURCE_UUID' => {
-          :property      => :resource_uuid,
-          :property_proc => -> ( value ) { Hoodoo::Utilities.rationalise_uuid( value ) },
-          :header        => 'X-Resource-UUID',
-          :header_proc   => -> ( value ) { value.to_s },
-
-          :secured       => true
-        },
-
-        'HTTP_X_DATED_AT' => {
-          :property      => :dated_at,
-          :property_proc => -> ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) },
-          :header        => 'X-Dated-At',
-          :header_proc   => -> ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) },
-
-          :auto_transfer => true,
-        },
-
-        'HTTP_X_DATED_FROM' => {
-          :property      => :dated_from,
-          :property_proc => -> ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) },
-          :header        => 'X-Dated-From',
-          :header_proc   => -> ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) },
-
-          :auto_transfer => true,
-        },
-
-        'HTTP_X_INSTANCE_MIGHT_EXIST' => {
-          :property      => :instance_might_exist,
-          :property_proc => -> ( value ) { !! value },
-          :header        => 'X-Instance-Might-Exist',
-          :header_proc   => -> ( value ) { value == true ? 'yes' : 'no' },
-        },
-      }
-
-      # For-speed Set derived from HEADER_TO_PROPERTY which contains just
-      # the property names.
-      #
-      PROPERTY_TO_HEADER = Set.new(
-        HEADER_TO_PROPERTY.map do | key, value |
-          value[ :property ]
-        end
-      )
-
-      # Define a series of read and custom write accessors according to the
-      # HTTP_HEADER_OPTIONS_MAP above. For example, a property of "dated_at"
-      # results in a "dated_at" reader, a "dated_at=" writer which calls
-      # Hoodoo::Utilities.rationalise_datetime to clean up the input value
-      # and sets the result into the "@dated_at" instance variable which the
-      # read accessor is expecting to find.
-      #
-      HEADER_TO_PROPERTY.each do | rack_header, description |
-        attr_reader( description[ :property ] )
-
-        define_method( "#{ description[ :property ] }=" ) do | parameter |
-          instance_variable_set(
-            "@#{ description[ :property ] }",
-            description[ :property_proc ].call( parameter )
-          )
-        end
-      end
+      Hoodoo::Services::Middleware.define_accessors_for_header_equivalents( self )
 
       # The resource name passed to the constructor, as a String.
       #
@@ -269,7 +161,8 @@ module Hoodoo
       #
       # +locale+::           As in the options for #endpoint_for.
       #
-      # Others::             See HEADER_TO_PROPERTY.
+      # OTHERS::             See Hoodoo::Services::Middleware's
+      #                      HEADER_TO_PROPERTY.
       #
       # The out-of-the box initialiser sets up the data for the #resource,
       # #version, #discovery_result, #interaction, #session_id, #locale,
@@ -401,11 +294,13 @@ module Hoodoo
           target_endpoint.session_id = self.session_id unless self.session_id.nil?
           target_endpoint.locale     = self.locale     unless self.locale.nil?
 
-          Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
-            setter = "#{ property }="
-            value  = self.send( property )
+          Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+            property        = description[ :property        ]
+            property_writer = description[ :property_writer ]
 
-            target_endpoint.send( setter, value ) unless value.nil?
+            value = self.send( property )
+
+            target_endpoint.send( property_writer, value ) unless value.nil?
           end
         end
 

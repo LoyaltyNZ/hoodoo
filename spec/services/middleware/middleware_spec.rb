@@ -1898,8 +1898,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['code']).to eq('platform.malformed')
-        expect(result['errors'][0]['message']).to include("header value '#{ datetime }' is an invalid ISO8601 datetime")
+        expect(result['errors'][0]['code']).to eq('generic.malformed')
+        expect(result['errors'][0]['message']).to eq("X-Dated-At header value '#{ datetime }' is invalid")
+        expect(result['errors'][0]['reference']).to eq("X-Dated-At")
       end
     end
   end
@@ -2040,8 +2041,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
         expect(last_response.status).to eq(422)
         result = JSON.parse(last_response.body)
-        expect(result['errors'][0]['code']).to eq('platform.malformed')
-        expect(result['errors'][0]['message']).to include("header value '#{ datetime }' is an invalid ISO8601 datetime")
+        expect(result['errors'][0]['code']).to eq('generic.malformed')
+        expect(result['errors'][0]['message']).to eq("X-Dated-From header value '#{ datetime }' is invalid")
+        expect(result['errors'][0]['reference']).to eq("X-Dated-From")
       end
     end
   end

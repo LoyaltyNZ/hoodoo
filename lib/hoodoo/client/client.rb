@@ -308,7 +308,7 @@ module Hoodoo
       #            If omitted, defaults to the locale set in this Client
       #            instance's constructor.
       #
-      # Others::   See Hoodoo::Client::Endpoint's HEADER_TO_PROPERTY.
+      # OTHERS::   See Hoodoo::Services::Middleware's HEADER_TO_PROPERTY.
       #
       def resource( resource, version = 1, options = {} )
 
@@ -318,7 +318,9 @@ module Hoodoo
           :locale     => options[ :locale ] || @locale
         }
 
-        Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
+        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+          property = description[ :property ]
+
           if options.has_key?( property )
             endpoint_options[ property ] = options[ property ]
           end
