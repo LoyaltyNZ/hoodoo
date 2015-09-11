@@ -318,7 +318,7 @@ module Hoodoo
           :locale     => options[ :locale ] || @locale
         }
 
-        Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each_key do | property |
+        Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
           if options.has_key?( property )
             endpoint_options[ property ] = options[ property ]
           end

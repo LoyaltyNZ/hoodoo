@@ -189,14 +189,14 @@ module Hoodoo
         },
       }
 
-      # Inverse mapping for HEADER_TO_PROPERTY which has keys of the
-      # property name and values of the Rack-style HTTP header name.
+      # For-speed Set derived from HEADER_TO_PROPERTY which contains just
+      # the property names.
       #
-      PROPERTY_TO_HEADER = Hash[
+      PROPERTY_TO_HEADER = Set.new(
         HEADER_TO_PROPERTY.map do | key, value |
-          [ value[ :property ], key ]
+          value[ :property ]
         end
-      ]
+      )
 
       # Define a series of read and custom write accessors according to the
       # HTTP_HEADER_OPTIONS_MAP above. For example, a property of "dated_at"
@@ -401,7 +401,7 @@ module Hoodoo
           target_endpoint.session_id = self.session_id unless self.session_id.nil?
           target_endpoint.locale     = self.locale     unless self.locale.nil?
 
-          Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each_key do | property |
+          Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
             setter = "#{ property }="
             value  = self.send( property )
 

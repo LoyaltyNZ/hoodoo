@@ -710,7 +710,7 @@ module Hoodoo; module Services
 
       local_request.locale = endpoint.locale
 
-      Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each_key do | property |
+      Hoodoo::Client::Endpoint::PROPERTY_TO_HEADER.each do | property |
         local_request.send( "#{ property }=", endpoint.send( property ) )
       end
 
