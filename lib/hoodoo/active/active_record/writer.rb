@@ -32,7 +32,7 @@ module Hoodoo
       # Example:
       #
       #     class SomeModel < ActiveRecord::Base
-      #       include Hoodoo::ActiveRecord::Wrier
+      #       include Hoodoo::ActiveRecord::Writer
       #       # ...
       #     end
       #
