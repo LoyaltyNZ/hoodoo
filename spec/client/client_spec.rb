@@ -201,7 +201,7 @@ describe Hoodoo::Client do
     endpoint_opts[ :dated_at      ] = @dated_at      unless @dated_at.nil?
     endpoint_opts[ :dated_from    ] = @dated_from    unless @dated_from.nil?
     endpoint_opts[ :resource_uuid ] = @resource_uuid unless @resource_uuid.nil?
-    endpoint_opts[ :deja_vu       ] = !! @deja_vu
+    endpoint_opts[ :deja_vu       ] = @deja_vu       if     @deja_vu == true
 
     if rand( 2 ) == 0
       override_locale          = SecureRandom.urlsafe_base64(2)
@@ -231,7 +231,7 @@ describe Hoodoo::Client do
 
   context 'without any session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo', 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -255,7 +255,7 @@ describe Hoodoo::Client do
         option_based_expectations( result )
       end
 
-      it 'cannot contact protected actions' do
+      it '(protected actions prohibited)' do
         result = @endpoint.list()
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.invalid_session' )
@@ -402,6 +402,66 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
     end
+
+    context 'rejects a request with secured option' do
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+        secured  = description[ :secured  ]
+
+        next unless secured == true
+
+        it "#{ property } present" do
+          case property
+            when :resource_uuid
+              @resource_uuid = Hoodoo::UUID.generate
+            else
+              raise "Update client_spec.rb with new secured properties for test"
+          end
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          mock_ident = Hoodoo::UUID.generate()
+          result     = @endpoint.show( mock_ident )
+
+          expect( result.platform_errors.has_errors? ).to eq( true )
+          expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.forbidden' )
+        end
+      end
+    end
+
+    context 'accepts a request with non-secured option' do
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+        secured  = description[ :secured  ]
+
+        next if secured == true
+
+        context "#{ property } present" do
+          before :each do
+            case property
+              when :dated_at
+                @dated_at = Time.now - 1.year
+              when :dated_from
+                @dated_from = Time.now - 2.years
+              when :deja_vu
+                @deja_vu = true
+              else
+                raise "Update client_spec.rb with new non-secured properties for test"
+            end
+
+            set_vars_for(
+              base_uri:     "http://localhost:#{ @port }",
+              auto_session: false
+            )
+          end
+
+          it_behaves_like Hoodoo::Client
+        end
+      end
+    end
   end
 
   ##############################################################################
@@ -410,7 +470,7 @@ describe Hoodoo::Client do
 
   context 'with a manual session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
 
         result = @endpoint.show( mock_ident )
@@ -418,7 +478,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
 
-      it 'can contact protected actions' do
+      it '(protected actions prohibited)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'bar' ]
         query_hash = { '_embed' => embeds }
@@ -510,7 +570,7 @@ describe Hoodoo::Client do
 
   context 'with auto-session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
 
         result = @endpoint.show( mock_ident )
@@ -518,7 +578,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
 
-      it 'can contact protected actions' do
+      it '(protected actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'bar' ]
         query_hash = { '_embed' => embeds }

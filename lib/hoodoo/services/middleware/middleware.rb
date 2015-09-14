@@ -230,7 +230,7 @@ module Hoodoo; module Services
 
       'HTTP_X_RESOURCE_UUID' => {
         :property        => :resource_uuid,
-        :property_proc   => -> ( value ) { Hoodoo::Utilities.rationalise_uuid( value ) },
+        :property_proc   => -> ( value ) { value.to_s },
         :validation_proc => -> ( value ) { Hoodoo::UUID.valid?( value ) },
         :header          => 'X-Resource-UUID',
         :header_proc     => -> ( value ) { value.to_s },
@@ -2000,7 +2000,8 @@ module Hoodoo; module Services
            )
 
           interaction.context.response.errors.add_error( 'platform.forbidden' )
-          return
+
+          return # EARLY EXIT
         end
 
         # If we reach here the header is either not secured, or is permitted.
@@ -2016,7 +2017,8 @@ module Hoodoo; module Services
               :reference => { :header_name => real_header }
             }
           )
-          return
+
+          return # EARLY EXIT
         end
 
         # All good!

@@ -133,7 +133,7 @@ module Hoodoo
           #       course, but for now, pragmatic implementation does the only
           #       thing we currently need to do - set "created_at".
           #
-          if self.include?( Hoodoo::ActiveRecord::Dated)
+          if self.include?( Hoodoo::ActiveRecord::Dated )
             unless context.request.dated_from.nil?
               instance.created_at = instance.updated_at = context.request.dated_from
             end
