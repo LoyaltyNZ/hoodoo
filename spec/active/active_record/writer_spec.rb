@@ -26,6 +26,7 @@ describe Hoodoo::ActiveRecord::Writer do
       self.table_name = :r_spec_model_writer_tests
 
       include Hoodoo::ActiveRecord::Writer
+      include Hoodoo::ActiveRecord::ErrorMapping
 
       validates :code, uniqueness: true
     end
@@ -79,6 +80,17 @@ describe Hoodoo::ActiveRecord::Writer do
         [{"code"=>"generic.invalid_duplication",
           "message"=>"Cannot create this resource instance due to a uniqueness constraint violation",
           "reference"=>"unknown"}]
+      )
+    end
+
+    it 'adds an invalid duplicate error where AR validations are present' do
+      record = RSpecModelWriterTestWithValidation.new(@record_with_app_validation.attributes)
+      expect(RSpecModelWriterTestWithValidation.persist_in(@context, attributes: nil, instance: record)).to be_truthy
+
+      expect(@context.response.errors.errors).to eq(
+        [{"code"=>"generic.invalid_duplication",
+          "message"=>"has already been taken",
+          "reference"=>"code"}]
       )
     end
   end
