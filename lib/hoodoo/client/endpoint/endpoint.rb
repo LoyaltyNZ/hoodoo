@@ -66,7 +66,8 @@ module Hoodoo
       #                    Optional. If omitted, defaults to "en-nz".
       #
       # OTHERS::           See Hoodoo::Services::Middleware's
-      #                    HEADER_TO_PROPERTY.
+      #                    HEADER_TO_PROPERTY. All such option keys _MUST_ be
+      #                    Symbols.
       #
       # Returns a Hoodoo::Services::Discovery "For..." family member
       # instance (e.g. Hoodoo::Services::Discovery::ForHTTP) which can be
@@ -162,7 +163,8 @@ module Hoodoo
       # +locale+::           As in the options for #endpoint_for.
       #
       # OTHERS::             See Hoodoo::Services::Middleware's
-      #                      HEADER_TO_PROPERTY.
+      #                      HEADER_TO_PROPERTY. All such option keys _MUST_
+      #                      be Symbols.
       #
       # The out-of-the box initialiser sets up the data for the #resource,
       # #version, #discovery_result, #interaction, #session_id, #locale,
@@ -213,10 +215,15 @@ module Hoodoo
         @discovery_result = options[ :discovery_result ]
         @interaction      = options[ :interaction      ]
 
-        self.session_id   = options[ :session_id       ]
-        self.locale       = options[ :locale           ]
-        self.dated_at     = options[ :dated_at         ]
-        self.dated_from   = options[ :dated_from       ]
+        self.session_id   = options[ :session_id ]
+        self.locale       = options[ :locale     ]
+
+        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+          property        = description[ :property        ]
+          property_writer = description[ :property_writer ]
+
+          self.send( property_writer, options[ property ] ) if options.has_key?( property )
+        end
 
         configure_with( @resource, @version, options )
       end

@@ -75,11 +75,6 @@ module Hoodoo; module Services
     #
     Hoodoo::Services::Middleware.define_accessors_for_header_equivalents( self )
 
-    # When a caller provides an <tt>X-Instance-Might-Exist</tt> header this
-    # will be set to +true+ otherwise it will be +false+.
-    #
-    attr_accessor :instance_might_exist
-
     # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
     # for the "X-Interaction-ID" header, for read-only use. All keys are in
     # upper case, are Strings, have "HTTP_" at the start and use underscores

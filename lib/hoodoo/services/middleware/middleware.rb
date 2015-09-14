@@ -230,7 +230,7 @@ module Hoodoo; module Services
 
       'HTTP_X_RESOURCE_UUID' => {
         :property        => :resource_uuid,
-        :property_proc   => -> ( value ) { Hoodoo::Utilities.rationalise_uuid( value ) },
+        :property_proc   => -> ( value ) { value.to_s },
         :validation_proc => -> ( value ) { Hoodoo::UUID.valid?( value ) },
         :header          => 'X-Resource-UUID',
         :header_proc     => -> ( value ) { value.to_s },
@@ -258,11 +258,11 @@ module Hoodoo; module Services
         :auto_transfer   => true,
       },
 
-      'HTTP_X_INSTANCE_MIGHT_EXIST' => {
-        :property        => :instance_might_exist,
+      'HTTP_X_DEJA_VU' => {
+        :property        => :deja_vu,
         :property_proc   => -> ( value ) { value == 'yes' || value == true ? true : false },
         :validation_proc => -> ( value ) { true }, # Anything is valid
-        :header          => 'X-Instance-Might-Exist',
+        :header          => 'X-Deja-Vu',
         :header_proc     => -> ( value ) { value == true ? 'yes' : 'no' },
       },
     }
@@ -1397,17 +1397,29 @@ module Hoodoo; module Services
       return rack_data
     end
 
-    # When a request includes an <tt>X-Instance-Might-Exist</tt> header
-    # and a service returns a result that includes any errors, we detect
-    # any in the collection without a code of +generic.invalid_duplication+.
+    # When a request includes an <tt>X-Deja-Vu</tt> header and a service
+    # returns a result that includes any errors for creation or deletion
+    # events, we detect any in the collection without a given code;
+    # +generic.invalid_duplication+ for creation, or
+    # +generic.not_found+ for deletion.
     #
     # If we find any then normal error handling continues, otherwise the
     # errors are cleared, an HTTP response code of 204 is setup in the
-    # +response+ object and body data is cleared.
+    # +response+ object and body data is cleared. <tt>X-Deja-Vu</tt> is
+    # set in the response too, with a +confirmed+ value.
     #
-    def remove_duplication_errors_from_response( interaction )
+    def remove_expected_errors_when_experiencing_deja_vu( interaction )
+      interesting_code = case interaction.requested_action
+        when :create
+          'generic.invalid_duplication'
+        when :delete
+          'generic.not_found'
+        else
+          return
+      end
+
       other_errors = interaction.context.response.errors.errors.detect do | error_hash |
-        error_hash[ 'code' ] != 'generic.invalid_duplication'
+        error_hash[ 'code' ] != interesting_code
       end
 
       if other_errors.nil?
@@ -1416,8 +1428,8 @@ module Hoodoo; module Services
         interaction.context.response.body             = ''
 
         interaction.context.response.add_header(
-          'X-Instance-Did-Exist',
-          "yes",
+          'X-Deja-Vu',
+          "confirmed",
           true # Overwrite
         )
       end
@@ -1837,8 +1849,8 @@ module Hoodoo; module Services
           block.call
         end
 
-        if context.request.instance_might_exist && context.response.halt_processing?
-          remove_duplication_errors_from_response( interaction )
+        if context.request.deja_vu && context.response.halt_processing?
+          remove_expected_errors_when_experiencing_deja_vu( interaction )
         end
 
         log_call_result( interaction )
@@ -1988,7 +2000,8 @@ module Hoodoo; module Services
            )
 
           interaction.context.response.errors.add_error( 'platform.forbidden' )
-          return
+
+          return # EARLY EXIT
         end
 
         # If we reach here the header is either not secured, or is permitted.
@@ -2004,7 +2017,8 @@ module Hoodoo; module Services
               :reference => { :header_name => real_header }
             }
           )
-          return
+
+          return # EARLY EXIT
         end
 
         # All good!

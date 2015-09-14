@@ -84,14 +84,26 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
 
   private
     def mock( context )
+
+      # Part of this could be automatic via HEADER_TO_PROPERTY but then
+      # any errors in that mapping which don't match our requirements in
+      # the test would be hidden, by the test using the same broken map.
+      #
+      # See also "def set_vars_for" and "def option_based_expectations"
+      # below. Be careful to follow the naming convention evident below
+      # if adding things.
+
       {
-        'id'         => context.request.ident || Hoodoo::UUID.generate(),
-        'created_at' => Time.now.utc.iso8601,
-        'kind'       => 'RSpecClientTestTarget',
-        'language'   => context.request.locale,
-        'embeds'     => context.request.embeds,
-        'body_hash'  => context.request.body,
-        'dated_at'   => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at ),
+        'id'            => context.request.ident || Hoodoo::UUID.generate(),
+        'created_at'    => Time.now.utc.iso8601,
+        'kind'          => 'RSpecClientTestTarget',
+        'language'      => context.request.locale,
+        'embeds'        => context.request.embeds,
+        'body_hash'     => context.request.body,
+        'dated_at'      => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
+        'dated_from'    => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
+        'resource_uuid' => context.request.resource_uuid,
+        'deja_vu'       => context.request.deja_vu,
       }
     end
 end
@@ -158,6 +170,10 @@ describe Hoodoo::Client do
   # implicitly, with a mixed case locale generated (potentially) by random
   # but the 'downcase' version being used for 'expect's.
   #
+  # Similar instance variables are used for UUID and déjà-vu specifiers. This
+  # method will probably get expanded over time with other properties derived
+  # from the Middleware's HEADER_TO_PROPERTY map too.
+  #
   # Through the use of random switches, we (eventually!) get test coverage
   # on locale specified (or not) given to the Client, plus override locale
   # (or not) and a dated-at date/time (or not) given to the Endpoint.
@@ -167,12 +183,25 @@ describe Hoodoo::Client do
     @expected_locale     = @locale.nil? ? 'en-nz' : @locale.downcase
     @client              = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
 
-    @expected_dated_at   = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
-    @expected_dated_from = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
-
     endpoint_opts = {}
-    endpoint_opts[ :dated_at   ] = @dated_at   unless @dated_at.nil?
-    endpoint_opts[ :dated_from ] = @dated_from unless @dated_from.nil?
+
+    # Part of this could be automatic via HEADER_TO_PROPERTY but then
+    # any errors in that mapping which don't match our requirements in
+    # the test would be hidden, by the test using the same broken map.
+    #
+    # See also "def mock" earlier in this file and
+    # "def option_based_expectations" later in this file. Be careful
+    # to follow the naming convention evident below if adding things.
+
+    @expected_dated_at      = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
+    @expected_dated_from    = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
+    @expected_resource_uuid = @resource_uuid
+    @expected_deja_vu       = @deja_vu != true ? nil : true
+
+    endpoint_opts[ :dated_at      ] = @dated_at      unless @dated_at.nil?
+    endpoint_opts[ :dated_from    ] = @dated_from    unless @dated_from.nil?
+    endpoint_opts[ :resource_uuid ] = @resource_uuid unless @resource_uuid.nil?
+    endpoint_opts[ :deja_vu       ] = @deja_vu       if     @deja_vu == true
 
     if rand( 2 ) == 0
       override_locale          = SecureRandom.urlsafe_base64(2)
@@ -183,35 +212,50 @@ describe Hoodoo::Client do
     @endpoint = @client.resource( :RSpecClientTestTarget, 1, endpoint_opts )
   end
 
+  # Automatic expectations based on HEADER_TO_PROPERTY are fine here as they
+  # are just working off the properties and the associated variable naming
+  # conventions within this test file.
+  #
+  # See also "def mock" and "def set_vars_for" earlier in this file.
+  #
+  def option_based_expectations( result )
+    Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+      property = description[ :property ]
+      expect( result[ property.to_s ] ).to eq( instance_variable_get( "@expected_#{ property }" ) )
+    end
+  end
+
   ##############################################################################
   # No automatic session acquisition and no session
   ##############################################################################
 
   context 'without any session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo', 'baz' ]
         query_hash = { '_embed' => embeds }
 
         result = @endpoint.show( mock_ident )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
-        expect( result[ 'embeds' ] ).to eq( [] )
+
+        expect( result[ 'id'       ] ).to eq( mock_ident )
+        expect( result[ 'embeds'   ] ).to eq( [] )
         expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result )
 
         result = @endpoint.show( mock_ident, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
-        expect( result[ 'embeds' ] ).to eq( embeds )
+
+        expect( result[ 'id'       ] ).to eq( mock_ident )
+        expect( result[ 'embeds'   ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result )
       end
 
-      it 'cannot contact protected actions' do
+      it '(protected actions prohibited)' do
         result = @endpoint.list()
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.invalid_session' )
@@ -358,6 +402,66 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
     end
+
+    context 'rejects a request with secured option' do
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+        secured  = description[ :secured  ]
+
+        next unless secured == true
+
+        it "#{ property } present" do
+          case property
+            when :resource_uuid
+              @resource_uuid = Hoodoo::UUID.generate
+            else
+              raise "Update client_spec.rb with new secured properties for test"
+          end
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          mock_ident = Hoodoo::UUID.generate()
+          result     = @endpoint.show( mock_ident )
+
+          expect( result.platform_errors.has_errors? ).to eq( true )
+          expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.forbidden' )
+        end
+      end
+    end
+
+    context 'accepts a request with non-secured option' do
+      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+        secured  = description[ :secured  ]
+
+        next if secured == true
+
+        context "#{ property } present" do
+          before :each do
+            case property
+              when :dated_at
+                @dated_at = Time.now - 1.year
+              when :dated_from
+                @dated_from = Time.now - 2.years
+              when :deja_vu
+                @deja_vu = true
+              else
+                raise "Update client_spec.rb with new non-secured properties for test"
+            end
+
+            set_vars_for(
+              base_uri:     "http://localhost:#{ @port }",
+              auto_session: false
+            )
+          end
+
+          it_behaves_like Hoodoo::Client
+        end
+      end
+    end
   end
 
   ##############################################################################
@@ -366,7 +470,7 @@ describe Hoodoo::Client do
 
   context 'with a manual session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
 
         result = @endpoint.show( mock_ident )
@@ -374,7 +478,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
 
-      it 'can contact protected actions' do
+      it '(protected actions prohibited)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'bar' ]
         query_hash = { '_embed' => embeds }
@@ -382,10 +486,11 @@ describe Hoodoo::Client do
         result = @endpoint.list( query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result.dataset_size ).to eq( result.size )
-        expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
+
+        expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 0 ][ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result[ 0 ] )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -393,11 +498,12 @@ describe Hoodoo::Client do
 
         result = @endpoint.create( body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
+
         expect( result[ 'body_hash' ] ).to eq( body_hash )
-        expect( result[ 'embeds' ] ).to eq( embeds )
-        expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+        expect( result[ 'embeds'    ] ).to eq( embeds )
+        expect( result[ 'language'  ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -406,12 +512,13 @@ describe Hoodoo::Client do
 
         result = @endpoint.update( mock_ident, body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
+
+        expect( result[ 'id'        ] ).to eq( mock_ident )
         expect( result[ 'body_hash' ] ).to eq( body_hash )
-        expect( result[ 'embeds' ] ).to eq( embeds )
-        expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+        expect( result[ 'embeds'    ] ).to eq( embeds )
+        expect( result[ 'language'  ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -419,11 +526,12 @@ describe Hoodoo::Client do
 
         result = @endpoint.delete( mock_ident, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
-        expect( result[ 'embeds' ] ).to eq( embeds )
+
+        expect( result[ 'id'       ] ).to eq( mock_ident )
+        expect( result[ 'embeds'   ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result )
       end
     end
 
@@ -462,7 +570,7 @@ describe Hoodoo::Client do
 
   context 'with auto-session' do
     shared_examples Hoodoo::Client do
-      it 'can contact public actions' do
+      it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
 
         result = @endpoint.show( mock_ident )
@@ -470,7 +578,7 @@ describe Hoodoo::Client do
         expect( result[ 'id' ] ).to eq( mock_ident )
       end
 
-      it 'can contact protected actions' do
+      it '(protected actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'bar' ]
         query_hash = { '_embed' => embeds }
@@ -478,10 +586,11 @@ describe Hoodoo::Client do
         result = @endpoint.list( query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result.dataset_size ).to eq( result.size )
-        expect( result[ 0 ][ 'embeds' ] ).to eq( embeds )
+
+        expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 0 ][ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 0 ][ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result[ 0 ] )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -489,11 +598,12 @@ describe Hoodoo::Client do
 
         result = @endpoint.create( body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
+
         expect( result[ 'body_hash' ] ).to eq( body_hash )
-        expect( result[ 'embeds' ] ).to eq( embeds )
-        expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+        expect( result[ 'embeds'    ] ).to eq( embeds )
+        expect( result[ 'language'  ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'foo' ]
@@ -502,12 +612,13 @@ describe Hoodoo::Client do
 
         result = @endpoint.update( mock_ident, body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
+
+        expect( result[ 'id'        ] ).to eq( mock_ident )
         expect( result[ 'body_hash' ] ).to eq( body_hash )
-        expect( result[ 'embeds' ] ).to eq( embeds )
-        expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+        expect( result[ 'embeds'    ] ).to eq( embeds )
+        expect( result[ 'language'  ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
 
         mock_ident = Hoodoo::UUID.generate()
         embeds     = [ 'baz', 'bar' ]
@@ -515,11 +626,12 @@ describe Hoodoo::Client do
 
         result = @endpoint.delete( mock_ident, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
-        expect( result[ 'id' ] ).to eq( mock_ident )
-        expect( result[ 'embeds' ] ).to eq( embeds )
+
+        expect( result[ 'id'       ] ).to eq( mock_ident )
+        expect( result[ 'embeds'   ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
-        expect( result[ 'dated_at' ] ).to eq( @expected_dated_at )
-        expect( result[ 'dated_from' ] ).to eq( @expected_dated_from )
+
+        option_based_expectations( result )
       end
 
       it 'automatically retries' do
