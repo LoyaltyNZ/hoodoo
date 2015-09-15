@@ -76,7 +76,7 @@ module Hoodoo
         # the check to see if a record exists with a duplicate value in some
         # given column is a separate operation from that which stores the
         # record subsequently. As per the Rails Guides entry on the uniqueness
-        #  validation at the time of writing:
+        # validation at the time of writing:
         #
         # http://guides.rubyonrails.org/active_record_validations.html#uniqueness
         #
@@ -105,6 +105,38 @@ module Hoodoo
         # additional future write-related enhancements in Hoodoo should they
         # arise, without necessarily needing service code changes.
         #
+        # Example:
+        #
+        #     class Unique < ActiveRecord::Base
+        #       include Hoodoo::ActiveRecord::Writer
+        #       validates :unique_code, :presence => true, :uniqueness => true
+        #     end
+        #
+        # The migration to create the table for the Unique model _MUST_ have a
+        # uniqueness constraint on the +unique_code+ field, e.g.:
+        #
+        #     def change
+        #       add_column :uniques, :unique_code, :null => false
+        #       add_index :uniques, [ :unique_code ], :unique => true
+        #     end
+        #
+        # Then, inside the implementation class which uses the above model,
+        # where you have (say) written private methods +mapping_of+ which
+        # maps +context.request.body+ to an attributes Hash for persistence
+        # and +rendering_of+ which uses Hoodoo::Presenters::Base.render_in to
+        # properly render a representation of your resource, you would write:
+        #
+        #     def create( context )
+        #       attributes = mapping_of( context.request.body )
+        #
+        #       model_instance = Unique.persist_in( context, attributes )
+        #       return if context.response.halt_processing?
+        #
+        #       # ...any other processing...
+        #
+        #       context.response.set_resource( rendering_of( context, model_instance ) )
+        #     end
+        #
         # Parameters:
         #
         # +context+::    Hoodoo::Services::Context instance describing a call
@@ -118,7 +150,8 @@ module Hoodoo
         #                instead.
         #
         # +instance+::   An instance of this model which is fully initialised
-        #                and ready to be persisted (saved).
+        #                and ready to be persisted (saved). Optional. If
+        #                omitted, pass the +attributes+ parameter instead.
         #
         def persist_in( context, attributes: nil, instance: nil )
 

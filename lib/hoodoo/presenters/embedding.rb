@@ -45,7 +45,7 @@ module Hoodoo
         #         be embedded / referenced.
         #
         # +rendered_resource_or_uuid+:: A rendered resource representation
-        #         in full, or a resource UUID String.
+        #                               in full, or a resource UUID String.
         #
         def add_one( key, rendered_resource_or_uuid )
           validate_one( rendered_resource_or_uuid )
@@ -66,9 +66,9 @@ module Hoodoo
         #         of a request in order to ask for the things in question to
         #         be embedded / referenced.
         #
-        # +array_of_rendered_resources_or_uuids+:: An Array of rendered
-        #         resource representations in full, or an Array of resource
-        #         UUID Strings.
+        # +array_of_rendered_resources_or_uuids+::
+        #         An Array of rendered resource representations in full, or an
+        #         Array of resource UUID Strings.
         #
         def add_many( key, array_of_rendered_resources_or_uuids )
           validate_many( array_of_rendered_resources_or_uuids )
@@ -98,7 +98,7 @@ module Hoodoo
       # Instantiate this class and add one, or an Array of fully rendered
       # resource objects to it via the API described in the base class,
       # Hoodoo::Presenters::Embedding::Embeddable. You can then pass it to
-      # the likes of Hoodoo::Presenters::Base#render_in via the +options+
+      # the likes of Hoodoo::Presenters::Base.render_in via the +options+
       # parameter to have the embed data included in the fully rendered end
       # result.
       #
@@ -109,7 +109,7 @@ module Hoodoo
       # * Render the embedded resource(s)
       # * Create an instance of this class
       # * Add the rendered resource representations using this class's API
-      # * Use Hoodoo::Presenters::Base#render_in to render the final, target
+      # * Use Hoodoo::Presenters::Base.render_in to render the final, target
       #   resource, passing in the embed collection via the +options+ Hash.
       #
       # Simple example:
@@ -163,7 +163,7 @@ module Hoodoo
       # Instantiate this class and add one, or an Array of UUID strings via
       # the API described in the base class,
       # Hoodoo::Presenters::Embedding::Embeddable. You can then pass it to
-      # the likes of Hoodoo::Presenters::Base#render_in via the +options+
+      # the likes of Hoodoo::Presenters::Base.render_in via the +options+
       # parameter to have the reference data included in the fully rendered
       # end result.
       #
@@ -174,7 +174,7 @@ module Hoodoo
       # * Obtain the referenced resource UUID(s)
       # * Create an instance of this class
       # * Add the UUIDs using this class's API
-      # * Use Hoodoo::Presenters::Base#render_in to render the final, target
+      # * Use Hoodoo::Presenters::Base.render_in to render the final, target
       #   resource, passing in the reference collection via the +options+
       #   Hash.
       #
