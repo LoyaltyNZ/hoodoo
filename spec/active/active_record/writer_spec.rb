@@ -74,7 +74,10 @@ describe Hoodoo::ActiveRecord::Writer do
 
     it 'adds an invalid duplicate error where AR validations are missing' do
       record = RSpecModelWriterTestWithoutValidation.new(@record_without_app_validation.attributes)
-      expect(RSpecModelWriterTestWithoutValidation.persist_in(@context, attributes: nil, instance: record)).to be_truthy
+
+      expect(
+        RSpecModelWriterTestWithoutValidation.persist_in(@context, attributes: nil, instance: record)
+      ).to be_a(RSpecModelWriterTestWithoutValidation)
 
       expect(@context.response.errors.errors).to eq(
         [{"code"=>"generic.invalid_duplication",
@@ -85,7 +88,10 @@ describe Hoodoo::ActiveRecord::Writer do
 
     it 'adds an invalid duplicate error where AR validations are present' do
       record = RSpecModelWriterTestWithValidation.new(@record_with_app_validation.attributes)
-      expect(RSpecModelWriterTestWithValidation.persist_in(@context, attributes: nil, instance: record)).to be_truthy
+
+      expect(
+        RSpecModelWriterTestWithValidation.persist_in(@context, attributes: nil, instance: record)
+      ).to be_a(RSpecModelWriterTestWithValidation)
 
       expect(@context.response.errors.errors).to eq(
         [{"code"=>"generic.invalid_duplication",
@@ -94,4 +100,5 @@ describe Hoodoo::ActiveRecord::Writer do
       )
     end
   end
+
 end

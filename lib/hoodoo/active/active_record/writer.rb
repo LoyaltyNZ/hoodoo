@@ -68,11 +68,11 @@ module Hoodoo
         # this will catch those uniqueness constraint errors and ensure that the
         # error is added to +context.response+
         #
-        def persist_in( context, attributes:, instance: )
+        def persist_in( context, attributes: nil, instance: nil )
           # We either get a ready-initialised instance in the 'instance' option or
           # have to bulid one from the 'attributes' option, which takes precedence.
 
-          instance = self.new( attributes ) if attributes.present?
+          instance = self.new( attributes ) unless attributes.nil?
 
           # If this model has an ActiveRecord uniqueness validation, it is still
           # subject to race conditions and should be backed by a database constraint.
