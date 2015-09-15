@@ -204,6 +204,8 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
   end
 
   def delete( context )
+    return context.response.not_found( context.request.ident ) if ( context.request.ident == 'simulate_404' )
+
     expectable_hook( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).delete(
       'hello' + context.request.ident,
@@ -742,6 +744,25 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   it 'deletes things and passes through deja_vu' do
     delete_things(deja_vu: true)
+  end
+
+  it 'deletes things with a simulated 404' do
+    delete '/v1/rspec_test_inter_resource_calls_b/simulate_404',
+           nil,
+           headers_for()
+
+    expect(last_response.status).to eq(404)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('generic.not_found')
+  end
+
+  it 'deletes things with a 204 with deja vu' do
+    delete '/v1/rspec_test_inter_resource_calls_b/simulate_404',
+           nil,
+           headers_for(deja_vu: true)
+
+    expect(last_response.status).to eq(204)
+    expect(last_response.body).to be_empty
   end
 
   it 'should see errors from the inner call correctly' do

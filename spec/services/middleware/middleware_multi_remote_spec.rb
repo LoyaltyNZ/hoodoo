@@ -45,6 +45,7 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       context.response.body = { 'update' => TestEchoImplementation.to_h( context ) }
     end
     def delete( context )
+      return context.response.not_found( context.request.ident ) if context.request.ident == 'simulate_404'
       context.response.body = { 'delete' => TestEchoImplementation.to_h( context ) }
     end
 
@@ -621,6 +622,29 @@ describe Hoodoo::Services::Middleware do
 
     it 'deletes things, passing through custom locale and deja_vu' do
       delete_things( locale: 'bye', deja_vu: true )
+    end
+
+    it 'deletes things with a simulated 404' do
+      response = spec_helper_http(
+        klass:   Net::HTTP::Delete,
+        port:    @port,
+        path:    '/v2/test_some_echoes/simulate_404'      )
+
+      expect( response.code ).to eq( '404' )
+      parsed = JSON.parse( response.body )
+      expect( parsed[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'generic.not_found' )
+    end
+
+    it 'deletes things with a 204 with deja vu' do
+      response = spec_helper_http(
+        klass:   Net::HTTP::Delete,
+        port:    @port,
+        path:    '/v2/test_some_echoes/simulate_404',
+        headers: { 'X-Deja-Vu' => 'yes' }
+      )
+
+      expect( response.code ).to eq( '204' )
+      expect( response.body ).to be_nil
     end
 
     it 'should get 405 for bad requests' do
