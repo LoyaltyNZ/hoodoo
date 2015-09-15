@@ -196,22 +196,31 @@ class TestCallImplementation < Hoodoo::Services::Implementation
   end
 
   def create( context )
-    resource = context.resource( :TestEcho, 2, dated_from: context.request.dated_from )
+    endpoint = context.resource( :TestEcho, 2, dated_from: context.request.dated_from )
 
-    # If given the magic string "specify_uuid" in the mandatory resource
-    # text field "foo", then specifically make an inter-resource call with
-    # a resource UUID specified for the inner resource. This checks the
-    # permissions handling on "internal" inter-resource calls.
-    #
-    # This is for *inter-resource* calls *from* this resource to the target
-    # resource and has nothing to do with anything the top-level API caller
-    # specified.
-    #
     if context.request.body[ 'foo' ] == 'specify_uuid'
-      resource.resource_uuid = Hoodoo::UUID.generate()
+
+      # If given the magic string "specify_uuid" in the mandatory resource
+      # text field "foo", then specifically make an inter-resource call with
+      # a resource UUID specified for the inner resource. This checks the
+      # permissions handling on "internal" inter-resource calls.
+      #
+      # This is for *inter-resource* calls *from* this resource to the target
+      # resource and has nothing to do with anything the top-level API caller
+      # specified.
+      #
+      endpoint.resource_uuid = Hoodoo::UUID.generate()
+
+    elsif context.request.body[ 'foo' ] == 'deja_vu'
+
+      # This tests an inter-resource call specifying deja-vu and dealing with
+      # responses.
+      #
+      endpoint.deja_vu = true
+
     end
 
-    result = resource.create(
+    result = endpoint.create(
       context.request.body,
       {
         '_embed'     => context.request.embeds,
@@ -990,6 +999,40 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'errors' ].size ).to eq( 1 )
       expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
       expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to be_nil # Ensure no information disclosure vulnerability
+    end
+
+    # Remember this time the deja-vu stuff is happening one level down,
+    # as an inter-resource call, not at the top level per the similar
+    # tests that use spec_helper_http in the previous major "section"
+    # of this file.
+    #
+    it 'gets a 204 with deja-vu and duplication' do
+      post(
+        '/v1/test_call.tar.gz',
+         { 'foo' => 'bar', 'deja' => 'generic.invalid_duplication' }.to_json,
+         headers_for(deja_vu: true)
+      )
+
+      expect( last_response.status ).to eq( 204 )
+      expect( last_response.body   ).to be_empty
+      expect( last_response.headers[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
+    end
+
+    it 'gets non-204 with deja-vu and duplication plus other errors' do
+      post(
+        '/v1/test_call.tar.gz',
+         { 'foo' => 'bar', 'deja' => 'generic.invalid_decimal' }.to_json,
+         headers_for(deja_vu: true)
+      )
+
+      expect( last_response.status ).to eq( 422 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'errors' ].size ).to eq( 2 )
+      expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'generic.invalid_duplication' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 1 ][ 'code'      ] ).to eq( 'generic.invalid_decimal' )
+      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja' )
     end
 
     def update_things( locale: nil )
