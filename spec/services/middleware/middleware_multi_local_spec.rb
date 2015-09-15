@@ -40,7 +40,24 @@ class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementat
 
   def create( context )
     expectable_hook( context )
-    context.response.body = { 'inner' => 'created' }
+
+    # If called with deja-vu requested, then to test that inter-resource
+    # local calls deal with 422-style responses properly return a simulation
+    # of an actual duplication. The error we add here should _not_ lead to an
+    # error to the caller as Hoodoo should turn it into a 422.
+    #
+    if ( context.request.deja_vu )
+      context.response.add_error( 'generic.invalid_duplication', :reference => { :field_name => 'deja' } )
+    end
+
+    # This tests an invalid response type from a service during a local
+    # inter-resource call.
+    #
+    if context.request.body[ 'foo' ] == 'broken_response'
+      context.response.body = self
+    else
+      context.response.body = { 'inner' => 'created' }
+    end
   end
 
   def update( context )
@@ -163,17 +180,26 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     #
     context.request.body.delete( 'id' )
 
-    # If given the magic string "specify_uuid" in the mandatory resource
-    # text field "foo", then specifically make an inter-resource call with
-    # a resource UUID specified for the inner resource. This checks the
-    # permissions handling on "internal" inter-resource calls.
-    #
-    # This is for *inter-resource* calls *from* this resource to the target
-    # resource and has nothing to do with anything the top-level API caller
-    # specified.
-    #
     if context.request.body[ 'foo' ] == 'specify_uuid'
+
+      # If given the magic string "specify_uuid" in the mandatory resource
+      # text field "foo", then specifically make an inter-resource call with
+      # a resource UUID specified for the inner resource. This checks the
+      # permissions handling on "internal" inter-resource calls.
+      #
+      # This is for *inter-resource* calls *from* this resource to the target
+      # resource and has nothing to do with anything the top-level API caller
+      # specified.
+      #
       endpoint.resource_uuid = Hoodoo::UUID.generate()
+
+    elsif context.request.body[ 'foo' ] == 'deja_vu'
+
+      # This tests an inter-resource call specifying deja-vu and dealing with
+      # responses.
+      #
+      endpoint.deja_vu = true
+
     end
 
     result = endpoint.create(
@@ -187,7 +213,12 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     #
     unless result.adds_errors_to?( context.response.errors )
       expectable_result_hook( result )
-      context.response.body = { result: result, dated_from: context.request.dated_from }
+
+      if result.empty?
+        context.response.body = { result: 'I experienced deja-vu' }
+      else
+        context.response.body = { result: result, dated_from: context.request.dated_from }
+      end
     end
   end
 
@@ -577,7 +608,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     create_things(locale: 'baz', dated_from: DateTime.now)
   end
 
-  it 'creates things and passes through deja_vu' do
+  it 'creates things and does not pass through deja_vu' do
     create_things(deja_vu: true)
   end
 
@@ -648,6 +679,26 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result['errors'].size).to eq(1)
     expect(result['errors'][0]['code']).to eq('platform.forbidden')
     expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
+  end
+
+  it 'creates things with the inter-resource local call asking for deja-vu and being told there are duplicates' do
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'deja_vu'}),
+         headers_for()
+
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => 'I experienced deja-vu'})
+  end
+
+  it 'handles broken service responses' do
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'broken_response'}),
+         headers_for()
+
+    expect(last_response.status).to eq(500)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'RSpecTestInterResourceCallsAImplementation' received from a local inter-resource call")
   end
 
   def update_things(locale: nil)

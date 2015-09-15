@@ -947,11 +947,19 @@ module Hoodoo; module Services
 
       data = local_response.body
 
-      if data.is_a? Array
+      if data.is_a?( ::Hash )
+        data = Hoodoo::Client::AugmentedHash[ data ]
+
+      elsif data.is_a?( ::Array )
         data              = Hoodoo::Client::AugmentedArray.new( data )
         data.dataset_size = local_response.dataset_size
+
+      elsif data.is_a?( ::String ) && local_request.deja_vu && data == ''
+        data = Hoodoo::Client::AugmentedHash.new
+
       else
-        data = Hoodoo::Client::AugmentedHash[ data ]
+        raise "Hoodoo::Services::Middleware: Unexpected response type '#{ data.class.name }' received from a local inter-resource call"
+
       end
 
       data.set_platform_errors(
