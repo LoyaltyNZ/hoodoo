@@ -169,7 +169,7 @@ module Hoodoo
         #
         #     def show( context )
         #       found = SomeModel.acquire( context.request.ident )
-        #       return context.response.not_found() if found.nil?
+        #       return context.response.not_found( context.request.ident ) if found.nil?
         #
         #       # ...map 'found' to whatever resource you're representing,
         #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
@@ -276,7 +276,7 @@ module Hoodoo
         #
         #     def show( context )
         #       found = SomeModel.acquire_in( context )
-        #       return context.response.not_found() if found.nil?
+        #       return context.response.not_found( context.request.ident ) if found.nil?
         #
         #       # ...map 'found' to whatever resource you're representing,
         #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
