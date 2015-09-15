@@ -1408,6 +1408,10 @@ module Hoodoo; module Services
     # +response+ object and body data is cleared. <tt>X-Deja-Vu</tt> is
     # set in the response too, with a +confirmed+ value.
     #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. May be updated
+    #                 on exit with new response status code, body etc.
+    #
     def remove_expected_errors_when_experiencing_deja_vu( interaction )
       interesting_code = case interaction.requested_action
         when :create

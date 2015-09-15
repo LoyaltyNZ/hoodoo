@@ -25,6 +25,7 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
         49
       )
     end
+
     def show( context )
       if context.request.uri_path_components[ 0 ] == 'return_error'
         context.response.add_error(
@@ -38,12 +39,32 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
         context.response.body = { 'show' => TestEchoImplementation.to_h( context ) }
       end
     end
+
     def create( context )
+
+      # If asked to add another error to the response, we're testing
+      # the deja-vu stuff including making sure that errors are still returned
+      # if any non-"invalid duplication" stuff exists. As long as the error
+      # code requires no reference data or only requires a "field_name", this
+      # will work OK.
+      #
+      unless context.request.body[ 'deja' ].nil?
+        additional_error_code = context.request.body[ 'deja' ]
+        reference             = { :reference => { :field_name => 'deja' } }
+
+        context.response.add_error( 'generic.invalid_duplication', reference )
+        context.response.add_error( additional_error_code,         reference )
+
+        return
+      end
+
       context.response.set_resource( { 'create' => TestEchoImplementation.to_h( context ) } )
     end
+
     def update( context )
       context.response.body = { 'update' => TestEchoImplementation.to_h( context ) }
     end
+
     def delete( context )
       return context.response.not_found( context.request.ident ) if context.request.ident == 'simulate_404'
       context.response.body = { 'delete' => TestEchoImplementation.to_h( context ) }
@@ -294,10 +315,11 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( TestEchoQuietImplementation ).to receive( :after ).once
     end
 
-    def list_things( locale: nil, dated_at: nil )
+    def list_things( locale: nil, dated_at: nil, deja_vu: nil )
       headers = {}
       headers[ 'Accept-Language' ] = locale unless locale.nil?
       headers[ 'X-Dated-At'      ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
+      headers[ 'X-Deja-Vu'       ] = 'yes' if deja_vu == true
 
       response = spec_helper_http(
         port:    @port,
@@ -315,7 +337,7 @@ describe Hoodoo::Services::Middleware do
           'locale'              => locale.nil? ? 'en-nz' : locale,
           'dated_at'            => dated_at.to_s,
           'dated_from'          => '',
-          'deja_vu'             => '',
+          'deja_vu'             => deja_vu.to_s,
           'resource_uuid'       => '',
           'body'                => nil,
           'uri_path_components' => [],
@@ -368,6 +390,27 @@ describe Hoodoo::Services::Middleware do
         'HTTP_VERSION'    => 'HTTP/1.1',
         'HTTP_HOST'       => "127.0.0.1:#{ @port }"
       } ] )
+    end
+
+    # Code coverage: At present the middleware always calls its "remove
+    # expected errors" method if deja-vu is on andthere are errors in the
+    # response. This method then filters based on action, with an early
+    # exit for non-create, non-delete cases. We're testing that here.
+    #
+    it 'lists things without worrying about deja-vu' do
+      expect_any_instance_of( TestEchoImplementation ).to receive( :list ).once do | ignored_rspec_mock_instance, context |
+        context.response.not_found( 'some_error' )
+      end
+
+      expect_any_instance_of( Hoodoo::Services::Middleware ).to receive( :remove_expected_errors_when_experiencing_deja_vu ).once.and_call_original
+
+      response = spec_helper_http(
+        port:    @port,
+        path:    '/v2/test_some_echoes',
+        headers: { 'X-Deja-Vu' => 'yes' }
+      )
+
+      expect( response.code ).to eq( '404' )
     end
 
     def show_things( locale: nil, dated_at: nil )
@@ -528,6 +571,39 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to be_nil # Ensure no information disclosure vulnerability
     end
 
+    it 'gets a 204 with deja-vu and duplication' do
+      response = spec_helper_http(
+        klass:   Net::HTTP::Post,
+        port:    @port,
+        path:    '/v2/test_some_echoes',
+        body:    { 'foo' => 'bar', 'deja' => 'generic.invalid_duplication' }.to_json,
+        headers: { 'X-Deja-Vu' => 'yes' }
+      )
+
+      expect( response.code ).to eq( '204' )
+      expect( response.body ).to be_nil
+      expect( response[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
+    end
+
+    it 'gets non-204 with deja-vu and duplication plus other errors' do
+      response = spec_helper_http(
+        klass:   Net::HTTP::Post,
+        port:    @port,
+        path:    '/v2/test_some_echoes',
+        body:    { 'foo' => 'bar', 'deja' => 'generic.invalid_decimal' }.to_json,
+        headers: { 'X-Deja-Vu' => 'yes' }
+      )
+
+      expect( response.code ).to eq( '422' )
+      parsed = JSON.parse( response.body )
+
+      expect( parsed[ 'errors' ].size ).to eq( 2 )
+      expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'generic.invalid_duplication' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 1 ][ 'code'      ] ).to eq( 'generic.invalid_decimal' )
+      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja' )
+    end
+
     def update_things( locale: nil )
       headers = {}
       headers[ 'Accept-Language' ] = locale unless locale.nil?
@@ -645,6 +721,7 @@ describe Hoodoo::Services::Middleware do
 
       expect( response.code ).to eq( '204' )
       expect( response.body ).to be_nil
+      expect( response[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
     end
 
     it 'should get 405 for bad requests' do
