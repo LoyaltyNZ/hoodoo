@@ -2726,24 +2726,21 @@ module Hoodoo; module Services
     # present and the value is non-empty, it's validated as UUID and written as
     # the body's "id" field at the top-level if OK.
     #
+    # By the time this method is called, validation of the header value must
+    # already have taken place (see "deal_with_x_headers").
+    #
     # On exit, the interaction's request's body may be updated, or the
     # response's error collection may be updated rejecting the request on
     # the grounds of an invalid UUID.
     #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
     def maybe_update_body_data_for( interaction )
       return unless interaction.rack_request.env.has_key?( 'HTTP_X_RESOURCE_UUID' )
 
-      required_item_uuid = interaction.rack_request.env[ 'HTTP_X_RESOURCE_UUID' ].to_s rescue ''
-
-      unless Hoodoo::UUID.valid?( required_item_uuid )
-        interaction.context.response.errors.add_error(
-          'generic.invalid_uuid',
-          :message   => "Value of `X-Resource-UUID` HTTP header is an invalid UUID",
-          :reference => { :field_name => 'X-Resource-UUID' }
-        )
-      else
-        interaction.context.request.body[ 'id' ] = required_item_uuid
-      end
+      required_item_uuid = interaction.rack_request.env[ 'HTTP_X_RESOURCE_UUID' ]
+      interaction.context.request.body[ 'id' ] = required_item_uuid
     end
 
     # Record an exception in a given response object, overwriting any previous
