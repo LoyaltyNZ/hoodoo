@@ -867,8 +867,8 @@ module Hoodoo; module Services
              )
            )
 
-           local_response.errors.add_error( 'platform.forbidden' )
-          return
+          local_response.errors.add_error( 'platform.forbidden' )
+          break
         end
       end
 

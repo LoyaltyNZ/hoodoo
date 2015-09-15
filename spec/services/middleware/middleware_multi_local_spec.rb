@@ -149,7 +149,34 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
   def create( context )
     expectable_hook( context )
 
-    result = context.resource( :RSpecTestInterResourceCallsAResource ).create(
+    endpoint = context.resource( :RSpecTestInterResourceCallsAResource )
+
+    # This implementation makes an inter-resource call which just passes
+    # on the caller's provided body data. If someone used X-Resource-UUID
+    # in their top-level call with permission, 'body' will contain 'id'
+    # and that'll be rejected if we pass it through an inter-resource call
+    # (you must use the high-level interface to do that), assuming things
+    # are working properly andthe X-Resource-UUID specification is *not*
+    # automatically inherited to inter-resource endpoints.
+    #
+    # This is for *top level* calls specifying UUIDs to *this resource*.
+    #
+    context.request.body.delete( 'id' )
+
+    # If given the magic string "specify_uuid" in the mandatory resource
+    # text field "foo", then specifically make an inter-resource call with
+    # a resource UUID specified for the inner resource. This checks the
+    # permissions handling on "internal" inter-resource calls.
+    #
+    # This is for *inter-resource* calls *from* this resource to the target
+    # resource and has nothing to do with anything the top-level API caller
+    # specified.
+    #
+    if context.request.body[ 'foo' ] == 'specify_uuid'
+      endpoint.resource_uuid = Hoodoo::UUID.generate()
+    end
+
+    result = endpoint.create(
       context.request.body,
       { _embed: 'foo' }
     )
@@ -157,7 +184,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     # There are two tests hidden here. Note that if there's an error,
     # we're actually not setting response body, leaving it 'nil'; make
     # sure nothing barfs on that.
-
+    #
     unless result.adds_errors_to?( context.response.errors )
       expectable_result_hook( result )
       context.response.body = { result: result, dated_from: context.request.dated_from }
@@ -227,6 +254,21 @@ end
 
 describe Hoodoo::Services::Middleware::InterResourceLocal do
 
+  before :each do
+    @test_uuid = Hoodoo::UUID.generate()
+    @old_test_session = Hoodoo::Services::Middleware.test_session()
+    @test_session = @old_test_session.dup
+    permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
+    permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
+    @test_session.permissions = permissions
+    @test_session.scoping = @test_session.scoping.dup
+    Hoodoo::Services::Middleware.set_test_session( @test_session )
+  end
+
+  after :each do
+    Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+  end
+
   # Middleware maintains class-level record of whether or not any interfaces
   # had public actions for efficiency; ensure this is cleared after all these
   # tests run, so it's a clean slate for the next set.
@@ -255,7 +297,12 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :after ).once
   end
 
-  def headers_for( locale, dated_at = nil, dated_from = nil, deja_vu = nil )
+  def headers_for( locale:        nil,
+                   dated_at:      nil,
+                   dated_from:    nil,
+                   deja_vu:       nil,
+                   resource_uuid: nil )
+
     headers = {
       'HTTP_X_INTERACTION_ID' => @interaction_id,
       'CONTENT_TYPE'          => 'application/json; charset=utf-8'
@@ -263,6 +310,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     headers[ 'HTTP_CONTENT_LANGUAGE' ] = locale unless locale.nil?
     headers[ 'HTTP_ACCEPT_LANGUAGE'  ] = locale unless locale.nil?
+    headers[ 'HTTP_X_RESOURCE_UUID'  ] = resource_uuid unless resource_uuid.nil?
     headers[ 'HTTP_X_DATED_AT'       ] = Hoodoo::Utilities.nanosecond_iso8601( dated_at ) unless dated_at.nil?
     headers[ 'HTTP_X_DATED_FROM'     ] = Hoodoo::Utilities.nanosecond_iso8601( dated_from ) unless dated_from.nil?
     headers[ 'HTTP_X_DEJA_VU'        ] = 'yes' if deja_vu == true
@@ -270,7 +318,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     return headers
   end
 
-  def list_things(locale = nil, dated_at = nil)
+  def list_things(locale: nil, dated_at: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:list).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
       expect(context.request.dated_at).to eq(dated_at) # Is used
@@ -303,7 +351,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     get '/v1/rspec_test_inter_resource_calls_b',
         nil,
-        headers_for(locale, dated_at)
+        headers_for(locale: locale, dated_at: dated_at)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -332,9 +380,10 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
                   "2015-01-01",
                   "not-a-date"
                 ]
+
     datetimes.each do |datetime|
       it "complains about a bad X-Dated-At header of #{datetime}" do
-        headers = headers_for('en-nz', DateTime.now)
+        headers = headers_for(locale: 'en-nz', dated_at: DateTime.now)
         headers['HTTP_X_DATED_AT'] = datetime
 
         get '/v1/rspec_test_inter_resource_calls_b',
@@ -359,7 +408,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'lists things with a custom locale and dated_at time' do
-    list_things('foo', DateTime.now)
+    list_things(locale: 'foo', dated_at: DateTime.now)
   end
 
   it 'should report middleware level errors from the secondary service' do
@@ -379,7 +428,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result['errors'][0]['reference']).to eq('42')
   end
 
-  def show_things(locale = nil, dated_at = nil)
+  def show_things(locale: nil, dated_at: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:show).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
       expect(context.request.dated_at).to eq(dated_at) # Is used
@@ -411,7 +460,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     get '/v1/rspec_test_inter_resource_calls_b/world',
         nil,
-        headers_for(locale, dated_at)
+        headers_for(locale: locale, dated_at: dated_at)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -427,16 +476,16 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'shows things with a custom locale and dated_at time' do
-    show_things('bar', DateTime.now)
+    show_things(locale: 'bar', dated_at: DateTime.now)
   end
 
-  def create_things(locale = nil, dated_from = nil, deja_vu = nil)
+  def create_things(locale: nil, dated_from: nil, deja_vu: nil, resource_uuid: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:create).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
-      expect(context.request.dated_at).to eq(nil)          # Not used => expect 'nil'
-      expect(context.request.dated_from).to eq(dated_from) # Is used
-      expect(context.request.deja_vu).to eq(deja_vu)       # Is used
-      expect(context.request.resource_uuid).to eq(nil)     # Not used => expect 'nil'
+      expect(context.request.dated_at).to eq(nil)                # Not used => expect 'nil'
+      expect(context.request.dated_from).to eq(dated_from)       # Is used
+      expect(context.request.deja_vu).to eq(deja_vu)             # Is used
+      expect(context.request.resource_uuid).to eq(resource_uuid) # Is used
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
@@ -450,7 +499,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_at).to eq(nil)          # Not used => expect 'nil'
         expect(context.request.dated_from).to eq(dated_from) # Is passed through inter-resource calls
         expect(context.request.deja_vu).to eq(nil)           # Is not passed through inter-resource calls
-        expect(context.request.resource_uuid).to eq(nil)     # Not used => expect 'nil'
+        expect(context.request.resource_uuid).to eq(nil)     # Is not passed through inter-resource calls
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -459,7 +508,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     post '/v1/rspec_test_inter_resource_calls_b/',
          '{"foo": "required"}',
-         headers_for(locale, nil, dated_from, deja_vu)
+         headers_for(locale: locale, dated_from: dated_from, deja_vu: deja_vu, resource_uuid: resource_uuid)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -495,9 +544,10 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
                   "2015-01-01",
                   "not-a-date"
                 ]
+
     datetimes.each do |datetime|
       it "complains about a bad X-Dated-At header of #{datetime}" do
-        headers = headers_for('en-nz', DateTime.now)
+        headers = headers_for(locale: 'en-nz', dated_at: DateTime.now)
         headers['HTTP_X_DATED_FROM'] = datetime
 
         post '/v1/rspec_test_inter_resource_calls_b',
@@ -522,11 +572,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'creates things with a custom locale and passes through dated_from' do
-    create_things('baz', DateTime.now)
+    create_things(locale: 'baz', dated_from: DateTime.now)
   end
 
-  it 'creates things with a custom locale and passes through deja_vu' do
-    create_things('en', nil, true)
+  it 'creates things and passes through deja_vu' do
+    create_things(deja_vu: true)
   end
 
   it 'refuses to create things when the inner service gets invalid data, with callbacks' do
@@ -544,7 +594,61 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     fail_to_create_things()
   end
 
-  def update_things(locale = nil)
+  it 'creates things with a custom UUID given permission, but does not pass it through' do
+    @test_session.scoping.authorised_http_headers = [ 'HTTP_X_RESOURCE_UUID' ]
+    create_things(resource_uuid: Hoodoo::UUID.generate())
+  end
+
+  it 'fails to create things with a custom UUID if not given permission' do
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         '{"foo": "required"}',
+         headers_for(resource_uuid: Hoodoo::UUID.generate())
+
+    expect(last_response.status).to eq(403)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'].size).to eq(1)
+    expect(result['errors'][0]['code']).to eq('platform.forbidden')
+    expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
+  end
+
+  it 'can specify a UUID via an inter-resource call if it has top-level permission' do
+    @test_session.scoping.authorised_http_headers = [ 'HTTP_X_RESOURCE_UUID' ]
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+      expect(context.request.resource_uuid).to eq(nil) # Is not specified by top-level caller
+    end
+    # -> A
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
+        expect(context.request.resource_uuid).to_not be_nil
+        expect(Hoodoo::UUID.valid?(context.request.resource_uuid)).to eq(true)
+      end
+    # <- B
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
+      expect(result).to eq({ 'inner' => 'created' })
+    end
+
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'specify_uuid'}),
+         headers_for()
+
+    expect(last_response.status).to eq(200)
+    result = JSON.parse(last_response.body)
+    expect(result).to eq({'result' => {'inner' => 'created'}, 'dated_from' => nil})
+  end
+
+  it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'specify_uuid'}),
+         headers_for()
+
+    expect(last_response.status).to eq(403)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'].size).to eq(1)
+    expect(result['errors'][0]['code']).to eq('platform.forbidden')
+    expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
+  end
+
+  def update_things(locale: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:update).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
       expect(context.request.dated_at).to eq(nil)      # Not used => expect 'nil'
@@ -573,7 +677,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     patch '/v1/rspec_test_inter_resource_calls_b/world',
           '{"sum": 70}',
-          headers_for(locale)
+          headers_for(locale: locale)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -585,10 +689,10 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'updates things with a custom locale' do
-    update_things('boo')
+    update_things(locale: 'boo')
   end
 
-  def delete_things(locale = nil, deja_vu = nil)
+  def delete_things(locale: nil, deja_vu: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:delete).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
       expect(context.request.dated_at).to eq(nil)      # Not used => expect 'nil'
@@ -617,7 +721,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     delete '/v1/rspec_test_inter_resource_calls_b/world',
            nil,
-           headers_for(locale, nil, nil, deja_vu)
+           headers_for(locale: locale, deja_vu: deja_vu)
 
     expect(last_response.status).to eq(200)
     result = JSON.parse(last_response.body)
@@ -633,11 +737,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   end
 
   it 'deletes things with a custom locale' do
-    delete_things('bye')
+    delete_things(locale: 'bye')
   end
 
-  it 'deletes things with a custom locale and passes through deja_vu' do
-    delete_things('en', true)
+  it 'deletes things and passes through deja_vu' do
+    delete_things(deja_vu: true)
   end
 
   it 'should see errors from the inner call correctly' do
