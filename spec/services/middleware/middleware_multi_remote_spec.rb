@@ -876,6 +876,21 @@ describe Hoodoo::Services::Middleware do
       expect( Hoodoo::UUID.valid?( resource_uuid ) ).to eq( true )
     end
 
+    it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
+      post(
+        '/v1/test_call.tar.gz',
+         JSON.fast_generate( { :foo => 'specify_uuid' } ),
+         headers_for()
+      )
+
+      expect( last_response.status ).to eq( 403 )
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'errors' ].size ).to eq( 1 )
+      expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to be_nil # Ensure no information disclosure vulnerability
+    end
+
     def update_things( locale: nil )
       patch(
         '/v1/test_call/aa/bb.tar.gz',

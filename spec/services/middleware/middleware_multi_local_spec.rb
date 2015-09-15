@@ -636,6 +636,18 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(result).to eq({'result' => {'inner' => 'created'}, 'dated_from' => nil})
   end
 
+  it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'specify_uuid'}),
+         headers_for()
+
+    expect(last_response.status).to eq(403)
+    result = JSON.parse(last_response.body)
+    expect(result['errors'].size).to eq(1)
+    expect(result['errors'][0]['code']).to eq('platform.forbidden')
+    expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
+  end
+
   def update_things(locale: nil)
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:update).once.and_call_original
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_hook).once do | ignored_rspec_mock_instance, context |
