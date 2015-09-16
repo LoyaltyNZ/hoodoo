@@ -57,6 +57,83 @@ module Hoodoo
         model.extend( ClassMethods )
       end
 
+      # Instance equivalent of
+      # Hoodoo::ActiveRecord::Writer::ClassMethods.persist_in - see that
+      # for details. The class method just calls here, having constructed
+      # an instance based on the attributes it was given. If you have
+      # already built an instance yourself, just call this instance method
+      # equivalent instead.
+      #
+      #     def create( context )
+      #       attributes = mapping_of( context.request.body )
+      #       model_instance = Unique.new( attributes )
+      #
+      #       # ...maybe make other changes to model_instance, then...
+      #
+      #       model_instance.persist_in( context )
+      #       return if context.response.halt_processing?
+      #
+      #       # ...any other processing...
+      #
+      #       context.response.set_resource( rendering_of( context, model_instance ) )
+      #     end
+      #
+      # Parameters:
+      #
+      # +context+:: Hoodoo::Services::Context instance describing a call
+      #             context. This is typically a value passed to one of
+      #             the Hoodoo::Services::Implementation instance methods
+      #             that a resource subclass implements.
+      #
+      def persist_in( context )
+
+        # If this model has an ActiveRecord uniqueness validation, it is
+        # still subject to race conditions and MUST be backed by a database
+        # constraint. If this constraint fails, try to re-run model
+        # validations just in case it was a race condition case; though of
+        # course, it could be that there is *only* a database constraint and
+        # no model validation. If there is *only* a model validation, the
+        # model is ill-defined and at risk.
+
+        # First just see if we have any problems saving anyway.
+        #
+        errors_occurred = begin
+          :any unless self.save
+        rescue ::ActiveRecord::RecordNotUnique => error
+          :duplication
+        end
+
+        # If there was a problem, just try adding model-originated mapped
+        # errors via the relevant mixin. If there are no errors in context,
+        # add one for the invalid duplication case - no AR-level uniqueness
+        # validations must exist on the model.
+        #
+        unless errors_occurred.nil?
+          context.response.add_errors( self.platform_errors() ) if self.respond_to?( :platform_errors )
+
+          # We do nothing else. Hoodoo will check for errors on exit and if
+          # it "sees" only generic.invalid_duplication errors, plus an
+          # inbound flag saying that the caller is allowing these, it'll
+          # transform the response into a 204. If it sees any other errors,
+          # normal processing happens. At the time of writing, this is
+          # inside "middleware.rb" in method
+          # "remove_expected_errors_when_experiencing_deja_vu", though this
+          # may get changed without the comment here being updated too.
+          #
+          if errors_occurred == :duplication && context.response.halt_processing? == false
+            context.response.add_error(
+              'generic.invalid_duplication',
+              {
+                :message   => 'Cannot persist this resource instance due to a uniqueness constraint violation',
+                :reference => { :field_name => 'unknown' }
+              }
+            )
+          end
+        end
+
+        return self
+      end
+
       # Collection of class methods that get defined on an including class via
       # Hoodoo::ActiveRecord::Writer::included.
       #
@@ -146,66 +223,12 @@ module Hoodoo
         #
         # +attributes+:: Attributes hash to be passed to this model class's
         #                constructor, via <tt>self.new( attributes )</tt>.
-        #                Optional. If omitted, pass the +instance+ parameter
-        #                instead.
         #
-        # +instance+::   An instance of this model which is fully initialised
-        #                and ready to be persisted (saved). Optional. If
-        #                omitted, pass the +attributes+ parameter instead.
+        # See also the Hoodoo::ActiveRecord::Writer#persist_in instance method
+        # equivalent of this class method.
         #
-        def persist_in( context, attributes: nil, instance: nil )
-
-          # We either get a ready-initialised instance in the 'instance'
-          # parameter or have to bulid one from the 'attributes' parameter,
-          # which takes precedence.
-
-          instance = self.new( attributes ) unless attributes.nil?
-
-          # If this model has an ActiveRecord uniqueness validation, it is
-          # still subject to race conditions and MUST be backed by a database
-          # constraint. If this constraint fails, try to re-run model
-          # validations just in case it was a race condition case; though of
-          # course, it could be that there is *only* a database constraint and
-          # no model validation. If there is *only* a model validation, the
-          # model is ill-defined and at risk.
-
-          # First just see if we have any problems saving anyway.
-          #
-          errors_occurred = begin
-            :any unless instance.save
-          rescue ::ActiveRecord::RecordNotUnique => error
-            :duplication
-          end
-
-          # If there was a problem, just try adding model-originated mapped
-          # errors via the relevant mixin. If there are no errors in context,
-          # add one for the invalid duplication case - no AR-level uniqueness
-          # validations must exist on the model.
-          #
-          unless errors_occurred.nil?
-            context.response.add_errors( instance.platform_errors() ) if instance.respond_to?( :platform_errors )
-
-            # We do nothing else. Hoodoo will check for errors on exit and if
-            # it "sees" only generic.invalid_duplication errors, plus an
-            # inbound flag saying that the caller is allowing these, it'll
-            # transform the response into a 204. If it sees any other errors,
-            # normal processing happens. At the time of writing, this is
-            # inside "middleware.rb" in method
-            # "remove_expected_errors_when_experiencing_deja_vu", though this
-            # may get changed without the comment here being updated too.
-            #
-            if errors_occurred == :duplication && context.response.halt_processing? == false
-              context.response.add_error(
-                'generic.invalid_duplication',
-                {
-                  :message   => 'Cannot create this resource instance due to a uniqueness constraint violation',
-                  :reference => { :field_name => 'unknown' }
-                }
-              )
-            end
-          end
-
-          return instance
+        def persist_in( context, attributes )
+          return self.new( attributes ).persist_in( context )
         end
 
       end

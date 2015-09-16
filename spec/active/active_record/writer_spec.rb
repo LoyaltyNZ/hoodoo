@@ -72,32 +72,52 @@ describe Hoodoo::ActiveRecord::Writer do
       @session = @interaction.context.session
     end
 
-    it 'adds an invalid duplicate error where AR validations are missing' do
-      record = RSpecModelWriterTestWithoutValidation.new(@record_without_app_validation.attributes)
+    context 'adds an invalid duplicate error where AR validations are missing' do
+      def expect_correct_error
+        expect(@context.response.errors.errors).to eq(
+          [{"code"=>"generic.invalid_duplication",
+            "message"=>"Cannot create this resource instance due to a uniqueness constraint violation",
+            "reference"=>"unknown"}]
+        )
+      end
 
-      expect(
-        RSpecModelWriterTestWithoutValidation.persist_in(@context, attributes: nil, instance: record)
-      ).to be_a(RSpecModelWriterTestWithoutValidation)
+      it 'via class method' do
+        expect(
+          RSpecModelWriterTestWithoutValidation.persist_in(@context, @record_without_app_validation.attributes)
+        ).to be_a(RSpecModelWriterTestWithoutValidation)
+      end
 
-      expect(@context.response.errors.errors).to eq(
-        [{"code"=>"generic.invalid_duplication",
-          "message"=>"Cannot create this resource instance due to a uniqueness constraint violation",
-          "reference"=>"unknown"}]
-      )
+      it 'via instance method' do
+        record = RSpecModelWriterTestWithoutValidation.new(@record_without_app_validation.attributes)
+
+        expect(
+          record.persist_in(@context)
+        ).to be_a(RSpecModelWriterTestWithoutValidation)
+      end
     end
 
-    it 'adds an invalid duplicate error where AR validations are present' do
-      record = RSpecModelWriterTestWithValidation.new(@record_with_app_validation.attributes)
+    context 'adds an invalid duplicate error where AR validations are present' do
+      def expect_correct_error
+        expect(@context.response.errors.errors).to eq(
+          [{"code"=>"generic.invalid_duplication",
+            "message"=>"has already been taken",
+            "reference"=>"code"}]
+        )
+      end
 
-      expect(
-        RSpecModelWriterTestWithValidation.persist_in(@context, attributes: nil, instance: record)
-      ).to be_a(RSpecModelWriterTestWithValidation)
+      it 'via class method' do
+        expect(
+          RSpecModelWriterTestWithValidation.persist_in(@context, @record_with_app_validation.attributes)
+        ).to be_a(RSpecModelWriterTestWithValidation)
+      end
 
-      expect(@context.response.errors.errors).to eq(
-        [{"code"=>"generic.invalid_duplication",
-          "message"=>"has already been taken",
-          "reference"=>"code"}]
-      )
+      it 'via instance method' do
+        record = RSpecModelWriterTestWithValidation.new(@record_with_app_validation.attributes)
+
+        expect(
+          record.persist_in(@context)
+        ).to be_a(RSpecModelWriterTestWithValidation)
+      end
     end
   end
 

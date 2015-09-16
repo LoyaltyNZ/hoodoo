@@ -974,7 +974,7 @@ describe Hoodoo::Services::Middleware do
 
       post(
         '/v1/test_call.tar.gz',
-         JSON.fast_generate( { :foo => 'specify_uuid' } ),
+         { :foo => 'specify_uuid' }.to_json,
          headers_for()
       )
 
@@ -989,7 +989,7 @@ describe Hoodoo::Services::Middleware do
     it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
       post(
         '/v1/test_call.tar.gz',
-         JSON.fast_generate( { :foo => 'specify_uuid' } ),
+         { :foo => 'specify_uuid' }.to_json,
          headers_for()
       )
 
