@@ -119,6 +119,26 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     expect( @errors.errors ).to eq( [] )
   end
 
+  it 'maps "base" errors correctly' do
+    m = RSpecModelErrorMappingTest.new
+    m.errors.add( :base, 'this is a test' )
+
+    # The error added above would be cleared if we let validation happen as
+    # the first thing AR does for this is clear any existing erorrs out. So,
+    # having manually added an error, pass "false" to "adds_errors_to?" to
+    # prevent re-validation (see test "it 'does not auto-validate if so
+    # instructed'") and deal just with the model's existing error collection.
+
+    expect( m.adds_errors_to?( @errors, false ) ).to eq( true )
+    expect( @errors.errors ).to eq( [
+      {
+        "code" => "generic.invalid_parameters",
+        "message" => "this is a test",
+        "reference" => "model instance"
+      }
+    ] )
+  end
+
   it 'handles varying validation types' do
     m = RSpecModelErrorMappingTest.new( {
       :boolean  => true,

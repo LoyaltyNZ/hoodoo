@@ -108,9 +108,13 @@ module Hoodoo
 
         self.errors.messages.each_pair do | attribute_name, message_array |
           column = self.class.columns_hash[ attribute_name.to_s ]
-          next if column.nil?
 
-          attribute_type = attribute_type_of( attribute_name, column )
+          if column.nil?
+            attribute_type = 'unknown'
+            attribute_name = 'model instance' if attribute_name.to_s == 'base'
+          else
+            attribute_type = attribute_type_of( attribute_name, column )
+          end
 
           message_array.each do | message |
             error_code = case message

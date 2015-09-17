@@ -55,14 +55,28 @@ module Hoodoo
       #
       def self.instantiate( model )
         model.extend( ClassMethods )
+
+        # See instance method "persist_in" for how this gets used.
+        #
+        model.validate do
+          if @nz_co_loyalty_hoodoo_writer_db_uniqueness_violation == true
+            errors.add( :base, 'has already been taken' )
+          end
+        end
       end
 
       # Instance equivalent of
-      # Hoodoo::ActiveRecord::Writer::ClassMethods.persist_in - see that
-      # for details. The class method just calls here, having constructed
-      # an instance based on the attributes it was given. If you have
-      # already built an instance yourself, just call this instance method
-      # equivalent instead.
+      # Hoodoo::ActiveRecord::Writer::ClassMethods.persist_in - see that for
+      # details. The class method just calls here, having constructed an
+      # instance based on the attributes it was given. If you have already
+      # built an instance yourself, just call this instance method equivalent
+      # instead.
+      #
+      # As an instance-based method, the return value and error handling
+      # semantics differ from the class-based counterpart. Instead of
+      # checking "persisted?", check the return value of +persist_in+. This
+      # means you can also use +persist_in+ to save a previousl persisted, but
+      # now updated record, should you so wish.
       #
       #     def create( context )
       #       attributes = mapping_of( context.request.body )
@@ -70,8 +84,17 @@ module Hoodoo
       #
       #       # ...maybe make other changes to model_instance, then...
       #
-      #       model_instance.persist_in( context )
-      #       return if context.response.halt_processing?
+      #       result = model_instance.persist_in( context )
+      #
+      #       unless result === :success
+      #
+      #         # Error condition. If you're using the error handler mixin
+      #         # in Hoodoo::ActiveRecord::ErrorMapping, do this:
+      #         #
+      #         context.response.add_errors( model_instance.platform_errors )
+      #         return # Early exit
+      #
+      #       end
       #
       #       # ...any other processing...
       #
@@ -85,6 +108,12 @@ module Hoodoo
       #             the Hoodoo::Services::Implementation instance methods
       #             that a resource subclass implements.
       #
+      # Returns a Symbol of +:success+ or +:failure+ indicating the outcome
+      # of the same attempt. In the event of failure, the model will be
+      # invalid and not persisted; you can read errors immediately and should
+      # avoid unnecessarily re-running validations by calling +valid?+ or
+      # +validate+ on the instance.
+      #
       def persist_in( context )
 
         # If this model has an ActiveRecord uniqueness validation, it is
@@ -95,6 +124,18 @@ module Hoodoo
         # no model validation. If there is *only* a model validation, the
         # model is ill-defined and at risk.
 
+        # TODO: This flag is nasty but seems unavoidable. Whenever you query
+        #       the validity of a record, AR will always clear all errors and
+        #       then (re-)run validations. We cannot just add an error to
+        #       "base" and expect it to survive. Instead, it's necessary to
+        #       use this flag to signal to the custom validator added in the
+        #       'self.instantiate' implementation earlier that it should add
+        #       an error. Trouble is, when do we clear the flag...?
+        #
+        #       This solution works but is inelegant and fragile.
+        #
+        @nz_co_loyalty_hoodoo_writer_db_uniqueness_violation = false
+
         # First just see if we have any problems saving anyway.
         #
         errors_occurred = begin
@@ -103,35 +144,21 @@ module Hoodoo
           :duplication
         end
 
-        # If there was a problem, just try adding model-originated mapped
-        # errors via the relevant mixin. If there are no errors in context,
-        # add one for the invalid duplication case - no AR-level uniqueness
-        # validations must exist on the model.
+        # If an exception caught a duplication violation then either there is
+        # a race condition on an AR-level uniqueness validation, or no such
+        # validation at all. Thus, re-run validations with "valid?" and if it
+        # still seems OK we must be dealing with a database-only constraint.
+        # Set the magic flag (ugh, see earlier) to signal that when
+        # validations run, they should add a relevant error to "base".
         #
-        unless errors_occurred.nil?
-          context.response.add_errors( self.platform_errors() ) if self.respond_to?( :platform_errors )
-
-          # We do nothing else. Hoodoo will check for errors on exit and if
-          # it "sees" only generic.invalid_duplication errors, plus an
-          # inbound flag saying that the caller is allowing these, it'll
-          # transform the response into a 204. If it sees any other errors,
-          # normal processing happens. At the time of writing, this is
-          # inside "middleware.rb" in method
-          # "remove_expected_errors_when_experiencing_deja_vu", though this
-          # may get changed without the comment here being updated too.
-          #
-          if errors_occurred == :duplication && context.response.halt_processing? == false
-            context.response.add_error(
-              'generic.invalid_duplication',
-              {
-                :message   => 'Cannot persist this resource instance due to a uniqueness constraint violation',
-                :reference => { :field_name => 'unknown' }
-              }
-            )
+        if errors_occurred == :duplication
+          if self.valid?
+            @nz_co_loyalty_hoodoo_writer_db_uniqueness_violation = true
+            self.validate
           end
         end
 
-        return self
+        return errors_occurred.nil? ? :success : :failure
       end
 
       # Collection of class methods that get defined on an including class via
@@ -205,9 +232,17 @@ module Hoodoo
         #
         #     def create( context )
         #       attributes = mapping_of( context.request.body )
-        #
         #       model_instance = Unique.persist_in( context, attributes )
-        #       return if context.response.halt_processing?
+        #
+        #       unless model_instance.persisted?
+        #
+        #         # Error condition. If you're using the error handler mixin
+        #         # in Hoodoo::ActiveRecord::ErrorMapping, do this:
+        #         #
+        #         context.response.add_errors( model_instance.platform_errors )
+        #         return # Early exit
+        #
+        #       end
         #
         #       # ...any other processing...
         #
@@ -228,7 +263,10 @@ module Hoodoo
         # equivalent of this class method.
         #
         def persist_in( context, attributes )
-          return self.new( attributes ).persist_in( context )
+          instance = self.new( attributes )
+          instance.persist_in( context )
+
+          return instance
         end
 
       end
