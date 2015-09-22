@@ -15,7 +15,26 @@ module Hoodoo
       # Documented Platform API Resource 'QueueProcessingRequest'.
       #
       class QueueProcessingRequest < Hoodoo::Presenters::Base
+
+        # Defined values for the +state+ enumeration in the schema.
+        #
+        STATES = [ :processed, :deferred ]
+
         schema do
+          text :message_reference
+          enum :state, :from => STATES
+          datetime  :queued_at
+          text :queue_caller_key
+
+          hash :caller_identity do
+
+          end
+
+          hash :info do
+
+          end
+
+          array :platform_requests
         end
       end
     end
