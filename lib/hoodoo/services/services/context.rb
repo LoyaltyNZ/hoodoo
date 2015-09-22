@@ -106,7 +106,7 @@ module Hoodoo; module Services
       #            If omitted, defaults to the locale set in this Client
       #            instance's constructor.
       #
-      # Others::   See Hoodoo::Services::Middleware's HEADER_TO_PROPERTY.
+      # Others::   See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+.
       #            For any options in that map which describe themselves as
       #            being automatically transferred from one endpoint to
       #            another, you can prevent this by explicitly pasisng a
@@ -124,7 +124,7 @@ module Hoodoo; module Services
 
         endpoint.locale = options[ :locale ] unless options[ :locale ].nil?
 
-        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
           property        = description[ :property        ]
           property_writer = description[ :property_writer ]
           auto_transfer   = description[ :auto_transfer   ]

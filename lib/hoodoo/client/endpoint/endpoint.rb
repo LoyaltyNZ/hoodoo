@@ -65,9 +65,8 @@ module Hoodoo
       # +locale+::         Locale string for request/response, e.g. "en-gb".
       #                    Optional. If omitted, defaults to "en-nz".
       #
-      # OTHERS::           See Hoodoo::Services::Middleware's
-      #                    HEADER_TO_PROPERTY. All such option keys _MUST_ be
-      #                    Symbols.
+      # OTHERS::           See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+.
+      #                    All such option keys _MUST_ be Symbols.
       #
       # Returns a Hoodoo::Services::Discovery "For..." family member
       # instance (e.g. Hoodoo::Services::Discovery::ForHTTP) which can be
@@ -107,7 +106,7 @@ module Hoodoo
       # Define read/write accessors for properties related to "X-Foo"
       # headers. See the Middleware for details.
       #
-      Hoodoo::Services::Middleware.define_accessors_for_header_equivalents( self )
+      Hoodoo::Client::Headers.define_accessors_for_header_equivalents( self )
 
       # The resource name passed to the constructor, as a String.
       #
@@ -162,9 +161,8 @@ module Hoodoo
       #
       # +locale+::           As in the options for #endpoint_for.
       #
-      # OTHERS::             See Hoodoo::Services::Middleware's
-      #                      HEADER_TO_PROPERTY. All such option keys _MUST_
-      #                      be Symbols.
+      # OTHERS::             See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+.
+      #                      All such option keys _MUST_ be Symbols.
       #
       # The out-of-the box initialiser sets up the data for the #resource,
       # #version, #discovery_result, #interaction, #session_id, #locale,
@@ -218,7 +216,7 @@ module Hoodoo
         self.session_id   = options[ :session_id ]
         self.locale       = options[ :locale     ]
 
-        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
           property        = description[ :property        ]
           property_writer = description[ :property_writer ]
 
@@ -301,7 +299,7 @@ module Hoodoo
           target_endpoint.session_id = self.session_id unless self.session_id.nil?
           target_endpoint.locale     = self.locale     unless self.locale.nil?
 
-          Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+          Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
             property        = description[ :property        ]
             property_writer = description[ :property_writer ]
 

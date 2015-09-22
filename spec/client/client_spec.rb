@@ -172,7 +172,7 @@ describe Hoodoo::Client do
   #
   # Similar instance variables are used for UUID and déjà-vu specifiers. This
   # method will probably get expanded over time with other properties derived
-  # from the Middleware's HEADER_TO_PROPERTY map too.
+  # from Hoodoo::Client::Headers' HEADER_TO_PROPERTY map too.
   #
   # Through the use of random switches, we (eventually!) get test coverage
   # on locale specified (or not) given to the Client, plus override locale
@@ -219,7 +219,7 @@ describe Hoodoo::Client do
   # See also "def mock" and "def set_vars_for" earlier in this file.
   #
   def option_based_expectations( result )
-    Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+    Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
       property = description[ :property ]
       expect( result[ property.to_s ] ).to eq( instance_variable_get( "@expected_#{ property }" ) )
     end
@@ -404,7 +404,7 @@ describe Hoodoo::Client do
     end
 
     context 'rejects a request with secured option' do
-      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
         property = description[ :property ]
         secured  = description[ :secured  ]
 
@@ -433,7 +433,7 @@ describe Hoodoo::Client do
     end
 
     context 'accepts a request with non-secured option' do
-      Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
         property = description[ :property ]
         secured  = description[ :secured  ]
 

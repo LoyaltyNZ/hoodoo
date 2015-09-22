@@ -7,6 +7,8 @@
 #           25-Feb-2015 (ADH): Created.
 ########################################################################
 
+require 'hoodoo/client/headers'
+
 module Hoodoo
 
   # Hoodoo::Client provides a high-level abstracted interface for making
@@ -308,7 +310,7 @@ module Hoodoo
       #            If omitted, defaults to the locale set in this Client
       #            instance's constructor.
       #
-      # OTHERS::   See Hoodoo::Services::Middleware's HEADER_TO_PROPERTY. All
+      # OTHERS::   See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+. All
       #            such option keys _MUST_ be Symbols.
       #
       def resource( resource, version = 1, options = {} )
@@ -319,7 +321,7 @@ module Hoodoo
           :locale     => options[ :locale ] || @locale
         }
 
-        Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
           property = description[ :property ]
           endpoint_options[ property ] = options[ property ] if options.has_key?( property )
         end

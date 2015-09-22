@@ -226,7 +226,7 @@ module Hoodoo
             # A suite of options is defined by a constant in the Endpoint
             # superclass.
             #
-            Hoodoo::Services::Middleware::HEADER_TO_PROPERTY.each do | rack_header, description |
+            Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
               header_name = description[ :header      ]
               header_proc = description[ :header_proc ]
               property    = description[ :property    ]

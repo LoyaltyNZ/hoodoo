@@ -73,7 +73,7 @@ module Hoodoo; module Services
     # Define read/write accessors for properties related to "X-Foo"
     # headers. See the Middleware for details.
     #
-    Hoodoo::Services::Middleware.define_accessors_for_header_equivalents( self )
+    Hoodoo::Client::Headers.define_accessors_for_header_equivalents( self )
 
     # Hash of HTTP headers _in_ _Rack_ _format_ - e.g. +HTTP_X_INTERACTION_ID+
     # for the "X-Interaction-ID" header, for read-only use. All keys are in
