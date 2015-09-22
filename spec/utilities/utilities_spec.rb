@@ -430,15 +430,15 @@ describe Hoodoo::Utilities do
   #
   describe '#valid_iso8601_subset_datetime?' do
     it 'accepts valid' do
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T00:00:00Z'           ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00Z'           ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0Z'         ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0000Z'      ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.000000000Z' ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00+12:30'      ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00-12:30'      ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0+12:30'    ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0-12:30'    ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2014-12-11T00:00:00Z'           ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00Z'           ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0Z'         ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0000Z'      ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.000000000Z' ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00+12:30'      ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00-12:30'      ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0+12:30'    ) ).to be_a( DateTime )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( '2012-02-29T00:00:00.0-12:30'    ) ).to be_a( DateTime )
     end
 
     it 'rejects invalid' do
@@ -465,8 +465,8 @@ describe Hoodoo::Utilities do
   #
   describe '#valid_iso8601_subset_date?' do
     it 'accepts valid' do
-      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-12-11' ) ).to eq( true )
-      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2012-02-29' ) ).to eq( true )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2014-12-11' ) ).to be_a( Date )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( '2012-02-29' ) ).to be_a( Date )
     end
 
     it 'rejects invalid' do
