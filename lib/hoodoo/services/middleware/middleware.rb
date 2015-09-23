@@ -1890,9 +1890,10 @@ module Hoodoo; module Services
         # If we reach here the header is either not secured, or is permitted.
         # Check to see if the value is OK.
 
-        validation_proc = description[ :validation_proc ]
+        property_writer = description[ :property_writer ]
+        property_value  = description[ :property_proc   ].call( header_value )
 
-        if validation_proc.call( header_value ) == false
+        if property_value.nil?
           interaction.context.response.errors.add_error(
             'generic.malformed',
             {
@@ -1905,9 +1906,6 @@ module Hoodoo; module Services
         end
 
         # All good!
-
-        property_writer = description[ :property_writer ]
-        property_value  = description[ :property_proc   ].call( header_value )
 
         request.send( property_writer, property_value )
 

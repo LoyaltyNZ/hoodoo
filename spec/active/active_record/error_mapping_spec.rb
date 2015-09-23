@@ -36,6 +36,16 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
         validates :string, :length => { :maximum => 16 }
         validates :uuid, :uuid => true
       end
+
+      class RSpecModelErrorMappingTestBase < ActiveRecord::Base
+        self.table_name = RSpecModelErrorMappingTest.table_name
+
+        include Hoodoo::ActiveRecord::ErrorMapping
+
+        validate do | instance |
+          instance.errors.add( :base, 'this is a test' )
+        end
+      end
     end
   end
 
@@ -110,26 +120,10 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     ] )
   end
 
-  it 'does not auto-validate if so instructed' do
-    m = RSpecModelErrorMappingTest.new
-
-    expect( m.adds_errors_to?( @errors, false ) ).to eq( false )
-    expect( m ).to_not receive( :valid? )
-
-    expect( @errors.errors ).to eq( [] )
-  end
-
   it 'maps "base" errors correctly' do
-    m = RSpecModelErrorMappingTest.new
-    m.errors.add( :base, 'this is a test' )
+    m = RSpecModelErrorMappingTestBase.new
 
-    # The error added above would be cleared if we let validation happen as
-    # the first thing AR does for this is clear any existing erorrs out. So,
-    # having manually added an error, pass "false" to "adds_errors_to?" to
-    # prevent re-validation (see test "it 'does not auto-validate if so
-    # instructed'") and deal just with the model's existing error collection.
-
-    expect( m.adds_errors_to?( @errors, false ) ).to eq( true )
+    expect( m.adds_errors_to?( @errors ) ).to eq( true )
     expect( @errors.errors ).to eq( [
       {
         "code" => "generic.invalid_parameters",
@@ -204,8 +198,7 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
     array_col = RSpecModelErrorMappingTest.columns_hash[ 'array' ]
     expect(array_col).to receive(:array).once.and_return(true)
 
-    m.valid?
-    m.adds_errors_to?( @errors, false )
+    m.adds_errors_to?( @errors )
 
     expect( @errors.errors ).to eq( [
       {

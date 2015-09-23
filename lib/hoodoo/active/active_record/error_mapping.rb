@@ -93,16 +93,8 @@ module Hoodoo
       #                the model, by adding equivalent structured errors to
       #                the collection.
       #
-      # +validate+::   Optional, defaults to +true+; the model's +#valid?+
-      #                method will be called for you and its errors examined.
-      #                If you don't want to call +#valid?+ for any reason,
-      #                pass +false+ here. Only any errors already reported
-      #                by ActiveModel::Validations#errors will be mapped.
-      #                See http://api.rubyonrails.org/classes/ActiveModel/Validations.html#method-i-errors
-      #                for more information.
-      #
-      def adds_errors_to?( collection, validate = true )
-        self.valid? if validate
+      def adds_errors_to?( collection )
+        self.validate()
 
         added = false
 
@@ -173,12 +165,9 @@ module Hoodoo
       #
       #     return if context.response.add_errors( model.platform_errors )
       #
-      # +validate+:: Optional, defaults to +true+; same meaning as the same
-      #              name parameter in #adds_errors_to?.
-      #
-      def platform_errors( validate = true )
+      def platform_errors
         collection = Hoodoo::Errors.new
-        self.adds_errors_to?( collection, validate )
+        self.adds_errors_to?( collection )
 
         return collection
       end

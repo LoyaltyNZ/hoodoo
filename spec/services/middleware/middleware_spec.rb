@@ -1173,7 +1173,7 @@ describe Hoodoo::Services::Middleware do
           expect(last_response.body).to be_empty
         end
 
-        ['Yes', 'No', 'no', 'foo', 'bar', 'yes '].each do | invalid_value |
+        ['No', 'no', 'foo', 'bar', 'true', 'yes '].each do | invalid_value |
           it "ignores invalid value #{invalid_value}" do
             post '/v2/rspec_test_service_stub', '{ "foo": "present", "bar": 42 }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
                                                                                      'HTTP_X_DEJA_VU' => invalid_value }
