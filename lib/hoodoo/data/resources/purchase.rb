@@ -19,15 +19,16 @@ module Hoodoo
       class Purchase < Hoodoo::Presenters::Base
 
         schema do
-          text      :token_identifier
-          datetime  :backdated_to
+          text     :token_identifier
+          datetime :backdated_to
+          uuid     :estimation_id, :resource => :Estimation
+
+          text     :pos_reference    # TODO: Deprecated, renamed to...
+          text     :caller_reference #       ...this field.
 
           object :basket, :required => true do
             type :Basket
           end
-
-          text      :pos_reference
-          uuid      :estimation_id, :resource => :Estimation
         end
 
       end
