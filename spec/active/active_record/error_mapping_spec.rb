@@ -18,8 +18,24 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
         t.text     :array, :array => true
       end
 
+      ActiveRecord::Migration.create_table( :r_spec_model_associated_error_mapping_tests ) do | t |
+        t.string :other_string
+
+        # For 'has_many' - can't use "t.reference" as the generated
+        # column name is too long!
+        #
+        t.integer :many_id
+        t.index   :many_id
+      end
+
       class RSpecModelErrorMappingTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::ErrorMapping
+
+        has_many :r_spec_model_associated_error_mapping_tests,
+                 :foreign_key => :many_id,
+                 :class_name  => :RSpecModelAssociatedErrorMappingTest
+
+        accepts_nested_attributes_for :r_spec_model_associated_error_mapping_tests
 
         validates_presence_of :boolean,
                               :date,
@@ -35,6 +51,20 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
         validates_uniqueness_of :integer
         validates :string, :length => { :maximum => 16 }
         validates :uuid, :uuid => true
+
+        validate do
+          if string == 'magic'
+            errors.add( 'this.thing', 'is not a column' )
+          end
+        end
+      end
+
+      class RSpecModelAssociatedErrorMappingTest < ActiveRecord::Base
+        belongs_to :r_spec_model_error_mapping_test,
+                   :foreign_key => :many_id,
+                   :class_name  => :RSpecModelErrorMappingTest
+
+        validates :other_string, :length => { :maximum => 6 }
       end
 
       class RSpecModelErrorMappingTestBase < ActiveRecord::Base
@@ -52,6 +82,22 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
   before :each do
     @errors = Hoodoo::Errors.new( Hoodoo::ErrorDescriptions.new )
   end
+
+  let( :valid_model ) {
+    RSpecModelErrorMappingTest.new( {
+      :uuid     => Hoodoo::UUID.generate(),
+      :boolean  => true,
+      :date     => Time.now,
+      :datetime => Time.now,
+      :decimal  => 2.3,
+      :float    => 2.3,
+      :integer  => 42,
+      :string   => "hello",
+      :text     => "hello",
+      :time     => Time.now,
+      :array    => [ 'hello' ]
+    } )
+  }
 
   it 'auto-validates and maps errors correctly' do
 
@@ -210,19 +256,7 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
   end
 
   it 'maps duplicates' do
-    m = RSpecModelErrorMappingTest.new( {
-      :uuid      => Hoodoo::UUID.generate(),
-      :boolean  => true,
-      :date     => Time.now,
-      :datetime => Time.now,
-      :decimal  => 2.3,
-      :float    => 2.3,
-      :integer  => 42,
-      :string   => "hello",
-      :text     => "hello",
-      :time     => Time.now,
-      :array    => [ 'hello' ]
-    } )
+    m = valid_model
 
     m.adds_errors_to?( @errors )
     expect( @errors.errors ).to eq( [] )
@@ -280,23 +314,47 @@ describe Hoodoo::ActiveRecord::ErrorMapping do
   end
 
   it 'adds nothing if the model is valid' do
-    m = RSpecModelErrorMappingTest.new( {
-      :uuid      => Hoodoo::UUID.generate(),
-      :boolean  => true,
-      :date     => Time.now,
-      :datetime => Time.now,
-      :decimal  => 2.3,
-      :float    => 2.3,
-      :integer  => 42,
-      :string   => "hello",
-      :text     => "hello",
-      :time     => Time.now,
-      :array    => [ 'hello' ]
-    } )
+    m = valid_model
 
     expect( m.adds_errors_to?( @errors ) ).to eq( false )
     expect( @errors.errors ).to eq( [] )
 
     expect { m.save! }.to_not raise_error
+  end
+
+  it 'has-many associations are dereferenced' do
+    attrs = valid_model.attributes
+    attrs[ 'r_spec_model_associated_error_mapping_tests_attributes' ] = [
+      { :other_string => 'ok 1' },
+      { :other_string => 'ok 2' },
+      { :other_string => 'too long, so fails validation' }
+    ]
+
+    m = RSpecModelErrorMappingTest.new( attrs )
+
+    m.adds_errors_to?( @errors )
+
+    expect( @errors.errors ).to eq( [
+      {
+        "code" => "generic.invalid_string",
+        "message" => "is too long (maximum is 6 characters)",
+        "reference" => "r_spec_model_associated_error_mapping_tests.other_string"
+      }
+    ] )
+  end
+
+  it 'works with dot-separated non-attribute paths' do
+    m = valid_model
+    m.string = 'magic'
+
+    m.adds_errors_to?( @errors )
+
+    expect( @errors.errors ).to eq( [
+      {
+        "code" => "generic.invalid_parameters",
+        "message" => "is not a column",
+        "reference" => "this.thing"
+      }
+    ] )
   end
 end
