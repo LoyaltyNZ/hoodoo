@@ -124,33 +124,6 @@ module Hoodoo; module Services
     #
     PROHIBITED_INBOUND_FIELDS = Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys
 
-    # A request will be rejected if it includes an HTTP header from this list
-    # (expressed _precisely_ as it would appear in a Rack request) unless:
-    #
-    # * There is a session in use which includes a +scoping+ section
-    # * The +scoping+ session in turn has an +authorised_http_headers+ section
-    #   consisting of an Array of Strings
-    # * At least one of those Strings matches the header name that the inbound
-    #   request is attempting to use, again in the identical Rack request
-    #   formatting.
-    #
-    # Rack request formatting means the header name is in upper case, with any
-    # hyphens converted to underscores, and with a prefix of "HTTP_" added for
-    # _most_ headers. For more information, see the Rack specification:
-    #
-    # * https://github.com/rack/rack
-    # * https://github.com/rack/rack/blob/master/SPEC
-    #
-    SECURED_HEADERS = Set.new( [
-
-      # This header is ignored except in POST (resource creation) requests. It
-      # asks that the "id" field (UUID) for the persisted resource instance is
-      # of the given value, rather than automatically generated.
-      #
-      'HTTP_X_RESOURCE_UUID'
-
-    ] )
-
     # Somewhat arbitrary maximum incoming payload size to prevent ham-fisted
     # DOS attempts to consume RAM.
     #
@@ -531,6 +504,23 @@ module Hoodoo; module Services
       resource = resource.to_sym
       version  = version.to_i
 
+      # Build a Hash of any options which should be transferred from one
+      # endpoint to another for inter-resource calls, along with other
+      # options common to local and remote endpoints.
+
+      endpoint_options = {
+        :interaction => interaction,
+        :locale      => interaction.context.request.locale,
+      }
+
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+
+        if description[ :auto_transfer ] == true
+          endpoint_options[ property ] = interaction.context.request.send( property )
+        end
+      end
+
       if @discoverer.is_local?( resource, version )
 
         # For local inter-resource calls, return the middleware's endpoint
@@ -545,20 +535,12 @@ module Hoodoo; module Services
           raise "Hoodoo::Services::Middleware\#inter_resource_endpoint_for: Internal error - version #{ version } of resource #{ resource } endpoint is local according to the discovery engine, but no local service discovery record can be found"
         end
 
-        # Note that we automatically cascade dated_at (for reading data
-        # at a given historical date) but don't automatically cascade
-        # dated_from (for creating data with a specified date). It does
-        # not make sense in most cases to do so.
+        endpoint_options[ :discovery_result ] = discovery_result
 
         return Hoodoo::Services::Middleware::InterResourceLocal.new(
           resource,
           version,
-          {
-            :interaction      => interaction,
-            :locale           => interaction.context.request.locale,
-            :dated_at         => interaction.context.request.dated_at,
-            :discovery_result => discovery_result
-          }
+          endpoint_options
         )
 
       else
@@ -570,19 +552,14 @@ module Hoodoo; module Services
         # (e.g. session permission augmentation) and the result needs
         # extra processing before it is returned to the caller (e.g.
         # delete an augmented session, annotate any errors from call).
-        #
-        # As with local calls, dated_at is cascaded but dated_from is not.
+
+        endpoint_options[ :discoverer ] = @discoverer
+        endpoint_options[ :session    ] = interaction.context.session
 
         wrapped_endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
           version,
-          {
-            :discoverer  => @discoverer,
-            :interaction => interaction,
-            :session     => interaction.context.session,
-            :locale      => interaction.context.request.locale,
-            :dated_at    => interaction.context.request.dated_at
-          }
+          endpoint_options
         )
 
         if wrapped_endpoint.is_a?( Hoodoo::Client::Endpoint::AMQP ) && defined?( @@alchemy )
@@ -659,17 +636,13 @@ module Hoodoo; module Services
                               body_hash:  nil,
                               query_hash: nil )
 
-      interface      = discovery_result.interface_class
-      implementation = discovery_result.implementation_instance
-
       # We must construct a call context for the local service. This means
       # a local request object which we fill in with data just as if we'd
       # parsed an inbound HTTP request and a response object that contains
       # the usual default data.
 
-      env = {
-        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
-      }
+      interface      = discovery_result.interface_class
+      implementation = discovery_result.implementation_instance
 
       # Need to possibly augment the caller's session - same rationale
       # as #local_service_remote, so see that for details.
@@ -686,8 +659,12 @@ module Hoodoo; module Services
         return hash
       end
 
+      mock_rack_env = {
+        'HTTP_X_INTERACTION_ID' => source_interaction.interaction_id
+      }
+
       local_interaction = Hoodoo::Services::Middleware::Interaction.new(
-        env,
+        mock_rack_env,
         self,
         session
       )
@@ -704,9 +681,16 @@ module Hoodoo; module Services
 
       # Carry through any endpoint-specified request orientated attributes.
 
-      local_request.locale     = endpoint.locale
-      local_request.dated_at   = endpoint.dated_at
-      local_request.dated_from = endpoint.dated_from
+      local_request.locale = endpoint.locale
+
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property        = description[ :property        ]
+        property_writer = description[ :property_writer ]
+
+        value = endpoint.send( property )
+
+        local_request.send( property_writer, value ) unless value.nil?
+      end
 
       # Initialise the response data.
 
@@ -730,6 +714,33 @@ module Hoodoo; module Services
 
       local_interaction.requested_action = action
       authorisation                      = determine_authorisation( local_interaction )
+
+      # In addition, check security on any would-have-been-a-secured-header
+      # property.
+
+      return add_local_errors.call() if local_response.halt_processing?
+
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+
+        next if description[ :secured ] != true
+        next if endpoint.send( description[ :property ] ).nil?
+
+        real_header = description[ :header ]
+
+        if (
+             session.respond_to?( :scoping ) == false ||
+             session.scoping.respond_to?( :authorised_http_headers ) == false ||
+             session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
+             (
+               session.scoping.authorised_http_headers.include?( rack_header ) == false &&
+               session.scoping.authorised_http_headers.include?( real_header ) == false
+             )
+           )
+
+          local_response.errors.add_error( 'platform.forbidden' )
+          break
+        end
+      end
 
       return add_local_errors.call() if local_response.halt_processing?
 
@@ -806,11 +817,19 @@ module Hoodoo; module Services
 
       data = local_response.body
 
-      if data.is_a? Array
+      if data.is_a?( ::Hash )
+        data = Hoodoo::Client::AugmentedHash[ data ]
+
+      elsif data.is_a?( ::Array )
         data              = Hoodoo::Client::AugmentedArray.new( data )
         data.dataset_size = local_response.dataset_size
+
+      elsif data.is_a?( ::String ) && local_request.deja_vu && data == ''
+        data = Hoodoo::Client::AugmentedHash.new
+
       else
-        data = Hoodoo::Client::AugmentedHash[ data ]
+        raise "Hoodoo::Services::Middleware: Unexpected response type '#{ data.class.name }' received from a local inter-resource call"
+
       end
 
       data.set_platform_errors(
@@ -1250,10 +1269,52 @@ module Hoodoo; module Services
     def respond_for( interaction, preflight = false )
       interaction.context.response.body = '' if preflight
 
-      rack_data = interaction.context.response.for_rack( preflight )
+      rack_data = interaction.context.response.for_rack()
       log_outbound_response( interaction, rack_data )
 
       return rack_data
+    end
+
+    # When a request includes an <tt>X-Deja-Vu</tt> header and a service
+    # returns a result that includes any errors for creation or deletion
+    # events, we detect any in the collection without a given code;
+    # +generic.invalid_duplication+ for creation, or
+    # +generic.not_found+ for deletion.
+    #
+    # If we find any then normal error handling continues, otherwise the
+    # errors are cleared, an HTTP response code of 204 is setup in the
+    # +response+ object and body data is cleared. <tt>X-Deja-Vu</tt> is
+    # set in the response too, with a +confirmed+ value.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. May be updated
+    #                 on exit with new response status code, body etc.
+    #
+    def remove_expected_errors_when_experiencing_deja_vu( interaction )
+      interesting_code = case interaction.requested_action
+        when :create
+          'generic.invalid_duplication'
+        when :delete
+          'generic.not_found'
+        else
+          return
+      end
+
+      other_errors = interaction.context.response.errors.errors.detect do | error_hash |
+        error_hash[ 'code' ] != interesting_code
+      end
+
+      if other_errors.nil?
+        interaction.context.response.errors           = Hoodoo::Errors.new()
+        interaction.context.response.http_status_code = 204
+        interaction.context.response.body             = ''
+
+        interaction.context.response.add_header(
+          'X-Deja-Vu',
+          "confirmed",
+          true # Overwrite
+        )
+      end
     end
 
     # Announce the presence of the service endpoints to known interested
@@ -1457,18 +1518,17 @@ module Hoodoo; module Services
       early_exit = deal_with_cors( interaction )
       return early_exit unless early_exit.nil?
 
-      # If we reach here it's a normal request, not CORS preflight. Deal
-      # with unsecured HTTP headers first.
+      # If we reach here it's a normal request, not CORS preflight.
 
       deal_with_content_type_header( interaction )
-      deal_with_language_header( interaction )
-      deal_with_dating_headers( interaction )
+      deal_with_language_headers( interaction )
 
-      # Load the session and then, in the context of a loaded session,
-      # check to see if the request includes any secured HTTP headers.
+      # Load the session and then, in the context of a loaded session, process
+      # any remaining extension ("X-...") HTTP headers, checking up on secured
+      # headers in passing.
 
       load_session_into( interaction )
-      deal_with_authorised_headers( interaction )
+      deal_with_x_headers( interaction )
 
       return nil
     end
@@ -1671,6 +1731,10 @@ module Hoodoo; module Services
           block.call
         end
 
+        if context.request.deja_vu && context.response.halt_processing?
+          remove_expected_errors_when_experiencing_deja_vu( interaction )
+        end
+
         log_call_result( interaction )
 
       end # "Benchmark.realtime do"
@@ -1767,7 +1831,7 @@ module Hoodoo; module Services
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Updated on exit.
     #
-    def deal_with_language_header( interaction )
+    def deal_with_language_headers( interaction )
       lang = interaction.rack_request.env[ 'HTTP_CONTENT_LANGUAGE' ]
       lang = interaction.rack_request.env[ 'HTTP_ACCEPT_LANGUAGE' ] if lang.nil? || lang.empty?
 
@@ -1781,95 +1845,70 @@ module Hoodoo; module Services
       interaction.context.request.locale = lang.downcase
     end
 
-    # Extract the +X-Dated-At+ and +X-Dated-From+ headers from the client and
-    # (if present) store relevant DateTime instances in the request data.
+    # Extract all +X-Foo+ headers from Hoodoo::Client::Headers'
+    # +HEADER_TO_PROPERTY+ and store relevant information in the request data
+    # based on the header mappings. Security checks are done for secured
+    # headers. Validation is performed according to validation Procs in the
+    # mappings.
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Updated on exit.
     #
-    def deal_with_dating_headers( interaction )
-      interaction.context.request.dated_at   = nil
-      interaction.context.request.dated_from = nil
-
-      dated_at   = interaction.rack_request.env[ 'HTTP_X_DATED_AT'   ]
-      dated_from = interaction.rack_request.env[ 'HTTP_X_DATED_FROM' ]
-
-      unless dated_at.nil?
-        if  Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_at )
-          interaction.context.request.dated_at = dated_at
-        else
-          interaction.context.response.errors.add_error(
-            'platform.malformed',
-            'message' => "X-Dated-At header value '#{ dated_at }' is an invalid ISO8601 datetime"
-          )
-        end
-      end
-
-      unless dated_from.nil?
-        if Hoodoo::Utilities.valid_iso8601_subset_datetime?( dated_from )
-          interaction.context.request.dated_from = dated_from
-        else
-          interaction.context.response.errors.add_error(
-            'platform.malformed',
-            'message' => "X-Dated-From header value '#{ dated_from }' is an invalid ISO8601 datetime"
-          )
-        end
-      end
-    end
-
-    # Check the inbound request for anything in the SECURED_HEADERS set of
-    # HTTP headers. If there's any such header in the request, check the
-    # session. If there's no session, no session +scoping+ field or no scoping
-    # +authorised_http_headers+ array, set up a "forbidden" response. If there
-    # is an authorised list in the session, make sure it contains each of the
-    # secured headers in the request; set up a "forbidden" response if any are
-    # missing.
-    #
-    # The method has no return value, but the interaction's response's errors
-    # collection may be updated to reject the request.
-    #
-    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
-    #                 describing the current interaction. Parts of this may
-    #                 be updated on exit.
-    #
-    def deal_with_authorised_headers( interaction )
+    def deal_with_x_headers( interaction )
 
       # Set up some convenience variables
 
       session  = interaction.context.session
       rack_env = interaction.rack_request.env
+      request  = interaction.context.request
 
-      # See if the request includes any secured headers
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
 
-      secured_headers_in_request = SECURED_HEADERS.select do | header |
-        rack_env.has_key?( header )
-      end
+        header_value = rack_env[ rack_header ]
+        next if header_value.nil?
 
-      # Early exit for no-work-to-do or immediate-error-case. Note that we
-      # deliberately give no information on why the request was forbidden;
-      # an information disclosure bug would otherwise be present.
+        # Don't do anything else if this header is secured but prohibited.
 
-      return if secured_headers_in_request.empty?
+        real_header = description[ :header ]
 
-      if session.nil? ||
-         session.respond_to?( :scoping ) == false ||
-         session.scoping.respond_to?( :authorised_http_headers ) == false ||
-         session.scoping.authorised_http_headers.nil? ||
-         session.scoping.authorised_http_headers.empty?
+        if description[ :secured ] == true &&
+           (
+             session.respond_to?( :scoping ) == false ||
+             session.scoping.respond_to?( :authorised_http_headers ) == false ||
+             session.scoping.authorised_http_headers.respond_to?( :include? ) == false ||
+             (
+               session.scoping.authorised_http_headers.include?( rack_header ) == false &&
+               session.scoping.authorised_http_headers.include?( real_header ) == false
+             )
+           )
 
-        interaction.context.response.errors.add_error( 'platform.forbidden' )
-        return
-      end
-
-      # Make sure each header is allowed; early exit for any failure.
-
-      authorised_headers = session.scoping.authorised_http_headers
-
-      secured_headers_in_request.each do | secured_header |
-        unless authorised_headers.include?( secured_header )
           interaction.context.response.errors.add_error( 'platform.forbidden' )
-          return
+
+          return # EARLY EXIT
         end
+
+        # If we reach here the header is either not secured, or is permitted.
+        # Check to see if the value is OK.
+
+        property_writer = description[ :property_writer ]
+        property_value  = description[ :property_proc   ].call( header_value )
+
+        if property_value.nil?
+          interaction.context.response.errors.add_error(
+            'generic.malformed',
+            {
+              :message   => "#{ real_header } header value '#{ header_value }' is invalid",
+              :reference => { :header_name => real_header }
+            }
+          )
+
+          return # EARLY EXIT
+        end
+
+        # All good!
+
+        request.send( property_writer, property_value )
+
       end
     end
 
@@ -2568,24 +2607,21 @@ module Hoodoo; module Services
     # present and the value is non-empty, it's validated as UUID and written as
     # the body's "id" field at the top-level if OK.
     #
+    # By the time this method is called, validation of the header value must
+    # already have taken place (see "deal_with_x_headers").
+    #
     # On exit, the interaction's request's body may be updated, or the
     # response's error collection may be updated rejecting the request on
     # the grounds of an invalid UUID.
     #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction.
+    #
     def maybe_update_body_data_for( interaction )
       return unless interaction.rack_request.env.has_key?( 'HTTP_X_RESOURCE_UUID' )
 
-      required_item_uuid = interaction.rack_request.env[ 'HTTP_X_RESOURCE_UUID' ].to_s rescue ''
-
-      unless Hoodoo::UUID.valid?( required_item_uuid )
-        interaction.context.response.errors.add_error(
-          'generic.invalid_uuid',
-          :message   => "Value of `X-Resource-UUID` HTTP header is an invalid UUID",
-          :reference => { :field_name => 'X-Resource-UUID' }
-        )
-      else
-        interaction.context.request.body[ 'id' ] = required_item_uuid
-      end
+      required_item_uuid = interaction.rack_request.env[ 'HTTP_X_RESOURCE_UUID' ]
+      interaction.context.request.body[ 'id' ] = required_item_uuid
     end
 
     # Record an exception in a given response object, overwriting any previous

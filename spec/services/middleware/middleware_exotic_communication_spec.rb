@@ -116,6 +116,7 @@ describe Hoodoo::Services::Middleware do
               :headers    => {
                 'Content-Type' => 'application/json; charset=utf-8',
                 'Content-Language' => 'fr',
+                'Accept-Language' => 'fr',
                 'X-Interaction-ID' => @interaction.interaction_id,
                 'X-Session-ID' => @interaction.context.session.session_id
               }

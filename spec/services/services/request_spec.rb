@@ -41,7 +41,6 @@ describe Hoodoo::Services::Request do
         expect( @r.send( attr ) ).to eq( now )
 
         now = DateTime.now + 20
-
         @r.send( "#{ attr }=", Hoodoo::Utilities::nanosecond_iso8601( now ) )
         expect( @r.send( attr ) ).to eq( now )
       end

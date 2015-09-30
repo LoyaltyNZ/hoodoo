@@ -7,6 +7,8 @@
 #           10-Mar-2015 (ADH): Created
 ########################################################################
 
+require 'hoodoo/client/headers'
+
 require 'hoodoo/client/augmented_base'
 require 'hoodoo/client/augmented_hash'
 require 'hoodoo/client/augmented_array'

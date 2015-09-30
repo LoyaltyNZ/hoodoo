@@ -296,20 +296,23 @@ module Hoodoo
     #
     # +str+:: Value to check
     #
-    # Returns +true+ if a valid ISO 8601 subset date and time, else +false+.
+    # Returns a DateTime instance holding the parsed result if a valid ISO
+    # 8601 subset date and time, else +false+.
     #
     def self.valid_iso8601_subset_datetime?( str )
-      begin
-        valid = ( DATETIME_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
-                str.size > 10                                       &&
-                ::DateTime.parse( str ).is_a?( ::DateTime )
+
+      # Relies on Ruby evaluation behaviour and operator precedence - "'foo'
+      # && true" => true, but "true && 'foo'" => 'foo'. Don't use "and" here!
+
+      value = begin
+        ( DATETIME_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
+        str.size > 10                                       &&
+        ::DateTime.parse( str )
 
       rescue ArgumentError
-        valid = false
-
       end
 
-      return valid
+      return value.is_a?( ::DateTime ) && value
     end
 
     # Is the given String a valid ISO 8601 subset date (no time) as accepted
@@ -317,20 +320,22 @@ module Hoodoo
     #
     # +str+:: Value to check
     #
-    # Returns +true+ if a valid ISO 8601 subset date, else +false+.
+    # Returns a Date instance holding the parsed result if a valid ISO 8601
+    # subset date, else +false+.
     #
     def self.valid_iso8601_subset_date?( str )
-      begin
-        valid = ( DATE_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
-                str.size == 10                                  &&
-                ::Date.parse( str ).is_a?( ::Date )
+
+      # Same reliance as 'valid_iso8601_subset_datetime'?.
+
+      value = begin
+        ( DATE_ISO8601_SUBSET_REGEXP =~ str.to_s ) == 0 &&
+        str.size == 10                                  &&
+        ::Date.parse( str )
 
       rescue ArgumentError
-        valid = false
-
       end
 
-      return valid
+      return value.is_a?( ::Date ) && value
     end
 
     # Returns an ISO 8601 String equivalent of the given Time or DateTime

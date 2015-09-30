@@ -7,6 +7,8 @@
 #           25-Feb-2015 (ADH): Created.
 ########################################################################
 
+require 'hoodoo/client/headers'
+
 module Hoodoo
 
   # Hoodoo::Client provides a high-level abstracted interface for making
@@ -203,8 +205,9 @@ module Hoodoo
       #
       # The following additional *named* parameters are all optional:
       #
-      # +locale+::                The String given in Content-Language HTTP
-      #                           headers for requests; default is "en-nz".
+      # +locale+::                The String given in Content-Language _and_
+      #                           Accept-Language HTTP headers for requests;
+      #                           default is "en-nz".
       #
       # +session_id+::            An optional session ID to be used for the
       #                           initial X-Session-ID request header value.
@@ -303,43 +306,30 @@ module Hoodoo
       #
       # The options Hash key/values are as follows:
       #
-      # +locale+::     Locale string for request/response, e.g. "en-gb".
-      #                Optional. If omitted, defaults to the locale set in this
-      #                Client instance's constructor.
+      # +locale+:: Locale string for request/response, e.g. "en-gb". Optional.
+      #            If omitted, defaults to the locale set in this Client
+      #            instance's constructor.
       #
-      # +dated_at+::   Time instance, DateTime instance or String that Ruby can
-      #                parse into a DateTime instance used for show/list calls
-      #                to resource endpoints that support historical
-      #                representation via an <tt>X-Dated-At</tt> HTTP header or
-      #                equivalent. If omitted, defaults to +nil+ (no historical
-      #                representation requested).
-      #
-      # +dated_from+:: Time instance, DateTime instance or String that Ruby can
-      #                parse into a DateTime instance used for creation calls
-      #                to resource endpoints that support creation time
-      #                specification via an <tt>X-Dated-From</tt> HTTP header
-      #                or equivalent, as part of their support for historical
-      #                representation via a <tt>X-Dated-At</tt> HTTP header or
-      #                equivalent. If omitted, defaults to the created resource
-      #                being created at and thus valid from the server's value
-      #                of "now".
+      # OTHERS::   See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+. All
+      #            such option keys _MUST_ be Symbols.
       #
       def resource( resource, version = 1, options = {} )
 
-        locale     = options[ :locale   ] || @locale
-        dated_at   = options[ :dated_at ]
-        dated_from = options[ :dated_from ]
+        endpoint_options = {
+          :discoverer => @discoverer,
+          :session_id => @session_id,
+          :locale     => options[ :locale ] || @locale
+        }
+
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+          property = description[ :property ]
+          endpoint_options[ property ] = options[ property ] if options.has_key?( property )
+        end
 
         endpoint = Hoodoo::Client::Endpoint.endpoint_for(
           resource,
           version,
-          {
-            :discoverer => @discoverer,
-            :session_id => @session_id,
-            :locale     => locale,
-            :dated_at   => dated_at,
-            :dated_from => dated_from
-          }
+          endpoint_options
         )
 
         unless @auto_session_endpoint.nil?

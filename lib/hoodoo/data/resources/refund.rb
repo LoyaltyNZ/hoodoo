@@ -18,11 +18,13 @@ module Hoodoo
       class Refund < Hoodoo::Presenters::Base
 
         schema do
+          uuid :purchase_id, :required => true, :resource => :Purchase
+
+          text :caller_reference
+
           object :basket do
             type :Basket
           end
-
-          uuid   :purchase_id,  :required => true, :resource => :Purchase
         end
 
       end
