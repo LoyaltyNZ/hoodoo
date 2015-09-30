@@ -814,6 +814,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     expect(last_response.status).to eq(204)
     expect(last_response.body).to be_empty
+    expect(last_response['X-Deja-Vu']).to eq('confirmed')
   end
 
   it 'should see errors from the inner call correctly' do

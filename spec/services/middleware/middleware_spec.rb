@@ -1169,8 +1169,8 @@ describe Hoodoo::Services::Middleware do
                                                                                    'HTTP_X_DEJA_VU' => 'yes' }
 
           expect(last_response.status).to eq(204)
-          expect(last_response.headers['X-Deja-Vu']).to eq('confirmed')
           expect(last_response.body).to be_empty
+          expect(last_response.headers['X-Deja-Vu']).to eq('confirmed')
         end
 
         ['No', 'no', 'foo', 'bar', 'true', 'yes '].each do | invalid_value |
