@@ -33,6 +33,8 @@ module Hoodoo
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
+    # Dependency Hoodoo::ActiveRecord::Secure is included automatically.
+    #
     module Finder
 
       # Instantiates this module when it is included:

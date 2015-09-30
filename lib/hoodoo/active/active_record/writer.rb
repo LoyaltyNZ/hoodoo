@@ -27,6 +27,9 @@ module Hoodoo
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
     #
+    # Dependency Hoodoo::ActiveRecord::ErrorMapping is also included
+    # automatically.
+    #
     module Writer
 
       # Instantiates this module when it is included:
@@ -42,13 +45,20 @@ module Hoodoo
       #           this module.
       #
       def self.included( model )
-        instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
+        unless model == Hoodoo::ActiveRecord::Base
+          model.send( :include, Hoodoo::ActiveRecord::ErrorMapping )
+          instantiate( model )
+        end
+
         super( model )
       end
 
       # When instantiated in an ActiveRecord::Base subclass, all of the
       # Hoodoo::ActiveRecord::Writer::ClassMethods methods are defined as
       # class methods on the including class.
+      #
+      # This module depends upon Hoodoo::ActiveRecord::ErrorMapping, so
+      # that will be auto-included first if it isn't already.
       #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
