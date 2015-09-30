@@ -16,7 +16,7 @@ Require hoodoo when needed:
 
 Functionality includes:
 
-* _Middleware:_ The heart of services; Rake-based service applications (think Sinatra, Grape, Rails...) -- Hoodoo::Services::Middleware; but start at Hoodoo::Services::Service and see also Hoodoo::Services::Interface, Hoodoo::Services::Implementation and related classes Hoodoo::Services::Request, Hoodoo::Services::Response, Hoodoo::Services::Session, Hoodoo::Services::Context
+* _Middleware:_ The heart of services; Rack-based service applications (think Sinatra, Grape, Rails...) -- Hoodoo::Services::Middleware; but start at Hoodoo::Services::Service and see also Hoodoo::Services::Interface, Hoodoo::Services::Implementation and related classes Hoodoo::Services::Request, Hoodoo::Services::Response, Hoodoo::Services::Session, Hoodoo::Services::Context
 * _Generic Presenter Layer:_ Input and output validation and rendering -- Hoodoo::Presenters::Base, Hoodoo::Presenters::BaseDSL
 * _Unified Error Helpers:_ Adds standard platform error capability to any API/class -- Hoodoo::ErrorDescriptions, Hoodoo::Errors
 * _Unified Logger:_ A single logger for use with platform or local logs -- Hoodoo::Logger
