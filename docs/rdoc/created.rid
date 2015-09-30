@@ -1,18 +1,18 @@
-Wed, 30 Sep 2015 14:06:01 +1300
+Wed, 30 Sep 2015 17:00:08 +1300
 README.md	Thu, 21 May 2015 10:09:45 +1200
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Wed, 30 Sep 2015 14:04:16 +1300
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 27 Jan 2015 13:33:38 +1300
 lib/hoodoo/active/active_record/base.rb	Wed, 30 Sep 2015 14:04:16 +1300
 lib/hoodoo/active/active_record/dated.rb	Mon, 24 Aug 2015 16:04:50 +1200
-lib/hoodoo/active/active_record/error_mapping.rb	Wed, 30 Sep 2015 14:04:16 +1300
-lib/hoodoo/active/active_record/finder.rb	Wed, 30 Sep 2015 14:04:16 +1300
+lib/hoodoo/active/active_record/error_mapping.rb	Wed, 30 Sep 2015 16:53:02 +1300
+lib/hoodoo/active/active_record/finder.rb	Wed, 30 Sep 2015 16:58:18 +1300
 lib/hoodoo/active/active_record/search_helper.rb	Mon, 24 Aug 2015 16:04:50 +1200
 lib/hoodoo/active/active_record/secure.rb	Thu, 13 Aug 2015 17:07:36 +1200
 lib/hoodoo/active/active_record/support.rb	Mon, 24 Aug 2015 16:04:50 +1200
 lib/hoodoo/active/active_record/translated.rb	Tue, 11 Aug 2015 13:32:02 +1200
 lib/hoodoo/active/active_record/uuid.rb	Tue, 11 Aug 2015 13:04:50 +1200
-lib/hoodoo/active/active_record/writer.rb	Wed, 30 Sep 2015 14:04:16 +1300
+lib/hoodoo/active/active_record/writer.rb	Wed, 30 Sep 2015 16:58:00 +1300
 lib/hoodoo/client.rb	Wed, 30 Sep 2015 14:04:16 +1300
 lib/hoodoo/client/augmented_array.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_base.rb	Tue, 22 Sep 2015 11:53:54 +1200
