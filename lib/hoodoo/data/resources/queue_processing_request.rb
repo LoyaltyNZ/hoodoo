@@ -26,19 +26,11 @@ module Hoodoo
           datetime  :queued_at
           text :queue_caller_key
 
-          hash :caller_identity do
-
-          end
-
-          hash :info do
-
-          end
+          hash :caller_identity do; end
+          hash :info do; end
 
           array :platform_requests
-
-          hash :payload_errors do
-
-          end
+          array :payload_errors
         end
       end
     end
