@@ -35,6 +35,10 @@ module Hoodoo
           end
 
           array :platform_requests
+
+          hash :payload_errors do
+
+          end
         end
       end
     end
