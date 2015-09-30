@@ -48,11 +48,17 @@ href="Base.html">ActiveRecord::Base</a>.</p>
 
 <p>This will include:</p>
 <ul><li>
-<p><a href="UUID.html">Hoodoo::ActiveRecord::UUID</a></p>
-</li><li>
 <p><a href="Secure.html">Hoodoo::ActiveRecord::Secure</a></p>
 </li><li>
+<p><a href="Dated.html">Hoodoo::ActiveRecord::Dated</a></p>
+</li><li>
+<p><a href="Translated.html">Hoodoo::ActiveRecord::Translated</a></p>
+</li><li>
 <p><a href="Finder.html">Hoodoo::ActiveRecord::Finder</a></p>
+</li><li>
+<p><a href="UUID.html">Hoodoo::ActiveRecord::UUID</a></p>
+</li><li>
+<p><a href="Writer.html">Hoodoo::ActiveRecord::Writer</a></p>
 </li><li>
 <p><a href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a></p>
 </li></ul>
@@ -98,14 +104,6 @@ href="Base.html">ActiveRecord::Base</a>.</p>
       
         <li>
           
-            <a href="UUID.html">
-              Hoodoo::ActiveRecord::UUID
-            </a>
-          
-        </li>
-      
-        <li>
-          
             <a href="Secure.html">
               Hoodoo::ActiveRecord::Secure
             </a>
@@ -132,6 +130,22 @@ href="Base.html">ActiveRecord::Base</a>.</p>
           
             <a href="Finder.html">
               Hoodoo::ActiveRecord::Finder
+            </a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="UUID.html">
+              Hoodoo::ActiveRecord::UUID
+            </a>
+          
+        </li>
+      
+        <li>
+          
+            <a href="Writer.html">
+              Hoodoo::ActiveRecord::Writer
             </a>
           
         </li>
@@ -172,7 +186,7 @@ href="Base.html">ActiveRecord::Base</a>.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Base.html#method-c-inherited" name="method-c-inherited" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Instantiates all the <a href="../ActiveRecord.html">ActiveRecord</a> mixins
@@ -184,22 +198,22 @@ this module.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-inherited_source')" id="l_method-c-inherited_source">show</a>
                 
               </p>
               <div id="method-c-inherited_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 47</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
@@ -207,6 +221,8 @@ this module.</p>
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Writer</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 

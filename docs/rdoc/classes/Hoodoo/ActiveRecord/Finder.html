@@ -40,7 +40,24 @@
       
 <p>Mixin for models subclassed from <a href="Base.html">ActiveRecord::Base</a>
 providing support methods to handle common <code>show</code> and
-<code>list</code> filtering actions based on inbound data.</p>
+<code>list</code> filtering actions based on inbound data and create
+instances in a request context aware fashion.</p>
+
+<p>It is _STRONGLY RECOMMENDED_ that you use the likes of:</p>
+<ul><li>
+<p>Hoodoo::ActiveRecord::Finder::ClassMethods::new_in</p>
+</li><li>
+<p>Hoodoo::ActiveRecord::Finder::ClassMethods::acquire_in</p>
+</li><li>
+<p>Hoodoo::ActiveRecord::Finder::ClassMethods::list_in</p>
+</li></ul>
+
+<p>…to create and retrieve model data related directly to resource instances
+and participate “for free” in whatever plug-in <a
+href="../ActiveRecord.html">ActiveRecord</a> modules are mixed into the
+model classes, such as <a
+href="Secure.html">Hoodoo::ActiveRecord::Secure</a> and <a
+href="Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
 
 <p>See also:</p>
 <ul><li>
@@ -130,7 +147,7 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Finder.html#method-c-included" name="method-c-included" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Instantiates this module when it is included:</p>
@@ -149,22 +166,22 @@ this module.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 39</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 50</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_fields</span>,
@@ -195,7 +212,7 @@ this module.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Finder.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
@@ -213,22 +230,22 @@ this module.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
                 
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>

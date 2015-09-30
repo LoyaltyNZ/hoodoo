@@ -99,6 +99,22 @@ contacted over HTTP.</p>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>ca_file</td>
+            <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the
+location of a .pem format Certificate Authority file (trust store), which
+may include multliple certificates. The certificates in the file will be
+used by Net::HTTP to validate the SSL Ceritificate Chain presented by
+remote servers, when calling endpoints over HTTPS with <a
+href="../../Client.html">Hoodoo::Client</a>.</p>
+
+<p>Default <code>nil</code> value should be used in nearly all cases and uses
+Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>endpoint_uri</td>
             <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation
 can be contacted.</p></td>
@@ -141,11 +157,11 @@ be <code>nil</code> for no proxy override.</p></td>
         <div class="method">
           <div class="title method-title" id="method-c-new">
             
-              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil )
+              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil )
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForHTTP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Create an instance with named parameters as follows:</p>
@@ -164,31 +180,33 @@ be <code>nil</code> for no proxy override.</p></td>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 46</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
                 <span class="ruby-identifier">endpoint_uri</span>,,
-                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>   <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_uri</span> = <span class="ruby-identifier">endpoint_uri</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">proxy_uri</span>    = <span class="ruby-identifier">proxy_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ca_file</span>      = <span class="ruby-identifier">ca_file</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

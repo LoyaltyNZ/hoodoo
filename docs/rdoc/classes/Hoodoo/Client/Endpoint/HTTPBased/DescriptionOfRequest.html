@@ -98,6 +98,22 @@ Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
             <td class='attr-rw'>
               [RW]
             </td>
+            <td class='attr-name'>ca_file</td>
+            <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the
+location of a .pem format Certificate Authority file (trust store), which
+may include multliple certificates. The certificates in the file will be
+used by Net::HTTP to validate the SSL Ceritificate Chain presented by
+remote servers, when calling endpoints over HTTPS with <a
+href="../../../Client.html">Hoodoo::Client</a>.</p>
+
+<p>Default <code>nil</code> value should be used in nearly all cases and uses
+Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
+          </tr>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
             <td class='attr-name'>discovery_result</td>
             <td class='attr-desc'><p>A <a
 href="../../../Services/Discovery.html">Hoodoo::Services::Discovery</a>

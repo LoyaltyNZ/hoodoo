@@ -165,7 +165,7 @@ valid instance.</p></td>
             
             <a href="../../../classes/Hoodoo/Services/Context.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Create a new instance. There is almost certainly never any need to call
@@ -189,17 +189,17 @@ context instance this provides.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
                 
               </p>
@@ -225,7 +225,7 @@ context instance this provides.</p>
             
             <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
@@ -283,32 +283,34 @@ defaults to 1.</p>
 <p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
 defaults to the locale set in this <a href="../Client.html">Client</a>
 instance&#39;s constructor.</p>
-</dd><dt><code>dated_at</code>
+</dd><dt>Others
 <dd>
-<p>Time instance, DateTime instance or String which Ruby can parse into a
-DateTime instance used for show/list calls to resource endpoints that
-support historical representation, via an <code>X-Dated-At</code> HTTP
-header or equivalent. If omitted, defaults to <code>nil</code> (no
-historical representation requested).</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. For any
+options in that map which describe themselves as being automatically
+transferred from one endpoint to another, you can prevent this by
+explicitly pasisng a <code>nil</code> value for the option; otherwise,
+<em>OMIT</em> the option for normal behaviour. Non-auto-transfer properties
+can be specified as <code>nil</code> or omitted with no change in
+behaviour.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 116</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
   <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
@@ -317,11 +319,29 @@ historical representation requested).</p>
     <span class="ruby-ivar">@owning_interaction</span>
   )
 
-  <span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>   ]
-  <span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:dated_at</span> ]
+  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">locale</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ].<span class="ruby-identifier">nil?</span>
 
-  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">locale</span>   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">dated_at</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">dated_at</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>        = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>        ]
+    <span class="ruby-identifier">property_writer</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property_writer</span> ]
+    <span class="ruby-identifier">auto_transfer</span>   = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:auto_transfer</span>   ]
+
+    <span class="ruby-comment"># For automatically transferred options there&#39;s no way to stop the</span>
+    <span class="ruby-comment"># auto transfer unless explicitly stating &#39;nil&#39; to overwrite any</span>
+    <span class="ruby-comment"># existing value, so here, only write the value into the endpoint if</span>
+    <span class="ruby-comment"># the property specifically exists in the inbound options hash.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># For other properties, &#39;nil&#39; has no meaning and there&#39;s no need to</span>
+    <span class="ruby-comment"># override anything, so use &quot;unless nil?&quot; in that case.</span>
+
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">property</span> ]
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">auto_transfer</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>

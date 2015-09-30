@@ -44,9 +44,10 @@
 of fully rendered resource objects to it via the API described in the base
 class, <a
 href="Embeddable.html">Hoodoo::Presenters::Embedding::Embeddable</a>. You
-can then pass it to the likes of Hoodoo::Presenters::Base#render_in via the
-<code>options</code> parameter to have the embed data included in the fully
-rendered end result.</p>
+can then pass it to the likes of <a
+href="../Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
+via the <code>options</code> parameter to have the embed data included in
+the fully rendered end result.</p>
 
 <p>When a request arrives to embed data for a particular resource or list of
 resources (in which case, do the following for each item in that list):</p>
@@ -57,9 +58,10 @@ resources (in which case, do the following for each item in that list):</p>
 </li><li>
 <p>Add the rendered resource representations using this class&#39;s API</p>
 </li><li>
-<p>Use Hoodoo::Presenters::Base#render_in to render the final, target
-resource, passing in the embed collection via the <code>options</code> <a
-href="../Hash.html">Hash</a>.</p>
+<p>Use <a
+href="../Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
+to render the final, target resource, passing in the embed collection via
+the <code>options</code> <a href="../Hash.html">Hash</a>.</p>
 </li></ul>
 
 <p>Simple example:</p>
@@ -147,7 +149,7 @@ embeds.add_many( &#39;vouchers&#39;, rendered_voucher_array )
             
             <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeds.html#method-i-resource_key" name="method-i-resource_key" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Returns the top-level resource key used for reference data, as per the API
@@ -155,17 +157,17 @@ documentation - which is the <a href="../String.html">String</a>
 <code>_embed</code>.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-resource_key_source')" id="l_method-i-resource_key_source">show</a>
                 
               </p>
@@ -188,7 +190,7 @@ documentation - which is the <a href="../String.html">String</a>
             
             <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeds.html#method-i-validate_many" name="method-i-validate_many" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Called from <a href="Embeddable.html#method-i-add_many">add_many</a> in the
@@ -202,17 +204,17 @@ checked, for speed.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-validate_many_source')" id="l_method-i-validate_many_source">show</a>
                 
               </p>
@@ -239,7 +241,7 @@ checked, for speed.</p>
             
             <a href="../../../../classes/Hoodoo/Presenters/Embedding/Embeds.html#method-i-validate_one" name="method-i-validate_one" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Called from <a href="Embeddable.html#method-i-add_one">add_one</a> in the
@@ -252,17 +254,17 @@ href="../Hash.html">Hash</a>.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-validate_one_source')" id="l_method-i-validate_one_source">show</a>
                 
               </p>

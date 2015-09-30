@@ -130,7 +130,7 @@ them in future and update your calling code.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-full_scope_for" name="method-c-full_scope_for" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Given an <a href="../ActiveRecord.html">ActiveRecord</a> class and <a
@@ -168,17 +168,17 @@ anonymous scope, all the way through to a secured, translated, backdated
 scope for use with subsequent query refinements.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-full_scope_for_source')" id="l_method-c-full_scope_for_source">show</a>
                 
               </p>
@@ -186,20 +186,19 @@ scope for use with subsequent query refinements.</p>
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
-  <span class="ruby-identifier">modules</span>          = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">included_modules</span>()
 
   <span class="ruby-comment"># Due to the mechanism used, dating scope must be done first or the</span>
   <span class="ruby-comment"># rest of the query may be invalid.</span>
   <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">modules</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> )
     <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">dated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">modules</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )
     <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">modules</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span> )
     <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">translated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">end</span>
 
@@ -217,7 +216,7 @@ scope for use with subsequent query refinements.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-process_to_map" name="method-c-process_to_map" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Takes a Hash of possibly-non-String keys and with <code>nil</code> values
@@ -230,17 +229,17 @@ every value.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-process_to_map_source')" id="l_method-c-process_to_map_source">show</a>
                 
               </p>

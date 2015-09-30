@@ -51,7 +51,13 @@
             
             <li><a href="../../files/lib/hoodoo/client/endpoint/endpoints/not_found_rb.html">lib/hoodoo/client/endpoint/endpoints/not_found.rb</a></li>
             
+            <li><a href="../../files/lib/hoodoo/client/headers_rb.html">lib/hoodoo/client/headers.rb</a></li>
+            
             <li><a href="../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
+            
+            <li><a href="../../files/lib/hoodoo/services/services/context_rb.html">lib/hoodoo/services/services/context.rb</a></li>
+            
+            <li><a href="../../files/lib/hoodoo/services/services/request_rb.html">lib/hoodoo/services/services/request.rb</a></li>
             
         </ul>
     </div>
@@ -104,6 +110,11 @@ being contacted.</p>
         <li>
           <span class="type">CLASS</span>
           <a href="Client/Endpoint.html">Hoodoo::Client::Endpoint</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Client/Headers.html">Hoodoo::Client::Headers</a>
         </li>
       
     </ul>
@@ -169,7 +180,7 @@ being contacted.</p>
             
             <a href="../../classes/Hoodoo/Client.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Create a client instance. This is used as a factory for endpoint instances
@@ -376,8 +387,8 @@ client = Hoodoo::Client.new(
 optional:</p>
 <dl class="rdoc-list note-list"><dt><code>locale</code>
 <dd>
-<p>The String given in Content-Language HTTP headers for requests; default is
-“en-nz”.</p>
+<p>The String given in Content-Language <em>and</em> Accept-Language HTTP
+headers for requests; default is “en-nz”.</p>
 </dd><dt><code>session_id</code>
 <dd>
 <p>An optional session ID to be used for the initial X-Session-ID request
@@ -413,22 +424,22 @@ management, see the Hoodoo::Client::Endpoints::AutoSession class&#39;s
 code.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
                 
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 240</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 243</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">base_uri</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
                 <span class="ruby-identifier">drb_uri</span><span class="ruby-operator">:</span>               <span class="ruby-keyword">nil</span>,
                 <span class="ruby-identifier">drb_port</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
@@ -492,7 +503,7 @@ code.</p>
             
             <a href="../../classes/Hoodoo/Client.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Get an endpoint instance which you can use for talking to a Resource. See
@@ -520,46 +531,46 @@ optional; default is 1.</p>
 <p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
 defaults to the locale set in this <a href="Client.html">Client</a>
 instance&#39;s constructor.</p>
-</dd><dt><code>dated_at</code>
+</dd><dt>OTHERS
 <dd>
-<p>Time instance, DateTime instance or String which Ruby can parse into a
-DateTime instance used for show/list calls to resource endpoints that
-support historical representation, via an <code>X-Dated-At</code> HTTP
-header or equivalent. If omitted, defaults to <code>nil</code> (no
-historical representation requested).</p>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. All such
+option keys <em>MUST</em> be Symbols.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
                 
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 317</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 316</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
 
-  <span class="ruby-identifier">locale</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span>   ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
-  <span class="ruby-identifier">dated_at</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:dated_at</span> ]
+  <span class="ruby-identifier">endpoint_options</span> = {
+    <span class="ruby-value">:discoverer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span>,
+    <span class="ruby-value">:session_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@session_id</span>,
+    <span class="ruby-value">:locale</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@locale</span>
+  }
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span> ]
+    <span class="ruby-identifier">endpoint_options</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">property</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+  <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">endpoint</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span>.<span class="ruby-identifier">endpoint_for</span>(
     <span class="ruby-identifier">resource</span>,
     <span class="ruby-identifier">version</span>,
-    {
-      <span class="ruby-value">:discoverer</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discoverer</span>,
-      <span class="ruby-value">:session_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@session_id</span>,
-      <span class="ruby-value">:locale</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">locale</span>,
-      <span class="ruby-value">:dated_at</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">dated_at</span>
-    }
+    <span class="ruby-identifier">endpoint_options</span>
   )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@auto_session_endpoint</span>.<span class="ruby-identifier">nil?</span>
