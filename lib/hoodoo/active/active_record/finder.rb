@@ -3,8 +3,8 @@
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Support mixin for models subclassed from ActiveRecord::Base
-#           providing enhanced find mechanisms for +show+ and +list+
-#           action handling.
+#           providing enhanced find mechanisms for data retrieval,
+#           especially +show+ and +list+ action handling.
 # ----------------------------------------------------------------------
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
@@ -32,6 +32,8 @@ module Hoodoo
     # See also:
     #
     # * http://guides.rubyonrails.org/active_record_basics.html
+    #
+    # Dependency Hoodoo::ActiveRecord::Secure is included automatically.
     #
     module Finder
 
@@ -87,8 +89,8 @@ module Hoodoo
 
         # Create an instance of this model with knowledge of the wider request
         # context. This may lead to important things like support of inbound
-        # "dated_from" values, automatic idempotency protection and so-on,
-        # depending upon the Hoodoo mixins included (or not) by this class.
+        # "dated_from" values, depending upon the Hoodoo mixins included (or
+        # not) by this class.
         #
         # You use this exactly as you would for ActiveRecord::Core#new, but an
         # additional, mandatory first parameter providing the request context
@@ -133,7 +135,7 @@ module Hoodoo
           #       course, but for now, pragmatic implementation does the only
           #       thing we currently need to do - set "created_at".
           #
-          if self.include?( Hoodoo::ActiveRecord::Dated)
+          if self.include?( Hoodoo::ActiveRecord::Dated )
             unless context.request.dated_from.nil?
               instance.created_at = instance.updated_at = context.request.dated_from
             end
@@ -169,7 +171,7 @@ module Hoodoo
         #
         #     def show( context )
         #       found = SomeModel.acquire( context.request.ident )
-        #       return context.response.not_found() if found.nil?
+        #       return context.response.not_found( context.request.ident ) if found.nil?
         #
         #       # ...map 'found' to whatever resource you're representing,
         #       # e.g. via a Hoodoo::Presenters::Base subclass with resource
@@ -276,7 +278,7 @@ module Hoodoo
         #
         #     def show( context )
         #       found = SomeModel.acquire_in( context )
-        #       return context.response.not_found() if found.nil?
+        #       return context.response.not_found( context.request.ident ) if found.nil?
         #
         #       # ...map 'found' to whatever resource you're representing,
         #       # e.g. via a Hoodoo::Presenters::Base subclass with resource

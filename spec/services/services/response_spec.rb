@@ -213,6 +213,23 @@ describe Hoodoo::Services::Response do
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
     end
+
+    it 'should allow pre-encoded strings in the body' do
+      @r.body = 'Hello World!'
+
+      status, headers, body = @r.for_rack
+
+      expect(status).to eq(200)
+      expect(body.body).to eq(['Hello World!'])
+    end
+
+    it 'should raise an exception when the body is in an unsupported format' do
+      @r.body = :foo
+
+      expect {
+        status, headers, body = @r.for_rack
+      }.to raise_error(RuntimeError, "Hoodoo::Services::Response\#for_rack given unrecognised body data class 'Symbol'")
+    end
   end
 
   context "#not_found" do

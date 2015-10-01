@@ -52,27 +52,6 @@ module Hoodoo
       #                    or an equivalent. Optional, but if omitted, only
       #                    public resource actions will be accessible.
       #
-      # +locale+::         Locale string for request/response, e.g. "en-gb".
-      #                    Optional. If omitted, defaults to "en-nz".
-      #
-      # +dated_at+::       Time instance, DateTime instance or String which
-      #                    Ruby can parse into a DateTime instance used for
-      #                    show/list calls to resource endpoints that support
-      #                    historical representation, via an
-      #                    <tt>X-Dated-At</tt> HTTP header or equivalent. If
-      #                    omitted, defaults to +nil+ (no historical
-      #                    representation requested).
-      #
-      # +dated_from+::     Time instance, DateTime instance or String that Ruby
-      #                    can parse into a DateTime instance used for creation
-      #                    calls to resource endpoints that support creation
-      #                    time specification via an <tt>X-Dated-From</tt> HTTP
-      #                    header or equivalent, as part of their support for
-      #                    historical representation via a <tt>X-Dated-At</tt>
-      #                    HTTP header or equivalent. If omitted, defaults to
-      #                    the created resource being created at and thus valid
-      #                    from the server's value of "now".
-      #
       # +interaction+::    Optional Hoodoo::Services::Middleware::Interaction
       #                    instance which describes a *source* interaction at
       #                    hand. This is a middleware concept and most of the
@@ -82,6 +61,12 @@ module Hoodoo
       #                    which is handling the call needs to make an
       #                    inter-resource call, which is why an Endpoint is
       #                    being created.
+      #
+      # +locale+::         Locale string for request/response, e.g. "en-gb".
+      #                    Optional. If omitted, defaults to "en-nz".
+      #
+      # OTHERS::           See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+.
+      #                    All such option keys _MUST_ be Symbols.
       #
       # Returns a Hoodoo::Services::Discovery "For..." family member
       # instance (e.g. Hoodoo::Services::Discovery::ForHTTP) which can be
@@ -94,6 +79,11 @@ module Hoodoo
       # Callers dealing with inter-resource call code may want to consult
       # their discoverer to see if the resource is locally available
       # before bothering to instantiate an endpoint.
+      #
+      # If the +deja_vu+ option is set, then a confirmed case of deja vu
+      # results in an empty Hash being returned, with no platform errors
+      # associated. This is the high-level transport neutral equivalent of
+      # (say) a 204 HTTP response with no body.
       #
       def self.endpoint_for( resource, version, options )
         discoverer       = options.delete( :discoverer )
@@ -117,6 +107,11 @@ module Hoodoo
           return klass.new( resource, version, options )
         end
       end
+
+      # Define read/write accessors for properties related to "X-Foo"
+      # headers. See the Middleware for details.
+      #
+      Hoodoo::Client::Headers.define_accessors_for_header_equivalents( self )
 
       # The resource name passed to the constructor, as a String.
       #
@@ -142,57 +137,6 @@ module Hoodoo
       # String, e.g. "en-gb", or if +nil+, uses "en-nz" by default.
       #
       attr_accessor :locale
-
-      # A DateTime instance equivalent to the ISO 8601 subset representation
-      # in an X-Dated-At HTTP header or equivalent, used for calls to show
-      # or list resources that support historical representation. If +nil+,
-      # the instantaneous internal endpoint target processing time of
-      # 'now' is implied.
-      #
-      attr_reader :dated_at
-
-      # A DateTime instance equivalent to the ISO 8601 subset representation
-      # in an X-Dated-From HTTP header or equivalent, used for calls to
-      # create resources, for any resource which supports historical
-      # representation retrieval.
-      #
-      # The historical retrieval code (see method #dated_at in this class, and
-      # module Hoodoo::ActiveRecord::Dated) will be able to find the database
-      # record for any requested time on or after this date _but not before_.
-      # The date may be in the past or future; a record might exist in the
-      # database, but not be visible until the dated-from creation time comes
-      # to pass.
-      #
-      # The value is +nil+ if no special creation time is requested - implies
-      # whatever value of "now" applies at instant of processing the resource
-      # creation action at whatever persistence layer is in use.
-      #
-      attr_reader :dated_from
-
-      # Writer for #dated_at which accepts a Time instance, DateTime instance
-      # or a String; see Hoodoo::Utilities#rationalise_datetime for details -
-      # the given input parameter is run through this processing function.
-      #
-      # Invalid date/time strings can lead to an exception. If you want to
-      # avoid catching an exception, use
-      # Hoodoo::Utilities#valid_iso8601_subset_datetime? to check a String
-      # input type before calling here.
-      #
-      # +input+:: Time, DateTime or String - run through
-      #           Hoodoo::Utilities#rationalise_datetime to generate a
-      #           DateTime instance or raise an exception.
-      #
-      def dated_at=( input )
-        @dated_at = Hoodoo::Utilities.rationalise_datetime( input )
-      end
-
-      # As #dated_at=, but used to set the value returned by #dated_from.
-      #
-      # +input+:: As for #dated_at=
-      #
-      def dated_from=( input )
-        @dated_from = Hoodoo::Utilities.rationalise_datetime( input )
-      end
 
       # Create an endpoint instance that will be used to make requests to
       # a given resource.
@@ -222,9 +166,8 @@ module Hoodoo
       #
       # +locale+::           As in the options for #endpoint_for.
       #
-      # +dated_at+::         As in the options for #endpoint_for.
-      #
-      # +dated_from+::       As in the options for #endpoint_for.
+      # OTHERS::             See Hoodoo::Client::Headers' +HEADER_TO_PROPERTY+.
+      #                      All such option keys _MUST_ be Symbols.
       #
       # The out-of-the box initialiser sets up the data for the #resource,
       # #version, #discovery_result, #interaction, #session_id, #locale,
@@ -275,10 +218,15 @@ module Hoodoo
         @discovery_result = options[ :discovery_result ]
         @interaction      = options[ :interaction      ]
 
-        self.session_id   = options[ :session_id       ]
-        self.locale       = options[ :locale           ]
-        self.dated_at     = options[ :dated_at         ]
-        self.dated_from   = options[ :dated_from       ]
+        self.session_id   = options[ :session_id ]
+        self.locale       = options[ :locale     ]
+
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+          property        = description[ :property        ]
+          property_writer = description[ :property_writer ]
+
+          self.send( property_writer, options[ property ] ) if options.has_key?( property )
+        end
 
         configure_with( @resource, @version, options )
       end
@@ -355,8 +303,15 @@ module Hoodoo
         def copy_updated_options_to( target_endpoint )
           target_endpoint.session_id = self.session_id unless self.session_id.nil?
           target_endpoint.locale     = self.locale     unless self.locale.nil?
-          target_endpoint.dated_at   = self.dated_at   unless self.dated_at.nil?
-          target_endpoint.dated_from = self.dated_from unless self.dated_from.nil?
+
+          Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+            property        = description[ :property        ]
+            property_writer = description[ :property_writer ]
+
+            value = self.send( property )
+
+            target_endpoint.send( property_writer, value ) unless value.nil?
+          end
         end
 
       public

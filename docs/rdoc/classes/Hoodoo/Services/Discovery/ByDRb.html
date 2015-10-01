@@ -144,9 +144,9 @@ endpoints.</p>
       <table border='0' cellpadding='5'>
         
           <tr valign='top'>
-            <td class="attr-name">FRONT_OBJECT</td>
+            <td class="attr-name"><a name="FRONT_OBJECT">FRONT_OBJECT</a></td>
             <td>=</td>
-            <td class="attr-value">Hoodoo::Services::Discovery::ByDRb::DRbServer.new</td>
+            <td class="attr-value"><pre>Hoodoo::Services::Discovery::ByDRb::DRbServer.new</pre></td>
           </tr>
           
             <tr valign='top'>
@@ -156,14 +156,14 @@ endpoints.</p>
           
         
           <tr valign='top'>
-            <td class="attr-name">LOCAL_ACL</td>
+            <td class="attr-name"><a name="LOCAL_ACL">LOCAL_ACL</a></td>
             <td>=</td>
-            <td class="attr-value">ACL.new( %w[
+            <td class="attr-value"><pre>ACL.new( %w[
 deny all
 allow ::1
 allow fe80::1%lo0
 allow 127.0.0.1
-] )</td>
+] )</pre></td>
           </tr>
           
             <tr valign='top'>
@@ -190,23 +190,23 @@ allow 127.0.0.1
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-flush_services_for_test" name="method-i-flush_services_for_test" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Intended for testing only - flushes the records held in the DRb service.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-flush_services_for_test_source')" id="l_method-i-flush_services_for_test_source">show</a>
                 
               </p>
@@ -229,7 +229,7 @@ allow 127.0.0.1
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Announce the location of an instance through the DRb service (which may be
@@ -266,17 +266,17 @@ local development is assumed).</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
                 
               </p>
@@ -313,7 +313,7 @@ local development is assumed).</p>
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
@@ -337,17 +337,17 @@ behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
                 
               </p>
@@ -369,7 +369,7 @@ behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Discover an endpoint someone previously registered via <a
@@ -386,17 +386,17 @@ instance if the endpoint is found, else <code>nil</code>.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
                 
               </p>

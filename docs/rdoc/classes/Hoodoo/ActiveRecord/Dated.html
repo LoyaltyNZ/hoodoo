@@ -38,6 +38,10 @@
 href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
 dating support.</p>
 
+<p>The facilities provided here are powerful but relatively complex, so please
+read through this documentation section in full to understand everything
+you need to do.</p>
+
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Overview">Overview</h2>
 
 <p>This mixin adds finder methods to the model it is applied to (see <a
@@ -125,6 +129,17 @@ of the appropriate history entry when a record is deleted or updated
 without breaking the history table constraints. See <a
 href="https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb">github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb</a>
 for more information.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Model+instance+creation">Model instance creation</h2>
+
+<p>It is _VERY IMPORTANT_ that you use
+Hoodoo::ActiveRecord::Finder::ClassMethods::new_in to create new resource
+instances when using Dating. You <em>could</em> just manually read the
+`context.request.dated_from` value to ensure that an appropriate creation
+time is set; presently, `created_at` and `updated_at` are set from the
+`dated_from` value. However, using `new_in` for this isolates your code
+from any possible under-the-hood implementation changes therein and
+future-proof your code.</p>
 
     </div>
   
@@ -215,7 +230,7 @@ for more information.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-included" name="method-c-included" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Instantiates this module when it is included:</p>
@@ -234,22 +249,22 @@ this module.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
                 
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 108</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 123</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_dated_with</span>,
@@ -274,7 +289,7 @@ this module.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
@@ -288,22 +303,22 @@ this module.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
                 
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 128</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -319,7 +334,7 @@ this module.</p>
             
             <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-sanitised_column_string" name="method-c-sanitised_column_string" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Forms a String containing the specified <code>model_klass</code>&#39;s
@@ -328,22 +343,22 @@ attribute names escaped and joined with commas.</p>
 <p><code>model_klass</code> Class which responds to .attribute_names</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-sanitised_column_string_source')" id="l_method-c-sanitised_column_string_source">show</a>
                 
               </p>
               <div id="method-c-sanitised_column_string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 137</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-identifier">model_klass</span> )
   <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
 <span class="ruby-keyword">end</span></pre>

@@ -140,7 +140,7 @@ href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
             
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_request" name="method-i-get_data_for_request" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Preprocess a high level request description, returning <a
@@ -153,22 +153,22 @@ instance.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-get_data_for_request_source')" id="l_method-i-get_data_for_request_source">show</a>
                 
               </p>
               <div id="method-i-get_data_for_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 130</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
@@ -230,7 +230,8 @@ instance.</p>
 
   <span class="ruby-identifier">headers</span> = {
     <span class="ruby-string">&#39;Content-Type&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;application/json; charset=utf-8&#39;</span>,
-    <span class="ruby-string">&#39;Content-Language&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span> <span class="ruby-comment"># Locale comes from Endpoint superclass</span>
+    <span class="ruby-string">&#39;Content-Language&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>, <span class="ruby-comment"># Locale comes from Endpoint superclass</span>
+    <span class="ruby-string">&#39;Accept-Language&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>
   }
 
   <span class="ruby-comment"># Interaction comes from Endpoint superclass.</span>
@@ -250,10 +251,19 @@ instance.</p>
     <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;X-Session-ID&#39;</span>] = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>()
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Historical dating comes from the Endpoint superclass.</span>
+  <span class="ruby-comment"># A suite of options is defined by a constant in the Endpoint</span>
+  <span class="ruby-comment"># superclass.</span>
   <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>().<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;X-Dated-At&#39;</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">nanosecond_iso8601</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>() )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">header_name</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:header</span>      ]
+    <span class="ruby-identifier">header_proc</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:header_proc</span> ]
+    <span class="ruby-identifier">property</span>    = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>    ]
+
+    <span class="ruby-identifier">property_value</span>  = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">property_value</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">headers</span>[ <span class="ruby-identifier">header_name</span> ] = <span class="ruby-identifier">header_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">property_value</span> )
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">data</span>             = <span class="ruby-constant">DataForRequest</span>.<span class="ruby-identifier">new</span>
@@ -276,7 +286,7 @@ instance.</p>
             
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_response" name="method-i-get_data_for_response" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
@@ -291,22 +301,22 @@ instance.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-get_data_for_response_source')" id="l_method-i-get_data_for_response_source">show</a>
                 
               </p>
               <div id="method-i-get_data_for_response_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 232</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
