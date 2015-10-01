@@ -1,5 +1,5 @@
-Wed, 30 Sep 2015 17:00:08 +1300
-README.md	Thu, 21 May 2015 10:09:45 +1200
+Thu, 01 Oct 2015 13:12:54 +1300
+README.md	Wed, 30 Sep 2015 17:00:50 +1300
 lib/hoodoo.rb	Tue, 30 Jun 2015 14:47:49 +1200
 lib/hoodoo/active.rb	Wed, 30 Sep 2015 14:04:16 +1300
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 27 Jan 2015 13:33:38 +1300
@@ -18,7 +18,7 @@ lib/hoodoo/client/augmented_array.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/augmented_base.rb	Tue, 22 Sep 2015 11:53:54 +1200
 lib/hoodoo/client/augmented_hash.rb	Mon, 16 Mar 2015 09:45:31 +1300
 lib/hoodoo/client/client.rb	Wed, 30 Sep 2015 14:04:16 +1300
-lib/hoodoo/client/endpoint/endpoint.rb	Wed, 30 Sep 2015 14:04:16 +1300
+lib/hoodoo/client/endpoint/endpoint.rb	Thu, 01 Oct 2015 13:12:30 +1300
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Tue, 30 Jun 2015 17:06:24 +1200
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Fri, 24 Jul 2015 14:21:35 +1200
 lib/hoodoo/client/endpoint/endpoints/http.rb	Wed, 30 Sep 2015 14:04:16 +1300
