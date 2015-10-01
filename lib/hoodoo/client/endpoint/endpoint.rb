@@ -80,6 +80,11 @@ module Hoodoo
       # their discoverer to see if the resource is locally available
       # before bothering to instantiate an endpoint.
       #
+      # If the +deja_vu+ option is set, then a confirmed case of deja vu
+      # results in an empty Hash being returned, with no platform errors
+      # associated. This is the high-level transport neutral equivalent of
+      # (say) a 204 HTTP response with no body.
+      #
       def self.endpoint_for( resource, version, options )
         discoverer       = options.delete( :discoverer )
         discovery_result = discoverer.discover( resource.to_sym, version.to_i )
