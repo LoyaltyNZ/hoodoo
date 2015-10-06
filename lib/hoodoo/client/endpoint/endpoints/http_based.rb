@@ -134,15 +134,9 @@ module Hoodoo
             #
             attr_accessor :raw_body_data
 
-            # An object that will allow Hash-like indexing by case-insensitive
-            # HTTP header name and return the first encountered value. For
-            # example, <tt>foo['X-Bar']</tt> and <tt>foo['x-bar']</tt> would
-            # both return +nil+ if no X-Bar header was present in a response,
-            # else return the value from the first such header encountered in
-            # the response.
-            #
-            # A raw Net::HTTPOK (sic.) instance from a successful response is
-            # an example of such an object.
+            # An object that will allow Hash-like lookup and iteration of
+            # key/value pairs via +each+. A raw Net::HTTPOK (sic.) instance
+            # from a successful response is an example of such an object.
             #
             # May be unset (+nil+) or empty, especially for error cases.
             #
