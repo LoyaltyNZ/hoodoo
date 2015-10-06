@@ -512,7 +512,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
 
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
-      expect(result.class < Array).to eq(true)
+      expect(result).to be_a(Hoodoo::Client::AugmentedArray)
       expect(result.platform_errors.has_errors?).to eq(true)
     end
 
@@ -595,7 +595,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
 
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
-      expect(result.class < Hash).to eq(true)
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
       expect(result.platform_errors.has_errors?).to eq(true)
     end
 
@@ -838,7 +838,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
 
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
-      expect(result.class < Hash).to eq(true)
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
       expect(result.platform_errors.has_errors?).to eq(true)
     end
 
@@ -918,7 +918,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
 
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
-      expect(result.class < Hash).to eq(true)
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
       expect(result.platform_errors.has_errors?).to eq(true)
     end
 
@@ -1023,7 +1023,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     end
 
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
-      expect(result.class < Hash).to eq(true)
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
       expect(result.platform_errors.has_errors?).to eq(true)
     end
 

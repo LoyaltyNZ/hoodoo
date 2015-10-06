@@ -63,9 +63,9 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       # code requires no reference data or only requires a "field_name", this
       # will work OK.
       #
-      unless context.request.body[ 'deja' ].nil?
-        additional_error_code = context.request.body[ 'deja' ]
-        reference             = { :reference => { :field_name => 'deja' } }
+      if context.request.deja_vu
+        additional_error_code = context.request.body[ 'additional_error' ] || 'generic.invalid_duplication'
+        reference             = { :reference => { :field_name => 'deja_vu' } }
 
         context.response.add_error( 'generic.invalid_duplication', reference )
         context.response.add_error( additional_error_code,         reference )
@@ -240,7 +240,7 @@ class TestCallImplementation < Hoodoo::Services::Implementation
       #
       endpoint.resource_uuid = Hoodoo::UUID.generate()
 
-    elsif context.request.body[ 'foo' ] == 'deja_vu'
+    elsif context.request.body.has_key?( 'deja_vu_in_other_resource' )
 
       # This tests an inter-resource call specifying deja-vu and dealing with
       # responses.
@@ -582,34 +582,42 @@ describe Hoodoo::Services::Middleware do
         headers: headers
       )
 
-      expect( response.code ).to eq( '200' )
-      expect_response_headers_on( response )
+      if deja_vu
+        expect( response.code ).to eq( '204' )
+        expect( response.body ).to be_nil
+        expect_response_headers_on( response )
 
-      parsed = JSON.parse( response.body )
+      else
+        expect( response.code ).to eq( '200' )
+        expect_response_headers_on( response )
 
-      expected_body = { 'foo' => 'bar', 'baz' => 'boo' }
-      expected_body[ 'id' ] = resource_uuid unless resource_uuid.nil?
+        parsed = JSON.parse( response.body )
 
-      expect( parsed[ 'create' ] ).to_not be_nil
-      expect( parsed[ 'create' ] ).to eq(
-        {
-          'locale'              => locale.nil? ? 'en-nz' : locale,
-          'dated_at'            => '',
-          'dated_from'          => dated_from.to_s,
-          'deja_vu'             => deja_vu.to_s,
-          'resource_uuid'       => resource_uuid.to_s,
-          'body'                => expected_body,
-          'uri_path_components' => [],
-          'uri_path_extension'  => 'json',
-          'list_offset'         => 0,
-          'list_limit'          => 50,
-          'list_sort_data'      => { 'created_at' => 'desc' },
-          'list_search_data'    => {},
-          'list_filter_data'    => {},
-          'embeds'              => [ 'embed_one', 'embed_two' ],
-          'references'          => []
-        }
-      )
+        expected_body = { 'foo' => 'bar', 'baz' => 'boo' }
+        expected_body[ 'id' ] = resource_uuid unless resource_uuid.nil?
+
+        expect( parsed[ 'create' ] ).to_not be_nil
+        expect( parsed[ 'create' ] ).to eq(
+          {
+            'locale'              => locale.nil? ? 'en-nz' : locale,
+            'dated_at'            => '',
+            'dated_from'          => dated_from.to_s,
+            'deja_vu'             => deja_vu.to_s,
+            'resource_uuid'       => resource_uuid.to_s,
+            'body'                => expected_body,
+            'uri_path_components' => [],
+            'uri_path_extension'  => 'json',
+            'list_offset'         => 0,
+            'list_limit'          => 50,
+            'list_sort_data'      => { 'created_at' => 'desc' },
+            'list_search_data'    => {},
+            'list_filter_data'    => {},
+            'embeds'              => [ 'embed_one', 'embed_two' ],
+            'references'          => []
+          }
+        )
+
+      end
     end
 
     it 'creates things with callbacks', :check_callbacks => true do
@@ -657,7 +665,7 @@ describe Hoodoo::Services::Middleware do
         klass:   Net::HTTP::Post,
         port:    @port,
         path:    '/v2/test_some_echoes',
-        body:    { 'foo' => 'bar', 'deja' => 'generic.invalid_duplication' }.to_json,
+        body:    { 'foo' => 'bar' }.to_json,
         headers: { 'X-Deja-Vu' => 'yes' }
       )
 
@@ -673,7 +681,7 @@ describe Hoodoo::Services::Middleware do
         klass:   Net::HTTP::Post,
         port:    @port,
         path:    '/v2/test_some_echoes',
-        body:    { 'foo' => 'bar', 'deja' => 'generic.invalid_decimal' }.to_json,
+        body:    { 'foo' => 'bar', 'additional_error' => 'generic.invalid_decimal' }.to_json,
         headers: { 'X-Deja-Vu' => 'yes' }
       )
 
@@ -684,9 +692,9 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'errors' ].size ).to eq( 2 )
       expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'generic.invalid_duplication' )
-      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja_vu' )
       expect( parsed[ 'errors' ][ 1 ][ 'code'      ] ).to eq( 'generic.invalid_decimal' )
-      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja_vu' )
     end
 
     def update_things( locale: nil )
@@ -985,7 +993,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets the correct type back when an inter-resource remote call generates an error' do
       expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
-        expect( result.class < Array               ).to eq( true )
+        expect( result ).to be_a( Hoodoo::Client::AugmentedArray )
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
@@ -1048,7 +1056,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets the correct type back when an inter-resource remote call generates an error' do
       expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
-        expect( result.class < Hash                ).to eq( true )
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
@@ -1147,22 +1155,38 @@ describe Hoodoo::Services::Middleware do
     it 'gets a 204 with deja-vu and duplication' do
       post(
         '/v1/test_call.tar.gz',
-         { 'foo' => 'bar', 'deja' => 'generic.invalid_duplication' }.to_json,
-         headers_for( deja_vu: true )
+         { 'foo' => 'bar', 'deja_vu_in_other_resource' => 'yes' }.to_json,
+         headers_for() # *not* requesting Deja-Vu at the top level
       )
 
-      expect( last_response.status ).to eq( 204 )
-      expect( last_response.body   ).to be_empty
-      expect( last_response.headers[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
+      # If the test passes, the inter-resource call returned the equivlant
+      # of a 204, so the parsed payload giving us the result of that call
+      # will show an empty Hash and a 'confirmed' option from the endpoint.
+
+      expect( last_response.status ).to eq( 200 )
       expect_response_headers_on( last_response )
+
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'create' ] ).to eq( {} )
+      expect( parsed[ 'options' ][ 'deja_vu' ] ).to eq( 'confirmed' )
     end
 
     it 'gets non-204 with deja-vu and duplication plus other errors' do
       post(
         '/v1/test_call.tar.gz',
-         { 'foo' => 'bar', 'deja' => 'generic.invalid_decimal' }.to_json,
-         headers_for( deja_vu: true )
+         {
+           'foo'                       => 'bar',
+           'deja_vu_in_other_resource' => 'yes',
+           'additional_error'          => 'generic.invalid_decimal'
+         }.to_json,
+         headers_for() # *not* requesting Deja-Vu at the top level
       )
+
+      # If the test passes, the inter-resource call will add other errors
+      # that aren't just duplication, so the call returns the full error
+      # set normally rather than via a 204 response equivalent. Normal
+      # error handling in the calling resource therefore takes place.
 
       expect( last_response.status ).to eq( 422 )
       expect_response_headers_on( last_response )
@@ -1171,9 +1195,9 @@ describe Hoodoo::Services::Middleware do
 
       expect( parsed[ 'errors' ].size ).to eq( 2 )
       expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'generic.invalid_duplication' )
-      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja_vu' )
       expect( parsed[ 'errors' ][ 1 ][ 'code'      ] ).to eq( 'generic.invalid_decimal' )
-      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja' )
+      expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja_vu' )
     end
 
     it 'rejects non-deja-vu 204 responses' do
@@ -1199,7 +1223,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets the correct type back when an inter-resource remote call generates an error' do
       expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
-        expect( result.class < Hash                ).to eq( true )
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
@@ -1263,7 +1287,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets the correct type back when an inter-resource remote call generates an error' do
       expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
-        expect( result.class < Hash                ).to eq( true )
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
@@ -1343,7 +1367,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets a 404 for missing endpoints (and gets correct type back when inter-resource call generates an error)' do
       expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
-        expect( result.class < Hash                ).to eq( true )
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 

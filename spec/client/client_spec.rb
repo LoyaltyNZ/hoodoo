@@ -58,12 +58,28 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
     # This will be a public action
 
     def show( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
     end
 
     # The rest will be protected actions
 
     def list( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.list.offset == 42
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resources(
         [ mock( context ), mock( context ), mock( context ) ],
         3
@@ -71,6 +87,13 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
     end
 
     def create( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.body.has_key?( 'return_error' )
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
 
       # If expecting deja-vu, cause deja-vu.
       #
@@ -87,11 +110,27 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
     end
 
     def update( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
       context.response.add_header( 'X-Example-Header', 'example' )
     end
 
     def delete( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
     end
 
@@ -237,7 +276,7 @@ describe Hoodoo::Client do
   #
   def option_based_expectations( result )
 
-    if ( result.class < Array )
+    if result.is_a?( Hoodoo::Client::AugmentedArray )
       resource = result[ 0 ]
     else
       resource = result
@@ -594,6 +633,51 @@ describe Hoodoo::Client do
       end
 
       it_behaves_like Hoodoo::Client
+    end
+
+    context 'and when endpoints return errors' do
+      before :each do
+        set_vars_for(
+          base_uri:     "http://localhost:#{ @port }",
+          auto_session: false,
+          session_id:   @old_test_session.session_id
+        )
+      end
+
+      it 'returns an AugmentedArray for #list' do
+        result = @endpoint.list( { :offset => 42 } ) # 42 -> magic -> service adds error
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedArray )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #show' do
+        result = @endpoint.show( 'return_error' )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #create' do
+        result = @endpoint.create( { 'return_error' => true } )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #update' do
+        result = @endpoint.update( 'return_error', {} )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #delete' do
+        result = @endpoint.delete( 'return_error' )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
     end
 
     context 'and with non-secured option' do
