@@ -284,21 +284,8 @@ module Hoodoo
         # The stock Hash class has many constructor options. Rather than
         # try to write bespoke versions, for CIHash we just take any (or
         # no) parameter for a constructor, call the superclass, then
-        # rewrite the Hash internally using CIHash#[]= to ensure
+        # rewrite the Hash internally using CIHash.[] to ensure
         # appropriate key generation in this simplistic implementation.
-        #
-        # *args:: As for the Hash class constructor.
-        #
-        def initialize( *args, &block )
-          super( *args, &block )
-
-          keys = self.keys
-          keys.each do | key |
-            self[ key ] = self.delete( key )
-          end
-        end
-
-        # See #initialize - same rationale here.
         #
         def self.[]( *args, &block )
           instance = super( *args, &block )
