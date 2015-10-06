@@ -131,6 +131,36 @@ callers wanting to communicate with resources from “outside the system”.</p>
 
 
     
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>response_options</td>
+            <td class='attr-desc'><p>On success, this Hash may be updated with options describing
+&#39;out-of-band&#39; information associated with the response, derived
+from HTTP headers for HTTP-based transports. Non-HTTP transports still
+carry HTTP-like headers and apply equally here.</p>
+
+<p>For more about the mapping from header to option, see class method <a
+href="Headers.html#method-c-x_header_to_options">Hoodoo::Client::Headers.x_header_to_options</a>.
+Since <a href="../../Hoodoo.html">Hoodoo</a> itself sets up
+<code>X-Interaction-ID</code> and <code>X-Service-Response-Time</code>
+headers in <em>most</em> cases, you can expect to at least find the options
+<code>interaction_id</code> and <code>service_response_time</code> set for
+successful calls.</p>
+
+<p>Under some circustances, especially for certain error conditions, the value
+may be <code>nil</code>, though <a href="../../Hoodoo.html">Hoodoo</a>
+endeavours to avoid this and at least fill in <code>interaction_id</code>
+where possible.</p></td>
+          </tr>
+        
+      </table>
+    
 
 
     <!-- Methods -->
