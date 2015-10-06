@@ -145,7 +145,24 @@ module Hoodoo
       def set_platform_errors( errors )
         @nz_co_loyalty_platform_errors = errors
       end
-    end
 
+      # On success, this Hash may be updated with options describing
+      # 'out-of-band' information associated with the response, derived from
+      # HTTP headers for HTTP-based transports. Non-HTTP transports still
+      # carry HTTP-like headers and apply equally here.
+      #
+      # For more about the mapping from header to option, see class method
+      # Hoodoo::Client::Headers.x_header_to_options. Since Hoodoo itself
+      # sets up <tt>X-Interaction-ID</tt> and <tt>X-Service-Response-Time</tt>
+      # headers in _most_ cases, you can expect to at least find the options
+      # +interaction_id+ and +service_response_time+ set for successful calls.
+      #
+      # Under some circustances, especially for certain error conditions, the
+      # value may be +nil+, though Hoodoo endeavours to avoid this and at
+      # least fill in +interaction_id+ where possible.
+      #
+      attr_accessor :response_options
+
+    end
   end
 end

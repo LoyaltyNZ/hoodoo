@@ -62,6 +62,7 @@ class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementat
 
   def update( context )
     expectable_hook( context )
+    context.response.add_header( 'X-Example-Header', 'example' )
     context.response.body = { 'inner' => 'updated' }
   end
 
@@ -109,7 +110,10 @@ end
 # calls a secure method in ...AInterface and is used to make sure that a
 # public action calling to a secure action is handled correctly (i.e. overall
 # response is 401).
-
+#
+# Note intentional mix of 'body= ', 'set_resource' and 'set_resources' just
+# to make sure those all get some coverage again.
+#
 class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementation
   def list( context )
     expectable_hook( context )
@@ -139,7 +143,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     result = context.resource( :RSpecTestInterResourceCallsAResource ).list(qd)
     result.adds_errors_to?( context.response.errors )
     expectable_result_hook( result )
-    context.response.body = { result: result }
+    context.response.set_resources( [ { :result => result, :options => result.response_options } ] )
   end
 
   def show( context )
@@ -153,14 +157,14 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     else
       result = context.resource( :RSpecTestInterResourceCallsAResource ).show(
         'hello' + context.request.ident,
-        { _embed: :foo }
+        { :_embed => :foo }
       )
     end
 
     expectable_result_hook( result )
 
     context.response.add_errors( result.platform_errors )
-    context.response.body = { result: result }
+    context.response.body = { :result => result, :options => result.response_options }
   end
 
   def create( context )
@@ -204,20 +208,25 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
     result = endpoint.create(
       context.request.body,
-      { _embed: 'foo' }
+      { :_embed => 'foo' }
     )
+
+    expectable_result_hook( result )
 
     # There are two tests hidden here. Note that if there's an error,
     # we're actually not setting response body, leaving it 'nil'; make
     # sure nothing barfs on that.
     #
-    unless result.adds_errors_to?( context.response.errors )
-      expectable_result_hook( result )
-
+    if result.adds_errors_to?( context.response.errors )
+      expectable_result_failure_hook( result )
+    else
       if result.empty?
-        context.response.body = { result: 'I experienced deja-vu' }
+        context.response.set_resource( { :result     => 'I experienced deja-vu',
+                                         :options    => result.response_options } )
       else
-        context.response.body = { result: result, dated_from: context.request.dated_from }
+        context.response.set_resource( { :result     => result,
+                                         :options    => result.response_options,
+                                         :dated_from => context.request.dated_from } )
       end
     end
   end
@@ -227,11 +236,11 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     result = context.resource( :RSpecTestInterResourceCallsAResource ).update(
       'hello' + context.request.ident,
       context.request.body,
-      { _embed: 'foo' }
+      { :_embed => 'foo' }
     )
     expectable_result_hook( result )
     context.response.add_errors( result.platform_errors )
-    context.response.body = { result: result }
+    context.response.body = { :result => result, :options => result.response_options }
   end
 
   def delete( context )
@@ -240,10 +249,11 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     expectable_hook( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).delete(
       'hello' + context.request.ident,
-      { _embed: [ :foo ] }
+      { :_embed => [ :foo ] }
     )
     expectable_result_hook( result )
-    context.response.body = { result: result }
+    context.response.add_errors( result.platform_errors )
+    context.response.body = { :result => result, :options => result.response_options }
   end
 
   # ...So we can expect any instance of this class to receive these messages
@@ -252,6 +262,8 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
   def expectable_hook( context )
   end
   def expectable_result_hook( result )
+  end
+  def expectable_result_failure_hook( result )
   end
 end
 
@@ -324,8 +336,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   before :example, :check_callbacks => true do
     expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :before ).once
     # -> A
-      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to receive( :before ).once
-      expect_any_instance_of( RSpecTestInterResourceCallsAImplementation ).to receive( :after ).once
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:before ).once
+      expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:after ).once
     # <- B
     expect_any_instance_of( RSpecTestInterResourceCallsBImplementation ).to receive( :after ).once
   end
@@ -349,6 +361,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     headers[ 'HTTP_X_DEJA_VU'        ] = 'yes' if deja_vu == true
 
     return headers
+  end
+
+  def expect_response_options_for( options )
+    expect( options ).to_not be_nil
+    expect( options[ 'service_response_time' ] ).to_not be_nil
+    expect( options[ 'interaction_id'        ] ).to_not be_nil
+    expect( Hoodoo::UUID.valid?( options[ 'interaction_id' ] ) ).to eq( true )
   end
 
   def list_things(locale: nil, dated_at: nil)
@@ -387,8 +406,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         headers_for(locale: locale, dated_at: dated_at)
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => [1,2,3,4]})
+
+    expect(result['_data']).to_not be_nil
+    expect(result['_data'][0]).to_not be_nil
+    expect(result['_data'][0]['result']).to eq([1,2,3,4])
+    expect_response_options_for(result['_data'][0]['options'])
   end
 
   it 'manages ActiveRecord when implementation is called in its presence' do
@@ -424,7 +448,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
             headers
 
         expect(last_response.status).to eq(422)
+
         result = JSON.parse(last_response.body)
+
         expect(result['errors'][0]['code']).to eq('generic.malformed')
         expect(result['errors'][0]['message']).to eq("X-Dated-At header value '#{ datetime }' is invalid")
         expect(result['errors'][0]['reference']).to eq("X-Dated-At")
@@ -446,8 +472,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   it 'should report middleware level errors from the secondary service' do
     get '/v1/rspec_test_inter_resource_calls_b?limit=10', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
     expect(last_response.status).to eq(422)
+
     result = JSON.parse(last_response.body)
+
     expect(result['errors'][0]['code']).to eq('platform.malformed')
     expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
     expect(result['errors'][0]['reference']).to eq('search: foo')
@@ -455,10 +484,42 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   it 'should report custom errors from the secondary service' do
     get '/v1/rspec_test_inter_resource_calls_b?offset=42', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
     expect(last_response.status).to eq(412)
+
     result = JSON.parse(last_response.body)
+
     expect(result['errors'][0]['code']).to eq('service_calls_a.triggered')
     expect(result['errors'][0]['reference']).to eq('42')
+  end
+
+  it 'handles incorrect return types from the "inner" service' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:list) do | instance, context |
+      context.response.body = {}
+    end
+
+    get '/v1/rspec_test_inter_resource_calls_b', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.fault')
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'Hash' received from a local inter-resource call for action 'list'")
+  end
+
+  it 'gets the correct type back when an inter-resource local call generates an error' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:list) do | instance, context |
+      context.response.add_error( 'platform.malformed' )
+    end
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
+      expect(result).to be_a(Hoodoo::Client::AugmentedArray)
+      expect(result.platform_errors.has_errors?).to eq(true)
+    end
+
+    get '/v1/rspec_test_inter_resource_calls_b', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
   end
 
   def show_things(locale: nil, dated_at: nil)
@@ -496,8 +557,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         headers_for(locale: locale, dated_at: dated_at)
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'shown'}})
+    expect_response_options_for(result['options'])
+
+    expect(result['result']).to eq({'inner' => 'shown'})
   end
 
   it 'shows things with callbacks', :check_callbacks => true do
@@ -510,6 +574,35 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   it 'shows things with a custom locale and dated_at time' do
     show_things(locale: 'bar', dated_at: DateTime.now)
+  end
+
+  it 'handles incorrect return types from the "inner" service' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show) do | instance, context |
+      context.response.body = []
+    end
+
+    get '/v1/rspec_test_inter_resource_calls_b/world', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.fault')
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'Array' received from a local inter-resource call for action 'show'")
+  end
+
+  it 'gets the correct type back when an inter-resource local call generates an error' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show) do | instance, context |
+      context.response.add_error( 'platform.malformed' )
+    end
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
+      expect(result.platform_errors.has_errors?).to eq(true)
+    end
+
+    get '/v1/rspec_test_inter_resource_calls_b/world', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
   end
 
   def create_things(locale: nil, dated_from: nil, deja_vu: nil, resource_uuid: nil)
@@ -544,8 +637,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
          headers_for(locale: locale, dated_from: dated_from, deja_vu: deja_vu, resource_uuid: resource_uuid)
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'created'}, 'dated_from' => (dated_from.nil? ? nil : dated_from.to_s)})
+    expect_response_options_for(result['options'])
+
+    expect(result['result']).to eq({'inner' => 'created'})
+    expect(result).to have_key('dated_from')
+    expect(result['dated_from']).to eq(dated_from.nil? ? nil : dated_from.to_s)
   end
 
   def fail_to_create_things
@@ -555,11 +653,15 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to_not receive(:create)
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to_not receive(:expectable_hook)
     # <- B
-    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to_not receive(:expectable_result_hook)
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook)
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_failure_hook)
 
     post '/v1/rspec_test_inter_resource_calls_b/', '{"sum": 7}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
     expect(last_response.status).to eq(422)
+
     result = JSON.parse(last_response.body)
+
     expect(result['errors'].size).to eq(1)
     expect(result['errors'][0]['message']).to eq('Field `foo` is required')
   end
@@ -588,7 +690,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
              headers
 
         expect(last_response.status).to eq(422)
+
         result = JSON.parse(last_response.body)
+
         expect(result['errors'][0]['code']).to eq('generic.malformed')
         expect(result['errors'][0]['message']).to eq("X-Dated-From header value '#{ datetime }' is invalid")
         expect(result['errors'][0]['reference']).to eq("X-Dated-From")
@@ -638,7 +742,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
          headers_for(resource_uuid: Hoodoo::UUID.generate())
 
     expect(last_response.status).to eq(403)
+
     result = JSON.parse(last_response.body)
+
     expect(result['errors'].size).to eq(1)
     expect(result['errors'][0]['code']).to eq('platform.forbidden')
     expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
@@ -665,8 +771,13 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
          headers_for()
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'created'}, 'dated_from' => nil})
+    expect_response_options_for(result['options'])
+
+    expect(result['result']).to eq({'inner' => 'created'})
+    expect(result).to have_key('dated_from')
+    expect(result['dated_from']).to be_nil
   end
 
   it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
@@ -675,7 +786,9 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
          headers_for()
 
     expect(last_response.status).to eq(403)
+
     result = JSON.parse(last_response.body)
+
     expect(result['errors'].size).to eq(1)
     expect(result['errors'][0]['code']).to eq('platform.forbidden')
     expect(result['errors'][0]['reference']).to be_nil # Ensure no information disclosure vulnerability
@@ -687,8 +800,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
          headers_for()
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => 'I experienced deja-vu'})
+    expect_response_options_for(result['options'])
+
+    expect(result['result']).to eq('I experienced deja-vu')
   end
 
   it 'handles broken service responses' do
@@ -698,7 +814,41 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
     expect(last_response.status).to eq(500)
     result = JSON.parse(last_response.body)
-    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'RSpecTestInterResourceCallsAImplementation' received from a local inter-resource call")
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'RSpecTestInterResourceCallsAImplementation' received from a local inter-resource call for action 'create'")
+  end
+
+  it 'handles incorrect return types from the "inner" service' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create) do | instance, context |
+      context.response.body = OpenStruct.new
+    end
+
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'bar'}),
+         headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.fault')
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'OpenStruct' received from a local inter-resource call for action 'create'")
+  end
+
+  it 'gets the correct type back when an inter-resource local call generates an error' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create) do | instance, context |
+      context.response.add_error( 'platform.malformed' )
+    end
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
+      expect(result.platform_errors.has_errors?).to eq(true)
+    end
+
+    post '/v1/rspec_test_inter_resource_calls_b/',
+         JSON.fast_generate({:foo => 'bar'}),
+         headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
   end
 
   def update_things(locale: nil)
@@ -733,8 +883,12 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
           headers_for(locale: locale)
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'updated'}})
+    expect_response_options_for(result['options'])
+    expect(result['options']['example_header']).to eq('example')
+
+    expect(result['result']).to eq({'inner' => 'updated'})
   end
 
   it 'updates things with callbacks', :check_callbacks => true do
@@ -743,6 +897,36 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   it 'updates things with a custom locale' do
     update_things(locale: 'boo')
+  end
+
+  it 'handles incorrect return types from the "inner" service' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update) do | instance, context |
+      context.response.body = "string"
+    end
+
+    patch '/v1/rspec_test_inter_resource_calls_b/world', '{}', headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.fault')
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'String' received from a local inter-resource call for action 'update'")
+  end
+
+  it 'gets the correct type back when an inter-resource local call generates an error' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update) do | instance, context |
+      context.response.add_error( 'platform.malformed' )
+    end
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
+      expect(result.platform_errors.has_errors?).to eq(true)
+    end
+
+    patch '/v1/rspec_test_inter_resource_calls_b/world', '{}', headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
   end
 
   def delete_things(locale: nil, deja_vu: nil)
@@ -777,8 +961,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
            headers_for(locale: locale, deja_vu: deja_vu)
 
     expect(last_response.status).to eq(200)
+
     result = JSON.parse(last_response.body)
-    expect(result).to eq({'result' => {'inner' => 'deleted'}})
+    expect_response_options_for(result['options'])
+
+    expect(result['result']).to eq({'inner' => 'deleted'})
   end
 
   it 'deletes things with callbacks', :check_callbacks => true do
@@ -815,6 +1002,35 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect(last_response.status).to eq(204)
     expect(last_response.body).to be_empty
     expect(last_response['X-Deja-Vu']).to eq('confirmed')
+  end
+
+  it 'handles incorrect return types from the "inner" service' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete) do | instance, context |
+      context.response.body = instance
+    end
+
+    delete '/v1/rspec_test_inter_resource_calls_b/world', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+
+    expect(result['errors'][0]['code']).to eq('platform.fault')
+    expect(result['errors'][0]['message']).to eq("Hoodoo::Services::Middleware: Unexpected response type 'RSpecTestInterResourceCallsAImplementation' received from a local inter-resource call for action 'delete'")
+  end
+
+  it 'gets the correct type back when an inter-resource local call generates an error' do
+    expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete) do | instance, context |
+      context.response.add_error( 'platform.malformed' )
+    end
+
+    expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook) do | instance, result |
+      expect(result).to be_a(Hoodoo::Client::AugmentedHash)
+      expect(result.platform_errors.has_errors?).to eq(true)
+    end
+
+    delete '/v1/rspec_test_inter_resource_calls_b/world', nil, headers_for()
+
+    result = JSON.parse(last_response.body)
+    expect(result['errors'][0]['code']).to eq('platform.malformed')
   end
 
   it 'should see errors from the inner call correctly' do

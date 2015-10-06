@@ -404,9 +404,10 @@ describe Hoodoo::Services::Middleware do
           equivalent_path: mock_path
         )
 
+        bad_body_data = '499 Invented'
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 499,
-          :body => '499 Invented'
+          :body        => bad_body_data
         )
 
         run_expectations( :show, mock_queue, mock_path + '/ident', mock_method, mock_query, mock_remote, mock_response )
@@ -421,9 +422,11 @@ describe Hoodoo::Services::Middleware do
 
         expect( errors ).to have_key( 'errors' )
         expect( errors[ 'errors' ] ).to be_a( Array )
-        expect( errors[ 'errors' ][ 0 ] ).to have_key( 'code' )
-        expect( errors[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
-        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Unexpected raw HTTP status code 499 with non-JSON response - 499 Invented' )
+        expect( errors[ 'errors' ][ 0 ] ).to_not be_nil
+
+        expect( errors[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.fault' )
+        expect( errors[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'Unexpected raw HTTP status code 499 with non-JSON response' )
+        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( "#{ bad_body_data }" )
       end
 
       it 'calls #show over Alchemy and handles 200 status but bad JSON' do
@@ -439,9 +442,10 @@ describe Hoodoo::Services::Middleware do
           equivalent_path: mock_path
         )
 
+        bad_body_data = 'Not JSON'
         mock_response = AlchemyAMQ::HTTPResponse.new(
           :status_code => 200,
-          :body => 'Not JSON'
+          :body        => bad_body_data
         )
 
         run_expectations( :show, mock_queue, mock_path + '/ident', mock_method, mock_query, mock_remote, mock_response )
@@ -456,9 +460,11 @@ describe Hoodoo::Services::Middleware do
 
         expect( errors ).to have_key( 'errors' )
         expect( errors[ 'errors' ] ).to be_a( Array )
-        expect( errors[ 'errors' ][ 0 ] ).to have_key( 'code' )
-        expect( errors[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'platform.fault' )
-        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' )
+        expect( errors[ 'errors' ][ 0 ] ).to_not be_nil
+
+        expect( errors[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.fault' )
+        expect( errors[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' )
+        expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( "#{ bad_body_data }" )
       end
     end
   end

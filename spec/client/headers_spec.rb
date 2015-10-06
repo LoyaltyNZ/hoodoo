@@ -151,4 +151,22 @@ describe Hoodoo::Client::Headers do
       end
     end
   end
+
+  context '#x_header_to_options' do
+    it 'converts headers' do
+      hash = {
+        'x-interaction-id'      => '23',
+        'X-Foo-Bar'             => '42',
+        'x_underscored_item'    => 'hello world',
+        'X_CAPITAL_UNDERSCORES' => 'yes'
+      }
+
+      options = Hoodoo::Client::Headers.x_header_to_options( hash )
+
+      expect( options[ 'interaction_id'      ] ).to eq( '23'          )
+      expect( options[ 'foo_bar'             ] ).to eq( '42'          )
+      expect( options[ 'underscored_item'    ] ).to eq( 'hello world' )
+      expect( options[ 'capital_underscores' ] ).to eq( 'yes'         )
+    end
+  end
 end
