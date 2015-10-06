@@ -218,6 +218,52 @@ module Hoodoo
           end
         end
       end
+
+      # From a Hash-like source where keys are HTTP header names and values
+      # are the corresponding HTTP header values, extract interesting values
+      # and return a Hash of options as described below.
+      #
+      # Any <tt>X-Foo</tt> header is extracted, including core Hoodoo extension
+      # headers such as <tt>X-Interaction-ID</tt>, which is present in any
+      # response. The "X-" is stripped, the rest converted to lower case and
+      # hyphens converted to underscores. The interaction ID, therefore, would
+      # be set as an +interaction_id+ option. <tt>X-Foo</tt> would be set as a
+      # +foo+ option - and so-on.
+      #
+      # The header matcher accepts headers from the Hash-like source in upper
+      # or lower case with hyphens or underscores inside; extracted headers can
+      # therefore start with any of <tt>X_</tt>, <tt>x_</tt>, <tt>X-</tt> or
+      # <tt>x-</tt>. The Hash-like source must support the +each+ operator
+      # yielding a key and value to the block on each iteration.
+      #
+      # Header values are not translated at all, so (unless something very
+      # unsual is going on) the option values will be Strings.
+      #
+      # If the same header is encountered more than once, only the first one
+      # encountered (in enumeration order, whatever that might be) is stored.
+      #
+      # Parameters:
+      #
+      # +hashlike_source+:: Hash-like source containing HTTP headers/values.
+      #
+      def self.x_header_to_options( hashlike_source )
+        hashlike_source ||= {}
+        options           = {}
+
+        hashlike_source.each do | key, value |
+          next unless ( key[ 0 ] == 'x' || key[ 0 ] == 'X' ) &&
+                      ( key[ 1 ] == '-' || key[ 1 ] == '_' )
+
+          entry = key.to_s.downcase.gsub( '-', '_' )[ 2..-1 ]
+
+          unless entry == '' || options.has_key?( entry )
+            options[ entry ] = value
+          end
+        end
+
+        return options
+      end
+
     end
   end
 end

@@ -65,6 +65,9 @@ module Hoodoo; module Services
     # recommended that you call #set_resources and pass a total dataset size
     # in addition to just the Array containing a page of list data.
     #
+    # When reading response data, the body information is only valid if
+    # method #halt_processing? returns +false+.
+    #
     attr_accessor :body
     alias_method  :set_resource, :body=
 

@@ -261,6 +261,88 @@ module Hoodoo
       return hash_of_arrays
     end
 
+    # A very simple Hash subclass with case-insensitive-keys that are
+    # somewhat type agonistic (+to_s+ conversion is used, so the most
+    # obvious interchangeable use cases are Strings or Symbols).
+    #
+    # Reading and writing from a CIHash is much slower than a normal
+    # Hash as the given key for such operations is converted to String
+    # and upper case every time.
+    #
+    # This only works for Hash#[] and Hash#[]= styles of reading and
+    # writing keys. Standard Hash construction via Hash::[] or Hash.new
+    # is supported with automatic rewriting to case insensitive key
+    # variants. For anything else, including things like Hash#include?,
+    # you _MUST_ use upper case String versions of keys. This class
+    # does not attempt to cover every possible kind of standard library
+    # Hash lookup (which may change with newer versions of Ruby).
+    #
+    class CIHash < Hash
+
+      public
+
+        # The stock Hash class has many constructor options. Rather than
+        # try to write bespoke versions, for CIHash we just take any (or
+        # no) parameter for a constructor, call the superclass, then
+        # rewrite the Hash internally using CIHash#[]= to ensure
+        # appropriate key generation in this simplistic implementation.
+        #
+        # *args:: As for the Hash class constructor.
+        #
+        def initialize( *args, &block )
+          super( *args, &block )
+
+          keys = self.keys
+          keys.each do | key |
+            self[ key ] = self.delete( key )
+          end
+        end
+
+        # See #initialize - same rationale here.
+        #
+        def self.[]( *args, &block )
+          instance = super( *args, &block )
+
+          keys = instance.keys
+          keys.each do | key |
+            instance[ key ] = instance.delete( key )
+          end
+
+          return instance
+        end
+
+        # Case-insensitive equivalent of Hash#[]=; sets a value.
+        #
+        # +key+::   Key to set. Converted to String and upper case for
+        #           internal writing.
+        #
+        # +value+:: Value to set for converted key.
+        #
+        def []=( key, value )
+          super( nz_co_loyalty_ci( key ), value )
+        end
+
+        # Case-insensitive equivalent of Hash#[]; returns looked-up value.
+        #
+        # +key+:: Key to look up. Converted to String and upper case for
+        #         internal reading.
+        #
+        def []( key )
+          super( nz_co_loyalty_ci( key ) )
+        end
+
+      protected
+
+        # Convert a key to an upper case String.
+        #
+        # +key+:: Key to convert. Expected to be a Symbol or String.
+        #
+        def nz_co_loyalty_ci( key )
+          key.to_s.upcase
+        end
+
+    end
+
     # Is a parameter convertable to an integer cleanly? Returns the integer
     # value if so, else +nil+.
     #

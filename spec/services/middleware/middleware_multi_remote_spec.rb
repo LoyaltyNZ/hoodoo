@@ -16,6 +16,14 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
   public
 
     def list( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.list.offset == 42
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resources(
         [
           { 'list0' => TestEchoImplementation.to_h( context ) },
@@ -42,6 +50,13 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
 
     def create( context )
 
+      # Deliberate error generation hook.
+      #
+      if context.request.body.has_key?( 'return_error' )
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       # If asked to add another error to the response, we're testing
       # the deja-vu stuff including making sure that errors are still returned
       # if any non-"invalid duplication" stuff exists. As long as the error
@@ -62,6 +77,15 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
     end
 
     def update( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
+      context.response.add_header( 'X-Example-Header', 'example' )
       context.response.body = { 'update' => TestEchoImplementation.to_h( context ) }
     end
 
@@ -70,8 +94,8 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       context.response.body = { 'delete' => TestEchoImplementation.to_h( context ) }
     end
 
-  private # Conceptually
-
+    # Used by both this class and later code in this file.
+    #
     def self.to_h( context )
       {
         'locale'              => context.request.locale,
@@ -155,13 +179,16 @@ class TestCallImplementation < Hoodoo::Services::Implementation
       }
     )
 
+    expectable_result_hook( result )
+
     return if result.adds_errors_to?( context.response.errors )
 
     context.response.set_resources(
       [
-        { 'listA' => result },
-        { 'listB' => result },
-        { 'listC' => result }
+        { 'listA'   => result                  },
+        { 'listB'   => result                  },
+        { 'listC'   => result                  },
+        { 'options' => result.response_options }
       ],
       ( result.dataset_size || 0 ) + 2
     )
@@ -189,8 +216,10 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         }
       )
 
+      expectable_result_hook( result )
+
       context.response.add_errors( result.platform_errors )
-      context.response.body = { 'show' => result }
+      context.response.body = { 'show' => result, 'options' => result.response_options }
 
     end
   end
@@ -228,8 +257,10 @@ class TestCallImplementation < Hoodoo::Services::Implementation
       }
     )
 
+    expectable_result_hook( result )
+
     context.response.add_errors( result.platform_errors )
-    context.response.body = { 'create' => result }
+    context.response.body = { 'create' => result, 'options' => result.response_options }
   end
 
   def update( context )
@@ -242,8 +273,11 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+
+    expectable_result_hook( result )
+
     context.response.add_errors( result.platform_errors )
-    context.response.body = { 'update' => result }
+    context.response.body = { 'update' => result, 'options' => result.response_options }
   end
 
   def delete( context )
@@ -255,8 +289,17 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         '_reference' => context.request.references
       }
     )
+
+    expectable_result_hook( result )
+
     context.response.add_errors( result.platform_errors )
-    context.response.body = { 'delete' => result }
+    context.response.body = { 'delete' => result, 'options' => result.response_options }
+  end
+
+  # ...So we can expect any instance of this class to receive this message
+  # and check on the data it was given.
+  #
+  def expectable_result_hook( result )
   end
 end
 
@@ -268,6 +311,19 @@ end
 
 class TestCallService < Hoodoo::Services::Service
   comprised_of TestCallInterface
+end
+
+# A helper method for a set of common expectations.
+
+def expect_response_headers_on( response, should_not_have_called_service = false )
+  expect( response[ 'X-Interaction-ID' ] ).to_not be_nil
+  expect( Hoodoo::UUID.valid?( response[ 'X-Interaction-ID' ] ) ).to eq( true )
+
+  if should_not_have_called_service
+    expect( response[ 'X-Service-Response-Time' ] ).to     be_nil
+  else
+    expect( response[ 'X-Service-Response-Time' ] ).to_not be_nil
+  end
 end
 
 # And Finally - the tests.
@@ -337,6 +393,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
       expect( parsed[ '_data' ]).to_not be_nil
@@ -391,6 +449,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
       expect( parsed[ '_data' ] ).to eq( [ {
@@ -402,7 +462,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     # Code coverage: At present the middleware always calls its "remove
-    # expected errors" method if deja-vu is on andthere are errors in the
+    # expected errors" method if deja-vu is on and there are errors in the
     # response. This method then filters based on action, with an early
     # exit for non-create, non-delete cases. We're testing that here.
     #
@@ -420,6 +480,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '404' )
+      expect_response_headers_on( response )
     end
 
     def show_things( locale: nil, dated_at: nil )
@@ -434,8 +495,11 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
+      expect( parsed[ 'show' ] ).to_not be_nil
       expect( parsed[ 'show' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
@@ -477,8 +541,11 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
+      expect( parsed[ 'show' ] ).to_not be_nil
       expect( parsed[ 'show' ] ).to eq(
         {
           'locale'              => 'en-nz',
@@ -516,11 +583,14 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
       expected_body = { 'foo' => 'bar', 'baz' => 'boo' }
       expected_body[ 'id' ] = resource_uuid unless resource_uuid.nil?
 
+      expect( parsed[ 'create' ] ).to_not be_nil
       expect( parsed[ 'create' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
@@ -573,6 +643,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '403' )
+      expect_response_headers_on( response, true ) # true => shouldn't have called service
+
       parsed = JSON.parse( response.body )
 
       expect( parsed[ 'errors' ].size ).to eq( 1 )
@@ -591,6 +663,8 @@ describe Hoodoo::Services::Middleware do
 
       expect( response.code ).to eq( '204' )
       expect( response.body ).to be_nil
+
+      expect_response_headers_on( response )
       expect( response[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
     end
 
@@ -604,6 +678,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '422' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
       expect( parsed[ 'errors' ].size ).to eq( 2 )
@@ -626,8 +702,11 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
+      expect( parsed[ 'update' ] ).to_not be_nil
       expect( parsed[ 'update' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
@@ -674,8 +753,11 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '200' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
 
+      expect( parsed[ 'delete' ] ).to_not be_nil
       expect( parsed[ 'delete' ] ).to eq(
         {
           'locale'              => locale.nil? ? 'en-nz' : locale,
@@ -716,7 +798,10 @@ describe Hoodoo::Services::Middleware do
         path:    '/v2/test_some_echoes/simulate_404'      )
 
       expect( response.code ).to eq( '404' )
+      expect_response_headers_on( response )
+
       parsed = JSON.parse( response.body )
+
       expect( parsed[ 'errors' ][ 0 ][ 'code' ] ).to eq( 'generic.not_found' )
     end
 
@@ -731,6 +816,7 @@ describe Hoodoo::Services::Middleware do
       expect( response.code ).to eq( '204' )
       expect( response.body ).to be_nil
       expect( response[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
+      expect_response_headers_on( response )
     end
 
     it 'should get 405 for bad requests' do
@@ -746,6 +832,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '405' )
+      expect_response_headers_on( response, true ) # true => shouldn't have called service
     end
 
     it 'should be detect 404 OK' do
@@ -755,6 +842,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( response.code ).to eq( '404' )
+      expect_response_headers_on( response, true ) # true => shouldn't have called service
     end
   end
 
@@ -796,6 +884,15 @@ describe Hoodoo::Services::Middleware do
       return headers
     end
 
+    # A helper method for a set of common expectations.
+
+    def expect_response_options_for( options )
+      expect( options ).to_not be_nil
+      expect( options[ 'service_response_time' ] ).to_not be_nil
+      expect( options[ 'interaction_id'        ] ).to_not be_nil
+      expect( Hoodoo::UUID.valid?( options[ 'interaction_id' ] ) ).to eq( true )
+    end
+
     def list_things( locale: nil, dated_at: nil )
       get(
         '/v1/test_call.tar.gz?limit=25&offset=75',
@@ -835,7 +932,11 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+
       expect( parsed[ '_dataset_size' ]).to eq( 51 )
+
+      expect( parsed[ '_data' ][ 3 ] ).to_not be_nil
+      expect_response_options_for( parsed[ '_data' ][ 3 ][ 'options' ] )
     end
 
     it 'list things in the remote service with callbacks', :check_callbacks => true do
@@ -865,8 +966,7 @@ describe Hoodoo::Services::Middleware do
       get(
         '/v1/test_call.tar.gz?limit=25&offset=75',
         nil,
-        { 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-          'HTTP_CONTENT_LANGUAGE' => 'de' }
+        headers_for( locale: 'de' )
       )
 
       module JSON
@@ -876,9 +976,27 @@ describe Hoodoo::Services::Middleware do
       end
 
       expect( last_response.status ).to eq( 500 )
+      expect_response_headers_on( last_response, true ) # true => shouldn't have called service
+
       parsed = JSON.parse( last_response.body )
 
       expect( parsed[ 'errors' ][ 0 ][ 'message' ] ).to eq( "Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn't understand 'object_class' or 'array_class' options" )
+    end
+
+    it 'gets the correct type back when an inter-resource remote call generates an error' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result.class < Array               ).to eq( true )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      get(
+        '/v1/test_call.tar.gz?offset=42', # 42 -> magic -> inner service adds error
+        nil,
+        headers_for( locale: 'de' )
+      )
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
     end
 
     def show_things( locale: nil, dated_at: nil )
@@ -911,6 +1029,9 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+
+      expect( parsed[ 'options' ] ).to_not be_nil
+      expect_response_options_for( parsed[ 'options' ] )
     end
 
     it 'shows things in the remote service with callbacks', :check_callbacks => true do
@@ -923,6 +1044,18 @@ describe Hoodoo::Services::Middleware do
 
     it 'shows things with a custom locale and dated-at time' do
       show_things( locale: 'bar', dated_at: DateTime.now )
+    end
+
+    it 'gets the correct type back when an inter-resource remote call generates an error' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result.class < Hash                ).to eq( true )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      get( '/v1/test_call/return_error', nil, headers_for() )
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('generic.invalid_string')
     end
 
     def create_things( locale: nil, dated_from: nil, deja_vu: nil, resource_uuid: nil )
@@ -955,6 +1088,9 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+
+      expect( parsed[ 'options' ] ).to_not be_nil
+      expect_response_options_for( parsed[ 'options' ] )
     end
 
     it 'creates things in the remote service with callbacks', :check_callbacks => true do
@@ -994,6 +1130,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 403 )
+      expect_response_headers_on( last_response ) # should call target service, but fails on inter-resource call
+
       parsed = JSON.parse( last_response.body )
 
       expect( parsed[ 'errors' ].size ).to eq( 1 )
@@ -1010,22 +1148,25 @@ describe Hoodoo::Services::Middleware do
       post(
         '/v1/test_call.tar.gz',
          { 'foo' => 'bar', 'deja' => 'generic.invalid_duplication' }.to_json,
-         headers_for(deja_vu: true)
+         headers_for( deja_vu: true )
       )
 
       expect( last_response.status ).to eq( 204 )
       expect( last_response.body   ).to be_empty
       expect( last_response.headers[ 'X-Deja-Vu' ] ).to eq( 'confirmed' )
+      expect_response_headers_on( last_response )
     end
 
     it 'gets non-204 with deja-vu and duplication plus other errors' do
       post(
         '/v1/test_call.tar.gz',
          { 'foo' => 'bar', 'deja' => 'generic.invalid_decimal' }.to_json,
-         headers_for(deja_vu: true)
+         headers_for( deja_vu: true )
       )
 
       expect( last_response.status ).to eq( 422 )
+      expect_response_headers_on( last_response )
+
       parsed = JSON.parse( last_response.body )
 
       expect( parsed[ 'errors' ].size ).to eq( 2 )
@@ -1033,6 +1174,43 @@ describe Hoodoo::Services::Middleware do
       expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'deja' )
       expect( parsed[ 'errors' ][ 1 ][ 'code'      ] ).to eq( 'generic.invalid_decimal' )
       expect( parsed[ 'errors' ][ 1 ][ 'reference' ] ).to eq( 'deja' )
+    end
+
+    it 'rejects non-deja-vu 204 responses' do
+      expect_any_instance_of( Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse ).to receive( :http_status_code ).and_return( 204        )
+      expect_any_instance_of( Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse ).to receive( :raw_body_data    ).and_return( 'not JSON' )
+
+      post(
+        '/v1/test_call.tar.gz',
+         { 'foo' => 'bar' }.to_json,
+         headers_for()
+      )
+
+      expect( last_response.status ).to eq( 500 )
+      expect_response_headers_on( last_response )
+
+      parsed = JSON.parse( last_response.body )
+
+      expect( parsed[ 'errors' ].size ).to eq( 1 )
+      expect( parsed[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.fault' )
+      expect( parsed[ 'errors' ][ 0 ][ 'message'   ] ).to eq( "Unexpected raw HTTP status code 204 with 'X-Deja-Vu: confirmed' not present" )
+      expect( parsed[ 'errors' ][ 0 ][ 'reference' ] ).to eq( '204' )
+    end
+
+    it 'gets the correct type back when an inter-resource remote call generates an error' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result.class < Hash                ).to eq( true )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      post(
+        '/v1/test_call.tar.gz',
+         { :foo => 'bar', :return_error => 'yes' }.to_json,
+         headers_for()
+      )
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
     end
 
     def update_things( locale: nil )
@@ -1065,6 +1243,10 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+
+      expect( parsed[ 'options' ] ).to_not be_nil
+      expect_response_options_for( parsed[ 'options' ] )
+      expect( parsed[ 'options' ][ 'example_header' ] ).to eq( 'example' )
     end
 
     it 'updates things in the remote service with callbacks', :check_callbacks => true do
@@ -1077,6 +1259,18 @@ describe Hoodoo::Services::Middleware do
 
     it 'updates things with a custom locale' do
       update_things( locale: 'boo' )
+    end
+
+    it 'gets the correct type back when an inter-resource remote call generates an error' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result.class < Hash                ).to eq( true )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      patch( '/v1/test_call/return_error', '{}', headers_for() )
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
     end
 
     def delete_things( locale: nil, deja_vu: nil )
@@ -1109,6 +1303,9 @@ describe Hoodoo::Services::Middleware do
           'references'          => []
         }
       )
+
+      expect( parsed[ 'options' ] ).to_not be_nil
+      expect_response_options_for( parsed[ 'options' ] )
     end
 
     it 'deletes things in the remote service with callbacks', :check_callbacks => true do
@@ -1131,6 +1328,8 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 422 )
+      expect_response_headers_on( last_response )
+
       parsed = JSON.parse( last_response.body )
 
       expect( parsed[ 'errors' ] ).to_not be_nil
@@ -1142,7 +1341,12 @@ describe Hoodoo::Services::Middleware do
       })
     end
 
-    it 'gets a 404 for missing endpoints' do
+    it 'gets a 404 for missing endpoints (and gets correct type back when inter-resource call generates an error)' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result.class < Hash                ).to eq( true )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
       get(
         '/v1/test_call/generate_404',
         nil,
@@ -1150,6 +1354,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 404 )
+      expect_response_headers_on( last_response )
     end
 
     it 'can reuse an endpoint' do
@@ -1160,10 +1365,15 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 200 )
+      expect_response_headers_on( last_response )
+
       parsed = JSON.parse( last_response.body )
 
       expect( parsed[ 'show' ]).to_not be_nil
       expect( parsed[ 'show' ][ 'show' ][ 'uri_path_components' ] ).to eq( [ 'ensure_repeated_use_works' ] )
+
+      expect( parsed[ 'options' ] ).to_not be_nil
+      expect_response_options_for( parsed[ 'options' ] )
     end
 
     # Ruby can't kill off an "unresponsive" thread - there seems to be no
@@ -1183,6 +1393,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( last_response.status ).to eq( 404 )
+      expect_response_headers_on( last_response ) # should call target service, but fails on inter-resource call
     end
 
     # Similarly shaky test for simulating arbitrary other failure kinds.
@@ -1198,6 +1409,7 @@ describe Hoodoo::Services::Middleware do
 
       expect( last_response.status ).to eq( 500 )
       expect( last_response.body ).to include( 'some connection error' )
+      expect_response_headers_on( last_response )
     end
   end
 end
