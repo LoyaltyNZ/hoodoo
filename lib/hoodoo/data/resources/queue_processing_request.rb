@@ -24,8 +24,7 @@ module Hoodoo
           text :message_reference
           enum :state, :from => STATES
           datetime  :queued_at
-          text :queue_caller_key
-
+          uuid :caller_outlet_id, :resource => :Outlet
           hash :caller_identity do; end
           hash :info do; end
 
