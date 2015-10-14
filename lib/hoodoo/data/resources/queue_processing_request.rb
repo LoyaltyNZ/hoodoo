@@ -5,7 +5,7 @@
 # Purpose:: Define documented Internal Platform API Resource
 #           'QueueProcessingRequest'.
 # ----------------------------------------------------------------------
-#           22-Seo-2015 (RJS): Created.
+#           22-Sep-2015 (RJS): Created.
 ########################################################################
 
 module Hoodoo
@@ -24,8 +24,6 @@ module Hoodoo
           text :message_reference
           enum :state, :from => STATES
           datetime  :queued_at
-          uuid :caller_outlet_id, :resource => :Outlet
-          hash :caller_identity do; end
           hash :info do; end
 
           array :platform_requests
