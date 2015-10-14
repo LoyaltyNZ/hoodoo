@@ -58,12 +58,28 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
     # This will be a public action
 
     def show( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
     end
 
     # The rest will be protected actions
 
     def list( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.list.offset == 42
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resources(
         [ mock( context ), mock( context ), mock( context ) ],
         3
@@ -71,14 +87,50 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
     end
 
     def create( context )
-      context.response.set_resource( mock( context ) )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.body.has_key?( 'return_error' )
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
+      # If expecting deja-vu, cause deja-vu.
+      #
+      if context.request.deja_vu
+        context.response.add_error(
+          'generic.invalid_duplication',
+          :reference => { :field_name => 'hello' }
+        )
+
+      else
+        context.response.set_resource( mock( context ) )
+
+      end
     end
 
     def update( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
+      context.response.add_header( 'X-Example-Header', 'example' )
     end
 
     def delete( context )
+
+      # Deliberate error generation hook.
+      #
+      if context.request.ident == 'return_error'
+        context.response.add_error( 'platform.malformed' )
+        return
+      end
+
       context.response.set_resource( mock( context ) )
     end
 
@@ -94,10 +146,14 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
       # if adding things.
 
       {
-        'id'            => context.request.ident || Hoodoo::UUID.generate(),
+        'id'            => context.request.ident                 ||
+                           context.request.body.try( :[], 'id' ) ||
+                           Hoodoo::UUID.generate(),
+
         'created_at'    => Time.now.utc.iso8601,
         'kind'          => 'RSpecClientTestTarget',
         'language'      => context.request.locale,
+
         'embeds'        => context.request.embeds,
         'body_hash'     => context.request.body,
         'dated_at'      => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
@@ -219,10 +275,25 @@ describe Hoodoo::Client do
   # See also "def mock" and "def set_vars_for" earlier in this file.
   #
   def option_based_expectations( result )
+
+    if result.is_a?( Hoodoo::Client::AugmentedArray )
+      resource = result[ 0 ]
+    else
+      resource = result
+    end
+
     Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
       property = description[ :property ]
-      expect( result[ property.to_s ] ).to eq( instance_variable_get( "@expected_#{ property }" ) )
+      expect( resource[ property.to_s ] ).to eq( instance_variable_get( "@expected_#{ property }" ) )
     end
+
+    # We also always expect some standard response headers to have been included
+    # in the result out-of-band options payload.
+
+    expect( result.response_options[ 'interaction_id' ] ).to be_present
+    expect( Hoodoo::UUID.valid?( result.response_options[ 'interaction_id' ] ) ).to eq( true )
+    expect( result.response_options[ 'service_response_time' ] ).to be_present
+
   end
 
   ##############################################################################
@@ -410,7 +481,7 @@ describe Hoodoo::Client do
 
         next unless secured == true
 
-        it "#{ property } present" do
+        it "'#{ property }' present" do
           case property
             when :resource_uuid
               @resource_uuid = Hoodoo::UUID.generate
@@ -439,7 +510,7 @@ describe Hoodoo::Client do
 
         next if secured == true
 
-        context "#{ property } present" do
+        context "'#{ property }' present" do
           before :each do
             case property
               when :dated_at
@@ -490,7 +561,7 @@ describe Hoodoo::Client do
         expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
 
-        option_based_expectations( result[ 0 ] )
+        option_based_expectations( result )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -512,6 +583,7 @@ describe Hoodoo::Client do
 
         result = @endpoint.update( mock_ident, body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.response_options[ 'example_header' ] ).to eq( 'example' )
 
         expect( result[ 'id'        ] ).to eq( mock_ident )
         expect( result[ 'body_hash' ] ).to eq( body_hash )
@@ -562,6 +634,131 @@ describe Hoodoo::Client do
 
       it_behaves_like Hoodoo::Client
     end
+
+    context 'and when endpoints return errors' do
+      before :each do
+        set_vars_for(
+          base_uri:     "http://localhost:#{ @port }",
+          auto_session: false,
+          session_id:   @old_test_session.session_id
+        )
+      end
+
+      it 'returns an AugmentedArray for #list' do
+        result = @endpoint.list( { :offset => 42 } ) # 42 -> magic -> service adds error
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedArray )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #show' do
+        result = @endpoint.show( 'return_error' )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #create' do
+        result = @endpoint.create( { 'return_error' => true } )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #update' do
+        result = @endpoint.update( 'return_error', {} )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      it 'returns an AugmentedHash for #delete' do
+        result = @endpoint.delete( 'return_error' )
+
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+    end
+
+    context 'and with non-secured option' do
+
+      # Specific functional tests
+
+      it "'deja_vu' in use" do
+        @deja_vu = true
+
+        set_vars_for(
+          base_uri:     "http://localhost:#{ @port }",
+          auto_session: false
+        )
+
+        result = @endpoint.create( { 'hello' => 'world' } )
+
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.response_options[ 'deja_vu' ] ).to eq( 'confirmed' )
+      end
+    end
+
+    context 'and with secured option' do
+      before :each do
+        test_session = @old_test_session.dup
+        test_session.scoping = @old_test_session.scoping.dup
+        test_session.scoping.authorised_http_headers = []
+
+        Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+          next unless description[ :secured ] == true
+          test_session.scoping.authorised_http_headers << rack_header
+        end
+
+        Hoodoo::Services::Middleware.set_test_session( test_session )
+      end
+
+      after :each do
+        Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+      end
+
+      Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
+        property = description[ :property ]
+        secured  = description[ :secured  ]
+
+        next unless secured == true
+
+        it "'#{ property }' present" do
+          case property
+            when :resource_uuid
+              @resource_uuid = Hoodoo::UUID.generate
+            else
+              raise "Update client_spec.rb with new secured properties for test"
+          end
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          mock_ident = Hoodoo::UUID.generate()
+          result     = @endpoint.show( mock_ident )
+
+          expect( result.platform_errors.has_errors? ).to eq( false )
+        end
+      end
+
+      # Specific functional tests
+
+      it "'resource_uuid' in use" do
+        @resource_uuid = Hoodoo::UUID.generate
+
+        set_vars_for(
+          base_uri:     "http://localhost:#{ @port }",
+          auto_session: false
+        )
+
+        result = @endpoint.create( { 'hello' => 'world' } )
+
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'id' ] ).to eq( @resource_uuid )
+      end
+    end
   end
 
   ##############################################################################
@@ -590,7 +787,7 @@ describe Hoodoo::Client do
         expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
 
-        option_based_expectations( result[ 0 ] )
+        option_based_expectations( result )
 
         embeds     = [ 'baz' ]
         query_hash = { '_embed' => embeds }
@@ -612,6 +809,7 @@ describe Hoodoo::Client do
 
         result = @endpoint.update( mock_ident, body_hash, query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.response_options[ 'example_header' ] ).to eq( 'example' )
 
         expect( result[ 'id'        ] ).to eq( mock_ident )
         expect( result[ 'body_hash' ] ).to eq( body_hash )

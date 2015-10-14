@@ -134,6 +134,14 @@ module Hoodoo
             #
             attr_accessor :raw_body_data
 
+            # An object that will allow Hash-like lookup and iteration of
+            # key/value pairs via +each+. A raw Net::HTTPOK (sic.) instance
+            # from a successful response is an example of such an object.
+            #
+            # May be unset (+nil+) or empty, especially for error cases.
+            #
+            attr_accessor :http_headers
+
           end
 
           # Preprocess a high level request description, returning HTTP
@@ -266,6 +274,9 @@ module Hoodoo
 
             rescue => e
               data = response_class_for( description_of_response.action ).new
+              data.response_options = Hoodoo::Client::Headers.x_header_to_options(
+                description_of_response.http_headers
+              )
 
               case code
                 when 404
@@ -275,12 +286,22 @@ module Hoodoo
                 when 200
                   data.platform_errors.add_error(
                     'platform.fault',
-                    :reference => { :exception => RuntimeError.new( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' ) }
+                    :message   => 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200',
+                    :reference => { :exception => RuntimeError.new( "#{ body }" ) }
                   )
+                when 204
+                  if data.response_options[ 'deja_vu' ] != 'confirmed'
+                    data.platform_errors.add_error(
+                      'platform.fault',
+                      :message   => "Unexpected raw HTTP status code 204 with 'X-Deja-Vu: confirmed' not present",
+                      :reference => { :exception => RuntimeError.new( '204' ) }
+                    )
+                  end # Else do nothing; keep the empty 'data'
                 else
                   data.platform_errors.add_error(
                     'platform.fault',
-                    :reference => { :exception => RuntimeError.new( "Unexpected raw HTTP status code #{ code } with non-JSON response - #{ body }" ) }
+                    :message   => "Unexpected raw HTTP status code #{ code } with non-JSON response",
+                    :reference => { :exception => RuntimeError.new( "#{ body }" ) }
                   )
               end
 
@@ -328,9 +349,12 @@ module Hoodoo
 
             end
 
+            parsed.response_options = Hoodoo::Client::Headers.x_header_to_options(
+              description_of_response.http_headers
+            )
+
             return parsed
           end
-
       end
     end
   end

@@ -697,13 +697,25 @@ module Hoodoo; module Services
       set_common_response_headers( local_interaction )
       update_response_for( local_response, interface )
 
-      # Add errors from the local service response into an augmented hash
+      # Work out what kind of result the caller is expecting.
+
+      result_class = if action == :list
+        Hoodoo::Client::AugmentedArray
+      else
+        Hoodoo::Client::AugmentedHash
+      end
+
+      # Add errors from the local service response into an augmented object
       # for responding early (via a Proc for internal reuse later).
 
       add_local_errors = Proc.new {
-        hash = Hoodoo::Client::AugmentedHash.new
-        hash.platform_errors.merge!( local_response.errors )
-        hash
+        result                  = result_class.new
+        result.response_options = Hoodoo::Client::Headers.x_header_to_options(
+          local_response.headers
+        )
+
+        result.platform_errors.merge!( local_response.errors )
+        result
       }
 
       # Figure out initial action / authorisation results for this request.
@@ -812,31 +824,39 @@ module Hoodoo; module Services
         session.delete_from_memcached()
       end
 
-      # Extract the returned data and "rephrase" it as an augmented
-      # array or hash carrying error data if necessary.
+      # Extract the returned data, handling error conditions.
 
-      data = local_response.body
-
-      if data.is_a?( ::Hash )
-        data = Hoodoo::Client::AugmentedHash[ data ]
-
-      elsif data.is_a?( ::Array )
-        data              = Hoodoo::Client::AugmentedArray.new( data )
-        data.dataset_size = local_response.dataset_size
-
-      elsif data.is_a?( ::String ) && local_request.deja_vu && data == ''
-        data = Hoodoo::Client::AugmentedHash.new
+      if local_response.halt_processing?
+        result = result_class.new
+        result.set_platform_errors(
+          annotate_errors_from_other_resource( local_response.errors )
+        )
 
       else
-        raise "Hoodoo::Services::Middleware: Unexpected response type '#{ data.class.name }' received from a local inter-resource call"
+        body = local_response.body
+
+        if action == :list && body.is_a?( ::Array )
+          result              = Hoodoo::Client::AugmentedArray.new( body )
+          result.dataset_size = local_response.dataset_size
+
+        elsif action != :list && body.is_a?( ::Hash )
+          result = Hoodoo::Client::AugmentedHash[ body ]
+
+        elsif local_request.deja_vu && body == ''
+          result = result_class.new
+
+        else
+          raise "Hoodoo::Services::Middleware: Unexpected response type '#{ body.class.name }' received from a local inter-resource call for action '#{ action }'"
+
+        end
 
       end
 
-      data.set_platform_errors(
-        annotate_errors_from_other_resource( local_response.errors )
+      result.response_options = Hoodoo::Client::Headers.x_header_to_options(
+        local_response.headers
       )
 
-      return data
+      return result
     end
 
   private

@@ -83,6 +83,18 @@ support methods.</p>
           </ul>
         </dd>
       
+        <dt>X</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-x_header_to_options">x_header_to_options</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
     </dl>
   
 
@@ -401,6 +413,86 @@ expecting to use.</p>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-c-x_header_to_options">
+            
+              <b>x_header_to_options</b>( hashlike_source )
+            
+            <a href="../../../classes/Hoodoo/Client/Headers.html#method-c-x_header_to_options" name="method-c-x_header_to_options" class="permalink">Link</a>
+          </div>
+
+          
+            <div class="description">
+              <p>From a Hash-like source where keys are HTTP header names and values are the
+corresponding HTTP header values, extract interesting values and return a
+Hash of options as described below.</p>
+
+<p>Any <code>X-Foo</code> header is extracted, including core <a
+href="../../Hoodoo.html">Hoodoo</a> extension headers such as
+<code>X-Interaction-ID</code>, which is present in any response. The “X-”
+is stripped, the rest converted to lower case and hyphens converted to
+underscores. The interaction ID, therefore, would be set as an
+<code>interaction_id</code> option. <code>X-Foo</code> would be set as a
+<code>foo</code> option - and so-on.</p>
+
+<p>The header matcher accepts headers from the Hash-like source in upper or
+lower case with hyphens or underscores inside; extracted headers can
+therefore start with any of <code>X_</code>, <code>x_</code>,
+<code>X-</code> or <code>x-</code>. The Hash-like source must support the
+<code>each</code> operator yielding a key and value to the block on each
+iteration.</p>
+
+<p>Header values are not translated at all, so (unless something very unsual
+is going on) the option values will be Strings.</p>
+
+<p>If the same header is encountered more than once, only the first one
+encountered (in enumeration order, whatever that might be) is stored.</p>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>hashlike_source</code>
+<dd>
+<p>Hash-like source containing HTTP headers/values.</p>
+</dd></dl>
+            </div>
+          
+
+          
+
+          
+
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-x_header_to_options_source')" id="l_method-c-x_header_to_options_source">show</a>
+                
+              </p>
+              <div id="method-c-x_header_to_options_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 249</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">x_header_to_options</span>( <span class="ruby-identifier">hashlike_source</span> )
+  <span class="ruby-identifier">hashlike_source</span> <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">options</span>           = {}
+
+  <span class="ruby-identifier">hashlike_source</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">key</span>[ <span class="ruby-number">0</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;x&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">key</span>[ <span class="ruby-number">0</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;X&#39;</span> ) <span class="ruby-operator">&amp;&amp;</span>
+                ( <span class="ruby-identifier">key</span>[ <span class="ruby-number">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">key</span>[ <span class="ruby-number">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;_&#39;</span> )
+
+    <span class="ruby-identifier">entry</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">gsub</span>( <span class="ruby-string">&#39;-&#39;</span>, <span class="ruby-string">&#39;_&#39;</span> )[ <span class="ruby-number">2</span><span class="ruby-operator">..</span><span class="ruby-number">-1</span> ]
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">entry</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">entry</span> )
+      <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">entry</span> ] = <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">options</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
