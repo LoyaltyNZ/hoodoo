@@ -122,7 +122,7 @@ module Hoodoo; module Services
     #
     def self.comprised_of( *classes )
 
-      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
+      # http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C
       #
       classes.each do | klass |
         unless klass < Hoodoo::Services::Interface

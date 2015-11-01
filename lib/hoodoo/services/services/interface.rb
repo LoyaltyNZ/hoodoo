@@ -274,7 +274,7 @@ module Hoodoo; module Services
     #
     def endpoint( uri_path_fragment, implementation_class )
 
-      # http://www.ruby-doc.org/core-2.1.3/Module.html#method-i-3C
+      # http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C
       #
       unless implementation_class < Hoodoo::Services::Implementation
         raise "Hoodoo::Services::Interface#endpoint must provide Hoodoo::Services::Implementation subclasses, but '#{ implementation_class }' was given instead"

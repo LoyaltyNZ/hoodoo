@@ -36,37 +36,42 @@ module Hoodoo
             #
             # Options are:
             #
-            # +base_uri+::  A String giving the base URI at which resource
-            #               endpoint implementations can be found. The
-            #               protocol (HTTP or HTTPS), host and port are of
-            #               interest. The path will be overwritten with
-            #               by-convention values for individual resources.
+            # +base_uri+::     A String giving the base URI at which resource
+            #                  endpoint implementations can be found. The
+            #                  protocol (HTTP or HTTPS), host and port are of
+            #                  interest. The path will be overwritten with
+            #                  by-convention values for individual resources.
             #
-            # +proxy_uri+:: An optional full URI of an HTTP proxy to use if
-            #               the base URI commands use of HTTP or HTTPS. Ruby
-            #               will itself read <tt>ENV['HTTP_PROXY']</tt> if
-            #               set; this option will _override_ that variable.
-            #               Set as a String, as with +base_uri+.
+            # +proxy_uri+::    An optional full URI of an HTTP proxy to use if
+            #                  the base URI commands use of HTTP or HTTPS. Ruby
+            #                  will itself read <tt>ENV['HTTP_PROXY']</tt> if
+            #                  set; this option will _override_ that variable.
+            #                  Set as a String, as with +base_uri+.
             #
-            # +ca_file+::   An optional String indicating a relative or
-            #               absolute file path to the location of a .pem
-            #               format Certificate Authority file (trust store),
-            #               which may include multliple certificates. The
-            #               certificates in the file will be used by
-            #               Net::HTTP to validate the SSL Ceritificate Chain
-            #               presented by remote servers, when calling
-            #               endpoints over HTTPS with Hoodoo::Client.
+            # +ca_file+::      An optional String indicating a relative or
+            #                  absolute file path to the location of a +.pem+
+            #                  format Certificate Authority file (trust store),
+            #                  which may include multliple certificates. The
+            #                  certificates in the file will be used by
+            #                  Net::HTTP to validate the SSL ceritificate
+            #                  chain presented by remote servers, when calling
+            #                  endpoints over HTTPS with Hoodoo::Client.
             #
-            #               Default +nil+ value should be used in nearly all
-            #               cases and uses Ruby OpenSSL defaults which are
-            #               generally Operating System provided.
+            #                  Default +nil+ value should be used in nearly all
+            #                  cases and uses Ruby OpenSSL defaults which are
+            #                  generally Operating System provided.
             #
-            # +routing+::   An optional parameter which gives custom routing
-            #               for exception cases where the by-convention map
-            #               doesn't work. This is usually because there is a
-            #               resource singleton which lives logically at a
-            #               singular named route rather than plural route,
-            #               e.g. "/v1/health" rather than "/v1/healths".
+            # +http_timeout+:: Optional Float indicating the Net::HTTP read
+            #                  timeout value. This operates at the HTTP
+            #                  transport level and is independent of any
+            #                  timeouts set within the API providing server.
+            #
+            # +routing+::      An optional parameter which gives custom routing
+            #                  for exception cases where the by-convention map
+            #                  doesn't work. This is usually because there is a
+            #                  resource singleton which lives logically at a
+            #                  singular named route rather than plural route,
+            #                  e.g. "/v1/health" rather than "/v1/healths".
             #
             # The +routing+ parameter is a Hash of Resource names _as_
             # _Symbols_, then values which are Hash of API Version _as_
@@ -94,10 +99,11 @@ module Hoodoo
             # actually Hoodoo itself but implemented in a compatible fashion.
             #
             def configure_with( options )
-              @base_uri  = URI.parse( options[ :base_uri  ] )
-              @proxy_uri = URI.parse( options[ :proxy_uri ] ) unless options[ :proxy_uri ].nil?
-              @ca_file   = options[ :ca_file ]
-              @routing   = options[ :routing ] || {}
+              @base_uri     = URI.parse( options[ :base_uri  ] )
+              @proxy_uri    = URI.parse( options[ :proxy_uri ] ) unless options[ :proxy_uri ].nil?
+              @ca_file      = options[ :ca_file ]
+              @http_timeout = options[ :http_timeout ]
+              @routing      = options[ :routing ] || {}
             end
 
             # Announce the location of an instance. This is really a no-op
@@ -152,7 +158,8 @@ module Hoodoo
                 version:      version,
                 endpoint_uri: endpoint_uri,
                 proxy_uri:    @proxy_uri,
-                ca_file:      @ca_file
+                ca_file:      @ca_file,
+                http_timeout: @http_timeout
               )
             end
 

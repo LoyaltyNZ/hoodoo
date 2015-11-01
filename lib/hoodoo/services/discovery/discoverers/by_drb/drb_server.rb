@@ -68,7 +68,7 @@ module Hoodoo; module Services; class Discovery # Just used as a namespace here
 
         # For security, "disable eval() and friends":
         #
-        # http://www.ruby-doc.org/stdlib-2.1.6/libdoc/drb/rdoc/DRb.html
+        # http://www.ruby-doc.org/stdlib-2.2.3/libdoc/drb/rdoc/DRb.html
         # https://ruby-hacking-guide.github.io/security.html
         # http://blog.recurity-labs.com/archives/2011/05/12/druby_for_penetration_testers/
 
