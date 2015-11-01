@@ -140,7 +140,7 @@ href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
             
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_request" name="method-i-get_data_for_request" class="permalink">Link</a>
           </div>
-
+          
           
             <div class="description">
               <p>Preprocess a high level request description, returning <a
@@ -153,22 +153,22 @@ instance.</p>
 </dd></dl>
             </div>
           
-
+          
           
 
           
-
+          
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source:
+                Source: 
                 <a href="javascript:toggleSource('method-i-get_data_for_request_source')" id="l_method-i-get_data_for_request_source">show</a>
                 
               </p>
               <div id="method-i-get_data_for_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 152</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 158</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
@@ -286,7 +286,7 @@ instance.</p>
             
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_response" name="method-i-get_data_for_response" class="permalink">Link</a>
           </div>
-
+          
           
             <div class="description">
               <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
@@ -301,22 +301,22 @@ instance.</p>
 </dd></dl>
             </div>
           
-
+          
           
 
           
-
+          
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source:
+                Source: 
                 <a href="javascript:toggleSource('method-i-get_data_for_response_source')" id="l_method-i-get_data_for_response_source">show</a>
                 
               </p>
               <div id="method-i-get_data_for_response_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 264</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 270</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
