@@ -114,12 +114,12 @@ support methods.</p>
       <table border='0' cellpadding='5'>
         
           <tr valign='top'>
-            <td class="attr-name"><a name="UUID_PROPERTY_PROC">UUID_PROPERTY_PROC</a></td>
+            <td class="attr-name">UUID_PROPERTY_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) {
+            <td class="attr-value">-&gt; ( value ) {
 value = Hoodoo::UUID.valid?( value ) &amp;&amp; value
 value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39; if &#39;value&#39; falsy
-}</pre></td>
+}</td>
           </tr>
           
             <tr valign='top'>
@@ -133,9 +133,9 @@ appeared to not be a <a href="../UUID.html">UUID</a>.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="UUID_HEADER_PROC">UUID_HEADER_PROC</a></td>
+            <td class="attr-name">UUID_HEADER_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) { value }</pre></td>
+            <td class="attr-value">-&gt; ( value ) { value }</td>
           </tr>
           
             <tr valign='top'>
@@ -147,13 +147,13 @@ to the input value coerced to a String and no other changes.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="DATETIME_IN_PAST_ONLY_PROPERTY_PROC">DATETIME_IN_PAST_ONLY_PROPERTY_PROC</a></td>
+            <td class="attr-name">DATETIME_IN_PAST_ONLY_PROPERTY_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) {
+            <td class="attr-value">-&gt; ( value ) {
 value = Hoodoo::Utilities.valid_iso8601_subset_datetime?( value )
 value = nil if value &amp;&amp; value &gt; DateTime.now
 value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39; if &#39;value&#39; falsy
-}</pre></td>
+}</td>
           </tr>
           
             <tr valign='top'>
@@ -167,9 +167,9 @@ be in a supported format.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="DATETIME_WRITER_PROC">DATETIME_WRITER_PROC</a></td>
+            <td class="attr-name">DATETIME_WRITER_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) }</pre></td>
+            <td class="attr-value">-&gt; ( value ) { Hoodoo::Utilities.rationalise_datetime( value ) }</td>
           </tr>
           
             <tr valign='top'>
@@ -183,9 +183,9 @@ validation mechanism for inbound String-only from-header data.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="DATETIME_HEADER_PROC">DATETIME_HEADER_PROC</a></td>
+            <td class="attr-name">DATETIME_HEADER_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) }</pre></td>
+            <td class="attr-value">-&gt; ( value ) { Hoodoo::Utilities.nanosecond_iso8601( value ) }</td>
           </tr>
           
             <tr valign='top'>
@@ -198,11 +198,11 @@ precision.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="BOOLEAN_PROPERTY_PROC">BOOLEAN_PROPERTY_PROC</a></td>
+            <td class="attr-name">BOOLEAN_PROPERTY_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) {
+            <td class="attr-value">-&gt; ( value ) {
 value.to_s.downcase == &#39;yes&#39; || value == true ? true : false
-}</pre></td>
+}</td>
           </tr>
           
             <tr valign='top'>
@@ -216,9 +216,9 @@ insensitive.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="BOOLEAN_HEADER_PROC">BOOLEAN_HEADER_PROC</a></td>
+            <td class="attr-name">BOOLEAN_HEADER_PROC</td>
             <td>=</td>
-            <td class="attr-value"><pre>-&gt; ( value ) { value == true ? &#39;yes&#39; : &#39;no&#39; }</pre></td>
+            <td class="attr-value">-&gt; ( value ) { value == true ? &#39;yes&#39; : &#39;no&#39; }</td>
           </tr>
           
             <tr valign='top'>
@@ -231,9 +231,9 @@ value.</p></td>
           
         
           <tr valign='top'>
-            <td class="attr-name"><a name="HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a></td>
+            <td class="attr-name">HEADER_TO_PROPERTY</td>
             <td>=</td>
-            <td class="attr-value"><pre>{
+            <td class="attr-value">{
 # Take care not to define any property name which clashes with an
 # option in any other part of this entire system where these &quot;other
 # options&quot; get merged in. A project search for
@@ -274,7 +274,7 @@ value.</p></td>
 :header        =&gt; &#39;X-Deja-Vu&#39;,
 :header_proc   =&gt; BOOLEAN_HEADER_PROC,
 },
-}</pre></td>
+}</td>
           </tr>
           
             <tr valign='top'>
@@ -360,7 +360,7 @@ for that property.</p></td>
             
             <a href="../../../classes/Hoodoo/Client/Headers.html#method-c-define_accessors_for_header_equivalents" name="method-c-define_accessors_for_header_equivalents" class="permalink">Link</a>
           </div>
-
+          
           
             <div class="description">
               <p>Define a series of read and custom write accessors according to the
@@ -377,17 +377,17 @@ expecting to use.</p>
 </dd></dl>
             </div>
           
-
+          
           
 
           
-
+          
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source:
+                Source: 
                 <a href="javascript:toggleSource('method-c-define_accessors_for_header_equivalents_source')" id="l_method-c-define_accessors_for_header_equivalents_source">show</a>
                 
               </p>
@@ -426,7 +426,7 @@ expecting to use.</p>
             
             <a href="../../../classes/Hoodoo/Client/Headers.html#method-c-x_header_to_options" name="method-c-x_header_to_options" class="permalink">Link</a>
           </div>
-
+          
           
             <div class="description">
               <p>From a Hash-like source where keys are HTTP header names and values are the
@@ -461,17 +461,17 @@ encountered (in enumeration order, whatever that might be) is stored.</p>
 </dd></dl>
             </div>
           
-
+          
           
 
           
-
+          
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source:
+                Source: 
                 <a href="javascript:toggleSource('method-c-x_header_to_options_source')" id="l_method-c-x_header_to_options_source">show</a>
                 
               </p>

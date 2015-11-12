@@ -374,6 +374,8 @@ describe Hoodoo::Services::Session do
   #
   context 'real Memcached connection code test coverage' do
     before :example do
+      # Clear the connection cache for each test
+      Hoodoo::Services::Session.class_variable_set( '@@dalli_clients', nil ) # Hack for test!
       Hoodoo::Services::Session::MockDalliClient.bypass( true )
     end
 
@@ -411,6 +413,20 @@ describe Hoodoo::Services::Session do
       expect {
         described_class.connect_to_memcached( '256.2.3.4:0' )
       }.to raise_error RuntimeError
+    end
+
+    it 'only initialises once for one given host' do
+      expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::Services::Session::MockDalliClient.new )
+
+      1.upto( 3 ) do
+        described_class.connect_to_memcached( 'one' )
+      end
+
+      expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::Services::Session::MockDalliClient.new )
+
+      1.upto( 3 ) do
+        described_class.connect_to_memcached( 'two' )
+      end
     end
   end
 end

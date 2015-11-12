@@ -260,7 +260,7 @@ describe Hoodoo::Client do
     endpoint_opts[ :deja_vu       ] = @deja_vu       if     @deja_vu == true
 
     if rand( 2 ) == 0
-      override_locale          = SecureRandom.urlsafe_base64(2)
+      override_locale          = SecureRandom.urlsafe_base64( 2 )
       endpoint_opts[ :locale ] = override_locale
       @expected_locale         = override_locale.downcase
     end
@@ -446,6 +446,31 @@ describe Hoodoo::Client do
       end
 
       it_behaves_like Hoodoo::Client
+    end
+
+    context 'and with a custom HTTP read timeout' do
+      before :each do
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:     base_uri,
+          http_timeout: 0.0000001
+        )
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+      end
+
+      it 'times out elegantly' do
+        mock_ident = Hoodoo::UUID.generate()
+        result     = @endpoint.show( mock_ident )
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
+      end
     end
 
     context 'and with custom routing' do

@@ -70,6 +70,12 @@ module Hoodoo
             #
             attr_accessor :ca_file
 
+            # Optional Float indicating the Net::HTTP read timeout value.
+            # This operates at the HTTP transport level and is independent
+            # of any timeouts set within the API providing server.
+            #
+            attr_accessor :http_timeout
+
             # Optional Hash of query data.
             #
             attr_accessor :query_hash

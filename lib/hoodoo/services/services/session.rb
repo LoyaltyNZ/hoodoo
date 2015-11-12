@@ -549,10 +549,12 @@ module Hoodoo
           raise 'Hoodoo::Services::Session.connect_to_memcached: The Memcached connection host data is nil or empty'
         end
 
-        stats = nil
+        stats   = nil
+        mclient = nil
 
         begin
-          mclient = ::Dalli::Client.new(
+          @@dalli_clients         ||= {}
+          @@dalli_clients[ host ] ||= ::Dalli::Client.new(
             host,
             {
               :compress   => false,
@@ -561,7 +563,7 @@ module Hoodoo
             }
           )
 
-          stats = mclient.stats()
+          stats = @@dalli_clients[ host ].stats()
 
         rescue Exception => e
           stats = nil
@@ -571,7 +573,7 @@ module Hoodoo
         if stats.nil?
           raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached at '#{ host }'"
         else
-          return mclient
+          return @@dalli_clients[ host ]
         end
       end
 
@@ -714,6 +716,12 @@ module Hoodoo
           else
             false
           end
+        end
+
+        # Mock 'stats' health check.
+        #
+        def stats
+          true
         end
       end
     end

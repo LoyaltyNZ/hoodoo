@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files  = Dir.glob('spec/**/*.rb')
   s.homepage    = 'http://github.com/LoyaltyNZ/hoodoo'
 
-  s.required_ruby_version = '>= 2.1.6'
+  s.required_ruby_version = '>= 2.1'
 
   s.add_runtime_dependency     'uuidtools',        '~> 2.1'
   s.add_runtime_dependency     'kgio',             '~> 2.9' # Speeds up Dalli
