@@ -170,23 +170,13 @@ RSpec.configure do | config |
 end
 
 # For things like ActiveRecord::Migrations used during database-orientated
-# tests, or for certain logger tests, have to silence STDOUT chatter to avoid
-# messing up RSpec's output, but we need to be sure it's restored.
+# tests, or for certain logger tests, have to silence +STDOUT+ chatter to
+# avoid messing up RSpec's output, but we need to be sure it's restored.
 #
-# This method is called with a block. It redirects STODUT to File::NULL and
-# executes the block. An 'ensure' clause restores STDOUT always.
+# &block:: Block of code to call while +STDOUT+ is disabled.
 #
 def spec_helper_silence_stdout( &block )
-  begin
-    $old_stdout = $stdout.clone
-    $stdout.reopen( File::NULL, 'w' )
-
-    yield
-
-  ensure
-    $stdout.reopen( $old_stdout )
-
-  end
+  Kernel.silence_stream( STDOUT, &block )
 end
 
 # Start up a service application under WEBrick via Rack on localhost, using
