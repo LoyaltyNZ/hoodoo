@@ -162,6 +162,23 @@ describe Hoodoo::ActiveRecord::Writer do
       end
     end
 
+    # This tries to check that, despite the nested transaction and rollback
+    # behaviour inside #persist_in, deep internal exceptions still propagate
+    # out correctly. It assumes database rollbacks happened OK (that's up to
+    # AR and the DB driver) and just makes sure the exception gets out.
+    #
+    context 'when internal exceptions occur' do
+      it 'reports them correctly' do
+        record = RSpecModelWriterTestWithValidation.new( @record_with_app_validation.attributes() )
+
+        # This is a method called deep inside ActiveRecord in its Transactions
+        # mixin. It is private, so this test is fragile.
+
+        expect( record ).to receive( :add_to_transaction ).and_raise( 'boo!' )
+        expect { result = record.persist_in( @context ) }.to raise_error( RuntimeError, 'boo!' )
+      end
+    end
+
     # Prove that we handle the classic ActiveRecord validation of:
     #
     #    Thread 1              Thread 2
@@ -176,52 +193,78 @@ describe Hoodoo::ActiveRecord::Writer do
     # for the other thread to advance, in order to ensure the articial race
     # condition is provoked every time without reliance on dubious 'sleep's.
     #
-    it 'handles AR race conditions' do
-      attrs    = unique_attributes()
+    context 'with race conditions' do
+      shared_examples 'a robust model' do | use_transaction |
+        it 'and handles duplicates correctly' do
+          attrs    = unique_attributes()
 
-      record_1 = RSpecModelWriterTestWithValidation.new( attrs )
-      record_2 = RSpecModelWriterTestWithValidation.new( attrs )
+          record_1 = RSpecModelWriterTestWithValidation.new( attrs )
+          record_2 = RSpecModelWriterTestWithValidation.new( attrs )
 
-      queue_1  = Queue.new
-      queue_2  = Queue.new
+          queue_1  = Queue.new
+          queue_2  = Queue.new
 
-      thread_1 = Thread.new do
-        queue_1.pop() # Wait until thread 2 gets going
+          thread_1 = Thread.new do
+            queue_1.pop() # Wait until thread 2 gets going
 
-        expect( record_1 ).to receive( :perform_validations ).once do
-          queue_2 << :go # Tell thread 2 to run validations
-          queue_1.pop()  # Wait for thread 2 to run validations
-          true # Indicate successful validation, let save happen
+            expect( record_1 ).to receive( :perform_validations ).once do
+              queue_2 << :go # Tell thread 2 to run validations
+              queue_1.pop()  # Wait for thread 2 to run validations
+              true # Indicate successful validation, let save happen
+            end
+
+            result = if use_transaction
+              record_1.transaction do
+                record_1.persist_in( @context )
+              end
+            else
+              record_1.persist_in( @context )
+            end
+
+            expect( result ).to eq( :success )
+
+            queue_2 << :go # Tell thread 2 to save
+          end
+
+          thread_2 = Thread.new do
+            queue_1 << :go
+            queue_2.pop() # Wait for thread 1 to run validations, then tell us to go
+
+            expect( record_2 ).to receive( :perform_validations ).once do
+              queue_1 << :go # Now tell thread 1 to save
+              queue_2.pop() # Wait for thread 2 to do the same as the above
+              true # Indicate successful validation, let save happen
+            end
+
+            # Since the validation above will succeed but then try to save and that
+            # will fail, we expect the Writer module to re-query "valid?" and in the
+            # end to return ":failure".
+
+            expect( record_2 ).to receive( :valid? ).once.and_call_original
+
+            result = if use_transaction
+              record_2.transaction do
+                record_2.persist_in( @context )
+              end
+            else
+              record_2.persist_in( @context )
+            end
+
+            expect( result ).to eq( :failure )
+          end
+
+          thread_1.join()
+          thread_2.join()
         end
-
-        result = record_1.persist_in( @context )
-        expect( result ).to eq( :success )
-
-        queue_2 << :go # Tell thread 2 to save
       end
 
-      thread_2 = Thread.new do
-        queue_1 << :go
-        queue_2.pop() # Wait for thread 1 to run validations, then tell us to go
-
-        expect( record_2 ).to receive( :perform_validations ).once do
-          queue_1 << :go # Now tell thread 1 to save
-          queue_2.pop() # Wait for thread 2 to do the same as the above
-          true # Indicate successful validation, let save happen
-        end
-
-        # Since the validation above will succeed but then try to save and that
-        # will fail, we expect the Writer module to re-query "valid?" and in the
-        # end to return ":failure".
-
-        expect( record_2 ).to receive( :valid? ).once.and_call_original
-
-        result = record_2.persist_in( @context )
-        expect( result ).to eq( :failure )
+      context 'and no outer transaction' do
+        it_behaves_like 'a robust model', false
       end
 
-      thread_1.join()
-      thread_2.join()
+      context 'and an outer transaction' do
+        it_behaves_like 'a robust model', true
+      end
     end
 
   end
