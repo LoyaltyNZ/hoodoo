@@ -147,7 +147,9 @@ module Hoodoo
         # First just see if we have any problems saving anyway.
         #
         errors_occurred = begin
-          :any unless self.save
+          self.transaction( :requires_new => true ) do
+            :any unless self.save
+          end
         rescue ::ActiveRecord::RecordNotUnique => error
           :duplication
         end
@@ -174,6 +176,8 @@ module Hoodoo
       #
       module ClassMethods
 
+        # == Overview
+        #
         # Service authors _SHOULD_ use this method when persisting data with
         # ActiveRecord if there is a risk of duplication constraint violation
         # of any kind. This will include a violation on the UUID of a resource
@@ -217,7 +221,8 @@ module Hoodoo
         # additional future write-related enhancements in Hoodoo should they
         # arise, without necessarily needing service code changes.
         #
-        # Example:
+        #
+        # == Example
         #
         #     class Unique < ActiveRecord::Base
         #       include Hoodoo::ActiveRecord::Writer
@@ -257,7 +262,8 @@ module Hoodoo
         #       context.response.set_resource( rendering_of( context, model_instance ) )
         #     end
         #
-        # Parameters:
+        #
+        # == Parameters
         #
         # +context+::    Hoodoo::Services::Context instance describing a call
         #                context. This is typically a value passed to one of
@@ -269,6 +275,38 @@ module Hoodoo
         #
         # See also the Hoodoo::ActiveRecord::Writer#persist_in instance method
         # equivalent of this class method.
+        #
+        #
+        # == Nested transaction note
+        #
+        # Ordinarily an exception in a nested transaction does not roll back.
+        # ActiveRecord wraps all saves in a transaction "out of the box", so
+        # the following construct could have unexpected results...
+        #
+        #     Model.transaction do
+        #       instance.persist_in( context )
+        #     end
+        #
+        # ...if <tt>instance.valid?</tt> runs any SQL queries - which is very
+        # likely. PostgreSQL, for example, would then raise an exception; the
+        # inner transaction failed, leaving the outer one in an aborted state:
+        #
+        #     PG::InFailedSqlTransaction: ERROR:  current transaction is
+        #     aborted, commands ignored until end of transaction block
+        #
+        # ActiveRecord provides us with a way to define a transaction that
+        # does roll back via the <tt>requires_new: true</tt> option. Hoodoo
+        # thus protects callers from the above artefacts by ensuring that all
+        # saves are wrapped in an outer transaction that causes rollback in
+        # any parents. This sidesteps the unexpected behaviour, but service
+        # authors might sometimes need to be aware of this if using complex
+        # transaction behaviour along with <tt>persist_in</tt>.
+        #
+        # In pseudocode, the internal implementation is:
+        #
+        #     self.transaction( :requires_new => true ) do
+        #       self.save
+        #     end
         #
         def persist_in( context, attributes )
           instance = self.new( attributes )

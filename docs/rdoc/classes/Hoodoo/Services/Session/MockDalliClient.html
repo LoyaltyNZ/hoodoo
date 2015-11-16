@@ -141,6 +141,11 @@ href="MockDalliClient.html#method-c-store">::store</a>&#39;s hash of data.</p>
             
               
               <li>
+                <a href="#method-i-stats">stats</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-c-store">store</a>
               </li>
             
@@ -177,7 +182,7 @@ href="MockDalliClient.html#method-c-store">::store</a>&#39;s hash of data.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-c-bypass" name="method-c-bypass" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Pass <code>true</code> to bypass the mock client (subject to the caller
@@ -186,22 +191,22 @@ e.g. get test code coverage on real Memcached. Pass <code>false</code>
 otherwise.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-bypass_source')" id="l_method-c-bypass_source">show</a>
                 
               </p>
               <div id="method-c-bypass_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 660</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 662</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
   <span class="ruby-identifier">@@bypass</span> = <span class="ruby-identifier">bypass_boolean</span>
 <span class="ruby-keyword">end</span></pre>
@@ -217,29 +222,29 @@ otherwise.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-c-bypass-3F" name="method-c-bypass-3F" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>If <code>true</code>, bypass this class and use real Dalli::Client; else
 don&#39;t. Default return value is <code>false</code>.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-bypass-3F_source')" id="l_method-c-bypass-3F_source">show</a>
                 
               </p>
               <div id="method-c-bypass-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 669</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 671</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass?</span>
   <span class="ruby-identifier">@@bypass</span>
 <span class="ruby-keyword">end</span></pre>
@@ -255,28 +260,28 @@ don&#39;t. Default return value is <code>false</code>.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-c-reset" name="method-c-reset" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Wipe out all saved data.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-reset_source')" id="l_method-c-reset_source">show</a>
                 
               </p>
               <div id="method-c-reset_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 652</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 654</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">reset</span>
   <span class="ruby-identifier">@@store</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -292,7 +297,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-c-store" name="method-c-store" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>For test analysis, return the hash of &#39;memcached&#39; mock data.</p>
@@ -302,22 +307,22 @@ are hashes with “:expires_at” giving an expiry time or “nil” and “:val
 giving your stored value.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-c-store_source')" id="l_method-c-store_source">show</a>
                 
               </p>
               <div id="method-c-store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 646</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 648</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">store</span>
   <span class="ruby-identifier">@@store</span>
 <span class="ruby-keyword">end</span></pre>
@@ -335,28 +340,28 @@ giving your stored value.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Remove data for the given key.</p>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
                 
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 710</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 712</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
@@ -377,7 +382,7 @@ giving your stored value.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-i-get" name="method-i-get" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Get the data stored under the given key. Returns <code>nil</code> if not
@@ -388,22 +393,22 @@ found / expired.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
                 
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 678</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 680</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
@@ -425,7 +430,7 @@ found / expired.</p>
             
             <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-i-set" name="method-i-set" class="permalink">Link</a>
           </div>
-          
+
           
             <div class="description">
               <p>Set data for a given key.</p>
@@ -443,22 +448,22 @@ If omitted, the data does not expire.</p>
 </dd></dl>
             </div>
           
-          
+
           
 
           
-          
+
           
             
             <div class="sourcecode">
               
               <p class="source-link">
-                Source: 
+                Source:
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
                 
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 698</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 700</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">data</span> = {
     <span class="ruby-value">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,
@@ -466,6 +471,43 @@ If omitted, the data does not expire.</p>
   }
 
   <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">data</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-stats">
+            
+              <b>stats</b>()
+            
+            <a href="../../../../classes/Hoodoo/Services/Session/MockDalliClient.html#method-i-stats" name="method-i-stats" class="permalink">Link</a>
+          </div>
+
+          
+            <div class="description">
+              <p>Mock &#39;stats&#39; health check.</p>
+            </div>
+          
+
+          
+
+          
+
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-stats_source')" id="l_method-i-stats_source">show</a>
+                
+              </p>
+              <div id="method-i-stats_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 723</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stats</span>
   <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
