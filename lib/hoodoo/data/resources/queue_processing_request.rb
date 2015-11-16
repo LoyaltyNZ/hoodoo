@@ -21,9 +21,9 @@ module Hoodoo
         STATES = [ :processed, :deferred ]
 
         schema do
-          text :message_reference
-          enum :state, :from => STATES
-          datetime  :queued_at
+          text :message_reference, :required => true
+          enum :state,                                :from => STATES
+          datetime  :queued_at,    :required => true
           hash :info do; end
 
           array :platform_requests
