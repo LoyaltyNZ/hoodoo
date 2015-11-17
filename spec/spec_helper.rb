@@ -1,7 +1,7 @@
 require 'webrick'
 require 'webrick/https'
 
-# Set the correct environment for testing
+# Set the correct environment for testing.
 
 ENV[ 'RACK_ENV' ] = 'test'
 
@@ -15,7 +15,7 @@ SimpleCov.start do
   add_filter '/spec/'
 end
 
-# a bit of debugging
+# Debugging support.
 
 require 'byebug'
 
@@ -71,7 +71,7 @@ RSpec.configure do | config |
 
   Kernel.srand config.seed
 
-  # Connect to PostgreSQL; no database yet
+  # Connect to PostgreSQL; no database yet.
 
   database_name = 'hoodoo_test'
 
