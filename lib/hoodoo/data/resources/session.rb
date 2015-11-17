@@ -18,7 +18,6 @@ module Hoodoo
         schema do
           uuid     :caller_id,  :required => true, :resource => :Caller
           datetime :expires_at, :required => true
-          text     :identifier, :required => true
         end
 
       end

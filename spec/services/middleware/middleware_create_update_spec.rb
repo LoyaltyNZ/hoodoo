@@ -137,14 +137,14 @@ describe Hoodoo::Services::Middleware do
       do_post( :a, 'foo' => 'hello', 'bar' => 42 )
       do_patch( :a, 'foo' => true, 'bar' => 'foo' )
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with required fields only' do
       do_post( :a, 'bar' => 42 )
       do_patch( :a, 'foo' => true )
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     # Explicit nils should be preserved through rendering and
@@ -154,8 +154,8 @@ describe Hoodoo::Services::Middleware do
       do_post( :a, 'foo' => nil, 'bar' => 42 )
       do_patch( :a, 'foo' => true, 'bar' => nil )
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
   end
 
@@ -171,22 +171,22 @@ describe Hoodoo::Services::Middleware do
       do_post( :a, 'foo' => 'hello', 'bar' => 42, 'random' => true )
       do_patch( :a, 'foo' => true, 'bar' => 'foo', 'random' => true )
       do_post( :b, 'code' => 'hello', 'random' => true, 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'actions' => { 'list' => 'allow' }, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => { 'list' => 'allow' }, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with required fields only' do
       do_post( :a, 'bar' => 42, 'random' => true )
       do_patch( :a, 'foo' => true, 'random' => true )
       do_post( :b, 'code' => 'hello', 'random' => true, 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with explicit nils' do
       do_post( :a, 'foo' => nil, 'bar' => 42, 'random' => true )
       do_patch( :a, 'foo' => true, 'bar' => nil, 'random' => true )
       do_post( :b, 'code' => 'hello', 'random' => true, 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'actions' => nil, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'actions' => { 'list' => nil }, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => nil, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'actions' => { 'list' => nil }, 'random' => true, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'rejects unknown data across many fields (flat top level)' do
@@ -229,39 +229,39 @@ describe Hoodoo::Services::Middleware do
 
     it 'with many fields' do
       do_post( :b,  'id' => Hoodoo::UUID.generate, 'code' => 'hello', 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'kind' => 'Foo', 'code' => 'hello', 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'kind' => 'Foo', 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'kind' => 'Foo', 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'created_at' => Time.now.iso8601, 'code' => 'hello', 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'language' => 'fr', 'code' => 'hello', 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'language' => 'fr', 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'language' => 'fr', 'actions' => { 'list' => 'allow' }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with required fields only' do
       do_post( :b,  'id' => Hoodoo::UUID.generate, 'code' => 'hello', 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'kind' => 'Foo', 'code' => 'hello', 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'kind' => 'Foo', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'kind' => 'Foo', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'created_at' => Time.now.iso8601, 'code' => 'hello', 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'created_at' => Time.now.iso8601, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'created_at' => Time.now.iso8601, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'language' => 'fr', 'code' => 'hello', 'message' => 'world', 'errors' => [] )
-      do_patch( :b, 'language' => 'fr', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'language' => 'fr', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with explicit nils' do
       do_post( :b,  'id' => Hoodoo::UUID.generate, 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'id' => Hoodoo::UUID.generate, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'kind' => 'Foo', 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'kind' => 'Foo', 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'kind' => 'Foo', 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'kind' => 'Foo', 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'kind' => 'Foo', 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'created_at' => Time.now.iso8601, 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'created_at' => Time.now.iso8601, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       do_post( :b,  'language' => 'fr', 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => [] )
-      do_patch( :b, 'language' => 'fr', 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
-      do_patch( :b, 'language' => 'fr', 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'language' => 'fr', 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+      do_patch( :b, 'language' => 'fr', 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
   end
 
@@ -277,22 +277,22 @@ describe Hoodoo::Services::Middleware do
       do_post( :a, 'foo' => 'hello', 'bar' => 'not an integer' )
       do_patch( :a, 'foo' => 'not boolean', 'bar' => 'foo' )
       do_post( :b, 'code' => 22, 'message' => 'world', 'reference' => 'baz', 'errors' => [] )
-      do_patch( :b, 'actions' => 'not an object', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => 'not an object', 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with required fields only' do
       do_post( :a, 'bar' => 'still not an integer' )
       do_patch( :a, 'foo' => 'still not a boolean' )
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'errors' => 'not an array' )
-      do_patch( :b, 'caller_id' => 'not a uuid', 'expires_at' => Time.now.iso8601, 'identifier' => 'baz' )
+      do_patch( :b, 'caller_id' => 'not a uuid', 'expires_at' => Time.now.iso8601 )
     end
 
     it 'with explicit nils' do
       do_post( :a, 'foo' => nil, 'bar' => 'still not an integer' )
       do_patch( :a, 'foo' => 'still not a boolean', 'bar' => nil )
       do_post( :b, 'code' => 'hello', 'message' => 'world', 'reference' => nil, 'errors' => 'still not an array' )
-      do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time', 'identifier' => 'baz' )
-      do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time', 'identifier' => 'baz' )
+      do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time' )
+      do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => 'not a time' )
     end
   end
 
@@ -356,7 +356,7 @@ describe Hoodoo::Services::Middleware do
 
       it 'with many fields' do
         do_patch( :a, 'bar' => 'foo' )
-        do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+        do_patch( :b, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       end
 
       it 'with empty data' do
@@ -366,8 +366,8 @@ describe Hoodoo::Services::Middleware do
 
       it 'with explicit nils' do
         do_patch( :a, 'foo' => nil )
-        do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
-        do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601, 'identifier' => nil )
+        do_patch( :b, 'actions' => nil, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
+        do_patch( :b, 'actions' => { 'list' => nil }, 'caller_id' => Hoodoo::UUID.generate, 'expires_at' => Time.now.iso8601 )
       end
     end
   end
