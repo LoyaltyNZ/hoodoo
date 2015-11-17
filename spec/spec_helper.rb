@@ -17,7 +17,7 @@ end
 
 # a bit of debugging
 
-require 'byebug';
+require 'byebug'
 
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
