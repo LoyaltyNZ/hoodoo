@@ -53,3 +53,10 @@ If working on an installed copy of the gem through normal channels, you should b
     rake rerdoc
 
 Some additional higher level hand written documentation may also be present as Markdown data inside the `docs` folder.
+
+## Licence
+
+Please see the `LICENSE` and `hoodoo.gemspec` file for licence details. Those files are authoritative. At the time of writing - though this note might get out of date - Hoodoo is released under the LGPL v3; see:
+
+* http://www.gnu.org/licenses/lgpl-3.0-standalone.html
+* https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3)
