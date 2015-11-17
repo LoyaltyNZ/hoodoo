@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = [ 'Tom Cully',               'Andrew Hodgkinson'               ]
   s.email       = [ 'tom.cully@loyalty.co.nz', 'andrew.hodgkinson@loyalty.co.nz' ]
-  s.license     = 'MIT'
+  s.license     = 'LGPL'
 
   s.files       = Dir.glob('lib/**/*.rb')
   s.bindir      = 'bin'
