@@ -49,8 +49,8 @@ module Hoodoo
           #
           def discover_remote( resource, version )
 
-            queue = ENV[ 'AMQ_ENDPOINT' ] || 'service.default'
-            path  = "/v#{ version }/#{ resource.downcase.pluralize }"
+            queue = "service.#{ resource.to_s.downcase }"
+            path  = "/v#{ version }/#{ resource.to_s.downcase.pluralize }"
 
             return Hoodoo::Services::Discovery::ForAMQP.new(
               resource:        resource,

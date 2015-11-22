@@ -12,8 +12,8 @@ describe Hoodoo::Services::Discovery::ByConsul do
     expect( result ).to be_a( Hoodoo::Services::Discovery::ForAMQP )
     expect( result.resource ).to eq( :Version )
     expect( result.version ).to eq( 2 )
-    expect( result.queue_name ).to eq( 'service.utility' )
-    expect( result.equivalent_path ).to eq( '/v2/version')
+    expect( result.queue_name ).to eq( 'service.version' )
+    expect( result.equivalent_path ).to eq( '/v2/versions')
   end
 
   it 'discovers' do
@@ -23,7 +23,7 @@ describe Hoodoo::Services::Discovery::ByConsul do
     result = @d.discover( :Version, 2 )
     expect( result.resource ).to eq( :Version )
     expect( result.version ).to eq( 2 )
-    expect( result.queue_name ).to eq( 'service.utility' )
-    expect( result.equivalent_path ).to eq( '/v2/version')
+    expect( result.queue_name ).to eq( 'service.version' )
+    expect( result.equivalent_path ).to eq( '/v2/versions')
   end
 end

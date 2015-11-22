@@ -60,19 +60,21 @@ describe Hoodoo::Services::Middleware do
     end
 
     # TODO: Weak test! Assumes static mappings. Will need modification
-    #       for generic Hoodoo.
+    #       for real Consul discoverer when implemented.
     #
     it 'returns known queue endpoint locations' do
       location = @mw.instance_variable_get( '@discoverer' ).discover( :Version, 2 )
       expect( location ).to be_a( Hoodoo::Services::Discovery::ForAMQP )
-      expect( location.queue_name ).to eq( 'service.utility' )
-      expect( location.equivalent_path ).to eq( '/v2/version' )
+      expect( location.queue_name ).to eq( 'service.version' )
+      expect( location.equivalent_path ).to eq( '/v2/versions' )
     end
 
-    it 'returns "nil" for unknown queue endpoint locations' do
-      location = @mw.instance_variable_get( '@discoverer' ).discover( :NotAKnownResource, 2 )
-      expect( location ).to be_nil
-    end
+    # TODO: Update for real Consul discoverer when implemented.
+    #
+    # it 'returns "nil" for unknown queue endpoint locations' do
+    #   location = @mw.instance_variable_get( '@discoverer' ).discover( :NotAKnownResource, 2 )
+    #   expect( location ).to be_nil
+    # end
 
     context 'calling Alchemy' do
       before :each do
