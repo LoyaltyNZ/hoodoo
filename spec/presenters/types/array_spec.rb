@@ -21,6 +21,7 @@ describe Hoodoo::Presenters::Array do
           integer :an_integer, :default => 42
           datetime :a_datetime
         end
+        array :an_array_of_anything
         enum :an_enum, :from => [ :one, 'two', 3 ]
         text :some_text
       end
@@ -106,6 +107,21 @@ describe Hoodoo::Presenters::Array do
         {'code'=>"generic.invalid_integer", 'message'=>"Field `an_array[1].an_integer` is an invalid integer", 'reference'=>"an_array[1].an_integer"},
         {'code'=>"generic.invalid_datetime", 'message'=>"Field `an_array[2].a_datetime` is an invalid ISO8601 datetime", 'reference'=>"an_array[2].a_datetime"},
       ])
+    end
+
+    it 'should let anything be placed in an array with no schema properties' do
+      data = {
+        'an_array' => [],
+        'an_array_of_anything' => [
+          'one',
+          2,
+          true,
+          { :hello => :world }
+        ]
+      }
+
+      errors = TestPresenterArray.validate(data)
+      expect(errors.errors).to eq([])
     end
   end
 
@@ -203,6 +219,29 @@ describe Hoodoo::Presenters::Array do
           { 'an_integer' => 42, 'a_datetime' => time },
         ],
         'an_enum' => "one"
+      })
+    end
+
+    it 'should render any entries in an array with no schema properties' do
+      data = {
+        'an_array' => [],
+        'an_array_of_anything' => [
+          'one',
+          2,
+          true,
+          { :hello => :world }
+        ]
+      }
+
+      expect(TestPresenterArray.render(data)).to eq({
+        'an_array' => [],
+        'a_default_array' => [ { 'an_integer' => 42 }, { 'some_array_text' => 'hello' } ],
+        'an_array_of_anything' => [
+          'one',
+          2,
+          true,
+          { :hello => :world }
+        ]
       })
     end
   end
