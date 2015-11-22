@@ -60,7 +60,8 @@ module Hoodoo
         #              subclass's documentation for details.
         #
         # Returns the result of calling #announce_remote (in the subclass
-        # in use) with the same parameters.
+        # in use) with the same parameters. See the protected method
+        # definition in this base class for details.
         #
         def announce( resource, version = 1, options = {} )
           resource = resource.to_sym
@@ -83,7 +84,8 @@ module Hoodoo
         #              is 1.
         #
         # Returns the result of calling #discover_remote (in the subclass
-        # in use) with the same parameters.
+        # in use) with the same parameters. See the protected method
+        # definition in this base class for details.
         #
         # Use #is_local? if you need to know that an endpoint was
         # announced through this same instance ("locally").
