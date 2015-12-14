@@ -8,7 +8,6 @@ sudo: false
 
 # http://docs.travis-ci.com/user/caching/
 #
-language: ruby
 cache: bundler
 
 addons:
@@ -23,7 +22,7 @@ script:
 deploy:
   provider: rubygems
   api_key:
-    secure: dw06uLFoYeLxXh/3efXELTcZeTGKO1Jq6X19KSn/6R2hJhlhwvHPSHIg8cQEOGr4cup7PbBlWBoUkAmwPUZLn240Y3pJ5NlGaaAb/PWiAPpE9R5MM76oAJs+yJhPTSd/9C2eo/s5saOv8MzGMPfm72nH4SWSI8vRHAZaN9RYNw9NVR1wlNO/+aEfeJVZGsGiYbZhdr+aAQ+OEgFgY7zNet0kbyq7qNPUzVB/JPsQuJvDuII6lTxe0yBVI+Jv02BeJVJw6/TKh7smZUdzfRHa5IItuPWT6/tG47JzWcb4dTYE6pSs4si33ya+yvBZ2zcRNLg/HmZl8ZwPBdtQ1Z7xbhKpZipe9GQmlLAOqESHZmuKMIVFruGZ4cMaYJoSkbpZ3vOHU50UYD4gAP874STqsVhLGk/SRG0v91Nafn/elO5aYdrPROFi8FVWoEWgXw72twxibLx1Y54K1T4f6VWESHsgvTRISei5RAwojiaCY7U/zqvMjscbXjWbpIg49ZK9gp23FW0PfEYC5OfeIs9BUDfI4L3/pinSVCqBz1RXYZhmKr78fv4RTG2XGd2wyWvZ3wjmwtPpY2ycO5RuN3I5dsai8w0Ogoae8ZjMV/zFu1ZFfY+tStQGjG3P/pg0tF70gW+dI8lCSlsrTO1t/d/PwwsZd6b/Tt/2HiWaqjsw+jQ=
+    secure: "LZecb7XtIICln+yH6xa2MRRfdH2G16HW+LjiV23o+a/C9/P3XXinDFGrx6Tg8VXVqe8VpRpAQbbt5l/BAOIRn332LvhuAMs+hI1T/qS59P5y3WvIebKBEUsvrPI3KLRUWqZ1QsC4rj728hsqVrBd6RtQkEA6Eph/C7WfxPqYzV4iuimyPDpghdiQ/8ZfFibD50E3R6lr/IFZsirF1XwQRwNqgwS8CZFWIoIvMpEUQGdhrmUFtynQV5edWhgQoXVadvkd+hse4TEYhyD5lsh4Ad65oBHdvR2veSgm3yHnKSmcihPAm3A/QaxvbjoVNfHK1XlKHeBhBvBuexXt9juw8DR3xPZBHt0CF+v+V4FWt0KzCIBKp/4saL+s3mBO2HtrDsrGaTuVi1YXeJdLTCNvjwDbrhEbwJ8/EgiABE1c8+63q86s5ecwhq7VZcexEbQEMafmfTX0nq79T79e6jf6RFwn+rPvDWdfUlDd0IJvgxkTx1pMsUK/gWToaMSqH92L9yt1WyKeVQmPiDLT31YnYmKO4kpHJXVc3DHRWs8LYN6flvRagBP8cwe8gkmHdZFwZZXrvdSqdjwq679X/jaXzrQGfrTHpdc8rLAz7U+RNEROERpinYb6RVKBkwT6zD3mQVQ1EwEGk6JH71TtoxPXvbAHVDg9YKOxhzqhTx97jjs="
   gem: hoodoo
   on:
     tags: true
