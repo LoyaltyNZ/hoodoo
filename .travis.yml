@@ -11,7 +11,7 @@ sudo: false
 cache: bundler
 
 addons:
-  postgresql: "9.3"
+  postgresql: '9.3'
 
 script:
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
