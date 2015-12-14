@@ -15,7 +15,7 @@ Gem::Specification.new do | s |
   s.bindir      = 'bin'
   s.executables = [ 'hoodoo' ]
   s.test_files  = Dir.glob( 'spec/**/*.rb' )
-  s.homepage    = 'http://github.com/LoyaltyNZ/hoodoo'
+  s.homepage    = 'https://loyaltynz.github.io/hoodoo/'
 
   s.required_ruby_version = '>= 2.1'
 
