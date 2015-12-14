@@ -7,8 +7,8 @@ Gem::Specification.new do | s |
   s.date        = '2016-12-10'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
-  s.authors     = [ 'Tom Cully',               'Andrew Hodgkinson'               ]
-  s.email       = [ 'tom.cully@loyalty.co.nz', 'andrew.hodgkinson@loyalty.co.nz' ]
+  s.authors     = [ 'Loyalty New Zealand' ]
+  s.email       = [ 'andrew.hodgkinson@loyalty.co.nz' ]
   s.license     = 'LGPL-3.0'
 
   s.files       = Dir.glob( 'lib/**/*.rb' )
