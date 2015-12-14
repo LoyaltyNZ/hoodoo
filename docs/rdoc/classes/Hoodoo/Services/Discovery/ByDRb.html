@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::ByDRb</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Discovery::ByDRb
+                <span class="parent">&lt;
+                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_drb/by_drb_rb.html">lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb</a></li>
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_rb.html">lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb</a></li>
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_start_rb.html">lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_start.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Discover resource endpoint locations via a DRb registry. For HTTP-based
+endpoints.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="ByDRb/DRbServer.html">Hoodoo::Services::Discovery::ByDRb::DRbServer</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>A</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-announce_remote">announce_remote</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-configure_with">configure_with</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-discover_remote">discover_remote</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>F</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-flush_services_for_test">flush_services_for_test</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='FRONT_OBJECT'>
+            <td class="attr-name">FRONT_OBJECT</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::Services::Discovery::ByDRb::DRbServer.new</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Singleton “Front object” for the DRB service used in local development.</p></td>
+            </tr>
+          <tr valign='top' id='LOCAL_ACL'>
+            <td class="attr-name">LOCAL_ACL</td>
+            <td>=</td>
+            <td class="attr-value"><pre>ACL.new( %w[
+deny all
+allow ::1
+allow fe80::1%lo0
+allow 127.0.0.1
+] )</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Only allow connections from 127.0.0.1.</p></td>
+            </tr>
+      </table>
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-flush_services_for_test">
+              <b>flush_services_for_test</b>()
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-flush_services_for_test" name="method-i-flush_services_for_test" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Intended for testing only - flushes the records held in the DRb service.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-flush_services_for_test_source')" id="l_method-i-flush_services_for_test_source">show</a>
+              </p>
+              <div id="method-i-flush_services_for_test_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 27</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">flush_services_for_test</span>
+  <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">flush</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Protected methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-announce_remote">
+              <b>announce_remote</b>( resource, version, options = {} )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Announce the location of an instance through the DRb service (which may be
+started up if necessary).</p>
+
+<p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
+instance.</p>
+
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a
+href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a
+href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options hash as described below.</p>
+</dd></dl>
+
+<p>Options keys are currently all required:</p>
+<dl class="rdoc-list note-list"><dt><code>host</code>
+<dd>
+<p>Host name as a string for location of service endpoint, over HTTP (usually,
+local development is assumed).</p>
+</dd><dt><code>port</code>
+<dd>
+<p>Port number of service endpoint.</p>
+</dd><dt><code>path</code>
+<dd>
+<p>Path on the above host and port of service endpoint.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
+              </p>
+              <div id="method-i-announce_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 75</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+
+  <span class="ruby-identifier">host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:host</span> ]
+  <span class="ruby-identifier">port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:port</span> ]
+  <span class="ruby-identifier">path</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:path</span> ]
+
+  <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-node">&quot;http://#{ host }:#{ port }#{ path }&quot;</span>
+
+  <span class="ruby-comment"># Announce our local services if we managed to find the host and port,</span>
+  <span class="ruby-comment"># but no point otherwise; the values could be anything. In a &#39;guard&#39;</span>
+  <span class="ruby-comment"># based environment, first-run determines host and port but subsequent</span>
+  <span class="ruby-comment"># runs do not - yet it stays the same, so it works out OK there.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">host</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">port</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+    <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-configure_with">
+              <b>configure_with</b>( options )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
+Parameters:</p>
+<dl class="rdoc-list note-list"><dt>options
+<dd>
+<p>Options hash as described below.</p>
+</dd></dl>
+
+<p>Options are:</p>
+<dl class="rdoc-list note-list"><dt><code>drb_port</code>
+<dd>
+<p>Optional port on which to launch the DRb service. If omitted, environment
+variable <code>HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE</code> will be
+consulted. If unset, port 8787 is used.</p>
+</dd><dt><code>drb_uri</code>
+<dd>
+<p>Optional URI String at which to find an existing DRB service. It must
+alreayd be running. If omitted, the <code>drb_port</code> option&#39;s
+behaviour applies. If present, the <code>drb_port</code> option is ignored.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
+              </p>
+              <div id="method-i-configure_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-ivar">@drb_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_port</span> ]
+  <span class="ruby-ivar">@drb_uri</span>  = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:drb_uri</span>  ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-discover_remote">
+              <b>discover_remote</b>( resource, version )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByDRb.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Discover an endpoint someone previously registered via <a
+href="ByDRb.html#method-i-announce_remote">announce_remote</a>.</p>
+
+<p>Returns a <a href="ForHTTP.html">Hoodoo::Services::Discovery::ForHTTP</a>
+instance if the endpoint is found, else <code>nil</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name as a String.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Endpoint version as an Integer.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
+              </p>
+              <div id="method-i-discover_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 104</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

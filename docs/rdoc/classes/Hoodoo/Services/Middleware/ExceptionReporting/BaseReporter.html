@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
+                <span class="parent">&lt;
+                    <a href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../../files/lib/hoodoo/services/middleware/exception_reporting/base_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Subclass this method to create a custom class used to contact external
+exception monitoring / reporting engine. Examples include:</p>
+<ul><li>
+<p>Raygun:      <a href="https://raygun.io">raygun.io</a></p>
+</li><li>
+<p>Honeybadger: <a href="https://www.honeybadger.io">www.honeybadger.io</a></p>
+</li><li>
+<p>Exceptional: <a href="http://www.exceptional.io">www.exceptional.io</a></p>
+</li><li>
+<p>Airbrake:    <a href="https://airbrake.io">airbrake.io</a></p>
+</li></ul>
+
+<p><a href="../../../../Hoodoo.html">Hoodoo</a> includes some classes for
+integration which you can choose from if you want to use the integrated
+service. Alternatively write your own. When you do this, name your class
+<strong>outside</strong> the <a href="../../../../Hoodoo.html">Hoodoo</a>
+namespace (the class&#39;s name can be anything you like). Otherwise you
+will trample upon Hoodoo&#39; reserved namespace and may cause a naming
+collision in future <a href="../../../../Hoodoo.html">Hoodoo</a> versions.</p>
+
+<p>“Under the hood” the <a
+href="../../../Communicators/Pool.html">Hoodoo::Communicators::Pool</a>
+mechanism is used. All reporters are assumed to be (comparatively) slow
+communicators so are descendants of <a
+href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>.</p>
+
+<p>Add a reporter class to the middleware from any service application by
+calling <a
+href="../ExceptionReporting.html#method-c-add">Hoodoo::Services::Middleware::ExceptionReporting.add</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-communicate">communicate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-report">report</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+        <li>
+            ::Singleton
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-communicate">
+              <b>communicate</b>( object )
+            <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method,
+which is part of the base class implementation and implements <a
+href="../../../Communicators/Slow.html#method-i-communicate">Hoodoo::Communicators::Slow#communicate</a>.
+It calls through to the <a
+href="BaseReporter.html#method-i-report">report</a> method which subclasses
+do implement, unpacking a payload used for the internal communicators into
+the parameters that <a href="BaseReporter.html#method-i-report">report</a>
+expects.</p>
+<dl class="rdoc-list note-list"><dt><code>object</code>
+<dd>
+<p><a
+href="Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
+instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
+              </p>
+              <div id="method-i-communicate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 97</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">exception</span>, <span class="ruby-identifier">object</span>.<span class="ruby-identifier">rack_env</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-report">
+              <b>report</b>( e, env = nil )
+            <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Subclasses implement this method. The middleware creates the singleton
+instance of the subclass, then calls your implementation of the method when
+it catches an exception in its top level handler. The subclass
+implementation sends details of the exception to the desired exception
+monitoring or reporting service. The return value is ignored.</p>
+
+<p>The middleware wraps calls to your subclass in a nested exception handler.
+If you raise an exception, the middleware logs details with a
+<code>:debug</code> level through its logger instance if possible (see <a
+href="../../Middleware.html#method-c-logger">Hoodoo::Services::Middleware.logger</a>)
+along with printing details to $stderr, then continues processing.</p>
+
+<p>If service applications are expecting potential exceptions to occur and
+they catch them without re-raising for the middleware to catch, this
+reporting method will not be called. If a service author thinks such an
+exception ought to be logged, they must re-raise it.</p>
+
+<p>The middleware runs calls here in a processing Thread to avoid delays to
+the calling client. This means your implementation of this method can use
+blocking network calls should you so wish; but beware, you are running in
+your own Thread on every call and more than one call might be running
+concurrently. If your implementation is not threadsafe, use a Mutex. For
+example, add a mutex class variable to your class:</p>
+
+<pre><code>@@mutex = Mutex.new
+</code></pre>
+
+<p>…then use it inside <code>report</code> with something like:</p>
+
+<pre><code>def report( e )
+  @@mutex.synchronize do
+    # Your reporting service&#39;s custom code goes here
+  end
+end
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>env</code>
+<dd>
+<p>Optional <a href="../../../../Rack.html">Rack</a> environment hash for the
+inbound request, for exception reports made in the context of <a
+href="../../../../Rack.html">Rack</a> request handling.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
+              </p>
+              <div id="method-i-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Context</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Context
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/services/services/context_rb.html">lib/hoodoo/services/services/context.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>A collection of objects which describe the context in which a service is
+being called. The service reads session and request information and returns
+results of its processing via the associated response object.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-resource">resource</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-owning_interaction'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>owning_interaction</td>
+            <td class='attr-desc'><p>The <a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance for which this context exists (the &#39;owning&#39; instance).
+Generally speaking this is only needed internally as part of the
+inter-resource call mechanism.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-request'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>request</td>
+            <td class='attr-desc'><p>The <a href="Request.html">Hoodoo::Services::Request</a> instance giving
+details about the inbound request. Relevant information will depend upon
+the endpoint service implementation action being addressed.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-response'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>response</td>
+            <td class='attr-desc'><p>The <a href="Response.html">Hoodoo::Services::Response</a> instance that a
+service implementation updates with results of its processing.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-session'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>session</td>
+            <td class='attr-desc'><p>The <a href="Session.html">Hoodoo::Services::Session</a> instance
+describing the authorised call context. If a resource implementation is
+handling a public action this may be <code>nil</code>, else it will be a
+valid instance.</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( session, request, response, owning_interaction )
+            <a href="../../../classes/Hoodoo/Services/Context.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create a new instance. There is almost certainly never any need to call
+this unless you&#39;re the <a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+constructor! If you want to build a context for (say) test purposes,
+it&#39;s probably best to construct an interaction instance and use the
+context instance this provides.</p>
+<dl class="rdoc-list note-list"><dt><code>session</code>
+<dd>
+<p>See <a href="Context.html#attribute-i-session">session</a>.</p>
+</dd><dt><code>request</code>
+<dd>
+<p>See <a href="Context.html#attribute-i-request">request</a>.</p>
+</dd><dt><code>response</code>
+<dd>
+<p>See <a href="Context.html#attribute-i-response">response</a>.</p>
+</dd><dt><code>owning_interaction</code>
+<dd>
+<p>See interaction.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
+  <span class="ruby-ivar">@session</span>            = <span class="ruby-identifier">session</span>
+  <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
+  <span class="ruby-ivar">@response</span>           = <span class="ruby-identifier">response</span>
+  <span class="ruby-ivar">@owning_interaction</span> = <span class="ruby-identifier">owning_interaction</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-resource">
+              <b>resource</b>( resource, version = 1, options = {} )
+            <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
+endpoint instance for talking to a resource&#39;s interface. See <a
+href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a>.</p>
+
+<p>You can request an endpoint for any resource name, whether or not an
+implementation actually exists for it. Until you try and talk to the
+interface through the endpoint instance, you won&#39;t know if it is there.
+All endpoint methods return instances of classes that mix in <a
+href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>;
+these mixin methods provide error handling options to detect a “not found”
+error (equivanent to HTTP status code 404) returned when a resource
+implementation turns out to not actually be present.</p>
+
+<p>The idiomatic call sequence is something like the following, where you get
+hold of an endpoint, make a call and handle the response:</p>
+
+<pre><code>clock = context.resource( :Clock, 2 ) # v2 of &#39;Clock&#39; resource
+time  = clock.show( &#39;now&#39; )
+
+return if time.adds_errors_to?( context.response.errors )
+</code></pre>
+
+<p>…or alternatively:</p>
+
+<pre><code>clock = context.resource( :Clock, 2 ) # v2 of &#39;Clock&#39; resource
+time  = clock.show( &#39;now&#39; )
+
+context.response.add_errors( time.platform_errors )
+return if context.response.halt_processing?
+</code></pre>
+
+<p>The return value of calls made to the endpoint is an Array or Hash that
+mixes in <a
+href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>; see
+this class&#39;s documentation for details of the two alternative error
+handling approaches shown above.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
+symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Optional required implemented version for the endpoint, as an Integer -
+defaults to 1.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Optional options Hash (see below).</p>
+</dd></dl>
+
+<p>The options Hash key/values are as follows:</p>
+<dl class="rdoc-list note-list"><dt><code>locale</code>
+<dd>
+<p>Locale string for request/response, e.g. “en-gb”. Optional. If omitted,
+defaults to the locale set in this <a href="../Client.html">Client</a>
+instance&#39;s constructor.</p>
+</dd><dt>Others
+<dd>
+<p>See Hoodoo::Client::Headers&#39; <code>HEADER_TO_PROPERTY</code>. For any
+options in that map which describe themselves as being automatically
+transferred from one endpoint to another, you can prevent this by
+explicitly pasisng a <code>nil</code> value for the option; otherwise,
+<em>OMIT</em> the option for normal behaviour. Non-auto-transfer properties
+can be specified as <code>nil</code> or omitted with no change in
+behaviour.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
+              </p>
+              <div id="method-i-resource_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 117</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
+  <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
+    <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span>,
+    <span class="ruby-ivar">@owning_interaction</span>
+  )
+
+  <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">locale</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:locale</span> ].<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>        = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>        ]
+    <span class="ruby-identifier">property_writer</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property_writer</span> ]
+    <span class="ruby-identifier">auto_transfer</span>   = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:auto_transfer</span>   ]
+
+    <span class="ruby-comment"># For automatically transferred options there&#39;s no way to stop the</span>
+    <span class="ruby-comment"># auto transfer unless explicitly stating &#39;nil&#39; to overwrite any</span>
+    <span class="ruby-comment"># existing value, so here, only write the value into the endpoint if</span>
+    <span class="ruby-comment"># the property specifically exists in the inbound options hash.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># For other properties, &#39;nil&#39; has no meaning and there&#39;s no need to</span>
+    <span class="ruby-comment"># override anything, so use &quot;unless nil?&quot; in that case.</span>
+
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-identifier">property</span> ]
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">auto_transfer</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">property</span> )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

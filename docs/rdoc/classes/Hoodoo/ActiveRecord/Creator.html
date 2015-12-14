@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Creator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::Creator
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/active/active_record/creator_rb.html">lib/hoodoo/active/active_record/creator.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p><a href="Support.html">Support</a> mixin for models subclassed from <a
+href="Base.html">ActiveRecord::Base</a> providing context-aware model
+instance creation, allowing service authors to auto-inherit related
+features from <a href="../../Hoodoo.html">Hoodoo</a> without changing their
+code.</p>
+
+<p>It is <em>STRONGLY</em> <em>RECOMMENDED</em> that you use the likes of:</p>
+<ul><li>
+<p>Hoodoo::ActiveRecord::Creator::ClassMethods::new_in</p>
+</li></ul>
+
+<p>…to create model instances and participate “for free” in whatever plug-in
+<a href="../ActiveRecord.html">ActiveRecord</a> modules are mixed into the
+model classes, such as <a
+href="Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
+
+<p>See also:</p>
+<ul><li>
+<p><a
+href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+</li></ul>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Creator/ClassMethods.html">Hoodoo::ActiveRecord::Creator::ClassMethods</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-included">included</a>,
+              </li>
+              <li>
+                <a href="#method-c-instantiate">instantiate</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-included">
+              <b>included</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Creator.html#method-c-included" name="method-c-included" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Instantiates this module when it is included:</p>
+
+<p>Example:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Creator
+  # ...
+end
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
+              </p>
+              <div id="method-c-included_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-instantiate">
+              <b>instantiate</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Creator.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+subclass, all of the <a
+href="Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
+methods are defined as class methods on the including class.</p>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
+              </p>
+              <div id="method-c-instantiate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 65</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

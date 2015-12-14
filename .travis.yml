@@ -1,0 +1,16 @@
+language: ruby
+rvm:
+  - 2.1.6
+
+# http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
+sudo: false
+
+# http://docs.travis-ci.com/user/caching/
+language: ruby
+cache: bundler
+
+addons:
+  postgresql: "9.3"
+
+script:
+  - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace

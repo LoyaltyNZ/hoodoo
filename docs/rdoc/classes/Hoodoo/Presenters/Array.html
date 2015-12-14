@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Presenters::Array</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Presenters::Array
+                <span class="parent">&lt;
+                    <a href="Field.html">Hoodoo::Presenters::Field</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/presenters/types/array_rb.html">lib/hoodoo/presenters/types/array.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>A JSON <a href="Array.html">Array</a> schema member.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-render">render</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>V</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-validate">validate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>W</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-walk">walk</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+        <li>
+            <a href="BaseDSL.html">
+              Hoodoo::Presenters::BaseDSL
+            </a>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-properties'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>properties</td>
+            <td class='attr-desc'><p>The properties of this object, an <code>array</code> of <code>Field</code>
+instances.</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-render">
+              <b>render</b>( data, target )
+            <a href="../../../classes/Hoodoo/Presenters/Array.html#method-i-render" name="method-i-render" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Render an array into the target hash based on the internal state that
+describes this instance&#39;s current path (position in the heirarchy of
+nested schema entities).</p>
+<dl class="rdoc-list note-list"><dt><code>data</code>
+<dd>
+<p>The <a href="Array.html">Array</a> to render.</p>
+</dd><dt><code>target</code>
+<dd>
+<p>The <a href="Hash.html">Hash</a> that we render into. A “path” of keys
+leading to nested Hashes is built via +super()+, with the final key entry
+yielding the rendered array.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-render_source')" id="l_method-i-render_source">show</a>
+              </p>
+              <div id="method-i-render_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 51</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+
+  <span class="ruby-comment"># Data provided is explicitly nil or not an array? Don&#39;t need to render</span>
+  <span class="ruby-comment"># anything beyond &#39;nil&#39; at the field (the not-array case covers nil and</span>
+  <span class="ruby-comment"># covers invalid input, which is treated as nil).</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">super</span>( <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">target</span> ) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+
+  <span class="ruby-comment"># Otherwise, start looking at rendering array contents (even if the</span>
+  <span class="ruby-comment"># input array is empty). This relies on pass-by-reference; we&#39;ll update</span>
+  <span class="ruby-comment"># this specific instance of &#39;array&#39; later. Call &#39;super&#39; to render the</span>
+  <span class="ruby-comment"># &#39;array&#39; instance in place in &#39;target&#39; straight away...</span>
+
+  <span class="ruby-identifier">array</span> = []
+  <span class="ruby-identifier">path</span>  = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">target</span> )
+
+  <span class="ruby-comment"># ...then look at rendering the input entries of &#39;data&#39; into &#39;array&#39;.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
+    <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">data</span> )
+
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
+
+      <span class="ruby-comment"># We have properties defined so array values (in &quot;item&quot;) must be</span>
+      <span class="ruby-comment"># Hashes. If non-Hash, treat as if nil; explicit-nil-means-nil.</span>
+
+      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+        <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
+        <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-keyword">nil</span> )
+        <span class="ruby-keyword">next</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">subtarget</span> = {}
+
+      <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">name</span>    = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+        <span class="ruby-identifier">has_key</span> = <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> )
+
+        <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">has_key</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">has_default?</span>()
+
+        <span class="ruby-identifier">property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">has_key</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">item</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-identifier">property</span>.<span class="ruby-identifier">default</span>, <span class="ruby-identifier">subtarget</span> )
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">rendered</span> = <span class="ruby-identifier">subtarget</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">?</span> {} <span class="ruby-operator">:</span> <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">subtarget</span>, <span class="ruby-identifier">path</span> )
+
+      <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
+      <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-identifier">rendered</span> )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-validate">
+              <b>validate</b>( data, path = &#39;&#39; )
+            <a href="../../../classes/Hoodoo/Presenters/Array.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Check if data is a valid <a href="Array.html">Array</a> and return a <a
+href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
+              </p>
+              <div id="method-i-validate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 16</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+  <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+    <span class="ruby-comment"># No array entry schema? No array entry validation, then.</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>, <span class="ruby-identifier">index</span> <span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+          <span class="ruby-identifier">rdata</span> = ( <span class="ruby-identifier">item</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> ) ) <span class="ruby-operator">?</span> <span class="ruby-identifier">item</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
+          <span class="ruby-identifier">indexed_path</span> = <span class="ruby-node">&quot;#{ full_path( path ) }[#{ index }]&quot;</span>
+          <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">indexed_path</span> ) )
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
+      <span class="ruby-string">&#39;generic.invalid_array&#39;</span>,
+      <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid array&quot;</span>,
+      <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:field_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">full_path</span>( <span class="ruby-identifier">path</span> ) }
+    )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">errors</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-walk">
+              <b>walk</b>( &amp;block )
+            <a href="../../../classes/Hoodoo/Presenters/Array.html#method-i-walk" name="method-i-walk" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Invoke a given block, passing this item; call recursively for any defined
+sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
+<dl class="rdoc-list note-list"><dt>&amp;block
+<dd>
+<p>Mandatory block, which is passed &#39;self&#39; when called.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-walk_source')" id="l_method-i-walk_source">show</a>
+              </p>
+              <div id="method-i-walk_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 109</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
+
+  <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">property</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-keyword">end</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

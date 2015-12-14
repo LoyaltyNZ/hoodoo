@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Dated</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::Dated
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/active/active_record/dated_rb.html">lib/hoodoo/active/active_record/dated.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p><a href="Support.html">Support</a> mixin for models subclassed from <a
+href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
+dating support.</p>
+
+<p>The facilities provided here are powerful but relatively complex, so please
+read through this documentation section in full to understand everything
+you need to do.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Overview">Overview</h2>
+
+<p>This mixin adds finder methods to the model it is applied to (see <a
+href="Dated/ClassMethods.html#method-i-dated">Hoodoo::ActiveRecord::Dated::ClassMethods#dated</a>
+and <a
+href="Dated/ClassMethods.html#method-i-dated_at">Hoodoo::ActiveRecord::Dated::ClassMethods#dated_at</a>).
+These finders require two database tables in order to function correctly -
+the primary table (the model table) and a history table. When a record is
+updated it should be moved to the history table and a new record inserted
+with the new values. When a record is deleted it should be moved to the
+history table. This can be done manually with application code, or by
+things like SQL triggers (see later).</p>
+
+<p>Dating is only enabled if the including class explicitly calls the <a
+href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>
+method.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Database+table+requirements">Database table requirements</h2>
+
+<p>In all related tables, all date-time values must be stored as UTC.</p>
+
+<p>The primary table <em>must</em> have a unique column named <code>id</code>
+and two timestamp columns named <code>updated_at</code> and
+<code>created_at</code> which both need to be set by the application code
+(the <a href="../ActiveRecord.html">ActiveRecord</a>
+<code>timestamps</code> macro in a migration file defines appropriate
+columns).</p>
+
+<p>The history table requires the same columns as the primary table with two
+differences:</p>
+<ol><li>
+<p>The history table&#39;s <code>id</code> column must be populated with any
+unique value whilst the history table&#39;s <code>uuid</code> column must
+be populated with the primary table&#39;s <code>id</code> value.</p>
+</li><li>
+<p>The history table must have two additional columns,
+<code>effective_start</code> and <code>effective_end</code>. The
+<code>effective_start</code> column determines when the history entry
+becomes effective (inclusive) whilst the <code>effective_end</code>
+determines when the history entry was effective to (exclusive). A record is
+considered to be effective at a particular time if that time is the same or
+after the <code>effective_start</code> and before the
+<code>effective_end</code>.</p>
+
+<p>The <code>effective_start</code> must be set to the
+<code>effective_end</code> of the last record with same <code>uuid</code>,
+or to the <code>created_at</code> of the record if there is no previous
+records with the same <code>uuid</code>.</p>
+
+<p>The <code>effective_end</code> must be set to the current time (UTC) when
+deleting a record or to the updated record&#39;s <code>updated_at</code>
+when updating a record.</p>
+</li></ol>
+
+<p>Additionally there are two constraints on the history table that must not
+be broken for the finder methods to function correctly:</p>
+<ol><li>
+<p>When adding a record to the history table its <code>effective_end</code>
+must be after all other records in the history table with the same
+<code>uuid</code>.</p>
+</li><li>
+<p>When inserting a new record to the primary table its <code>id</code> must
+not exist in the history table.</p>
+</li></ol>
+
+<p>The history table name defaults to the name of the primary table
+concatenated with <code>_history_entries</code>. This can be overriden when
+calling <a
+href="Dated/ClassMethods.html#method-i-dating_enabled">Hoodoo::ActiveRecord::Dated::ClassMethods#dating_enabled</a>.</p>
+
+<p>Example:</p>
+
+<pre><code>class Post &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Dated
+  dating_enabled( history_table_name: &#39;historical_posts&#39; )
+end
+</code></pre>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Migration+assistance">Migration assistance</h2>
+
+<p>Compatible database migration generators are included in
+<code>service_shell</code>. These migrations create the history table and
+add database triggers (PostgreSQL specific) which will handle the creation
+of the appropriate history entry when a record is deleted or updated
+without breaking the history table constraints. See <a
+href="https://github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb">github.com/LoyaltyNZ/service_shell/blob/master/bin/generators/effective_date.rb</a>
+for more information.</p>
+
+<h2 id="module-Hoodoo::ActiveRecord::Dated-label-Model+instance+creation">Model instance creation</h2>
+
+<p>It is <em>VERY</em> <em>IMPORTANT</em> that you use
+Hoodoo::ActiveRecord::Creator::ClassMethods::new_in to create new resource
+instances when using Dating. You <em>could</em> just manually read the
+`context.request.dated_from` value to ensure that an appropriate creation
+time is set; presently, `created_at` and `updated_at` are set from the
+`dated_from` value. However, using `new_in` for this isolates your code
+from any possible under-the-hood implementation changes therein and
+future-proof your code.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-included">included</a>,
+              </li>
+              <li>
+                <a href="#method-c-instantiate">instantiate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>S</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-sanitised_column_string">sanitised_column_string</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-included">
+              <b>included</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-included" name="method-c-included" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Instantiates this module when it is included:</p>
+
+<p>Example:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Dated
+  # ...
+end
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
+              </p>
+              <div id="method-c-included_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
+    <span class="ruby-value">:nz_co_loyalty_hoodoo_dated_with</span>,
+    {
+      <span class="ruby-value">:instance_predicate</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>,
+      <span class="ruby-value">:instance_accessor</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>
+    }
+  )
+
+  <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-instantiate">
+              <b>instantiate</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+subclass, all of the <a
+href="Dated/ClassMethods.html">Hoodoo::ActiveRecord::Dated::ClassMethods</a>
+methods are defined as class methods on the including class.</p>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
+              </p>
+              <div id="method-c-instantiate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 143</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-sanitised_column_string">
+              <b>sanitised_column_string</b>( model_klass )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-sanitised_column_string" name="method-c-sanitised_column_string" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Forms a String containing the specified <code>model_klass</code>&#39;s
+attribute names escaped and joined with commas.</p>
+
+<p><code>model_klass</code> Class which responds to .attribute_names</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-sanitised_column_string_source')" id="l_method-c-sanitised_column_string_source">show</a>
+              </p>
+              <div id="method-c-sanitised_column_string_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 152</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-identifier">model_klass</span> )
+  <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

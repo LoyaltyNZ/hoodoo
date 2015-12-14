@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Support</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::ActiveRecord::Support
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/active/active_record/support_rb.html">lib/hoodoo/active/active_record/support.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Most of the <a href="../ActiveRecord.html">ActiveRecord</a> support code
+provides mixins with a public API. That public interface makes it obvious
+what the mixin&#39;s defined method names will be, helping to avoid
+collisions/shadowing. Sometimes, those methods want to share code but
+private methods don&#39;t work well in that context - their names could
+unwittingly collide with names in the including class, written by an author
+not aware of those essentially hidden but vital interfaces.</p>
+
+<p>This is a support class specifically designed to solve this issue. It&#39;s
+really a public, independent expression of a series of specialised methods
+that would otherwise have normally been private.</p>
+
+<p>Although this code forms part of the <a href="../../Hoodoo.html">Hoodoo</a>
+public API, its unusual status means that you should not really call any of
+these methods unless you&#39;re prepared to track unexpected API changes in
+them in future and update your calling code.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>F</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-full_scope_for">full_scope_for</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>P</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-process_to_map">process_to_map</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-full_scope_for">
+              <b>full_scope_for</b>( klass, context )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-full_scope_for" name="method-c-full_scope_for" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Given an <a href="../ActiveRecord.html">ActiveRecord</a> class and <a
+href="../../Hoodoo.html">Hoodoo</a> request context, work out which <a
+href="../../Hoodoo.html">Hoodoo</a> support modules are included within
+this class and call base methods to provide a fully specified basic query
+chain obeying all the necessary aspects of the <a
+href="../ActiveRecord.html">ActiveRecord</a> model class and the request.</p>
+
+<p>Each of the following are called if the owning module is included:</p>
+<ul><li>
+<p>Hoodoo::ActiveRecord::Secure#secure</p>
+</li><li>
+<p>Hoodoo::ActiveRecord::Translated#translated</p>
+</li><li>
+<p>Hoodoo::ActiveRecord::Dated#dated</p>
+</li></ul>
+<dl class="rdoc-list note-list"><dt><code>klass</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> subclass <em>class</em> (not
+instance) which is making the call here. This is the entity which is
+checked for module inclusions to determine how the query chain should be
+assembled.</p>
+</dd><dt><code>context</code>
+<dd>
+<p><a href="../Services/Context.html">Hoodoo::Services::Context</a> instance
+describing a call context. This is typically a value passed to one of the
+<a
+href="../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd></dl>
+
+<p>Returns an ActiveRecord::Relation instance which is anything from a generic
+anonymous scope, all the way through to a secured, translated, backdated
+scope for use with subsequent query refinements.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-full_scope_for_source')" id="l_method-c-full_scope_for_source">show</a>
+              </p>
+              <div id="method-c-full_scope_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
+
+  <span class="ruby-comment"># Due to the mechanism used, dating scope must be done first or the</span>
+  <span class="ruby-comment"># rest of the query may be invalid.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> )
+    <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">dated</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )
+    <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span> )
+    <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">translated</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">prevailing_scope</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-process_to_map">
+              <b>process_to_map</b>( hash )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-process_to_map" name="method-c-process_to_map" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Takes a Hash of possibly-non-String keys and with <code>nil</code> values
+or Proc instances appropriate for Hoodoo::ActiveRecord::Finder#search_with
+/ filter_with. Returns a similar Hash with all-String keys and a Proc for
+every value.</p>
+<dl class="rdoc-list note-list"><dt><code>hash</code>
+<dd>
+<p>Hash Symbol or String keys and Proc instance or <code>nil</code> values.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-process_to_map_source')" id="l_method-c-process_to_map_source">show</a>
+              </p>
+              <div id="method-c-process_to_map_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
+
+  <span class="ruby-identifier">map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc_or_nil</span> <span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">proc_or_nil</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">map</span>[ <span class="ruby-identifier">attr</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-identifier">attr</span> )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">map</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

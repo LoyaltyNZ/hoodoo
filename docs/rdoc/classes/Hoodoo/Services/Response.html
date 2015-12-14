@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Response</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Response
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/services/services/response_rb.html">lib/hoodoo/services/services/response.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>The service middleware creates a <a
+href="Response.html">Hoodoo::Services::Response</a> instance for each
+request it handles, populating it with some data before and after the
+service implementation runs as part of standard pre- and post-processing.
+In the middle, the service implementation is given the instance and adds
+its own data to it.</p>
+
+<p>The instance carries data about both error conditions and successful work.
+In the successful case, <a
+href="Response.html#attribute-i-http_status_code">http_status_code</a> and
+<a href="Response.html#attribute-i-body">body</a> data is set by the
+service and used in the response. In the error case (see <a
+href="Response.html#attribute-i-errors">errors</a>), the HTTP status code
+is taken from the first error in the errors collection and the response
+body will be the JSON representation of that collection - any HTTP status
+code or response body data previously set by the service will be ignored.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>A</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-add_error">add_error</a>,
+              </li>
+              <li>
+                <a href="#method-i-add_errors">add_errors</a>,
+              </li>
+              <li>
+                <a href="#method-i-add_header">add_header</a>,
+              </li>
+              <li>
+                <a href="#method-i-add_precompiled_error">add_precompiled_error</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>F</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-for_rack">for_rack</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>G</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-get_header">get_header</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>H</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-halt_processing-3F">halt_processing?</a>,
+              </li>
+              <li>
+                <a href="#method-i-headers">headers</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>,
+              </li>
+              <li>
+                <a href="#method-i-not_found">not_found</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>S</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-set_resources">set_resources</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-body'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>body</td>
+            <td class='attr-desc'><p>A service implementation can set (and read back, should it wish) the API
+call response body data using this <a
+href="Response.html#attribute-i-body">body</a> / <a
+href="Response.html#attribute-i-body">body=</a> accessor. This is converted
+to a client-facing representation automatically (e.g. to JSON).</p>
+
+<p>The response body <strong>MUST</strong> be either a Ruby <code>Array</code>
+or a Ruby <code>Hash</code>. For <strong>internal</strong>
+<strong>use</strong> <strong>only</strong> a Ruby <code>String</code> of
+pre-encoded response data is also accepted.</p>
+
+<p>This method is aliased as <a
+href="Response.html#attribute-i-set_resource">set_resource</a>, for
+semantic use when you want to set the response body to a representation (as
+a Hash) of a resource. When you want to set an Array of items for a list,
+it is strongly recommended that you call <a
+href="Response.html#method-i-set_resources">set_resources</a> and pass a
+total dataset size in addition to just the Array containing a page of list
+data.</p>
+
+<p>When reading response data, the body information is only valid if method <a
+href="Response.html#method-i-halt_processing-3F">halt_processing?</a>
+returns <code>false</code>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-dataset_size'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>dataset_size</td>
+            <td class='attr-desc'><p>Read back a the dataset size given by a prior call to <a
+href="Response.html#method-i-set_resources">set_resources</a>, or
+<code>nil</code> if none has been provided (either the response contains no
+list yet/at all, or an Array was given but the dataset size was not
+supplied).</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-errors'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>errors</td>
+            <td class='attr-desc'><p>Obtain a reference to the <a href="../Errors.html">Hoodoo::Errors</a>
+instance for this response; use <a
+href="../Errors.html#method-i-add_error">Hoodoo::Errors#add_error</a> to
+add to the collection directly. For convenience, this class also provides
+the <a href="Response.html#method-i-add_error">add_error</a> proxy instance
+method (syntactic sugar for most service implementations, but with a return
+value that helps keep the service middleware code clean).</p>
+
+<p>It&#39;s possible to change the errors object if you want to swap it for
+any reason, though this is generally discouraged - especially if the
+existing errors collection isn&#39;t empty. The middleware does this as
+part of request handling, but generally speaking nobody else should need
+to.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-http_status_code'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>http_status_code</td>
+            <td class='attr-desc'><p>HTTP status code that will be involved in the response. Default is 200.
+Integer, or something that can be converted to one with <code>to_i</code>.
+If errors are added to the response then the status code is derived from
+the first error in the collection, overriding any value set here. See <a
+href="Response.html#attribute-i-errors">errors</a>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-set_resource'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>set_resource</td>
+            <td class='attr-desc'><p>A service implementation can set (and read back, should it wish) the API
+call response body data using this <a
+href="Response.html#attribute-i-body">body</a> / <a
+href="Response.html#attribute-i-body">body=</a> accessor. This is converted
+to a client-facing representation automatically (e.g. to JSON).</p>
+
+<p>The response body <strong>MUST</strong> be either a Ruby <code>Array</code>
+or a Ruby <code>Hash</code>. For <strong>internal</strong>
+<strong>use</strong> <strong>only</strong> a Ruby <code>String</code> of
+pre-encoded response data is also accepted.</p>
+
+<p>This method is aliased as <a
+href="Response.html#attribute-i-set_resource">set_resource</a>, for
+semantic use when you want to set the response body to a representation (as
+a Hash) of a resource. When you want to set an Array of items for a list,
+it is strongly recommended that you call <a
+href="Response.html#method-i-set_resources">set_resources</a> and pass a
+total dataset size in addition to just the Array containing a page of list
+data.</p>
+
+<p>When reading response data, the body information is only valid if method <a
+href="Response.html#method-i-halt_processing-3F">halt_processing?</a>
+returns <code>false</code>.</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( interaction_id )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create a new instance, ready to take on a response. The service middleware
+is responsible for doing this.</p>
+<dl class="rdoc-list note-list"><dt><code>interaction_id</code>
+<dd>
+<p>The <a href="../UUID.html">UUID</a> of the interaction taking place for
+which a response is required.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 87</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">interaction_id</span> )
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">interaction_id</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Response.new must be given a valid Interaction ID (got &#39;#{ interaction_id.inspect }&#39;)&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-ivar">@interaction_id</span>   = <span class="ruby-identifier">interaction_id</span>
+  <span class="ruby-ivar">@errors</span>           = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>()
+  <span class="ruby-ivar">@headers</span>          = {}
+  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">200</span>
+  <span class="ruby-ivar">@body</span>             = {}
+  <span class="ruby-ivar">@dataset_size</span>     = <span class="ruby-keyword">nil</span>
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add_error">
+              <b>add_error</b>( code, options = nil )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-add_error" name="method-i-add_error" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add an error to the internal collection. Passes input parameters through to
+<a href="../Errors.html#method-i-add_error">Hoodoo::Errors#add_error</a>,
+so see that for details. For convenience, returns the for-rack
+representation of the response so far, so that code which wishes to add one
+error and abort request processing immediately can just do:</p>
+
+<pre><code>return response_object.add_error( ... )</code></pre>
+
+<p>…as part of processing a <a href="../../Rack.html">Rack</a> invocation of
+the <code>call</code> method. This is really only useful for the service
+middleware.</p>
+<dl class="rdoc-list note-list"><dt><code>code</code>
+<dd>
+<p>Error code (e.g. “platform.generic”).</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Options Hash - see <a
+href="../Errors.html#method-i-add_error">Hoodoo::Errors#add_error</a>.</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre><code>response.add_error(
+  &#39;generic.not_found&#39;,
+  &#39;message&#39; =&gt; &#39;Optional custom message&#39;,
+  &#39;reference&#39; =&gt; { :ident =&gt; &#39;mandatory reference data&#39; }
+)
+</code></pre>
+
+<p>In the above example, the mandatory reference data <code>uuid</code> comes
+from the description for the &#39;platform.not_found&#39; message - see the
+Hoodoo::ErrorDescriptions#initialize <em>implementation</em> and Platform
+API.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_error_source')" id="l_method-i-add_error_source">show</a>
+              </p>
+              <div id="method-i-add_error_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 212</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add_errors">
+              <b>add_errors</b>( errors_object )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-add_errors" name="method-i-add_errors" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add errors from a <a href="../Errors.html">Hoodoo::Errors</a> instance to
+this response&#39;s error collection.</p>
+<dl class="rdoc-list note-list"><dt>errors_object
+<dd>
+<p><a href="../Errors.html">Hoodoo::Errors</a> instance to merge into the
+error collection of &#39;this&#39; response object.</p>
+</dd></dl>
+
+<p>Returns <code>true</code> if errors were merged, else <code>false</code>
+(the source collection was empty).</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_errors_source')" id="l_method-i-add_errors_source">show</a>
+              </p>
+              <div id="method-i-add_errors_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 248</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors</span>( <span class="ruby-identifier">errors_object</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add_header">
+              <b>add_header</b>( name, value, overwrite = false )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-add_header" name="method-i-add_header" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add an HTTP header to the internal collection that will be used for the
+response. Trying to set data for the same HTTP header name more than once
+will result in an exception being raised unless the <code>overwrite</code>
+parameter is used (this is strongly discouraged in the general case).</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>Correct case and punctuation HTTP header name (e.g. “Content-Type”).</p>
+</dd><dt><code>value</code>
+<dd>
+<p>Value for the header, as a string or something that behaves sensibly when
+<code>to_s</code> is invoked upon it.</p>
+</dd><dt><code>overwrite</code>
+<dd>
+<p>Optional. Pass <code>true</code> to allow the same HTTP header name to be
+set more than once - the new value overwrites the old. By default this is
+prohibited and an exception will be raised to avoid accidental value
+overwrites.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_header_source')" id="l_method-i-add_header_source">show</a>
+              </p>
+              <div id="method-i-add_header_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 151</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">overwrite</span> = <span class="ruby-keyword">false</span> )
+  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-identifier">dname</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span>
+  <span class="ruby-identifier">value</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">overwrite</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">dname</span> ) )
+    <span class="ruby-identifier">hash</span>  = <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">dname</span> ]
+    <span class="ruby-identifier">name</span>  = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">keys</span>[ <span class="ruby-number">0</span> ]
+    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">values</span>[ <span class="ruby-number">0</span> ]
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Response\#add_header: Value &#39;#{ value }&#39; already defined for header &#39;#{ name }&#39;&quot;</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">dname</span> ] = { <span class="ruby-identifier">name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> }
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add_precompiled_error">
+              <b>add_precompiled_error</b>( code, message, reference, http_status = 500 )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-add_precompiled_error" name="method-i-add_precompiled_error" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add a precompiled error to the error collection. Pass error code, error
+message and reference data directly.</p>
+
+<p>In most cases you should be calling <a
+href="Response.html#method-i-add_error">add_error</a> instead,
+<strong>NOT</strong> here.</p>
+
+<p><strong>No</strong> <strong>validation</strong> is performed. You should
+only really call here if storing an error / errors from another, trusted
+source with assumed validity (e.g. another service called remotely with
+errors in the JSON response). It&#39;s possible to store invalid error data
+using this call, which means counter-to-documentation results could be
+returned to API clients. That is Very Bad.</p>
+
+<p>Pass optionally the HTTP status code to use if this happens to be the first
+stored error. If this is omitted, 500 is kept as the default.</p>
+
+<p>As with <a href="Response.html#method-i-add_error">add_error</a>, returns a
+<a href="../../Rack.html">Rack</a> representation of the response.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_precompiled_error_source')" id="l_method-i-add_precompiled_error_source">show</a>
+              </p>
+              <div id="method-i-add_precompiled_error_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 234</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-number">500</span> )
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-for_rack">
+              <b>for_rack</b>()
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-for_rack" name="method-i-for_rack" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Convert the internal response data into something that <a
+href="../../Rack.html">Rack</a> expects. The return value of this method
+can be passed back to <a href="../../Rack.html">Rack</a> from <a
+href="../../Rack.html">Rack</a> middleware or applications. Usually, this
+is only called directly by <a
+href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-for_rack_source')" id="l_method-i-for_rack_source">show</a>
+              </p>
+              <div id="method-i-for_rack_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 271</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
+
+  <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-comment"># Work out the status code and basic response body</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
+    <span class="ruby-identifier">http_status_code</span> = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">http_status_code</span>
+    <span class="ruby-identifier">body_data</span>        = <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">render</span>( <span class="ruby-ivar">@interaction_id</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">http_status_code</span> = <span class="ruby-ivar">@http_status_code</span>
+    <span class="ruby-identifier">body_data</span>        = <span class="ruby-ivar">@body</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">status</span> = <span class="ruby-identifier">http_status_code</span>.<span class="ruby-identifier">to_i</span>
+
+  <span class="ruby-comment"># We&#39;re not using JSON5, so the Platform API says that outmost arrays</span>
+  <span class="ruby-comment"># are wrapped with a top-level object key &quot;_data&quot;.</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+    <span class="ruby-identifier">response_hash</span> = { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_data</span> }
+    <span class="ruby-identifier">response_hash</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span> ] = <span class="ruby-ivar">@dataset_size</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@dataset_size</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">response_string</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> )
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
+    <span class="ruby-identifier">response_string</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">body_data</span> )
+  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> )
+    <span class="ruby-identifier">response_string</span> = <span class="ruby-identifier">body_data</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Response\#for_rack given unrecognised body data class &#39;#{ body_data.class.name }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-identifier">response_string</span> )
+
+  <span class="ruby-comment"># Finally, sort out the headers</span>
+
+  <span class="ruby-identifier">headers</span>().<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">header_name</span>, <span class="ruby-identifier">header_value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">rack_response</span>[ <span class="ruby-identifier">header_name</span> ] = <span class="ruby-identifier">header_value</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Return the complete response</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">finish</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-get_header">
+              <b>get_header</b>( name )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-get_header" name="method-i-get_header" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Check the stored value of a given HTTP header. Checks are case insensitive.
+Returns the value stored by a prior <a
+href="Response.html#method-i-add_header">add_header</a> call, or
+<code>nil</code> for no value (or an explicitly stored value of
+<code>nil</code>)</p>
+<dl class="rdoc-list note-list"><dt><code>name</code>
+<dd>
+<p>HTTP header name (e.g. “Content-Type”, “CONTENT-TYPE”).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-get_header_source')" id="l_method-i-get_header_source">show</a>
+              </p>
+              <div id="method-i-get_header_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 172</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_header</span>( <span class="ruby-identifier">name</span> )
+  <span class="ruby-identifier">value_hash</span> = <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value_hash</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">value_hash</span>.<span class="ruby-identifier">values</span>[ <span class="ruby-number">0</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-halt_processing-3F">
+              <b>halt_processing?</b>()
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-halt_processing-3F" name="method-i-halt_processing-3F" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Returns <code>true</code> if processing should halt, e.g. because errors
+have been added to the errors collection. Check here whenever you would
+consider an early exit due to errors arising in processing (otherwise they
+will just continue to accumulate).</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-halt_processing-3F_source')" id="l_method-i-halt_processing-3F_source">show</a>
+              </p>
+              <div id="method-i-halt_processing-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 107</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">halt_processing?</span>
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-headers">
+              <b>headers</b>()
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-headers" name="method-i-headers" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Returns the list previously set headers in a name: value Hash.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-headers_source')" id="l_method-i-headers_source">show</a>
+              </p>
+              <div id="method-i-headers_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 180</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">headers</span>
+  <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">result</span>, <span class="ruby-identifier">kv_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">result</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">kv_array</span>[ <span class="ruby-number">1</span> ] )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-not_found">
+              <b>not_found</b>( ident )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-not_found" name="method-i-not_found" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set the standard not found error message (generic.not_found), to be used
+durning a &#39;show&#39; call when the requested resource does not exist.</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p>The identifier of the resource which was not found</p>
+</dd></dl>
+
+<p>Example:</p>
+
+<pre><code>return response.not_found( ident ) if resource.nil?
+</code></pre>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-not_found_source')" id="l_method-i-not_found_source">show</a>
+              </p>
+              <div id="method-i-not_found_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 262</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">not_found</span>( <span class="ruby-identifier">ident</span> )
+  <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;generic.not_found&#39;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:ident</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-set_resources">
+              <b>set_resources</b>( array, dataset_size = nil )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-set_resources" name="method-i-set_resources" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Similar to <a href="Response.html#attribute-i-body">body</a> and <a
+href="Response.html#attribute-i-set_resource">set_resource</a>, but used
+when you are returning an array of items. Although you can just assign an
+array to either of <a href="Response.html#attribute-i-body">body</a> or <a
+href="Response.html#attribute-i-set_resource">set_resource</a>, calling <a
+href="Response.html#method-i-set_resources">set_resources</a> is more
+semantically correct and provides an additional feature; you can specify
+the total number of items in the dataset.</p>
+
+<p>For example, if you were listing a page of 50 resource instances but the
+total matching dataset of that list included 344 instances, you would pass
+344 in the <code>dataset_size</code> input parameter. This is optional but
+highly recommended as it is often very useful for calling clients.</p>
+<dl class="rdoc-list note-list"><dt><code>array</code>
+<dd>
+<p>Array of resource representations (Ruby Array with Ruby Hash entries
+representing rendered resources, ideally through the <a
+href="../Presenters.html">Hoodoo::Presenters</a> framework).</p>
+</dd><dt><code>dataset_size</code>
+<dd>
+<p>Optional <em>total</em> number of items in the entire dataset of which
+<code>array</code> is, most likely, just a subset due to paginated lists
+via offset and limit parameters.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-set_resources_source')" id="l_method-i-set_resources_source">show</a>
+              </p>
+              <div id="method-i-set_resources_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 130</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resources</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dataset_size</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">array</span>
+  <span class="ruby-ivar">@dataset_size</span> = <span class="ruby-identifier">dataset_size</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

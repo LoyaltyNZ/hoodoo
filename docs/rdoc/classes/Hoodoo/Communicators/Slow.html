@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Communicators::Slow</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Communicators::Slow
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/communicators/slow_rb.html">lib/hoodoo/communicators/slow.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>See <a href="Pool.html">Hoodoo::Communicators::Pool</a> for details.</p>
+
+<p>A “slow communicator”. Subclass this to create a class where instances are
+invoked via <a href="Slow.html#method-i-communicate">#communicate</a> with
+some parameter and, in response, they talk to some other piece of software
+to communicate information related to that parameter. The communication is
+expected to be slow and might involve blocking I/O network calls. An
+instance of the class is called from a Thread with this in mind.</p>
+
+<p>If you expect your communicator subclass to always perform very quickly,
+the Thread will introduce overhead that may actually slow down overall
+system performance. Avoid this by creating a subclass of <a
+href="Fast.html">Hoodoo::Communicators::Fast</a> instead.</p>
+
+<p>Example: A communicator might be part of a logging scheme which talks to a
+network-based third party logging service. The parameter it expects would
+be a log message string.</p>
+
+<p><strong>IMPORTANT</strong>: If you use <a
+href="../ActiveRecord.html">ActiveRecord</a> in a slow communicator class,
+beware that your writer runs in a ruby Thread. Unless you take steps to
+prevent it, <a href="../ActiveRecord.html">ActiveRecord</a> will implicitly
+check out a connection which stays with your Thread forever. This steals a
+connection from the pool. To prevent this issue, you must use the following
+pattern:</p>
+
+<pre><code>def communicate( object )
+  ActiveRecord::Base.connection_pool.with_connection do
+    # ...Any AciveRecord code goes here...
+  end
+end
+</code></pre>
+
+<p>Code within the <code>with_connection</code> block uses a temporary
+connection from the pool which is returned once the block has finished
+processing. Even if exceptions occur within your <a
+href="../ActiveRecord.html">ActiveRecord</a> code, the connection is still
+correctly returned to the pool using the above approach.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-communicate">communicate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-dropped">dropped</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-communicate">
+              <b>communicate</b>( object )
+            <a href="../../../classes/Hoodoo/Communicators/Slow.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Communicate (possibly slowly) with the piece of external software for which
+your subclass is designed. Subclasses <em>must</em> implement this method.
+There is no need to call <code>super</code> in your implementation.</p>
+
+<p>If a slow communicator can&#39;t keep up with the incoming message rate,
+messages may be dropped. Implement <a
+href="Slow.html#method-i-dropped">dropped</a> if you want to detect this
+condition.</p>
+<dl class="rdoc-list note-list"><dt><code>object</code>
+<dd>
+<p>Parameter sent by the communication pool, in response to someone calling <a
+href="Pool.html#method-i-communicate">Hoodoo::Communicators::Pool#communicate</a>
+with that value.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
+              </p>
+              <div id="method-i-communicate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/slow.rb, line 63</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+  <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #communicate&#39;</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-dropped">
+              <b>dropped</b>( count )
+            <a href="../../../classes/Hoodoo/Communicators/Slow.html#method-i-dropped" name="method-i-dropped" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>This method is called <em>before</em> <a
+href="Slow.html#method-i-communicate">communicate</a> if messages have been
+dropped prior to the one which <a
+href="Slow.html#method-i-communicate">communicate</a> is about to report.
+Should you care, your subclass can implement this method and take whatever
+action it wants (e.g. log that messages were discarded).</p>
+
+<p>The default implementation does nothing; there is no need to call
+<code>super</code> in custom implementations.</p>
+<dl class="rdoc-list note-list"><dt><code>count</code>
+<dd>
+<p>Number of messages dropped between the previous call to <a
+href="Slow.html#method-i-communicate">communicate</a> and the call which is
+about to be made.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-dropped_source')" id="l_method-i-dropped_source">show</a>
+              </p>
+              <div id="method-i-dropped_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/slow.rb, line 78</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped</span>( <span class="ruby-identifier">count</span> )
+  <span class="ruby-comment"># This Implementation Intentionally Left Blank</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

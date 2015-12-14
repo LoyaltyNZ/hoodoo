@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Request</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Request
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/services/services/request_rb.html">lib/hoodoo/services/services/request.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Instances of the <a href="Request.html">Hoodoo::Services::Request</a> class
+are passed to service interface implementations when requests come in via
+<a href="../../Rack.html">Rack</a>, after basic checks have been passed and
+a particular interface implementation has been identified by endpoint.</p>
+
+<p>Descriptions of default values expected out of accessors herein refer to
+the use case when driven through <a
+href="Middleware.html">Hoodoo::Services::Middleware</a>. If the class is
+instantiated “bare” it gains no default values at all (all read accessors
+would report <code>nil</code>).</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Request/ListParameters.html">Hoodoo::Services::Request::ListParameters</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>U</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-uri_path_components-3D">uri_path_components=</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-body'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>body</td>
+            <td class='attr-desc'><p>Parsed payload hash, for create and update actions only; else
+<code>nil</code>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-embeds'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>embeds</td>
+            <td class='attr-desc'><p>Array of strings giving requested embedded items; [] if there are none
+requested.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-headers'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>headers</td>
+            <td class='attr-desc'><p>Hash of HTTP headers <em>in</em> <em>Rack</em> <em>format</em> - e.g.
+<code>HTTP_X_INTERACTION_ID</code> for the “X-Interaction-ID” header, for
+read-only use. All keys are in upper case, are Strings, have “HTTP_” at the
+start and use underscores where the original request might&#39;ve used an
+underscore or hyphen. The usual curious <a href="../../Rack.html">Rack</a>
+exceptions of <code>CONTENT_TYPE</code> and <code>CONTENT_LENGTH</code> do
+apply, though. This is a superset of header values including those sent by
+the client in its request and anything <a href="../../Rack.html">Rack</a>
+itself might have added.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-ident'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>ident</td>
+            <td class='attr-desc'><p>The first entry in the <a
+href="Request.html#attribute-i-uri_path_components">uri_path_components</a>
+array, or <code>nil</code> if the array is empty. This supports a common
+case for inter-resource calls where a <a href="../UUID.html">UUID</a> or
+other unique identifier is provided through the first path element
+(“<code>.../v1/resource/uuid</code>”).</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-list'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>list</td>
+            <td class='attr-desc'><p>The <a
+href="Request/ListParameters.html">Hoodoo::Services::Request::ListParameters</a>
+instance associated with this request.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-locale'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>locale</td>
+            <td class='attr-desc'><p>Requested locale for internationalised operations; +“en-nz”+ by default.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-references'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>references</td>
+            <td class='attr-desc'><p>Array of strings giving requested referenced items; [] if there are none
+requested.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-uri_path_components'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>uri_path_components</td>
+            <td class='attr-desc'><p>An array of zero or more path components making up the URI
+<strong>after</strong> the service endpoint has been accounted for. For
+example, with a service endpoint of “products”, this URI:</p>
+
+<pre><code>http://test.com/v1/products/1234/foo.json
+</code></pre>
+
+<p>…would lead to this path component array:</p>
+
+<pre><code>[ &#39;1234&#39;, &#39;foo&#39; ]
+</code></pre>
+
+<p>The first element of the path components array is exposed in the read-only
+<a href="Request.html#attribute-i-ident">ident</a> accessor.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-uri_path_extension'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>uri_path_extension</td>
+            <td class='attr-desc'><p>A filename extension on the URI path component, if any, else an empty
+string. The <em>first</em> dot in the <em>last</em> path component is
+looked for (see also <a
+href="Request.html#attribute-i-uri_path_components">uri_path_components</a>),
+so for example this URI:</p>
+
+<pre><code>http://test.com/v1/products/1.2.3.4/foo.my.tar.gz</code></pre>
+
+<p>…would lead to this URI path extension string:</p>
+
+<pre><code>&#39;my.tar.gz&#39;
+</code></pre></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>()
+            <a href="../../../classes/Hoodoo/Services/Request.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set up defaults in this instance.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 178</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>              = <span class="ruby-string">&#39;en-nz&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_components</span> = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uri_path_extension</span>  = <span class="ruby-string">&#39;&#39;</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">list</span>                = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span><span class="ruby-operator">::</span><span class="ruby-constant">ListParameters</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">embeds</span>              = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">references</span>          = []
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">headers</span>             = {}.<span class="ruby-identifier">freeze</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-uri_path_components-3D">
+              <b>uri_path_components=</b>( ary )
+            <a href="../../../classes/Hoodoo/Services/Request.html#method-i-uri_path_components-3D" name="method-i-uri_path_components-3D" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set the array returned by <a
+href="Request.html#attribute-i-uri_path_components">uri_path_components</a>
+and record the first element in the value returned by <a
+href="Request.html#attribute-i-ident">ident</a>.</p>
+<dl class="rdoc-list note-list"><dt><code>ary</code>
+<dd>
+<p>Path component array to record. If <code>nil</code> or not an array,
+<code>nil</code> is stored for <a
+href="Request.html#attribute-i-uri_path_components">#uri_path_components</a>
+and <a href="Request.html#attribute-i-ident">ident</a>.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-uri_path_components-3D_source')" id="l_method-i-uri_path_components-3D_source">show</a>
+              </p>
+              <div id="method-i-uri_path_components-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 113</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uri_path_components=</span>( <span class="ruby-identifier">ary</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
+    <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-identifier">ary</span>
+    <span class="ruby-ivar">@ident</span>               = <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@uri_path_components</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-ivar">@ident</span>               = <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

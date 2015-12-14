@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::ForHTTP</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Discovery::ForHTTP
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/results/for_http_rb.html">lib/hoodoo/services/discovery/results/for_http.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Describe a resource endpoint location in a way that allows it to be
+contacted over HTTP.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-ca_file'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>ca_file</td>
+            <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the
+location of a .pem format Certificate Authority file (trust store), which
+may include multliple certificates. The certificates in the file will be
+used by Net::HTTP to validate the SSL Ceritificate Chain presented by
+remote servers, when calling endpoints over HTTPS with <a
+href="../../Client.html">Hoodoo::Client</a>.</p>
+
+<p>Default <code>nil</code> value should be used in nearly all cases and uses
+Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-endpoint_uri'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>endpoint_uri</td>
+            <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation
+can be contacted.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-http_timeout'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>http_timeout</td>
+            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value. This operates
+at the HTTP transport level and is independent of any timeouts set within
+the API providing server.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-proxy_uri'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>proxy_uri</td>
+            <td class='attr-desc'><p>Full URI (as a URI object) of an HTTP proxy to use as an override to
+<code>ENV['HTTP_PROXY']</code> which Ruby itself will otherwise read. Will
+be <code>nil</code> for no proxy override.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-resource'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>resource</td>
+            <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-version'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>version</td>
+            <td class='attr-desc'><p>Resource endpoint version, as an Integer (e.g. 2).</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil, http_timeout: nil )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ForHTTP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create an instance with named parameters as follows:</p>
+<dl class="rdoc-list note-list"><dt>resource
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-resource">resource</a>.</p>
+</dd><dt>version
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-version">version</a>.</p>
+</dd><dt><code>endpoint_uri</code>
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-endpoint_uri">endpoint_uri</a>.</p>
+</dd><dt><code>proxy_uri</code>
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-proxy_uri">proxy_uri</a>. Optional.</p>
+</dd><dt><code>ca_file</code>
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-ca_file">ca_file</a>. Optional.</p>
+</dd><dt><code>http_timeout</code>
+<dd>
+<p>See <a href="ForHTTP.html#attribute-i-http_timeout">http_timeout</a>.
+Optional.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
+                <span class="ruby-identifier">version</span>,,
+                <span class="ruby-identifier">endpoint_uri</span>,,
+                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>    <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>      <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_uri</span> = <span class="ruby-identifier">endpoint_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">proxy_uri</span>    = <span class="ruby-identifier">proxy_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ca_file</span>      = <span class="ruby-identifier">ca_file</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_timeout</span> = <span class="ruby-identifier">http_timeout</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

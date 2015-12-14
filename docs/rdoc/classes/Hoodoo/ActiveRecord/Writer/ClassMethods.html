@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Writer::ClassMethods</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::Writer::ClassMethods
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/active/active_record/writer_rb.html">lib/hoodoo/active/active_record/writer.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Collection of class methods that get defined on an including class via <a
+href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>P</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-persist_in">persist_in</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-persist_in">
+              <b>persist_in</b>( context, attributes )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Writer/ClassMethods.html#method-i-persist_in" name="method-i-persist_in" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <h2 id="method-i-persist_in-label-Overview">Overview</h2>
+
+<p>Service authors <em>SHOULD</em> use this method when persisting data with
+<a href="../../ActiveRecord.html">ActiveRecord</a> if there is a risk of
+duplication constraint violation of any kind. This will include a violation
+on the <a href="../UUID.html">UUID</a> of a resource if you support
+external setting of this value via the body of a <code>create</code> call
+containing the <code>id</code> field, injected by <a
+href="../../../Hoodoo.html">Hoodoo</a> as the result of an authorised use
+of the <code>X-Resource-UUID</code> HTTP header.</p>
+
+<p><a href="../../Services.html">Services</a> often run in highly concurrent
+environments and uniqueness constraint validations with <a
+href="../../ActiveRecord.html">ActiveRecord</a> cannot protect against race
+conditions in such cases. IT works at the application level; the check to
+see if a record exists with a duplicate value in some given column is a
+separate operation from that which stores the record subsequently. As per
+the Rails Guides entry on the uniqueness validation at the time of writing:</p>
+
+<p><a
+href="http://guides.rubyonrails.org/active_record_validations.html#uniqueness">guides.rubyonrails.org/active_record_validations.html#uniqueness</a></p>
+
+<p><em>“It does not create a uniqueness constraint in the database, so it may
+happen that two different database connections create two records with the
+same value for a column that you intend to be unique. To avoid that, you
+must create a unique index on both columns in your database.”</em></p>
+
+<p>You <strong>MUST</strong> always use a uniqueness constraint at the
+database level and <strong>MAY</strong> additionally use <a
+href="../../ActiveRecord.html">ActiveRecord</a> validations for a higher
+level warning in all but race condition edge cases. If you then use this
+<code>persist_in</code> method to store records, all duplication cases will
+be handled elegantly and reported as a
+<code>generic.invalid_duplication</code> error. In the event that a caller
+has used the <code>X-Deja-Vu</code> HTTP header, <a
+href="../../../Hoodoo.html">Hoodoo</a> will take such an error and
+transform it into a non-error 204 HTTP response; so by using
+<code>persist_in</code>, you also ensure that your service participates
+successfully in this process without any additional coding effort. You get
+safe concurrency and protection against the inherent lack of idempotency in
+HTTP <code>POST</code> operations via any must-be-unique fields (within
+your defined scope) automatically.</p>
+
+<p>Using this method for data storage instead of plain <a
+href="../../ActiveRecord.html">ActiveRecord</a> <code>send</code> or
+<code>send!</code> will also help your code auto-inherit any additional
+future write-related enhancements in <a
+href="../../../Hoodoo.html">Hoodoo</a> should they arise, without
+necessarily needing service code changes.</p>
+
+<h2 id="method-i-persist_in-label-Example">Example</h2>
+
+<pre><code>class Unique &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Writer
+  validates :unique_code, :presence =&gt; true, :uniqueness =&gt; true
+end
+</code></pre>
+
+<p>The migration to create the table for the Unique model <em>MUST</em> have a
+uniqueness constraint on the <code>unique_code</code> field, e.g.:</p>
+
+<pre><code>def change
+  add_column :uniques, :unique_code, :null =&gt; false
+  add_index :uniques, [ :unique_code ], :unique =&gt; true
+end
+</code></pre>
+
+<p>Then, inside the implementation class which uses the above model, where you
+have (say) written private methods <code>mapping_of</code> which maps
+<code>context.request.body</code> to an attributes Hash for persistence and
+<code>rendering_of</code> which uses <a
+href="../../Presenters/Base.html#method-c-render_in">Hoodoo::Presenters::Base.render_in</a>
+to properly render a representation of your resource, you would write:</p>
+
+<pre><code>def create( context )
+  attributes = mapping_of( context.request.body )
+  model_instance = Unique.persist_in( context, attributes )
+
+  unless model_instance.persisted?
+
+    # Error condition. If you&#39;re using the error handler mixin
+    # in Hoodoo::ActiveRecord::ErrorMapping, do this:
+    #
+    context.response.add_errors( model_instance.platform_errors )
+    return # Early exit
+
+  end
+
+  # ...any other processing...
+
+  context.response.set_resource( rendering_of( context, model_instance ) )
+end
+</code></pre>
+
+<h2 id="method-i-persist_in-label-Parameters">Parameters</h2>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd><dt><code>attributes</code>
+<dd>
+<p>Attributes hash to be passed to this model class&#39;s constructor, via
+<code>self.new( attributes )</code>.</p>
+</dd></dl>
+
+<p>See also the <a
+href="../Writer.html#method-i-persist_in">Hoodoo::ActiveRecord::Writer#persist_in</a>
+instance method equivalent of this class method.</p>
+
+<h2 id="method-i-persist_in-label-Nested+transaction+note">Nested transaction note</h2>
+
+<p>Ordinarily an exception in a nested transaction does not roll back. <a
+href="../../ActiveRecord.html">ActiveRecord</a> wraps all saves in a
+transaction “out of the box”, so the following construct could have
+unexpected results…</p>
+
+<pre><code>Model.transaction do
+  instance.persist_in( context )
+end
+</code></pre>
+
+<p>…if <code>instance.valid?</code> runs any SQL queries - which is very
+likely. PostgreSQL, for example, would then raise an exception; the inner
+transaction failed, leaving the outer one in an aborted state:</p>
+
+<pre><code>PG::InFailedSqlTransaction: ERROR:  current transaction is
+aborted, commands ignored until end of transaction block</code></pre>
+
+<p><a href="../../ActiveRecord.html">ActiveRecord</a> provides us with a way
+to define a transaction that does roll back via the <code>requires_new:
+true</code> option. <a href="../../../Hoodoo.html">Hoodoo</a> thus protects
+callers from the above artefacts by ensuring that all saves are wrapped in
+an outer transaction that causes rollback in any parents. This sidesteps
+the unexpected behaviour, but service authors might sometimes need to be
+aware of this if using complex transaction behaviour along with
+<code>persist_in</code>.</p>
+
+<p>In pseudocode, the internal implementation is:</p>
+
+<pre><code>self.transaction( :requires_new =&gt; true ) do
+  self.save
+end
+</code></pre>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-persist_in_source')" id="l_method-i-persist_in_source">show</a>
+              </p>
+              <div id="method-i-persist_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/writer.rb, line 311</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">persist_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> )
+  <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">attributes</span> )
+  <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">persist_in</span>( <span class="ruby-identifier">context</span> )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">instance</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

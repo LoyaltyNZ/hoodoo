@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Services::Discovery::ByConsul</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Services::Discovery::ByConsul
+                <span class="parent">&lt;
+                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_consul_rb.html">lib/hoodoo/services/discovery/discoverers/by_consul.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Discover resource endpoint locations via a registry held in Consul. For
+AMQP-based endpoints; maps paths to queue names.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>A</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-announce_remote">announce_remote</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-discover_remote">discover_remote</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Protected methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-announce_remote">
+              <b>announce_remote</b>( resource, version, options = {} )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByConsul.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Announce the location of an instance to Consul.</p>
+
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
+
+<p>TODO: NOT YET IMPLEMENTED. Placeholder only.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>options</code>
+<dd>
+<p>Ignored. TODO: Queue name, equivalent path.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
+              </p>
+              <div id="method-i-announce_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_consul.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> ) <span class="ruby-comment"># TODO: Replace</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-discover_remote">
+              <b>discover_remote</b>( resource, version )
+            <a href="../../../../classes/Hoodoo/Services/Discovery/ByConsul.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Discover the location of an instance using Consul.</p>
+
+<p>TODO: This currently doesn&#39;t use Consul at all! It has a TODO:
+hard-coded mapping.</p>
+
+<p>Returns a <a href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
+instance if the endpoint is found, else <code>nil</code>.</p>
+
+<p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Passed to <a
+href="ByConsul.html#method-i-discover_remote">discover_remote</a>.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
+              </p>
+              <div id="method-i-discover_remote_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_consul.rb, line 50</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+
+  <span class="ruby-identifier">queue</span> = <span class="ruby-node">&quot;service.#{ resource.to_s.downcase }&quot;</span>
+  <span class="ruby-identifier">path</span>  = <span class="ruby-node">&quot;/v#{ version }/#{ resource.to_s.downcase.pluralize }&quot;</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForAMQP</span>.<span class="ruby-identifier">new</span>(
+    <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>        <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>         <span class="ruby-identifier">version</span>,
+    <span class="ruby-identifier">queue_name</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">queue</span>,
+    <span class="ruby-identifier">equivalent_path</span><span class="ruby-operator">:</span> <span class="ruby-identifier">path</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Rack::Server</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Rack::Server
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../files/lib/hoodoo/services/middleware/rack_monkey_patch_rb.html">lib/hoodoo/services/middleware/rack_monkey_patch.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See file
+“rack_monkey_path.rb”&#39;s documentation for details.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-racks_original_start">racks_original_start</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>S</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-start">start</a>,
+              </li>
+              <li>
+                <a href="#method-c-start_and_record_host_and_port">start_and_record_host_and_port</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-racks_original_start">
+              <b>racks_original_start</b>( options = nil )
+            <a href="../../classes/Rack/Server.html#method-c-racks_original_start" name="method-c-racks_original_start" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. Alias for the
+original <a href="Server.html#method-c-start">::start</a>.</p>
+            </div>
+
+
+            <div class="aka">
+              Alias for: <a href="Server.html#method-c-start">start</a>
+            </div>
+
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-start">
+              <b>start</b>( options = nil )
+            <a href="../../classes/Rack/Server.html#method-c-start" name="method-c-start" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See <a
+href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
+<dl class="rdoc-list note-list"><dt>options
+<dd>
+<p>See <a
+href="Server.html#method-c-start_and_record_host_and_port">::start_and_record_host_and_port</a>.</p>
+</dd></dl>
+            </div>
+
+            <div class="aka">
+              Also aliased as: <a href="Server.html#method-c-racks_original_start">racks_original_start</a>
+            </div>
+
+            <div class="aka">
+              Alias for: <a href="Server.html#method-c-start_and_record_host_and_port">start_and_record_host_and_port</a>
+            </div>
+
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-start_and_record_host_and_port">
+              <b>start_and_record_host_and_port</b>( options = nil )
+            <a href="../../classes/Rack/Server.html#method-c-start_and_record_host_and_port" name="method-c-start_and_record_host_and_port" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Part of the <a href="../Rack.html">Rack</a> monkey patch. See file
+“rack_monkey_path.rb”&#39;s documentation for details.</p>
+
+<p>This method is aliased in place of <a
+href="Server.html#method-c-start">::start</a> and reads the passed-in
+options hash to attempt to determine the host name and port number under
+which a <a href="../Rack.html">Rack</a> based service is running. It then
+calls through to Rack&#39;s original <a
+href="Server.html#method-c-start">::start</a> implementation.</p>
+<dl class="rdoc-list note-list"><dt><code>options</code>
+<dd>
+<p>Options (see original <a href="Server.html">Rack::Server</a>
+documentation).</p>
+</dd></dl>
+            </div>
+
+            <div class="aka">
+              Also aliased as: <a href="Server.html#method-c-start">start</a>
+            </div>
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-start_and_record_host_and_port_source')" id="l_method-c-start_and_record_host_and_port_source">show</a>
+              </p>
+              <div id="method-c-start_and_record_host_and_port_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/rack_monkey_patch.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">start_and_record_host_and_port</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> )
+  <span class="ruby-identifier">racks_original_start</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

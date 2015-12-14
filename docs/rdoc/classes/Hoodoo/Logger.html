@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Logger</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Logger
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../files/lib/hoodoo/logger/fast_writer_rb.html">lib/hoodoo/logger/fast_writer.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/flattener_mixin_rb.html">lib/hoodoo/logger/flattener_mixin.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/logger_rb.html">lib/hoodoo/logger/logger.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/slow_writer_rb.html">lib/hoodoo/logger/slow_writer.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/writer_mixin_rb.html">lib/hoodoo/logger/writer_mixin.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/writers/file_writer_rb.html">lib/hoodoo/logger/writers/file_writer.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/writers/log_entries_dot_com_writer_rb.html">lib/hoodoo/logger/writers/log_entries_dot_com_writer.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/logger/writers/stream_writer_rb.html">lib/hoodoo/logger/writers/stream_writer.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Multiple output logging via local code or external services. Instantiate a
+new <a href="Logger.html">Logger</a>, then use <a
+href="Logger.html#method-i-add">add</a> to add <em>instances</em> of writer
+classes to the collection of log writers. When <a
+href="Logger.html#method-i-report">report</a>, <a
+href="Logger.html#method-i-debug">debug</a>, <a
+href="Logger.html#method-i-info">info</a>, <a
+href="Logger.html#method-i-warn">warn</a> or <a
+href="Logger.html#method-i-error">error</a> are called, a corresponding log
+message is sent once to each of the writers, provided that the configured
+logging level (#level, <a href="Logger.html#attribute-i-level">level=</a>)
+allows it.</p>
+
+<p>By default, a new logger instance has no configured writers so logged
+messages will not go anywhere. You must use <a
+href="Logger.html#method-i-add">add</a> to add at least one writer for the
+instance to be useful.</p>
+
+<p>Some writer classes are provided by <a href="../Hoodoo.html">Hoodoo</a>,
+including:</p>
+<ul><li>
+<p><a href="Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a> - write
+to output streams, typically expected to be fast, e.g. unredirected $stdout
+or $stderr.</p>
+</li><li>
+<p><a href="Logger/FileWriter.html">Hoodoo::Logger::FileWriter</a> - write to
+files, typically expected to be relatively slow.</p>
+</li></ul>
+
+<p>Some loggers can preserve structural logged data (see <a
+href="Logger.html#method-i-report">report</a>) while others flatten all log
+messages. For example, <a
+href="Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a> must
+flatten messages but a custom writer that, say, persisted messages in a
+database should be able to preserve structure.</p>
+
+<p>Writers are either considered fast or slow. Fast writers are called inline
+as soon as a message gets logged. Slow writers are called asynchronously
+via a Thread. A Queue is used to buffer messages for slow writers; if this
+gets too large, messages may be dropped. Once the slow writer catches up, a
+<code>warn</code> level log message is automatically logged to report the
+number of dropped messages in the interim.</p>
+
+<p>To create a new custom writer class of any name/namespace, just subclass <a
+href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
+href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a> - see those
+classes for details.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Logger/Communicator.html">Hoodoo::Logger::Communicator</a>
+        </li>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Logger/FlattenerMixin.html">Hoodoo::Logger::FlattenerMixin</a>
+        </li>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Logger/WriterMixin.html">Hoodoo::Logger::WriterMixin</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/FastCommunicator.html">Hoodoo::Logger::FastCommunicator</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/FileWriter.html">Hoodoo::Logger::FileWriter</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/LogEntriesDotComWriter.html">Hoodoo::Logger::LogEntriesDotComWriter</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/Payload.html">Hoodoo::Logger::Payload</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/SlowCommunicator.html">Hoodoo::Logger::SlowCommunicator</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Logger/StreamWriter.html">Hoodoo::Logger::StreamWriter</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>A</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-add">add</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-debug">debug</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>E</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-error">error</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-info">info</a>,
+              </li>
+              <li>
+                <a href="#method-i-instances">instances</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-remove">remove</a>,
+              </li>
+              <li>
+                <a href="#method-i-remove_all">remove_all</a>,
+              </li>
+              <li>
+                <a href="#method-i-report">report</a>,
+              </li>
+              <li>
+                <a href="#method-i-report-3F">report?</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>W</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-wait">wait</a>,
+              </li>
+              <li>
+                <a href="#method-i-warn">warn</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-level'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>level</td>
+            <td class='attr-desc'><p>Return or set the current log level. This is <code>:debug</code> by
+default.</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( component = :Middleware )
+            <a href="../../classes/Hoodoo/Logger.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create a new logger instance. Once created, use <a
+href="Logger.html#method-i-add">add</a> to add writers.</p>
+<dl class="rdoc-list note-list"><dt>component
+<dd>
+<p>Flat logging methods (see <a href="Logger.html#method-i-debug">debug</a>,
+<a href="Logger.html#method-i-info">info</a>, <a
+href="Logger.html#method-i-warn">warn</a> and <a
+href="Logger.html#method-i-error">error</a>) are internally logged through
+the structured logger (see <a
+href="Logger.html#method-i-report">report</a>) using the
+<code>component</code> (again, see <a
+href="Logger.html#method-i-report">report</a>) optionally passed here as a
+Symbol or String. Default is <code>:Middleware</code>.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">component</span> = <span class="ruby-value">:Middleware</span> )
+  <span class="ruby-ivar">@level</span>     = <span class="ruby-value">:debug</span>
+  <span class="ruby-ivar">@pool</span>      = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Pool</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@component</span> = <span class="ruby-identifier">component</span>
+  <span class="ruby-ivar">@writers</span>   = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add">
+              <b>add</b>( *writer_instances )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-add" name="method-i-add" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add a new writer instance to this logger. Example:</p>
+
+<pre><code>file_writer   = Hoodoo::Logger::FileWriter.new( &#39;output.log&#39; )
+stdout_writer = Hoodoo::Logger::StreamWriter.new
+
+@logger = Hoodoo::Logger.new
+
+logger.add( file_writer   )
+logger.add( stdout_writer )
+
+# ...then later...
+
+logger.report( ... ) # -&gt; Sends to &quot;output.log&quot; and $stdout</code></pre>
+<dl class="rdoc-list note-list"><dt><code>writer_instances</code>
+<dd>
+<p>One or more <em>instances</em> of a subclass of <a
+href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
+href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>, passed as one
+or more comma-separated parameters.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_source')" id="l_method-i-add_source">show</a>
+              </p>
+              <div id="method-i-add_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 83</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">writer_instances</span> )
+  <span class="ruby-identifier">writer_instances</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">writer_instance</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">communicator</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">writer_instance</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span><span class="ruby-operator">::</span><span class="ruby-constant">FastWriter</span> )
+      <span class="ruby-constant">FastCommunicator</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-keyword">self</span> )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">writer_instance</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span><span class="ruby-operator">::</span><span class="ruby-constant">SlowWriter</span> )
+      <span class="ruby-constant">SlowCommunicator</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-keyword">self</span> )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Logger\#add: Only instances of Hoodoo::Logger::FastWriter or Hoodoo::Logger::SlowWriter can be added - #{ writer_instance.class.name } was given&quot;</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">add</span>( <span class="ruby-identifier">communicator</span> )
+    <span class="ruby-ivar">@writers</span>[ <span class="ruby-identifier">writer_instance</span> ] = <span class="ruby-identifier">communicator</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-debug">
+              <b>debug</b>( *args )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-debug" name="method-i-debug" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Write a <code>debug</code> log message, provided the log level is
+<code>:debug</code>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-i-report">report</a> for structured logging under
+the component specified in the constructor and code &#39;log&#39;.</p>
+
+<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
+over unstructured direct logging.</p>
+<dl class="rdoc-list note-list"><dt>*args
+<dd>
+<p>One or more arguments that will be treated as strings and written in the
+presented order to the log, each on its own line of output (“\n”
+terminated).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-debug_source')" id="l_method-i-debug_source">show</a>
+              </p>
+              <div id="method-i-debug_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 222</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">debug</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:debug</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-error">
+              <b>error</b>( *args )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-error" name="method-i-error" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Write an <code>error</code> log message, regardless of logging level.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-i-report">report</a> for structured logging under
+the component specified in the constructor and code &#39;log&#39;.</p>
+
+<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
+over unstructured direct logging.</p>
+<dl class="rdoc-list note-list"><dt>*args
+<dd>
+<p>One or more arguments that will be treated as strings and written in the
+presented order to the log, each on its own line of output (“\n”
+terminated).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-error_source')" id="l_method-i-error_source">show</a>
+              </p>
+              <div id="method-i-error_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 272</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">error</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:error</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-info">
+              <b>info</b>( *args )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-info" name="method-i-info" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Write an <code>info</code> log message, provided the log level is
+<code>:debug</code> or <code>:info</code>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-i-report">report</a> for structured logging under
+the component specified in the constructor and code &#39;log&#39;.</p>
+
+<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
+over unstructured direct logging.</p>
+<dl class="rdoc-list note-list"><dt>*args
+<dd>
+<p>One or more arguments that will be treated as strings and written in the
+presented order to the log, each on its own line of output (“\n”
+terminated).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-info_source')" id="l_method-i-info_source">show</a>
+              </p>
+              <div id="method-i-info_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 239</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">info</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:info</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-instances">
+              <b>instances</b>()
+            <a href="../../classes/Hoodoo/Logger.html#method-i-instances" name="method-i-instances" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Returns an array of all log writer instances currently in use, in order of
+addition. See <a href="Logger.html#method-i-add">add</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-instances_source')" id="l_method-i-instances_source">show</a>
+              </p>
+              <div id="method-i-instances_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 130</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">instances</span>
+
+  <span class="ruby-comment"># Implicit ordering relies on Ruby &gt;= 1.9 documented behaviour of</span>
+  <span class="ruby-comment"># preserving order of addition to a Hash.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-ivar">@writers</span>.<span class="ruby-identifier">keys</span>
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-remove">
+              <b>remove</b>( writer_instance )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-remove" name="method-i-remove" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Remove a writer instance from this logger. If the instance has not been
+previously added, no error is raised.</p>
+
+<p>Slow writers may take a while to finish processing and shut down in the
+background. As a result, this method might take a while to return. Internal
+default timeouts may even mean that the writer is still running (possibly
+entirely hung).</p>
+<dl class="rdoc-list note-list"><dt><code>writer_instance</code>
+<dd>
+<p>An <em>instance</em> of a subclass of <a
+href="Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
+href="Logger/SlowWriter.html">Hoodoo::Logger::SlowWriter</a>.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-remove_source')" id="l_method-i-remove_source">show</a>
+              </p>
+              <div id="method-i-remove_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 110</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remove</span>( <span class="ruby-identifier">writer_instance</span> )
+  <span class="ruby-identifier">communicator</span> = <span class="ruby-ivar">@writers</span>[ <span class="ruby-identifier">writer_instance</span> ]
+  <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">remove</span>( <span class="ruby-identifier">communicator</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-remove_all">
+              <b>remove_all</b>()
+            <a href="../../classes/Hoodoo/Logger.html#method-i-remove_all" name="method-i-remove_all" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Remove all writer instances from this logger.</p>
+
+<p>Slow writers may take a while to finish processing and shut down in the
+background. As a result, this method might take a while to return. Internal
+default timeouts may even mean that one or more slow writers are still
+running (possibly entirely hung).</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-remove_all_source')" id="l_method-i-remove_all_source">show</a>
+              </p>
+              <div id="method-i-remove_all_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 122</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remove_all</span>
+  <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">terminate</span>()
+  <span class="ruby-ivar">@writers</span> = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-report">
+              <b>report</b>( log_level, component, code, data )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-report" name="method-i-report" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Logs a message using the structured logger. Whether or not log data is
+written in a stuctured manner depends upon the writer(s) in use (see <a
+href="Logger.html#method-i-add">add</a>). Structured writers preserve data
+structures like hashes or arrays rather than (say) dumping things out as
+strings into flat output streams.</p>
+
+<p>As with flat logging methods <a
+href="Logger.html#method-i-debug">debug</a>, <a
+href="Logger.html#method-i-info">info</a>, <a
+href="Logger.html#method-i-warn">warn</a> and <a
+href="Logger.html#method-i-error">error</a>, a message is only logged if
+the logging threshold level (see <a
+href="Logger.html#attribute-i-level">level=</a>) is set to an equal or
+lower level.</p>
+<dl class="rdoc-list note-list"><dt><code>log_level</code>
+<dd>
+<p>Log level as a symbol - one of, from most trivial to most severe,
+<code>:debug</code>, <code>:info</code>, <code>:warn</code> or
+<code>:error</code>.</p>
+</dd><dt><code>component</code>
+<dd>
+<p>Component; for example, the resource name for a specific resource endpoint
+implementation, &#39;Middleware&#39; for <a
+href="../Hoodoo.html">Hoodoo</a> middleware itself, or some other name you
+think is useful. String or Symbol.</p>
+</dd><dt><code>code</code>
+<dd>
+<p>Component-defined code. Think of this in a manner similar to platform error
+codes, appearing after the “.”; messages related to the same thing should
+share the same code. The intent is to produce log data that someone can
+filter on code to get useful information about that specific aspect of a
+service implementation&#39;s behaviour.</p>
+</dd><dt><code>data</code>
+<dd>
+<p>A Hash containing the level-, component- and code-dependent payload data to
+be logged.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
+              </p>
+              <div id="method-i-report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 197</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report?</span>( <span class="ruby-identifier">log_level</span> )
+
+  <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">communicate</span>(
+    <span class="ruby-constant">Payload</span>.<span class="ruby-identifier">new</span>(
+      <span class="ruby-identifier">log_level</span><span class="ruby-operator">:</span> <span class="ruby-identifier">log_level</span>,
+      <span class="ruby-identifier">component</span><span class="ruby-operator">:</span> <span class="ruby-identifier">component</span>,
+      <span class="ruby-identifier">code</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">code</span>,
+      <span class="ruby-identifier">data</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">data</span>
+    )
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-report-3F">
+              <b>report?</b>( log_level )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-report-3F" name="method-i-report-3F" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Given the log level configuration of this instance - see <a
+href="Logger.html#attribute-i-level">level=</a> and <a
+href="Logger.html#attribute-i-level">level</a> - should a message of the
+given log level be reported? Returns <code>true</code> if so else
+<code>false</code>.</p>
+
+<p>This is mostly for internal use but external callers might find it useful
+from time to time, especially in tests.</p>
+<dl class="rdoc-list note-list"><dt><code>log_level</code>
+<dd>
+<p>Log level of interest as a Symbol - <code>debug</code>, <code>info</code>,
+<code>warn</code> or <code>error</code>.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-report-3F_source')" id="l_method-i-report-3F_source">show</a>
+              </p>
+              <div id="method-i-report-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 163</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report?</span>( <span class="ruby-identifier">log_level</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:info</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">log_level</span> <span class="ruby-operator">==</span> <span class="ruby-value">:warn</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:debug</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:info</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@level</span> <span class="ruby-operator">!=</span> <span class="ruby-value">:warn</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-wait">
+              <b>wait</b>()
+            <a href="../../classes/Hoodoo/Logger.html#method-i-wait" name="method-i-wait" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Wait for all writers to finish writing all log messages sent up to the
+point of calling. Internal default timeouts for slow writers mean that hung
+or extremely slow/backlogged writers may not have finished by the time the
+call returns, but it&#39;s necessary to enforce a timeout else this call
+may never return at all.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-wait_source')" id="l_method-i-wait_source">show</a>
+              </p>
+              <div id="method-i-wait_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 145</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">wait</span>
+  <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">wait</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-warn">
+              <b>warn</b>( *args )
+            <a href="../../classes/Hoodoo/Logger.html#method-i-warn" name="method-i-warn" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Write a <code>warn</code> log message, provided the log level is
+<code>:debug</code>, <code>:info</code> or <code>:warn</code>.</p>
+
+<p>The logging data is unstructured, but gets passed to <a
+href="Logger.html#method-i-report">report</a> for structured logging under
+the component specified in the constructor and code &#39;log&#39;.</p>
+
+<p>Calling <a href="Logger.html#method-i-report">report</a> is recommended
+over unstructured direct logging.</p>
+<dl class="rdoc-list note-list"><dt>*args
+<dd>
+<p>One or more arguments that will be treated as strings and written in the
+presented order to the log, each on its own line of output (“\n”
+terminated).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-warn_source')" id="l_method-i-warn_source">show</a>
+              </p>
+              <div id="method-i-warn_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 256</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">warn</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-value">:warn</span>, <span class="ruby-ivar">@component</span>, <span class="ruby-value">:log</span>, { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">args</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

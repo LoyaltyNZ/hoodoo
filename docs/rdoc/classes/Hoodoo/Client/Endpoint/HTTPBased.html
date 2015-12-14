@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Client::Endpoint::HTTPBased</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Client::Endpoint::HTTPBased
+                <span class="parent">&lt;
+                    <a href="../Endpoint.html">Hoodoo::Client::Endpoint</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/client/endpoint/endpoints/http_based_rb.html">lib/hoodoo/client/endpoint/endpoints/http_based.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Base class for endpoints that have an <a href="HTTP.html">HTTP</a> basis to
+their request and responses, even if the underlying transport is not <a
+href="HTTP.html">HTTP</a>. This is basically a collection of library-like
+routines useful to such classes and specifically excludes the part which
+actually makes an <a href="HTTP.html">HTTP</a> call (or <a
+href="AMQP.html">AMQP</a> call, or whatever) to a resource. That&#39;s up
+to the subclass.</p>
+
+<p>This must never be instantiated directly as an endpoint. Instead,
+instantiate a subclass such as <a
+href="HTTP.html">Hoodoo::Client::Endpoint::HTTP</a> or <a
+href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="HTTPBased/DataForRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DataForRequest</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="HTTPBased/DescriptionOfRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="HTTPBased/DescriptionOfResponse.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>G</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-get_data_for_request">get_data_for_request</a>,
+              </li>
+              <li>
+                <a href="#method-i-get_data_for_response">get_data_for_response</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Protected methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-get_data_for_request">
+              <b>get_data_for_request</b>( description_of_request )
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_request" name="method-i-get_data_for_request" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Preprocess a high level request description, returning <a
+href="HTTP.html">HTTP</a> orientated compiled data as a <a
+href="HTTPBased/DataForRequest.html">DataForRequest</a> instance.</p>
+<dl class="rdoc-list note-list"><dt><code>description_of_request</code>
+<dd>
+<p><a href="HTTPBased/DescriptionOfRequest.html">DescriptionOfRequest</a>
+instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-get_data_for_request_source')" id="l_method-i-get_data_for_request_source">show</a>
+              </p>
+              <div id="method-i-get_data_for_request_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
+  <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
+  <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
+  <span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">ident</span>.<span class="ruby-identifier">to_s</span>
+
+  <span class="ruby-identifier">body_data</span>  = <span class="ruby-identifier">body_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">body_hash</span> )
+
+  <span class="ruby-comment"># Amazingly, there&#39;s no fast way to deep clone a URI. Long story</span>
+  <span class="ruby-comment"># short - Marshal.load(Marshal.dump(uri)) takes, astonishingly,</span>
+  <span class="ruby-comment"># twice as long to execute as URI.parse(uri.to_s). I have no idea</span>
+  <span class="ruby-comment"># how that&#39;s possible. The Addressable gem is even slower.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment">#   require &#39;benchmark&#39;</span>
+  <span class="ruby-comment">#   require &#39;addressable/uri&#39; # Assuming gem is present</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment">#   s=&#39;http://user:password@pond.org.uk:9924/foo/bar.baz?thing=that&#39;</span>
+  <span class="ruby-comment">#   u=URI.parse(s)</span>
+  <span class="ruby-comment">#   a=Addressable::URI.parse(s)</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment">#   Benchmark.realtime { 1000000.times { u2=URI.parse(u.to_s) } }</span>
+  <span class="ruby-comment">#   # =&gt; 14.110195</span>
+  <span class="ruby-comment">#   Benchmark.realtime { 1000000.times { a2=a.dup } }</span>
+  <span class="ruby-comment">#   # =&gt; 26.530487</span>
+  <span class="ruby-comment">#   Benchmark.realtime { 1000000.times { u2=Marshal.load(Marshal.dump(u)) } }</span>
+  <span class="ruby-comment">#   # =&gt; 22.048637</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># ...repeatably.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># TODO: Is it possible to improve this? It&#39;s truly awful, to the</span>
+  <span class="ruby-comment">#       extent I&#39;m almost motivated to write a URI handler gem.</span>
+  <span class="ruby-comment">#       The core library URI API is tragically bad.</span>
+
+  <span class="ruby-identifier">remote_uri</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">to_s</span> )
+
+  <span class="ruby-comment"># Now we&#39;ve a copy, we can use high level URI methods to manipulate</span>
+  <span class="ruby-comment"># it to form the full request URI.</span>
+
+  <span class="ruby-identifier">remote_uri</span>.<span class="ruby-identifier">path</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;/#{ URI::escape( ident ) }&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ident</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-comment"># Grey area over whether this encodes spaces as &quot;%20&quot; or &quot;+&quot;, but</span>
+  <span class="ruby-comment"># so long as the middleware consistently uses the URI encode/decode</span>
+  <span class="ruby-comment"># calls, it should work out in the end anyway.</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">dup</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ] = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">encode_www_form</span>( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ] ) <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) )
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;filter&#39;</span> ] = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">encode_www_form</span>( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;filter&#39;</span> ] ) <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;filter&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) )
+
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ] = <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ].<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> ) <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> ) )
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ] = <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ].<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> ) <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> ) )
+
+    <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-string">&#39;search&#39;</span>     ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;search&#39;</span>     ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;search&#39;</span>     ].<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-string">&#39;filter&#39;</span>     ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;filter&#39;</span>     ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;filter&#39;</span>     ].<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-string">&#39;_embed&#39;</span>     ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_embed&#39;</span>     ].<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-string">&#39;_reference&#39;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;_reference&#39;</span> ].<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">remote_uri</span>.<span class="ruby-identifier">query</span> = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">encode_www_form</span>( <span class="ruby-identifier">query_hash</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">headers</span> = {
+    <span class="ruby-string">&#39;Content-Type&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;application/json; charset=utf-8&#39;</span>,
+    <span class="ruby-string">&#39;Content-Language&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>, <span class="ruby-comment"># Locale comes from Endpoint superclass</span>
+    <span class="ruby-string">&#39;Accept-Language&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>() <span class="ruby-operator">||</span> <span class="ruby-string">&#39;en-nz&#39;</span>
+  }
+
+  <span class="ruby-comment"># Interaction comes from Endpoint superclass.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># TODO: Can anything be done about inbound X-Interaction-ID</span>
+  <span class="ruby-comment">#       headers or interaction ID values specified by the</span>
+  <span class="ruby-comment">#       calling client which would be stripped by an Alchemy</span>
+  <span class="ruby-comment">#       architecture but not by conventional HTTP servers?</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>().<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;X-Interaction-ID&#39;</span> ] = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>().<span class="ruby-identifier">interaction_id</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Session ID comes from Endpoint superclass.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>().<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;X-Session-ID&#39;</span>] = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>()
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># A suite of options is defined by a constant in the Endpoint</span>
+  <span class="ruby-comment"># superclass.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span><span class="ruby-operator">::</span><span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">header_name</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:header</span>      ]
+    <span class="ruby-identifier">header_proc</span> = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:header_proc</span> ]
+    <span class="ruby-identifier">property</span>    = <span class="ruby-identifier">description</span>[ <span class="ruby-value">:property</span>    ]
+
+    <span class="ruby-identifier">property_value</span>  = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
+
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">property_value</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">headers</span>[ <span class="ruby-identifier">header_name</span> ] = <span class="ruby-identifier">header_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">property_value</span> )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">data</span>             = <span class="ruby-constant">DataForRequest</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">full_uri</span>    = <span class="ruby-identifier">remote_uri</span>
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">body_string</span> = <span class="ruby-identifier">body_data</span>
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">header_hash</span> = <span class="ruby-identifier">headers</span>
+  <span class="ruby-identifier">data</span>.<span class="ruby-identifier">query_hash</span>  = <span class="ruby-identifier">query_hash</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-get_data_for_response">
+              <b>get_data_for_response</b>( description_of_response )
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_response" name="method-i-get_data_for_response" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
+an instance of <a
+href="../AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
+href="../AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> with either
+processed body data inside, or error data associated.</p>
+<dl class="rdoc-list note-list"><dt><code>description_of_response</code>
+<dd>
+<p><a href="HTTPBased/DescriptionOfResponse.html">DescriptionOfResponse</a>
+instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-get_data_for_response_source')" id="l_method-i-get_data_for_response_source">show</a>
+              </p>
+              <div id="method-i-get_data_for_response_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 270</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
+  <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
+  <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(
+      <span class="ruby-identifier">body</span>,
+      <span class="ruby-value">:object_class</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>,
+      <span class="ruby-value">:array_class</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span>
+    )
+
+  <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">response_options</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span>.<span class="ruby-identifier">x_header_to_options</span>(
+      <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_headers</span>
+    )
+
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">code</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-number">404</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">generate_404_response_for</span>( <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">action</span> )
+      <span class="ruby-keyword">when</span> <span class="ruby-number">408</span>
+        <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;platform.timeout&#39;</span> )
+      <span class="ruby-keyword">when</span> <span class="ruby-number">200</span>
+        <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-string">&#39;platform.fault&#39;</span>,
+          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Could not parse body data returned from inter-resource call despite receiving HTTP status code 200&#39;</span>,
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
+        )
+      <span class="ruby-keyword">when</span> <span class="ruby-number">204</span>
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">response_options</span>[ <span class="ruby-string">&#39;deja_vu&#39;</span> ] <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;confirmed&#39;</span>
+          <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
+            <span class="ruby-string">&#39;platform.fault&#39;</span>,
+            <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Unexpected raw HTTP status code 204 with &#39;X-Deja-Vu: confirmed&#39; not present&quot;</span>,
+            <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;204&#39;</span> ) }
+          )
+        <span class="ruby-keyword">end</span> <span class="ruby-comment"># Else do nothing; keep the empty &#39;data&#39;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
+          <span class="ruby-string">&#39;platform.fault&#39;</span>,
+          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Unexpected raw HTTP status code #{ code } with non-JSON response&quot;</span>,
+          <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
+        )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Just in case someone changes JSON parsers under us and the</span>
+  <span class="ruby-comment"># replacement doesn&#39;t support the options used above...</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware: Incompatible JSON implementation in use which doesn&#39;t understand &#39;object_class&#39; or &#39;array_class&#39; options&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If the parsed data wrapped an array, extract just the array</span>
+  <span class="ruby-comment"># part, else the hash part.</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> ) )
+    <span class="ruby-identifier">size</span>   = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span> ]
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span>         ]
+    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">dataset_size</span> = <span class="ruby-identifier">size</span>
+
+  <span class="ruby-keyword">elsif</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;kind&#39;</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Errors&#39;</span> )
+
+    <span class="ruby-comment"># This isn&#39;t an array, it&#39;s an AugmentedHash describing errors.</span>
+    <span class="ruby-comment"># Turn this into a formal errors collection.</span>
+
+    <span class="ruby-identifier">errors_from_resource</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>()
+
+    <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;errors&#39;</span> ].<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">error</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">errors_from_resource</span>.<span class="ruby-identifier">add_precompiled_error</span>(
+        <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;code&#39;</span>      ],
+        <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;message&#39;</span>   ],
+        <span class="ruby-identifier">error</span>[ <span class="ruby-string">&#39;reference&#39;</span> ],
+        <span class="ruby-identifier">code</span>
+      )
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-comment"># Use a &#39;clean&#39; copy of the response class rather than keeping</span>
+    <span class="ruby-comment"># the originating data. People will not make assumptions about</span>
+    <span class="ruby-comment"># error payloads and trip over with the early return 404 stuff</span>
+    <span class="ruby-comment"># etc. this way.</span>
+
+    <span class="ruby-identifier">parsed</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">set_platform_errors</span>( <span class="ruby-identifier">errors_from_resource</span> )
+
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">response_options</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Headers</span>.<span class="ruby-identifier">x_header_to_options</span>(
+    <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_headers</span>
+  )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">parsed</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

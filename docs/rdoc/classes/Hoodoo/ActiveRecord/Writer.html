@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Writer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::Writer
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/active/active_record/writer_rb.html">lib/hoodoo/active/active_record/writer.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p><a href="Support.html">Support</a> mixin for models subclassed from <a
+href="Base.html">ActiveRecord::Base</a> providing context-aware data
+writing, allowing service authors to auto-inherit persistence-related
+features from <a href="../../Hoodoo.html">Hoodoo</a> without changing their
+own code.</p>
+
+<p>See individual module methods for examples, along with:</p>
+<ul><li>
+<p><a
+href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrails.org/active_record_basics.html</a></p>
+</li></ul>
+
+<p>Dependency <a
+href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a> is also
+included automatically.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Writer/ClassMethods.html">Hoodoo::ActiveRecord::Writer::ClassMethods</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-included">included</a>,
+              </li>
+              <li>
+                <a href="#method-c-instantiate">instantiate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>P</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-persist_in">persist_in</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-included">
+              <b>included</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Writer.html#method-c-included" name="method-c-included" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Instantiates this module when it is included:</p>
+
+<p>Example:</p>
+
+<pre><code>class SomeModel &lt; ActiveRecord::Base
+  include Hoodoo::ActiveRecord::Writer
+  # ...
+end
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant class that is
+including this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
+              </p>
+              <div id="method-c-included_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/writer.rb, line 47</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+    <span class="ruby-identifier">model</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:include</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ErrorMapping</span> )
+    <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-instantiate">
+              <b>instantiate</b>( model )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Writer.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+subclass, all of the <a
+href="Writer/ClassMethods.html">Hoodoo::ActiveRecord::Writer::ClassMethods</a>
+methods are defined as class methods on the including class.</p>
+
+<p>This module depends upon <a
+href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a>, so that
+will be auto-included first if it isn&#39;t already.</p>
+<dl class="rdoc-list note-list"><dt><code>model</code>
+<dd>
+<p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
+this module.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
+              </p>
+              <div id="method-c-instantiate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/writer.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
+
+  <span class="ruby-comment"># See instance method &quot;persist_in&quot; for how this gets used.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">validate</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@nz_co_loyalty_hoodoo_writer_db_uniqueness_violation</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+      <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>( <span class="ruby-value">:base</span>, <span class="ruby-string">&#39;has already been taken&#39;</span> )
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-persist_in">
+              <b>persist_in</b>( context )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Writer.html#method-i-persist_in" name="method-i-persist_in" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Instance equivalent of <a
+href="Writer/ClassMethods.html#method-i-persist_in">Hoodoo::ActiveRecord::Writer::ClassMethods#persist_in</a>
+- see that for details. The class method just calls here, having
+constructed an instance based on the attributes it was given. If you have
+already built an instance yourself, just call this instance method
+equivalent instead.</p>
+
+<p>As an instance-based method, the return value and error handling semantics
+differ from the class-based counterpart. Instead of checking “persisted?”,
+check the return value of <code>persist_in</code>. This means you can also
+use <code>persist_in</code> to save a previousl persisted, but now updated
+record, should you so wish.</p>
+
+<pre><code>def create( context )
+  attributes = mapping_of( context.request.body )
+  model_instance = Unique.new( attributes )
+
+  # ...maybe make other changes to model_instance, then...
+
+  unless model_instance.persist_in( context ) === :success
+
+    # Error condition. If you&#39;re using the error handler mixin
+    # in Hoodoo::ActiveRecord::ErrorMapping, do this:
+    #
+    context.response.add_errors( model_instance.platform_errors )
+    return # Early exit
+
+  end
+
+  # ...any other processing...
+
+  context.response.set_resource( rendering_of( context, model_instance ) )
+end
+</code></pre>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../Services/Context.html">Hoodoo::Services::Context</a> instance
+describing a call context. This is typically a value passed to one of the
+<a
+href="../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd></dl>
+
+<p>Returns a Symbol of <code>:success</code> or <code>:failure</code>
+indicating the outcome of the same attempt. In the event of failure, the
+model will be invalid and not persisted; you can read errors immediately
+and should avoid unnecessarily re-running validations by calling
+<code>valid?</code> or <code>validate</code> on the instance.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-persist_in_source')" id="l_method-i-persist_in_source">show</a>
+              </p>
+              <div id="method-i-persist_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/writer.rb, line 125</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">persist_in</span>( <span class="ruby-identifier">context</span> )
+
+  <span class="ruby-comment"># If this model has an ActiveRecord uniqueness validation, it is</span>
+  <span class="ruby-comment"># still subject to race conditions and MUST be backed by a database</span>
+  <span class="ruby-comment"># constraint. If this constraint fails, try to re-run model</span>
+  <span class="ruby-comment"># validations just in case it was a race condition case; though of</span>
+  <span class="ruby-comment"># course, it could be that there is *only* a database constraint and</span>
+  <span class="ruby-comment"># no model validation. If there is *only* a model validation, the</span>
+  <span class="ruby-comment"># model is ill-defined and at risk.</span>
+
+  <span class="ruby-comment"># TODO: This flag is nasty but seems unavoidable. Whenever you query</span>
+  <span class="ruby-comment">#       the validity of a record, AR will always clear all errors and</span>
+  <span class="ruby-comment">#       then (re-)run validations. We cannot just add an error to</span>
+  <span class="ruby-comment">#       &quot;base&quot; and expect it to survive. Instead, it&#39;s necessary to</span>
+  <span class="ruby-comment">#       use this flag to signal to the custom validator added in the</span>
+  <span class="ruby-comment">#       &#39;self.instantiate&#39; implementation earlier that it should add</span>
+  <span class="ruby-comment">#       an error. Trouble is, when do we clear the flag...?</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment">#       This solution works but is inelegant and fragile.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-ivar">@nz_co_loyalty_hoodoo_writer_db_uniqueness_violation</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-comment"># First just see if we have any problems saving anyway.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">errors_occurred</span> = <span class="ruby-keyword">begin</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transaction</span>( <span class="ruby-value">:requires_new</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">do</span>
+      <span class="ruby-value">:any</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">RecordNotUnique</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">error</span>
+    <span class="ruby-value">:duplication</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># If an exception caught a duplication violation then either there is</span>
+  <span class="ruby-comment"># a race condition on an AR-level uniqueness validation, or no such</span>
+  <span class="ruby-comment"># validation at all. Thus, re-run validations with &quot;valid?&quot; and if it</span>
+  <span class="ruby-comment"># still seems OK we must be dealing with a database-only constraint.</span>
+  <span class="ruby-comment"># Set the magic flag (ugh, see earlier) to signal that when</span>
+  <span class="ruby-comment"># validations run, they should add a relevant error to &quot;base&quot;.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors_occurred</span> <span class="ruby-operator">==</span> <span class="ruby-value">:duplication</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">valid?</span>
+      <span class="ruby-ivar">@nz_co_loyalty_hoodoo_writer_db_uniqueness_violation</span> = <span class="ruby-keyword">true</span>
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors_occurred</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-value">:success</span> <span class="ruby-operator">:</span> <span class="ruby-value">:failure</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

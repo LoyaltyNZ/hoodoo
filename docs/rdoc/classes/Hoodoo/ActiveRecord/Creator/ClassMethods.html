@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::Creator::ClassMethods</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::Creator::ClassMethods
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/active/active_record/creator_rb.html">lib/hoodoo/active/active_record/creator.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Collection of class methods that get defined on an including class via <a
+href="../Creator.html#method-c-included">Hoodoo::ActiveRecord::Creator.included</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-new_in">new_in</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-new_in">
+              <b>new_in</b>( context, attributes = nil, &amp;block )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Creator/ClassMethods.html#method-i-new_in" name="method-i-new_in" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create an instance of this model with knowledge of the wider request
+context. This may lead to important things like support of inbound
+“dated_from” values, depending upon the <a
+href="../../../Hoodoo.html">Hoodoo</a> mixins included (or not) by this
+class - see <a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
+
+<p>You use this exactly as you would for ActiveRecord::Core#new, but an
+additional, mandatory first parameter providing the request context must be
+supplied. For example, instead of this:</p>
+
+<pre><code>instance = SomeActiveRecordSubclass.new( attrs )
+</code></pre>
+
+<p>…do this inside a resource implementation:</p>
+
+<pre><code>instance = SomeActiveRecordSubclass.new_in( context, attrs )
+</code></pre>
+
+<p>See also:</p>
+<ul><li>
+<p><a
+href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">api.rubyonrails.org/classes/ActiveRecord/Base.html</a></p>
+</li></ul>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd><dt><code>attributes</code>
+<dd>
+<p>Optional model attributes Hash, passed through to ActiveRecord::Core#new.</p>
+</dd><dt>&amp;block
+<dd>
+<p>Optional block for initialisation, passed through to
+ActiveRecord::Core#new.</p>
+</dd></dl>
+
+<p>Returns a new model instance which may have context-derived values set for
+some attributes, in addition to anything set through the
+<code>attributes</code> or <code>&amp;block</code> parameters, if present.</p>
+
+<p>Note that context-dependent data is set <em>AFTER</em> attribute or block
+based values, so takes precedence over anything you might set up using
+those parameters.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-new_in_source')" id="l_method-i-new_in_source">show</a>
+              </p>
+              <div id="method-i-new_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/creator.rb, line 114</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">new_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">attributes</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+
+  <span class="ruby-comment"># TODO: Refactor this to use the scope chain plugin approach in due</span>
+  <span class="ruby-comment">#       course, but for now, pragmatic implementation does the only</span>
+  <span class="ruby-comment">#       thing we currently need to do - set &quot;created_at&quot;.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> )
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_from</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">created_at</span> = <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">updated_at</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_from</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">instance</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

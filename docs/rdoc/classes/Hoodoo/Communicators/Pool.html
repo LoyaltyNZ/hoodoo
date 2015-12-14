@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Communicators::Pool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::Communicators::Pool
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/communicators/pool_rb.html">lib/hoodoo/communicators/pool.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Maintains a pool of object instances which are expected to be communicating
+with “the outside world” in some way. A message sent to the pool is
+replicated to all the communicators in that pool. Some communicators are
+fast, which means they are called synchronously and expected to return very
+quickly. Some communicators are slow, which means they are called
+asynchronously through a work queue.</p>
+
+<p>See <a href="Pool.html#method-i-add">add</a> for more information.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Pool/QueueEntry.html">Hoodoo::Communicators::Pool::QueueEntry</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Pool/QueueWithTimeout.html">Hoodoo::Communicators::Pool::QueueWithTimeout</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>A</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-add">add</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-communicate">communicate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-remove">remove</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>T</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-terminate">terminate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>W</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-wait">wait</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='MAX_SLOW_QUEUE_SIZE'>
+            <td class="attr-name">MAX_SLOW_QUEUE_SIZE</td>
+            <td>=</td>
+            <td class="attr-value"><pre>50</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p><a href="Slow.html">Hoodoo::Communicators::Slow</a> subclass communicators
+are called in their own Threads via a processing Queue. There is the
+potential for a flood of communications to cause the queue to back up
+considerably, so a maximum number of messages is defined. If the queue size
+is _equal to or greater_ than this amount when a message arrives, it will
+be dropped and a &#39;dropped message&#39; count incremented.</p></td>
+            </tr>
+          <tr valign='top' id='THREAD_EXIT_TIMEOUT'>
+            <td class="attr-name">THREAD_EXIT_TIMEOUT</td>
+            <td>=</td>
+            <td class="attr-value"><pre>5</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>When asking slow communicator threads to exit, a timeout must be used in
+case the thread doesn&#39;t seem to be responsive. This is the timeout
+value in seconds - it can take a floating point or integer value.</p></td>
+            </tr>
+          <tr valign='top' id='THREAD_WAIT_TIMEOUT'>
+            <td class="attr-name">THREAD_WAIT_TIMEOUT</td>
+            <td>=</td>
+            <td class="attr-value"><pre>5</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Analogous to <a
+href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a> but used when
+waiting for a processing Thread to drain its Queue, without asking it to
+exit.</p></td>
+            </tr>
+      </table>
+
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-group'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>group</td>
+            <td class='attr-desc'><p>Retrieve the ThreadGroup instance managing the collection of slow
+communicator threads. This is mostly used for testing purposes and has
+little general purpose utility.</p></td>
+          </tr>
+      </table>
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>()
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create a new pool of communicators - instances of subclasses of <a
+href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
+href="Slow.html">Hoodoo::Communicators::Slow</a>, are added with <a
+href="Pool.html#method-i-add">add</a> and called with <a
+href="Pool.html#method-i-communicate">communicate</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
+  <span class="ruby-ivar">@pool</span>  = {}
+  <span class="ruby-ivar">@group</span> = <span class="ruby-operator">::</span><span class="ruby-constant">ThreadGroup</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-add">
+              <b>add</b>( communicator )
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-i-add" name="method-i-add" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add a communicator instance to the pool. Future calls to <a
+href="Pool.html#method-i-communicate">communicate</a> will call the
+same-named method in that instance.</p>
+
+<p>Subclasses of <a href="Slow.html">Hoodoo::Communicators::Slow</a> are
+called within a processing Thread. Subclasses of <a
+href="Fast.html">Hoodoo::Communicators::Fast</a> are called inline. The
+instances are called in the order of addition, but since each slow
+communicator runs in its own Thread, the execution order is indeterminate
+for such instances.</p>
+
+<p>If a slow communicator&#39;s inbound message queue length matches or
+exceeds <a href="Pool.html#MAX_SLOW_QUEUE_SIZE">MAX_SLOW_QUEUE_SIZE</a>,
+messages for that specific communicator will start being dropped until the
+communicator clears the backlog and at last one space opens on the queue.
+<a href="Slow.html">Slow</a> communicators can detect when this has
+happened by implementing <a
+href="Slow.html#method-i-dropped">Hoodoo::Communicators::Slow#dropped</a>
+in the subclass.</p>
+
+<p>If you pass the same instance more than once, the subsequent calls are
+ignored. You can add many instances of the same class if that&#39;s useful
+for any reason.</p>
+
+<p>Returns the passed-in communicator instance parameter, for convenience.</p>
+<dl class="rdoc-list note-list"><dt><code>communicator</code>
+<dd>
+<p>Instance is to be added to the pool. Must be either a <a
+href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
+href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-add_source')" id="l_method-i-add_source">show</a>
+              </p>
+              <div id="method-i-add_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 88</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> <span class="ruby-operator">||</span>
+           <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Slow</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::Pool\#add must be called with an instance of a subclass of Hoodoo::Communicators::Fast or Hoodoo::Communicators::Slow only&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">communicator</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> )
+    <span class="ruby-identifier">add_fast_communicator</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">add_slow_communicator</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">communicator</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-communicate">
+              <b>communicate</b>( object )
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Call the <a href="Pool.html#method-i-communicate">communicate</a> method on
+each communicator instance added via <a
+href="Pool.html#method-i-add">add</a>. Each instance is called in the same
+order as corresponding calls are made to the pool. <em>Across</em>
+instances, fast communicators are called in the order they were added to
+the pool, but since each slow communicator runs in its own Thread,
+execution order is indeterminate.</p>
+<dl class="rdoc-list note-list"><dt><code>object</code>
+<dd>
+<p>Parameter passed to the communicator subclass instance <a
+href="Pool.html#method-i-communicate">communicate</a> methods.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
+              </p>
+              <div id="method-i-communicate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 147</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+  <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">communicator</span>, <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:fast</span> )
+      <span class="ruby-keyword">begin</span>
+        <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">object</span> )
+      <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+        <span class="ruby-identifier">handle_exception</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">communicator</span> )
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">data</span>       = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span>       ]
+      <span class="ruby-identifier">thread</span>     = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:thread</span>     ]
+      <span class="ruby-identifier">work_queue</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ]
+
+      <span class="ruby-comment"># This is inaccurate if one or more &quot;dropped messages&quot; reports are</span>
+      <span class="ruby-comment"># on the queue, but since some communicators might report them in</span>
+      <span class="ruby-comment"># the same way as other messages, it&#39;s not necessarily incorrect</span>
+      <span class="ruby-comment"># either.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">work_queue</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">MAX_SLOW_QUEUE_SIZE</span>
+        <span class="ruby-identifier">dropped</span> = <span class="ruby-identifier">thread</span>[ <span class="ruby-value">:dropped_messages</span> ]
+
+        <span class="ruby-keyword">if</span> <span class="ruby-identifier">dropped</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
+          <span class="ruby-identifier">thread</span>[ <span class="ruby-value">:dropped_messages</span> ] = <span class="ruby-number">0</span>
+
+          <span class="ruby-comment"># Opposite of comment above on MAX_SLOW_QUEUE_SIZE check...</span>
+          <span class="ruby-comment"># Yes, this takes up a queue entry and the payload addition</span>
+          <span class="ruby-comment"># afterwards might take it one above max size, but that&#39;s OK</span>
+          <span class="ruby-comment"># since this is just a &quot;dropped messages&quot; report and though</span>
+          <span class="ruby-comment"># some communicators might deal with them slowly, others may</span>
+          <span class="ruby-comment"># just ignore them.</span>
+          <span class="ruby-comment">#</span>
+          <span class="ruby-identifier">work_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-identifier">dropped</span> )
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-identifier">work_queue</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">QueueEntry</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-identifier">object</span> )
+
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">thread</span>[ <span class="ruby-value">:dropped_messages</span> ] <span class="ruby-operator">+=</span> <span class="ruby-number">1</span>
+
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-remove">
+              <b>remove</b>( communicator )
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-i-remove" name="method-i-remove" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Remove a communicator previously added by <a
+href="Pool.html#method-i-add">add</a>. See that for details.</p>
+
+<p>It is harmless to try and remove communicator instances more than once or
+to try to remove something that was never added in the first place; the
+call simply has no side effects.</p>
+
+<p>If removing a slow communicator, its thread will be terminated with default
+timeout value of <a
+href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a> seconds. For
+this reason, removing a slow communicator may take a long time.</p>
+
+<p>Returns the passed-in communicator instance parameter, for convenience.</p>
+<dl class="rdoc-list note-list"><dt><code>communicator</code>
+<dd>
+<p>Instance is to be removed from the pool. Must be either a <a
+href="Fast.html">Hoodoo::Communicators::Fast</a> or <a
+href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-remove_source')" id="l_method-i-remove_source">show</a>
+              </p>
+              <div id="method-i-remove_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 121</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">remove</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">unless</span> ( <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> <span class="ruby-operator">||</span>
+           <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">class</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Slow</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::Pool\#remove must be called with an instance of a subclass of Hoodoo::Communicators::Fast or Hoodoo::Communicators::Slow only&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">communicator</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Communicators</span><span class="ruby-operator">::</span><span class="ruby-constant">Fast</span> )
+    <span class="ruby-identifier">remove_fast_communicator</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">remove_slow_communicator</span>( <span class="ruby-identifier">communicator</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">communicator</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-terminate">
+              <b>terminate</b>( per_instance_timeout: THREAD_EXIT_TIMEOUT )
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-i-terminate" name="method-i-terminate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>The communication pool is “emptied” by this call, going back to a clean
+state as if just initialised. New workers can be added via <a
+href="Pool.html#method-i-add">add</a> and then called via <a
+href="Pool.html#method-i-communicate">communicate</a> if you so wish.</p>
+
+<p>Hoodoo::Communciators::Fast subclass instances are removed immediately
+without complications.</p>
+
+<p><a href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instances in
+the communication pool are called via a worker Thread; this method shuts
+down all such worker Threads, clearing their work queues and asking each
+one to exit (politely). There is no mechanism (other than overall Ruby
+process exit) available to shut down the Threads by force, so some Threads
+may not respond and time out.</p>
+
+<p>When this method exits, all workers will have either exited or timed out
+and possibly still be running, but are considered too slow or dead. No
+further communications are made to them.</p>
+
+<p>The following <strong>named</strong> parameters are supported:</p>
+<dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
+<dd>
+<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
+Default is the value in <a
+href="Pool.html#THREAD_EXIT_TIMEOUT">THREAD_EXIT_TIMEOUT</a>. For example,
+with three slow communicators in the pool and all three reached a 5 second
+timeout, the termination method would not return for 15 seconds (3 * 5
+seconds full timeout).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-terminate_source')" id="l_method-i-terminate_source">show</a>
+              </p>
+              <div id="method-i-terminate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 275</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">terminate</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-constant">THREAD_EXIT_TIMEOUT</span> )
+  <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">shift</span>() <span class="ruby-comment"># Hash#shift -&gt; remove a key/value pair.</span>
+    <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
+
+    <span class="ruby-identifier">request_termination_for</span>(
+      <span class="ruby-identifier">thread</span><span class="ruby-operator">:</span>     <span class="ruby-identifier">data</span>[ <span class="ruby-value">:thread</span>     ],
+      <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+      <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-wait">
+              <b>wait</b>( per_instance_timeout: THREAD_WAIT_TIMEOUT, communicator: nil )
+            <a href="../../../classes/Hoodoo/Communicators/Pool.html#method-i-wait" name="method-i-wait" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>This method is only useful if there are any <a
+href="Slow.html">Hoodoo::Communicators::Slow</a> subclass instances in the
+communication pool. Each instance is called via a worker Thread; this
+method waits for each communicator to drain its queue before returning.
+This is useful if you have a requirement to wait for all communications to
+finish on all threads, presumably for wider synchronisation reasons.</p>
+
+<p>Since fast communicators are called synchronously there is never any need
+to wait for them, so this call ignores such pool entries.</p>
+
+<p>The following <strong>named</strong> parameters are supported:</p>
+<dl class="rdoc-list note-list"><dt><code>per_instance_timeout</code>
+<dd>
+<p>Timeout for <em>each</em> slow communicator Thread in seconds. Optional.
+Default is the value in <a
+href="Pool.html#THREAD_WAIT_TIMEOUT">THREAD_WAIT_TIMEOUT</a>.</p>
+</dd><dt><code>communicator</code>
+<dd>
+<p>If you want to wait for specific instance only (see <a
+href="Pool.html#method-i-add">add</a>), pass it here. If the instance is a
+fast communicator, or any object not added to the pool, then there is no
+error raised. The method simply returns immediately.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-wait_source')" id="l_method-i-wait_source">show</a>
+              </p>
+              <div id="method-i-wait_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 216</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">wait</span>( <span class="ruby-identifier">per_instance_timeout</span><span class="ruby-operator">:</span> <span class="ruby-constant">THREAD_WAIT_TIMEOUT</span>,
+          <span class="ruby-identifier">communicator</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">communicator</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">communicator</span>, <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+      <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
+
+      <span class="ruby-identifier">wait_for</span>(
+        <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+        <span class="ruby-identifier">sync_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:sync_queue</span> ],
+        <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+      )
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@pool</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">communicator</span> )
+    <span class="ruby-identifier">item</span> = <span class="ruby-ivar">@pool</span>[ <span class="ruby-identifier">communicator</span> ]
+
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:slow</span> )
+    <span class="ruby-identifier">data</span> = <span class="ruby-identifier">item</span>[ <span class="ruby-value">:slow</span> ]
+
+    <span class="ruby-identifier">wait_for</span>(
+      <span class="ruby-identifier">work_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:work_queue</span> ],
+      <span class="ruby-identifier">sync_queue</span><span class="ruby-operator">:</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:sync_queue</span> ],
+      <span class="ruby-identifier">timeout</span><span class="ruby-operator">:</span>    <span class="ruby-identifier">per_instance_timeout</span>
+    )
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

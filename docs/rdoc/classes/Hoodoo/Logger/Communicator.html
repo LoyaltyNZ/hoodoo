@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Logger::Communicator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::Logger::Communicator
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/logger/logger_rb.html">lib/hoodoo/logger/logger.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Mixin used internally for the <a
+href="FastCommunicator.html">FastCommunicator</a> and <a
+href="SlowCommunicator.html">SlowCommunicator</a> wrappers that hide
+implementation complexity from log writer subclasses.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-communicate">communicate</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-dropped">dropped</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( writer_instance, owning_logger )
+            <a href="../../../classes/Hoodoo/Logger/Communicator.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Create an instance of a logging communicator, based on the given log writer
+and owning logger instance.</p>
+<dl class="rdoc-list note-list"><dt><code>writer_instance</code>
+<dd>
+<p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> or <a
+href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a> subclass instance
+that will log things when this <a href="Communicator.html">Communicator</a>
+asks it to do so.</p>
+</dd><dt><code>owning_logger</code>
+<dd>
+<p><a href="../Logger.html">Hoodoo::Logger</a> instance that will be using
+this communicator instance.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 331</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-identifier">owning_logger</span> )
+  <span class="ruby-ivar">@writer_instance</span> = <span class="ruby-identifier">writer_instance</span>
+  <span class="ruby-ivar">@owning_logger</span>   = <span class="ruby-identifier">owning_logger</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-communicate">
+              <b>communicate</b>( payload )
+            <a href="../../../classes/Hoodoo/Logger/Communicator.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Implement Hoodoo::Communicators::Base#communicate for both slow and fast
+writers. Assumes it will be passed a <a
+href="Payload.html">Hoodoo::Logger::Payload</a> class instance which
+describes the structured log data to report; also assumes it is only called
+when the calling logger&#39;s configured log level threshold should allow
+through the level of the log message in question. Calls through to the
+report implementation.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
+              </p>
+              <div id="method-i-communicate_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 343</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">payload</span> )
+  <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">log_level</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">component</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">code</span>,
+    <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">data</span>
+  )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-dropped">
+              <b>dropped</b>( number )
+            <a href="../../../classes/Hoodoo/Logger/Communicator.html#method-i-dropped" name="method-i-dropped" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Implement optional method <a
+href="../Communicators/Slow.html#method-i-dropped">Hoodoo::Communicators::Slow#dropped</a>
+on behalf of subclasses. The method turns the &#39;messages dropped&#39;
+notification into a log message of <code>:warn</code> level and which it
+reports internally immediately for the Writer instance only (since
+different writers have different queues and thus different dropped message
+warnings), provided that the owning <a
+href="../Logger.html">Hoodoo::Logger</a> instance log level lets warnings
+through.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-dropped_source')" id="l_method-i-dropped_source">show</a>
+              </p>
+              <div id="method-i-dropped_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 360</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped</span>( <span class="ruby-identifier">number</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@owning_logger</span>.<span class="ruby-identifier">report?</span>( <span class="ruby-value">:warn</span> )
+    <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
+      <span class="ruby-value">:warn</span>,
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>,
+      <span class="ruby-string">&#39;dropped.messages&#39;</span>,
+      <span class="ruby-node">&quot;Logging flooded - #{ number } messages dropped&quot;</span>
+    )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>
