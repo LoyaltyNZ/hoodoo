@@ -1,0 +1,24 @@
+# Site globals
+
+title: Hoodoo Guides
+categories: [home, guide]
+baseurl: /hoodoo
+
+# Markup engine and configuration
+
+markdown: redcarpet
+redcarpet:
+  extensions: [smart]
+
+# Tell Jekyll where to find @imports and set CSS output style
+
+sass:
+  sass_dir:  _sass
+  style:    :compressed
+
+# Custom variables available as "{{ site.custom... }}"
+
+custom:
+  github_repo_url:       'https://github.com/LoyaltyNZ/hoodoo'
+  api_specification_url: 'https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification/'
+  rdoc_root_url:         'https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc'

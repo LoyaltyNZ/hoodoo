@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ site.title }}: {{ page.title }}</title>
+
+    <link href='{{ site.baseurl }}/styles.css' rel='stylesheet' type='text/css'>
+    <script src='{{ site.baseurl }}/script.js' type='text/javascript'></script>
+  </head>
+  <body>
+    <header>
+      <h1>{{ site.title }}: {{ page.title }}</h1>
+
+      <nav>
+        <a href="{{ site.baseurl }}/">Home</a>
+        |
+        <a href="{{ site.custom.github_repo_url }}">GitHub</a>
+        |
+        <a href="https://www.loyalty.co.nz">Loyalty NZ</a>
+      </nav>
+
+      <div class="clear"></div>
+    </header>
+
+    <article>
+      <nav id="article_navigation_top">
+{% include navigation.html %}
+      </nav>
+
+      <section>

@@ -1,0 +1,39 @@
+/* Colour palette based on:
+ *
+ *   http://www.colourlovers.com/palette/3830945/thing
+ *
+ */
+
+$header_footer_foreground: #fff;
+$header_footer_background: #3b394f;
+
+$print_header_footer_foreground: #000;
+$print_header_footer_background: #f6f6f6;
+
+$body_foreground: #000;
+$body_background: #fff;
+
+$monospace_foreground: #4b41c6;
+$monospace_background: #f6f6f6;
+
+$code_icon: #ddd;
+
+$article_nav_foreground: #000;
+$article_nav_background: $monospace_background;
+
+$article_link_default: $monospace_foreground;
+$article_link_visited: darken( $monospace_foreground, 20% );
+$article_link_hover:   lighten( $monospace_foreground, 20% );
+
+$article_nav_link_default: $article_link_default;
+$article_nav_link_visited: $article_link_visited;
+$article_nav_link_hover:   $article_link_hover;
+
+$header_footer_link_default: #eee;
+$header_footer_link_visited: #eee;
+$header_footer_link_hover:   #fff;
+
+$blockquote_background: $monospace_background;
+$blockquote_icon: #f00;
+
+$block_region_radius: 5px;

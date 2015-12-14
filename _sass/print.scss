@@ -1,0 +1,61 @@
+/* Print variations. The focus is in making dark backgrounds light to save ink
+ * (but making sure they print, via a WebKit CSS directive, because they're
+ * useful to deliniate certain content areas) and hiding uninformative external
+ * hyperlink navigation. Borders are also minimised but a small amount is kept
+ * for aesthetics and things like the left-hanging icon on PRE areas.
+ */
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    zoom: 90%;
+  }
+
+  a, a:visited {
+    text-decoration: none;
+    color: #000 !important;
+  }
+
+  article, header, footer {
+    padding: 30px 20px;
+  }
+
+  pre {
+    padding-left: 20px;
+
+    code {
+      font-size: 9pt;
+    }
+  }
+
+  nav#article_navigation_top {
+    div.article_navigation_reference,
+    div.article_navigation_guides {
+      display: none;
+    }
+  }
+
+  header, footer {
+    display: block;
+    text-align: center;
+    color: $print_header_footer_foreground;
+    background: $print_header_footer_background;
+    box-shadow: none;
+
+    h1 {
+      display: block;
+      margin: 0;
+    }
+  }
+
+  header nav {
+    display: none;
+  }
+
+  span#footer_navigation_other {
+    display: none;
+  }
+}

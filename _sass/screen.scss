@@ -1,0 +1,286 @@
+/*
+ * Bear in mind that 'modernscale.scss' is loaded in front of this file!
+ */
+
+/* Fundamental typography and layout */
+
+html {
+  min-width: 320px;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+
+  color: $body_foreground;
+  background: $body_background;
+
+  font-family: 'Tinos', 'Palatino Linotype', 'Book Antiqua', 'Palatino', serif;
+  font-size: 13pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+div.clear {
+  clear: both;
+}
+
+pre, code, tt, kbd {
+  color: $monospace_foreground;
+  background: $monospace_background;
+
+  font-family: 'Inconsolata', 'Consolas', 'Andale Mono', monospace;
+  font-size: 80%;
+}
+
+code, tt, kbd {
+  padding: 3px;
+}
+
+pre {
+  padding: 20px 20px 20px 30px;
+  page-break-inside: avoid;
+  overflow: scroll;
+
+  box-shadow: 0 0 5px $monospace_background;
+  border-radius: $block_region_radius;
+
+  code {
+    padding: 0;
+    border-top: none;
+    color: #333;
+  }
+}
+
+div.highlight {
+  @include hanging_icon( '\f1c9', $code_icon );
+}
+
+ul, ol {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+li {
+  margin-left: 1.5em;
+}
+
+/* https://css-tricks.com/snippets/css/prevent-superscripts-and-subscripts-from-affecting-line-height/ */
+
+sup, sub {
+  position: relative;
+  top: -0.4em;
+  vertical-align: baseline;
+  font-size: 80%;
+}
+
+sub {
+  top: 0.4em;
+}
+
+img.diagram {
+  display: block;
+  float: right;
+  margin: 0 0 20px 20px ;
+}
+
+/* Main page article overrides */
+
+article {
+  padding: 40px 10%;
+
+  nav#article_navigation_top div.article_navigation_contents h4 {
+    margin-top: 0;
+  }
+
+  section {
+    h1:first-child,
+    h2:first-child,
+    h3:first-child,
+    h4:first-child,
+    h5:first-child,
+    h6:first-child,
+    ul:first-child,
+    ol:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    line-height: 1.4;
+  }
+
+  a {
+    color: $article_link_default;
+  }
+
+  a:visited {
+    color: $article_link_visited;
+  }
+
+  a:hover {
+    color: $article_link_hover;
+  }
+
+  nav {
+
+    /* CSS hack - keep above position: relative "div.highlight" which needs
+     * the position specifier for the hanging decoration icon; else that block
+     * invisibly stretches across the page width on top of the TOC and stops
+     * the links being clickable.
+     */
+
+    position: relative;
+    z-index: 100;
+
+    max-width: 33%;
+    float: right;
+    overflow: scroll;
+
+    margin-left: 20pt;
+    margin-bottom: 10pt;
+    padding: 20px;
+
+    color: $article_nav_foreground;
+    background: $article_nav_background;
+    box-shadow: 0 0 5px $article_nav_background;
+    border: none !important;
+    border-radius: $block_region_radius;
+
+    font-size: 85%;
+    line-height: 1.3;
+
+    a {
+      text-decoration: none;
+    }
+
+    li {
+      margin: 2px 0 2px 1.2em;
+    }
+
+    ul:last-child, ol:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Use block quotes (">" prefix in Markdown) for notes / callouts */
+
+  blockquote {
+
+    /* Bizarre hack for a universal <blockquote> quirk; stops backgrounds from
+     * overlapping floats, such as the TOC. Downside is that the blockquote is
+     * only as wide as its text, not using more space if available. That's
+     * solved by using "overflow: auto" instead, but then the inner content
+     * providing the floating "i" icon is left-cropped since it deliberately
+     * hangs outside the left edge of the element bounding box.
+     */
+    display: table;
+
+    margin: 0;
+    padding: 15px 15px 15px 30px;
+    page-break-inside: avoid;
+
+    background: $blockquote_background;
+    box-shadow: 0 0 5px $blockquote_background;
+    border-radius: $block_region_radius;
+
+    @include hanging_icon( '\f129', $blockquote_icon );
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+/* Hide the narrow viewport bottom navigation by default;
+ * may be overridden by 'narrow.scss'.
+ */
+
+nav#article_navigation_bottom {
+  display: none;
+}
+
+/* Headings with automatic section numbers. From:
+ *
+ *   http://philarcher.org/diary/2013/headingnumbers/
+ *
+ */
+
+section {
+  h2 { counter-reset: h3; }
+  h3 { counter-reset: h4; }
+  h4 { counter-reset: h5; }
+  h5 { counter-reset: h6; }
+
+  h2:before { counter-increment: h2; content: counter( h2 ) ". "; }
+  h3:before { counter-increment: h3; content: counter( h2 ) "." counter( h3 ) ". "; }
+  h4:before { counter-increment: h4; content: counter( h2 ) "." counter( h3 ) "." counter( h4 ) ". "; }
+  h5:before { counter-increment: h5; content: counter( h2 ) "." counter( h3 ) "." counter( h4 ) "." counter( h5 ) ". "; }
+  h6:before { counter-increment: h6; content: counter( h2 ) "." counter( h3 ) "." counter( h4 ) "." counter( h5 ) "." counter( h6 ) ". "; }
+
+  h2.no_counter:before,
+  h3.no_counter:before,
+  h4.no_counter:before,
+  h5.no_counter:before,
+  h6.no_counter:before {
+    content: "";
+    counter-increment: none;
+  }
+}
+
+body { counter-reset: h2; }
+
+/* Header and footer general */
+
+header, footer {
+  padding: 25pt 10%;
+
+  color: $header_footer_foreground;
+  background: $header_footer_background;
+  box-shadow: 0 0 2px $header_footer_background;
+
+  h1 {
+    font-size: 32pt;
+  }
+
+  nav {
+    white-space: nowrap;
+
+    a {
+      font-size: 14pt;
+      color: $header_footer_link_default;
+    }
+
+    a:visited {
+      color: $header_footer_link_visited;
+    }
+
+    a:hover {
+      color: $header_footer_link_hover;
+    }
+  }
+}
+
+header {
+  box-sizing: border-box;
+  display: table; // It's 2015 and this is still the quickest and most reliable method O_o
+  width: 100%;
+
+  h1 {
+    display: table-cell;
+  }
+
+  nav {
+    display: table-cell;
+    text-align: right;
+    padding-left: 2em;
+    vertical-align: middle;
+  }
+}
+
+footer nav {
+  text-align: center;
+}

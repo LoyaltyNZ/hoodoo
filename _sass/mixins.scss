@@ -1,0 +1,36 @@
+/* Call with e.g.:
+ *
+ *   div.highlight {
+ *     @include hanging_icon( '\f1c9', #ddd );
+ *   }
+ *
+ * ...to put a "page" hanging icon from FontAwesome on a DIV of class
+ * "highlight" in colour "#ddd".
+ */
+
+@mixin hanging_icon( $font_awesome_character, $colour ) {
+  position: relative;
+
+  :before {
+    position: absolute;
+    display: inline-block;
+    top: 12px;
+    left: -15px;
+
+    text-align: center;
+    font-family: 'FontAwesome';
+    font-style: normal;
+    font-weight: normal;
+
+    font-size: 18px;
+    line-height: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+
+    content: $font_awesome_character;
+
+    color: $colour;
+    background: #fff;
+  }
+}

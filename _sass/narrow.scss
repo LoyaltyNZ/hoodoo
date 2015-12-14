@@ -1,0 +1,91 @@
+/* Narrow viewport variations */
+
+@media only screen and (max-width: 640px) {
+
+  header {
+    display: block;
+    text-align: center;
+
+    h1 {
+      font-size: 24pt;
+      display: block;
+      margin-top: 0;
+    }
+
+    nav {
+      display: block;
+      text-align: center;
+      padding-left: 0;
+
+      a {
+        font-size: 14pt;
+      }
+    }
+
+    div.clear {
+      display: none;
+    }
+  }
+
+  pre {
+    padding-left: 20px;
+
+    code {
+      font-size: 8pt;
+    }
+  }
+
+  img.diagram {
+    float: none;
+    margin: 20px auto;
+  }
+
+  article nav {
+    float: none;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px;
+
+    /* More finger-friendly navigation */
+
+    li {
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+  }
+
+  /* Show the contents at the top, but reference and guides at the end */
+
+  nav#article_navigation_top {
+    margin-bottom: 20px;
+
+    div.article_navigation_reference,
+    div.article_navigation_guides {
+      display: none;
+    }
+  }
+
+  nav#article_navigation_bottom {
+    display: block;
+
+    div.article_navigation_contents {
+      display: none;
+    }
+
+    div.article_navigation_reference h4 {
+      margin-top: 0;
+    }
+  }
+
+  footer nav {
+    font-size: 12pt;
+
+    span {
+      display: block;
+    }
+
+    span#footer_link_separator {
+      display: none;
+    }
+  }
+}

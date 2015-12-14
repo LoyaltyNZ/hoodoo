@@ -1,0 +1,19 @@
+/* Wide viewport variations */
+
+@media only screen and (min-width: 1280px) {
+  body {
+    font-size: 13.75pt;
+  }
+
+  article, header, footer {
+    padding-left: 15%;
+    padding-right: 15%;
+  }
+}
+
+@media only screen and (min-width: 1900px) {
+  article, header, footer {
+    padding-left: 20%;
+    padding-right: 20%;
+  }
+}
