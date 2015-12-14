@@ -2,6 +2,8 @@
 
 Simplify the implementation of services within an API-based software platform.
 
+See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documentation and examples.
+
 ## Usage
 
 Add the gem to your `Gemfile`:
