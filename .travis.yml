@@ -3,9 +3,11 @@ rvm:
   - 2.1.6
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
+#
 sudo: false
 
 # http://docs.travis-ci.com/user/caching/
+#
 language: ruby
 cache: bundler
 
@@ -14,3 +16,15 @@ addons:
 
 script:
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
+
+# https://docs.travis-ci.com/user/deployment/rubygems
+# API key is encrypted and secure.
+#
+deploy:
+  provider: rubygems
+  api_key:
+    secure: OBKCKGKD1HKoqFyz1KsbdnOtvP7dcBMnpuwxzKBNCoklTzVGHOgYE0sZWmTPqYPzOY58N+6ZbrmAzZ4Ob8pjaFnHFAXOtQU4cedm7DEWeXXmLA0UPTlwtxaS/3G3Oo+AZwtQtdwNvT4aT4fynaW/SCCk40Lo4Ze5dCncs6vGi2wy1jMFvlshMNsgsFHAKPETnHQSSHqVhSeJBRHxghsax/t0lW6Q2Cn69YUy06YMcpT2pvC2RJSnmLf4bFoH4YqUh1biOPf9HT749KU5su2PUJbLD+O4z6+llodUS7wfnA6qtEzT2q/LkBIW4KV7TIRBbJrtGxT+X+T5FLWknoh8NIXcflgDfMslGzl+9zWkw1K/ZXhwdzHunGR4gpN2wCBssXCAoO0K+keuHLGWa4T8mYX7wIj1EoHwdqTX5WVoIcUT/EqeEc8Z056lJEGe9HErrrCoirVqZk45VI/dJl1fcB3C2GwLDJXiXsNL1HS3U2iEFXTFCB3oAPdpBpvoWBXGZDj625bPLJcXhR+h7+OYxMZTKo8h8LpyTgu0bZkqhECYCBWHDl+BEQ3k1uraMDxoOu4KD81IIRSb0sgGv6WZEgty7IlIL9v3ayKvvAmg4XezlyB68ThnvmdW8Hby7IofD/Jyfmh4SdSt0wwj2kDUxp/IRFUSM4iMvG8g+3OgKcw=
+  gem: hoodoo
+  on:
+    tags: true
+    repo: LoyaltyNZ/hoodoo
