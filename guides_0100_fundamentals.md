@@ -426,15 +426,13 @@ The `bin` folder contains optional helpers.
 
 The shell is more "opinionated" than Hoodoo by necessity. It needs to know where it's going to include files, the requirement order and so-on, and where to look to get everything set up for running under Rack locally, or in deployed environments over conventional HTTP or HTTP-over-[AMQP](https://www.amqp.org) via [Alchemy](https://github.com/LoyaltyNZ/alchemy-amq). A Rails-like configuration approach is taken with a `config` folder containing database information, environment-specific files -- remember, that's `RACK_ENV`, **NOT** `RAILS_ENV`! -- and the `initializers` folder for custom startup code. It contains out-of-box ways to easily _optionally_ enable [Raygun](https://raygun.io), [Airbrake](https://airbrake.io) and/or [NewRelic](https://newrelic.com).
 
-The Shell introduces the idea of _five_ environments:
+The Shell introduces the idea of three environments:
 
 * `RACK_ENV=test` -- applies while tests are running only
 * `RACK_ENV=development` -- familiar, Rails-like local development
 * `RACK_ENV=production` -- again familiar, fully-tested production code
-* `RACK_ENV=red` -- this is intended to be used for third-party integration in a non-production environment. If you stand up a Red environment, it should contain identical, or as near-as-possible identical code to Production at all times.
-* `RACK_ENV=edge` -- a team of developers is likely to need a leading-edge collaborative environment which may contain unstable code. This can be coordinated for use by QA prior to deployment through to Red and Production.
 
-You don't have to use all of these. Only the test, development and production environments are effectively mandatory. You can add new ones just by using the right `RACK_ENV` value and, optionally, adding an appropriately named file into the `environments` folder.
+You can add new environments just by using the right `RACK_ENV` value and, optionally, adding an appropriately named file into the `environments` folder.
 
 ```
 ├── config
