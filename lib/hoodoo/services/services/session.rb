@@ -9,7 +9,7 @@
 ########################################################################
 
 require 'ostruct'
-require 'dalli'
+# require 'dalli'
 
 module Hoodoo
   module Services

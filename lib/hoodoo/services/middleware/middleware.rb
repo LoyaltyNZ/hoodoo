@@ -1747,11 +1747,11 @@ module Hoodoo; module Services
 
         end
 
-        if ( defined?( ::ActiveRecord ) && defined?( ::ActiveRecord::Base ) )
-          ::ActiveRecord::Base.connection_pool.with_connection( &block )
-        else
+        # if ( defined?( ::ActiveRecord ) && defined?( ::ActiveRecord::Base ) )
+        #   ::ActiveRecord::Base.connection_pool.with_connection( &block )
+        # else
           block.call
-        end
+        # end
 
         if context.request.deja_vu && context.response.halt_processing?
           remove_expected_errors_when_experiencing_deja_vu( interaction )

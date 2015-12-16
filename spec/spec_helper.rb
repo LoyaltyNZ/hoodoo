@@ -17,7 +17,7 @@ end
 
 # Debugging support.
 
-require 'byebug'
+# require 'byebug'
 
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
@@ -26,8 +26,8 @@ require 'byebug'
 #
 # http://stackoverflow.com/questions/7586813/fake-an-active-record-model-without-db
 
-require 'database_cleaner'
-require 'active_record'
+# require 'database_cleaner'
+# require 'active_record'
 require 'logger'
 
 # Include AlchemyAMQ for testing only.
@@ -78,9 +78,9 @@ RSpec.configure do | config |
 
   # Wake up Database Cleaner.
 
-  DatabaseCleaner.strategy = :transaction # MUST NOT be changed
-
-  database_name = 'hoodoo_test'
+  # DatabaseCleaner.strategy = :transaction # MUST NOT be changed
+  #
+  # database_name = 'hoodoo_test'
 
   config.before( :suite ) do
 
@@ -102,44 +102,44 @@ RSpec.configure do | config |
 
     ENV[ 'HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE' ] = Hoodoo::Utilities.spare_port().to_s()
 
-    # Connect to PostgreSQL before tests start.
-
-    spec_helper_connect_to_postgres()
-
-    # Sometimes if a user force quits the spec suite, the hoodoo_test database
-    # will not be deleted. The following makes sure it is removed now.
-
-    database_exists = ActiveRecord::Base.connection.execute(
-      "SELECT COUNT(*) FROM pg_database WHERE datname = '#{ database_name }'"
-    ).any?
-
-    if database_exists
-      ActiveRecord::Base.connection.drop_database( database_name )
-    end
-
-    # Create the test database (hiding output) and connect to it.
-
-    ActiveRecord::Base.logger = Logger.new( nil )
-    ActiveRecord::Base.connection.create_database( database_name )
-    ActiveRecord::Base.logger = Logger.new( STDERR )
-
-    spec_helper_connect_to_postgres( database_name )
+    # # Connect to PostgreSQL before tests start.
+    #
+    # spec_helper_connect_to_postgres()
+    #
+    # # Sometimes if a user force quits the spec suite, the hoodoo_test database
+    # # will not be deleted. The following makes sure it is removed now.
+    #
+    # database_exists = ActiveRecord::Base.connection.execute(
+    #   "SELECT COUNT(*) FROM pg_database WHERE datname = '#{ database_name }'"
+    # ).any?
+    #
+    # if database_exists
+    #   ActiveRecord::Base.connection.drop_database( database_name )
+    # end
+    #
+    # # Create the test database (hiding output) and connect to it.
+    #
+    # ActiveRecord::Base.logger = Logger.new( nil )
+    # ActiveRecord::Base.connection.create_database( database_name )
+    # ActiveRecord::Base.logger = Logger.new( STDERR )
+    #
+    # spec_helper_connect_to_postgres( database_name )
 
   end
 
   config.after( :suite ) do
 
-    # Delete the test database afterwards. Must disconnect from it
-    # first, going back to the default 'postgresql' database instead.
-
-    begin
-      spec_helper_connect_to_postgres()
-      ActiveRecord::Base.connection.drop_database( database_name )
-    rescue
-      # Ignore exceptions. Any failures to delete the database will
-      # be picked up by the at-test-startup precautionary delete
-      # anyway.
-    end
+    # # Delete the test database afterwards. Must disconnect from it
+    # # first, going back to the default 'postgresql' database instead.
+    #
+    # begin
+    #   spec_helper_connect_to_postgres()
+    #   ActiveRecord::Base.connection.drop_database( database_name )
+    # rescue
+    #   # Ignore exceptions. Any failures to delete the database will
+    #   # be picked up by the at-test-startup precautionary delete
+    #   # anyway.
+    # end
 
     # Shut down the DRb discoverer.
 
@@ -154,15 +154,15 @@ RSpec.configure do | config |
 
   end
 
-  # Make sure DatabaseCleaner runs between each test.
-
-  config.before( :each ) do
-    DatabaseCleaner.start
-  end
-
-  config.after( :each ) do
-    DatabaseCleaner.clean
-  end
+  # # Make sure DatabaseCleaner runs between each test.
+  #
+  # config.before( :each ) do
+  #   DatabaseCleaner.start
+  # end
+  #
+  # config.after( :each ) do
+  #   DatabaseCleaner.clean
+  # end
 end
 
 # Connect to PostgreSQL for test purposes. Generally only used within
