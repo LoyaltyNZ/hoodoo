@@ -58,16 +58,16 @@ Some additional higher level hand written documentation may also be present as M
 
 ## Contributors
 
-* Andrew Hodgkinson
-* Tom Cully
-* Rory Stephenson
+* [Andrew Hodgkinson](https://github.com/pond)
+* [Tom Cully](https://github.com/tomdionysus)
+* [Rory Stephenson](https://github.com/thelollies)
 * David Mitchell
-* Joseph Leniston
-* Jeremy Olliver
-* Charles Peach
-* Graham Jenson
-* Jordan Carter
-* Andrew Pett
+* [Joseph Leniston](https://github.com/josephleniston)
+* [Jeremy Olliver](https://github.com/jeremyolliver)
+* [Charles Peach](https://github.com/charlespeach)
+* [Graham Jenson](https://github.com/grahamjenson)
+* [Jordan Carter](https://github.com/jordandcarter)
+* [Andrew Pett](https://github.com/aspett)
 
 ## Licence
 
