@@ -61,7 +61,7 @@ Some additional higher level hand written documentation may also be present as M
 * [Andrew Hodgkinson](https://github.com/pond)
 * [Tom Cully](https://github.com/tomdionysus)
 * [Rory Stephenson](https://github.com/thelollies)
-* David Mitchell
+* [David Mitchell](https://github.com/davidamitchell)
 * [Joseph Leniston](https://github.com/josephleniston)
 * [Jeremy Olliver](https://github.com/jeremyolliver)
 * [Charles Peach](https://github.com/charlespeach)
