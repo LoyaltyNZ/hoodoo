@@ -296,3 +296,22 @@ def spec_helper_http( path:,
 
   return http.request( request )
 end
+
+# Add support to count the database queries run within a
+# given block. Returns the number of queries run.
+#
+def count_database_calls_in( &block )
+  count = 0
+
+  cb = ->(name, start_time, finish_time, id, query) {
+    # only bump the count if the database call is not to
+    #  CACHE or SCHEMA
+    unless [ 'CACHE', 'SCHEMA' ].include?( query[:name] )
+      count += 1
+    end
+  }
+
+  ActiveSupport::Notifications.subscribed( cb, "sql.active_record", &block )
+
+  count
+end
