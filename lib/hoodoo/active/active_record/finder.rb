@@ -184,7 +184,13 @@ module Hoodoo
             # preferable to looking up the wrong record!
 
             checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
-            return checker.first unless checker.count == 0
+
+            # If we have found a record return it, otherwise continue to loop
+            # through +id_fields+
+            #
+            if checker.first
+              return checker.first
+            end
           end
 
           return nil

@@ -153,6 +153,49 @@ describe Hoodoo::ActiveRecord::Finder do
       found = finder.acquire( @code )
       expect( found ).to eq(nil) # Not in 'group 1'
     end
+
+    # previously the finder would always cause an extra
+    # call to the database to preform a count
+    #
+    it 'does not do excessive database calls' do
+
+      count = count_database_calls_in do
+        found = RSpecModelFinderTest.acquire( @id )
+        expect( found ).to eq(@a)
+      end
+      # the id will be the first searched in the finder
+      #  therefore only one call will be made
+      expect( count ).to eq( 1 )
+
+      count = count_database_calls_in do
+        found = RSpecModelFinderTest.acquire( @uuid )
+        expect( found ).to eq(@b)
+      end
+
+      # the uuid will be the second searched in the finder
+      #  therefore two calls will be made, one for the
+      #  id and one for the uuid
+      expect( count ).to eq( 2 )
+
+      count = count_database_calls_in do
+        found = RSpecModelFinderTest.acquire( @code )
+        expect( found ).to eq(@c)
+      end
+
+      # the code will be the third searched in the finder
+      #  therefore three calls will be made, one for the
+      #  id, one for the uuid and one for the code
+      expect( count ).to eq( 3 )
+
+
+      count = count_database_calls_in do
+        found = RSpecModelFinderTest.acquire( Hoodoo::UUID.generate )
+        expect( found ).to be_nil
+      end
+
+      # the finder will search all three
+      expect( count ).to eq( 3 )
+    end
   end
 
   # ==========================================================================
