@@ -1,5 +1,7 @@
 # Hoodoo
 
+[![Gem Version](https://badge.fury.io/rb/hoodoo.svg)](https://rubygems.org/gems/hoodoo) [![Build Status](https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/hoodoo)
+
 Simplify the implementation of services within an API-based software platform.
 
 See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documentation and examples.
