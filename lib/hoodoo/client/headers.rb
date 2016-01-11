@@ -175,10 +175,10 @@ module Hoodoo
           :secured       => true,
         },
 
-        'HTTP_X_ASSUME_IDENTITY' => {
-          :property      => :assume_identity,
+        'HTTP_X_ASSUME_IDENTITY_OF' => {
+          :property      => :assume_identity_of,
           :property_proc => KVP_PROPERTY_PROC,
-          :header        => 'X-Assume-Identity',
+          :header        => 'X-Assume-Identity-Of',
           :header_proc   => KVP_HEADER_PROC,
 
           :secured       => true,

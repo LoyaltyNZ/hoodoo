@@ -146,21 +146,21 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
       # if adding things.
 
       {
-        'id'              => context.request.ident                 ||
-                            context.request.body.try( :[], 'id' ) ||
-                            Hoodoo::UUID.generate(),
+        'id'                 => context.request.ident                 ||
+                                context.request.body.try( :[], 'id' ) ||
+                                Hoodoo::UUID.generate(),
 
-        'created_at'      => Time.now.utc.iso8601,
-        'kind'            => 'RSpecClientTestTarget',
-        'language'        => context.request.locale,
+        'created_at'         => Time.now.utc.iso8601,
+        'kind'               => 'RSpecClientTestTarget',
+        'language'           => context.request.locale,
 
-        'embeds'          => context.request.embeds,
-        'body_hash'       => context.request.body,
-        'dated_at'        => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
-        'dated_from'      => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
-        'resource_uuid'   => context.request.resource_uuid,
-        'assume_identity' => context.request.assume_identity,
-        'deja_vu'         => context.request.deja_vu,
+        'embeds'             => context.request.embeds,
+        'body_hash'          => context.request.body,
+        'dated_at'           => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
+        'dated_from'         => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
+        'resource_uuid'      => context.request.resource_uuid,
+        'assume_identity_of' => context.request.assume_identity_of,
+        'deja_vu'            => context.request.deja_vu,
       }
     end
 end
@@ -252,17 +252,17 @@ describe Hoodoo::Client do
     # "def option_based_expectations" later in this file. Be careful
     # to follow the naming convention evident below if adding things.
 
-    @expected_dated_at        = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
-    @expected_dated_from      = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
-    @expected_resource_uuid   = @resource_uuid
-    @expected_assume_identity = @assume_identity
-    @expected_deja_vu         = @deja_vu != true ? nil : true
+    @expected_dated_at           = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
+    @expected_dated_from         = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
+    @expected_resource_uuid      = @resource_uuid
+    @expected_assume_identity_of = @assume_identity_of
+    @expected_deja_vu            = @deja_vu != true ? nil : true
 
-    endpoint_opts[ :dated_at        ] = @dated_at        unless @dated_at.nil?
-    endpoint_opts[ :dated_from      ] = @dated_from      unless @dated_from.nil?
-    endpoint_opts[ :resource_uuid   ] = @resource_uuid   unless @resource_uuid.nil?
-    endpoint_opts[ :assume_identity ] = @assume_identity unless @assume_identity.nil?
-    endpoint_opts[ :deja_vu         ] = @deja_vu         if     @deja_vu == true
+    endpoint_opts[ :dated_at           ] = @dated_at           unless @dated_at.nil?
+    endpoint_opts[ :dated_from         ] = @dated_from         unless @dated_from.nil?
+    endpoint_opts[ :resource_uuid      ] = @resource_uuid      unless @resource_uuid.nil?
+    endpoint_opts[ :assume_identity_of ] = @assume_identity_of unless @assume_identity_of.nil?
+    endpoint_opts[ :deja_vu            ] = @deja_vu            if     @deja_vu == true
 
     if rand( 2 ) == 0
       override_locale          = SecureRandom.urlsafe_base64( 2 )
@@ -513,8 +513,8 @@ describe Hoodoo::Client do
           case property
             when :resource_uuid
               @resource_uuid = Hoodoo::UUID.generate
-            when :assume_identity
-              @assume_identity = @example_authorised_identity
+            when :assume_identity_of
+              @assume_identity_of = @example_authorised_identity
             else
               raise "Update client_spec.rb with new secured properties for test"
           end
@@ -758,8 +758,8 @@ describe Hoodoo::Client do
           case property
             when :resource_uuid
               @resource_uuid = Hoodoo::UUID.generate
-            when :assume_identity
-              @assume_identity = @example_authorised_identity
+            when :assume_identity_of
+              @assume_identity_of = @example_authorised_identity
             else
               raise "Update client_spec.rb with new secured properties for test"
           end
