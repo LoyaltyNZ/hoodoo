@@ -1186,7 +1186,7 @@ module Hoodoo; module Services
       end
 
       if secure == false || level == :error
-        body = ''
+        body = String.new
         rack_data[ 2 ].each { | thing | body << thing.to_s }
 
         if interaction.context.response.halt_processing?
