@@ -1,6 +1,11 @@
+# https://bugs.ruby-lang.org/issues/11657
+#
+# At the time of writing both 2.1.6 and 2.3.0 now work, but 2.2.4 still crashes.
+#
 language: ruby
 rvm:
   - 2.1.6
+  - 2.3.0
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
