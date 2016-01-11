@@ -23,6 +23,35 @@ describe Hoodoo::Client::Headers do
     end
   end
 
+  context 'for URL encoded data' do
+    before :each do
+      @test_hash =
+      {
+        'foo' => "hello, world; this & that = foo! \r\t",
+        'bar' => "foo;bar=baz & this + UTF-8 / emoji 😀"
+      }
+
+      @test_string = URI::encode_www_form( @test_hash )
+    end
+
+    context 'KVP_PROPERTY_PROC' do
+      it 'converts valid values' do
+        expect( described_class::KVP_PROPERTY_PROC.call( @test_string ) ).to eq( @test_hash )
+      end
+
+      it 'does not raise exceptions for invalid values' do
+        expect( described_class::KVP_PROPERTY_PROC.call( ''      ) ).to eq( {} )
+        expect( described_class::KVP_PROPERTY_PROC.call( 'hello' ) ).to eq( { 'hello' => '' } )
+      end
+    end
+
+    context 'KVP_HEADER_PROC' do
+      it 'converts values' do
+        expect( described_class::KVP_HEADER_PROC.call( @test_hash ) ).to eq( @test_string )
+      end
+    end
+  end
+
   context 'DATETIME_IN_PAST_ONLY_PROPERTY_PROC' do
     it 'converts valid values' do
       date_time = DateTime.now - 10.seconds
