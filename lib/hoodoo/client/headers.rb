@@ -182,6 +182,7 @@ module Hoodoo
           :header_proc   => KVP_HEADER_PROC,
 
           :secured       => true,
+          :auto_transfer => true,
         },
 
         'HTTP_X_DATED_AT' => {

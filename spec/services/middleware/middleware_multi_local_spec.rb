@@ -177,7 +177,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
     # in their top-level call with permission, 'body' will contain 'id'
     # and that'll be rejected if we pass it through an inter-resource call
     # (you must use the high-level interface to do that), assuming things
-    # are working properly andthe X-Resource-UUID specification is *not*
+    # are working properly and the X-Resource-UUID specification is *not*
     # automatically inherited to inter-resource endpoints.
     #
     # This is for *top level* calls specifying UUIDs to *this resource*.
