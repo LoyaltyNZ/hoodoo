@@ -1,5 +1,5 @@
-Wed, 13 Jan 2016 08:47:37 +1300
-README.md	Wed, 13 Jan 2016 08:46:38 +1300
+Wed, 13 Jan 2016 10:00:55 +1300
+README.md	Wed, 13 Jan 2016 09:50:25 +1300
 lib/hoodoo.rb	Mon, 11 Jan 2016 15:26:36 +1300
 lib/hoodoo/active.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/active/active_model/uuid_validator.rb	Tue, 15 Dec 2015 15:29:01 +1300
@@ -25,7 +25,7 @@ lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Tue, 15 Dec 2015 15:29:01 +
 lib/hoodoo/client/endpoint/endpoints/http.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/client/endpoint/endpoints/http_based.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/client/endpoint/endpoints/not_found.rb	Tue, 15 Dec 2015 15:29:01 +1300
-lib/hoodoo/client/headers.rb	Wed, 13 Jan 2016 08:45:47 +1300
+lib/hoodoo/client/headers.rb	Wed, 13 Jan 2016 09:50:21 +1300
 lib/hoodoo/communicators.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/communicators/fast.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/communicators/pool.rb	Tue, 15 Dec 2015 15:29:01 +1300
@@ -95,7 +95,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/services/middleware/interaction.rb	Tue, 15 Dec 2015 15:29:01 +1300
-lib/hoodoo/services/middleware/middleware.rb	Wed, 13 Jan 2016 08:45:47 +1300
+lib/hoodoo/services/middleware/middleware.rb	Wed, 13 Jan 2016 09:50:21 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/services/services/context.rb	Tue, 15 Dec 2015 15:29:01 +1300
 lib/hoodoo/services/services/implementation.rb	Tue, 15 Dec 2015 15:29:01 +1300
