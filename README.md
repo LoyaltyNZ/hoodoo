@@ -1,6 +1,6 @@
 # Hoodoo
 
-[![Gem Version](https://badge.fury.io/rb/hoodoo.svg)](https://rubygems.org/gems/hoodoo) [![Build Status](https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/hoodoo)
+[![Gem Version](https://badge.fury.io/rb/hoodoo.svg)](https://rubygems.org/gems/hoodoo) [![Build Status](https://travis-ci.org/LoyaltyNZ/hoodoo.svg?branch=master)](https://travis-ci.org/LoyaltyNZ/hoodoo) [![License](https://img.shields.io/badge/license-LGPL--3.0-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0.en.html)
 
 Simplify the implementation of services within an API-based software platform.
 
