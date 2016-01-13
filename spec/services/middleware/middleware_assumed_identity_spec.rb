@@ -56,7 +56,7 @@ describe Hoodoo::Services::Middleware do
     permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
 
     @test_session.permissions = permissions
-    @test_session.identity    = @test_session.identity.dup
+    @test_session.identity    = OpenStruct.new
     @test_session.scoping     = @test_session.scoping.dup
   end
 
@@ -422,11 +422,13 @@ describe Hoodoo::Services::Middleware do
         expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller" )
       end
 
-      it 'rejects top-level non-Hash' do
+      it 'rejects top-level non-Hash (1)' do
         set_rules( [ '1', '2', '3' ] )
         result = show( { 'account_id' => '21' }, 422 )
         expect_malformed( result )
+      end
 
+      it 'rejects top-level non-Hash (2)' do
         set_rules( 'String' )
         result = show( { 'account_id' => '21' }, 422 )
         expect_malformed( result )
@@ -491,7 +493,7 @@ describe Hoodoo::Services::Middleware do
         Hoodoo::Services::Middleware.set_test_session( @test_session )
       end
 
-      it 'rejects explicit empty hashes' do
+      it 'rejects explicit empty hashes (1)' do
         get(
           '/v1/rspec_assumed_identity/hello',
           nil,
@@ -502,13 +504,15 @@ describe Hoodoo::Services::Middleware do
         )
 
         expect( last_response.status ).to eq( 422 )
+      end
 
-        # Likewise via a Hash.
-        #
+      # Likewise via a Hash.
+      #
+      it 'rejects explicit empty hashes (2)' do
         result = show( {}, 422 )
       end
 
-      it 'rejects no-key headers' do
+      it 'rejects no-key headers (1)' do
         get(
           '/v1/rspec_assumed_identity/hello',
           nil,
@@ -522,13 +526,15 @@ describe Hoodoo::Services::Middleware do
 
         result = JSON.parse( last_response.body )
         expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( '' )
+      end
 
-        # Likewise via a Hash.
-        #
+      # Likewise via a Hash.
+      #
+      it 'rejects no-key headers (2)' do
         result = show( { '' => '22' }, 403 )
       end
 
-      it 'rejects no-key value' do
+      it 'rejects no-key value (1)' do
         get(
           '/v1/rspec_assumed_identity/hello',
           nil,
@@ -542,9 +548,11 @@ describe Hoodoo::Services::Middleware do
 
         result = JSON.parse( last_response.body )
         expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id,' )
+      end
 
-        # Likewise via a Hash.
-        #
+      # Likewise via a Hash.
+      #
+      it 'rejects no-key value (2)' do
         result = show( { 'account_id' => '' }, 403 )
       end
 
