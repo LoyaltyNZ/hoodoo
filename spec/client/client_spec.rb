@@ -159,8 +159,9 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
         'dated_at'           => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
         'dated_from'         => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
         'resource_uuid'      => context.request.resource_uuid,
-        'assume_identity_of' => context.request.assume_identity_of,
         'deja_vu'            => context.request.deja_vu,
+        'assume_identity_of' => context.request.assume_identity_of,
+        'actual_identity'    => ( context.session.identity.to_h rescue nil ),
       }
     end
 end
@@ -732,6 +733,7 @@ describe Hoodoo::Client do
     context 'and with secured option' do
       before :each do
         test_session = @old_test_session.dup
+        test_session.identity = OpenStruct.new
         test_session.scoping = @old_test_session.scoping.dup
         test_session.scoping.authorised_http_headers = []
         test_session.scoping.authorised_identities = @authorised_identities
@@ -773,6 +775,8 @@ describe Hoodoo::Client do
           result     = @endpoint.show( mock_ident )
 
           expect( result.platform_errors.has_errors? ).to eq( false )
+
+          option_based_expectations( result )
         end
       end
 
@@ -790,6 +794,36 @@ describe Hoodoo::Client do
 
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result[ 'id' ] ).to eq( @resource_uuid )
+      end
+
+      context "'assume_identity_of' in use" do
+        it 'but invalid' do
+          @assume_identity_of = { 'invalid' => 'Hoodoo::UUID.generate' }
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          result = @endpoint.create( { 'hello' => 'world' } )
+
+          expect( result.platform_errors.has_errors? ).to eq( true )
+          expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.forbidden' )
+        end
+
+        it 'and valid' do
+          @assume_identity_of = @example_authorised_identity
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          result = @endpoint.create( { 'hello' => 'world' } )
+
+          expect( result.platform_errors.has_errors? ).to eq( false )
+          expect( result[ 'actual_identity' ] ).to eq( @example_authorised_identity )
+        end
       end
     end
   end

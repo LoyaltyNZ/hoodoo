@@ -96,10 +96,10 @@ describe Hoodoo::Services::Middleware do
       }
     )
 
-    expect( last_response.status.to_s ).to eq( expected_status.to_s )
+    expect( last_response.status ).to eq( expected_status )
     result = JSON.parse( last_response.body )
 
-    if ( expected_status.to_s == '200' )
+    if ( expected_status == 200 )
       expect( result[ 'identity' ] ).to eq( identity_hash )
     end
 
@@ -434,6 +434,12 @@ describe Hoodoo::Services::Middleware do
         expect_malformed( result )
       end
 
+      it 'rejects an empty rules Hash' do
+        set_rules( {} )
+        result = show( { 'account_id' => '21' }, 422 )
+        expect_malformed( result )
+      end
+
       it 'rejects top-level value where array was expected' do
         set_rules( {
           'account_id' => '21'
@@ -605,4 +611,29 @@ describe Hoodoo::Services::Middleware do
       end
     end
   end
+
+  # ==========================================================================
+
+  context 'code coverage' do
+    before :each do
+      @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+      @test_session.scoping.authorised_identities   = { 'account_id' => [ '1' ] }
+      Hoodoo::Services::Middleware.set_test_session( @test_session )
+    end
+
+    it 'internally self-checks' do
+      allow_any_instance_of( Hoodoo::Services::Middleware ).to receive( :deal_with_x_assume_identity_of ) do | instance, interaction |
+        instance.send(
+          :validate_x_assume_identity_of,
+          interaction,
+          { 'account_id' => 23 },
+          @test_session.scoping.authorised_identities
+        )
+      end
+
+      result = show( { 'account_id' => '1' }, 500 )
+      expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Internal error - internal validation input value for X-Assume-Identity-Of is not a String' )
+    end
+  end
+
 end

@@ -4,13 +4,17 @@
 
 require 'spec_helper'
 
+# Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
+#
+VALID_ASSUMED_IDENTITY_HASH ||= { 'caller_id' => 'custom_caller_id' }
+
 # This gets inter-resource called from ...BImplementation. It expects search
 # data containing an 'offset' key and string/integer value. If > 0, an error
 # is triggered quoting the offset value in the reference data; else a hook
 # method is called that we can check with RSpec.
 #
 # It contains one public action, to test public-to-public calling from ...B.
-
+#
 class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementation
 
   def list( context )
@@ -33,6 +37,8 @@ class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementat
         :message => 'Returning error as requested',
         :reference => { :another => 'no other ident', :field_name => 'no ident' }
       )
+    elsif context.request.ident == 'hello_return_identity' || context.request.ident == 'hello_set_good_inter_resource_identity'
+      context.response.set_resource( { 'identity' => context.session.identity.to_h } )
     else
       context.response.set_resource( { 'inner' => 'shown' } )
     end
@@ -155,8 +161,18 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
         {}
       )
     else
-      result = context.resource( :RSpecTestInterResourceCallsAResource ).show(
-        'hello' + context.request.ident,
+      resource = context.resource( :RSpecTestInterResourceCallsAResource )
+
+      if ( context.request.ident == 'set_bad_inter_resource_identity' )
+        resource.assume_identity_of = {
+          VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
+        }
+      elsif ( context.request.ident == 'set_good_inter_resource_identity' )
+        resource.assume_identity_of = VALID_ASSUMED_IDENTITY_HASH
+      end
+
+      result = resource.show(
+        'hello_' + context.request.ident,
         { :_embed => :foo }
       )
     end
@@ -234,7 +250,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
   def update( context )
     expectable_hook( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).update(
-      'hello' + context.request.ident,
+      'hello_' + context.request.ident,
       context.request.body,
       { :_embed => 'foo' }
     )
@@ -248,7 +264,7 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
     expectable_hook( context )
     result = context.resource( :RSpecTestInterResourceCallsAResource ).delete(
-      'hello' + context.request.ident,
+      'hello_' + context.request.ident,
       { :_embed => [ :foo ] }
     )
     expectable_result_hook( result )
@@ -536,8 +552,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
-        expect(context.request.uri_path_components).to eq(['helloworld'])
-        expect(context.request.ident).to eq('helloworld')
+        expect(context.request.uri_path_components).to eq(['hello_world'])
+        expect(context.request.ident).to eq('hello_world')
         expect(context.request.uri_path_extension).to eq('')
         expect(context.request.list.offset).to eq(0)
         expect(context.request.list.limit).to eq(50)
@@ -865,8 +881,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to eq({'sum' => 70})
         expect(context.request.embeds).to eq(['foo'])
-        expect(context.request.uri_path_components).to eq(['helloworld'])
-        expect(context.request.ident).to eq('helloworld')
+        expect(context.request.uri_path_components).to eq(['hello_world'])
+        expect(context.request.ident).to eq('hello_world')
         expect(context.request.locale).to eq(locale || 'en-nz')
         expect(context.request.dated_at).to eq(nil)      # Not used => expect 'nil'
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
@@ -943,8 +959,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.owning_interaction.interaction_id).to eq(@interaction_id)
         expect(context.request.body).to be_nil
         expect(context.request.embeds).to eq(['foo'])
-        expect(context.request.uri_path_components).to eq(['helloworld'])
-        expect(context.request.ident).to eq('helloworld')
+        expect(context.request.uri_path_components).to eq(['hello_world'])
+        expect(context.request.ident).to eq('hello_world')
         expect(context.request.locale).to eq(locale || 'en-nz')
         expect(context.request.dated_at).to eq(nil)      # Not used => expect 'nil'
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
@@ -1049,7 +1065,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once.and_call_original
 
-    get '/v1/rspec_test_inter_resource_calls_b/_return_error', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    get '/v1/rspec_test_inter_resource_calls_b/return_error', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     expect(last_response.status).to eq(422)
     result = JSON.parse(last_response.body)
     expect( result[ 'errors' ] ).to_not be_nil
@@ -1058,6 +1074,122 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       'message'   => 'Returning error as requested',
       'reference' => 'no ident,no other ident'
     })
+  end
+
+  context 'X-Assume-Identity-Of' do
+    context 'top-level use permitted' do
+      before :each do
+        @old_test_session = Hoodoo::Services::Middleware.test_session()
+
+        test_session          = @old_test_session.dup
+        test_session.identity = test_session.identity.dup
+        test_session.scoping  = test_session.scoping.dup
+
+        test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+        test_session.scoping.authorised_identities   = {
+          VALID_ASSUMED_IDENTITY_HASH.keys.first =>
+          [ VALID_ASSUMED_IDENTITY_HASH.values.first ]
+        }
+
+        Hoodoo::Services::Middleware.set_test_session( test_session )
+      end
+
+      after :each do
+        Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+      end
+
+      context 'when in use at top level' do
+        it 'sees correct identity in the downstream resource' do
+          get(
+            '/v1/rspec_test_inter_resource_calls_b/return_identity',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+            }
+          )
+
+          result = JSON.parse( last_response.body )
+          expect( result[ 'result' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+        end
+
+        it 'cannot set an illegal identity in the inter-resource call' do
+          get(
+            '/v1/rspec_test_inter_resource_calls_b/set_bad_inter_resource_identity',
+            nil,
+            {
+              'CONTENT_TYPE' => 'application/json; charset=utf-8',
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+            }
+          )
+
+          expect( last_response.status ).to eq( 403 )
+          result = JSON.parse( last_response.body )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+        end
+      end
+
+      context 'in inter-resource call only' do
+        identity_hash = { 'caller_id' => 'custom_caller_id' }
+
+        it 'can still set identity for the downstream resource' do
+          get(
+            '/v1/rspec_test_inter_resource_calls_b/set_good_inter_resource_identity',
+            nil,
+            { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          )
+
+          result = JSON.parse( last_response.body )
+          expect( result[ 'result' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+        end
+
+        it 'cannot set an illegal identity for the downstream resource' do
+          get(
+            '/v1/rspec_test_inter_resource_calls_b/set_bad_inter_resource_identity',
+            nil,
+            { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          )
+
+          expect( last_response.status ).to eq( 403 )
+          result = JSON.parse( last_response.body )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+        end
+      end
+    end
+
+    context 'top-level use prohibited' do
+      before :each do
+        @old_test_session = Hoodoo::Services::Middleware.test_session()
+
+        test_session          = @old_test_session.dup
+        test_session.identity = test_session.identity.dup
+        test_session.scoping  = test_session.scoping.dup
+
+        test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
+        test_session.scoping.authorised_identities   = { 'caller_id' => [ 'custom_caller_id' ] }
+
+        Hoodoo::Services::Middleware.set_test_session( test_session )
+      end
+
+      after :each do
+        Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+      end
+
+      # middleware_assumed_identity_spec.rb already comprehensively tests
+      # top-level calls, so just do the inter-resource check here.
+      #
+      it 'cannot override a valid identity in inter-resource calls' do
+        get(
+          '/v1/rspec_test_inter_resource_calls_b/set_good_inter_resource_identity',
+          nil,
+          { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        )
+
+        expect( last_response.status ).to eq( 403 )
+        result = JSON.parse( last_response.body )
+        expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+      end
+    end
   end
 
   it 'should get told if an action is not supported' do

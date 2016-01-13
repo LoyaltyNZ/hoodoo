@@ -758,6 +758,10 @@ module Hoodoo; module Services
 
       return add_local_errors.call() if local_response.halt_processing?
 
+      deal_with_x_assume_identity_of( local_interaction )
+
+      return add_local_errors.call() if local_response.halt_processing?
+
       # Construct the local request details.
 
       local_request.uri_path_components = upc
