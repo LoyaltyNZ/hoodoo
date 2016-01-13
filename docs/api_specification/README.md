@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 1, 2015-12-10_
+_Release 2, 2016-01-14_
 
 [](TOCS)
 * [Overview](#ao)
@@ -28,6 +28,7 @@ _Release 1, 2015-12-10_
       * [`X-Dated-From`](#http_x_dated_from)
       * [`X-Deja-Vu`](#http_x_deja_vu)
       * [`X-Resource-UUID`](#http_x_resource_uuid)
+      * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
   * [Security](#security)
     * [Access security](#access_security)
       * [Scoping and resource representation](#scoping_and_resource_representation)
@@ -155,7 +156,7 @@ Platform-level errors generally arise from the top level of API call processing,
 | 404 Not Found             | `platform.not_found`               | "{entity_name}" | No valid interface endpoint was found for the requested path (`reference` will be an empty string); your API call was not processed further at all by the platform. |
 | 422 Unprocessable Entity  | `platform.malformed`               | Undefined       | URL path, query string or request body data was malformed, or contained unexpected data. Associated message and arbitrary reference data _may_ provide more information for developers to examine. |
 | 401 Unauthorized          | `platform.invalid_session`         | Undefined       | The `X-Session-ID` header value has been omitted, or does not contain a valid session identifier ("we don't know who you are"). |
-| 403 Forbidden             | `platform.forbidden`               | Undefined       | The `X-Session-ID` header value refers to a valid session, but the session permissions prohibit the attempted action ("we know who you are, but you can't do that"). |
+| 403 Forbidden             | `platform.forbidden`               | Undefined       | The `X-Session-ID` header value refers to a valid session, but the session data prohibits the attempted action, special HTTP header usage or other top-level behaviour ("we know who you are, but you can't do that"). |
 | 405 Method Not Allowed    | `platform.method_not_allowed`      | Undefined       | Attempt to use an HTTP method in a call to an interface which does not support it ("we know who you are and you're allowed to try that, but the target resource doesn't support it"). |
 | 408 Request Timeout       | `platform.timeout`                 | Undefined       | Internal systems did not respond within a given timeout period. Retry the request later. |
 | 500 Internal Server Error | `platform.fault`                   | "{exception}"   | An internal platform error occurred. If exception information is available it will be put in the `reference` data in string form, else `reference` will be an empty string. |
@@ -536,6 +537,39 @@ When present, the `X-Resource-UUID` HTTP header is only relevant for HTTP `POST`
 
 Callers entrusted with the ability to specify UUID values up front bear responsibility for making sure their generation algorithm is of high quality, especially in regard to entropy and **MUST NEVER** reuse UUID values for obvious reasons!
 
+##### <a name="http_x_assume_identity_of"></a>`X-Assume-Identity-Of`
+
+* Relevant for any call
+* Restricted
+* **SECURITY SENSITIVE**
+* Value is a URL-encoded set of key/value pairs
+* Allows session identity override
+
+This is a _restricted header_, which means only [Sessions](#session.resource) associated with a [Caller](#caller.resource) that has the header name included in its `authorised_http_headers` list will be able to use it.
+
+When present, the `X-Assume-Identity-Of` header allows the caller to specify keys and values that will be set in the active [Session's](#session.resource) `identity` section. For that one API call, the caller assumes the identity of someone else.
+
+Normally, identity information is automatic and pulled in from the [Caller](#caller.resource) instance used to create the Session in question. All API calls under a given Session will therefore always contain the same immutable identity information. Under very special cases however, you might want one single caller to be able in essence masquerade as other identities when performing API operations, either for data visibility when reading, or data 'ownership' (scoping) when writing resource information. Although it is generally _strongly encouraged_ that individual Caller instances with their own Session are used for any given identity that you want to use, permitting this secured HTTP header via a privileged Caller definiton will allow you to act as many entities, all within one session.
+
+The system first loads the session data for an incoming API call, then if the secured HTTP header is present, permitted and well-formed, merges the key/value pairs from the header's value into the existing session data. The API call then continues through the system as normal, but with the augmented/altered identity information present.
+
+The key/value pairs are specified using [URL encoding](http://www.w3.org/TR/html5/forms.html#url-encoded-form-data) - percent-escaped special characters, a "`=`" character between keys and values and a "`&`" character separating the pairs. For example:
+
+```
+X-Assume-Identity-Of: account_id=account1&member_id=member%20number%203
+```
+
+...to yield a Session identity section containing any prior data merged/overwritten with:
+
+```json
+{
+  "account_id": "account1",
+  "member_id":  "member number 3"
+}
+```
+
+This would be an extremely dangerous header without other safeguards, since it would allow an API caller to masquerade as any identity in the entire system without limit. To avoid such a large security risk, the Session's associated [Caller](#caller.resource) must include rules that describe the allowed key/value pair data in the HTTP header. If these rules are absent or prohibit one or more of the attempted key/value pairs used, a 403 `platform.forbidden` response will be returned. See the [Caller resource documentation](#caller.resource) for more information about the rule definiton and behaviour.
+
 
 
 ### <a name="security"></a>Security
@@ -832,8 +866,11 @@ A `Caller` is a representation of some actor which interacts with the Loyalty Pl
   },
 
   "scoping": {
-    // Domain-defined by derived customised resource variants, plus:
-    "authorised_http_headers": [ "{string}", ... ]
+    // Domain-defined by derived customised resource variants, plus
+    // standardised optional entries:
+
+    "authorised_http_headers": [ "{string}", ... ],
+    "authorised_identities":   {identity-map}
   }
 }
 ```
@@ -844,9 +881,14 @@ The resource contains an `identity` section that in the generic description of a
 
 The embedded [PermissionsResources](#permissions_resources.type) data describes "what you can do" at a high level - the basic set of resources it can access and the actions it can perform upon those resources. The default behaviour cannot be specified at this time - any unspecified resource action will always be denied by default.
 
-Within this permissions constraint, the `scoping` section can contain further domain-defined fields as with the `identity` section. The only generic entry is `authorised_http_headers`. This supports some [special HTTP headers](#special_http_headers) used to provide unusual functionality to special case callers. Some of these are _secured_ and only permitted when a Session is related to a Caller that includes a particular header in its `authorised_http_headers` array. Currently the following HTTP headers have meaning in the `authorised_http_headers` array:
+Within this permissions constraint, the `scoping` section can contain further domain-defined fields as with the `identity` section. There are very few reserved, generic entries:
 
-* [`X-Resource-UUID`](#http_x_resource_uuid)
+* `authorised_http_headers`: This supports some [special HTTP headers](#special_http_headers) used to provide unusual functionality to special case callers. Some of these are _secured_ and only permitted when a Session is related to a Caller that includes a particular header in its `authorised_http_headers` array. Currently the following HTTP headers have meaning in the `authorised_http_headers` array:
+
+  * [`X-Resource-UUID`](#http_x_resource_uuid)
+  * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
+
+* `authorised_identities`: Information on identities which are allowed to be assumed via the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured header. See the [identity map section later](#caller.resource.interface.identity_maps) for details.
 
 ##### <a name="caller.resource.interface"></a>Interface
 
@@ -880,8 +922,11 @@ To create an instance, `POST` this JSON data:
   },
 
   "scoping": {
-    // Domain-defined by derived customised resource variants, plus:
-    "authorised_http_headers": [ "{string}", ... ]
+    // Domain-defined by derived customised resource variants, plus
+    // standardised optional entries:
+
+    "authorised_http_headers": [ "{string}", ... ],
+    "authorised_identities":   {identity-map}
   }
 }
 ```
@@ -899,13 +944,152 @@ Only a subset of fields may be modified - in particular, note that the `identity
   },
 
   "scoping": {
-    // Domain-defined by derived customised resource variants, plus:
-    "authorised_http_headers": [ "{string}", ... ]
+    // Domain-defined by derived customised resource variants, plus
+    // standardised optional entries:
+
+    "authorised_http_headers": [ "{string}", ... ],
+    "authorised_identities":   {identity-map}
   }
 }
 ```
 
 **Note:** When a Caller instance is modified or deleted, the platform provider's implementation should ensure that any [Sessions](#session.resource) that refer to the Caller will automatically be invalidated.
+
+###### <a name="caller.resource.interface.identity_maps"></a>Identity maps
+
+The optional `authorised_identities` entry in the `scoping` section of the Caller resource describes an _identity map_ used by the implementation of the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured HTTP header. This header lets an API caller specify an alternative identity for use in that one call. The key/value pairs expressed in the HTTP header's value are validated against the identity map.
+
+The identity map operates on a whitelist basis. Given that the associated HTTP header's aim is to change key/value pairs inside the session identity, the map specifies the keys you can specify and provides lists of the values permitted for those keys. The map can be deeply nested, so that particular values of particular keys may in turn allow only particular other values of other keys.
+
+Due to the arbitrary potential key and value contents of the map given the generic use of identity information is up to the implementation of the Caller and Session resources and the meaning therein is API domain-specific, there is no formalised Type defined for the identity map; it is best described by example.
+
+Suppose we had _accounts_ containing one or more _members_ who own one more _devices_. We normally might set up one Caller for every device, with each Caller giving a value for device ID, member ID and account ID as its identity. For any unique combination, a unique Caller is defined so that a Session can be obtained using the Caller credentials. If a Caller's credentials are leaked, only that account/member/device combination is compromised. This is secure, but clumsy; for some special case (probably internal administrative) reason, we decide to define one Caller which can be used to assume the identity of other accounts/members/devices.
+
+The identity map is explicitly designed to make it impossible to define a Caller which can adopt _any_ identity. We must know up-front the IDs that will be permitted.
+
+In the simple case, we could just list these out in a flat identity map. The scoping part of the [Caller](#caller.resource) definition might look like this:
+
+```json
+{
+  "scoping": {
+    "authorised_identities": {
+      "account_id": [ "account1", "account6", "account94" ],
+      "member_id":  [ "member3", "member4", "member12", "member124" ],
+      "device_id":  [ "device1", "device3", "device9", "device102" ]
+    }
+  }
+}
+```
+
+Note now each key's value _must_ be an array - even if it only has one entry - of the allowed identities that can be assumed for each of those named entries. The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header. Thus:
+
+```
+X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=9
+```
+
+Partial identity overrides are permitted:
+
+```
+X-Assume-Identity-Of: account_id=account94
+```
+
+In this example, our model for the account/member/device example is a hierarchy. The 'flat' identity map above allows an errant API caller to assume an identity where, say, the given member does not belong to the given account. Given you must know the permitted values up-front, you must also know the hierarchy up-front; you can provide a more nested identity map that describes it:
+
+```json
+{
+  "scoping": {
+    "authorised_identities": {
+
+      "account_id": {
+
+        "account1": {
+          "member_id": {
+            "member3": {
+              "device_id": [ "device1" ]
+            },
+            "member4": {
+              "device_id": [ "device3", "device9" ]
+            }
+          }
+        },
+
+        "account6": {
+          "member_id": [ "member12" ]
+        },
+
+        "account94": {
+          "member_id": {
+            "member124": {
+              "device_id": [ "device102" ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+This is a complex example with three levels of nesting. At the top level only `account_id` is given; if the HTTP header is in use at all, it must specify a least an `account_id` key and value. Note how the entry for `account_id` now has a sub-object instead of an array, with now _keys_ listing the allowed account IDs. For each of those allowed IDs, values are in essence a nested identity map framgent. We can look up the next thing which is allowed - `member_id`. In the case of the first and last accounts, there's even another level - the devices - but `account6` only has one member, `member12` and that member has no devices, so the structure just ends at a single-element array giving the permitted ID.
+
+With the updated map, the following header specification would be valid:
+
+```
+X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=device1
+```
+
+The next example would not be valid, because `account1` does not contain `member124` - the identity map shows that member under `account94`:
+
+```
+X-Assume-Identity-Of: account_id=account1&member_id=member124
+```
+
+As before, partial specification is OK; we might just give the account ID:
+
+```
+X-Assume-Identity-Of: account_id=account94
+```
+
+We cannot just give, say, a member ID though; there is no top-level `member_id` key, so even though `member12` used below does appear in the identity map, there's no way to find it without an accompanying `account_id`:
+
+```
+X-Assume-Identity-Of: member_id=account12
+```
+
+So an identity map consists of an Object with:
+
+* Keys that describe same-named keys allowed in the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) header value's key/value pair keys.
+* Values that at the furthest depth of used nesting must be arrays of permitted values in the header value's key/value pair values.
+* Values that alternatively are sub-objects describing a deeper level of nesting. In those sub-objects, keys describe the permitted header value's key/value pair values, and the values describe the nested identity map fragment to use if that value is detected.
+* To put it another way, you can see from the above that there's nesting pattern of alternating "permitted key, permitted value(s), permitted key, permitted value(s)..." all the way down to the final deepest part anywhere in the map which must be an array of permitted values.
+
+Placing a given header value's permitted key at more than one level in the map may provoke undefined behaviour, or at best be very confusing! This is not recommended. For example:
+
+```javascript
+{
+  "scoping": {
+    "authorised_identities": {
+
+      "account_id": {
+        "account1": {
+          "member_id": {
+            "member3": {
+              // etc., as before
+            }
+          }
+        }
+        // etc., as before
+      },
+
+      "device_id": [ "device1", "device3", "device9", "device102" ]
+    }
+  }
+}
+```
+
+This map includes the same nested data as before, but would also allow an HTTP header to request an assumed identity of just a `device_id` value from the array _as well as_ using an account ID, member ID and device ID permitted by the nested part of the map. This may have unintended consequences. The best approach is to only ever provide a particular key at a particular level in the map, for deterministic and understandable behaviour.
+
+Finally, beware the combination of the Caller's own saved identity and the possibilities for assumed identities, if it defines any, when those assumed identities may not be fully specified (e.g. only an account ID is given and nothing else). The assumed values are merged on top of anything the Caller already defines, so you might still have a vector for accidental code errors yielding invalid identity key/value entry combinations. It may be best to have a specialised Caller with no defined identity of its own, with non-null constraints in any places where identity matters to your resource implementations to catch cases where assumed identity is in use, but incomplete.
 
 
 
@@ -1057,3 +1241,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | Date       | Version            | Author             | Summary |
 |------------|--------------------|--------------------|---------|
 | 2015-12-10 | Release 1          | ADH                | Created by splitting out content from an internal API document. |
+| 2016-01-14 | Release 2          | ADH                | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
