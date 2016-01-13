@@ -2015,6 +2015,15 @@ module Hoodoo; module Services
     def validate_x_assume_identity_of( interaction, input_hash, rules_hash, recursive = false )
       identity_overrides = {}
 
+      unless rules_hash.is_a?( Hash )
+        interaction.context.response.errors.add_error(
+          'generic.malformed',
+          :message => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
+        )
+
+        return nil
+      end
+
       rules_hash.each do | rules_key, rules_value |
 
         next unless input_hash.has_key?( rules_key )
@@ -2029,10 +2038,14 @@ module Hoodoo; module Services
             identity_overrides[ rules_key ] = input_value
           else
             interaction.context.response.errors.add_error(
-              'generic.malformed',
+              'platform.forbidden',
               {
                 :message   => "X-Assume-Identity-Of header value requests a prohibited identity quantity",
-                :reference => { :header_value => ( interaction.context.request.assume_identity_of rescue 'unknown' ) }
+                :reference =>
+                {
+                  :name  => rules_key,
+                  :value => input_value
+                }
               }
             )
             return nil
@@ -2054,10 +2067,14 @@ module Hoodoo; module Services
 
           else
             interaction.context.response.errors.add_error(
-              'generic.malformed',
+              'platform.forbidden',
               {
                 :message   => "X-Assume-Identity-Of header value requests a prohibited identity quantity",
-                :reference => { :header_value => ( interaction.context.request.assume_identity_of rescue 'unknown' ) }
+                :reference =>
+                {
+                  :name  => rules_key,
+                  :value => input_value
+                }
               }
             )
             return nil
@@ -2067,10 +2084,7 @@ module Hoodoo; module Services
         else
           interaction.context.response.errors.add_error(
             'generic.malformed',
-            {
-              :message   => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
-              :reference => { :rules => ( interaction.context.session.scoping.authorised_identities.to_s rescue 'unknown' ) }
-            }
+            :message => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
           )
           return nil
 
@@ -2079,10 +2093,13 @@ module Hoodoo; module Services
 
       unless recursive || ( input_hash.keys - identity_overrides.keys ).empty?
         interaction.context.response.errors.add_error(
-          'generic.malformed',
+          'platform.forbidden',
           {
-            :message   => "X-Assume-Identity-Of header value requests a prohibited identity name",
-            :reference => { :header_value => ( interaction.context.request.assume_identity_of rescue 'unknown' ) }
+            :message   => "X-Assume-Identity-Of header value requests prohibited identity name(s)",
+            :reference =>
+            {
+              :names => ( input_hash.keys - identity_overrides.keys ).sort().join( ',' )
+            }
           }
         )
         return nil
