@@ -1170,6 +1170,10 @@ ignore inter-resource call errors.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_local_errors</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">halt_processing?</span>
 
+  <span class="ruby-identifier">deal_with_x_assume_identity_of</span>( <span class="ruby-identifier">local_interaction</span> )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">add_local_errors</span>.<span class="ruby-identifier">call</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">local_response</span>.<span class="ruby-identifier">halt_processing?</span>
+
   <span class="ruby-comment"># Construct the local request details.</span>
 
   <span class="ruby-identifier">local_request</span>.<span class="ruby-identifier">uri_path_components</span> = <span class="ruby-identifier">upc</span>

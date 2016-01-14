@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.0.4)
+    hoodoo (1.0.5)
       dalli (~> 2.7)
       kgio (~> 2.9)
       uuidtools (~> 2.1)
@@ -63,7 +63,7 @@ GEM
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rake (10.4.2)
+    rake (10.5.0)
     raygun4ruby (1.1.9)
       httparty (~> 0.11)
       json
