@@ -133,6 +133,24 @@ describe Hoodoo::Services::Middleware do
   # ==========================================================================
 
   context 'X-Assume-Identity-Of allowed' do
+    context 'with empty rules' do
+      before :each do
+        @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+        @test_session.scoping.authorised_identities   = {}
+
+        Hoodoo::Services::Middleware.set_test_session( @test_session )
+      end
+
+      it 'rejects any values' do
+        result = show( { 'account_id' => '1', 'member_id' => 1 }, 403 )
+
+        expect( result[ 'kind' ] ).to eq( 'Errors' )
+        expect( result[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.forbidden' )
+        expect( result[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'X-Assume-Identity-Of header value requests prohibited identity name(s)' )
+        expect( result[ 'errors' ][ 0 ][ 'reference' ] ).to eq( 'account_id\\,member_id' )
+      end
+    end
+
     context 'with flat rules' do
       before :each do
         @test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
@@ -430,12 +448,6 @@ describe Hoodoo::Services::Middleware do
 
       it 'rejects top-level non-Hash (2)' do
         set_rules( 'String' )
-        result = show( { 'account_id' => '21' }, 422 )
-        expect_malformed( result )
-      end
-
-      it 'rejects an empty rules Hash' do
-        set_rules( {} )
         result = show( { 'account_id' => '21' }, 422 )
         expect_malformed( result )
       end

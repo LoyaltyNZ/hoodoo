@@ -1975,16 +1975,6 @@ module Hoodoo; module Services
         )
       end
 
-      if ( rules_hash.empty? )
-        interaction.context.response.errors.add_error(
-          'generic.malformed',
-          {
-            :message   => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
-            :reference => { :rules => ( interaction.context.session.scoping.authorised_identities.to_s rescue 'unknown' ) }
-          }
-        )
-      end
-
       return if interaction.context.response.halt_processing?
 
       identity_overrides = validate_x_assume_identity_of( interaction, input_hash, rules_hash )
