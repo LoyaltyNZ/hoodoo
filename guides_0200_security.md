@@ -48,7 +48,7 @@ In a `RACK_ENV` mode of `development` or `test`, Hoodoo uses an internal test se
 
 Sessions conceptually consist of three parts.
 
-#### Identity
+#### <a name="Identity"></a>Identity
 
 This section describes _who you are_, as a caller. The meaning of this is defined by the person designing the API. For example, you might model real world retail companies using a Retailer and an Outlet, assigning Callers to each Outlet. The identity section of a Session could, **through your implementation of the Session endpoint**, contain the IDs of the associated Retailer and Outlet. The implementation of a secure resource endpoint can then easily find out which Retailer and Outlet made the call.
 
@@ -74,7 +74,13 @@ For more, see [data model security section, below](#DataModelSecurity).
 
 ##### <a name="Secure_headers"></a>Secure headers
 
-Some HTTP headers are only permitted if the scoping section includes an `authorised_http_headers` property. The value is an Array containing the HTTP headers permitted. At the time of writing, the `X-Resource-UUID` header (which lets a caller specify up-front the value for the `id` field for a `POST` operation creating a new resource) is the only defined secure header, but always check the [Hoodoo API Specification]({{ site.custom.api_specification_url }}) for the up to date, definitive list.
+Some HTTP headers are only permitted if the scoping section includes an `authorised_http_headers` property. The value is an Array containing the HTTP headers permitted. At the time of writing, these secure headers are defined:
+
+* [`X-Resource-UUID`]({{ site.custom.api_specification_url }}#http_x_resource_uuid): Used in relation to persisted data and explored more in the [Active Record Guide]({{ site.baseurl }}/guides_0300_active_record.html).
+
+* [`X-Assume-Identity-Of`]({{ site.custom.api_specification_url }}#http_x_assume_identity_of): Used in rare cases where an API caller wants to temporarily assume a different identity in the [identity section (see above)](#Identity) of the Session. The Hoodoo documentation describes it in depth.
+
+Always check the [Hoodoo API Specification]({{ site.custom.api_specification_url }}) for the up to date, definitive list of secure headers.
 
 #### Sessions during development
 
