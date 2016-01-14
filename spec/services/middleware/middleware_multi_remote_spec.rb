@@ -8,9 +8,13 @@
 require 'spec_helper'
 require 'json'
 
+# Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
+#
+VALID_ASSUMED_IDENTITY_HASH ||= { 'caller_id' => 'custom_caller_id' }
+
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
-
+#
 class TestEchoImplementation < Hoodoo::Services::Implementation
 
   public
@@ -41,8 +45,10 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
           :message => 'Returning error as requested',
           :reference => { :another => 'no other ident', :field_name => 'no ident' }
         )
-      elsif context.request.uri_path_components[ 0 ] == 'return_invalid_json'
+      elsif context.request.uri_path_components[ 0 ] == 'return_invalid_data'
         context.response.body = 'Hello, world'
+      elsif context.request.ident == 'return_identity' || context.request.ident == 'set_good_inter_resource_identity'
+        context.response.body = { 'identity' => context.session.identity.to_h }
       else
         context.response.body = { 'show' => TestEchoImplementation.to_h( context ) }
       end
@@ -206,6 +212,14 @@ class TestCallImplementation < Hoodoo::Services::Implementation
         context.resource( :NotFound, 42 )
       else
         context.resource( :TestEcho, 2 )
+      end
+
+      if ( context.request.ident == 'set_bad_inter_resource_identity' )
+        resource.assume_identity_of = {
+          VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
+        }
+      elsif ( context.request.ident == 'set_good_inter_resource_identity' )
+        resource.assume_identity_of = VALID_ASSUMED_IDENTITY_HASH
       end
 
       result = resource.show(
@@ -1065,6 +1079,135 @@ describe Hoodoo::Services::Middleware do
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('generic.invalid_string')
+    end
+
+    it 'gets the correct type back when an inter-resource remote call returns invalid data' do
+      expect_any_instance_of( TestCallImplementation ).to receive( :expectable_result_hook ) do | instance, result |
+        expect( result ).to be_a( Hoodoo::Client::AugmentedHash )
+        expect( result.platform_errors.has_errors? ).to eq( true )
+      end
+
+      get( '/v1/test_call/return_invalid_data', nil, headers_for() )
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.fault')
+      expect(result['errors'][0]['message']).to eq('Could not parse body data returned from inter-resource call despite receiving HTTP status code 200')
+    end
+
+    context 'X-Assume-Identity-Of' do
+      context 'top-level use permitted' do
+        before :each do
+          @old_test_session = Hoodoo::Services::Middleware.test_session()
+
+          test_session          = @old_test_session.dup
+          test_session.identity = test_session.identity.dup
+          test_session.scoping  = test_session.scoping.dup
+
+          test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
+          test_session.scoping.authorised_identities   = {
+            VALID_ASSUMED_IDENTITY_HASH.keys.first =>
+            [ VALID_ASSUMED_IDENTITY_HASH.values.first ]
+          }
+
+          Hoodoo::Services::Middleware.set_test_session( test_session )
+        end
+
+        after :each do
+          Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+        end
+
+        context 'when in use at top level' do
+          it 'sees correct identity in the downstream resource' do
+            get(
+              '/v1/test_call/return_identity',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              }
+            )
+
+            result = JSON.parse( last_response.body )
+            expect( result[ 'show' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+          end
+
+          it 'cannot set an illegal identity in the inter-resource call' do
+            get(
+              '/v1/test_call/set_bad_inter_resource_identity',
+              nil,
+              {
+                'CONTENT_TYPE' => 'application/json; charset=utf-8',
+                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              }
+            )
+
+            expect( last_response.status ).to eq( 403 )
+            result = JSON.parse( last_response.body )
+            expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          end
+        end
+
+        context 'in inter-resource call only' do
+          identity_hash = { 'caller_id' => 'custom_caller_id' }
+
+          it 'can still set identity for the downstream resource' do
+            get(
+              '/v1/test_call/set_good_inter_resource_identity',
+              nil,
+              { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+            )
+
+            result = JSON.parse( last_response.body )
+            expect( result[ 'show' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+          end
+
+          it 'cannot set an illegal identity for the downstream resource' do
+            get(
+              '/v1/test_call/set_bad_inter_resource_identity',
+              nil,
+              { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+            )
+
+            expect( last_response.status ).to eq( 403 )
+            result = JSON.parse( last_response.body )
+            expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'X-Assume-Identity-Of header value requests a prohibited identity quantity' )
+          end
+        end
+      end
+
+      context 'top-level use prohibited' do
+        before :each do
+          @old_test_session = Hoodoo::Services::Middleware.test_session()
+
+          test_session          = @old_test_session.dup
+          test_session.identity = test_session.identity.dup
+          test_session.scoping  = test_session.scoping.dup
+
+          test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
+          test_session.scoping.authorised_identities   = { 'caller_id' => [ 'custom_caller_id' ] }
+
+          Hoodoo::Services::Middleware.set_test_session( test_session )
+        end
+
+        after :each do
+          Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+        end
+
+        # middleware_assumed_identity_spec.rb already comprehensively tests
+        # top-level calls, so just do the inter-resource check here.
+        #
+        it 'cannot override a valid identity in inter-resource calls' do
+          get(
+            '/v1/test_call/set_good_inter_resource_identity',
+            nil,
+            { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          )
+
+          expect( last_response.status ).to eq( 403 )
+          result = JSON.parse( last_response.body )
+          expect( result[ 'errors' ][ 0 ][ 'message' ] ).to eq( 'Action not authorized' )
+        end
+      end
     end
 
     def create_things( locale: nil, dated_from: nil, deja_vu: nil, resource_uuid: nil )

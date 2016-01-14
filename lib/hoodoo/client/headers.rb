@@ -36,6 +36,29 @@ module Hoodoo
       UUID_HEADER_PROC = -> ( value ) { value }
 
       # Used by HEADER_TO_PROPERTY; this Proc when called with some non-nil
+      # value from an HTTP header containing URL-encoded simple key/value
+      # pair data returns a decoded Hash of key/value pairs. Use URL encoding
+      # in the HTTP header value as per:
+      #
+      # http://www.w3.org/TR/html5/forms.html#url-encoded-form-data
+      #
+      # Invalid input will produce unusual results, e.g. an empty Hash or a
+      # Hash where certain keys may have empty string values.
+      #
+      KVP_PROPERTY_PROC = -> ( value ) {
+        Hash[ URI.decode_www_form( value ) ]
+      }
+
+      # Used by HEADER_TO_PROPERTY; this Proc when called with some non-nested
+      # Hash evaluates to a URL-encoded form data String as per:
+      #
+      # http://www.w3.org/TR/html5/forms.html#url-encoded-form-data
+      #
+      KVP_HEADER_PROC = -> ( value ) {
+        URI.encode_www_form( value )
+      }
+
+      # Used by HEADER_TO_PROPERTY; this Proc when called with some non-nil
       # value from an HTTP header representing a Date/Time in a supported
       # format, evaluates to either a parsed DateTime instance or +nil+ if the
       # value appeared to not be in a supported format.
@@ -150,6 +173,16 @@ module Hoodoo
           :header_proc   => UUID_HEADER_PROC,
 
           :secured       => true,
+        },
+
+        'HTTP_X_ASSUME_IDENTITY_OF' => {
+          :property      => :assume_identity_of,
+          :property_proc => KVP_PROPERTY_PROC,
+          :header        => 'X-Assume-Identity-Of',
+          :header_proc   => KVP_HEADER_PROC,
+
+          :secured       => true,
+          :auto_transfer => true,
         },
 
         'HTTP_X_DATED_AT' => {

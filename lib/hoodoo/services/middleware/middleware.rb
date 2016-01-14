@@ -758,6 +758,10 @@ module Hoodoo; module Services
 
       return add_local_errors.call() if local_response.halt_processing?
 
+      deal_with_x_assume_identity_of( local_interaction )
+
+      return add_local_errors.call() if local_response.halt_processing?
+
       # Construct the local request details.
 
       local_request.uri_path_components = upc
@@ -1186,7 +1190,7 @@ module Hoodoo; module Services
       end
 
       if secure == false || level == :error
-        body = ''
+        body = String.new
         rack_data[ 2 ].each { | thing | body << thing.to_s }
 
         if interaction.context.response.halt_processing?
@@ -1547,10 +1551,13 @@ module Hoodoo; module Services
 
       # Load the session and then, in the context of a loaded session, process
       # any remaining extension ("X-...") HTTP headers, checking up on secured
-      # headers in passing.
+      # headers in passing. There's special handling for X-Assume-Identity-Of,
+      # which may update the session data loaded into 'interaction' with new
+      # identity information.
 
       load_session_into( interaction )
       deal_with_x_headers( interaction )
+      deal_with_x_assume_identity_of( interaction )
 
       return nil
     end
@@ -1934,6 +1941,167 @@ module Hoodoo; module Services
       end
     end
 
+    # The X-Assume-Identity-Of secured HTTP header allows a caller to specify
+    # values for parts of their session's "identity" section, based upon
+    # permitted values described in their session's "scoping" section. This
+    # method assumes that the permission to use the header in the first place
+    # has already been established by #deal_with_x_headers and, as a result,
+    # relevant property information has been written into the request object.
+    #
+    # The header's value is parsed and checked against the session scoping
+    # data. If everything looks good, the loaded session's identity is
+    # updated accordingly. If there are any problems, one or more errors will
+    # be added to the interaction's context's response object.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
+    #
+    def deal_with_x_assume_identity_of( interaction )
+
+      # Header not in use? Exit now.
+      #
+      return if interaction.context.request.assume_identity_of.nil?
+
+      input_hash = interaction.context.request.assume_identity_of
+      rules_hash = interaction.context.session.scoping.authorised_identities rescue {}
+
+      if ( input_hash.empty? )
+        interaction.context.response.errors.add_error(
+          'generic.malformed',
+          {
+            :message   => "X-Assume-Identity-Of header value is malformed",
+            :reference => { :header_value => ( interaction.context.request.assume_identity_of rescue 'unknown' ) }
+          }
+        )
+      end
+
+      return if interaction.context.response.halt_processing?
+
+      identity_overrides = validate_x_assume_identity_of( interaction, input_hash, rules_hash )
+
+      return if interaction.context.response.halt_processing?
+
+      identity_overrides.each do | key, value |
+        interaction.context.session.identity.send( "#{ key }=", value )
+      end
+    end
+
+    # Back-end to #deal_with_x_assume_identity_of which recursively processes
+    # a rule set against a value from the X-Assume-Identity-Of HTTP header and
+    # either updates the interaction's context's response object with error
+    # details if anything is wrong, or returns a flat Hash of keys and values
+    # to (over-)write in the session's identity section.
+    #
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Will be updated on
+    #                 exit if errors occur.
+    #
+    # +input_hash+::  Header value for X-Assume-Identity-Of processed into a
+    #                 flat Hash of String keys and String values.
+    #
+    # +rules_hash+::  Rules Hash from the session scoping data - usually its
+    #                 "authorised_identities" key - or a sub-hash from nested
+    #                 data during recursive calls.
+    #
+    # +recursive+::   Top-level callers MUST omit this parameter. Internal
+    #                 recursive callers MUST set this to +true+.
+    #
+    def validate_x_assume_identity_of( interaction, input_hash, rules_hash, recursive = false )
+      identity_overrides = {}
+
+      unless rules_hash.is_a?( Hash )
+        interaction.context.response.errors.add_error(
+          'generic.malformed',
+          :message => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
+        )
+
+        return nil
+      end
+
+      rules_hash.each do | rules_key, rules_value |
+
+        next unless input_hash.has_key?( rules_key )
+        input_value = input_hash[ rules_key ]
+
+        unless input_value.is_a?( String )
+          raise "Internal error - internal validation input value for X-Assume-Identity-Of is not a String"
+        end
+
+        if rules_value.is_a?( Array )
+          if rules_value.include?( input_value )
+            identity_overrides[ rules_key ] = input_value
+          else
+            interaction.context.response.errors.add_error(
+              'platform.forbidden',
+              {
+                :message   => "X-Assume-Identity-Of header value requests a prohibited identity quantity",
+                :reference =>
+                {
+                  :name  => rules_key,
+                  :value => input_value
+                }
+              }
+            )
+            return nil
+          end
+
+        elsif rules_value.is_a?( Hash )
+          if rules_value.has_key?( input_value )
+            identity_overrides[ rules_key ] = input_value
+
+            nested_identity_overrides = validate_x_assume_identity_of(
+              interaction,
+              input_hash,
+              rules_value[ input_value ],
+              true
+            )
+
+            return if nested_identity_overrides.nil?
+            identity_overrides.merge!( nested_identity_overrides )
+
+          else
+            interaction.context.response.errors.add_error(
+              'platform.forbidden',
+              {
+                :message   => "X-Assume-Identity-Of header value requests a prohibited identity quantity",
+                :reference =>
+                {
+                  :name  => rules_key,
+                  :value => input_value
+                }
+              }
+            )
+            return nil
+
+          end
+
+        else
+          interaction.context.response.errors.add_error(
+            'generic.malformed',
+            :message => "X-Assume-Identity-Of header cannot be processed because of malformed scoping rules in Session's associated Caller",
+          )
+          return nil
+
+        end
+      end
+
+      unless recursive || ( input_hash.keys - identity_overrides.keys ).empty?
+        interaction.context.response.errors.add_error(
+          'platform.forbidden',
+          {
+            :message   => "X-Assume-Identity-Of header value requests prohibited identity name(s)",
+            :reference =>
+            {
+              :names => ( input_hash.keys - identity_overrides.keys ).sort().join( ',' )
+            }
+          }
+        )
+        return nil
+      end
+
+      return identity_overrides
+    end
+
     # Preprocessing stage that sets up common headers required in any response.
     # May vary according to inbound content type requested. If processing was
     # aborted early (e.g. missing inbound Content-Type) we may fall to defaults.
@@ -1941,7 +2109,8 @@ module Hoodoo; module Services
     # (At the time of writing, platform documentations say we're JSON only - but
     # there's an strong chance of e.g. XML representation being demanded later).
     #
-    # +response+:: Hoodoo::Services::Response instance to update.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the current interaction. Updated on exit.
     #
     def set_common_response_headers( interaction )
       interaction.context.response.add_header( 'X-Interaction-ID', interaction.interaction_id )

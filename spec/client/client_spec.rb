@@ -146,20 +146,22 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
       # if adding things.
 
       {
-        'id'            => context.request.ident                 ||
-                           context.request.body.try( :[], 'id' ) ||
-                           Hoodoo::UUID.generate(),
+        'id'                 => context.request.ident                 ||
+                                context.request.body.try( :[], 'id' ) ||
+                                Hoodoo::UUID.generate(),
 
-        'created_at'    => Time.now.utc.iso8601,
-        'kind'          => 'RSpecClientTestTarget',
-        'language'      => context.request.locale,
+        'created_at'         => Time.now.utc.iso8601,
+        'kind'               => 'RSpecClientTestTarget',
+        'language'           => context.request.locale,
 
-        'embeds'        => context.request.embeds,
-        'body_hash'     => context.request.body,
-        'dated_at'      => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
-        'dated_from'    => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
-        'resource_uuid' => context.request.resource_uuid,
-        'deja_vu'       => context.request.deja_vu,
+        'embeds'             => context.request.embeds,
+        'body_hash'          => context.request.body,
+        'dated_at'           => context.request.dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_at   ),
+        'dated_from'         => context.request.dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( context.request.dated_from ),
+        'resource_uuid'      => context.request.resource_uuid,
+        'deja_vu'            => context.request.deja_vu,
+        'assume_identity_of' => context.request.assume_identity_of,
+        'actual_identity'    => ( context.session.identity.to_h rescue nil ),
       }
     end
 end
@@ -213,6 +215,8 @@ describe Hoodoo::Client do
     @old_test_session = Hoodoo::Services::Middleware.test_session()
     @port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService )
     @https_port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService, true )
+    @authorised_identities = { 'member_id' => [ '23', '24' ] }
+    @example_authorised_identity = { 'member_id' => '23' }
   end
 
   after :all do
@@ -249,15 +253,17 @@ describe Hoodoo::Client do
     # "def option_based_expectations" later in this file. Be careful
     # to follow the naming convention evident below if adding things.
 
-    @expected_dated_at      = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
-    @expected_dated_from    = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
-    @expected_resource_uuid = @resource_uuid
-    @expected_deja_vu       = @deja_vu != true ? nil : true
+    @expected_dated_at           = @dated_at.nil?   ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_at   )
+    @expected_dated_from         = @dated_from.nil? ? nil : Hoodoo::Utilities.nanosecond_iso8601( @dated_from )
+    @expected_resource_uuid      = @resource_uuid
+    @expected_assume_identity_of = @assume_identity_of
+    @expected_deja_vu            = @deja_vu != true ? nil : true
 
-    endpoint_opts[ :dated_at      ] = @dated_at      unless @dated_at.nil?
-    endpoint_opts[ :dated_from    ] = @dated_from    unless @dated_from.nil?
-    endpoint_opts[ :resource_uuid ] = @resource_uuid unless @resource_uuid.nil?
-    endpoint_opts[ :deja_vu       ] = @deja_vu       if     @deja_vu == true
+    endpoint_opts[ :dated_at           ] = @dated_at           unless @dated_at.nil?
+    endpoint_opts[ :dated_from         ] = @dated_from         unless @dated_from.nil?
+    endpoint_opts[ :resource_uuid      ] = @resource_uuid      unless @resource_uuid.nil?
+    endpoint_opts[ :assume_identity_of ] = @assume_identity_of unless @assume_identity_of.nil?
+    endpoint_opts[ :deja_vu            ] = @deja_vu            if     @deja_vu == true
 
     if rand( 2 ) == 0
       override_locale          = SecureRandom.urlsafe_base64( 2 )
@@ -508,6 +514,8 @@ describe Hoodoo::Client do
           case property
             when :resource_uuid
               @resource_uuid = Hoodoo::UUID.generate
+            when :assume_identity_of
+              @assume_identity_of = @example_authorised_identity
             else
               raise "Update client_spec.rb with new secured properties for test"
           end
@@ -725,8 +733,10 @@ describe Hoodoo::Client do
     context 'and with secured option' do
       before :each do
         test_session = @old_test_session.dup
+        test_session.identity = OpenStruct.new
         test_session.scoping = @old_test_session.scoping.dup
         test_session.scoping.authorised_http_headers = []
+        test_session.scoping.authorised_identities = @authorised_identities
 
         Hoodoo::Client::Headers::HEADER_TO_PROPERTY.each do | rack_header, description |
           next unless description[ :secured ] == true
@@ -750,6 +760,8 @@ describe Hoodoo::Client do
           case property
             when :resource_uuid
               @resource_uuid = Hoodoo::UUID.generate
+            when :assume_identity_of
+              @assume_identity_of = @example_authorised_identity
             else
               raise "Update client_spec.rb with new secured properties for test"
           end
@@ -763,6 +775,8 @@ describe Hoodoo::Client do
           result     = @endpoint.show( mock_ident )
 
           expect( result.platform_errors.has_errors? ).to eq( false )
+
+          option_based_expectations( result )
         end
       end
 
@@ -780,6 +794,36 @@ describe Hoodoo::Client do
 
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result[ 'id' ] ).to eq( @resource_uuid )
+      end
+
+      context "'assume_identity_of' in use" do
+        it 'but invalid' do
+          @assume_identity_of = { 'invalid' => 'Hoodoo::UUID.generate' }
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          result = @endpoint.create( { 'hello' => 'world' } )
+
+          expect( result.platform_errors.has_errors? ).to eq( true )
+          expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.forbidden' )
+        end
+
+        it 'and valid' do
+          @assume_identity_of = @example_authorised_identity
+
+          set_vars_for(
+            base_uri:     "http://localhost:#{ @port }",
+            auto_session: false
+          )
+
+          result = @endpoint.create( { 'hello' => 'world' } )
+
+          expect( result.platform_errors.has_errors? ).to eq( false )
+          expect( result[ 'actual_identity' ] ).to eq( @example_authorised_identity )
+        end
       end
     end
   end
