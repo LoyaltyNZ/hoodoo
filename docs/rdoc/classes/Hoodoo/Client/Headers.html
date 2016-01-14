@@ -108,6 +108,42 @@ appeared to not be a <a href="../UUID.html">UUID</a>.</p></td>
 this Proc when called with some <a href="../UUID.html">UUID</a> evaluates
 to the input value coerced to a String and no other changes.</p></td>
             </tr>
+          <tr valign='top' id='KVP_PROPERTY_PROC'>
+            <td class="attr-name">KVP_PROPERTY_PROC</td>
+            <td>=</td>
+            <td class="attr-value"><pre>-&gt; ( value ) {
+Hash[ URI.decode_www_form( value ) ]
+}</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
+this Proc when called with some non-nil value from an HTTP header
+containing URL-encoded simple key/value pair data returns a decoded Hash of
+key/value pairs. Use URL encoding in the HTTP header value as per:</p>
+
+<p><a
+href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p>
+
+<p>Invalid input will produce unusual results, e.g. an empty Hash or a Hash
+where certain keys may have empty string values.</p></td>
+            </tr>
+          <tr valign='top' id='KVP_HEADER_PROC'>
+            <td class="attr-name">KVP_HEADER_PROC</td>
+            <td>=</td>
+            <td class="attr-value"><pre>-&gt; ( value ) {
+URI.encode_www_form( value )
+}</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Used by <a href="Headers.html#HEADER_TO_PROPERTY">HEADER_TO_PROPERTY</a>;
+this Proc when called with some non-nested Hash evaluates to a URL-encoded
+form data String as per:</p>
+
+<p><a
+href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR/html5/forms.html#url-encoded-form-data</a></p></td>
+            </tr>
           <tr valign='top' id='DATETIME_IN_PAST_ONLY_PROPERTY_PROC'>
             <td class="attr-name">DATETIME_IN_PAST_ONLY_PROPERTY_PROC</td>
             <td>=</td>
@@ -193,6 +229,16 @@ value.</p></td>
 :header_proc   =&gt; UUID_HEADER_PROC,
 
 :secured       =&gt; true,
+},
+
+&#39;HTTP_X_ASSUME_IDENTITY_OF&#39; =&gt; {
+:property      =&gt; :assume_identity_of,
+:property_proc =&gt; KVP_PROPERTY_PROC,
+:header        =&gt; &#39;X-Assume-Identity-Of&#39;,
+:header_proc   =&gt; KVP_HEADER_PROC,
+
+:secured       =&gt; true,
+:auto_transfer =&gt; true,
 },
 
 &#39;HTTP_X_DATED_AT&#39; =&gt; {
@@ -321,7 +367,7 @@ expecting to use.</p>
                 <a href="javascript:toggleSource('method-c-define_accessors_for_header_equivalents_source')" id="l_method-c-define_accessors_for_header_equivalents_source">show</a>
               </p>
               <div id="method-c-define_accessors_for_header_equivalents_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 200</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 233</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">define_accessors_for_header_equivalents</span>( <span class="ruby-identifier">klass</span> )
   <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">class_eval</span> <span class="ruby-keyword">do</span>
     <span class="ruby-constant">HEADER_TO_PROPERTY</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">rack_header</span>, <span class="ruby-identifier">description</span> <span class="ruby-operator">|</span>
@@ -393,7 +439,7 @@ encountered (in enumeration order, whatever that might be) is stored.</p>
                 <a href="javascript:toggleSource('method-c-x_header_to_options_source')" id="l_method-c-x_header_to_options_source">show</a>
               </p>
               <div id="method-c-x_header_to_options_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 249</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/headers.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">x_header_to_options</span>( <span class="ruby-identifier">hashlike_source</span> )
   <span class="ruby-identifier">hashlike_source</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">options</span>           = {}
