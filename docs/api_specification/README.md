@@ -43,6 +43,7 @@ _Release 2, 2016-01-14_
   * [Resources](#authentication.api.resources)
     * [Caller `::resource::caller`](#caller.resource)
       * [Interface](#caller.resource.interface)
+        * [Identity maps](#caller.resource.interface.identity_maps)
     * [Session `::resource::session`](#session.resource)
       * [Interface](#session.resource.interface)
 * [Analytical API](#analytical.api)
