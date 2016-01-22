@@ -403,7 +403,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port:    @port,
-        path:    '/v2/test_some_echoes.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two',
+        path:    '/2/TestEcho.tar.gz?limit=25&offset=75&_reference=embed_one,embed_two',
         headers: headers
       )
 
