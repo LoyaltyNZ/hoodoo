@@ -36,7 +36,7 @@ module Hoodoo
         # +resource+:: See #resource.
         # +version+::  See #version.
         #
-        def initialize( resource:, version:)
+        def initialize( resource:, version: )
 
           @resource     = resource.to_sym
           @version      = version.to_i
