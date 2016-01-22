@@ -39,7 +39,7 @@ module Hoodoo
             # to keep Rack happy.
 
             endpoint_uri      = URI.parse( 'http://localhost:80' )
-            endpoint_uri.path = @discovery_result.equivalent_path
+            endpoint_uri.path = @discovery_result.routing_path
 
             @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
             @description.discovery_result = @discovery_result
@@ -136,40 +136,58 @@ module Hoodoo
             action = description_of_request.action
             data   = get_data_for_request( description_of_request )
 
-            # Host and port are just there to keep Rack happy at the
+            # Host and port are only provided to keep Rack happy at the
             # receiving end of the over-AMQP synthesised HTTP request.
 
-            alchemy_options = {
-              :host    => description_of_request.endpoint_uri.host,
-              :port    => description_of_request.endpoint_uri.port,
-              :query   => data.query_hash,
-              :body    => data.body_string,
-              :headers => data.header_hash
-            }
-
-            unless self.session_id().nil? # Session comes from Endpoint superclass
-              alchemy_options[ :session_id ] = self.session_id()
-            end
-
-            http_method = {
+            http_method =
+            {
               :create => 'POST',
               :update => 'PATCH',
               :delete => 'DELETE'
             }[ action ] || 'GET'
 
-            description_of_response        = DescriptionOfResponse.new
-            description_of_response.action = action
+            http_message =
+            {
+              'scheme'  => 'http',
+              'verb'    => http_method,
 
-            amqp_response = self.alchemy().http_request(
-              description_of_request.discovery_result.queue_name,
-              http_method,
-              data.full_uri.path,
-              alchemy_options
-            )
+              'host'    => description_of_request.endpoint_uri.host,
+              'port'    => description_of_request.endpoint_uri.port,
+              'path'    => data.full_uri.path,
+              'query'   => data.query_hash,
 
-            description_of_response.http_status_code = amqp_response.status_code.to_i
-            description_of_response.http_headers     = amqp_response.headers || {}
-            description_of_response.raw_body_data    = amqp_response.body
+              'headers' => data.header_hash,
+              'body'    => data.body_string
+            }
+
+            unless self.session_id().nil? # Session comes from Endpoint superclass
+              http_message[ 'session_id' ] = self.session_id()
+            end
+
+            amqp_response = self.alchemy().send_message_to_resource( http_message )
+
+            description_of_response              = DescriptionOfResponse.new
+            description_of_response.action       = action
+            description_of_response.http_headers = {}
+
+            if amqp_response == AlchemyFlux::TimeoutError
+              description_of_response.http_status_code = 408
+              description_of_response.raw_body_data    = '408 Timeout'
+
+            elsif amqp_response == AlchemyFlux::MessageNotDeliveredError
+              description_of_response.http_status_code = 404
+              description_of_response.raw_body_data    = '404 Not Found'
+
+            elsif amqp_response.is_a?( Hash )
+              description_of_response.http_status_code = amqp_response[ 'status_code' ].to_i
+              description_of_response.http_headers     = amqp_response[ 'headers'     ] || {}
+              description_of_response.raw_body_data    = amqp_response[ 'body'        ]
+
+            else
+              description_of_response.http_status_code = 500
+              description_of_response.raw_body_data    = '500 Internal Server Error'
+
+            end
 
             return get_data_for_response( description_of_response )
           end

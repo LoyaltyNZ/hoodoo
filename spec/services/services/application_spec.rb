@@ -28,17 +28,17 @@ describe Hoodoo::Services::Service do
   it 'should complain about incorrect interface classes' do
     expect {
       RSpecTestService.comprised_of( Hash )
-    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hash'")
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Service::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hash'")
 
     expect {
       RSpecTestService.comprised_of( Hoodoo::Services::Interface )
-    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hoodoo::Services::Interface'")
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Service::comprised_of expects Hoodoo::Services::Interface subclasses only - got 'Hoodoo::Services::Interface'")
   end
 
   it 'should complain if called directly' do
     expect {
       RSpecTestService.new.call( nil )
-    }.to raise_error(RuntimeError, "Hoodoo::Services::Implementation subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru")
+    }.to raise_error(RuntimeError, "Hoodoo::Services::Service subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru")
   end
 
   it 'should correctly report its component classes' do

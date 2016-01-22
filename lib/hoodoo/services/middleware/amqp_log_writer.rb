@@ -13,33 +13,32 @@ module Hoodoo; module Services
   class Middleware
 
     # Log writer which sends structured messages to an AMQP-based queue via
-    # the AlchemyAMQ gems. A Hoodoo::Logger::FastWriter subclass, since though
-    # talking to the queue might be comparatively slow, Alchemy itself uses an
-    # asynchronous Thread for this so there's no need to add another one for
-    # this logger.
+    # the Alchemy Flux gem. A Hoodoo::Logger::FastWriter subclass, since though
+    # talking to the queue might be comparatively slow, Flux uses Event Machine
+    # for this so there's no need to add another Thread for this logger.
     #
-    # See also Hoodoo::Logger and Hoodoo::Services::Middleware::AMQPLogMessage.
+    # See also Hoodoo::Logger.
     #
     class AMQPLogWriter < Hoodoo::Logger::FastWriter
 
       # Create an AMQP logger instance.
       #
-      # +alchemy+::    The Alchemy endpoint to use for sending messages to the
-      #                AMQP-based queue.
+      # +alchemy+::     The Alchemy endpoint to use for sending messages to the
+      #                 AMQP-based queue.
       #
-      # +queue_name+:: The queue name (as a String) to use. Optional. If
-      #                omitted, reads +ENV[ 'AMQ_LOGGING_ENDPOINT' ]+ or if
-      #                that is unset, defaults to +platform.logging+.
+      # +routing_key+:: The routing key (as a String) to use. Optional. If
+      #                 omitted, reads +ENV[ 'AMQ_LOGGING_ENDPOINT' ]+ or if
+      #                 that is unset, defaults to +platform.logging+.
       #
       # If you're running with Rack on top of Alchemy, then the +call+ method's
       # +env+ parameter containing the Rack environment should have a key of
       # +rack.alchemy+ or +alchemy+ with a value that can be assigned to the
       # +alchemy+ parameter. The logger will then use the active Alchemy
-      # service to send messages to its configured named queue.
+      # service to send messages to its configured routing key.
       #
-      def initialize( alchemy, queue_name = nil )
-        @alchemy    = alchemy
-        @queue_name = queue_name || ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
+      def initialize( alchemy, routing_key = nil )
+        @alchemy     = alchemy
+        @routing_key = routing_key || ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
       end
 
       # Custom implementation of the Hoodoo::Logger::WriterMixin#report
@@ -63,19 +62,15 @@ module Hoodoo; module Services
       #                    the log payload.
       #
       def report( level, component, code, data )
-        return if @alchemy.nil? || defined?( Hoodoo::Services::Middleware::AMQPLogMessage ).nil?
+        return if @alchemy.nil?
 
         # Take care with Symbol keys in 'data' vs string keys in e.g. 'Session'.
 
         data[ :id ] ||= Hoodoo::UUID.generate()
 
-        interaction_id = data[ :interaction_id ]
-        session        = data[ :session ] || {}
+        session = data[ :session ] || {}
+        message = Hoodoo::Services::Middleware::AMQPLogMessage.new( {
 
-        caller_id      = session[ 'caller_id' ]
-        identity       = ( session[ 'identity' ] || {} ).to_h
-
-        message = Hoodoo::Services::Middleware::AMQPLogMessage.new(
           :id             => data[ :id ],
           :level          => level,
           :component      => component,
@@ -84,34 +79,13 @@ module Hoodoo; module Services
 
           :data           => data,
 
-          :interaction_id => interaction_id,
-          :caller_id      => caller_id,
-          :identity       => identity,
+          :interaction_id => data[ :interaction_id ],
+          :caller_id      => session[ 'caller_id' ],
+          :identity       => ( session[ 'identity' ] || {} ).to_h
 
-          :routing_key    => @queue_name,
-        )
+        } ).to_h()
 
-        # Broken services can attempt to log invalid datatypes such as
-        # BigDecimal, which Msgpack can't serialize. At the time of writing,
-        # Alchemy AMQ would thus encounter a serialization exception *within
-        # its EventMachine sending loop*, so in a different *native* thread.
-        # This exception could not be caught by Ruby / Hoodoo in "this"
-        # native thread, so instead the uncaught exception kills the service.
-        # Although Alchemy could catch that itself, there is no way for it to
-        # report the failure to Hoodoo in a way that a log reporting caller
-        # could understand; it's async and in the wrong native thread anyway.
-        #
-        # Solution: In non-production environments only (due to the potential
-        # performance hit), manually serialize the message before sending it.
-        # If this call blows up, the Hoodoo exception handler will catch it
-        # and report the result as a properly formed 500, including the
-        # Msgpack (or other exception) details on exactly what was wrong.
-        #
-        unless Hoodoo::Services::Middleware.environment.production?
-          message.serialize()
-        end
-
-        @alchemy.send_message( message )
+        @alchemy.send_message_to_queue( @routing_key, message )
       end
     end
 

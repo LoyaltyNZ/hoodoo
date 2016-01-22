@@ -80,14 +80,11 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
 
         :interaction_id => interaction_id,
         :caller_id      => @session.caller_id,
-        :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h ),
-
-        :routing_key    => @queue,
+        :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h )
       }
 
       expect( Hoodoo::Services::Middleware::AMQPLogMessage ).to receive( :new ).with( expected_hash ).and_return( {} )
-      expect_any_instance_of( Hash ).to receive( :serialize ).once
-      expect( @alchemy ).to receive( :send_message ).with( {} ).once
+      expect( @alchemy ).to receive( :send_message_to_queue ).with( @queue, {} ).once
 
       @logger.report( level, component, code, data )
     end

@@ -53,7 +53,7 @@ module Hoodoo; module Services
   #
   # The middleware adds a STDERR stream writer logger by default and an AMQP
   # log writer on the first Rack +call+ should the Rack environment provide an
-  # Alchemy endpoint (see the AlchemyAMQ gem).
+  # Alchemy endpoint (see the Alchemy Flux gem).
   #
   class Middleware
 
@@ -215,6 +215,33 @@ module Hoodoo; module Services
       q.nil? == false && q.empty? == false
     end
 
+    # Return a service 'name' derived from the service's collection of
+    # declared resources. The name will be the same across any instances of
+    # the service that implement the same resources. This can be used for
+    # e.g. AMQP-based queue-named operations, that want to target the same
+    # resource collection regardless of instance.
+    #
+    # This method will not work unless the middleware has parsed the set
+    # of service interface declarations (during instance initialisation).
+    # If a least one middleware instance has already been created, it is
+    # safe to call.
+    #
+    def self.service_name
+      @@service_name
+    end
+
+    # For a given resource name and version, return the _de_ _facto_ routing
+    # path based on version and name with no modifications.
+    #
+    # +resource+::    Resource name for the endpoint, e.g. +:Purchase+.
+    #                 String or symbol.
+    #
+    # +version+::     Implemented version of the endpoint. Integer.
+    #
+    def self.de_facto_path_for( resource, version )
+      "/#{ version }/#{ resource }"
+    end
+
     # Access the middleware's logging instance. Call +report+ on this to make
     # structured log entries. See Hoodoo::Logger::WriterMixin#report along
     # with Hoodoo::Logger for other calls you can use.
@@ -338,7 +365,8 @@ module Hoodoo; module Services
     # of the endpoints.
     #
     def self.flush_services_for_test
-      @@services = []
+      @@services     = []
+      @@service_name = nil
 
       ObjectSpace.each_object( self ) do | middleware_instance |
         discoverer = middleware_instance.instance_variable_get( '@discoverer' )
@@ -383,7 +411,8 @@ module Hoodoo; module Services
       # actions          Set of symbols naming allowed actions
       # implementation   Hoodoo::Services::Implementation subclass *instance* to
       #                  use on match
-
+      #
+      #
       @@services = service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
@@ -395,6 +424,13 @@ module Hoodoo; module Services
         #
         interfaces_have_public_methods() unless interface.public_actions.empty?
 
+        # There are two routes to an implementation - one via the custom path
+        # given through its 'endpoint' declaration, the other a de facto path
+        # determined from the unmodified version and resource name. Both lead
+        # to the same implementation instance.
+        #
+        implementation_instance = interface.implementation.new
+
         # Regexp explanation:
         #
         # Match "/", the version text, "/", the endpoint text, then either
@@ -402,16 +438,33 @@ module Hoodoo; module Services
         # everything else. Match data index 1 will be whatever character (if
         # any) followed after the endpoint ("/" or ".") while index 2 contains
         # everything else.
+        #
+        custom_path   = "/v#{ interface.version }/#{ interface.endpoint }"
+        custom_regexp = /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/
+
+        # Same as above, but for the de facto routing.
+        #
+        de_facto_path   = self.class.de_facto_path_for( interface.resource, interface.version )
+        de_facto_regexp = /\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/
 
         Hoodoo::Services::Discovery::ForLocal.new(
           :resource                => interface.resource,
           :version                 => interface.version,
-          :base_path               => "/v#{ interface.version }/#{ interface.endpoint }",
-          :routing_regexp          => /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/,
+          :base_path               => custom_path,
+          :routing_regexp          => custom_regexp,
+          :de_facto_base_path      => de_facto_path,
+          :de_facto_routing_regexp => de_facto_regexp,
           :interface_class         => interface,
-          :implementation_instance => interface.implementation.new
+          :implementation_instance => implementation_instance
         )
+
       end
+
+      # Determine the service name from the resources above then announce
+      # the whole collection to any interested discovery engines.
+
+      sorted_resources = @@services.map() { | service | service.resource }.sort()
+      @@service_name   = "service.#{ sorted_resources.join( '_' ) }"
 
       announce_presence_of( @@services )
     end
@@ -1343,22 +1396,13 @@ module Hoodoo; module Services
       end
     end
 
-    # Announce the presence of the service endpoints to known interested
-    # parties.
+    # Announce the presence of the local resource endpoints in this service
+    # to known interested parties.
     #
     # ONLY CALL AS PART OF INSTANCE CREATION (from #initialize).
     #
-    # +services+:: Array of Hashes describing service information.
-    #
-    # Hash keys/values are as follows:
-    #
-    # +regexp+::         A regular expression for a URI path which, if matched,
-    #                    means that this service endpoint is being called.
-    # +path+::           The endpoint path that the regexp would match, with
-    #                    leading "/" (e.g. "/v1/products")
-    # +interface+::      The Interface subclass for this endpoint.
-    # +implementation+:: The Implementation subclass instance for this
-    #                    endpoint.
+    # +services+:: Array of Hoodoo::Services::Discovery::ForLocal instances
+    #              describing available resources in this local service.
     #
     def announce_presence_of( services )
 
@@ -1370,7 +1414,7 @@ module Hoodoo; module Services
       #
       # A class variable is wrong, as entirely new instances of the service
       # middleware might be stood up in one process and could potentially
-      # be handling different services. This is typically only the case for
+      # be handling different resources. This is typically only the case for
       # running tests, but *might* happen elsewhere too. In any event, we
       # don't want announcements in one instance to pollute the discovery
       # data in another (especially the records of which services were
@@ -1378,14 +1422,15 @@ module Hoodoo; module Services
 
       if self.class.on_queue?
 
-        @discoverer ||= Hoodoo::Services::Discovery::ByConsul.new
+        @discoverer ||= Hoodoo::Services::Discovery::ByFlux.new
 
         services.each do | service |
           interface = service.interface_class
 
           @discoverer.announce(
             interface.resource,
-            interface.version
+            interface.version,
+            { :services => services }
           )
         end
 
@@ -1584,12 +1629,16 @@ module Hoodoo; module Services
       # then there's no matching endpoint; badly routed request; 404. If we
       # find many, raise an exception and rely on the exception handler to
       # send back a 500.
+      #
+      # We try the custom routing path first, then the de facto path, then
+      # give up if neither match.
 
       uri_path = CGI.unescape( interaction.rack_request.path() )
 
       selected_path_data = nil
       selected_services  = @@services.select do | service_data |
-        path_data = process_uri_path( uri_path, service_data.routing_regexp )
+        path_data = process_uri_path( uri_path, service_data.routing_regexp ) ||
+                    process_uri_path( uri_path, service_data.de_facto_routing_regexp )
 
         if path_data.nil?
           false

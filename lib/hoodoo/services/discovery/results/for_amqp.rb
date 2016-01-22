@@ -25,32 +25,26 @@ module Hoodoo
         #
         attr_accessor :version
 
-        # Queue name for the target service implementation, as a
-        # String (e.g. "service.account").
+        # Path at which the resource is expected to be found on the queue
+        # (routing via Topic Exchange and Alchemy Flux's translations of
+        # paths to keys).
         #
-        attr_accessor :queue_name
-
-        # URL path equivalent that should be mapped to the queue in
-        # #queue_name, as a String (e.g. "/v2/accounts").
-        #
-        attr_accessor :equivalent_path
+        attr_reader :routing_path
 
         # Create an instance with named parameters as follows:
         #
-        # +resource+::       See #resource.
-        # +version+::        See #version.
-        # +queue_name+::     See #queue_name.
-        # +equivalent_pat+:: See #equivalent_pat.
+        # +resource+:: See #resource.
+        # +version+::  See #version.
         #
-        def initialize( resource:,
-                        version:,
-                        queue_name:,
-                        equivalent_path: )
+        def initialize( resource:, version:)
 
-          self.resource        = resource.to_sym
-          self.version         = version.to_i
-          self.queue_name      = queue_name
-          self.equivalent_path = equivalent_path
+          @resource     = resource.to_sym
+          @version      = version.to_i
+          @routing_path = Hoodoo::Services::Middleware.de_facto_path_for(
+            resource,
+            version
+          )
+
         end
       end
     end

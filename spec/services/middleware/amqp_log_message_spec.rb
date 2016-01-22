@@ -2,8 +2,6 @@ require 'spec_helper.rb'
 
 describe Hoodoo::Services::Middleware::AMQPLogMessage do
 
-  require 'msgpack'
-
   let( :now ) do
     Time.now
   end
@@ -35,18 +33,9 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
     )
   end
 
-  it 'serializes' do
+  it 'converts input options to canonical output Hash' do
     obj = described_class.new( hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
-  end
-
-  it 'deserializes' do
-    obj = described_class.new( hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
-    obj.id = nil # Clear some instance vars
-    obj.level = nil
-    obj.deserialize # Should reset instance vars based on prior serialization
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
+    expect( obj.to_h ).to eq( compare_hash )
   end
 
   it 'handles nil' do
@@ -55,6 +44,6 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
     )
 
     obj = described_class.new( source_hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( local_compare_hash )
+    expect( obj.to_h ).to eq( local_compare_hash )
   end
 end

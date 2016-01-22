@@ -1158,7 +1158,7 @@ Log and error data may or may not be retrievable by a resource-based API. The AP
 
 Hoodoo assigns UUIDs to error messages up-front, via UUIDs associated with `error` level log entries, so persisting an error report is akin to persisting any other log item. Thus, Hoodoo automatic logging can be used to provide the basis of a persistence mechanism; **but Hoodoo does not persist log entries itself**. Persistence options include:
 
-* Use a queue-based system, e.g. HTTP-over-AMQP with [Alchemy AMQ](https://github.com/LoyaltyNZ/alchemy-amq) and log to the queue. Have an Alchemy process somewhere which listens for logging queue messages and persists them in appropriate formats for e.g. log or Errors resource recovery at a later date. You may choose to persist data indefinitely in the case of errors. You may need to apply rate limiting somewhere in the chain to avoid DOS vulnerabilities.
+* Use a queue-based system, e.g. HTTP-over-AMQP with [Alchemy Flux](https://github.com/LoyaltyNZ/alchemy-flux) and log to the queue. Have an Alchemy process somewhere which listens for logging queue messages and persists them in appropriate formats for e.g. log or Errors resource recovery at a later date. You may choose to persist data indefinitely in the case of errors. You may need to apply rate limiting somewhere in the chain to avoid DOS vulnerabilities.
 
   This is a centralised approach:
 

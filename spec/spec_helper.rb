@@ -30,17 +30,12 @@ require 'database_cleaner'
 require 'active_record'
 require 'logger'
 
-# Include AlchemyAMQ for testing only.
-
-# TODO: See spec/alchemy/alchemy-amq.rb. Remove this once 'real' Alchemy
-#       is opened.
-#
-$LOAD_PATH.unshift File.join( File.dirname( __FILE__ ), 'alchemy' )
+# Include Alchemy Flux for testing only.
 
 begin
-  require 'alchemy-amq'
+  require 'alchemy-flux'
 rescue LoadError
-  raise 'Cannot load alchemy-amq; did you run me with "bundle exec..." ?'
+  raise 'Cannot load alchemy-flux; did you run me with "bundle exec..." ?'
 end
 
 # Now it's safe to require Rack test code and Hoodoo itself.

@@ -27,6 +27,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'
   s.add_development_dependency 'rdoc',             '~> 4.2' # See also 'sdoc' in Gemfile
   s.add_development_dependency 'rack-test',        '~> 0.6'
+  s.add_development_dependency 'alchemy-flux',     '~> 0.0'
   s.add_development_dependency 'rspec',            '~> 3.3'
   s.add_development_dependency 'rspec-mocks',      '~> 3.3'
   s.add_development_dependency 'activerecord',     '~> 4.2'
