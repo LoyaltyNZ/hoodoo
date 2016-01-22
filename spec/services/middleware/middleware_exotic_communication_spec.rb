@@ -25,8 +25,8 @@ describe Hoodoo::Services::Middleware do
 
   context 'on queue' do
     before :each do
-      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
-      ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
+      @old_queue = ENV[ 'AMQ_URI' ]
+      ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
       @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
 
       @cvar = false
@@ -43,7 +43,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     after :each do
-      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+      ENV[ 'AMQ_URI' ] = @old_queue
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true

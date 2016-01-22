@@ -211,7 +211,7 @@ module Hoodoo; module Services
     # Are we running on the queue, else (implied) a local HTTP server?
     #
     def self.on_queue?
-      q = ENV[ 'AMQ_ENDPOINT' ]
+      q = ENV[ 'AMQ_URI' ]
       q.nil? == false && q.empty? == false
     end
 
@@ -1025,7 +1025,8 @@ module Hoodoo; module Services
     # +env+:: Rack 'env' parameter from e.g. Rack's invocation of #call.
     #
     def enable_alchemy_logging_from( env )
-      alchemy = env[ 'rack.alchemy' ]
+      alchemy = env[ 'alchemy.service' ]
+
       unless alchemy.nil? || defined?( @@alchemy )
         @@alchemy = alchemy
         self.class.send( :add_queue_logging, @@alchemy ) unless @@alchemy.nil?

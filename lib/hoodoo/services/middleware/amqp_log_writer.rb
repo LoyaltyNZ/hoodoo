@@ -31,10 +31,11 @@ module Hoodoo; module Services
       #                 that is unset, defaults to +platform.logging+.
       #
       # If you're running with Rack on top of Alchemy, then the +call+ method's
-      # +env+ parameter containing the Rack environment should have a key of
-      # +rack.alchemy+ or +alchemy+ with a value that can be assigned to the
-      # +alchemy+ parameter. The logger will then use the active Alchemy
-      # service to send messages to its configured routing key.
+      # +env+ parameter containing the Rack environment _MUST_ have a key of
+      # +alchemy.service+ with a value that's the AlchemyFlux::Service instance
+      # handling queue communication. This is assigned to the +alchemy+
+      # parameter. The logger will then use this active Alchemy service to send
+      # messages to its configured routing key.
       #
       def initialize( alchemy, routing_key = nil )
         @alchemy     = alchemy
