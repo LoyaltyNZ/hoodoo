@@ -2,13 +2,8 @@ require 'spec_helper.rb'
 
 describe Hoodoo::Services::Middleware::AMQPLogMessage do
 
-  require 'msgpack'
-
-  let( :now ) do
-    Time.now
-  end
-
-  let( :source_hash ) do
+  let( :now       ) { Time.now }
+  let( :base_hash ) {
     {
       :id => '1',
       :level => 'info',
@@ -19,42 +14,45 @@ describe Hoodoo::Services::Middleware::AMQPLogMessage do
 
       :interaction_id => '3',
       :caller_id => '2',
-      :identity => { :foo => '4', :bar => '5' }
+      :identity => { :foo => '4', :bar => '5' },
     }
+  }
+
+  ############################################################################
+  # All tests must use 'let' to define values for 'reported_at' and
+  # 'expected_reported_at'.
+  ############################################################################
+
+  let( :hash            ) { base_hash().merge( :reported_at => reported_at() ) }
+  let( :expected_result ) {
+    Hoodoo::Utilities.stringify( hash() ).merge( 'reported_at' => expected_reported_at() )
+  }
+
+  shared_examples 'a well formed logger' do
+    it 'and canonicalises the fields' do
+      obj = described_class.new( hash() )
+      expect( obj.to_h ).to eq( expected_result() )
+    end
   end
 
-  let( :hash ) do
-    source_hash().merge( :reported_at => now() )
+  context 'with a Time object in "reported_at"' do
+    let( :reported_at          ) { Time.now }
+    let( :expected_reported_at ) { reported_at().strftime( Hoodoo::Services::Middleware::AMQPLogMessage::TIME_FORMATTER ) }
+
+    it_behaves_like 'a well formed logger'
   end
 
-  let( :compare_hash ) do
-    Hoodoo::Utilities.stringify(
-      source_hash().merge(
-        :reported_at => now().strftime( Hoodoo::Services::Middleware::AMQPLogMessage::TIME_FORMATTER )
-      )
-    )
+  context 'with a String object in "reported_at"' do
+    let( :reported_at          ) { Time.now.iso8601 }
+    let( :expected_reported_at ) { reported_at()    }
+
+    it_behaves_like 'a well formed logger'
   end
 
-  it 'serializes' do
-    obj = described_class.new( hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
-  end
+  context 'with "nil" in "reported_at"' do
+    let( :reported_at          ) { nil           }
+    let( :expected_reported_at ) { reported_at() }
 
-  it 'deserializes' do
-    obj = described_class.new( hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
-    obj.id = nil # Clear some instance vars
-    obj.level = nil
-    obj.deserialize # Should reset instance vars based on prior serialization
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( compare_hash )
-  end
-
-  it 'handles nil' do
-    local_compare_hash = Hoodoo::Utilities.stringify(
-      source_hash.merge( :reported_at => nil )
-    )
-
-    obj = described_class.new( source_hash )
-    expect( MessagePack.unpack( obj.serialize ) ).to eq( local_compare_hash )
+    it_behaves_like 'a well formed logger'
   end
 end

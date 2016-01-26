@@ -59,9 +59,16 @@ end
 
 describe Hoodoo::Services::Middleware do
 
-  def try_to_call( endpoint, ident = nil )
+  def try_to_call( endpoint: nil,
+                   resource: nil,
+                   ident: nil )
+
+    path = resource.nil?                  ?
+           "/v1/#{ endpoint }/#{ ident }" :
+           "/1/#{ resource }/#{ ident }"
+
     get(
-      "/v1/#{ endpoint }/#{ ident }",
+      path,
       nil,
       { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     )
@@ -102,24 +109,36 @@ describe Hoodoo::Services::Middleware do
 
     context '#list' do
       it 'prohibits actions without session', :without_session => true do
-        try_to_call( 'no_public_action' )
+        try_to_call( endpoint: 'no_public_action' )
+        expect( last_response.status ).to eq( 401 )
+
+        try_to_call( resource: 'NoPublicAction' )
         expect( last_response.status ).to eq( 401 )
       end
 
       it 'allows actions with session' do
-        try_to_call( 'no_public_action' )
+        try_to_call( endpoint: 'no_public_action' )
+        expect( last_response.status ).to eq( 200 )
+
+        try_to_call( resource: 'NoPublicAction' )
         expect( last_response.status ).to eq( 200 )
       end
     end
 
     context '#show' do
       it 'prohibits actions without session', :without_session => true do
-        try_to_call( 'no_public_action', 'some_uuid' )
+        try_to_call( endpoint: 'no_public_action', ident: 'some_uuid' )
+        expect( last_response.status ).to eq( 401 )
+
+        try_to_call( resource: 'NoPublicAction', ident: 'some_uuid' )
         expect( last_response.status ).to eq( 401 )
       end
 
       it 'allows actions with session' do
-        try_to_call( 'no_public_action', 'some_uuid' )
+        try_to_call( endpoint: 'no_public_action', ident: 'some_uuid' )
+        expect( last_response.status ).to eq( 200 )
+
+        try_to_call( resource: 'NoPublicAction', ident: 'some_uuid' )
         expect( last_response.status ).to eq( 200 )
       end
     end
@@ -145,22 +164,34 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'prohibits secure actions without session', :without_session => true do
-      try_to_call( 'public_action', 'some_uuid' )
+      try_to_call( endpoint: 'public_action', ident: 'some_uuid' )
+      expect( last_response.status ).to eq( 401 )
+
+      try_to_call( resource: 'PublicAction', ident: 'some_uuid' )
       expect( last_response.status ).to eq( 401 )
     end
 
     it 'allows secure actions with session' do
-      try_to_call( 'public_action', 'some_uuid' )
+      try_to_call( endpoint: 'public_action', ident: 'some_uuid' )
+      expect( last_response.status ).to eq( 200 )
+
+      try_to_call( resource: 'PublicAction', ident: 'some_uuid' )
       expect( last_response.status ).to eq( 200 )
     end
 
     it 'allows public actions without session', :without_session => true do
-      try_to_call( 'public_action' )
+      try_to_call( endpoint: 'public_action' )
+      expect( last_response.status ).to eq( 200 )
+
+      try_to_call( resource: 'PublicAction' )
       expect( last_response.status ).to eq( 200 )
     end
 
     it 'allows public actions with session' do
-      try_to_call( 'public_action' )
+      try_to_call( endpoint: 'public_action' )
+      expect( last_response.status ).to eq( 200 )
+
+      try_to_call( resource: 'PublicAction' )
       expect( last_response.status ).to eq( 200 )
     end
   end
@@ -187,24 +218,36 @@ describe Hoodoo::Services::Middleware do
     context 'in interface with no public actions' do
       context '#list' do
         it 'prohibits actions without session', :without_session => true do
-          try_to_call( 'no_public_action' )
+          try_to_call( endpoint: 'no_public_action' )
+          expect( last_response.status ).to eq( 401 )
+
+          try_to_call( resource: 'NoPublicAction' )
           expect( last_response.status ).to eq( 401 )
         end
 
         it 'allows actions with session' do
-          try_to_call( 'no_public_action' )
+          try_to_call( endpoint: 'no_public_action' )
+          expect( last_response.status ).to eq( 200 )
+
+          try_to_call( resource: 'NoPublicAction' )
           expect( last_response.status ).to eq( 200 )
         end
       end
 
       context '#show' do
         it 'prohibits actions without session', :without_session => true do
-          try_to_call( 'no_public_action', 'some_uuid' )
+          try_to_call( endpoint: 'no_public_action', ident: 'some_uuid' )
+          expect( last_response.status ).to eq( 401 )
+
+          try_to_call( resource: 'NoPublicAction', ident: 'some_uuid' )
           expect( last_response.status ).to eq( 401 )
         end
 
         it 'allows actions with session' do
-          try_to_call( 'no_public_action', 'some_uuid' )
+          try_to_call( endpoint: 'no_public_action', ident: 'some_uuid' )
+          expect( last_response.status ).to eq( 200 )
+
+          try_to_call( resource: 'NoPublicAction', ident: 'some_uuid' )
           expect( last_response.status ).to eq( 200 )
         end
       end
@@ -212,22 +255,34 @@ describe Hoodoo::Services::Middleware do
 
     context 'in interface with public actions' do
       it 'prohibits secure actions without session', :without_session => true do
-        try_to_call( 'public_action', 'some_uuid' )
+        try_to_call( endpoint: 'public_action', ident: 'some_uuid' )
+        expect( last_response.status ).to eq( 401 )
+
+        try_to_call( resource: 'PublicAction', ident: 'some_uuid' )
         expect( last_response.status ).to eq( 401 )
       end
 
       it 'allows secure actions with session' do
-        try_to_call( 'public_action', 'some_uuid' )
+        try_to_call( endpoint: 'public_action', ident: 'some_uuid' )
+        expect( last_response.status ).to eq( 200 )
+
+        try_to_call( resource: 'PublicAction', ident: 'some_uuid' )
         expect( last_response.status ).to eq( 200 )
       end
 
       it 'allows public actions without session', :without_session => true do
-        try_to_call( 'public_action' )
+        try_to_call( endpoint: 'public_action' )
+        expect( last_response.status ).to eq( 200 )
+
+        try_to_call( resource: 'PublicAction' )
         expect( last_response.status ).to eq( 200 )
       end
 
       it 'allows public actions with session' do
-        try_to_call( 'public_action' )
+        try_to_call( endpoint: 'public_action' )
+        expect( last_response.status ).to eq( 200 )
+
+        try_to_call( resource: 'PublicAction' )
         expect( last_response.status ).to eq( 200 )
       end
     end

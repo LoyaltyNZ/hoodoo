@@ -15,6 +15,6 @@ require 'hoodoo/services/discovery/results/for_local'
 require 'hoodoo/services/discovery/results/for_remote'
 
 require 'hoodoo/services/discovery/discoverers/by_convention'
-require 'hoodoo/services/discovery/discoverers/by_consul'
+require 'hoodoo/services/discovery/discoverers/by_flux'
 require 'hoodoo/services/discovery/discoverers/by_drb/drb_server'
 require 'hoodoo/services/discovery/discoverers/by_drb/by_drb'

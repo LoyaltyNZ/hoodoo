@@ -102,7 +102,7 @@ module Hoodoo; module Services
     # +env+:: Rack environment (ignored).
     #
     def call( env )
-      raise "Hoodoo::Services::Implementation subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru"
+      raise "Hoodoo::Services::Service subclasses should only be called through the middleware - add 'use Hoodoo::Services::Middleware' to (e.g.) config.ru"
     end
 
   protected
@@ -126,7 +126,7 @@ module Hoodoo; module Services
       #
       classes.each do | klass |
         unless klass < Hoodoo::Services::Interface
-          raise "Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got '#{ klass }'"
+          raise "Hoodoo::Services::Service::comprised_of expects Hoodoo::Services::Interface subclasses only - got '#{ klass }'"
         end
       end
 

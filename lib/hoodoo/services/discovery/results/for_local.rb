@@ -46,6 +46,17 @@ module Hoodoo
         #
         attr_accessor :routing_regexp
 
+        # The de facto routing equivalent of #base_path. This is not
+        # a custom path based on the interface's declared endpoint; it
+        # is derived directlyf rom resource or version - for example,
+        # "/1/Product" or "/2/Member". String.
+        #
+        attr_accessor :de_facto_base_path
+
+        # As #routing_regexp, but matches #de_facto_base_path.
+        #
+        attr_accessor :de_facto_routing_regexp
+
         # The Hoodoo::Services::Interface subclass _class_ describing the
         # resource interface.
         #
@@ -62,6 +73,8 @@ module Hoodoo
         # +version+::                 See #version.
         # +base_path+::               See #base_path.
         # +routing_regexp+::          See #routing_regexp.
+        # +de_facto_base_path+::      See #de_facto_base_path.
+        # +de_facto_routing_regexp+:: See #de_facto_routing_regexp.
         # +interface_class+::         See #interface_class.
         # +implementation_instance+:: See #implementation_instance.
         #
@@ -69,6 +82,8 @@ module Hoodoo
                         version:,
                         base_path:,
                         routing_regexp:,
+                        de_facto_base_path:,
+                        de_facto_routing_regexp:,
                         interface_class:,
                         implementation_instance: )
 
@@ -76,6 +91,8 @@ module Hoodoo
           self.version                 = version.to_i
           self.base_path               = base_path
           self.routing_regexp          = routing_regexp
+          self.de_facto_base_path      = de_facto_base_path
+          self.de_facto_routing_regexp = de_facto_routing_regexp
           self.interface_class         = interface_class
           self.implementation_instance = implementation_instance
         end

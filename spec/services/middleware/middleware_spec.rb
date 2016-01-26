@@ -194,12 +194,12 @@ describe Hoodoo::Services::Middleware do
     end
 
     it 'should know about a queue' do
-      old = ENV[ 'AMQ_ENDPOINT' ]
-      ENV[ 'AMQ_ENDPOINT' ] = nil
+      old = ENV[ 'AMQ_URI' ]
+      ENV[ 'AMQ_URI' ] = nil
       expect(Hoodoo::Services::Middleware.on_queue?).to eq(false)
-      ENV[ 'AMQ_ENDPOINT' ] = 'foo'
+      ENV[ 'AMQ_URI' ] = 'foo'
       expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
-      ENV[ 'AMQ_ENDPOINT' ] = old
+      ENV[ 'AMQ_URI' ] = old
     end
   end
 

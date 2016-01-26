@@ -1,5 +1,5 @@
 # service_middleware_spec.rb is too large. This file covers logging
-# extentions around StructuredLogger and AMQPLogMessage.
+# extentions around StructuredLogger.
 
 require 'spec_helper'
 
@@ -101,8 +101,8 @@ describe Hoodoo::Services::Middleware do
 
   context 'off queue' do
     before :each do
-      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
-      ENV[ 'AMQ_ENDPOINT' ] = nil
+      @old_queue = ENV[ 'AMQ_URI' ]
+      ENV[ 'AMQ_URI' ] = nil
 
       @cvar = false
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
@@ -112,7 +112,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     after :each do
-      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+      ENV[ 'AMQ_URI' ] = @old_queue
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
@@ -155,8 +155,8 @@ describe Hoodoo::Services::Middleware do
 
   context 'on queue' do
     before :each do
-      @old_queue = ENV[ 'AMQ_ENDPOINT' ]
-      ENV[ 'AMQ_ENDPOINT' ] = 'amqp://test:test@127.0.0.1'
+      @old_queue = ENV[ 'AMQ_URI' ]
+      ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
 
       @cvar = false
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
@@ -166,7 +166,7 @@ describe Hoodoo::Services::Middleware do
     end
 
     after :each do
-      ENV[ 'AMQ_ENDPOINT' ] = @old_queue
+      ENV[ 'AMQ_URI' ] = @old_queue
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
@@ -182,7 +182,7 @@ describe Hoodoo::Services::Middleware do
         @app = app
       end
       def call(env)
-        env['rack.alchemy'] = self
+        env['alchemy.service'] = self
         @app.call(env)
       end
       def send_message(*args)
@@ -214,7 +214,7 @@ describe Hoodoo::Services::Middleware do
     it 'has the expected "development" mode loggers' do
       force_logging_to( 'development' )
 
-      expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_queue).at_least(:once)
       spec_helper_silence_stdout() do
         get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       end
@@ -228,7 +228,7 @@ describe Hoodoo::Services::Middleware do
     it 'has the expected "production" mode loggers' do
       force_logging_to( 'production' )
 
-      expect_any_instance_of(FakeAlchemy).to receive(:send_message).at_least(:once)
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_queue).at_least(:once)
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       instances = Hoodoo::Services::Middleware.logger.instances
