@@ -1,4 +1,4 @@
-## 1.0.6 (2016-01-26)
+## 1.1.0 (2016-01-26)
 
 * Updated to support new open source Alchemy Flux gem in place of previously stubbed, proprietary Alchemy AMQ gem, for running on-queue under the wider Alchemy architecture.
 
