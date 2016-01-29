@@ -212,6 +212,17 @@ module Hoodoo
         #             the Hoodoo::Services::Implementation instance methods
         #             that a resource subclass implements.
         #
+        # Additional _named_ parameters are:
+        #
+        # +unquoted_column_names+:: (Optional) An Array of Strings giving one
+        #                           or more column names to use for the query.
+        #                           If omitted, all model attribtues are used
+        #                           as columns. If the "id" column is not
+        #                           included in the Array, it will be added
+        #                           anyway as this column is mandatory. The
+        #                           effect is equivalent to an Array given in
+        #                           the ActiveRecord +select+ method.
+        #
         def dated( context, unquoted_column_names: nil )
           date_time = context.request.dated_at || Time.now
           return self.dated_at( date_time, unquoted_column_names: unquoted_column_names )
@@ -226,6 +237,17 @@ module Hoodoo
         # +date_time+:: (Optional) A Time or DateTime instance, or a String that
         #               can be converted to a DateTime instance, for which the
         #               "effective dated" scope is to be constructed.
+        #
+        # Additional _named_ parameters are:
+        #
+        # +unquoted_column_names+:: (Optional) An Array of Strings giving one
+        #                           or more column names to use for the query.
+        #                           If omitted, all model attribtues are used
+        #                           as columns. If the "id" column is not
+        #                           included in the Array, it will be added
+        #                           anyway as this column is mandatory. The
+        #                           effect is equivalent to an Array given in
+        #                           the ActiveRecord +select+ method.
         #
         def dated_at( date_time = Time.now, unquoted_column_names: nil )
 
@@ -276,6 +298,17 @@ module Hoodoo
         #
         # If historic dating hasn't been enabled via a call to #dating_enabled,
         # then the default 'all' scope is returned instead.
+        #
+        # _Named_ parameters are:
+        #
+        # +unquoted_column_names+:: (Optional) An Array of Strings giving one
+        #                           or more column names to use for the query.
+        #                           If omitted, all model attribtues are used
+        #                           as columns. If the "id" column is not
+        #                           included in the Array, it will be added
+        #                           anyway as this column is mandatory. The
+        #                           effect is equivalent to an Array given in
+        #                           the ActiveRecord +select+ method.
         #
         def dated_historical_and_current( unquoted_column_names: nil )
 
