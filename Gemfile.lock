@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.1.0)
+    hoodoo (1.1.1)
       dalli (~> 2.7)
       kgio (~> 2.9)
       uuidtools (~> 2.1)
@@ -35,7 +35,7 @@ GEM
     airbrake (4.3.5)
       builder
       multi_json
-    alchemy-flux (0.1.0)
+    alchemy-flux (0.1.2)
       amqp (~> 1.5)
       eventmachine (~> 1.0)
       msgpack (~> 0.7)
@@ -85,7 +85,7 @@ GEM
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
       rspec-mocks (~> 3.4.0)
-    rspec-core (3.4.1)
+    rspec-core (3.4.2)
       rspec-support (~> 3.4.0)
     rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
