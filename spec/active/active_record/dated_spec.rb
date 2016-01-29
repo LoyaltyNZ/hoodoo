@@ -77,7 +77,7 @@ describe Hoodoo::ActiveRecord::Dated do
       @uuid_a = Hoodoo::UUID.generate
       @uuid_b = Hoodoo::UUID.generate
 
-      @now  = Time.now.utc
+      @now = Time.now.utc
 
       # uuid, data, created_at, effective_end, effective_start
       [
@@ -208,7 +208,6 @@ describe Hoodoo::ActiveRecord::Dated do
     end
 
     context '.dated_historical_and_current' do
-
       it 'returns counts correctly' do
         expect( model_klass.dated_historical_and_current.count ).to be 6
       end
@@ -217,14 +216,41 @@ describe Hoodoo::ActiveRecord::Dated do
         expect( model_klass.dated_historical_and_current.pluck( :data ) ).to match_array( [ 'one', 'two', 'three', 'four', 'five', 'six' ] )
       end
 
+      context 'SQL' do
+        it 'has expected default columns' do
+          sql = model_klass.dated_historical_and_current.to_sql.downcase
+
+          expect( sql ).to include( 'select "id","data","created_at","updated_at"' )
+          expect( sql ).to include( 'select "uuid" as "id","data","created_at","updated_at"' )
+        end
+
+        it 'handles custom column selections' do
+          sql = model_klass.dated_historical_and_current(
+            unquoted_column_names: [ 'id', 'created_at' ]
+          ).to_sql.downcase
+
+          expect( sql ).to include( 'select "id","created_at"' )
+          expect( sql ).to include( 'select "uuid" as "id","created_at"' )
+        end
+
+        it 'handles custom column selections that omit "id"' do
+          sql = model_klass.dated_historical_and_current(
+            unquoted_column_names: [ 'created_at' ]
+          ).to_sql.downcase
+
+          expect( sql ).to include( 'select "created_at","id"' )
+          expect( sql ).to include( 'select "created_at","uuid" as "id"' )
+        end
+      end
     end
 
   end
 
   context "using default effective dating config" do
 
-    # Must be defined as a method rather than using a let statement as let
-    # statement values cannot be used in before blocks.
+    # Must be defined as a method rather than using a 'let' statement as
+    # 'let' statement values cannot be used in 'before' blocks.
+    #
     def model_klass
       RSpecModelEffectiveDateTest
     end
@@ -235,8 +261,9 @@ describe Hoodoo::ActiveRecord::Dated do
 
   context "overriding history table name" do
 
-    # Must be defined as a method rather than using a let statement as let
-    # statement values cannot be used in before blocks.
+    # Must be defined as a method rather than using a 'let' statement as
+    # 'let' statement values cannot be used in 'before' blocks.
+    #
     def model_klass
       RSpecModelEffectiveDateTestOverride
     end
@@ -245,4 +272,74 @@ describe Hoodoo::ActiveRecord::Dated do
 
   end
 
+  context "SQL and column selections" do
+    before :each do
+      @now      = Time.now.utc
+      @safe_now = RSpecModelEffectiveDateTestOverride.sanitize( @now )
+
+      request   = Hoodoo::Services::Request.new
+      @context  = Hoodoo::Services::Context.new( nil, request, nil, nil )
+
+      @context.request.dated_at = @now
+    end
+
+    def run_other_expectations( sql )
+      expect( sql ).to include( "from r_spec_model_effective_date_history_entries" )
+      expect( sql ).to include( "\"effective_start\" <= #{ @safe_now }" )
+      expect( sql ).to include( "\"effective_end\" > #{ @safe_now }" )
+      expect( sql ).to include( "\"effective_end\" is null" )
+    end
+
+    it 'generates expected basic SQL' do
+      sql = RSpecModelEffectiveDateTestOverride.dated( @context ).to_sql.downcase
+
+      expect( sql ).to include( 'select "id","data","created_at","updated_at"' )
+      expect( sql ).to include( 'select "uuid" as "id","data","created_at","updated_at"' )
+      run_other_expectations( sql )
+    end
+
+    it 'generates expected column-selected SQL via #dated' do
+      sql = RSpecModelEffectiveDateTestOverride.dated(
+        @context,
+        unquoted_column_names: [ 'id', 'created_at' ]
+      ).to_sql.downcase
+
+      expect( sql ).to include( 'select "id","created_at"' )
+      expect( sql ).to include( 'select "uuid" as "id","created_at"' )
+      run_other_expectations( sql )
+    end
+
+    it 'includes "id" if omitted, via #dated' do
+      sql = RSpecModelEffectiveDateTestOverride.dated(
+        @context,
+        unquoted_column_names: [ 'created_at' ]
+      ).to_sql.downcase
+
+      expect( sql ).to include( 'select "created_at","id"' )
+      expect( sql ).to include( 'select "created_at","uuid" as "id"' )
+      run_other_expectations( sql )
+    end
+
+    it 'generates expected column-selected SQL via #dated_at' do
+      sql = RSpecModelEffectiveDateTestOverride.dated_at(
+        @now,
+        unquoted_column_names: [ 'id', 'created_at' ]
+      ).to_sql.downcase
+
+      expect( sql ).to include( 'select "id","created_at"' )
+      expect( sql ).to include( 'select "uuid" as "id","created_at"' )
+      run_other_expectations( sql )
+    end
+
+    it 'includes "id" if omitted, via #dated_at' do
+      sql = RSpecModelEffectiveDateTestOverride.dated_at(
+        @now,
+        unquoted_column_names: [ 'created_at' ]
+      ).to_sql.downcase
+
+      expect( sql ).to include( 'select "created_at","id"' )
+      expect( sql ).to include( 'select "created_at","uuid" as "id"' )
+      run_other_expectations( sql )
+    end
+  end
 end

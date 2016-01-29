@@ -148,7 +148,7 @@ module Hoodoo
               # around somewhere.
 
               @wrapping_session = session
-              @wrapped_endpoint.session_id = session.session_id
+              @wrapped_endpoint.session_id = session.session_id unless session.nil?
               return nil
             end
           end

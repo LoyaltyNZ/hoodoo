@@ -36,9 +36,9 @@
 <p>Loyalty New Zealand 2014</p>
 </dd><dt>Purpose
 <dd>
-<p>Structured logging onto an AMQP-based queue, via the AlchemyAMQ gem.
-Optional; class is defined only if the supporting AlchemyAMQ gem&#39;s
-classes are defined.</p>
+<p>Structured logging onto an AMQP-based queue, via the Alchemy Flux gem. This
+class just exists to rationalise any parameters inbound in order to
+generate a clean representation for Flux.</p>
 
 <p>The middleware uses this to put log and error messages on the queue.
 Interested services use this to read such messages from the queue.</p>
@@ -50,11 +50,6 @@ Interested services use this to read such messages from the queue.</p>
     </div>
 
 
-    <!-- File only: requires -->
-    <div class="sectiontitle">Required Files</div>
-    <ul>
-        <li>alchemy-amq</li>
-    </ul>
 
 
 
@@ -69,10 +64,6 @@ Interested services use this to read such messages from the queue.</p>
         <li>
           <span class="type">MODULE</span>
           <a href="../../../../../classes/Hoodoo/Services.html">Hoodoo::Services</a>
-        </li>
-        <li>
-          <span class="type">MODULE</span>
-          <a href="../../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage/AlchemyAMQ.html">Hoodoo::Services::Middleware::AMQPLogMessage::AlchemyAMQ</a>
         </li>
         <li>
           <span class="type">CLASS</span>

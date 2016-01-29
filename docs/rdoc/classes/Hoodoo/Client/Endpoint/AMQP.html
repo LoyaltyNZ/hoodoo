@@ -327,7 +327,7 @@ instance in the <code>discovery_result</code> field of the
   <span class="ruby-comment"># to keep Rack happy.</span>
 
   <span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-string">&#39;http://localhost:80&#39;</span> )
-  <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">equivalent_path</span>
+  <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-ivar">@discovery_result</span>.<span class="ruby-identifier">routing_path</span>
 
   <span class="ruby-ivar">@description</span>                  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">Endpoint</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTPBased</span><span class="ruby-operator">::</span><span class="ruby-constant">DescriptionOfRequest</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@description</span>.<span class="ruby-identifier">discovery_result</span> = <span class="ruby-ivar">@discovery_result</span>

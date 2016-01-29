@@ -206,7 +206,7 @@ details.</p>
   <span class="ruby-comment">#</span>
   <span class="ruby-identifier">classes</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">|</span>
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">klass</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span>
-      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Implementation::comprised_of expects Hoodoo::Services::Interface subclasses only - got &#39;#{ klass }&#39;&quot;</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Service::comprised_of expects Hoodoo::Services::Interface subclasses only - got &#39;#{ klass }&#39;&quot;</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
@@ -248,7 +248,7 @@ href="../../Rack.html">Rack</a> ends up calling here directly by accident.</p>
               <div id="method-i-call_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/service.rb, line 104</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
-  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Implementation subclasses should only be called through the middleware - add &#39;use Hoodoo::Services::Middleware&#39; to (e.g.) config.ru&quot;</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Service subclasses should only be called through the middleware - add &#39;use Hoodoo::Services::Middleware&#39; to (e.g.) config.ru&quot;</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

@@ -67,29 +67,20 @@ contacted over AMQP (e.g. via Alchemy).</p>
       <!-- Section attributes -->
       <div class="sectiontitle">Attributes</div>
       <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-equivalent_path'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>equivalent_path</td>
-            <td class='attr-desc'><p>URL path equivalent that should be mapped to the queue in <a
-href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
-(e.g. “/v2/accounts”).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-queue_name'>
-            <td class='attr-rw'>
-              [RW]
-            </td>
-            <td class='attr-name'>queue_name</td>
-            <td class='attr-desc'><p>Queue name for the target service implementation, as a String (e.g.
-“service.account”).</p></td>
-          </tr>
           <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
               [RW]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-routing_path'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>routing_path</td>
+            <td class='attr-desc'><p>Path at which the resource is expected to be found on the queue (routing
+via Topic Exchange and Alchemy Flux&#39;s translations of paths to keys).</p></td>
           </tr>
           <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
@@ -105,7 +96,7 @@ href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version:, queue_name:, equivalent_path: )
+              <b>new</b>( resource:, version: )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForAMQP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -117,12 +108,6 @@ href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
 </dd><dt>version
 <dd>
 <p>See <a href="ForAMQP.html#attribute-i-version">version</a>.</p>
-</dd><dt><code>queue_name</code>
-<dd>
-<p>See <a href="ForAMQP.html#attribute-i-queue_name">queue_name</a>.</p>
-</dd><dt><code>equivalent_pat</code>
-<dd>
-<p>See equivalent_pat.</p>
 </dd></dl>
             </div>
 
@@ -134,16 +119,16 @@ href="ForAMQP.html#attribute-i-queue_name">queue_name</a>, as a String
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_amqp.rb, line 45</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
-                <span class="ruby-identifier">version</span>,,
-                <span class="ruby-identifier">queue_name</span>,,
-                <span class="ruby-identifier">equivalent_path</span><span class="ruby-operator">:</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_amqp.rb, line 39</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,, <span class="ruby-identifier">version</span><span class="ruby-operator">:</span> )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>        = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>         = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">queue_name</span>      = <span class="ruby-identifier">queue_name</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">equivalent_path</span> = <span class="ruby-identifier">equivalent_path</span>
+  <span class="ruby-ivar">@resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-ivar">@version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-ivar">@routing_path</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">de_facto_path_for</span>(
+    <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span>
+  )
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
