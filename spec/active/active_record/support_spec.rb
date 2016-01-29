@@ -163,7 +163,7 @@ describe Hoodoo::ActiveRecord::Support do
           manual_scope = RSpecFullScopeForTestSubclass.dated( @context ).to_sql()
 
           expect( manual_scope ).to include( "FROM #{ @thtname1 }" )
-          expect( manual_scope ).to include( "effective_end > #{ RSpecFullScopeForTestSubclass.sanitize( @test_time_value ) }" )
+          expect( manual_scope ).to include( "\"effective_end\" > #{ RSpecFullScopeForTestSubclass.sanitize( @test_time_value ) }" )
         end
 
         it 'secure' do
@@ -201,7 +201,7 @@ describe Hoodoo::ActiveRecord::Support do
         manual_scope = RSpecFullScopeForTestBaseSubclassWithoutOverrides.dated( @context ).to_sql()
 
         expect( manual_scope ).to include( "FROM #{ @thtname2 }" )
-        expect( manual_scope ).to include( "effective_end > #{ RSpecFullScopeForTestBaseSubclassWithoutOverrides.sanitize( @test_time_value ) }" )
+        expect( manual_scope ).to include( "\"effective_end\" > #{ RSpecFullScopeForTestBaseSubclassWithoutOverrides.sanitize( @test_time_value ) }" )
       end
 
       it 'secure' do

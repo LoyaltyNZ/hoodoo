@@ -386,7 +386,7 @@ module Hoodoo
 
           quoted_column_names     = self.quoted_column_names( unquoted_column_names )
           quoted_primary_key_name = quoted_column_names[ primary_key_index ]
-          history_primary_key     = '"uuid" as ' << quoted_primary_key_name
+          history_primary_key     = '"uuid" AS ' << quoted_primary_key_name
 
           quoted_column_names[ primary_key_index ] = history_primary_key
 
