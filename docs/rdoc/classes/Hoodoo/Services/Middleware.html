@@ -26,6 +26,7 @@
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/services/discovery/discoverers/by_flux_rb.html">lib/hoodoo/services/discovery/discoverers/by_flux.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/middleware/amqp_log_message_rb.html">lib/hoodoo/services/middleware/amqp_log_message.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/middleware/amqp_log_writer_rb.html">lib/hoodoo/services/middleware/amqp_log_writer.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/middleware/endpoints/inter_resource_local_rb.html">lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb</a></li>
@@ -83,7 +84,7 @@ use such codes yourself.</p>
 <p>The middleware adds a STDERR stream writer logger by default and an AMQP
 log writer on the first <a href="../../Rack.html">Rack</a>
 <code>call</code> should the <a href="../../Rack.html">Rack</a> environment
-provide an Alchemy endpoint (see the AlchemyAMQ gem).</p>
+provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
 
     </div>
 
@@ -135,6 +136,14 @@ provide an Alchemy endpoint (see the AlchemyAMQ gem).</p>
           <ul>
               <li>
                 <a href="#method-i-call">call</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-de_facto_path_for">de_facto_path_for</a>
               </li>
           </ul>
         </dd>
@@ -217,6 +226,9 @@ provide an Alchemy endpoint (see the AlchemyAMQ gem).</p>
         <dd>
           <ul>
               <li>
+                <a href="#method-c-service_name">service_name</a>,
+              </li>
+              <li>
                 <a href="#method-c-set_log_folder">set_log_folder</a>,
               </li>
               <li>
@@ -248,6 +260,41 @@ provide an Alchemy endpoint (see the AlchemyAMQ gem).</p>
 
     <!-- Methods -->
       <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-de_facto_path_for">
+              <b>de_facto_path_for</b>( resource, version )
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-de_facto_path_for" name="method-c-de_facto_path_for" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>For a given resource name and version, return the <em>de</em>
+<em>facto</em> routing path based on version and name with no
+modifications.</p>
+<dl class="rdoc-list note-list"><dt><code>resource</code>
+<dd>
+<p>Resource name for the endpoint, e.g. <code>:Purchase</code>. String or
+symbol.</p>
+</dd><dt><code>version</code>
+<dd>
+<p>Implemented version of the endpoint. Integer.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-de_facto_path_for_source')" id="l_method-c-de_facto_path_for_source">show</a>
+              </p>
+              <div id="method-c-de_facto_path_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 241</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-node">&quot;/#{ version }/#{ resource }&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
         <div class="method">
           <div class="title method-title" id="method-c-environment">
               <b>environment</b>()
@@ -304,9 +351,10 @@ internally and (where required) inform the DRb process of the endpoints.</p>
                 <a href="javascript:toggleSource('method-c-flush_services_for_test_source')" id="l_method-c-flush_services_for_test_source">show</a>
               </p>
               <div id="method-c-flush_services_for_test_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 340</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 367</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
-  <span class="ruby-identifier">@@services</span> = []
+  <span class="ruby-identifier">@@services</span>     = []
+  <span class="ruby-identifier">@@service_name</span> = <span class="ruby-keyword">nil</span>
 
   <span class="ruby-constant">ObjectSpace</span>.<span class="ruby-identifier">each_object</span>( <span class="ruby-keyword">self</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">middleware_instance</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">discoverer</span> = <span class="ruby-identifier">middleware_instance</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@discoverer&#39;</span> )
@@ -418,7 +466,7 @@ security considerations when using logs.</p>
                 <a href="javascript:toggleSource('method-c-logger_source')" id="l_method-c-logger_source">show</a>
               </p>
               <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 254</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 281</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
 <span class="ruby-keyword">end</span></pre>
@@ -476,7 +524,7 @@ calls should be passed.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 353</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 381</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -510,7 +558,8 @@ calls should be passed.</p>
   <span class="ruby-comment"># actions          Set of symbols naming allowed actions</span>
   <span class="ruby-comment"># implementation   Hoodoo::Services::Implementation subclass *instance* to</span>
   <span class="ruby-comment">#                  use on match</span>
-
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-identifier">@@services</span> = <span class="ruby-identifier">service_container</span>.<span class="ruby-identifier">component_interfaces</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">interface</span> <span class="ruby-operator">|</span>
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">implementation</span>.<span class="ruby-identifier">nil?</span>
@@ -522,6 +571,13 @@ calls should be passed.</p>
     <span class="ruby-comment">#</span>
     <span class="ruby-identifier">interfaces_have_public_methods</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">empty?</span>
 
+    <span class="ruby-comment"># There are two routes to an implementation - one via the custom path</span>
+    <span class="ruby-comment"># given through its &#39;endpoint&#39; declaration, the other a de facto path</span>
+    <span class="ruby-comment"># determined from the unmodified version and resource name. Both lead</span>
+    <span class="ruby-comment"># to the same implementation instance.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-identifier">implementation_instance</span> = <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">implementation</span>.<span class="ruby-identifier">new</span>
+
     <span class="ruby-comment"># Regexp explanation:</span>
     <span class="ruby-comment">#</span>
     <span class="ruby-comment"># Match &quot;/&quot;, the version text, &quot;/&quot;, the endpoint text, then either</span>
@@ -529,16 +585,33 @@ calls should be passed.</p>
     <span class="ruby-comment"># everything else. Match data index 1 will be whatever character (if</span>
     <span class="ruby-comment"># any) followed after the endpoint (&quot;/&quot; or &quot;.&quot;) while index 2 contains</span>
     <span class="ruby-comment"># everything else.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-identifier">custom_path</span>   = <span class="ruby-node">&quot;/v#{ interface.version }/#{ interface.endpoint }&quot;</span>
+    <span class="ruby-identifier">custom_regexp</span> = <span class="ruby-node">/\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/</span>
+
+    <span class="ruby-comment"># Same as above, but for the de facto routing.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-identifier">de_facto_path</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">resource</span>, <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">version</span> )
+    <span class="ruby-identifier">de_facto_regexp</span> = <span class="ruby-node">/\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/</span>
 
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForLocal</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">:resource</span>                =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">resource</span>,
       <span class="ruby-value">:version</span>                 =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">version</span>,
-      <span class="ruby-value">:base_path</span>               =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;/v#{ interface.version }/#{ interface.endpoint }&quot;</span>,
-      <span class="ruby-value">:routing_regexp</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-node">/\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/</span>,
+      <span class="ruby-value">:base_path</span>               =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">custom_path</span>,
+      <span class="ruby-value">:routing_regexp</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">custom_regexp</span>,
+      <span class="ruby-value">:de_facto_base_path</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">de_facto_path</span>,
+      <span class="ruby-value">:de_facto_routing_regexp</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">de_facto_regexp</span>,
       <span class="ruby-value">:interface_class</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interface</span>,
-      <span class="ruby-value">:implementation_instance</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">implementation</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-value">:implementation_instance</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">implementation_instance</span>
     )
+
   <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Determine the service name from the resources above then announce</span>
+  <span class="ruby-comment"># the whole collection to any interested discovery engines.</span>
+
+  <span class="ruby-identifier">sorted_resources</span> = <span class="ruby-identifier">@@services</span>.<span class="ruby-identifier">map</span>() { <span class="ruby-operator">|</span> <span class="ruby-identifier">service</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">service</span>.<span class="ruby-identifier">resource</span> }.<span class="ruby-identifier">sort</span>()
+  <span class="ruby-identifier">@@service_name</span>   = <span class="ruby-node">&quot;service.#{ sorted_resources.join( &#39;_&#39; ) }&quot;</span>
 
   <span class="ruby-identifier">announce_presence_of</span>( <span class="ruby-identifier">@@services</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -565,7 +638,7 @@ calls should be passed.</p>
               <div id="method-c-on_queue-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
-  <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_ENDPOINT&#39;</span> ]
+  <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_URI&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -595,10 +668,43 @@ recorded.</p>
                 <a href="javascript:toggleSource('method-c-record_host_and_port_source')" id="l_method-c-record_host_and_port_source">show</a>
               </p>
               <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 329</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 356</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-service_name">
+              <b>service_name</b>()
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-service_name" name="method-c-service_name" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Return a service &#39;name&#39; derived from the service&#39;s collection
+of declared resources. The name will be the same across any instances of
+the service that implement the same resources. This can be used for e.g.
+AMQP-based queue-named operations, that want to target the same resource
+collection regardless of instance.</p>
+
+<p>This method will not work unless the middleware has parsed the set of
+service interface declarations (during instance initialisation). If a least
+one middleware instance has already been created, it is safe to call.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-service_name_source')" id="l_method-c-service_name_source">show</a>
+              </p>
+              <div id="method-c-service_name_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 229</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">service_name</span>
+  <span class="ruby-identifier">@@service_name</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -638,7 +744,7 @@ href="Middleware.html#method-c-environment">::environment</a>).</p>
                 <a href="javascript:toggleSource('method-c-set_log_folder_source')" id="l_method-c-set_log_folder_source">show</a>
               </p>
               <div id="method-c-set_log_folder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 294</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 321</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -678,7 +784,7 @@ class method.</p>
                 <a href="javascript:toggleSource('method-c-set_logger_source')" id="l_method-c-set_logger_source">show</a>
               </p>
               <div id="method-c-set_logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 271</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 298</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
@@ -717,7 +823,7 @@ session ID had been supplied.</p>
                 <a href="javascript:toggleSource('method-c-set_test_session_source')" id="l_method-c-set_test_session_source">show</a>
               </p>
               <div id="method-c-set_test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 316</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 343</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -751,7 +857,7 @@ used.</p>
                 <a href="javascript:toggleSource('method-c-test_session_source')" id="l_method-c-test_session_source">show</a>
               </p>
               <div id="method-c-test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 305</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 332</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">test_session</span>
   <span class="ruby-identifier">@@test_session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -781,7 +887,7 @@ protocol requirements.</p>
                 <a href="javascript:toggleSource('method-i-call_source')" id="l_method-i-call_source">show</a>
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 424</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 477</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -885,7 +991,7 @@ an endpoint implementation.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_endpoint_for_source')" id="l_method-i-inter_resource_endpoint_for_source">show</a>
               </p>
               <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 505</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 558</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1041,7 +1147,7 @@ ignore inter-resource call errors.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 633</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 686</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,

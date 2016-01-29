@@ -171,7 +171,10 @@ future-proof your code.</p>
         <dd>
           <ul>
               <li>
-                <a href="#method-c-sanitised_column_string">sanitised_column_string</a>
+                <a href="#method-c-sanitised_column_string">sanitised_column_string</a>,
+              </li>
+              <li>
+                <a href="#method-c-sanitised_column_string_for">sanitised_column_string_for</a>
               </li>
           </ul>
         </dd>
@@ -275,10 +278,13 @@ this module.</p>
           </div>
 
             <div class="description">
-              <p>Forms a String containing the specified <code>model_klass</code>&#39;s
-attribute names escaped and joined with commas.</p>
-
-<p><code>model_klass</code> Class which responds to .attribute_names</p>
+              <p>Returns a String containing the specified <code>model_klass</code>&#39;s
+attribute names considered as column names, escaped by the in-use database
+adaptor and joined into with commas.</p>
+<dl class="rdoc-list note-list"><dt><code>model_klass</code>
+<dd>
+<p>Class which responds to <code>#attribute_names</code>.</p>
+</dd></dl>
             </div>
 
 
@@ -289,9 +295,42 @@ attribute names escaped and joined with commas.</p>
                 <a href="javascript:toggleSource('method-c-sanitised_column_string_source')" id="l_method-c-sanitised_column_string_source">show</a>
               </p>
               <div id="method-c-sanitised_column_string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 152</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 153</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string</span>( <span class="ruby-identifier">model_klass</span> )
-  <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> ) }.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sanitised_column_string_for</span>( <span class="ruby-identifier">model_klass</span>.<span class="ruby-identifier">attribute_names</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-sanitised_column_string_for">
+              <b>sanitised_column_string_for</b>( attribute_array )
+            <a href="../../../classes/Hoodoo/ActiveRecord/Dated.html#method-c-sanitised_column_string_for" name="method-c-sanitised_column_string_for" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>As <a
+href="Dated.html#method-c-sanitised_column_string">::sanitised_column_string</a>
+but takes the array of attribute or column names directly.</p>
+<dl class="rdoc-list note-list"><dt>attribute_array
+<dd>
+<p>Array of column names, as Strings or Symbols.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-sanitised_column_string_for_source')" id="l_method-c-sanitised_column_string_for_source">show</a>
+              </p>
+              <div id="method-c-sanitised_column_string_for_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 162</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">sanitised_column_string_for</span>( <span class="ruby-identifier">attribute_array</span> )
+  <span class="ruby-identifier">attribute_array</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span>
+    <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> )
+  <span class="ruby-keyword">end</span>.<span class="ruby-identifier">join</span>( <span class="ruby-string">&#39;,&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

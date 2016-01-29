@@ -21,7 +21,7 @@
             <span class="type">Class</span>
             Hoodoo::Services::Middleware::AMQPLogMessage
                 <span class="parent">&lt;
-                    AlchemyAMQ::Message
+                    Object
                 </span>
         </h1>
         <ul class="files">
@@ -32,13 +32,9 @@
         <div id="content">
     <div class="description">
       
-<p>For <a href="AMQPLogMessage/AlchemyAMQ.html">AlchemyAMQ</a> gem users, the
-<a href="AMQPLogMessage.html">AMQPLogMessage</a> class provides an
-AlchemyAMQ::Message subclass used for sending structured log data to the
-queue. <a href="../../Logger.html">Hoodoo::Logger</a> uses this.</p>
-
-<p>See the <a href="AMQPLogMessage/AlchemyAMQ.html">AlchemyAMQ</a> gem for
-more details.</p>
+<p>A representation of a log message placed on an AMQP-based queue. The
+primary expected communications interface is Alchemy Flux at the time of
+writing.</p>
 
     </div>
 
@@ -47,27 +43,11 @@ more details.</p>
 
 
 
-    <!-- Namespace -->
-    <div class="sectiontitle">Namespace</div>
-    <ul>
-        <li>
-          <span class="type">MODULE</span>
-          <a href="AMQPLogMessage/AlchemyAMQ.html">Hoodoo::Services::Middleware::AMQPLogMessage::AlchemyAMQ</a>
-        </li>
-    </ul>
 
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
-        <dt>D</dt>
-        <dd>
-          <ul>
-              <li>
-                <a href="#method-i-deserialize">deserialize</a>
-              </li>
-          </ul>
-        </dd>
         <dt>N</dt>
         <dd>
           <ul>
@@ -84,19 +64,11 @@ more details.</p>
               </li>
           </ul>
         </dd>
-        <dt>S</dt>
+        <dt>T</dt>
         <dd>
           <ul>
               <li>
-                <a href="#method-i-serialize">serialize</a>
-              </li>
-          </ul>
-        </dd>
-        <dt>U</dt>
-        <dd>
-          <ul>
-              <li>
-                <a href="#method-i-update">update</a>
+                <a href="#method-i-to_h">to_h</a>
               </li>
           </ul>
         </dd>
@@ -111,16 +83,6 @@ more details.</p>
       <!-- Section constants -->
       <div class="sectiontitle">Constants</div>
       <table border='0' cellpadding='5'>
-          <tr valign='top' id='TYPE'>
-            <td class="attr-name">TYPE</td>
-            <td>=</td>
-            <td class="attr-value"><pre>&#39;hoodoo_service_middleware_amqp_log_message&#39;</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>The named “type” of this message, to be registered with <a
-href="AMQPLogMessage/AlchemyAMQ.html">AlchemyAMQ</a>.</p></td>
-            </tr>
           <tr valign='top' id='TIME_FORMATTER'>
             <td class="attr-name">TIME_FORMATTER</td>
             <td>=</td>
@@ -213,13 +175,14 @@ href="AMQPLogMessage.html#method-i-reported_at-3D">reported_at=</a>.</p></td>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>(options = {})
+              <b>new</b>( options = {} )
             <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
             <div class="description">
               <p>Create an instance with options keyed on the attributes defined for the
-class.</p>
+class. Option keys may be Strings or Symbols but must only match defined
+attribute names.</p>
             </div>
 
 
@@ -230,45 +193,16 @@ class.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 128</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(<span class="ruby-identifier">options</span> = {})
-  <span class="ruby-identifier">update</span>( <span class="ruby-identifier">options</span> ) <span class="ruby-comment"># Should be called before &#39;super&#39;</span>
-  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">options</span> )
-
-  <span class="ruby-ivar">@type</span> = <span class="ruby-constant">AMQPLogMessage</span><span class="ruby-operator">::</span><span class="ruby-constant">TYPE</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 98</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-identifier">options</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">send</span>( <span class="ruby-node">&quot;#{ name }=&quot;</span>, <span class="ruby-identifier">value</span> )
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
           </div>
       <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-deserialize">
-              <b>deserialize</b>()
-            <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-i-deserialize" name="method-i-deserialize" class="permalink">Link</a>
-          </div>
-
-            <div class="description">
-              <p>Unpack a serialized representation into this instance. See the <a
-href="AMQPLogMessage/AlchemyAMQ.html">AlchemyAMQ</a> gem and
-AlchemyAMQ::Message#deserialize.</p>
-            </div>
-
-
-
-            <div class="sourcecode">
-              <p class="source-link">
-                Source:
-                <a href="javascript:toggleSource('method-i-deserialize_source')" id="l_method-i-deserialize_source">show</a>
-              </p>
-              <div id="method-i-deserialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 159</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">deserialize</span>
-  <span class="ruby-keyword">super</span>
-  <span class="ruby-identifier">update</span>( <span class="ruby-ivar">@content</span> )
-<span class="ruby-keyword">end</span></pre>
-              </div>
-            </div>
-          </div>
         <div class="method">
           <div class="title method-title" id="method-i-reported_at-3D">
               <b>reported_at=</b>( time )
@@ -303,7 +237,7 @@ href="AMQPLogMessage.html#TIME_FORMATTER">TIME_FORMATTER</a>),
                 <a href="javascript:toggleSource('method-i-reported_at-3D_source')" id="l_method-i-reported_at-3D_source">show</a>
               </p>
               <div id="method-i-reported_at-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 96</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">reported_at=</span>( <span class="ruby-identifier">time</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">time</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> )
     <span class="ruby-ivar">@reported_at</span> = <span class="ruby-identifier">time</span>
@@ -317,15 +251,13 @@ href="AMQPLogMessage.html#TIME_FORMATTER">TIME_FORMATTER</a>),
             </div>
           </div>
         <div class="method">
-          <div class="title method-title" id="method-i-serialize">
-              <b>serialize</b>()
-            <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-i-serialize" name="method-i-serialize" class="permalink">Link</a>
+          <div class="title method-title" id="method-i-to_h">
+              <b>to_h</b>()
+            <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-i-to_h" name="method-i-to_h" class="permalink">Link</a>
           </div>
 
             <div class="description">
-              <p>Seralize this instance. See the <a
-href="AMQPLogMessage/AlchemyAMQ.html">AlchemyAMQ</a> gem and
-AlchemyAMQ::Message#serialize.</p>
+              <p>Retrieve a simple Hash representation of this instance.</p>
             </div>
 
 
@@ -333,62 +265,24 @@ AlchemyAMQ::Message#serialize.</p>
             <div class="sourcecode">
               <p class="source-link">
                 Source:
-                <a href="javascript:toggleSource('method-i-serialize_source')" id="l_method-i-serialize_source">show</a>
+                <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
               </p>
-              <div id="method-i-serialize_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 138</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">serialize</span>
-  <span class="ruby-ivar">@content</span> = {
-    <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
-    <span class="ruby-value">:level</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@level</span>,
-    <span class="ruby-value">:component</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@component</span>,
-    <span class="ruby-value">:code</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@code</span>,
-    <span class="ruby-value">:reported_at</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@reported_at</span>,
+              <div id="method-i-to_h_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 106</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
+  {
+    <span class="ruby-string">&#39;id&#39;</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@id</span>,
+    <span class="ruby-string">&#39;level&#39;</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@level</span>,
+    <span class="ruby-string">&#39;component&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@component</span>,
+    <span class="ruby-string">&#39;code&#39;</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@code</span>,
+    <span class="ruby-string">&#39;reported_at&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@reported_at</span>,
 
-    <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
+    <span class="ruby-string">&#39;data&#39;</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@data</span>,
 
-    <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@interaction_id</span>,
-    <span class="ruby-value">:caller_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@caller_id</span>,
-    <span class="ruby-value">:identity</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@identity</span>
+    <span class="ruby-string">&#39;interaction_id&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@interaction_id</span>,
+    <span class="ruby-string">&#39;caller_id&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@caller_id</span>,
+    <span class="ruby-string">&#39;identity&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-ivar">@identity</span> )
   }
-
-  <span class="ruby-keyword">super</span>
-<span class="ruby-keyword">end</span></pre>
-              </div>
-            </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-update">
-              <b>update</b>( options )
-            <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogMessage.html#method-i-update" name="method-i-update" class="permalink">Link</a>
-          </div>
-
-            <div class="description">
-              <p>Set public attribute values according to an options hash keyed on the
-attributes defined for the class.</p>
-            </div>
-
-
-
-            <div class="sourcecode">
-              <p class="source-link">
-                Source:
-                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
-              </p>
-              <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_message.rb, line 167</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">options</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:id</span>             ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">level</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:level</span>          ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">component</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:component</span>      ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">code</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:code</span>           ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">reported_at</span>    = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:reported_at</span>    ]
-
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">data</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:data</span>           ]
-
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:interaction_id</span> ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>      ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">identity</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:identity</span>       ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

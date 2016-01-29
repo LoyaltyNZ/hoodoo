@@ -33,14 +33,13 @@
     <div class="description">
       
 <p>Log writer which sends structured messages to an AMQP-based queue via the
-AlchemyAMQ gems. A <a
+Alchemy Flux gem. A <a
 href="../../Logger/FastWriter.html">Hoodoo::Logger::FastWriter</a>
 subclass, since though talking to the queue might be comparatively slow,
-Alchemy itself uses an asynchronous Thread for this so there&#39;s no need
-to add another one for this logger.</p>
+Flux uses Event Machine for this so there&#39;s no need to add another
+Thread for this logger.</p>
 
-<p>See also <a href="../../Logger.html">Hoodoo::Logger</a> and <a
-href="AMQPLogMessage.html">Hoodoo::Services::Middleware::AMQPLogMessage</a>.</p>
+<p>See also <a href="../../Logger.html">Hoodoo::Logger</a>.</p>
 
     </div>
 
@@ -85,7 +84,7 @@ href="AMQPLogMessage.html">Hoodoo::Services::Middleware::AMQPLogMessage</a>.</p>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( alchemy, queue_name = nil )
+              <b>new</b>( alchemy, routing_key = nil )
             <a href="../../../../classes/Hoodoo/Services/Middleware/AMQPLogWriter.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -94,20 +93,21 @@ href="AMQPLogMessage.html">Hoodoo::Services::Middleware::AMQPLogMessage</a>.</p>
 <dl class="rdoc-list note-list"><dt>alchemy
 <dd>
 <p>The Alchemy endpoint to use for sending messages to the AMQP-based queue.</p>
-</dd><dt><code>queue_name</code>
+</dd><dt><code>routing_key</code>
 <dd>
-<p>The queue name (as a String) to use. Optional. If omitted, reads +ENV[
+<p>The routing key (as a String) to use. Optional. If omitted, reads +ENV[
 &#39;AMQ_LOGGING_ENDPOINT&#39; ]+ or if that is unset, defaults to
 <code>platform.logging</code>.</p>
 </dd></dl>
 
 <p>If you&#39;re running with <a href="../../../Rack.html">Rack</a> on top of
 Alchemy, then the <code>call</code> method&#39;s <code>env</code> parameter
-containing the <a href="../../../Rack.html">Rack</a> environment should
-have a key of <code>rack.alchemy</code> or <code>alchemy</code> with a
-value that can be assigned to the <code>alchemy</code> parameter. The
-logger will then use the active Alchemy service to send messages to its
-configured named queue.</p>
+containing the <a href="../../../Rack.html">Rack</a> environment
+<em>MUST</em> have a key of <code>alchemy.service</code> with a value
+that&#39;s the AlchemyFlux::Service instance handling queue communication.
+This is assigned to the <code>alchemy</code> parameter. The logger will
+then use this active Alchemy service to send messages to its configured
+routing key.</p>
             </div>
 
 
@@ -119,9 +119,9 @@ configured named queue.</p>
               </p>
               <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 40</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">alchemy</span>, <span class="ruby-identifier">queue_name</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-ivar">@alchemy</span>    = <span class="ruby-identifier">alchemy</span>
-  <span class="ruby-ivar">@queue_name</span> = <span class="ruby-identifier">queue_name</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_LOGGING_ENDPOINT&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">alchemy</span>, <span class="ruby-identifier">routing_key</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-ivar">@alchemy</span>     = <span class="ruby-identifier">alchemy</span>
+  <span class="ruby-ivar">@routing_key</span> = <span class="ruby-identifier">routing_key</span> <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_LOGGING_ENDPOINT&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;platform.logging&#39;</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -171,19 +171,15 @@ independent, searchable field in the log payload.</p>
               <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/amqp_log_writer.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span> ).<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-comment"># Take care with Symbol keys in &#39;data&#39; vs string keys in e.g. &#39;Session&#39;.</span>
 
   <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ] <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
 
-  <span class="ruby-identifier">interaction_id</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ]
-  <span class="ruby-identifier">session</span>        = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-identifier">session</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:session</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-identifier">message</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>( {
 
-  <span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span> ]
-  <span class="ruby-identifier">identity</span>       = ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
-
-  <span class="ruby-identifier">message</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">AMQPLogMessage</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-value">:id</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:id</span> ],
     <span class="ruby-value">:level</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">level</span>,
     <span class="ruby-value">:component</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">component</span>,
@@ -192,34 +188,13 @@ independent, searchable field in the log payload.</p>
 
     <span class="ruby-value">:data</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>,
 
-    <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction_id</span>,
-    <span class="ruby-value">:caller_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">caller_id</span>,
-    <span class="ruby-value">:identity</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">identity</span>,
+    <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:interaction_id</span> ],
+    <span class="ruby-value">:caller_id</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;caller_id&#39;</span> ],
+    <span class="ruby-value">:identity</span>       =<span class="ruby-operator">&gt;</span> ( <span class="ruby-identifier">session</span>[ <span class="ruby-string">&#39;identity&#39;</span> ] <span class="ruby-operator">||</span> {} ).<span class="ruby-identifier">to_h</span>
 
-    <span class="ruby-value">:routing_key</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@queue_name</span>,
-  )
+  } ).<span class="ruby-identifier">to_h</span>()
 
-  <span class="ruby-comment"># Broken services can attempt to log invalid datatypes such as</span>
-  <span class="ruby-comment"># BigDecimal, which Msgpack can&#39;t serialize. At the time of writing,</span>
-  <span class="ruby-comment"># Alchemy AMQ would thus encounter a serialization exception *within</span>
-  <span class="ruby-comment"># its EventMachine sending loop*, so in a different *native* thread.</span>
-  <span class="ruby-comment"># This exception could not be caught by Ruby / Hoodoo in &quot;this&quot;</span>
-  <span class="ruby-comment"># native thread, so instead the uncaught exception kills the service.</span>
-  <span class="ruby-comment"># Although Alchemy could catch that itself, there is no way for it to</span>
-  <span class="ruby-comment"># report the failure to Hoodoo in a way that a log reporting caller</span>
-  <span class="ruby-comment"># could understand; it&#39;s async and in the wrong native thread anyway.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-comment"># Solution: In non-production environments only (due to the potential</span>
-  <span class="ruby-comment"># performance hit), manually serialize the message before sending it.</span>
-  <span class="ruby-comment"># If this call blows up, the Hoodoo exception handler will catch it</span>
-  <span class="ruby-comment"># and report the result as a properly formed 500, including the</span>
-  <span class="ruby-comment"># Msgpack (or other exception) details on exactly what was wrong.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">environment</span>.<span class="ruby-identifier">production?</span>
-    <span class="ruby-identifier">message</span>.<span class="ruby-identifier">serialize</span>()
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">send_message</span>( <span class="ruby-identifier">message</span> )
+  <span class="ruby-ivar">@alchemy</span>.<span class="ruby-identifier">send_message_to_queue</span>( <span class="ruby-ivar">@routing_key</span>, <span class="ruby-identifier">message</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

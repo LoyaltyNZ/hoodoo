@@ -87,6 +87,26 @@ cleanest to follow the same pattern.</p>
             <td class='attr-desc'><p>The base path of this resource and version - for example, “/v1/products” or
 “/v2/members”. String.</p></td>
           </tr>
+          <tr valign='top' id='attribute-i-de_facto_base_path'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>de_facto_base_path</td>
+            <td class='attr-desc'><p>The de facto routing equivalent of <a
+href="ForLocal.html#attribute-i-base_path">base_path</a>. This is not a
+custom path based on the interface&#39;s declared endpoint; it is derived
+directlyf rom resource or version - for example, “/1/Product” or
+“/2/Member”. String.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-de_facto_routing_regexp'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>de_facto_routing_regexp</td>
+            <td class='attr-desc'><p>As <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>,
+but matches <a
+href="ForLocal.html#attribute-i-de_facto_base_path">de_facto_base_path</a>.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-implementation_instance'>
             <td class='attr-rw'>
               [RW]
@@ -135,7 +155,7 @@ Regexp instance.</p></td>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version:, base_path:, routing_regexp:, interface_class:, implementation_instance: )
+              <b>new</b>( resource:, version:, base_path:, routing_regexp:, de_facto_base_path:, de_facto_routing_regexp:, interface_class:, implementation_instance: )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForLocal.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -153,6 +173,14 @@ Regexp instance.</p></td>
 </dd><dt><code>routing_regexp</code>
 <dd>
 <p>See <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>.</p>
+</dd><dt><code>de_facto_base_path</code>
+<dd>
+<p>See <a
+href="ForLocal.html#attribute-i-de_facto_base_path">de_facto_base_path</a>.</p>
+</dd><dt><code>de_facto_routing_regexp</code>
+<dd>
+<p>See <a
+href="ForLocal.html#attribute-i-de_facto_routing_regexp">de_facto_routing_regexp</a>.</p>
 </dd><dt><code>interface_class</code>
 <dd>
 <p>See <a
@@ -172,11 +200,13 @@ href="ForLocal.html#attribute-i-implementation_instance">implementation_instance
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_local.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_local.rb, line 81</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
                 <span class="ruby-identifier">base_path</span>,,
                 <span class="ruby-identifier">routing_regexp</span>,,
+                <span class="ruby-identifier">de_facto_base_path</span>,,
+                <span class="ruby-identifier">de_facto_routing_regexp</span>,,
                 <span class="ruby-identifier">interface_class</span>,,
                 <span class="ruby-identifier">implementation_instance</span><span class="ruby-operator">:</span> )
 
@@ -184,6 +214,8 @@ href="ForLocal.html#attribute-i-implementation_instance">implementation_instance
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>                 = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">base_path</span>               = <span class="ruby-identifier">base_path</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">routing_regexp</span>          = <span class="ruby-identifier">routing_regexp</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">de_facto_base_path</span>      = <span class="ruby-identifier">de_facto_base_path</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">de_facto_routing_regexp</span> = <span class="ruby-identifier">de_facto_routing_regexp</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface_class</span>         = <span class="ruby-identifier">interface_class</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">implementation_instance</span> = <span class="ruby-identifier">implementation_instance</span>
 <span class="ruby-keyword">end</span></pre>
