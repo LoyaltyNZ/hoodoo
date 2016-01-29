@@ -144,13 +144,25 @@ module Hoodoo
         model.extend( ClassMethods )
       end
 
-      # Forms a String containing the specified +model_klass+'s attribute names
-      # escaped and joined with commas.
+      # Returns a String containing the specified +model_klass+'s attribute
+      # names considered as column names, escaped by the in-use database
+      # adaptor and joined into with commas.
       #
-      # +model_klass+ Class which responds to .attribute_names
+      # +model_klass+:: Class which responds to <tt>#attribute_names</tt>.
       #
       def self.sanitised_column_string( model_klass )
-        model_klass.attribute_names.map{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }.join( ',' )
+        self.sanitised_column_string_for( model_klass.attribute_names )
+      end
+
+      # As ::sanitised_column_string but takes the array of attribute or
+      # column names directly.
+      #
+      # +attribute_array+:: Array of column names, as Strings or Symbols.
+      #
+      def self.sanitised_column_string_for( attribute_array )
+        attribute_array.map do | c |
+          ActiveRecord::Base.connection.quote_column_name( c )
+        end.join( ',' )
       end
 
       # Collection of class methods that get defined on an including class via
@@ -200,9 +212,9 @@ module Hoodoo
         #             the Hoodoo::Services::Implementation instance methods
         #             that a resource subclass implements.
         #
-        def dated( context )
+        def dated( context, unquoted_column_names: nil )
           date_time = context.request.dated_at || Time.now
-          return self.dated_at( date_time )
+          return self.dated_at( date_time, unquoted_column_names: unquoted_column_names )
         end
 
         # Return an ActiveRecord::Relation scoping a query to include only model
@@ -215,39 +227,41 @@ module Hoodoo
         #               can be converted to a DateTime instance, for which the
         #               "effective dated" scope is to be constructed.
         #
-        def dated_at( date_time = Time.now )
+        def dated_at( date_time = Time.now, unquoted_column_names: nil )
 
           dating_table_name = dated_with_table_name()
           return all() if dating_table_name.nil? # "Model.all" -> returns anonymous scope
 
           # Rationalise and convert the date time to UTC.
 
-          date_time = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
+          date_time      = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
+          safe_date_time = self.sanitize( date_time ) # ActiveRecord provides #sanitize
 
-          # Create a string that specifies this model's attributes escaped and
-          # joined by commas for use in a SQL query.
+          # Create strings that specify the required attributes escaped and
+          # joined by commas for use in a SQL query, for both main and history
+          # tables.
 
-          formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
+          safe_name_string = self.quoted_column_name_string(
+            unquoted_column_names: unquoted_column_names
+          )
 
-          # Convert date_time to a String suitable for an SQL query.
-
-          string_date_time = sanitize( date_time )
+          safe_history_name_string = self.quoted_column_name_string_for_history(
+            unquoted_column_names: unquoted_column_names
+          )
 
           # A query that combines historical and current records which are
           # effective at the specified date time.
 
           nested_query = %{
             (
-              SELECT #{ formatted_model_attributes } FROM (
-                SELECT #{ formatted_model_attributes }, updated_at as effective_start, null AS effective_end
+              SELECT #{ safe_name_string } FROM (
+                SELECT #{ safe_name_string },"updated_at" AS "effective_start",NULL AS "effective_end"
                 FROM #{ self.table_name }
-
                 UNION ALL
-
-                SELECT #{ self.dated_with_history_column_mapping }, effective_start, effective_end
+                SELECT #{ safe_history_name_string },"effective_start","effective_end"
                 FROM #{ dating_table_name }
               ) AS u
-              WHERE effective_start <= #{ string_date_time } AND (effective_end > #{ string_date_time } OR effective_end IS NULL)
+              WHERE "effective_start" <= #{ safe_date_time } AND ("effective_end" > #{ safe_date_time } OR "effective_end" IS NULL)
             ) AS #{ self.table_name }
           }
 
@@ -263,26 +277,31 @@ module Hoodoo
         # If historic dating hasn't been enabled via a call to #dating_enabled,
         # then the default 'all' scope is returned instead.
         #
-        def dated_historical_and_current
+        def dated_historical_and_current( unquoted_column_names: nil )
 
           dating_table_name = dated_with_table_name()
           return all() if dating_table_name.nil? # "Model.all" -> returns anonymous scope
 
-          # Create a string that specifies this model's attributes escaped and
-          # joined by commas for use in a SQL query.
+          # Create strings that specify the required attributes escaped and
+          # joined by commas for use in a SQL query, for both main and history
+          # tables.
 
-          formatted_model_attributes = Hoodoo::ActiveRecord::Dated.sanitised_column_string( self )
+          safe_name_string = self.quoted_column_name_string(
+            unquoted_column_names: unquoted_column_names
+          )
+
+          safe_history_name_string = self.quoted_column_name_string_for_history(
+            unquoted_column_names: unquoted_column_names
+          )
 
           # A query that combines historical and current records.
 
           nested_query = %{
             (
-              SELECT #{ formatted_model_attributes }
+              SELECT #{ safe_name_string }
               FROM #{ self.table_name }
-
               UNION ALL
-
-              SELECT #{ self.dated_with_history_column_mapping }
+              SELECT #{ safe_history_name_string }
               FROM #{ dating_table_name }
             ) AS #{ self.table_name }
           }
@@ -314,27 +333,64 @@ module Hoodoo
           instance.nil? ? nil : instance.table_name
         end
 
-        protected
+      protected
 
-        # Forms and returns string which maps history table column names to the
-        # primary table column names for use in SQL queries.
+        # Takes an Array of unquoted column names and returns a new Array of
+        # names quoted by the current database adapter.
         #
-        def dated_with_history_column_mapping
-          desired_attributes = self.attribute_names.dup
+        # +unquoted_column_names+:: Optional Array of unquoted column names
+        #                           to use. Must contain only Strings.
+        #
+        def quoted_column_names( unquoted_column_names )
+          return unquoted_column_names.map do | c |
+            ActiveRecord::Base.connection.quote_column_name( c )
+          end
+        end
 
-          # Locate the primary key field, which must be called "id".
+        # Returns a String of comma-separated sanitised (quoted) column names
+        # based on this model's attribute names, or the given array of unquoted
+        # column names.
+        #
+        # _Named_ parameters are:
+        #
+        # +unquoted_column_names+:: Optional Array of unquoted column names
+        #                           to use. Must contain only Strings. If column
+        #                           "id" is missing, it will be added for you.
+        #
+        def quoted_column_name_string( unquoted_column_names: nil )
+          unquoted_column_names ||= self.attribute_names()
+          unquoted_column_names << 'id' unless unquoted_column_names.include?( 'id' )
 
-          primary_key_index = desired_attributes.index( 'id' )
+          return self.quoted_column_names( unquoted_column_names ).join( ',' )
+        end
 
-          # Sanitise the attribute names.
+        # As ::quoted_column_name_string, but returns a String appropriate for
+        # the history table. Notably, this requires a source column of "uuid" to
+        # be mapped in as column name "id" and works on the assumption that the
+        # primary key is "id".
+        #
+        # _Named_ parameters are:
+        #
+        # +unquoted_column_names+:: Optional Array of unquoted column names
+        #                           to use. Must contain only Strings. If column
+        #                           "id" is missing, it will be added for you.
+        #
+        def quoted_column_name_string_for_history( unquoted_column_names: nil )
+          unquoted_column_names ||= self.attribute_names
+          primary_key_index       = unquoted_column_names.index( 'id' )
 
-          desired_attributes.map!{ | c | ActiveRecord::Base.connection.quote_column_name( c ) }
+          if primary_key_index.nil?
+            unquoted_column_names << 'id'
+            primary_key_index = unquoted_column_names.count - 1
+          end
 
-          # Map the primary key.
+          quoted_column_names     = self.quoted_column_names( unquoted_column_names )
+          quoted_primary_key_name = quoted_column_names[ primary_key_index ]
+          history_primary_key     = '"uuid" as ' << quoted_primary_key_name
 
-          desired_attributes[ primary_key_index ] = 'uuid as ' << desired_attributes[ primary_key_index ]
+          quoted_column_names[ primary_key_index ] = history_primary_key
 
-          return desired_attributes.join( ',' )
+          return quoted_column_names.join( ',' )
         end
 
       end
