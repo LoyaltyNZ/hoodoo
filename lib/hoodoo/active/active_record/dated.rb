@@ -144,27 +144,6 @@ module Hoodoo
         model.extend( ClassMethods )
       end
 
-      # Returns a String containing the specified +model_klass+'s attribute
-      # names considered as column names, escaped by the in-use database
-      # adaptor and joined into with commas.
-      #
-      # +model_klass+:: Class which responds to <tt>#attribute_names</tt>.
-      #
-      def self.sanitised_column_string( model_klass )
-        self.sanitised_column_string_for( model_klass.attribute_names )
-      end
-
-      # As ::sanitised_column_string but takes the array of attribute or
-      # column names directly.
-      #
-      # +attribute_array+:: Array of column names, as Strings or Symbols.
-      #
-      def self.sanitised_column_string_for( attribute_array )
-        attribute_array.map do | c |
-          ActiveRecord::Base.connection.quote_column_name( c )
-        end.join( ',' )
-      end
-
       # Collection of class methods that get defined on an including class via
       # Hoodoo::ActiveRecord::Dated::included.
       #
@@ -392,7 +371,7 @@ module Hoodoo
         #
         def quoted_column_name_string( unquoted_column_names: nil )
           unquoted_column_names ||= self.attribute_names()
-          unquoted_column_names << 'id' unless unquoted_column_names.include?( 'id' )
+          unquoted_column_names   = unquoted_column_names + [ 'id' ] unless unquoted_column_names.include?( 'id' )
 
           return self.quoted_column_names( unquoted_column_names ).join( ',' )
         end
@@ -413,8 +392,8 @@ module Hoodoo
           primary_key_index       = unquoted_column_names.index( 'id' )
 
           if primary_key_index.nil?
-            unquoted_column_names << 'id'
-            primary_key_index = unquoted_column_names.count - 1
+            unquoted_column_names = unquoted_column_names + [ 'id' ]
+            primary_key_index     = unquoted_column_names.count - 1
           end
 
           quoted_column_names     = self.quoted_column_names( unquoted_column_names )
