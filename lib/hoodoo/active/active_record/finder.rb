@@ -253,14 +253,14 @@ module Hoodoo
           self.nz_co_loyalty_hoodoo_show_id_fields || []
         end
 
-        # Back-end to #acquire and therefore, in turn, #acquire_with. Returns
+        # Back-end to #acquire and therefore, in turn, #acquire_in. Returns
         # an ActiveRecord::Relation instance which scopes the search for a
-        # record by `id` and across any other columns specified by
-        # #acquire_with via `OR`.
+        # record by +id+ and across any other columns specified by
+        # #acquire_with, via SQL +OR+.
         #
         # Normally such a scope could only ever return a single record based
         # on an assuption of uniqueness constraints around columns which one
-        # might use in an equivalent of a `find` call. In some instances
+        # might use in an equivalent of a +find+ call. In some instances
         # however - e.g. a table that contains historic representations of a
         # model as well as its 'current' representation - there may be more
         # than one result and the returned value from this method may need to

@@ -1,4 +1,4 @@
-Thu, 04 Feb 2016 11:39:02 +1300
+Thu, 04 Feb 2016 11:45:23 +1300
 README.md	Thu, 14 Jan 2016 15:40:47 +1300
 lib/hoodoo.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active.rb	Thu, 14 Jan 2016 15:15:01 +1300
@@ -7,7 +7,7 @@ lib/hoodoo/active/active_record/base.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/creator.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/dated.rb	Wed, 03 Feb 2016 16:44:00 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 14 Jan 2016 15:15:01 +1300
-lib/hoodoo/active/active_record/finder.rb	Thu, 04 Feb 2016 11:25:57 +1300
+lib/hoodoo/active/active_record/finder.rb	Thu, 04 Feb 2016 11:45:16 +1300
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/secure.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/support.rb	Thu, 14 Jan 2016 15:15:01 +1300

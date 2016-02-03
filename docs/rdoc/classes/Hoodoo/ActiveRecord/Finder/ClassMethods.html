@@ -413,15 +413,16 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a></p>
             <div class="description">
               <p>Back-end to <a href="ClassMethods.html#method-i-acquire">acquire</a> and
 therefore, in turn, <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a>. Returns an
+href="ClassMethods.html#method-i-acquire_in">acquire_in</a>. Returns an
 ActiveRecord::Relation instance which scopes the search for a record by
-`id` and across any other columns specified by <a
-href="ClassMethods.html#method-i-acquire_with">acquire_with</a> via `OR`.</p>
+<code>id</code> and across any other columns specified by <a
+href="ClassMethods.html#method-i-acquire_with">acquire_with</a>, via SQL
+<code>OR</code>.</p>
 
 <p>Normally such a scope could only ever return a single record based on an
 assuption of uniqueness constraints around columns which one might use in
-an equivalent of a `find` call. In some instances however - e.g. a table
-that contains historic representations of a model as well as its
+an equivalent of a <code>find</code> call. In some instances however - e.g.
+a table that contains historic representations of a model as well as its
 &#39;current&#39; representation - there may be more than one result and
 the returned value from this method may need to be chained in with other
 scopes to form a useful query.</p>
