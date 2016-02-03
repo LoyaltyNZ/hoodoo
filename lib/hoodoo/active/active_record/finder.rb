@@ -152,48 +152,7 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match.
         #
         def acquire( ident )
-          extra_fields = self.acquired_with()
-
-          id_fields = [ :id ] + extra_fields
-          id_fields.each do | field |
-
-            # This is fiddly.
-            #
-            # You must use a string with field substitution approach, rather
-            # than e.g. ".where( :field => :ident )". AREL/ActiveRecord will,
-            # in the latter case, compose rational SQL based on column data
-            # types. If you have an *integer* ID field, then, it'll try to
-            # convert a *string* ident to an integer. This can give Hilarious
-            # Consequences. Consider looking up on (integer) field "id" or
-            # (text) field "uuid", with a string ident of "1f294942..." - the
-            # text UUID would be fine, but the integer ID may end up with the
-            # UUID being "to_i"'d, yielding integer 1. If the ID field is
-            # looked at first, you're highly likely to find the wrong record.
-            #
-            # The solution is, as written, simple; just use the substitution
-            # approach rather than higher level AREL, causing a string-like SQL
-            # query on all adapters which SQL handles just fine for varying
-            # field data types.
-            #
-            # The caveat is that should the database object to mismatched type
-            # comparisons it will actually raise an error - we see this on
-            # for example PostgreSQL where a column is an integer but we try
-            # to match it against a string that cannot be cleanly converted to
-            # one (e.g. trying to find an integer column 'id' based on a text
-            # UUID value containing alphabetic characters). That is still
-            # preferable to looking up the wrong record!
-
-            checker = where( [ "\"#{ self.table_name }\".\"#{ field }\" = ?", ident ] )
-
-            # If we have found a record return it, otherwise continue to loop
-            # through +id_fields+
-            #
-            if checker.first
-              return checker.first
-            end
-          end
-
-          return nil
+          return acquisition_scope( ident ).first
         end
 
         # Implicily secure, translated, dated etc. etc. version of #acquire,
@@ -292,6 +251,31 @@ module Hoodoo
         #
         def acquired_with
           self.nz_co_loyalty_hoodoo_show_id_fields || []
+        end
+
+        # Back-end to #acquire and therefore, in turn, #acquire_in. Returns
+        # an ActiveRecord::Relation instance which scopes the search for a
+        # record by +id+ and across any other columns specified by
+        # #acquire_with, via SQL +OR+.
+        #
+        # Normally such a scope could only ever return a single record based
+        # on an assuption of uniqueness constraints around columns which one
+        # might use in an equivalent of a +find+ call. In some instances
+        # however - e.g. a table that contains historic representations of a
+        # model as well as its 'current' representation - there may be more
+        # than one result and the returned value from this method may need to
+        # be chained in with other scopes to form a useful query.
+        #
+        def acquisition_scope( ident )
+          extra_fields = self.acquired_with()
+          arel_table   = self.arel_table()
+          arel_query   = arel_table[ :id ].eq( ident )
+
+          extra_fields.each do | field |
+            arel_query = arel_query.or( arel_table[ field ].eq( ident ) )
+          end
+
+          return where( arel_query )
         end
 
         # Generate an ActiveRecord::Relation instance which can be used to

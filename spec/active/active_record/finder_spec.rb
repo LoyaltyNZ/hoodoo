@@ -154,47 +154,50 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( found ).to eq(nil) # Not in 'group 1'
     end
 
-    # previously the finder would always cause an extra
-    # call to the database to preform a count
+    # Early versions of the 'acquire'-backed methods always inadvertently
+    # performed two database calls, via a count then a true find. This was
+    # refactored to only make one call per attribute, but that in turn can
+    # be much improved via the AREL table to compose a single query that
+    # uses "OR" to get the database to check each attribute in order. Thus
+    # every test below expects exactly one database call only.
     #
-    it 'does not do excessive database calls' do
+    context 'only makes one database call when' do
 
-      count = count_database_calls_in do
-        found = RSpecModelFinderTest.acquire( @id )
-        expect( found ).to eq(@a)
-      end
-      # the id will be the first searched in the finder
-      #  therefore only one call will be made
-      expect( count ).to eq( 1 )
+      it 'finding on the first attribute' do
+        count = count_database_calls_in do
+          found = RSpecModelFinderTest.acquire( @id )
+          expect( found ).to eq(@a)
+        end
 
-      count = count_database_calls_in do
-        found = RSpecModelFinderTest.acquire( @uuid )
-        expect( found ).to eq(@b)
+        expect( count ).to eq( 1 )
       end
 
-      # the uuid will be the second searched in the finder
-      #  therefore two calls will be made, one for the
-      #  id and one for the uuid
-      expect( count ).to eq( 2 )
+      it 'finding on the second attribute' do
+        count = count_database_calls_in do
+          found = RSpecModelFinderTest.acquire( @uuid )
+          expect( found ).to eq(@b)
+        end
 
-      count = count_database_calls_in do
-        found = RSpecModelFinderTest.acquire( @code )
-        expect( found ).to eq(@c)
+        expect( count ).to eq( 1 )
       end
 
-      # the code will be the third searched in the finder
-      #  therefore three calls will be made, one for the
-      #  id, one for the uuid and one for the code
-      expect( count ).to eq( 3 )
+      it 'finding on the third attribute' do
+        count = count_database_calls_in do
+          found = RSpecModelFinderTest.acquire( @code )
+          expect( found ).to eq(@c)
+        end
 
-
-      count = count_database_calls_in do
-        found = RSpecModelFinderTest.acquire( Hoodoo::UUID.generate )
-        expect( found ).to be_nil
+        expect( count ).to eq( 1 )
       end
 
-      # the finder will search all three
-      expect( count ).to eq( 3 )
+      it 'checking all three attributes but finding nothing' do
+        count = count_database_calls_in do
+          found = RSpecModelFinderTest.acquire( Hoodoo::UUID.generate )
+          expect( found ).to be_nil
+        end
+
+        expect( count ).to eq( 1 )
+      end
     end
   end
 
@@ -342,6 +345,23 @@ describe Hoodoo::ActiveRecord::Finder do
       @context.request.uri_path_components = [ @scoped_3.id ]
       found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one + '!' ).acquire_in( @context )
       expect( found ).to be_nil
+    end
+  end
+
+  # ==========================================================================
+
+  context 'acquisition_scope' do
+    it 'SQL generation is as expected' do
+      sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
+                           "FROM \"r_spec_model_finder_tests\" " <<
+                           "WHERE (" <<
+                             "(" <<
+                               "\"r_spec_model_finder_tests\".\"id\" = '#{ @id }' OR " <<
+                               "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'" <<
+                             ") OR " <<
+                             "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" <<
+                           ")" )
     end
   end
 
