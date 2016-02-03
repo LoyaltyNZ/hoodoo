@@ -152,7 +152,7 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match.
         #
         def acquire( ident )
-          extra_fields = self.nz_co_loyalty_hoodoo_show_id_fields || []
+          extra_fields = self.acquired_with()
 
           id_fields = [ :id ] + extra_fields
           id_fields.each do | field |
@@ -270,12 +270,28 @@ module Hoodoo
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
         # are to be used to "find-by-identifier" through calls #acquire and
-        # #acquire_in. See those for more details.
+        # #acquire_in. See those methods for more details.
+        #
+        # Fields will be searched in the order listed. If duplicate items are
+        # present, the first occurrence is kept and the rest are removed.
         #
         # *args:: One or more field names as Strings or Symbols.
         #
+        # See also: #acquired_with
+        #
         def acquire_with( *args )
-          self.nz_co_loyalty_hoodoo_show_id_fields = args
+          self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s ).uniq!()
+        end
+
+        # Return the list of model fields _in_ _addition_ _to_ +id+ which
+        # are being used to "find-by-identifier" through calls to #acquire
+        # and #acquire_in. The returned Array contains de-duplicated String
+        # values only.
+        #
+        # See also: #acquire_with
+        #
+        def acquired_with
+          self.nz_co_loyalty_hoodoo_show_id_fields || []
         end
 
         # Generate an ActiveRecord::Relation instance which can be used to
