@@ -285,7 +285,8 @@ module Hoodoo
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
         # are being used to "find-by-identifier" through calls to #acquire
-        # and #acquire_in.
+        # and #acquire_in. The returned Array contains de-duplicated String
+        # values only.
         #
         # See also: #acquire_with
         #
