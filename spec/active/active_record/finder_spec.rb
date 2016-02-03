@@ -20,7 +20,7 @@ describe Hoodoo::ActiveRecord::Finder do
       include Hoodoo::ActiveRecord::Finder
 
       self.primary_key = :id
-      acquire_with :uuid, :code
+      acquire_with :uuid, :code, :uuid # Deliberate duplication
 
       # These forms follow quite closely the RDoc comments in
       # the finder.rb source.
@@ -236,6 +236,15 @@ describe Hoodoo::ActiveRecord::Finder do
 
       @context = @interaction.context
       @session = @interaction.context.session
+    end
+
+    it 'knowns how to acquire' do
+
+      # Note the corresponding 'acquire_with' used Symbols and had a
+      # duplicated entry - we expect Strings and no duplicates here.
+      #
+      expect( RSpecModelFinderTest.acquired_with() ).to eq( [ 'uuid', 'code' ] )
+
     end
 
     it 'finds with secure scopes from the class' do
