@@ -72,7 +72,35 @@ module Hoodoo
           self.id = Hoodoo::UUID.generate() if self.id.nil?
         end
 
-        model.validates( :id, :uuid => true, :presence => true, :uniqueness => true )
+        # One validation only runs if manual dating is enabled at the time
+        # that validations are checked; the other only if it is disabled.
+
+        manual_dating_is_on = Proc.new do | model |
+          model.class.include?( Hoodoo::ActiveRecord::ManuallyDated ) &&
+          model.class.manual_dating_enabled?()
+        end
+
+        model.validates(
+          :id,
+          {
+            :if         => manual_dating_is_on,
+            :uuid       => true,
+            :presence   => true,
+            :uniqueness => { :scope => :effective_end },
+
+          }
+        )
+
+        model.validates(
+          :id,
+          {
+            :unless     => manual_dating_is_on,
+            :uuid       => true,
+            :presence   => true,
+            :uniqueness => true,
+
+          }
+        )
       end
 
     end

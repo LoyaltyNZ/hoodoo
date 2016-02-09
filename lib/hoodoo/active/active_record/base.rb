@@ -22,6 +22,7 @@ module Hoodoo
       #
       # * Hoodoo::ActiveRecord::Secure
       # * Hoodoo::ActiveRecord::Dated
+      # * Hoodoo::ActiveRecord::ManuallyDated
       # * Hoodoo::ActiveRecord::Translated
       # * Hoodoo::ActiveRecord::Finder
       # * Hoodoo::ActiveRecord::UUID
@@ -29,12 +30,17 @@ module Hoodoo
       # * Hoodoo::ActiveRecord::Writer
       # * Hoodoo::ActiveRecord::ErrorMapping
       #
+      # ...but not necessarily _activate_ those modules. For example,
+      # the Hoodoo::ActiveRecord::Dated module must be activated by a
+      # call to Hoodoo::ActiveRecord::Dated.dating_enabled.
+      #
       class Base < ::ActiveRecord::Base
 
         # Reading data.
         #
         include Hoodoo::ActiveRecord::Secure
         include Hoodoo::ActiveRecord::Dated
+        include Hoodoo::ActiveRecord::ManuallyDated
         include Hoodoo::ActiveRecord::Translated
         include Hoodoo::ActiveRecord::Finder
 
@@ -62,6 +68,7 @@ module Hoodoo
 
           Hoodoo::ActiveRecord::Secure.instantiate( model )
           Hoodoo::ActiveRecord::Dated.instantiate( model )
+          Hoodoo::ActiveRecord::ManuallyDated.instantiate( model )
           Hoodoo::ActiveRecord::Translated.instantiate( model )
           Hoodoo::ActiveRecord::Finder.instantiate( model )
 

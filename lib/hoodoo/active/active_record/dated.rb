@@ -179,6 +179,13 @@ module Hoodoo
 
         end
 
+        # If a prior call has been made to #dating_enabled then this method
+        # returns +true+, else +false+.
+        #
+        def dating_enabled?
+          return self.dated_with() != nil?
+        end
+
         # Return an ActiveRecord::Relation containing the model instances which
         # are effective at +context.request.dated_at+. If this value is nil the
         # current time in UTC is used.

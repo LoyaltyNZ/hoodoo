@@ -22,6 +22,7 @@ require 'hoodoo/active/active_record/error_mapping'
 
 require 'hoodoo/active/active_record/secure'
 require 'hoodoo/active/active_record/dated'
+require 'hoodoo/active/active_record/manually_dated'
 require 'hoodoo/active/active_record/translated'
 require 'hoodoo/active/active_record/finder'
 

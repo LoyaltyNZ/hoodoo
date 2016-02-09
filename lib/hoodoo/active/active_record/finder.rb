@@ -239,7 +239,8 @@ module Hoodoo
         # See also: #acquired_with
         #
         def acquire_with( *args )
-          self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s ).uniq!()
+          self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s )
+          self.nz_co_loyalty_hoodoo_show_id_fields.uniq!()
         end
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
