@@ -53,11 +53,13 @@ describe Hoodoo::ActiveRecord::Dated do
 
     before( :all ) do
 
-      # Create some examples data for finding. The data has two different UUIDs
+      # Create some example data for finding. The data has two different UUIDs
       # which I'll referer to as A and B. The following tables contain the
-      # historical and current records separately with their attributes.
+      # historical and current records separately with their attributes, with
+      # items created in the historical or main database tables respectively.
       #
       # Historical:
+      #
       # -------------------------------------------------------------------
       #  uuid | data    | created_at    | effective_end | effective_start |
       # -------------------------------------------------------------------
@@ -67,12 +69,12 @@ describe Hoodoo::ActiveRecord::Dated do
       #  B    | "four"  | now - 4 hours | now           | now - 2 hour    |
       #
       # Current:
+      #
       # --------------------------------
       #  uuid | data   | created_at    |
       # --------------------------------
       #  B    | "five" | now - 4 hours |
       #  A    | "six"  | now - 5 hours |
-      #
 
       @uuid_a = Hoodoo::UUID.generate
       @uuid_b = Hoodoo::UUID.generate
@@ -111,7 +113,23 @@ describe Hoodoo::ActiveRecord::Dated do
 
     end
 
-    context '.dated_at' do
+    context 'unscoped' do
+      it 'counts only the current records in the main database table' do
+        expect( model_klass.count ).to be 2
+      end
+
+      it 'finds only the current records in the main database table' do
+        expect( model_klass.pluck( :data ) ).to match_array( [ 'five', 'six' ] )
+      end
+    end
+
+    context '#dating_enabled?' do
+      it 'says it is automatically dated' do
+        expect( model_klass.dating_enabled? ).to eq( true )
+      end
+    end
+
+    context '#dated_at' do
       it 'returns counts correctly' do
         expect( model_klass.dated_at( @now - 10.hours ).count ).to be 0
         expect( model_klass.dated_at( @now ).count ).to be 2
@@ -143,7 +161,7 @@ describe Hoodoo::ActiveRecord::Dated do
 
     end
 
-    context '.dated' do
+    context '#dated' do
       it 'returns counts correctly' do
         # The contents of the Context are irrelevant aside from the fact that it
         # needs a request to store the dated_at value.
@@ -207,7 +225,7 @@ describe Hoodoo::ActiveRecord::Dated do
 
     end
 
-    context '.dated_historical_and_current' do
+    context '#dated_historical_and_current' do
       it 'returns counts correctly' do
         expect( model_klass.dated_historical_and_current.count ).to be 6
       end
