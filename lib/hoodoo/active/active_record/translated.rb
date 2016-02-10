@@ -21,7 +21,7 @@ module Hoodoo
     #
     module Translated
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #

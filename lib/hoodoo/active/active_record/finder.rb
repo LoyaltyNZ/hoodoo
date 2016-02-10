@@ -35,7 +35,7 @@ module Hoodoo
     #
     module Finder
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
@@ -43,6 +43,8 @@ module Hoodoo
       #       include Hoodoo::ActiveRecord::Finder
       #       # ...
       #     end
+      #
+      # Depends upon and auto-includes Hoodoo::ActiveRecord::Secure.
       #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.

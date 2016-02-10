@@ -22,7 +22,7 @@ module Hoodoo
     #
     module Secure
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #

@@ -29,7 +29,7 @@ module Hoodoo
     #
     module UUID
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
