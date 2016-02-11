@@ -22,7 +22,233 @@ module Hoodoo
     #
     # Depends upon and auto-includes Hoodoo::ActiveRecord::Finder.
     #
+    # == Overview
+    #
+    # This mixin lets you record and retrieve the historical state of any
+    # given ActiveRecord model. This is achieved by adding two date/time
+    # columns to the model and using these to track the start (inclusive) and
+    # end (exclusive, or "null" for "this is the 'contemporary' record) times
+    # for which this particular row is valid.
+    #
+    # == Vital caveats
+    #
+    # Since both the 'contemporary' and historic states of the model are all
+    # recorded in one table, anyone using this mechanism must ensure that
+    # (unless they specifically want to run a query across all of the
+    # representations) the mixin's scoping methods are _always_ used to target
+    # either current, or historic, or specifically-dated rows only.
+    #
+    # With this mechanism in place, the +id+ attribute of the model is _still_
+    # _a_ _unique_ _primary_ _key_ AND THIS IS **NO** **LONGER** THE RESOURCE
+    # UUID. The UUID moves to a _non-unique_ +uuid+ column. When rendering
+    # resources, YOU **MUST** USE THE +uuid+ COLUMN for the resource ID. This
+    # is a potentially serious gotcha and strong test coverage is advised! If
+    # you send back the wrong field value, it'll look like a reasonable UUID
+    # but will not match any records at all through API-based interfaces,
+    # assuming Hoodoo::ActiveRecord::Finder is in use for read-based queries.
+    # The UUID will appear to refer to a non-existant resource.
+    #
+    # * The +id+ column becomes a unique database primary key and of little
+    #   to no interest whatsoever to a service or API callers.
+    #
+    # * The +uuid+ column becomes the non-unique resource UUID which is of
+    #   great interest to a service and API callers.
+    #
+    # == Accuracy
+    #
+    # Time accuracy is intentionally limited, to aid database indices and help
+    # avoid clock accuracy differences across operating systems or datbase
+    # engines. Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES
+    # describes the accuracy applicable.
+    #
+    # If a record is, say, both created and then deleted within the accuracy
+    # window, then a dated query attempting to read the resource state from
+    # that (within-accuracy) identical time will return an undefined result.
+    # It might find the resource before it were deleted, or might not find the
+    # resource because it considers it to be no longer current. Of course, any
+    # dated query from outside the accuracy window will work as you would
+    # expect; only rapid changes in state within the accuracy window result in
+    # ambiguity.
+    #
+    # == Typical workflow
+    #
+    # Having included the mixin, run any required migrations (see below) and
+    # declared manual dating as active inside your <tt>ActiveRecord::Base</tt>
+    # subclass by calling
+    # Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manual_dating_enabled,
+    # you **MUST** include the ActiveRecord::Relation instances (scopes) inside
+    # any query chain used to read or write data.
+    #
+    # You might use Hoodoo::ActiveRecord::Finder#list_in or
+    # Hoodoo::ActiveRecord::Finder#acquire_in for +list+ or +show+ actions;
+    # such code changes from e.g.:
+    #
+    #     SomeModel.list_in( context )
+    #
+    # ...to:
+    #
+    #     SomeModel.manually_dated( context ).list_in( context )
+    #
+    # You MUST NOT update or delete records using conventional ActiveRecord
+    # methods if you want to use manual dating to record state changes.
+    # Instead, use
+    # Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_update_in
+    # or
+    # Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_destruction_in.
+    # For example to update a model based on the +context.request.body+ data
+    # without changes to the item in +context.request.ident+, handling "not
+    # found" or valiation error cases with the assumption that the
+    # Hoodoo::ActiveRecord::ErrorMapping mixin is in use, do this:
+    #
+    #     result = SomeModel.manually_dated_destruction_in( context )
+    #
+    #     if result.nil?
+    #       context.response.not_found( context.request.ident )
+    #     elsif result.adds_errors_to?( context.response.errors ) == false
+    #       rendered_data = render_model( result )
+    #       context.response.set_data( rendered_data )
+    #     end
+    #
+    # See the documentation for the update/destroy methods mentioned above for
+    # information on overriding the identifier used to find the target record
+    # and the attribute data used for updates.
+    #
+    # When rendering, you **MUST** remember to set the resource's +id+ field
+    # from the model's +uuid+ field:
+    #
+    #     SomePresenter.render_in(
+    #       context,
+    #       model.attributes,
+    #       {
+    #         :uuid         => model.uuid, # <-- ".uuid" - IMPORTANT!
+    #         :created_at   => model.created_at
+    #       }
+    #     )
+    #
+    # == Required migrations
+    #
+    # You must write an ActiveRecord migration for any table that wishes to
+    # use manual dating. The template below can handle multiple tables in one
+    # pass and can be rolled back safely *IF* no historic records have been
+    # added. Rollback becomes impossible once historic entries appear.
+    #
+    #     class ConvertToManualDating < ActiveRecord::Migration
+    #
+    #       # This example migration can handle multiple tables at once - e.g. pass an
+    #       # array of ":accounts, :members" if you were adding manual dating support to
+    #       # tables supporting an Account and Member ActiveRecord model.
+    #       #
+    #       TABLES_TO_CONVERT = [ :table_name, :another_table_name, ... ]
+    #
+    #       def up
+    #
+    #         # If you have any uniqueness constraints on this table, you'll need to
+    #         # remove them and re-add them with date-based scope. The main table will
+    #         # contain duplicated entries once historical versions of a row appear.
+    #         #
+    #         #   remove_index :table_name, <index fields(s) or name: 'index name'>
+    #         #
+    #         # For example, suppose you had declared this index somewhere:
+    #         #
+    #         #   add_index :accounts, :account_number, :unique => true
+    #         #
+    #         # Remove it with:
+    #         #
+    #         #   remove_index :accounts, :account_number
+    #
+    #         TABLES_TO_CONVERT.each do | table |
+    #
+    #           add_column table, :effective_start, :datetime, :null  => true
+    #           add_column table, :effective_end,   :datetime, :null  => true
+    #           add_column table, :uuid,            :string,   :limit => 32
+    #
+    #           add_index table, [        :effective_start, :effective_end ],                  :name => "index_#{ table }_start_end"
+    #           add_index table, [ :uuid, :effective_start, :effective_end ], :unique => true, :name => "index_#{ table }_id_start_end"
+    #           add_index table, [ :uuid,                   :effective_end ], :unique => true, :name => "index_#{ table }_id_end"
+    #
+    #           # If there's any data in the table already, it can't have any historic
+    #           # entries. So, we want to set the UUID to the 'id' field's old value,
+    #           # but we can also leave the 'id' field as-is. New rows for historical
+    #           # entries will acquire a new value of 'id' via Hoodoo.
+    #           #
+    #           execute "UPDATE #{ table } SET uuid = id"
+    #
+    #           # This won't follow the date/time rounding described by manual dating
+    #           # but it's good enough for an initial migration.
+    #           #
+    #           execute "UPDATE #{ table } SET effective_start = created_at"
+    #
+    #           # We couldn't add the UUID column with a not-null constraint until the
+    #           # above SQL had run to update any existing records with a value. Now we
+    #           # should put this back in, for rigour.
+    #           #
+    #           change_column_null table, :uuid, false
+    #
+    #         end
+    #
+    #         # Now add back any indices dropped earlier, but add them as two composite
+    #         # indices each - one with just :effective_end added, the other with both
+    #         # :effective_start and :effective_end added.
+    #         #
+    #         # For example, suppose you had declared this index somewhere:
+    #         #
+    #         #   add_index :accounts, :account_number, :unique => true
+    #         #
+    #         # You need to have done "remove_index :accounts, :account_number" earlier;
+    #         # then now add the two new equivalents. You may well find you have to give
+    #         # them custom names to avoid hitting index name length limits in your
+    #         # database if ActiveRecord is allowed to generate a name automatically:
+    #         #
+    #         #   add_index :accounts, [ :account_number, :effective_start, :effective_end ], :unique => true, :name => 'index_accounts_an_es_ee'
+    #         #   add_index :accounts, [ :account_number,                   :effective_end ], :unique => true, :name => 'index_accounts_an_ee'
+    #         #
+    #         # You might want to perform more detailed analysis on your index
+    #         # requirements once manual dating is enabled, but the above is a good rule
+    #         # of thumb.
+    #
+    #       end
+    #
+    #       # This would fail if any historic entries now existed in the database,
+    #       # because primary key 'id' values would get set to non-unique 'uuid'
+    #       # values. This is intentional and required to avoid corruption; you
+    #       # cannot roll back once history entries accumulate.
+    #       #
+    #       def down
+    #
+    #         # Remove any indices added manually at the end of "up", for example:
+    #         #
+    #         #   remove_index :accounts, :name => 'index_accounts_an_es_ee'
+    #         #   remove_index :accounts, :name => 'index_accounts_an_ee'
+    #
+    #         TABLES_TO_CONVERT.each do | table |
+    #
+    #           remove_index table, :name => "index_#{ table }_id_end"
+    #           remove_index table, :name => "index_#{ table }_id_start_end"
+    #           remove_index table, :name => "index_#{ table }_start_end"
+    #
+    #           execute "UPDATE #{ table } SET id = uuid"
+    #
+    #           remove_column table, :uuid
+    #           remove_column table, :effective_end
+    #           remove_column table, :effective_start
+    #
+    #         end
+    #
+    #         # Add back any indexes you removed at the very start of "up", e.g.:
+    #         #
+    #         #   add_index :accounts, :account_number, :unique => true
+    #
+    #       end
+    #     end
+    #
     module ManuallyDated
+
+      # Rounding resolution, in terms of number of decimal places to which
+      # seconds are rounded. Excessive accuracy makes for difficult, large
+      # indices in the database and may fall foul of system / database
+      # clock accuracy mismatches.
+      #
+      SECONDS_DECIMAL_PLACES = 2 # An Integer from 0 upwards
 
       # Instantiates this module when it is included.
       #
@@ -92,7 +318,7 @@ module Hoodoo
           self.nz_co_loyalty_hoodoo_manually_dated = true
 
           before_save do
-            now = Time.now.utc
+            now = Time.now.utc.round( SECONDS_DECIMAL_PLACES )
 
             self.created_at      ||= now
             self.updated_at      ||= now
@@ -157,7 +383,7 @@ module Hoodoo
         #             that a resource subclass implements.
         #
         def manually_dated( context )
-          date_time = context.request.dated_at || Time.now.utc
+          date_time = context.request.dated_at || Time.now
           return self.manually_dated_at( date_time )
         end
 
@@ -172,8 +398,8 @@ module Hoodoo
         #               can be converted to a DateTime instance, for which the
         #               "effective dated" scope is to be constructed.
         #
-        def manually_dated_at( date_time = Time.now.utc )
-          date_time  = Hoodoo::Utilities.nanosecond_iso8601( date_time.utc )
+        def manually_dated_at( date_time = Time.now )
+          date_time  = date_time.to_time.utc.round( SECONDS_DECIMAL_PLACES )
           arel_table = self.arel_table()
           arel_query = arel_table[ :effective_start ].lteq( date_time ).
                        and(
@@ -282,7 +508,7 @@ module Hoodoo
 
                 # The only way this can fail is by throwing an exception.
                 #
-                original.update_column( :effective_end, Time.now.utc )
+                original.update_column( :effective_end, Time.now.utc.round( SECONDS_DECIMAL_PLACES ) )
 
                 # When you 'dup' a live model, ActiveRecord clears the 'created_at'
                 # and 'updated_at' values, and the 'id' column - even if you set

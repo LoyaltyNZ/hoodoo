@@ -35,7 +35,6 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
     end
   end
 
-
   # Create some example data for finding. The data has two different UUIDs
   # which I'll referer to as A and B. The following tables list the
   # historical and current records with their attributes. All are created
@@ -64,8 +63,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
   #
   before :each do
 
-    @now = Time.now.utc
-
+    @now    = Time.now.utc.round( Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES )
     @uuid_a = Hoodoo::UUID.generate
     @uuid_b = Hoodoo::UUID.generate
 
@@ -147,10 +145,18 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         test_expectation( @now, [ 'five', 'six' ] )
       end
 
+      # Given the test above, if this was ignoring timezone or otherwise
+      # being confused it would take "now", subtract an hour, then add it
+      # back again; we'd see "five" and "six" instead of "four" and "six".
+      #
+      it 'converts inbound date/times to UTC' do
+        local = ( @now - 1.hour ).localtime( '+01:00' )
+        test_expectation( local, [ 'four', 'six' ] )
+      end
+
       it 'works with further filtering' do
         expect( RSpecModelManualDateTest.manually_dated_at( @now ).where( :uuid => @uuid_a ).pluck( :data ) ).to eq( [ 'six' ] )
       end
-
     end
 
     context '#manually_dated' do
@@ -191,6 +197,11 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
       it 'returns records that are effective now' do
         test_expectation( @now, [ 'five', 'six' ] )
+      end
+
+      it 'converts inbound date/times to UTC' do
+        local = ( @now - 1.hour ).localtime( '+01:00' )
+        test_expectation( local, [ 'four', 'six' ] )
       end
 
       it 'works with further filtering' do
@@ -254,6 +265,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         } )
 
         @record.save!
+        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) + 0.1 )
 
         @context.request.instance_variable_set( '@ident', @record.uuid )
         @context.request.body = { 'data' => @change_data_to }
@@ -466,6 +478,8 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         } )
 
         @record.save!
+        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) + 0.1 )
+
         @old_updated_at = @record.updated_at
 
         @context.request.instance_variable_set( '@ident', @record.uuid )
