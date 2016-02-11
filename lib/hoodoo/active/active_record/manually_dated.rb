@@ -20,9 +20,11 @@ module Hoodoo
     # ActiveRecord-based code, but it involves very complex database queries
     # that can have high cost and is tied into PostgreSQL.
     #
+    # Depends upon and auto-includes Hoodoo::ActiveRecord::Finder.
+    #
     module ManuallyDated
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
@@ -30,6 +32,9 @@ module Hoodoo
       #       include Hoodoo::ActiveRecord::ManuallyDated
       #       # ...
       #     end
+      #
+      # Depends upon and auto-includes Hoodoo::ActiveRecord::UUID and
+      # Hoodoo::ActiveRecord::Finder.
       #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
@@ -43,7 +48,12 @@ module Hoodoo
           }
         )
 
-        instantiate( model ) unless model == Hoodoo::ActiveRecord::Base
+        unless model == Hoodoo::ActiveRecord::Base
+          model.send( :include, Hoodoo::ActiveRecord::UUID )
+          model.send( :include, Hoodoo::ActiveRecord::Finder )
+          instantiate( model )
+        end
+
         super( model )
       end
 
@@ -73,9 +83,10 @@ module Hoodoo
         # record's +created_at+ and +updated_at+ fields are manually set to the
         # current time ("now"), _if_ not already set by the time the filter is
         # run. The record's +effective_start+ time is set to match +created_at+
-        # _if_ not already set. The record's +primary_id+ primary key is set to
-        # the value of +id+ concatenated by a new secondary UUID to form a 64
-        # character unique value, again _if_ this is not already set.
+        # _if_ not already set. The record's +uuid+ resource UUID is set to the
+        # value of the +id+ column if not already set, which is useful for new
+        # records but should never happen for history-savvy updates performed
+        # by this mixin's code.
         #
         def manual_dating_enabled
           self.nz_co_loyalty_hoodoo_manually_dated = true
@@ -86,8 +97,43 @@ module Hoodoo
             self.created_at      ||= now
             self.updated_at      ||= now
             self.effective_start ||= self.created_at
-            self.primary_id      ||= "#{ self.id }#{ Hoodoo::UUID.generate() }"
           end
+
+          # This is very similar to the UUID mixin, but works on the 'uuid'
+          # column. With manual dating, ActiveRecord's quirks with changing
+          # the primary key column, but still doing weird things with an
+          # attribute and accessor called "id", forces us to give up on any
+          # notion of changing the primary key. Keep "id" unique. This means
+          # the UUID mixin, if in use, is now setting the *real* per row
+          # unique key, while the "uuid" contains the UUID that should be
+          # rendered for the resource representation and will appear in more
+          # than one database row if the record has history entries. Thus,
+          # the validation is scoped to be unique only per "effective_end"
+          # value.
+          #
+          # Since the X-Resource-UUID header may be used and result in an
+          # attribute "id" being specified inbound for new records, we take
+          # any value of "id" if present and use that in preference to a
+          # totally new UUID in order to deal with that use case.
+
+          validate( :on => :create ) do
+            self.uuid ||= self.id || Hoodoo::UUID.generate()
+          end
+
+          validates(
+            :uuid,
+            {
+              :uuid       => true,
+              :presence   => true,
+              :uniqueness => { :scope => :effective_end },
+            }
+          )
+
+          # Lastly, we must specify an acquisition scope that's based on
+          # the "uuid" column only and *not* the "id" column.
+
+          acquire_with_id_substitute( :uuid )
+
         end
 
         # If a prior call has been made to #manual_dating_enabled then this
@@ -214,58 +260,90 @@ module Hoodoo
         def manually_dated_update_in( context,
                                       ident:      context.request.ident,
                                       attributes: context.request.body,
-                                      scope:      self.acquisition_scope( ident ) )
+                                      scope:      all() )
 
-          return self.transaction do
+          new_record      = nil
+          retry_operation = false
 
-            locked_rows = scope.lock()
-            original    = scope.manually_dated_contemporary().acquire( ident )
+          begin
+            begin
 
-            break if original.nil?
+              # 'requires_new' => exceptions in nested transactions will cause
+              # rollback; see the comment documentation for the Writer module's
+              # "persist_in" method for details.
+              #
+              self.transaction( :requires_new => true ) do
 
-            # Set the end date on the "newest" record to mark it as a historic
-            # entry. We never expect this to fail; if it did, an exception is
-            # likely even without the "!" form of the method, but use this
-            # explicitly and document clearly that an exception may arise.
-            #
-            original.effective_end = Time.now.utc
-            original.save!
+                lock_scope = scope.acquisition_scope( ident ).lock( true )
+                self.connection.execute( lock_scope.to_sql )
 
-            # When you 'dup' a live model, ActiveRecord clears the 'created_at'
-            # and 'updated_at' values, and the 'id' column - even if you set
-            # the "primary_key=..." value on the model to something else. Put
-            # it all back together again.
-            #
-            # Duplicate, apply attributes, then overwrite anything that is
-            # vital for dating so that the inbound attributes hash can't cause
-            # any inconsistencies.
-            #
-            updated = original.dup
-            updated.assign_attributes( attributes )
+                original = scope.manually_dated_contemporary().acquire( ident )
+                break if original.nil?
 
-            updated.id              = original.id
-            updated.created_at      = original.created_at
-            updated.updated_at      = original.effective_end # (sic.)
-            updated.effective_start = original.effective_end # (sic.)
-            updated.effective_end   = nil
+                # The only way this can fail is by throwing an exception.
+                #
+                original.update_column( :effective_end, Time.now.utc )
 
-            # Let the before_save filter create the primary ID (the real
-            # primary key, as far as the database goes).
-            #
-            updated.primary_id = nil
+                # When you 'dup' a live model, ActiveRecord clears the 'created_at'
+                # and 'updated_at' values, and the 'id' column - even if you set
+                # the "primary_key=..." value on the model to something else. Put
+                # it all back together again.
+                #
+                # Duplicate, apply attributes, then overwrite anything that is
+                # vital for dating so that the inbound attributes hash can't cause
+                # any inconsistencies.
+                #
+                new_record = original.dup
+                new_record.assign_attributes( attributes )
 
-            # This time, save with validation but no exceptions. The caller
-            # examines the returned object to see if there are validation
-            # errors / no persistence.
-            #
-            updated.save
+                new_record.id              = nil
+                new_record.uuid            = original.uuid
+                new_record.created_at      = original.created_at
+                new_record.updated_at      = original.effective_end # (sic.)
+                new_record.effective_start = original.effective_end # (sic.)
+                new_record.effective_end   = nil
 
-            # The evaluated result of the transaction block must be 'updated'
-            # in order for the method's return value to be as documented.
-            #
-            updated
+                # Save with validation but no exceptions. The caller examines the
+                # returned object to see if there were any validation errors.
+                #
+                new_record.save()
 
-          end
+                # Must roll back if the new record didn't save, to undo the
+                # 'effective_end' column update on 'original' earlier.
+                #
+                raise ::ActiveRecord::Rollback if new_record.errors.present?
+              end
+
+              retry_operation = false
+
+            rescue ::ActiveRecord::StatementInvalid => exception
+
+              # By observation, PostgreSQL can start worrying about deadlocks
+              # with the above. TODO: I don't know why; I can't see how it can
+              # possibly end up trying to do the things the logs imply given
+              # that the locking is definitely working and blocking anything
+              # other than one transaction at a time from working on a set of
+              # rows scoped by a particular resource UUID.
+              #
+              # In such a case, retry. But only do so once; then give up.
+              #
+              if retry_operation == false && exception.message.downcase.include?( 'deadlock' )
+                retry_operation = true
+
+                # Give other Threads time to run, maximising chance of deadlock
+                # being resolved before retry.
+                #
+                sleep 0.1
+
+              else
+                raise exception
+
+              end
+
+            end # "begin"..."rescue"..."end"
+          end while ( retry_operation ) # "begin"..."end while"
+
+          return new_record
         end
 
         # Analogous to #manually_dated_update_in and with the same return
@@ -280,9 +358,10 @@ module Hoodoo
         #
         # Since no actual "hard" record deletion takes place, traditional
         # ActiveRecord concerns of +delete+ versus +destroy+ or of dependency
-        # chain destruction do not apply. Callbacks related to _updating_
-        # will be triggered, bceause that's the only thing happening "under
-        # the hood".
+        # chain destruction do not apply. No callbacks or validations are run
+        # when the record is updated (via ActiveRecord's #update_column). A
+        # failure to update the record will result in an unhandled exception.
+        # No change is made to the +updated_at+ column value.
         #
         # _Unnamed_ parameters are:
         #
@@ -305,20 +384,14 @@ module Hoodoo
         #
         def manually_dated_destruction_in( context,
                                            ident: context.request.ident,
-                                           scope: self.acquisition_scope( ident ) )
+                                           scope: all() )
 
-          # See #manually_dated_update_in for rationale.
+          # See #manually_dated_update_in implementation for rationale.
           #
           return self.transaction do
 
-            locked_rows = scope.lock()
-            record      = scope.manually_dated_contemporary().acquire( ident )
-
-            break if record.nil?
-
-            record.effective_end = Time.now.utc
-            record.save!
-
+            record = scope.manually_dated_contemporary().lock( true ).acquire( ident )
+            record.update_column( :effective_end, Time.now.utc ) unless record.nil?
             record
 
           end
