@@ -63,7 +63,10 @@ href="../Dated.html#method-c-included">Hoodoo::ActiveRecord::Dated.included</a>.
                 <a href="#method-i-dated_with_table_name">dated_with_table_name</a>,
               </li>
               <li>
-                <a href="#method-i-dating_enabled">dating_enabled</a>
+                <a href="#method-i-dating_enabled">dating_enabled</a>,
+              </li>
+              <li>
+                <a href="#method-i-dating_enabled-3F">dating_enabled?</a>
               </li>
           </ul>
         </dd>
@@ -136,7 +139,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
                 <a href="javascript:toggleSource('method-i-dated_source')" id="l_method-i-dated_source">show</a>
               </p>
               <div id="method-i-dated_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_at</span>( <span class="ruby-identifier">date_time</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-identifier">unquoted_column_names</span> )
@@ -183,7 +186,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
                 <a href="javascript:toggleSource('method-i-dated_at_source')" id="l_method-i-dated_at_source">show</a>
               </p>
               <div id="method-i-dated_at_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 231</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 238</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>, <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">dating_table_name</span> = <span class="ruby-identifier">dated_with_table_name</span>()
@@ -263,7 +266,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
                 <a href="javascript:toggleSource('method-i-dated_historical_and_current_source')" id="l_method-i-dated_historical_and_current_source">show</a>
               </p>
               <div id="method-i-dated_historical_and_current_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 292</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 299</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_historical_and_current</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
 
   <span class="ruby-identifier">dating_table_name</span> = <span class="ruby-identifier">dated_with_table_name</span>()
@@ -322,7 +325,7 @@ href="ClassMethods.html#method-i-dating_enabled">dating_enabled</a>.</p>
                 <a href="javascript:toggleSource('method-i-dated_with_source')" id="l_method-i-dated_with_source">show</a>
               </p>
               <div id="method-i-dated_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 331</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 338</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_dated_with</span>
 <span class="ruby-keyword">end</span></pre>
@@ -354,7 +357,7 @@ returns <code>nil</code>.</p>
                 <a href="javascript:toggleSource('method-i-dated_with_table_name_source')" id="l_method-i-dated_with_table_name_source">show</a>
               </p>
               <div id="method-i-dated_with_table_name_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 343</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 350</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dated_with_table_name</span>
   <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>()
   <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">table_name</span>
@@ -411,6 +414,33 @@ documentation for <a href="../Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
               </div>
             </div>
           </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-dating_enabled-3F">
+              <b>dating_enabled?</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Dated/ClassMethods.html#method-i-dating_enabled-3F" name="method-i-dating_enabled-3F" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>If a prior call has been made to <a
+href="ClassMethods.html#method-i-dating_enabled">dating_enabled</a> then
+this method returns <code>true</code>, else <code>false</code>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-dating_enabled-3F_source')" id="l_method-i-dating_enabled-3F_source">show</a>
+              </p>
+              <div id="method-i-dating_enabled-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 185</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dating_enabled?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>() <span class="ruby-operator">!=</span> <span class="ruby-identifier">nil?</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
       <div class="sectiontitle">Instance Protected methods</div>
         <div class="method">
           <div class="title method-title" id="method-i-quoted_column_name_string">
@@ -439,7 +469,7 @@ If column “id” is missing, it will be added for you.</p>
                 <a href="javascript:toggleSource('method-i-quoted_column_name_string_source')" id="l_method-i-quoted_column_name_string_source">show</a>
               </p>
               <div id="method-i-quoted_column_name_string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 372</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 379</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">quoted_column_name_string</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">attribute_names</span>()
   <span class="ruby-identifier">unquoted_column_names</span>   = <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">+</span> [ <span class="ruby-string">&#39;id&#39;</span> ] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-string">&#39;id&#39;</span> )
@@ -477,7 +507,7 @@ If column “id” is missing, it will be added for you.</p>
                 <a href="javascript:toggleSource('method-i-quoted_column_name_string_for_history_source')" id="l_method-i-quoted_column_name_string_for_history_source">show</a>
               </p>
               <div id="method-i-quoted_column_name_string_for_history_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 390</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 397</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">quoted_column_name_string_for_history</span>( <span class="ruby-identifier">unquoted_column_names</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">unquoted_column_names</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">attribute_names</span>
   <span class="ruby-identifier">primary_key_index</span>       = <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">index</span>( <span class="ruby-string">&#39;id&#39;</span> )
@@ -521,7 +551,7 @@ quoted by the current database adapter.</p>
                 <a href="javascript:toggleSource('method-i-quoted_column_names_source')" id="l_method-i-quoted_column_names_source">show</a>
               </p>
               <div id="method-i-quoted_column_names_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 356</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 363</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">quoted_column_names</span>( <span class="ruby-identifier">unquoted_column_names</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">unquoted_column_names</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">|</span>
     <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quote_column_name</span>( <span class="ruby-identifier">c</span> )
