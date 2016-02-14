@@ -44,6 +44,8 @@ href="Base.html">ActiveRecord::Base</a>.</p>
 </li><li>
 <p><a href="Dated.html">Hoodoo::ActiveRecord::Dated</a></p>
 </li><li>
+<p><a href="ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a></p>
+</li><li>
 <p><a href="Translated.html">Hoodoo::ActiveRecord::Translated</a></p>
 </li><li>
 <p><a href="Finder.html">Hoodoo::ActiveRecord::Finder</a></p>
@@ -56,6 +58,10 @@ href="Base.html">ActiveRecord::Base</a>.</p>
 </li><li>
 <p><a href="ErrorMapping.html">Hoodoo::ActiveRecord::ErrorMapping</a></p>
 </li></ul>
+
+<p>…but not necessarily <em>activate</em> those modules. For example, the <a
+href="Dated.html">Hoodoo::ActiveRecord::Dated</a> module must be activated
+by a call to Hoodoo::ActiveRecord::Dated.dating_enabled.</p>
 
     </div>
 
@@ -90,6 +96,11 @@ href="Base.html">ActiveRecord::Base</a>.</p>
         <li>
             <a href="Dated.html">
               Hoodoo::ActiveRecord::Dated
+            </a>
+        </li>
+        <li>
+            <a href="ManuallyDated.html">
+              Hoodoo::ActiveRecord::ManuallyDated
             </a>
         </li>
         <li>
@@ -158,11 +169,12 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-inherited_source')" id="l_method-c-inherited_source">show</a>
               </p>
               <div id="method-c-inherited_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 61</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/base.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">inherited</span>( <span class="ruby-identifier">model</span> )
 
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ManuallyDated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Translated</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
 

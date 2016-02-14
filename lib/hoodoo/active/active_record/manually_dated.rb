@@ -27,8 +27,11 @@ module Hoodoo
     # This mixin lets you record and retrieve the historical state of any
     # given ActiveRecord model. This is achieved by adding two date/time
     # columns to the model and using these to track the start (inclusive) and
-    # end (exclusive, or "null" for "this is the 'contemporary' record) times
-    # for which this particular row is valid.
+    # end (exclusive and always set to precisely DATE_MAXIMUM for "this is the
+    # 'contemporary' record) date/times for which a particular row is valid.
+    #
+    # The majority of the functionality is implemented within class methods
+    # defined in module Hoodoo::ActiveRecord::ManuallyDated::ClassMethods.
     #
     # == Prerequisites
     #
@@ -62,9 +65,9 @@ module Hoodoo
     # either current, or historic, or specifically-dated rows only.
     #
     # With this mechanism in place, the +id+ attribute of the model is _still_
-    # _a_ _unique_ _primary_ _key_ AND THIS IS **NO** **LONGER** THE RESOURCE
+    # _a_ _unique_ _primary_ _key_ AND THIS IS *NO* *LONGER* THE RESOURCE
     # UUID. The UUID moves to a _non-unique_ +uuid+ column. When rendering
-    # resources, YOU **MUST** USE THE +uuid+ COLUMN for the resource ID. This
+    # resources, YOU *MUST* USE THE +uuid+ COLUMN for the resource ID. This
     # is a potentially serious gotcha and strong test coverage is advised! If
     # you send back the wrong field value, it'll look like a reasonable UUID
     # but will not match any records at all through API-based interfaces,
@@ -103,7 +106,7 @@ module Hoodoo
     # declared manual dating as active inside your <tt>ActiveRecord::Base</tt>
     # subclass by calling
     # Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manual_dating_enabled,
-    # you **MUST** include the ActiveRecord::Relation instances (scopes) inside
+    # you *MUST* include the ActiveRecord::Relation instances (scopes) inside
     # any query chain used to read or write data.
     #
     # You might use Hoodoo::ActiveRecord::Finder#list_in or
@@ -140,7 +143,7 @@ module Hoodoo
     # information on overriding the identifier used to find the target record
     # and the attribute data used for updates.
     #
-    # When rendering, you **MUST** remember to set the resource's +id+ field
+    # When rendering, you *MUST* remember to set the resource's +id+ field
     # from the model's +uuid+ field:
     #
     #     SomePresenter.render_in(
@@ -380,13 +383,15 @@ module Hoodoo
         # forth.
         #
         # When dating is enabled, a +before_save+ filter will ensure that the
-        # record's +created_at+ and +updated_at+ fields are manually set to the
-        # current time ("now"), _if_ not already set by the time the filter is
-        # run. The record's +effective_start+ time is set to match +created_at+
-        # _if_ not already set. The record's +uuid+ resource UUID is set to the
-        # value of the +id+ column if not already set, which is useful for new
-        # records but should never happen for history-savvy updates performed
-        # by this mixin's code.
+        # record's +created_at+ and +updated_at+ fields are manually set to
+        # the current time ("now"), if not already set by the time the filter
+        # is run. The record's +effective_start+ time is set to match
+        # +created_at+ if not already set and +effective_end+ is set to
+        # Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM _if_ not already
+        # set. The record's +uuid+ resource UUID is set to the value of the
+        # +id+ column if not already set, which is useful for new records but
+        # should never happen for history-savvy updates performed by this
+        # mixin's code.
         #
         def manual_dating_enabled
           self.nz_co_loyalty_hoodoo_manually_dated = true

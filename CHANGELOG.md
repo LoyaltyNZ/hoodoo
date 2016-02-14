@@ -1,3 +1,13 @@
+## 1.2.0 (2016-02-15)
+
+* All-new "manual" historic dating support. The transparent automatic dating is really nice and transparent for services, but it does come at a heavy cost with migrations (you _really_ need to lean on the `service_shell` generators), is tied into PostgreSQL and for complex associations/join scenarios can degrade performance to unacceptable levels. The counter to this is the lightweight, database-agnostic but much more intrusive "manual" historic dating system, available in `Hoodoo::ActiveRecord::ManuallyDated`. Substantial service changes may be required with the shift from using column `id` over to column `uuid` being the most fiddly and potentially fragile; read the documentation carefully and ensure your service test coverage is comprehensive.
+
+* UUID generator improvements lean on Ruby's `SecureRandom` and remove the external dependency on the UUIDTools gem. It's a really great piece of code but has far more functionality than we need, so it was time to say goodbye.
+
+* Some minor documentation-level (comment) fixes.
+
+* Routine maintenance `bundle update`.
+
 ## 1.1.3 (2016-02-04)
 
 * More efficient `acquire` method in ActiveRecord `Finder` support module. Now uses the AREL table to only ever make a single database query via `OR`. Related new method `acquisition_scope` is provided for convenience.

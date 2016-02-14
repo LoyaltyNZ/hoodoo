@@ -110,7 +110,11 @@ href="../ActiveRecord.html">ActiveRecord</a> model class and the request.</p>
 </li><li>
 <p>Hoodoo::ActiveRecord::Translated#translated</p>
 </li><li>
-<p>Hoodoo::ActiveRecord::Dated#dated</p>
+<p>Hoodoo::ActiveRecord::Dated#dated (if “dating_enabled?” is
+<code>true</code>)</p>
+</li><li>
+<p>Hoodoo::ActiveRecord::ManuallyDated#manually_dated (if
+“manual_dating_enabled?” is <code>true</code>)</p>
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>klass</code>
 <dd>
@@ -140,15 +144,19 @@ scope for use with subsequent query refinements.</p>
                 <a href="javascript:toggleSource('method-c-full_scope_for_source')" id="l_method-c-full_scope_for_source">show</a>
               </p>
               <div id="method-c-full_scope_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 83</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 85</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
 
   <span class="ruby-comment"># Due to the mechanism used, dating scope must be done first or the</span>
   <span class="ruby-comment"># rest of the query may be invalid.</span>
   <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Dated</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">dating_enabled?</span>()
     <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">dated</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ManuallyDated</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">manual_dating_enabled?</span>()
+    <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">prevailing_scope</span>.<span class="ruby-identifier">manually_dated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Secure</span> )

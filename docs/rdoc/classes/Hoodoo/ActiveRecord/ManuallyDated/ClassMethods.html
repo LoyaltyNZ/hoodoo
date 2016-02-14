@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::ActiveRecord::ManuallyDated::ClassMethods</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::ActiveRecord::ManuallyDated::ClassMethods
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/active/active_record/manually_dated_rb.html">lib/hoodoo/active/active_record/manually_dated.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Collection of class methods that get defined on an including class via <a
+href="../ManuallyDated.html#method-c-included">Hoodoo::ActiveRecord::ManuallyDated.included</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>M</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-manual_dating_enabled">manual_dating_enabled</a>,
+              </li>
+              <li>
+                <a href="#method-i-manual_dating_enabled-3F">manual_dating_enabled?</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated">manually_dated</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated_at">manually_dated_at</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated_contemporary">manually_dated_contemporary</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated_destruction_in">manually_dated_destruction_in</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated_historic">manually_dated_historic</a>,
+              </li>
+              <li>
+                <a href="#method-i-manually_dated_update_in">manually_dated_update_in</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manual_dating_enabled">
+              <b>manual_dating_enabled</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manual_dating_enabled" name="method-i-manual_dating_enabled" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Activate manually-driven historic dating for this model.</p>
+
+<p>See the module documentation for <a
+href="../ManuallyDated.html">Hoodoo::ActiveRecord::ManuallyDated</a> for
+full information on dating, column/attribute requirements and so forth.</p>
+
+<p>When dating is enabled, a <code>before_save</code> filter will ensure that
+the record&#39;s <code>created_at</code> and <code>updated_at</code> fields
+are manually set to the current time (“now”), if not already set by the
+time the filter is run. The record&#39;s <code>effective_start</code> time
+is set to match <code>created_at</code> if not already set and
+<code>effective_end</code> is set to
+Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM <em>if</em> not already
+set. The record&#39;s <code>uuid</code> resource <a
+href="../UUID.html">UUID</a> is set to the value of the <code>id</code>
+column if not already set, which is useful for new records but should never
+happen for history-savvy updates performed by this mixin&#39;s code.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manual_dating_enabled_source')" id="l_method-i-manual_dating_enabled_source">show</a>
+              </p>
+              <div id="method-i-manual_dating_enabled_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 396</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> = <span class="ruby-keyword">true</span>
+
+  <span class="ruby-identifier">before_save</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
+
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>      <span class="ruby-operator">||=</span> <span class="ruby-identifier">now</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">updated_at</span>      <span class="ruby-operator">||=</span> <span class="ruby-identifier">now</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">effective_start</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">effective_end</span>   <span class="ruby-operator">||=</span> <span class="ruby-constant">DATE_MAXIMUM</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># This is very similar to the UUID mixin, but works on the &#39;uuid&#39;</span>
+  <span class="ruby-comment"># column. With manual dating, ActiveRecord&#39;s quirks with changing</span>
+  <span class="ruby-comment"># the primary key column, but still doing weird things with an</span>
+  <span class="ruby-comment"># attribute and accessor called &quot;id&quot;, forces us to give up on any</span>
+  <span class="ruby-comment"># notion of changing the primary key. Keep &quot;id&quot; unique. This means</span>
+  <span class="ruby-comment"># the UUID mixin, if in use, is now setting the *real* per row</span>
+  <span class="ruby-comment"># unique key, while the &quot;uuid&quot; contains the UUID that should be</span>
+  <span class="ruby-comment"># rendered for the resource representation and will appear in more</span>
+  <span class="ruby-comment"># than one database row if the record has history entries. Thus,</span>
+  <span class="ruby-comment"># the validation is scoped to be unique only per &quot;effective_end&quot;</span>
+  <span class="ruby-comment"># value.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Since the X-Resource-UUID header may be used and result in an</span>
+  <span class="ruby-comment"># attribute &quot;id&quot; being specified inbound for new records, we take</span>
+  <span class="ruby-comment"># any value of &quot;id&quot; if present and use that in preference to a</span>
+  <span class="ruby-comment"># totally new UUID in order to deal with that use case.</span>
+
+  <span class="ruby-identifier">validate</span>( <span class="ruby-value">:on</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:create</span> ) <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">uuid</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">validates</span>(
+    <span class="ruby-value">:uuid</span>,
+    {
+      <span class="ruby-value">:uuid</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:presence</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:uniqueness</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:scope</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:effective_end</span> },
+    }
+  )
+
+  <span class="ruby-comment"># Lastly, we must specify an acquisition scope that&#39;s based on</span>
+  <span class="ruby-comment"># the &quot;uuid&quot; column only and *not* the &quot;id&quot; column.</span>
+
+  <span class="ruby-identifier">acquire_with_id_substitute</span>( <span class="ruby-value">:uuid</span> )
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manual_dating_enabled-3F">
+              <b>manual_dating_enabled?</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manual_dating_enabled-3F" name="method-i-manual_dating_enabled-3F" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>If a prior call has been made to <a
+href="ClassMethods.html#method-i-manual_dating_enabled">manual_dating_enabled</a>
+then this method returns <code>true</code>, else <code>false</code>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manual_dating_enabled-3F_source')" id="l_method-i-manual_dating_enabled-3F_source">show</a>
+              </p>
+              <div id="method-i-manual_dating_enabled-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 448</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated">
+              <b>manually_dated</b>( context )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated" name="method-i-manually_dated" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Return an ActiveRecord::Relation instance which only matches records that
+are relevant/effective at the date/time in the value of
+<code>context.request.dated_at</code> within the given
+<code>context</code>. If this value is <code>nil</code> then the current
+time in UTC is used.</p>
+
+<p>Manual historic dating must have been previously activated through a call
+to dating_enabled, else results will be undefined.</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_source')" id="l_method-i-manually_dated_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 465</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated</span>( <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated_at">
+              <b>manually_dated_at</b>( date_time = Time.now )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated_at" name="method-i-manually_dated_at" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Return an ActiveRecord::Relation instance which only matches records that
+are relevant/effective at the given date/time. If this value is
+<code>nil</code> then the current time in UTC is used.</p>
+
+<p>Manual historic dating must have been previously activated through a call
+to dating_enabled, else results will be undefined.</p>
+<dl class="rdoc-list note-list"><dt><code>date_time</code>
+<dd>
+<p>(Optional) A Time or DateTime instance, or a String that can be converted
+to a DateTime instance, for which the “effective dated” scope is to be
+constructed.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_at_source')" id="l_method-i-manually_dated_at_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_at_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 481</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> )
+  <span class="ruby-identifier">date_time</span>  = <span class="ruby-identifier">date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
+
+  <span class="ruby-identifier">arel_table</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">arel_table</span>()
+  <span class="ruby-identifier">arel_query</span> = <span class="ruby-identifier">arel_table</span>[ <span class="ruby-value">:effective_start</span> ].<span class="ruby-identifier">lteq</span>( <span class="ruby-identifier">date_time</span> ).
+               <span class="ruby-identifier">and</span>(
+                 <span class="ruby-identifier">arel_table</span>[ <span class="ruby-value">:effective_end</span> ].<span class="ruby-identifier">gt</span>( <span class="ruby-identifier">date_time</span> )
+                 <span class="ruby-comment"># .or(</span>
+                 <span class="ruby-comment">#   arel_table[ :effective_end ].eq( nil )</span>
+                 <span class="ruby-comment"># )</span>
+               )
+
+  <span class="ruby-identifier">where</span>( <span class="ruby-identifier">arel_query</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated_contemporary">
+              <b>manually_dated_contemporary</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated_contemporary" name="method-i-manually_dated_contemporary" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Return an ActiveRecord::Relation instance which only matches records that
+are &#39;current&#39;. The historic/past records for any given <a
+href="../UUID.html">UUID</a> will never be included in the scope.</p>
+
+<p>Manual historic dating must have been previously activated through a call
+to dating_enabled, else results will be undefined.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_contemporary_source')" id="l_method-i-manually_dated_contemporary_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_contemporary_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 514</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_contemporary</span>
+  <span class="ruby-identifier">where</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated_destruction_in">
+              <b>manually_dated_destruction_in</b>( context, ident: context.request.ident, scope: all() )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated_destruction_in" name="method-i-manually_dated_destruction_in" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Analogous to <a
+href="ClassMethods.html#method-i-manually_dated_update_in">manually_dated_update_in</a>
+and with the same return value and exception generation semantics, so see
+that method for those details.</p>
+
+<p>This particular method soft-deletes a record. It moves the
+&#39;current&#39; entry to being an &#39;historic&#39; entry as in <a
+href="ClassMethods.html#method-i-manually_dated_update_in">manually_dated_update_in</a>,
+but does not then generate any new &#39;current&#39; record. Returns
+<code>nil</code> if the record couldn&#39;t be found to start with, else
+returns the found and soft-deleted / now-historic model instance.</p>
+
+<p>Since no actual “hard” record deletion takes place, traditional <a
+href="../../ActiveRecord.html">ActiveRecord</a> concerns of
+<code>delete</code> versus <code>destroy</code> or of dependency chain
+destruction do not apply. No callbacks or validations are run when the
+record is updated (via ActiveRecord&#39;s update_column). A failure to
+update the record will result in an unhandled exception. No change is made
+to the <code>updated_at</code> column value.</p>
+
+<p><em>Unnamed</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements. This is used to
+obtain the record&#39;s <a href="../UUID.html">UUID</a> unless overridden
+(see named parameter list).</p>
+</dd></dl>
+
+<p>Additional <em>named</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p><a href="../UUID.html">UUID</a> (32-digit <code>id</code> column value) of
+the record to be updated. If omitted, <code>context.request.ident</code> is
+used.</p>
+</dd><dt><code>scope</code>
+<dd>
+<p>ActiveRecord::Relation instance providing the scope to use for database
+locks and acquiring the record to update. Defaults to acquisition_scope for
+the prevailing <code>ident</code> value.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_destruction_in_source')" id="l_method-i-manually_dated_destruction_in_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_destruction_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 692</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span>,
+                                   <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
+                                   <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span> <span class="ruby-identifier">all</span>() )
+
+  <span class="ruby-comment"># See #manually_dated_update_in implementation for rationale.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transaction</span> <span class="ruby-keyword">do</span>
+
+    <span class="ruby-identifier">record</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">manually_dated_contemporary</span>().<span class="ruby-identifier">lock</span>( <span class="ruby-keyword">true</span> ).<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> )
+    <span class="ruby-identifier">record</span>.<span class="ruby-identifier">update_column</span>( <span class="ruby-value">:effective_end</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">record</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">record</span>
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated_historic">
+              <b>manually_dated_historic</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated_historic" name="method-i-manually_dated_historic" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Return an ActiveRecord::Relation instance which only matches records that
+are from the past. The &#39;current&#39; record for any given <a
+href="../UUID.html">UUID</a> will never be included by the scope.</p>
+
+<p>Manual historic dating must have been previously activated through a call
+to dating_enabled, else results will be undefined.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_historic_source')" id="l_method-i-manually_dated_historic_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_historic_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 503</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_historic</span>
+  <span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-manually_dated_update_in">
+              <b>manually_dated_update_in</b>( context, ident: context.request.ident, attributes: context.request.body, scope: all() )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/ManuallyDated/ClassMethods.html#method-i-manually_dated_update_in" name="method-i-manually_dated_update_in" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Update a record with manual historic dating. This means that the
+&#39;current&#39; / most recent record is turned into a historic entry via
+setting its <code>effective_end</code> date, a duplicate is made and any
+new attribute values are set in this duplicate. This new record is then
+saved as the &#39;current&#39; version. A transaction containing a database
+lock over all history rows for the record via its <a
+href="../UUID.html">UUID</a> (<code>id</code> column) is used to provide
+concurrent access safety.</p>
+
+<p>The return value is complex:</p>
+<ul><li>
+<p>If <code>nil</code>, the record that was to be updated could not be found.</p>
+</li><li>
+<p>If not <code>nil</code>, an <a
+href="../../ActiveRecord.html">ActiveRecord</a> model instance is returned.
+This is the new &#39;current&#39; record, but it might not be saved;
+validation errors may have happened. You need to check for this before
+proceeding. This will <em>not</em> be the same model instance found for the
+original, most recent / current record.</p>
+</li></ul>
+
+<p>If attempts to update the previous, now-historic record&#39;s effective end
+date fail, an exception may be thrown as the failure condition is
+unexpected (it will almost certainly be because of a database connection
+failure). You <em>might</em> need to call this method from a block with a
+<code>rescue</code> clause if you wish to handle those elegantly, but it is
+probably a serious failure and the generally recommended behaviour is to
+just let Hoodoo&#39;s default exception handler catch the exception and
+return an HTTP 500 response to the API caller.</p>
+
+<p><em>Unnamed</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>context</code>
+<dd>
+<p><a href="../../Services/Context.html">Hoodoo::Services::Context</a>
+instance describing a call context. This is typically a value passed to one
+of the <a
+href="../../Services/Implementation.html">Hoodoo::Services::Implementation</a>
+instance methods that a resource subclass implements. This is used to find
+the record&#39;s <a href="../UUID.html">UUID</a> and new attribute
+information unless overridden (see named parameter list).</p>
+</dd></dl>
+
+<p>Additional <em>named</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>ident</code>
+<dd>
+<p><a href="../UUID.html">UUID</a> (32-digit <code>id</code> column value) of
+the record to be updated. If omitted, <code>context.request.ident</code> is
+used.</p>
+</dd><dt><code>attributes</code>
+<dd>
+<p>Hash of attributes to write (via ActiveRecord&#39;s
+<code>assign_attributes</code> method) in order to perform the update. If
+omitted, <code>context.request.body</code> is used.</p>
+</dd><dt><code>scope</code>
+<dd>
+<p>ActiveRecord::Relation instance providing the scope to use for database
+locks and acquiring the record to update. Defaults to acquisition_scope for
+the prevailing <code>ident</code> value.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-manually_dated_update_in_source')" id="l_method-i-manually_dated_update_in_source">show</a>
+              </p>
+              <div id="method-i-manually_dated_update_in_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 567</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_update_in</span>( <span class="ruby-identifier">context</span>,
+                              <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
+                              <span class="ruby-identifier">attributes</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">body</span>,
+                              <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">all</span>() )
+
+  <span class="ruby-identifier">new_record</span>      = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">false</span>
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-keyword">begin</span>
+
+      <span class="ruby-comment"># &#39;requires_new&#39; =&gt; exceptions in nested transactions will cause</span>
+      <span class="ruby-comment"># rollback; see the comment documentation for the Writer module&#39;s</span>
+      <span class="ruby-comment"># &quot;persist_in&quot; method for details.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transaction</span>( <span class="ruby-value">:requires_new</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">do</span>
+
+        <span class="ruby-identifier">lock_scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> ).<span class="ruby-identifier">lock</span>( <span class="ruby-keyword">true</span> )
+        <span class="ruby-keyword">self</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>( <span class="ruby-identifier">lock_scope</span>.<span class="ruby-identifier">to_sql</span> )
+
+        <span class="ruby-identifier">original</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">manually_dated_contemporary</span>().<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> )
+        <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">original</span>.<span class="ruby-identifier">nil?</span>
+
+        <span class="ruby-comment"># The only way this can fail is by throwing an exception.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">original</span>.<span class="ruby-identifier">update_column</span>( <span class="ruby-value">:effective_end</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> ) )
+
+        <span class="ruby-comment"># When you &#39;dup&#39; a live model, ActiveRecord clears the &#39;created_at&#39;</span>
+        <span class="ruby-comment"># and &#39;updated_at&#39; values, and the &#39;id&#39; column - even if you set</span>
+        <span class="ruby-comment"># the &quot;primary_key=...&quot; value on the model to something else. Put</span>
+        <span class="ruby-comment"># it all back together again.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-comment"># Duplicate, apply attributes, then overwrite anything that is</span>
+        <span class="ruby-comment"># vital for dating so that the inbound attributes hash can&#39;t cause</span>
+        <span class="ruby-comment"># any inconsistencies.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">new_record</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">dup</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">assign_attributes</span>( <span class="ruby-identifier">attributes</span> )
+
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">id</span>              = <span class="ruby-keyword">nil</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">uuid</span>            = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">uuid</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">created_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">created_at</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">updated_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_start</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_end</span>   = <span class="ruby-constant">DATE_MAXIMUM</span>
+
+        <span class="ruby-comment"># Save with validation but no exceptions. The caller examines the</span>
+        <span class="ruby-comment"># returned object to see if there were any validation errors.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">save</span>()
+
+        <span class="ruby-comment"># Must roll back if the new record didn&#39;t save, to undo the</span>
+        <span class="ruby-comment"># &#39;effective_end&#39; column update on &#39;original&#39; earlier.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">present?</span>
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">false</span>
+
+    <span class="ruby-keyword">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">StatementInvalid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+      <span class="ruby-comment"># By observation, PostgreSQL can start worrying about deadlocks</span>
+      <span class="ruby-comment"># with the above. TODO: I don&#39;t know why; I can&#39;t see how it can</span>
+      <span class="ruby-comment"># possibly end up trying to do the things the logs imply given</span>
+      <span class="ruby-comment"># that the locking is definitely working and blocking anything</span>
+      <span class="ruby-comment"># other than one transaction at a time from working on a set of</span>
+      <span class="ruby-comment"># rows scoped by a particular resource UUID.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-comment"># In such a case, retry. But only do so once; then give up.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">retry_operation</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">message</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-string">&#39;deadlock&#39;</span> )
+        <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">true</span>
+
+        <span class="ruby-comment"># Give other Threads time to run, maximising chance of deadlock</span>
+        <span class="ruby-comment"># being resolved before retry.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">sleep</span> <span class="ruby-number">0.1</span>
+
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">exception</span>
+
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">end</span> <span class="ruby-comment"># &quot;begin&quot;...&quot;rescue&quot;...&quot;end&quot;</span>
+  <span class="ruby-keyword">end</span> <span class="ruby-keyword">while</span> ( <span class="ruby-identifier">retry_operation</span> ) <span class="ruby-comment"># &quot;begin&quot;...&quot;end while&quot;</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">new_record</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>
