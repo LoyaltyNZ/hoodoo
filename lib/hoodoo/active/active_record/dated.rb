@@ -108,7 +108,7 @@ module Hoodoo
     #
     module Dated
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
@@ -177,6 +177,13 @@ module Hoodoo
 
           self.nz_co_loyalty_hoodoo_dated_with = history_klass
 
+        end
+
+        # If a prior call has been made to #dating_enabled then this method
+        # returns +true+, else +false+.
+        #
+        def dating_enabled?
+          return self.dated_with() != nil?
         end
 
         # Return an ActiveRecord::Relation containing the model instances which

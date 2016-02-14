@@ -35,7 +35,7 @@ module Hoodoo
     #
     module Finder
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
@@ -44,12 +44,15 @@ module Hoodoo
       #       # ...
       #     end
       #
+      # Depends upon and auto-includes Hoodoo::ActiveRecord::Secure.
+      #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.included( model )
         model.class_attribute(
           :nz_co_loyalty_hoodoo_show_id_fields,
+          :nz_co_loyalty_hoodoo_show_id_substitute,
           :nz_co_loyalty_hoodoo_search_with,
           :nz_co_loyalty_hoodoo_filter_with,
           {
@@ -237,9 +240,11 @@ module Hoodoo
         # *args:: One or more field names as Strings or Symbols.
         #
         # See also: #acquired_with
+        #           #acquire_with_id_substitute
         #
         def acquire_with( *args )
-          self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s ).uniq!()
+          self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s )
+          self.nz_co_loyalty_hoodoo_show_id_fields.uniq!()
         end
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
@@ -248,15 +253,44 @@ module Hoodoo
         # values only.
         #
         # See also: #acquire_with
+        #           #acquire_with_id_substitute
         #
         def acquired_with
           self.nz_co_loyalty_hoodoo_show_id_fields || []
+        end
+
+        # The #acquire_with method allows methods like #acquire and
+        # #acquire_in to transparently find a record based on _one_ _or_
+        # _more_ columns in the database. The columns (and corresponding
+        # model attributes) specified through a call to #acquire_with will
+        # normally be used _in_ _addition_ _to_ a lookup on the +id+
+        # column, but in rare circumstances you might need to bypass that
+        # and use an entirely different field. This is distinct from the
+        # ActiveRecord-level concept of the model's primary key column.
+        #
+        # To permanently change the use of the +id+ attribute as the first
+        # search parameter in #acquire and #acquire_in, by modifying the
+        # behaviour of #acquisition_scope, call here and pass in the new
+        # attribute name.
+        #
+        # +attr+:: Attribute name as a Symbol or String to use _instead_
+        #          of +id+, as a default mandatory column in
+        #          #acquisition_scope.
+        #
+        def acquire_with_id_substitute( attr )
+          self.nz_co_loyalty_hoodoo_show_id_substitute = attr.to_sym
         end
 
         # Back-end to #acquire and therefore, in turn, #acquire_in. Returns
         # an ActiveRecord::Relation instance which scopes the search for a
         # record by +id+ and across any other columns specified by
         # #acquire_with, via SQL +OR+.
+        #
+        # If you need to change the use of attribute +id+, specify a
+        # different attribute with #acquire_with_id_substitute. In that case,
+        # the given attribute is searched for instead of +id+; either way, a
+        # default starting attribute _will_ be used in scope in addition to
+        # any extra fields specified using #acquire_with.
         #
         # Normally such a scope could only ever return a single record based
         # on an assuption of uniqueness constraints around columns which one
@@ -269,7 +303,7 @@ module Hoodoo
         def acquisition_scope( ident )
           extra_fields = self.acquired_with()
           arel_table   = self.arel_table()
-          arel_query   = arel_table[ :id ].eq( ident )
+          arel_query   = arel_table[ self.nz_co_loyalty_hoodoo_show_id_substitute || :id ].eq( ident )
 
           extra_fields.each do | field |
             arel_query = arel_query.or( arel_table[ field ].eq( ident ) )

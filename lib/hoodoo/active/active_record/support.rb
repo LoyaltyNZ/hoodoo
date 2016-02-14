@@ -64,7 +64,9 @@ module Hoodoo
       #
       # * Hoodoo::ActiveRecord::Secure#secure
       # * Hoodoo::ActiveRecord::Translated#translated
-      # * Hoodoo::ActiveRecord::Dated#dated
+      # * Hoodoo::ActiveRecord::Dated#dated (if "dating_enabled?" is +true+)
+      # * Hoodoo::ActiveRecord::ManuallyDated#manually_dated
+      #   (if "manual_dating_enabled?" is +true+)
       #
       # +klass+::   The ActiveRecord::Base subclass _class_ (not instance)
       #             which is making the call here. This is the entity which is
@@ -86,8 +88,12 @@ module Hoodoo
         # Due to the mechanism used, dating scope must be done first or the
         # rest of the query may be invalid.
         #
-        if klass.include?( Hoodoo::ActiveRecord::Dated )
+        if klass.include?( Hoodoo::ActiveRecord::Dated ) && klass.dating_enabled?()
           prevailing_scope = prevailing_scope.dated( context )
+        end
+
+        if klass.include?( Hoodoo::ActiveRecord::ManuallyDated ) && klass.manual_dating_enabled?()
+          prevailing_scope = prevailing_scope.manually_dated( context )
         end
 
         if klass.include?( Hoodoo::ActiveRecord::Secure )

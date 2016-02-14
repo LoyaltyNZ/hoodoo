@@ -350,18 +350,40 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'acquisition_scope' do
-    it 'SQL generation is as expected' do
-      sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+  context 'acquisition scope and overrides' do
+    def expect_sql( sql, id_attr_name )
       expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
                            "FROM \"r_spec_model_finder_tests\" " <<
                            "WHERE (" <<
                              "(" <<
-                               "\"r_spec_model_finder_tests\".\"id\" = '#{ @id }' OR " <<
+                               "\"r_spec_model_finder_tests\".\"#{ id_attr_name }\" = '#{ @id }' OR " <<
                                "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'" <<
                              ") OR " <<
                              "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" <<
                            ")" )
+    end
+
+    context 'acquisition_scope' do
+      it 'SQL generation is as expected' do
+        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+        expect_sql( sql, 'id' )
+      end
+    end
+
+    context 'acquire_with_id_substitute' do
+      before :each do
+        @alt_attr_name = 'foo'
+        RSpecModelFinderTest.acquire_with_id_substitute( @alt_attr_name )
+      end
+
+      after :each do
+        RSpecModelFinderTest.acquire_with_id_substitute( 'id' )
+      end
+
+      it 'SQL generation is as expected' do
+        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+        expect_sql( sql, @alt_attr_name )
+      end
     end
   end
 

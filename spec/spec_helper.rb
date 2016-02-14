@@ -73,7 +73,8 @@ RSpec.configure do | config |
 
   # Wake up Database Cleaner.
 
-  DatabaseCleaner.strategy = :transaction # MUST NOT be changed
+  DATABASE_CLEANER_STRATEGY = :transaction # MUST NOT be changed
+  DatabaseCleaner.strategy = DATABASE_CLEANER_STRATEGY
 
   database_name = 'hoodoo_test'
 

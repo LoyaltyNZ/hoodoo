@@ -38,7 +38,7 @@ module Hoodoo
     #
     module Creator
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #

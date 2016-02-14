@@ -29,7 +29,7 @@ module Hoodoo
     #
     module UUID
 
-      # Instantiates this module when it is included:
+      # Instantiates this module when it is included.
       #
       # Example:
       #
@@ -69,10 +69,34 @@ module Hoodoo
         model.primary_key = 'id'
 
         model.validate( :on => :create ) do
-          self.id = Hoodoo::UUID.generate() if self.id.nil?
+          self.id ||= Hoodoo::UUID.generate()
         end
 
-        model.validates( :id, :uuid => true, :presence => true, :uniqueness => true )
+        model.validates(
+          :id,
+          {
+            :uuid       => true,
+            :presence   => true,
+            :uniqueness => true,
+          }
+        )
+
+        # We also have to remove ActiveRecord's default unscoped uniqueness
+        # check on 'id'. We've added an equivalent validator above.
+        #
+        # Sadly there is no API for this even as late as ActiveRecord 4.2,
+        # so we have to resort to fragile hackery.
+        #
+        model._validators.reject!() do | key, ignored |
+          key == :id
+        end
+
+        id_validation_callback = model._validate_callbacks.find do | callback |
+          callback.raw_filter.is_a?( ::ActiveRecord::Validations::UniquenessValidator ) &&
+          callback.raw_filter.attributes == [ :id ]
+        end
+
+        model._validate_callbacks.delete( id_validation_callback )
       end
 
     end
