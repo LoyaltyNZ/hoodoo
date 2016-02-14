@@ -19,7 +19,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
         t.timestamps
         t.datetime :effective_start, :null => false
-        t.datetime :effective_end,   :null => true
+        t.datetime :effective_end,   :null => false
       end
     end
 
@@ -66,23 +66,24 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
     @now    = Time.now.utc.round( Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES )
     @uuid_a = Hoodoo::UUID.generate
     @uuid_b = Hoodoo::UUID.generate
+    @eot    = Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM
 
     # uuid, data, created_at, effective_end, effective_start
     [
-      [ @uuid_a, 'one',   @now - 5.hours, @now - 3.hours, @now - 5.hours ],
-      [ @uuid_b, 'two',   @now - 4.hours, @now - 2.hours, @now - 4.hours ],
-      [ @uuid_a, 'three', @now - 5.hours, @now - 1.hour,  @now - 3.hours ],
-      [ @uuid_b, 'four',  @now - 4.hours, @now,           @now - 2.hours ],
-      [ @uuid_b, 'five',  @now - 4.hours, nil,            @now           ],
-      [ @uuid_a, 'six',   @now - 5.hours, nil,            @now - 1.hour  ]
+      [ @uuid_a, 'one',   @now - 5.hours, @now - 5.hours, @now - 3.hours  ],
+      [ @uuid_b, 'two',   @now - 4.hours, @now - 4.hours, @now - 2.hours  ],
+      [ @uuid_a, 'three', @now - 5.hours, @now - 3.hours, @now - 1.hour   ],
+      [ @uuid_b, 'four',  @now - 4.hours, @now - 2.hours, @now            ],
+      [ @uuid_b, 'five',  @now - 4.hours, @now,           @eot            ],
+      [ @uuid_a, 'six',   @now - 5.hours, @now - 1.hour,  @eot            ]
     ].each do | row_data |
       RSpecModelManualDateTest.new( {
         :id              => row_data[ 0 ],
         :data            => row_data[ 1 ],
         :created_at      => row_data[ 2 ],
         :updated_at      => row_data[ 2 ],
-        :effective_end   => row_data[ 3 ],
-        :effective_start => row_data[ 4 ]
+        :effective_start => row_data[ 3 ],
+        :effective_end   => row_data[ 4 ]
       } ).save!
     end
 
@@ -265,7 +266,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         } )
 
         @record.save!
-        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) + 0.1 )
+        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) * 2 )
 
         @context.request.instance_variable_set( '@ident', @record.uuid )
         @context.request.body = { 'data' => @change_data_to }
@@ -302,7 +303,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
         expect( historic.effective_end ).to eq( current.effective_start )
         expect( historic.effective_end ).to eq( current.updated_at      )
-        expect( current.effective_end  ).to be_nil
+        expect( current.effective_end  ).to eq( @eot                    )
       end
 
       it 'via context alone' do
@@ -478,7 +479,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         } )
 
         @record.save!
-        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) + 0.1 )
+        sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) * 2 )
 
         @old_updated_at = @record.updated_at
 
@@ -510,7 +511,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
         expect( historic.data ).to eq( @data )
 
-        expect( historic.effective_end ).to_not be_nil
+        expect( historic.effective_end ).to_not eq( @eot )
         expect( historic.updated_at ).to eq( @old_updated_at )
       end
 
@@ -708,13 +709,13 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         end
 
         dates  = results.map( & :effective_end )
-        nils   = dates.select() { | date | date.nil? }
-        others = dates.reject() { | date | date.nil? }
+        eots   = dates.select() { | date | date == @eot }
+        others = dates.reject() { | date | date == @eot }
 
         # "- 1" because the results Hash only contains results of the
         # *updates* we did, not the original starting record.
 
-        expect(   nils.count ).to eq( 1 )
+        expect(   eots.count ).to eq( 1 )
         expect( others.count ).to eq( values.count - 1 )
       end
     end
@@ -767,7 +768,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         expect( success ).to be_a( RSpecModelManualDateTest )
         expect( success.errors ).to be_empty
         expect( success.persisted? ).to eq( true )
-        expect( success.effective_end ).to_not be_nil
+        expect( success.effective_end ).to_not eq( @eot )
       end
     end
 

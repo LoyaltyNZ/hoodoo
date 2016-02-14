@@ -30,6 +30,29 @@ module Hoodoo
     # end (exclusive, or "null" for "this is the 'contemporary' record) times
     # for which this particular row is valid.
     #
+    # == Prerequisites
+    #
+    # A table in the database needs to have various changes and additions to
+    # support manual dating. For these to be possible:
+    #
+    # * Your database table may not already have columns called +uuid+,
+    #   +effective_start+ or +effective_end+. If it does, you'll need to first
+    #   migrate this to change the names and update any references in code.
+    #
+    # * Your database table must have a column called +created_at+ with the
+    #   creation timestamp of a record which will become the time from which
+    #   it is "visible" in historically-dated read queries. There can be no
+    #   +NULL+ values in this column.
+    #
+    # * Your database table must have a column called +updated_at+ with a
+    #   non +NULL+ value. If this isn't already present, migrate your data
+    #   to add it, setting the initial value to the same as +created_at+.
+    #
+    # For data safety it is very strongly recommended that you add in database
+    # level non-null constraints on +created_at+ and +updated_at+ if you don't
+    # have them already. The ActiveRecord +change_column_null+ method can be
+    # used in migrations to do this in a database-engine-neutral fashion.
+    #
     # == Vital caveats
     #
     # Since both the 'contemporary' and historic states of the model are all
@@ -53,6 +76,10 @@ module Hoodoo
     #
     # * The +uuid+ column becomes the non-unique resource UUID which is of
     #   great interest to a service and API callers.
+    #
+    # * The +uuid+ column is also the target for foreign keys with
+    #   relationships between records, NOT +id+. The relationships can
+    #   only be used when scoped by date.
     #
     # == Accuracy
     #
@@ -125,12 +152,31 @@ module Hoodoo
     #       }
     #     )
     #
+    # Likewise, remember to set foreign keys for any relational declarations
+    # via the +uuid+ column - e.g. go from this:
+    #
+    #     member.account_id = account.id
+    #
+    # ...to this:
+    #
+    #     member.account_id = account.uuid
+    #
+    # ...with the relational declarations in Member changing from:
+    #
+    #     belongs_to :account
+    #
+    # ...to:
+    #
+    #     belongs_to :account, :primary_key => :uuid
+    #
     # == Required migrations
     #
     # You must write an ActiveRecord migration for any table that wishes to
     # use manual dating. The template below can handle multiple tables in one
     # pass and can be rolled back safely *IF* no historic records have been
     # added. Rollback becomes impossible once historic entries appear.
+    #
+    #     require 'hoodoo/active'
     #
     #     class ConvertToManualDating < ActiveRecord::Migration
     #
@@ -158,12 +204,12 @@ module Hoodoo
     #
     #         TABLES_TO_CONVERT.each do | table |
     #
-    #           add_column table, :effective_start, :datetime, :null  => true
-    #           add_column table, :effective_end,   :datetime, :null  => true
+    #           add_column table, :effective_start, :datetime, :null  => true # (initially, but see below)
+    #           add_column table, :effective_end,   :datetime, :null  => true # (initially, but see below)
     #           add_column table, :uuid,            :string,   :limit => 32
     #
     #           add_index table, [        :effective_start, :effective_end ],                  :name => "index_#{ table }_start_end"
-    #           add_index table, [ :uuid, :effective_start, :effective_end ], :unique => true, :name => "index_#{ table }_id_start_end"
+    #           add_index table, [ :uuid, :effective_start, :effective_end ],                  :name => "index_#{ table }_id_start_end"
     #           add_index table, [ :uuid,                   :effective_end ], :unique => true, :name => "index_#{ table }_id_end"
     #
     #           # If there's any data in the table already, it can't have any historic
@@ -178,11 +224,17 @@ module Hoodoo
     #           #
     #           execute "UPDATE #{ table } SET effective_start = created_at"
     #
+    #           # Mark these records as contemporary/current.
+    #           #
+    #           execute "UPDATE #{ table } SET effective_end = '#{ ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM ) }'"
+    #
     #           # We couldn't add the UUID column with a not-null constraint until the
     #           # above SQL had run to update any existing records with a value. Now we
-    #           # should put this back in, for rigour.
+    #           # should put this back in, for rigour. Likewise for the start/end times.
     #           #
-    #           change_column_null table, :uuid, false
+    #           change_column_null table, :uuid,            false
+    #           change_column_null table, :effective_start, false
+    #           change_column_null table, :effective_end,   false
     #
     #         end
     #
@@ -199,7 +251,7 @@ module Hoodoo
     #         # them custom names to avoid hitting index name length limits in your
     #         # database if ActiveRecord is allowed to generate a name automatically:
     #         #
-    #         #   add_index :accounts, [ :account_number, :effective_start, :effective_end ], :unique => true, :name => 'index_accounts_an_es_ee'
+    #         #   add_index :accounts, [ :account_number, :effective_start, :effective_end ],                  :name => 'index_accounts_an_es_ee'
     #         #   add_index :accounts, [ :account_number,                   :effective_end ], :unique => true, :name => 'index_accounts_an_ee'
     #         #
     #         # You might want to perform more detailed analysis on your index
@@ -242,6 +294,28 @@ module Hoodoo
     #     end
     #
     module ManuallyDated
+
+      # In order for indices to work properly on +effective_end+ dates, +NULL+
+      # values cannot be permitted as SQL +NULL+ is magic and means "has no
+      # value", so such a value in a column prohibits indexing.
+      #
+      # We might have used a +NULL+ value in the 'end' date to mean "this is
+      # the contemporary/current record", but since we can't do that, we need
+      # the rather nasty alternative of an agreed constant that defines a
+      # "large date" which represents "maximum possible end-of-time".
+      #
+      # SQL does not define a maximum date, but most implementations do.
+      # PostgreSQL has a very high maximum year, while SQLite, MS SQL Server
+      # and MySQL (following a cursory Google search for documentation) say
+      # that the end of year 9999 is as high as it goes.
+      #
+      # To use this +DATE_MAXIMUM+ constant in raw SQL, be sure to format the
+      # Time instance through your ActiveRecord database adapter thus:
+      #
+      #     ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
+      #     # => returns "9999-12-31 23:59:59.000000" for PostgreSQL 9.4.
+      #
+      DATE_MAXIMUM = Time.parse( '9999-12-31T23:59:59.0Z' )
 
       # Rounding resolution, in terms of number of decimal places to which
       # seconds are rounded. Excessive accuracy makes for difficult, large
@@ -323,6 +397,7 @@ module Hoodoo
             self.created_at      ||= now
             self.updated_at      ||= now
             self.effective_start ||= self.created_at
+            self.effective_end   ||= DATE_MAXIMUM
           end
 
           # This is very similar to the UUID mixin, but works on the 'uuid'
@@ -400,13 +475,14 @@ module Hoodoo
         #
         def manually_dated_at( date_time = Time.now )
           date_time  = date_time.to_time.utc.round( SECONDS_DECIMAL_PLACES )
+
           arel_table = self.arel_table()
           arel_query = arel_table[ :effective_start ].lteq( date_time ).
                        and(
-                         arel_table[ :effective_end ].gt( date_time ).
-                         or(
-                           arel_table[ :effective_end ].eq( nil )
-                         )
+                         arel_table[ :effective_end ].gt( date_time )
+                         # .or(
+                         #   arel_table[ :effective_end ].eq( nil )
+                         # )
                        )
 
           where( arel_query )
@@ -420,7 +496,7 @@ module Hoodoo
         # call to #dating_enabled, else results will be undefined.
         #
         def manually_dated_historic
-          where.not( :effective_end => nil )
+          where.not( :effective_end => DATE_MAXIMUM )
         end
 
         # Return an ActiveRecord::Relation instance which only matches records
@@ -431,7 +507,7 @@ module Hoodoo
         # call to #dating_enabled, else results will be undefined.
         #
         def manually_dated_contemporary
-          where( :effective_end => nil )
+          where( :effective_end => DATE_MAXIMUM )
         end
 
         # Update a record with manual historic dating. This means that the
@@ -527,7 +603,7 @@ module Hoodoo
                 new_record.created_at      = original.created_at
                 new_record.updated_at      = original.effective_end # (sic.)
                 new_record.effective_start = original.effective_end # (sic.)
-                new_record.effective_end   = nil
+                new_record.effective_end   = DATE_MAXIMUM
 
                 # Save with validation but no exceptions. The caller examines the
                 # returned object to see if there were any validation errors.
