@@ -931,7 +931,9 @@ When you use the likes of `acquire_in` or `list_in` (see earlier), the scope is 
 
 #### <a name="Dating"></a>Dating
 
-> Advanced topic. Dating support only works with the PostgreSQL database, version 9.3 or later.
+##### <a name="Automatic_Dating"></a>Automatic Dating
+
+> Advanced topic. Dating support only works with the PostgreSQL database, version 9.3 or later. There is also a [_manual dating_ approach](#Manual_Dating) which requires a non-standard pattern for updates or deletions that cannot use normal ActiveRecord methods, but is database-agnostic and can be higher performance.
 
 Normally with Active Record, when attributes of a model are updated, the row representing that model in the database is changed with no permanent record of its previous state. Likewise, if a row is deleted from the database, there is no record kept of its previous state or even that it ever existed.
 
@@ -1182,6 +1184,50 @@ curl http://localhost:9292/v1/people/da9161c8326f4a628e222b3ec1eab3f3 \
   "name": "Bob"
 }
 ```
+
+
+
+##### <a name="Manual_Dating"></a>Manual Dating
+
+> Advanced topic. Please see the [Automatic Dating](#Automatic_Dating) overview to understand the basic principles and the caveats, including issues of data security and privacy. For example, with manual dating there is no "true" delete, as old records are always available through historical table rows.
+
+Hoodoo provides a concurrency-safe, lightweight, "hands-on" solution to historical change tracking of data that doesn't require the complex migrations and PostgreSQL-specific triggers of [Automatic Dating](#Automatic_Dating) but in turn requires service authors to be **VERY CAREFUL** about how they write their service implementations. It is implemented in the [Hoodoo::ActiveRecord::ManuallyDated mixin]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/ManuallyDated.html).
+
+Compared to the automatic dating mechanism, the manual dating engine:
+
+* Is simpler to understand
+* Only uses one table for your model's current and historical data
+* Generates much simpler database queries
+* For large datasets (especially in cross-table join/subquery scenarios) is likely to be faster -- sometimes very much so
+
+Manual dating is however neither transparent nor foolproof. This is a significant penalty which should not be underestimated. Hoodoo is unable to provide many safeguards or checks, leaving a wide potential for error that could be hard to spot, especially around resource rendering and UUIDs. Caller beware!
+
+A table migrated to support manual dating contains additional columns for the 'effective' start and end date of a row. Any queries reading rows should be made in the context of a date which is checked against the start/end columns to make sure that only record(s) relevant to that date are examined.
+
+There are _two_ IDs per row. The normal ActiveRecord `id` column still contains a unique per-row ID that looks like any other UUID -- but this is **NOT THE RESOURCE UUID**. That moves into a column called, explicitly, `uuid`. This is because the primary key in `id` still must be unique, so when a resource starts to acquire rows representing its historic state, we need columns to record both the resource's same public UUID across those rows and the internal database primary key value which must be truly unique.
+
+> It is **very important indeed** that acquisition of and rendering of a manually dated resource is done with the `uuid` column and **NEVER the `id` column** even though, of course, the rendered resource's _field's_ name will still be `"id"`. Strong test coverage is advised! For example, include an integration test that creates a record, remembers the response's JSON's `"id"` field value, modifies the record so that it contains (at least) two rows in the database and thus two different database-level values in the `id` column but the same `uuid` value, then read the most recent representation and check that the response's JSON's `"id"` field value is still the same.
+
+As with automatic dating, you **must** use the [`new_in`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/Creator/ClassMethods.html#method-i-new_in) method to instantiate models in order to automatically correctly initialise the attributes of a dated model.
+
+###### Migrations and uniqueness
+
+Unlike automatic dating, there is no generator for the migrations needed for manual dating as they're quite specific to your existing data set but also quite simple, only needing standard ActiveRecord migration semantics without the swathes of [PL/pgSQL code](https://www.postgresql.org/docs/current/static/plpgsql.html) required by the automatic system.
+
+The one major wrinkle is the difficult concept of "unique". A database index or application-level validation which checks for a unique value in a particular column _MUST_ adopt a different approach, since historic entries in the same table may contain valid, but duplicate values for a particular same `uuid` value. This means that strictly, uniqueness constraints need to apply across only _different_ +uuid+ values. For the _same_ `uuid` value, duplications should be permitted to allow for "historical" rows. A composite constraint on the required-unique column(s) in question _and_ the `uuid` column does the _exact opposite_ of this; it would allow duplicate values so long as `uuid`  was different, rather than allowing them only if it is the same. That's extremely hard to express using a database constraint, especially in an engine-agnostic manner.
+
+The solution is to instead just look for duplications across _contemporary_ ("current", non-historic) rows only, using a conditional index. If a record only has historic data, then it won't be "seen" by such an index and a new record, which contains an otherwise-duplicated value of the column(s) of interest, can be created. If you want to prohibit use of duplicated values even when prior examples only exist in now-soft-deleted historic data, then the conditions are too complex to express in an index. You'll need to use some wider, centralised locking mechanism (e.g. PostgreSQL advisory locks via, say, the [`with_advisory_lock` gem](https://rubygems.org/gems/with_advisory_lock)) and then, within that concurrency-safe environment, use application-level validations.
+
+###### Full technical information
+
+The mechanics of migration, the workflow and the individual methods are [all covered in RDoc]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/ManuallyDated.html)
+ with full examples available.
+
+###### API examples
+
+Onceyou have a migrated, manually dated model running within a service implementation, the `curl` examples given for automatic dating should work in the same way. To an API caller, the semantics for dated information storage and retrieval are identical.
+
+
 
 #### Translation
 
