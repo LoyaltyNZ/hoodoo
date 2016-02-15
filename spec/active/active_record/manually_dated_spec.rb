@@ -16,11 +16,35 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         t.string :id,   :null => false, :length => 32
 
         t.text :data
+        t.text :unique
 
         t.timestamps
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
       end
+
+      # Documentation recommends these constraints in migrations, so ensure
+      # everything works when they're present.
+
+      ActiveRecord::Migration.add_index :r_spec_model_manual_date_tests, [        :effective_start, :effective_end ], :name => "index_rspec_mmdt_start_end"
+      ActiveRecord::Migration.add_index :r_spec_model_manual_date_tests, [ :uuid, :effective_start, :effective_end ], :name => "index_rspec_mmdt_id_start_end"
+
+      sql_date_maximum = ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
+
+      ActiveRecord::Migration.add_index :r_spec_model_manual_date_tests,
+                                        :uuid,
+                                        :unique => true,
+                                        :name   => "index_rspec_mmdt_id_end",
+                                        :where  => "(effective_end = '#{ sql_date_maximum }')"
+
+      # Documentation gives something similar to this as an example of how
+      # to enforce a previously-simple uniqness constraint on one column.
+
+      ActiveRecord::Migration.add_index :r_spec_model_manual_date_tests,
+                                        :unique,
+                                        :unique => true,
+                                        :name   => "index_rspec_mmdt_unique_ee",
+                                        :where  => "(effective_end = '#{ sql_date_maximum }')"
     end
 
     class RSpecModelManualDateTest < ActiveRecord::Base
@@ -448,7 +472,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           }.to change( RSpecModelManualDateTest, :count ).by( 1 )
 
           expect( result ).to_not be_nil
-          expect( result.errors ).to be_empty
+          expect( result.errors.messages ).to be_empty
           expect( result.persisted? ).to eq( true )
         end
 
@@ -593,6 +617,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           )
 
           expect( result ).to_not be_nil
+          expect( result.errors.messages ).to be_empty
           expect( result.persisted? ).to eq( true )
         end
 
@@ -615,6 +640,212 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :uuid => record.uuid ).count ).to eq( 0 )
         expect( RSpecModelManualDateTest.manually_dated_historic.where( :uuid => record.uuid ).count ).to eq( 4 )
       end
+    end
+  end
+
+  # Rapid updates within configured date resolution might not be resolvable
+  # as individual history items via API, but they should still exist and
+  # things like uuid/start/end uniqueness constraint columns ought to still
+  # function without false positives.
+  #
+  context 'rapid updates' do
+    it 'does not hit uniqueness constraint violations during very rapid update attempts' do
+      overall_before      = RSpecModelManualDateTest.count
+      historic_before     = RSpecModelManualDateTest.manually_dated_historic.count
+      contemporary_before = RSpecModelManualDateTest.manually_dated_contemporary.count
+      update_count        = 20
+
+      record = RSpecModelManualDateTest.new( {
+        :data       => Hoodoo::UUID.generate(),
+        :created_at => Time.now - 1.year
+      } )
+
+      record.save!
+
+      1.upto( update_count ) do
+        result = RSpecModelManualDateTest.manually_dated_update_in(
+          @context,
+          ident: record.uuid,
+          attributes: { 'data' => Hoodoo::UUID.generate() }
+        )
+
+        expect( result ).to_not be_nil
+        expect( result.errors.messages ).to be_empty
+        expect( result.persisted? ).to eq( true )
+      end
+
+      overall_after      = RSpecModelManualDateTest.count
+      historic_after     = RSpecModelManualDateTest.manually_dated_historic.count
+      contemporary_after = RSpecModelManualDateTest.manually_dated_contemporary.count
+
+      expect( overall_after      - overall_before      ).to eq( update_count + 1 )
+      expect( historic_after     - historic_before     ).to eq( update_count     )
+      expect( contemporary_after - contemporary_before ).to eq( 1                )
+
+      expect( RSpecModelManualDateTest.where( :uuid => record.uuid ).count ).to eq( update_count + 1 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :uuid => record.uuid ).count ).to eq( update_count )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :uuid => record.uuid ).count ).to eq( 1 )
+    end
+  end
+
+  context 'uniqueness' do
+    before :all do
+      @unique = Hoodoo::UUID.generate()
+    end
+
+    it 'allows duplications within same resource instance history' do
+
+      # First generate a unique record
+
+      record = RSpecModelManualDateTest.new( {
+        :data       => Hoodoo::UUID.generate(),
+        :unique     => @unique,
+        :created_at => Time.now - 1.year
+      } )
+
+      record.save!
+
+      # Now update it
+
+      result = RSpecModelManualDateTest.manually_dated_update_in(
+        @context,
+        ident: record.uuid,
+        attributes: { 'data' => Hoodoo::UUID.generate() }
+      )
+
+      # We should end up with two records; one historic and one contemporary
+
+      expect( result ).to_not be_nil
+      expect( result.errors.messages ).to be_empty
+      expect( result.persisted? ).to eq( true )
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 2 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :unique => @unique ).count ).to eq( 1 )
+
+    end
+
+    it 'prohibits duplicates across different resource instances' do
+
+      # First generate a unique record
+
+      record = RSpecModelManualDateTest.new( {
+        :data       => Hoodoo::UUID.generate(),
+        :unique     => @unique,
+        :created_at => Time.now - 1.year
+      } )
+
+      record.save!
+
+      # Now make another one; this should be prohibited.
+
+      another_record = RSpecModelManualDateTest.new( {
+        :data   => Hoodoo::UUID.generate(),
+        :unique => @unique
+      } )
+
+      expect {
+        another_record.save!
+      }.to raise_error( ::ActiveRecord::RecordNotUnique )
+
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 1 )
+
+    end
+
+    it 'prohibits duplications when there is resource history and a contemporary record' do
+
+      # A fair bit of cut-and-paste here.. First generate, then update
+      # one record.
+
+      record = RSpecModelManualDateTest.new( {
+        :data       => Hoodoo::UUID.generate(),
+        :unique     => @unique,
+        :created_at => Time.now - 1.year
+      } )
+
+      record.save!
+
+      result = RSpecModelManualDateTest.manually_dated_update_in(
+        @context,
+        ident: record.uuid,
+        attributes: { 'data' => Hoodoo::UUID.generate() }
+      )
+
+      # We should end up with two records; one historic and one contemporary
+
+      expect( result ).to_not be_nil
+      expect( result.errors.messages ).to be_empty
+      expect( result.persisted? ).to eq( true )
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 2 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :unique => @unique ).count ).to eq( 1 )
+
+      # We should be unable to make a new instance that duplicates the unique
+      # value.
+
+      another_record = RSpecModelManualDateTest.new( {
+        :data   => Hoodoo::UUID.generate(),
+        :unique => @unique
+      } )
+
+      expect {
+        another_record.save!
+      }.to raise_error( ::ActiveRecord::RecordNotUnique )
+
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 2 )
+
+    end
+
+    it 'allows duplications when an old resource instance has been deleted' do
+
+      # First generate a unique record
+
+      record = RSpecModelManualDateTest.new( {
+        :data       => Hoodoo::UUID.generate(),
+        :unique     => @unique,
+        :created_at => Time.now - 1.year
+      } )
+
+      record.save!
+
+      # Now delete it
+
+      result = RSpecModelManualDateTest.manually_dated_destruction_in(
+        @context,
+        ident: record.uuid
+      )
+
+      # We should end up with one historic record
+
+      expect( result ).to_not be_nil
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :unique => @unique ).count ).to eq( 0 )
+
+      # For safety/test reliability, sleep to make sure we are beyond the
+      # limits of configured date accuracy.
+
+      sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) * 2 )
+
+      # We should be able to make a new instance with the unique value now
+
+      another_record = RSpecModelManualDateTest.new( {
+        :data   => Hoodoo::UUID.generate(),
+        :unique => @unique
+      } )
+
+      another_record.save!
+
+      # We should end up with two records; one old UUID historic and one new
+      # UUID contemporary
+
+      expect( another_record ).to_not be_nil
+      expect( another_record.errors.messages ).to be_empty
+      expect( another_record.persisted? ).to eq( true )
+      expect( RSpecModelManualDateTest.where( :unique => @unique ).count ).to eq( 2 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :unique => @unique ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_historic.where( :unique => @unique, :uuid => record.uuid ).count ).to eq( 1 )
+      expect( RSpecModelManualDateTest.manually_dated_contemporary.where( :unique => @unique, :uuid => another_record.uuid ).count ).to eq( 1 )
     end
   end
 
@@ -702,7 +933,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
         results.each do | result |
           expect( result ).to be_a( RSpecModelManualDateTest )
-          expect( result.errors ).to be_empty
+          expect( result.errors.messages ).to be_empty
           expect( result.persisted? ).to eq( true )
 
           result.reload
@@ -766,7 +997,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         success.reload
 
         expect( success ).to be_a( RSpecModelManualDateTest )
-        expect( success.errors ).to be_empty
+        expect( success.errors.messages ).to be_empty
         expect( success.persisted? ).to eq( true )
         expect( success.effective_end ).to_not eq( @eot )
       end
