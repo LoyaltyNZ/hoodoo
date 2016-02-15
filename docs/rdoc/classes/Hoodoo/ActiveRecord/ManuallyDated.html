@@ -394,10 +394,21 @@ end</code></pre>
       <!-- Section constants -->
       <div class="sectiontitle">Constants</div>
       <table border='0' cellpadding='5'>
+          <tr valign='top' id='SECONDS_DECIMAL_PLACES'>
+            <td class="attr-name">SECONDS_DECIMAL_PLACES</td>
+            <td>=</td>
+            <td class="attr-value"><pre>2</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Rounding resolution, in terms of number of decimal places to which seconds
+are rounded. Excessive accuracy makes for difficult, large indices in the
+database and may fall foul of system / database clock accuracy mismatches.</p></td>
+            </tr>
           <tr valign='top' id='DATE_MAXIMUM'>
             <td class="attr-name">DATE_MAXIMUM</td>
             <td>=</td>
-            <td class="attr-value"><pre>Time.parse( &#39;9999-12-31T23:59:59.0Z&#39; )</pre></td>
+            <td class="attr-value"><pre>Time.parse( &#39;9999-12-31T23:59:59.0Z&#39; ).round( SECONDS_DECIMAL_PLACES )</pre></td>
           </tr>
             <tr valign='top'>
               <td>&nbsp;</td>
@@ -423,17 +434,6 @@ href="../ActiveRecord.html">ActiveRecord</a> database adapter thus:</p>
 <pre><code>ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
 # =&gt; returns &quot;9999-12-31 23:59:59.000000&quot; for PostgreSQL 9.4.
 </code></pre></td>
-            </tr>
-          <tr valign='top' id='SECONDS_DECIMAL_PLACES'>
-            <td class="attr-name">SECONDS_DECIMAL_PLACES</td>
-            <td>=</td>
-            <td class="attr-value"><pre>2</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Rounding resolution, in terms of number of decimal places to which seconds
-are rounded. Excessive accuracy makes for difficult, large indices in the
-database and may fall foul of system / database clock accuracy mismatches.</p></td>
             </tr>
       </table>
 

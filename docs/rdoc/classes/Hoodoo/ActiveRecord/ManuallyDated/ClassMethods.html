@@ -124,6 +124,10 @@ happen for history-savvy updates performed by this mixin&#39;s code.</p>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> = <span class="ruby-keyword">true</span>
 
+  <span class="ruby-identifier">rounder</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">timelike</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">timelike</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
+  <span class="ruby-keyword">end</span>
+
   <span class="ruby-comment"># This is the &#39;tightest&#39;/innermost callback available for creation.</span>
   <span class="ruby-comment"># Intentionally have nothing for updates/deletes as the high level</span>
   <span class="ruby-comment"># API here must be used; we don&#39;t want to introduce any more magic.</span>
@@ -135,6 +139,13 @@ happen for history-savvy updates performed by this mixin&#39;s code.</p>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">updated_at</span>      <span class="ruby-operator">||=</span> <span class="ruby-identifier">now</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">effective_start</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">effective_end</span>   <span class="ruby-operator">||=</span> <span class="ruby-constant">DATE_MAXIMUM</span>
+
+    <span class="ruby-operator">%</span>{ <span class="ruby-identifier">created_at</span> <span class="ruby-identifier">updated_at</span> <span class="ruby-identifier">effective_start</span> <span class="ruby-identifier">effective_end</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">value</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">attr</span> )
+      <span class="ruby-identifier">rounded</span> = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
+
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-node">&quot;#{ attr }=&quot;</span>, <span class="ruby-identifier">rounded</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">rounded</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">value</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># This is very similar to the UUID mixin, but works on the &#39;uuid&#39;</span>
@@ -196,7 +207,7 @@ then this method returns <code>true</code>, else <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-i-manual_dating_enabled-3F_source')" id="l_method-i-manual_dating_enabled-3F_source">show</a>
               </p>
               <div id="method-i-manual_dating_enabled-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 464</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 475</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -236,7 +247,7 @@ instance methods that a resource subclass implements.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_source')" id="l_method-i-manually_dated_source">show</a>
               </p>
               <div id="method-i-manually_dated_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 481</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 492</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> )
@@ -273,7 +284,7 @@ constructed.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_at_source')" id="l_method-i-manually_dated_at_source">show</a>
               </p>
               <div id="method-i-manually_dated_at_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 497</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 508</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> )
   <span class="ruby-identifier">date_time</span>  = <span class="ruby-identifier">date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
 
@@ -314,7 +325,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_contemporary_source')" id="l_method-i-manually_dated_contemporary_source">show</a>
               </p>
               <div id="method-i-manually_dated_contemporary_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 530</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 541</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_contemporary</span>
   <span class="ruby-identifier">where</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -382,7 +393,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_destruction_in_source')" id="l_method-i-manually_dated_destruction_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_destruction_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 705</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 716</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span>,
                                    <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                                    <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span> <span class="ruby-identifier">all</span>() )
@@ -423,7 +434,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_historic_source')" id="l_method-i-manually_dated_historic_source">show</a>
               </p>
               <div id="method-i-manually_dated_historic_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 519</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 530</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_historic</span>
   <span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -506,7 +517,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_update_in_source')" id="l_method-i-manually_dated_update_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_update_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 583</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 594</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_update_in</span>( <span class="ruby-identifier">context</span>,
                               <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                               <span class="ruby-identifier">attributes</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">body</span>,
