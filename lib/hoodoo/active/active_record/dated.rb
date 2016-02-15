@@ -104,7 +104,7 @@ module Hoodoo
     # time is set; presently, `created_at` and `updated_at` are set from the
     # `dated_from` value. However, using `new_in` for this isolates your code
     # from any possible under-the-hood implementation changes therein and
-    # future-proof your code.
+    # future-proofs your code.
     #
     module Dated
 
