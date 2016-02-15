@@ -310,6 +310,13 @@ module Hoodoo
     #
     module ManuallyDated
 
+      # Rounding resolution, in terms of number of decimal places to which
+      # seconds are rounded. Excessive accuracy makes for difficult, large
+      # indices in the database and may fall foul of system / database
+      # clock accuracy mismatches.
+      #
+      SECONDS_DECIMAL_PLACES = 2 # An Integer from 0 upwards
+
       # In order for indices to work properly on +effective_end+ dates, +NULL+
       # values cannot be permitted as SQL +NULL+ is magic and means "has no
       # value", so such a value in a column prohibits indexing.
@@ -330,14 +337,7 @@ module Hoodoo
       #     ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
       #     # => returns "9999-12-31 23:59:59.000000" for PostgreSQL 9.4.
       #
-      DATE_MAXIMUM = Time.parse( '9999-12-31T23:59:59.0Z' )
-
-      # Rounding resolution, in terms of number of decimal places to which
-      # seconds are rounded. Excessive accuracy makes for difficult, large
-      # indices in the database and may fall foul of system / database
-      # clock accuracy mismatches.
-      #
-      SECONDS_DECIMAL_PLACES = 2 # An Integer from 0 upwards
+      DATE_MAXIMUM = Time.parse( '9999-12-31T23:59:59.0Z' ).round( SECONDS_DECIMAL_PLACES )
 
       # Instantiates this module when it is included.
       #
@@ -408,6 +408,10 @@ module Hoodoo
         def manual_dating_enabled
           self.nz_co_loyalty_hoodoo_manually_dated = true
 
+          rounder = Proc.new do | timelike |
+            timelike.to_time.round( SECONDS_DECIMAL_PLACES )
+          end
+
           # This is the 'tightest'/innermost callback available for creation.
           # Intentionally have nothing for updates/deletes as the high level
           # API here must be used; we don't want to introduce any more magic.
@@ -419,6 +423,13 @@ module Hoodoo
             self.updated_at      ||= now
             self.effective_start ||= self.created_at
             self.effective_end   ||= DATE_MAXIMUM
+
+            %i{ created_at updated_at effective_start effective_end }.each do | attr |
+              value   = self.send( attr )
+              rounded = value.to_time.round( SECONDS_DECIMAL_PLACES )
+
+              self.send( "#{ attr }=", rounded ) if rounded != value
+            end
           end
 
           # This is very similar to the UUID mixin, but works on the 'uuid'

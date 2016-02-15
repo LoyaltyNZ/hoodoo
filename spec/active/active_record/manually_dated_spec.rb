@@ -643,6 +643,38 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
     end
   end
 
+  context 'inbound date-time rounding' do
+    it 'rounds ActiveRecord-assigned timestamps' do
+      record = RSpecModelManualDateTest.new( {
+        :data => Hoodoo::UUID.generate()
+      } )
+
+      record.save!
+
+      %i{ created_at updated_at effective_start effective_end }.each do | attr |
+        value = record.send( attr )
+        expect( value.utc.round( Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) ).to eq( value )
+      end
+    end
+
+    it 'rounds explicitly assigned timestamps' do
+      record = RSpecModelManualDateTest.new( {
+        :data => Hoodoo::UUID.generate(),
+        :created_at      => Time.now - 2.seconds,
+        :updated_at      => Time.now - 1.seconds,
+        :effective_start => Time.now - 2.seconds,
+        :effective_end   => Time.now - 1.seconds
+      } )
+
+      record.save!
+
+      %i{ created_at updated_at effective_start effective_end }.each do | attr |
+        value = record.send( attr )
+        expect( value.utc.round( Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) ).to eq( value )
+      end
+    end
+  end
+
   # Rapid updates within configured date resolution might not be resolvable
   # as individual history items via API, but they should still exist and
   # things like uuid/start/end uniqueness constraint columns ought to still
