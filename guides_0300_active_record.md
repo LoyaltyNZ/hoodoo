@@ -1225,7 +1225,7 @@ The mechanics of migration, the workflow and the individual methods are [all cov
 
 ###### API examples
 
-Onceyou have a migrated, manually dated model running within a service implementation, the `curl` examples given for automatic dating should work in the same way. To an API caller, the semantics for dated information storage and retrieval are identical.
+Once you have a migrated, manually dated model running within a service implementation, the `curl` examples given for automatic dating should work in the same way. To an API caller, the semantics for dated information storage and retrieval are identical.
 
 
 
