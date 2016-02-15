@@ -1,2 +1,14 @@
+language: ruby
+rvm:
+  - 2.1.6
+
+# http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
+#
+sudo: false
+
+# http://docs.travis-ci.com/user/caching/
+#
+cache: bundler
+
 script:
   - bundle exec jekyll doctor
