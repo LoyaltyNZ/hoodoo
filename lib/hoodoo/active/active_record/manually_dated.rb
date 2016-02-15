@@ -184,7 +184,7 @@ module Hoodoo
     # one complex resource may be represented by several models with
     # relationships between them.
     #
-    # In such cas, remember to set foreign keys for any relational declarations
+    # In such cases, remember to set foreign keys for relational declarations
     # to a manually dated table via the +uuid+ column - e.g. go from this:
     #
     #     member.account_id = account.id
