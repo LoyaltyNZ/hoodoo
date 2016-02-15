@@ -30,7 +30,7 @@ module Hoodoo
     #
     # ...to create model instances and participate "for free" in whatever
     # plug-in ActiveRecord modules are mixed into the model classes, such as
-    # Hoodoo::ActiveRecord::Dated.
+    # Hoodoo::ActiveRecord::Dated and Hoodoo::ActiveRecord::ManuallyDated.
     #
     # See also:
     #
@@ -117,12 +117,13 @@ module Hoodoo
 
           # TODO: Refactor this to use the scope chain plugin approach in due
           #       course, but for now, pragmatic implementation does the only
-          #       thing we currently need to do - set "created_at".
+          #       things we currently require - set "created_at"/"updated_at".
           #
-          if self.include?( Hoodoo::ActiveRecord::Dated )
-            unless context.request.dated_from.nil?
-              instance.created_at = instance.updated_at = context.request.dated_from
-            end
+          unless context.request.dated_from.nil?
+            instance.created_at = instance.updated_at = context.request.dated_from if (
+              ( self.include?( Hoodoo::ActiveRecord::Dated         ) && self.dating_enabled?()        ) ||
+              ( self.include?( Hoodoo::ActiveRecord::ManuallyDated ) && self.manual_dating_enabled?() )
+            )
           end
 
           return instance

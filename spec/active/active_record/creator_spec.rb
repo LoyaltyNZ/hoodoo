@@ -15,6 +15,7 @@ describe Hoodoo::ActiveRecord::Creator do
     class RSpecModelCreatorTest < ActiveRecord::Base
       include Hoodoo::ActiveRecord::Creator
       include Hoodoo::ActiveRecord::Dated
+      include Hoodoo::ActiveRecord::ManuallyDated
     end
   end
 
@@ -45,14 +46,57 @@ describe Hoodoo::ActiveRecord::Creator do
       expect( instance.updated_at ).to be_nil
     end
 
-    it 'creates with specified dated-from value' do
-      time = Time.now.iso8601
-      @context.request.dated_from = time
+    context 'with "dated_from" given' do
+      before :each do
+        @time                       = Time.now
+        @context.request.dated_from = @time
+      end
 
-      instance = RSpecModelCreatorTest.new_in( @context )
+      shared_examples 'a dated model' do
+        it 'using the specified dated-from value' do
+          instance = RSpecModelCreatorTest.new_in( @context )
 
-      expect( instance.created_at.iso8601 ).to eq( time )
-      expect( instance.updated_at.iso8601 ).to eq( time )
+          expect( instance.created_at ).to eq( @time )
+          expect( instance.updated_at ).to eq( @time )
+        end
+      end
+
+      shared_examples 'a normal model' do
+        it 'creating with no default timestamps' do
+          instance = RSpecModelCreatorTest.new_in( @context )
+
+          expect( instance.created_at ).to eq( nil )
+          expect( instance.updated_at ).to eq( nil )
+        end
+      end
+
+      context 'automatic dating present' do
+        context 'and enabled it' do
+          before :each do
+            expect( RSpecModelCreatorTest ).to receive( :dating_enabled? ).once.and_return( true )
+          end
+
+          it_behaves_like 'a dated model'
+        end
+
+        context 'and not enabled it' do
+          it_behaves_like 'a normal model'
+        end
+      end
+
+      context 'manual dating present' do
+        context 'and enabled it' do
+          before :each do
+            expect( RSpecModelCreatorTest ).to receive( :manual_dating_enabled? ).once.and_return( true )
+          end
+
+          it_behaves_like 'a dated model'
+        end
+
+        context 'and not enabled it' do
+          it_behaves_like 'a normal model'
+        end
+      end
     end
 
     it 'creates with provided attributes' do
