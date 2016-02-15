@@ -1,3 +1,7 @@
+# Prerequisites
+
+exclude: [vendor]
+
 # Site globals
 
 title: Hoodoo Guides
