@@ -1,4 +1,4 @@
-Mon, 15 Feb 2016 10:34:21 +1300
+Mon, 15 Feb 2016 14:45:12 +1300
 README.md	Thu, 14 Jan 2016 15:40:47 +1300
 lib/hoodoo.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active.rb	Mon, 15 Feb 2016 10:21:55 +1300
@@ -8,7 +8,7 @@ lib/hoodoo/active/active_record/creator.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/dated.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/finder.rb	Mon, 15 Feb 2016 10:21:55 +1300
-lib/hoodoo/active/active_record/manually_dated.rb	Mon, 15 Feb 2016 10:33:47 +1300
+lib/hoodoo/active/active_record/manually_dated.rb	Mon, 15 Feb 2016 14:02:27 +1300
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active/active_record/secure.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/support.rb	Mon, 15 Feb 2016 10:21:55 +1300
@@ -29,7 +29,7 @@ lib/hoodoo/client/endpoint/endpoints/not_found.rb	Thu, 14 Jan 2016 15:15:01 +130
 lib/hoodoo/client/headers.rb	Thu, 14 Jan 2016 15:40:52 +1300
 lib/hoodoo/communicators.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/communicators/fast.rb	Thu, 14 Jan 2016 15:15:01 +1300
-lib/hoodoo/communicators/pool.rb	Thu, 14 Jan 2016 15:15:01 +1300
+lib/hoodoo/communicators/pool.rb	Mon, 15 Feb 2016 13:37:18 +1300
 lib/hoodoo/communicators/slow.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/data.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/data/resources/caller.rb	Thu, 14 Jan 2016 15:15:01 +1300
@@ -110,4 +110,4 @@ lib/hoodoo/utilities.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/utilities.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/uuid.rb	Mon, 15 Feb 2016 10:21:55 +1300
-lib/hoodoo/version.rb	Mon, 15 Feb 2016 10:26:02 +1300
+lib/hoodoo/version.rb	Mon, 15 Feb 2016 14:44:57 +1300

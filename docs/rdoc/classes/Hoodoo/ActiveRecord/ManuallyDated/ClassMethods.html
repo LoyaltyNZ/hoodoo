@@ -120,11 +120,15 @@ happen for history-savvy updates performed by this mixin&#39;s code.</p>
                 <a href="javascript:toggleSource('method-i-manual_dating_enabled_source')" id="l_method-i-manual_dating_enabled_source">show</a>
               </p>
               <div id="method-i-manual_dating_enabled_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 396</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 408</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> = <span class="ruby-keyword">true</span>
 
-  <span class="ruby-identifier">before_save</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-comment"># This is the &#39;tightest&#39;/innermost callback available for creation.</span>
+  <span class="ruby-comment"># Intentionally have nothing for updates/deletes as the high level</span>
+  <span class="ruby-comment"># API here must be used; we don&#39;t want to introduce any more magic.</span>
+
+  <span class="ruby-identifier">before_create</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
 
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">created_at</span>      <span class="ruby-operator">||=</span> <span class="ruby-identifier">now</span>
@@ -192,7 +196,7 @@ then this method returns <code>true</code>, else <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-i-manual_dating_enabled-3F_source')" id="l_method-i-manual_dating_enabled-3F_source">show</a>
               </p>
               <div id="method-i-manual_dating_enabled-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 448</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 464</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manual_dating_enabled?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -232,7 +236,7 @@ instance methods that a resource subclass implements.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_source')" id="l_method-i-manually_dated_source">show</a>
               </p>
               <div id="method-i-manually_dated_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 465</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 481</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> )
@@ -269,7 +273,7 @@ constructed.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_at_source')" id="l_method-i-manually_dated_at_source">show</a>
               </p>
               <div id="method-i-manually_dated_at_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 481</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 497</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> )
   <span class="ruby-identifier">date_time</span>  = <span class="ruby-identifier">date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
 
@@ -310,7 +314,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_contemporary_source')" id="l_method-i-manually_dated_contemporary_source">show</a>
               </p>
               <div id="method-i-manually_dated_contemporary_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 514</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 530</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_contemporary</span>
   <span class="ruby-identifier">where</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -378,7 +382,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_destruction_in_source')" id="l_method-i-manually_dated_destruction_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_destruction_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 692</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 705</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span>,
                                    <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                                    <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span> <span class="ruby-identifier">all</span>() )
@@ -419,7 +423,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_historic_source')" id="l_method-i-manually_dated_historic_source">show</a>
               </p>
               <div id="method-i-manually_dated_historic_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 503</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 519</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_historic</span>
   <span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -502,92 +506,89 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_update_in_source')" id="l_method-i-manually_dated_update_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_update_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 567</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 583</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_update_in</span>( <span class="ruby-identifier">context</span>,
                               <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                               <span class="ruby-identifier">attributes</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">body</span>,
                               <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">all</span>() )
 
-  <span class="ruby-identifier">new_record</span>      = <span class="ruby-keyword">nil</span>
-  <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-identifier">new_record</span>        = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">retried_operation</span> = <span class="ruby-keyword">false</span>
 
   <span class="ruby-keyword">begin</span>
-    <span class="ruby-keyword">begin</span>
 
-      <span class="ruby-comment"># &#39;requires_new&#39; =&gt; exceptions in nested transactions will cause</span>
-      <span class="ruby-comment"># rollback; see the comment documentation for the Writer module&#39;s</span>
-      <span class="ruby-comment"># &quot;persist_in&quot; method for details.</span>
+    <span class="ruby-comment"># &#39;requires_new&#39; =&gt; exceptions in nested transactions will cause</span>
+    <span class="ruby-comment"># rollback; see the comment documentation for the Writer module&#39;s</span>
+    <span class="ruby-comment"># &quot;persist_in&quot; method for details.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transaction</span>( <span class="ruby-value">:requires_new</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">do</span>
+
+      <span class="ruby-identifier">lock_scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> ).<span class="ruby-identifier">lock</span>( <span class="ruby-keyword">true</span> )
+      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>( <span class="ruby-identifier">lock_scope</span>.<span class="ruby-identifier">to_sql</span> )
+
+      <span class="ruby-identifier">original</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">manually_dated_contemporary</span>().<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> )
+      <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">original</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-comment"># The only way this can fail is by throwing an exception.</span>
       <span class="ruby-comment">#</span>
-      <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transaction</span>( <span class="ruby-value">:requires_new</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span> ) <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">original</span>.<span class="ruby-identifier">update_column</span>( <span class="ruby-value">:effective_end</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> ) )
 
-        <span class="ruby-identifier">lock_scope</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> ).<span class="ruby-identifier">lock</span>( <span class="ruby-keyword">true</span> )
-        <span class="ruby-keyword">self</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">execute</span>( <span class="ruby-identifier">lock_scope</span>.<span class="ruby-identifier">to_sql</span> )
-
-        <span class="ruby-identifier">original</span> = <span class="ruby-identifier">scope</span>.<span class="ruby-identifier">manually_dated_contemporary</span>().<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> )
-        <span class="ruby-keyword">break</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">original</span>.<span class="ruby-identifier">nil?</span>
-
-        <span class="ruby-comment"># The only way this can fail is by throwing an exception.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-identifier">original</span>.<span class="ruby-identifier">update_column</span>( <span class="ruby-value">:effective_end</span>, <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> ) )
-
-        <span class="ruby-comment"># When you &#39;dup&#39; a live model, ActiveRecord clears the &#39;created_at&#39;</span>
-        <span class="ruby-comment"># and &#39;updated_at&#39; values, and the &#39;id&#39; column - even if you set</span>
-        <span class="ruby-comment"># the &quot;primary_key=...&quot; value on the model to something else. Put</span>
-        <span class="ruby-comment"># it all back together again.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-comment"># Duplicate, apply attributes, then overwrite anything that is</span>
-        <span class="ruby-comment"># vital for dating so that the inbound attributes hash can&#39;t cause</span>
-        <span class="ruby-comment"># any inconsistencies.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-identifier">new_record</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">dup</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">assign_attributes</span>( <span class="ruby-identifier">attributes</span> )
-
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">id</span>              = <span class="ruby-keyword">nil</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">uuid</span>            = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">uuid</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">created_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">created_at</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">updated_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_start</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_end</span>   = <span class="ruby-constant">DATE_MAXIMUM</span>
-
-        <span class="ruby-comment"># Save with validation but no exceptions. The caller examines the</span>
-        <span class="ruby-comment"># returned object to see if there were any validation errors.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">save</span>()
-
-        <span class="ruby-comment"># Must roll back if the new record didn&#39;t save, to undo the</span>
-        <span class="ruby-comment"># &#39;effective_end&#39; column update on &#39;original&#39; earlier.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-identifier">raise</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">present?</span>
-      <span class="ruby-keyword">end</span>
-
-      <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">false</span>
-
-    <span class="ruby-keyword">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">StatementInvalid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
-
-      <span class="ruby-comment"># By observation, PostgreSQL can start worrying about deadlocks</span>
-      <span class="ruby-comment"># with the above. TODO: I don&#39;t know why; I can&#39;t see how it can</span>
-      <span class="ruby-comment"># possibly end up trying to do the things the logs imply given</span>
-      <span class="ruby-comment"># that the locking is definitely working and blocking anything</span>
-      <span class="ruby-comment"># other than one transaction at a time from working on a set of</span>
-      <span class="ruby-comment"># rows scoped by a particular resource UUID.</span>
+      <span class="ruby-comment"># When you &#39;dup&#39; a live model, ActiveRecord clears the &#39;created_at&#39;</span>
+      <span class="ruby-comment"># and &#39;updated_at&#39; values, and the &#39;id&#39; column - even if you set</span>
+      <span class="ruby-comment"># the &quot;primary_key=...&quot; value on the model to something else. Put</span>
+      <span class="ruby-comment"># it all back together again.</span>
       <span class="ruby-comment">#</span>
-      <span class="ruby-comment"># In such a case, retry. But only do so once; then give up.</span>
+      <span class="ruby-comment"># Duplicate, apply attributes, then overwrite anything that is</span>
+      <span class="ruby-comment"># vital for dating so that the inbound attributes hash can&#39;t cause</span>
+      <span class="ruby-comment"># any inconsistencies.</span>
       <span class="ruby-comment">#</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">retry_operation</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">message</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-string">&#39;deadlock&#39;</span> )
-        <span class="ruby-identifier">retry_operation</span> = <span class="ruby-keyword">true</span>
+      <span class="ruby-identifier">new_record</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">dup</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">assign_attributes</span>( <span class="ruby-identifier">attributes</span> )
 
-        <span class="ruby-comment"># Give other Threads time to run, maximising chance of deadlock</span>
-        <span class="ruby-comment"># being resolved before retry.</span>
-        <span class="ruby-comment">#</span>
-        <span class="ruby-identifier">sleep</span> <span class="ruby-number">0.1</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">id</span>              = <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">uuid</span>            = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">uuid</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">created_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">created_at</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">updated_at</span>      = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_start</span> = <span class="ruby-identifier">original</span>.<span class="ruby-identifier">effective_end</span> <span class="ruby-comment"># (sic.)</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">effective_end</span>   = <span class="ruby-constant">DATE_MAXIMUM</span>
 
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-identifier">raise</span> <span class="ruby-identifier">exception</span>
+      <span class="ruby-comment"># Save with validation but no exceptions. The caller examines the</span>
+      <span class="ruby-comment"># returned object to see if there were any validation errors.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">save</span>()
 
-      <span class="ruby-keyword">end</span>
+      <span class="ruby-comment"># Must roll back if the new record didn&#39;t save, to undo the</span>
+      <span class="ruby-comment"># &#39;effective_end&#39; column update on &#39;original&#39; earlier.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Rollback</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">new_record</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">present?</span>
+    <span class="ruby-keyword">end</span>
 
-    <span class="ruby-keyword">end</span> <span class="ruby-comment"># &quot;begin&quot;...&quot;rescue&quot;...&quot;end&quot;</span>
-  <span class="ruby-keyword">end</span> <span class="ruby-keyword">while</span> ( <span class="ruby-identifier">retry_operation</span> ) <span class="ruby-comment"># &quot;begin&quot;...&quot;end while&quot;</span>
+  <span class="ruby-keyword">rescue</span> <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">StatementInvalid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-comment"># By observation, PostgreSQL can start worrying about deadlocks</span>
+    <span class="ruby-comment"># with the above. Leading theory is that it&#39;s &quot;half way through&quot;</span>
+    <span class="ruby-comment"># inserting the new row when someone else comes along and waits</span>
+    <span class="ruby-comment"># on the lock, but that new waiting thread has also ended up</span>
+    <span class="ruby-comment"># capturing a lock on the half-inserted row (since inserting</span>
+    <span class="ruby-comment"># involves lots of internal steps and locks).</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># In such a case, retry. But only do so once; then give up.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">retried_operation</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">exception</span>.<span class="ruby-identifier">message</span>.<span class="ruby-identifier">downcase</span>.<span class="ruby-identifier">include?</span>( <span class="ruby-string">&#39;deadlock&#39;</span> )
+      <span class="ruby-identifier">retried_operation</span> = <span class="ruby-keyword">true</span>
+
+      <span class="ruby-comment"># Give other Threads time to run, maximising chance of deadlock</span>
+      <span class="ruby-comment"># being resolved before retry.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-identifier">sleep</span>( <span class="ruby-number">0.1</span> )
+      <span class="ruby-keyword">retry</span>
+
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-identifier">exception</span>
+
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">end</span> <span class="ruby-comment"># &quot;begin&quot;...&quot;rescue&quot;...&quot;end&quot;</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">new_record</span>
 <span class="ruby-keyword">end</span></pre>

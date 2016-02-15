@@ -233,6 +233,10 @@ class ConvertToManualDating &lt; ActiveRecord::Migration
   #
   TABLES_TO_CONVERT = [ :table_name, :another_table_name, ... ]
 
+  # This will come in handy later.
+  #
+  SQL_DATE_MAXIMUM = ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
+
   def up
 
     # If you have any uniqueness constraints on this table, you&#39;ll need to
@@ -255,9 +259,17 @@ class ConvertToManualDating &lt; ActiveRecord::Migration
       add_column table, :effective_end,   :datetime, :null  =&gt; true # (initially, but see below)
       add_column table, :uuid,            :string,   :limit =&gt; 32
 
-      add_index table, [        :effective_start, :effective_end ],                  :name =&gt; &quot;index_#{ table }_start_end&quot;
-      add_index table, [ :uuid, :effective_start, :effective_end ],                  :name =&gt; &quot;index_#{ table }_id_start_end&quot;
-      add_index table, [ :uuid,                   :effective_end ], :unique =&gt; true, :name =&gt; &quot;index_#{ table }_id_end&quot;
+      add_index table, [        :effective_start, :effective_end ], :name =&gt; &quot;index_#{ table }_start_end&quot;
+      add_index table, [ :uuid, :effective_start, :effective_end ], :name =&gt; &quot;index_#{ table }_uuid_start_end&quot;
+
+      # We can&#39;t allow duplicate UUIDs. Here&#39;s how to correctly scope based on
+      # any &#39;contemporary&#39; record, given its known fixed &#39;effective_end&#39;.
+      #
+      ActiveRecord::Migration.add_index table,
+                                        :uuid,
+                                        :unique =&gt; true,
+                                        :name   =&gt; &quot;index_#{ table }_uuid_end_unique&quot;,
+                                        :where  =&gt; &quot;(effective_end = &#39;#{ SQL_DATE_MAXIMUM }&#39;)&quot;
 
       # If there&#39;s any data in the table already, it can&#39;t have any historic
       # entries. So, we want to set the UUID to the &#39;id&#39; field&#39;s old value,
@@ -285,21 +297,21 @@ class ConvertToManualDating &lt; ActiveRecord::Migration
 
     end
 
-    # Now add back any indices dropped earlier, but add them as two composite
-    # indices each - one with just :effective_end added, the other with both
-    # :effective_start and :effective_end added.
-    #
-    # For example, suppose you had declared this index somewhere:
+    # Now add back any indices dropped earlier, but add them back as a
+    # conditional index as shown earlier for the &quot;uuid&quot; column. For example,
+    # suppose you had declared this index somewhere:
     #
     #   add_index :accounts, :account_number, :unique =&gt; true
     #
     # You need to have done &quot;remove_index :accounts, :account_number&quot; earlier;
-    # then now add the two new equivalents. You may well find you have to give
-    # them custom names to avoid hitting index name length limits in your
-    # database if ActiveRecord is allowed to generate a name automatically:
+    # then now add the new equivalent. You may well find you have to give it a
+    # custom name to avoid hitting index name length limits in your database:
     #
-    #   add_index :accounts, [ :account_number, :effective_start, :effective_end ],                  :name =&gt; &#39;index_accounts_an_es_ee&#39;
-    #   add_index :accounts, [ :account_number,                   :effective_end ], :unique =&gt; true, :name =&gt; &#39;index_accounts_an_ee&#39;
+    # ActiveRecord::Migration.add_index :accounts,
+    #                                   :account_number,
+    #                                   :unique =&gt; true,
+    #                                   :name   =&gt; &quot;index_#{ table }_account_number_end_unique&quot;,
+    #                                   :where  =&gt; &quot;(effective_end = &#39;#{ SQL_DATE_MAXIMUM }&#39;)&quot;
     #
     # You might want to perform more detailed analysis on your index
     # requirements once manual dating is enabled, but the above is a good rule
@@ -464,7 +476,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 345</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 357</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_manually_dated</span>,
@@ -510,7 +522,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 370</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 382</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
