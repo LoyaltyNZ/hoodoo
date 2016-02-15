@@ -109,6 +109,8 @@ module Hoodoo
     # you *MUST* include the ActiveRecord::Relation instances (scopes) inside
     # any query chain used to read or write data.
     #
+    # === Show and List
+    #
     # You might use Hoodoo::ActiveRecord::Finder#list_in or
     # Hoodoo::ActiveRecord::Finder#acquire_in for +list+ or +show+ actions;
     # such code changes from e.g.:
@@ -119,7 +121,20 @@ module Hoodoo
     #
     #     SomeModel.manually_dated( context ).list_in( context )
     #
-    # You MUST NOT update or delete records using conventional ActiveRecord
+    # === Create
+    #
+    # As with automatic dating - see Hoodoo::ActiveRecord::Dated - you should
+    # use method Hoodoo::ActiveRecord::Creator::ClassMethods.new_in to create
+    # new resource instances, to help ensure correct initial date setup and to
+    # help isolate your code from future functionality extensions/changes. An
+    # ActiveRecord +before_create+ filter deals with some of the "behind the
+    # scenes" maintenance but the initial acquisition of dating information
+    # from the prevailing request context only happens for you if you use
+    # Hoodoo::ActiveRecord::Creator::ClassMethods::new_in.
+    #
+    # === Update and Delete
+    #
+    # You *MUST* *NOT* update or delete records using conventional ActiveRecord
     # methods if you want to use manual dating to record state changes.
     # Instead, use
     # Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_update_in
@@ -143,6 +158,8 @@ module Hoodoo
     # information on overriding the identifier used to find the target record
     # and the attribute data used for updates.
     #
+    # == Rendering
+    #
     # When rendering, you *MUST* remember to set the resource's +id+ field
     # from the model's +uuid+ field:
     #
@@ -155,8 +172,20 @@ module Hoodoo
     #       }
     #     )
     #
-    # Likewise, remember to set foreign keys for any relational declarations
-    # via the +uuid+ column - e.g. go from this:
+    # == Associations
+    #
+    # Generally, use of ActiveRecord associations is minimal in most services
+    # because there is an implied database-level coupling of resources and a
+    # temptation to use cross-table ActiveRecord mechanisms for things like
+    # relational UUID integrity checks, rather than inter-resource calls.
+    # Doing so couples resources together at the database rather than keeping
+    # them isolated purely by API, which is often a really bad idea. It is,
+    # however, sometimes necessary for best possible performance, or sometimes
+    # one complex resource may be represented by several models with
+    # relationships between them.
+    #
+    # In such cases, remember to set foreign keys for relational declarations
+    # to a manually dated table via the +uuid+ column - e.g. go from this:
     #
     #     member.account_id = account.id
     #
@@ -407,10 +436,6 @@ module Hoodoo
         #
         def manual_dating_enabled
           self.nz_co_loyalty_hoodoo_manually_dated = true
-
-          rounder = Proc.new do | timelike |
-            timelike.to_time.round( SECONDS_DECIMAL_PLACES )
-          end
 
           # This is the 'tightest'/innermost callback available for creation.
           # Intentionally have nothing for updates/deletes as the high level

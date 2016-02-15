@@ -97,9 +97,9 @@ module Hoodoo
     #
     # == Model instance creation
     #
-    # It is _VERY_ _IMPORTANT_ that you use
-    # Hoodoo::ActiveRecord::Creator::ClassMethods::new_in to create new
-    # resource instances when using Dating. You _could_ just manually read the
+    # It is _VERY_ _IMPORTANT_ that you use method
+    # Hoodoo::ActiveRecord::Creator::ClassMethods.new_in to create new
+    # resource instances when using dating. You _could_ just manually read the
     # `context.request.dated_from` value to ensure that an appropriate creation
     # time is set; presently, `created_at` and `updated_at` are set from the
     # `dated_from` value. However, using `new_in` for this isolates your code
@@ -183,7 +183,7 @@ module Hoodoo
         # returns +true+, else +false+.
         #
         def dating_enabled?
-          return self.dated_with() != nil?
+          return self.dated_with().present?
         end
 
         # Return an ActiveRecord::Relation containing the model instances which
