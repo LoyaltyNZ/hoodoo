@@ -189,6 +189,10 @@ module Hoodoo
     #       #
     #       TABLES_TO_CONVERT = [ :table_name, :another_table_name, ... ]
     #
+    #       # This will come in handy later.
+    #       #
+    #       SQL_DATE_MAXIMUM = ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
+    #
     #       def up
     #
     #         # If you have any uniqueness constraints on this table, you'll need to
@@ -211,9 +215,17 @@ module Hoodoo
     #           add_column table, :effective_end,   :datetime, :null  => true # (initially, but see below)
     #           add_column table, :uuid,            :string,   :limit => 32
     #
-    #           add_index table, [        :effective_start, :effective_end ],                  :name => "index_#{ table }_start_end"
-    #           add_index table, [ :uuid, :effective_start, :effective_end ],                  :name => "index_#{ table }_id_start_end"
-    #           add_index table, [ :uuid,                   :effective_end ], :unique => true, :name => "index_#{ table }_id_end"
+    #           add_index table, [        :effective_start, :effective_end ], :name => "index_#{ table }_start_end"
+    #           add_index table, [ :uuid, :effective_start, :effective_end ], :name => "index_#{ table }_uuid_start_end"
+    #
+    #           # We can't allow duplicate UUIDs. Here's how to correctly scope based on
+    #           # any 'contemporary' record, given its known fixed 'effective_end'.
+    #           #
+    #           ActiveRecord::Migration.add_index table,
+    #                                             :uuid,
+    #                                             :unique => true,
+    #                                             :name   => "index_#{ table }_uuid_end_unique",
+    #                                             :where  => "(effective_end = '#{ SQL_DATE_MAXIMUM }')"
     #
     #           # If there's any data in the table already, it can't have any historic
     #           # entries. So, we want to set the UUID to the 'id' field's old value,
@@ -241,21 +253,21 @@ module Hoodoo
     #
     #         end
     #
-    #         # Now add back any indices dropped earlier, but add them as two composite
-    #         # indices each - one with just :effective_end added, the other with both
-    #         # :effective_start and :effective_end added.
-    #         #
-    #         # For example, suppose you had declared this index somewhere:
+    #         # Now add back any indices dropped earlier, but add them back as a
+    #         # conditional index as shown earlier for the "uuid" column. For example,
+    #         # suppose you had declared this index somewhere:
     #         #
     #         #   add_index :accounts, :account_number, :unique => true
     #         #
     #         # You need to have done "remove_index :accounts, :account_number" earlier;
-    #         # then now add the two new equivalents. You may well find you have to give
-    #         # them custom names to avoid hitting index name length limits in your
-    #         # database if ActiveRecord is allowed to generate a name automatically:
+    #         # then now add the new equivalent. You may well find you have to give it a
+    #         # custom name to avoid hitting index name length limits in your database:
     #         #
-    #         #   add_index :accounts, [ :account_number, :effective_start, :effective_end ],                  :name => 'index_accounts_an_es_ee'
-    #         #   add_index :accounts, [ :account_number,                   :effective_end ], :unique => true, :name => 'index_accounts_an_ee'
+    #         # ActiveRecord::Migration.add_index :accounts,
+    #         #                                   :account_number,
+    #         #                                   :unique => true,
+    #         #                                   :name   => "index_#{ table }_account_number_end_unique",
+    #         #                                   :where  => "(effective_end = '#{ SQL_DATE_MAXIMUM }')"
     #         #
     #         # You might want to perform more detailed analysis on your index
     #         # requirements once manual dating is enabled, but the above is a good rule
@@ -396,7 +408,11 @@ module Hoodoo
         def manual_dating_enabled
           self.nz_co_loyalty_hoodoo_manually_dated = true
 
-          before_save do
+          # This is the 'tightest'/innermost callback available for creation.
+          # Intentionally have nothing for updates/deletes as the high level
+          # API here must be used; we don't want to introduce any more magic.
+
+          before_create do
             now = Time.now.utc.round( SECONDS_DECIMAL_PLACES )
 
             self.created_at      ||= now
@@ -569,86 +585,83 @@ module Hoodoo
                                       attributes: context.request.body,
                                       scope:      all() )
 
-          new_record      = nil
-          retry_operation = false
+          new_record        = nil
+          retried_operation = false
 
           begin
-            begin
 
-              # 'requires_new' => exceptions in nested transactions will cause
-              # rollback; see the comment documentation for the Writer module's
-              # "persist_in" method for details.
+            # 'requires_new' => exceptions in nested transactions will cause
+            # rollback; see the comment documentation for the Writer module's
+            # "persist_in" method for details.
+            #
+            self.transaction( :requires_new => true ) do
+
+              lock_scope = scope.acquisition_scope( ident ).lock( true )
+              self.connection.execute( lock_scope.to_sql )
+
+              original = scope.manually_dated_contemporary().acquire( ident )
+              break if original.nil?
+
+              # The only way this can fail is by throwing an exception.
               #
-              self.transaction( :requires_new => true ) do
+              original.update_column( :effective_end, Time.now.utc.round( SECONDS_DECIMAL_PLACES ) )
 
-                lock_scope = scope.acquisition_scope( ident ).lock( true )
-                self.connection.execute( lock_scope.to_sql )
-
-                original = scope.manually_dated_contemporary().acquire( ident )
-                break if original.nil?
-
-                # The only way this can fail is by throwing an exception.
-                #
-                original.update_column( :effective_end, Time.now.utc.round( SECONDS_DECIMAL_PLACES ) )
-
-                # When you 'dup' a live model, ActiveRecord clears the 'created_at'
-                # and 'updated_at' values, and the 'id' column - even if you set
-                # the "primary_key=..." value on the model to something else. Put
-                # it all back together again.
-                #
-                # Duplicate, apply attributes, then overwrite anything that is
-                # vital for dating so that the inbound attributes hash can't cause
-                # any inconsistencies.
-                #
-                new_record = original.dup
-                new_record.assign_attributes( attributes )
-
-                new_record.id              = nil
-                new_record.uuid            = original.uuid
-                new_record.created_at      = original.created_at
-                new_record.updated_at      = original.effective_end # (sic.)
-                new_record.effective_start = original.effective_end # (sic.)
-                new_record.effective_end   = DATE_MAXIMUM
-
-                # Save with validation but no exceptions. The caller examines the
-                # returned object to see if there were any validation errors.
-                #
-                new_record.save()
-
-                # Must roll back if the new record didn't save, to undo the
-                # 'effective_end' column update on 'original' earlier.
-                #
-                raise ::ActiveRecord::Rollback if new_record.errors.present?
-              end
-
-              retry_operation = false
-
-            rescue ::ActiveRecord::StatementInvalid => exception
-
-              # By observation, PostgreSQL can start worrying about deadlocks
-              # with the above. TODO: I don't know why; I can't see how it can
-              # possibly end up trying to do the things the logs imply given
-              # that the locking is definitely working and blocking anything
-              # other than one transaction at a time from working on a set of
-              # rows scoped by a particular resource UUID.
+              # When you 'dup' a live model, ActiveRecord clears the 'created_at'
+              # and 'updated_at' values, and the 'id' column - even if you set
+              # the "primary_key=..." value on the model to something else. Put
+              # it all back together again.
               #
-              # In such a case, retry. But only do so once; then give up.
+              # Duplicate, apply attributes, then overwrite anything that is
+              # vital for dating so that the inbound attributes hash can't cause
+              # any inconsistencies.
               #
-              if retry_operation == false && exception.message.downcase.include?( 'deadlock' )
-                retry_operation = true
+              new_record = original.dup
+              new_record.assign_attributes( attributes )
 
-                # Give other Threads time to run, maximising chance of deadlock
-                # being resolved before retry.
-                #
-                sleep 0.1
+              new_record.id              = nil
+              new_record.uuid            = original.uuid
+              new_record.created_at      = original.created_at
+              new_record.updated_at      = original.effective_end # (sic.)
+              new_record.effective_start = original.effective_end # (sic.)
+              new_record.effective_end   = DATE_MAXIMUM
 
-              else
-                raise exception
+              # Save with validation but no exceptions. The caller examines the
+              # returned object to see if there were any validation errors.
+              #
+              new_record.save()
 
-              end
+              # Must roll back if the new record didn't save, to undo the
+              # 'effective_end' column update on 'original' earlier.
+              #
+              raise ::ActiveRecord::Rollback if new_record.errors.present?
+            end
 
-            end # "begin"..."rescue"..."end"
-          end while ( retry_operation ) # "begin"..."end while"
+          rescue ::ActiveRecord::StatementInvalid => exception
+
+            # By observation, PostgreSQL can start worrying about deadlocks
+            # with the above. Leading theory is that it's "half way through"
+            # inserting the new row when someone else comes along and waits
+            # on the lock, but that new waiting thread has also ended up
+            # capturing a lock on the half-inserted row (since inserting
+            # involves lots of internal steps and locks).
+            #
+            # In such a case, retry. But only do so once; then give up.
+            #
+            if retried_operation == false && exception.message.downcase.include?( 'deadlock' )
+              retried_operation = true
+
+              # Give other Threads time to run, maximising chance of deadlock
+              # being resolved before retry.
+              #
+              sleep( 0.1 )
+              retry
+
+            else
+              raise exception
+
+            end
+
+          end # "begin"..."rescue"..."end"
 
           return new_record
         end

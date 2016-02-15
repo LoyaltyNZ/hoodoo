@@ -1,3 +1,7 @@
+## 1.2.1 (2016-02-15)
+
+* Rapid iteration over 1.2.0 to recommend a better indexing strategy and remove an at-publishing known problem with 1.2.0 and updates happening faster than the configured date/time accuracy.
+
 ## 1.2.0 (2016-02-15)
 
 * All-new "manual" historic dating support. The transparent automatic dating is really nice and transparent for services, but it does come at a heavy cost with migrations (you _really_ need to lean on the `service_shell` generators), is tied into PostgreSQL and for complex associations/join scenarios can degrade performance to unacceptable levels. The counter to this is the lightweight, database-agnostic but much more intrusive "manual" historic dating system, available in `Hoodoo::ActiveRecord::ManuallyDated`. Substantial service changes may be required with the shift from using column `id` over to column `uuid` being the most fiddly and potentially fragile; read the documentation carefully and ensure your service test coverage is comprehensive.
