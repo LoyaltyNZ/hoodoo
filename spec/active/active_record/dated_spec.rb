@@ -124,8 +124,14 @@ describe Hoodoo::ActiveRecord::Dated do
     end
 
     context '#dating_enabled?' do
+      class RSpecNotDated < Hoodoo::ActiveRecord::Base; end
+
       it 'says it is automatically dated' do
         expect( model_klass.dating_enabled? ).to eq( true )
+      end
+
+      it 'knows when something is not automatically dated' do
+        expect( RSpecNotDated.dating_enabled? ).to eq( false )
       end
     end
 
