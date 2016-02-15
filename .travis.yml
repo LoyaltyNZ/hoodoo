@@ -11,4 +11,4 @@ sudo: false
 cache: bundler
 
 script:
-  - bundle exec jekyll doctor
+  - bundle exec jekyll build
