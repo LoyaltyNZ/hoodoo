@@ -127,14 +127,14 @@ for more information.</p>
 
 <h2 id="module-Hoodoo::ActiveRecord::Dated-label-Model+instance+creation">Model instance creation</h2>
 
-<p>It is <em>VERY</em> <em>IMPORTANT</em> that you use
-Hoodoo::ActiveRecord::Creator::ClassMethods::new_in to create new resource
-instances when using Dating. You <em>could</em> just manually read the
-`context.request.dated_from` value to ensure that an appropriate creation
-time is set; presently, `created_at` and `updated_at` are set from the
-`dated_from` value. However, using `new_in` for this isolates your code
-from any possible under-the-hood implementation changes therein and
-future-proof your code.</p>
+<p>It is <em>VERY</em> <em>IMPORTANT</em> that you use method <a
+href="Creator/ClassMethods.html#method-i-new_in">Hoodoo::ActiveRecord::Creator::ClassMethods#new_in</a>
+to create new resource instances when using dating. You <em>could</em> just
+manually read the `context.request.dated_from` value to ensure that an
+appropriate creation time is set; presently, `created_at` and `updated_at`
+are set from the `dated_from` value. However, using `new_in` for this
+isolates your code from any possible under-the-hood implementation changes
+therein and future-proof your code.</p>
 
     </div>
 

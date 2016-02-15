@@ -436,7 +436,7 @@ this method returns <code>true</code>, else <code>false</code>.</p>
               <div id="method-i-dating_enabled-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/dated.rb, line 185</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dating_enabled?</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>() <span class="ruby-operator">!=</span> <span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">dated_with</span>().<span class="ruby-identifier">present?</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

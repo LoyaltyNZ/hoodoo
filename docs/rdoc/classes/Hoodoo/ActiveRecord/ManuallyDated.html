@@ -141,6 +141,8 @@ href="ManuallyDated/ClassMethods.html#method-i-manual_dating_enabled">Hoodoo::Ac
 you <strong>MUST</strong> include the ActiveRecord::Relation instances
 (scopes) inside any query chain used to read or write data.</p>
 
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Show+and+List">Show and List</h3>
+
 <p>You might use Hoodoo::ActiveRecord::Finder#list_in or
 Hoodoo::ActiveRecord::Finder#acquire_in for <code>list</code> or
 <code>show</code> actions; such code changes from e.g.:</p>
@@ -153,9 +155,25 @@ Hoodoo::ActiveRecord::Finder#acquire_in for <code>list</code> or
 <pre><code>SomeModel.manually_dated( context ).list_in( context )
 </code></pre>
 
-<p>You MUST NOT update or delete records using conventional <a
-href="../ActiveRecord.html">ActiveRecord</a> methods if you want to use
-manual dating to record state changes. Instead, use <a
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Create">Create</h3>
+
+<p>As with automatic dating - see <a
+href="Dated.html">Hoodoo::ActiveRecord::Dated</a> - you should use method
+<a
+href="Creator/ClassMethods.html#method-i-new_in">Hoodoo::ActiveRecord::Creator::ClassMethods#new_in</a>
+to create new resource instances, to help ensure correct initial date setup
+and to help isolate your code from future functionality extensions/changes.
+An <a href="../ActiveRecord.html">ActiveRecord</a>
+<code>before_create</code> filter deals with some of the “behind the
+scenes” maintenance but the initial acquisition of dating information from
+the prevailing request context only happens for you if you use
+Hoodoo::ActiveRecord::Creator::ClassMethods::new_in.</p>
+
+<h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Update+and+Delete">Update and Delete</h3>
+
+<p>You <strong>MUST</strong> <strong>NOT</strong> update or delete records
+using conventional <a href="../ActiveRecord.html">ActiveRecord</a> methods
+if you want to use manual dating to record state changes. Instead, use <a
 href="ManuallyDated/ClassMethods.html#method-i-manually_dated_update_in">Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_update_in</a>
 or <a
 href="ManuallyDated/ClassMethods.html#method-i-manually_dated_destruction_in">Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_destruction_in</a>.
@@ -180,6 +198,8 @@ end
 information on overriding the identifier used to find the target record and
 the attribute data used for updates.</p>
 
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Rendering">Rendering</h2>
+
 <p>When rendering, you <strong>MUST</strong> remember to set the
 resource&#39;s <code>id</code> field from the model&#39;s <code>uuid</code>
 field:</p>
@@ -194,8 +214,22 @@ field:</p>
 )
 </code></pre>
 
-<p>Likewise, remember to set foreign keys for any relational declarations via
-the <code>uuid</code> column - e.g. go from this:</p>
+<h2 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Associations">Associations</h2>
+
+<p>Generally, use of <a href="../ActiveRecord.html">ActiveRecord</a>
+associations is minimal in most services because there is an implied
+database-level coupling of resources and a temptation to use cross-table <a
+href="../ActiveRecord.html">ActiveRecord</a> mechanisms for things like
+relational <a href="UUID.html">UUID</a> integrity checks, rather than
+inter-resource calls. Doing so couples resources together at the database
+rather than keeping them isolated purely by API, which is often a really
+bad idea. It is, however, sometimes necessary for best possible
+performance, or sometimes one complex resource may be represented by
+several models with relationships between them.</p>
+
+<p>In such cases, remember to set foreign keys for relational declarations to
+a manually dated table via the <code>uuid</code> column - e.g. go from
+this:</p>
 
 <pre><code>member.account_id = account.id
 </code></pre>
@@ -476,7 +510,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
               </p>
               <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 357</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 386</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_manually_dated</span>,
@@ -522,7 +556,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
               </p>
               <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 382</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 411</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
