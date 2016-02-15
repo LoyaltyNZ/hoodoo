@@ -139,8 +139,14 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
     end
 
     context '#manual_dating_enabled?' do
+      class RSpecNotManuallyDated < Hoodoo::ActiveRecord::Base; end
+
       it 'says it is manually dated' do
         expect( RSpecModelManualDateTest.manual_dating_enabled? ).to eq( true )
+      end
+
+      it 'knows when something is not automatically dated' do
+        expect( RSpecNotManuallyDated.manual_dating_enabled? ).to eq( false )
       end
     end
 
