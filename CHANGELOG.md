@@ -1,3 +1,7 @@
+## 1.3.0 (2016-02-17)
+
+* Improved exception reporting through the new `contextual_report` mechanism, which the middleware now uses and the Airbrake and Raygun reporters take advantage of.
+
 ## 1.2.3 (2016-02-16)
 
 * Oversight in Creator mixin's `new_in` corrected; it was not accounting for manual dating. Test coverage bolstered. Fix for automatic dating module's `dating_enabled?` method, test coverage also bolstered. Improved documentation for manual dating mixin.
