@@ -912,8 +912,12 @@ protocol requirements.</p>
 
   <span class="ruby-keyword">rescue</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">exception</span>
     <span class="ruby-keyword">begin</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">interaction</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span>
+        <span class="ruby-constant">ExceptionReporting</span>.<span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">context</span> )
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-constant">ExceptionReporting</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">env</span> )
+      <span class="ruby-keyword">end</span>
 
-      <span class="ruby-constant">ExceptionReporting</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">exception</span>, <span class="ruby-identifier">env</span> )
       <span class="ruby-identifier">record_exception</span>( <span class="ruby-identifier">interaction</span>, <span class="ruby-identifier">exception</span> )
 
       <span class="ruby-keyword">return</span> <span class="ruby-identifier">respond_for</span>( <span class="ruby-identifier">interaction</span> )
@@ -991,7 +995,7 @@ an endpoint implementation.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_endpoint_for_source')" id="l_method-i-inter_resource_endpoint_for_source">show</a>
               </p>
               <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 558</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 562</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1147,7 +1151,7 @@ ignore inter-resource call errors.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 686</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 690</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,

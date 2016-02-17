@@ -81,6 +81,14 @@ ability of the Raygun gem:</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-contextual_report">contextual_report</a>
+              </li>
+          </ul>
+        </dd>
         <dt>R</dt>
         <dd>
           <ul>
@@ -102,6 +110,45 @@ ability of the Raygun gem:</p>
 
     <!-- Methods -->
       <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-contextual_report">
+              <b>contextual_report</b>( e, context )
+            <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/RaygunReporter.html#method-i-contextual_report" name="method-i-contextual_report" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Report an exception for errors that occur within a fully handled <a
+href="../../../../Rack.html">Rack</a> request context, with a high level
+processed <a href="../../../../Hoodoo.html">Hoodoo</a> representation
+available.</p>
+<dl class="rdoc-list note-list"><dt><code>e</code>
+<dd>
+<p>Exception (or subclass) instance to be reported.</p>
+</dd><dt><code>context</code>
+<dd>
+<p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
+describing an in-flight request/response cycle.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-contextual_report_source')" id="l_method-i-contextual_report_source">show</a>
+              </p>
+              <div id="method-i-contextual_report_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+  <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span> <span class="ruby-keyword">rescue</span> {}
+  <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-value">:custom_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> { <span class="ruby-string">&#39;user_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;unknown&#39;</span> } )
+
+  <span class="ruby-constant">Raygun</span>.<span class="ruby-identifier">track_exception</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
         <div class="method">
           <div class="title method-title" id="method-i-report">
               <b>report</b>( e, env = nil )

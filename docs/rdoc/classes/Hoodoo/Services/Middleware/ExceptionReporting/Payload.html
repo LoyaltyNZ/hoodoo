@@ -71,6 +71,15 @@ mechanism.</p>
       <!-- Section attributes -->
       <div class="sectiontitle">Attributes</div>
       <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-context'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>context</td>
+            <td class='attr-desc'><p>A <a href="../../Context.html">Hoodoo::Services::Context</a> instance
+describing the in-flight request/response cycle, if there is one. May be
+<code>nil</code>.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-exception'>
             <td class='attr-rw'>
               [RW]
@@ -93,7 +102,7 @@ original Hash). May be <code>nil</code>.</p></td>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( exception:, rack_env: nil )
+              <b>new</b>( exception:, rack_env: nil, context: nil )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/Payload.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -105,6 +114,10 @@ original Hash). May be <code>nil</code>.</p></td>
 </dd><dt><code>rack_env</code>
 <dd>
 <p><a href="../../../../Rack.html">Rack</a> environment hash. Optional.</p>
+</dd><dt><code>context</code>
+<dd>
+<p><a href="../../Context.html">Hoodoo::Services::Context</a> instance.
+Optional.</p>
 </dd></dl>
             </div>
 
@@ -116,10 +129,11 @@ original Hash). May be <code>nil</code>.</p></td>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 107</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">exception</span>,, <span class="ruby-identifier">rack_env</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb, line 128</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">exception</span>,, <span class="ruby-identifier">rack_env</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">context</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@exception</span> = <span class="ruby-identifier">exception</span>
   <span class="ruby-ivar">@rack_env</span>  = <span class="ruby-identifier">rack_env</span>
+  <span class="ruby-ivar">@context</span>   = <span class="ruby-identifier">context</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
