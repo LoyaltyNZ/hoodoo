@@ -498,8 +498,12 @@ module Hoodoo; module Services
 
       rescue => exception
         begin
+          if interaction && interaction.context
+            ExceptionReporting.contextual_report( exception, interaction.context )
+          else
+            ExceptionReporting.report( exception, env )
+          end
 
-          ExceptionReporting.report( exception, env )
           record_exception( interaction, exception )
 
           return respond_for( interaction )
