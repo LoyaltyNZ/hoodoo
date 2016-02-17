@@ -52,7 +52,13 @@ The service's `Gemfile` would need to include the `raygun4ruby` gem and `bundle 
 
 ### Manual reporting
 
-A service can choose to broadcast through the exception reporting mechanism either by simply raising an exception itself and letting the middleware catch it, or driving the reporter explicitly. Since it is a singleton, you access the middleware-wide exception reporting engine simply via the `Hoodoo::Services::Middleware::ExceptionReporting` class within a service's resource implementation code. See [RDoc and the `report` method]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report) for details. For example:
+A service can choose to broadcast through the exception reporting mechanism either by simply raising an exception itself and letting the middleware catch it, or driving the reporter explicitly. Since it is a singleton, you access the middleware-wide exception reporting engine simply via the `Hoodoo::Services::Middleware::ExceptionReporting` class within a service's resource implementation code. See RDoc for the [`report`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report) and [`contextual_report`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-contextual_report) methods for details.
+
+#### Basic API
+
+The original exception reporting engine includes a basic API that just takes exception and _optional_ Rack environment details. This is easy to drive from both within a service's request/response cycle, or outside it, with no particular middleware dependency.
+
+For example:
 
 ```ruby
 class FooImplementation < Hoodoo::Services::Implementation
@@ -76,6 +82,30 @@ Note how your service can access the Rack request as a high level object through
 * [`Hoodoo::Services::Middleware::Interaction#rack_request`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/Interaction.html#attribute-i-rack_request)
 * [`Rack::Request#env`](http://www.rubydoc.info/gems/rack/Rack/Request#env-instance_method)
 
+#### Contextual API
+
+From Hoodoo v1.3.0 onwards, an additional reporting engine takes a mandatory context parameter and uses this to provide substantially more detailed exception reporting, subject to support for arbitrary user data in the exception reporting endpoint. The out-of-box example implementations for Airbrake (via its `session` API option key) and Raygun (via its `custom_data` API option key) make use of this. Other endpoint subclasses do not have to support this method; if the reporting subclass doesn't implement the contextual API, the Rack environment data is extracted from the context information and the system falls back to the basic API described above.
+
+```ruby
+class FooImplementation < Hoodoo::Services::Implementation
+  def show( context )
+
+    # ...encounter some exceptional condition severe enough to need
+    # explicitly reporting but not raising/throwing then...
+
+    Hoodoo::Services::Middleware::ExceptionReporting.contextual_report(
+      RuntimeError.new( 'Something bad happened' ),
+      context
+    )
+
+  end
+end
+```
+
+This more informative method is recommended over the basic API when writing new service implementation code.
+
+
+
 ### Rate limiting
 
 Like logging, exception reporting is based on [`Hoodoo::Communicators::Pool`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Communicators/Pool.html). Unlike logging, _all_ reporters are considered "slow communicators" and run on a Ruby thread with a queue size-based rate limit on incoming reports.
@@ -88,7 +118,7 @@ See the [relevant section of the Logging Guide]({{ site.baseurl }}/guides_0500_l
 
 Exception reporters are driven from a [`Hoodoo::Communicators::Pool`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Communicators/Pool.html) directly. A reporter is a subclass of somewhat epically namespaced class [`Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html), **which is a singleton** (so your reporter subclass will be too); this in turn is a subclass of [`Hoodoo::Communicators::Slow`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Communicators/Slow.html). _All_ exception reporters are treated as slow communicators and are run in a Ruby thread. Be sure to read the RDoc links above to understand more about communications pools and the implications of executing as a slow communication subclass.
 
-After that, it's very easy; you simply implement the [`Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter#report` method]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-report), remembering that your class is operating as a singleton. The design pattern behind the approach was taken with Airbrake and Raygun in mind as initial implementations, so your singleton is automatically instantiated without parameters. If you need any configuration and can't use class level storage, you could (for example) read environment variables or a YAML file inside a custom -- albeit still parameter-free -- `initialize` method.
+After that, it's very easy; you implement the [`Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter#report`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-report) and optionally the [`Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter#contextual_report`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-contextual_report) methods, remembering that your class is operating as a singleton. The design pattern behind the approach was taken with Airbrake and Raygun in mind as initial implementations, so your singleton is automatically instantiated without parameters. If you need any configuration and can't use class level storage, you could (for example) read environment variables or a YAML file inside a custom -- albeit still parameter-free -- `initialize` method.
 
 ### Example
 
