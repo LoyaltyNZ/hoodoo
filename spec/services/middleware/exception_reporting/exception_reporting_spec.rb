@@ -22,11 +22,22 @@ describe Hoodoo::Services::Middleware::ExceptionReporting do
     end
   end
 
+  class TestReporterD < Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
+    def report( e, env = nil )
+      expectable_hook_d1( e, env )
+    end
+
+    def contextual_report( e, context )
+      expectable_hook_d2( e, context )
+    end
+  end
+
   after :each do
     Hoodoo::Services::Middleware::ExceptionReporting.wait()
     Hoodoo::Services::Middleware::ExceptionReporting.remove( TestReporterA )
     Hoodoo::Services::Middleware::ExceptionReporting.remove( TestReporterB )
     Hoodoo::Services::Middleware::ExceptionReporting.remove( TestReporterC )
+    Hoodoo::Services::Middleware::ExceptionReporting.remove( TestReporterD )
   end
 
   it 'lets me add and remove handlers' do
@@ -88,5 +99,64 @@ describe Hoodoo::Services::Middleware::ExceptionReporting do
 
     expect( TestReporterA.instance ).to receive( :expectable_hook_a ).once.with( ex, ha )
     Hoodoo::Services::Middleware::ExceptionReporting.report( ex, ha )
+  end
+
+  context 'with contextual reporting' do
+    before :each do
+      Hoodoo::Services::Middleware::ExceptionReporting.add( TestReporterD )
+    end
+
+    it 'supports normal behaviour' do
+      ex = RuntimeError.new( 'D' )
+      ha = { :foo => :bar }
+
+      expect( TestReporterD.instance ).to receive( :expectable_hook_d1 ).once.with( ex, ha )
+      Hoodoo::Services::Middleware::ExceptionReporting.report( ex, ha )
+    end
+
+    it 'supports contextual behaviour' do
+      ex = RuntimeError.new( 'D' )
+      co = { :bar => :baz }
+
+      expect( TestReporterD.instance ).to receive( :expectable_hook_d2 ).once.with( ex, co )
+      Hoodoo::Services::Middleware::ExceptionReporting.contextual_report( ex, co )
+    end
+
+    context 'falling back to normal' do
+      before :each do
+        Hoodoo::Services::Middleware::ExceptionReporting.add( TestReporterA )
+      end
+
+      # When falling back, it should extract the Rack env (mocked here) from
+      # the context and pass that to the normal reporter.
+      #
+      it 'extracts the Rack "env"' do
+        ex = RuntimeError.new( 'D' )
+        ha = { :foo => :bar }
+        co = OpenStruct.new
+
+        co.owning_interaction = OpenStruct.new
+        co.owning_interaction.rack_request = OpenStruct.new
+        co.owning_interaction.rack_request.env = ha
+
+        expect( TestReporterD.instance ).to receive( :expectable_hook_d2 ).once.with( ex, co )
+        expect( TestReporterA.instance ).to receive( :expectable_hook_a  ).once.with( ex, ha )
+
+        Hoodoo::Services::Middleware::ExceptionReporting.contextual_report( ex, co )
+      end
+
+      # If it can't extract the Rack request from the context when falling back,
+      # the normal reporter should just be called with a "nil" second parameter.
+      #
+      it 'recovers from bad contexts' do
+        ex = RuntimeError.new( 'D' )
+        co = { :bar => :baz }
+
+        expect( TestReporterD.instance ).to receive( :expectable_hook_d2 ).once.with( ex, co  )
+        expect( TestReporterA.instance ).to receive( :expectable_hook_a  ).once.with( ex, nil )
+
+        Hoodoo::Services::Middleware::ExceptionReporting.contextual_report( ex, co )
+      end
+    end
   end
 end

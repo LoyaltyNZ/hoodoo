@@ -48,12 +48,28 @@ module Hoodoo; module Services
         #
         # +e+::   Exception (or subclass) instance to be reported.
         #
-        # +env+:: Optional Rack environment hash for the inbound request, for
-        #         exception reports made in the context of Rack request
+        # +env+:: Optional Rack environment hash for the inbound request,
+        #         for exception reports made in the context of Rack request
         #         handling.
         #
         def report( e, env = nil )
           Raygun.track_exception( e, env )
+        end
+
+        # Report an exception for errors that occur within a fully handled Rack
+        # request context, with a high level processed Hoodoo representation
+        # available.
+        #
+        # +e+::       Exception (or subclass) instance to be reported.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing an
+        #             in-flight request/response cycle.
+        #
+        def contextual_report( e, context )
+          hash = context.owning_interaction.rack_request.env rescue {}
+          hash = hash.merge( :custom_data => user_data_for( context ) || { 'user_data' => 'unknown' } )
+
+          Raygun.track_exception( e, hash )
         end
       end
 
