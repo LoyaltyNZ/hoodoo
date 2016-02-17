@@ -48,13 +48,36 @@ module Hoodoo; module Services
         #
         # +e+::   Exception (or subclass) instance to be reported.
         #
-        # +env+:: Optional Rack environment hash for the inbound request, for
-        #         exception reports made in the context of Rack request
+        # +env+:: Optional Rack environment hash for the inbound request,
+        #         for exception reports made in the context of Rack request
         #         handling. In the case of Airbrake, the call may just hang
         #         unless a Rack environment is provided.
         #
-        def report( e, env = nil )
-          Airbrake.notify_or_ignore( e, :rack_env => env )
+        def report( e, env )
+          opts = { :backtrace => Kernel.caller() }
+          opts[ :rack_env ] = env unless env.nil?
+
+          Airbrake.notify_or_ignore( e, opts )
+        end
+
+        # Report an exception for errors that occur within a fully handled Rack
+        # request context, with a high level processed Hoodoo representation
+        # available.
+        #
+        # +e+::       Exception (or subclass) instance to be reported.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing an
+        #             in-flight request/response cycle.
+        #
+        def contextual_report( e, context )
+          opts = {
+            :rack_env         => context.owning_interaction.rack_request.env,
+            :backtrace        => Kernel.caller(),
+            :environment_name => Hoodoo::Services::Middleware.environment,
+            :session          => user_data_for( context ) || 'unknown'
+          }
+
+          Airbrake.notify_or_ignore( e, opts )
         end
       end
 

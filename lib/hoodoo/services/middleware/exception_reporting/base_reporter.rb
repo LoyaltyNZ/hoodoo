@@ -84,6 +84,30 @@ module Hoodoo; module Services
           raise( 'Subclasses must implement #report' )
         end
 
+        # Similar to #report, with the same caveats; but has more information
+        # available.
+        #
+        # Subclasses report an exception for errors that occur within a fully
+        # handled Rack request context, with a high level processed Hoodoo
+        # representation available.
+        #
+        # Through the protected #user_data_for method, subclasses can, if the
+        # exception reporting backend supports it, include detailed request
+        # information with their contextual exception reports.
+        #
+        # Implementation is optional. If not available, the system falls back
+        # to the less detailed #report method. If called, all parameters must
+        # be provided; none are optional.
+        #
+        # +e+::       Exception (or subclass) instance to be reported.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing an
+        #             in-flight request/response cycle.
+        #
+        def contextual_report( e, context )
+          raise( 'Subclasses may implement #contextual_report' )
+        end
+
         # Subclasses *MUST* *NOT* override this method, which is part of the
         # base class implementation and implements
         # Hoodoo::Communicators::Slow#communicate. It calls through to the
@@ -95,7 +119,66 @@ module Hoodoo; module Services
         #            instance.
         #
         def communicate( object )
-          self.report( object.exception, object.rack_env )
+
+          env = object.rack_env || ( object.context.owning_interaction.rack_request.env rescue nil )
+
+          # The 'instance_methods( false )' call pulls only instance methods
+          # strictly defined in 'self' instance, not in any superclasses.
+          # Thus we don't see the base implementation of 'contextual_report'
+          # in this source file; only an overriding implementation in a real
+          # reporter subclass.
+          #
+          # http://ruby-doc.org/core-2.1.8/Module.html#method-i-instance_methods
+          #
+          subclass_methods = self.class.instance_methods( false )
+
+          if object.context && subclass_methods.include?( :contextual_report )
+            self.contextual_report( object.exception, object.context )
+          else
+            self.report( object.exception, env )
+          end
+        end
+
+        protected
+
+        # When passed a request context, extracts information that can be given
+        # as "user data" (or similar) to a exception reporting endpoint, if it
+        # supports such a concept.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing an
+        #             in-flight request/response cycle.
+        #
+        def user_data_for( context )
+          begin
+            hash = {
+              :interaction_id =>   context.owning_interaction.interaction_id,
+              :action         => ( context.owning_interaction.requested_action          || '(unknown)' ).to_s,
+              :resource       => ( context.owning_interaction.target_interface.resource || '(unknown)' ).to_s,
+              :version        =>   context.owning_interaction.target_interface.version,
+              :request        => {
+                :locale              => context.request.locale,
+                :uri_path_components => context.request.uri_path_components,
+                :uri_path_extension  => context.request.uri_path_extension,
+                :embeds              => context.request.embeds,
+                :references          => context.request.references,
+                :headers             => context.request.headers,
+                :list                => {
+                  :offset      => context.request.list.offset,
+                  :limit       => context.request.list.limit,
+                  :sort_data   => context.request.list.sort_data,
+                  :search_data => context.request.list.search_data,
+                  :filter_data => context.request.list.filter_data
+                }
+              }
+            }
+
+            hash[ :session ] = context.session.to_h unless context.session.nil?
+            return hash
+
+          rescue
+            return nil
+
+          end
         end
       end
 

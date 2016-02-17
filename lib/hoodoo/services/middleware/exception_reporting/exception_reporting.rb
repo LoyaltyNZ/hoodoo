@@ -75,6 +75,21 @@ module Hoodoo; module Services
         @@reporter_pool.communicate( payload )
       end
 
+      # Call all added exception reporters (see ::add) to report an exception
+      # based on the context of an in-flight request/response cycle. Reporters
+      # need to support the contextual reporting mechanism. If any do not, the
+      # simpler ::report mechanism is used as a fallback.
+      #
+      # +exception+:: Exception or Exception subclass instance to report.
+      #
+      # +context+::   Hoodoo::Services::Context instance describing the
+      #               in-flight request/response cycle.
+      #
+      def self.contextual_report( exception, context )
+        payload = Payload.new( exception: exception, context: context )
+        @@reporter_pool.communicate( payload )
+      end
+
       # Wait for all executing reporter threads to catch up before continuing.
       #
       # +timeout+:: Optional timeout wait delay *for* *each* *thread*. Default
@@ -99,14 +114,21 @@ module Hoodoo; module Services
         #
         attr_accessor :rack_env
 
+        # A Hoodoo::Services::Context instance describing the in-flight
+        # request/response cycle, if there is one. May be +nil+.
+        #
+        attr_accessor :context
+
         # Initialize this instance with named parameters:
         #
         # +exception+:: Exception (or Exception subclass) instance. Mandatory.
         # +rack_env+::  Rack environment hash. Optional.
+        # +context+::   Hoodoo::Services::Context instance. Optional.
         #
-        def initialize( exception:, rack_env: nil )
+        def initialize( exception:, rack_env: nil, context: nil )
           @exception = exception
           @rack_env  = rack_env
+          @context   = context
         end
       end
     end

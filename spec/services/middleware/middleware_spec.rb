@@ -367,7 +367,7 @@ describe Hoodoo::Services::Middleware do
 
       expect(Hoodoo::Services::Middleware.environment).to receive(:test?).once.and_return(false)
       expect(Hoodoo::Services::Middleware.environment).to receive(:development?).and_return(false)
-      expect(Hoodoo::Services::Middleware::ExceptionReporting).to receive(:report).and_raise("boo!")
+      expect(Hoodoo::Services::Middleware::ExceptionReporting).to receive(:contextual_report).and_raise("boo!")
 
       # Route through to the unimplemented "list" call, so the subclass raises
       # an exception. This is tested independently elsewhere too. This causes
@@ -379,6 +379,28 @@ describe Hoodoo::Services::Middleware do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq('Middleware exception in exception handler')
+    end
+
+    it 'a matching endpoint should fall back to the basic reporting API if context is not available' do
+
+      # See previous test for details.
+
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).once.and_return(true)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:test?).once.and_return(false)
+      expect(Hoodoo::Services::Middleware.environment).to receive(:development?).and_return(false)
+
+      expect(Hoodoo::Services::Middleware::Interaction).to receive(:new) do
+        raise("boo!")
+      end
+
+      # All we care about is seeing a call to #report instead of
+      # #contextual_report as in the previous test. Things will probably
+      # fail and fall to the fallback handler eventually anyway given that
+      # we broke the attempt to create an Interaction instance deliberately,
+      # so don't worry about examining the 'get' results.
+      #
+      expect(Hoodoo::Services::Middleware::ExceptionReporting).to receive(:report)
+      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
     end
 
     # -------------------------------------------------------------------------
