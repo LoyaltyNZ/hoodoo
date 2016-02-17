@@ -1,4 +1,4 @@
-Wed, 17 Feb 2016 17:35:43 +1300
+Wed, 17 Feb 2016 17:44:08 +1300
 README.md	Thu, 14 Jan 2016 15:40:47 +1300
 lib/hoodoo.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/active.rb	Mon, 15 Feb 2016 10:21:55 +1300
@@ -91,7 +91,7 @@ lib/hoodoo/services/middleware/amqp_log_message.rb	Tue, 26 Jan 2016 14:26:24 +13
 lib/hoodoo/services/middleware/amqp_log_writer.rb	Tue, 26 Jan 2016 14:26:24 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Fri, 29 Jan 2016 15:42:39 +1300
-lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Wed, 17 Feb 2016 16:20:20 +1300
+lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Wed, 17 Feb 2016 17:42:16 +1300
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Wed, 17 Feb 2016 15:52:00 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Wed, 17 Feb 2016 17:04:40 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Wed, 17 Feb 2016 17:05:00 +1300

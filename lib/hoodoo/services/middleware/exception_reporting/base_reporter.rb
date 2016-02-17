@@ -89,10 +89,10 @@ module Hoodoo; module Services
         #
         # Subclasses report an exception for errors that occur within a fully
         # handled Rack request context, with a high level processed Hoodoo
-        # representation  available.
+        # representation available.
         #
-        # Through the protected #user_data_for method, implementations can, if
-        # the exception reporting backend supports it, include detailed request
+        # Through the protected #user_data_for method, subclasses can, if the
+        # exception reporting backend supports it, include detailed request
         # information with their contextual exception reports.
         #
         # Implementation is optional. If not available, the system falls back
@@ -119,14 +119,8 @@ module Hoodoo; module Services
         #            instance.
         #
         def communicate( object )
-          env = object.rack_env
 
-          if env.nil? && object.context
-            begin
-              env ||= object.context.owning_interaction.rack_request.env
-            rescue
-            end
-          end
+          env = object.rack_env || ( object.context.owning_interaction.rack_request.env rescue nil )
 
           # The 'instance_methods( false )' call pulls only instance methods
           # strictly defined in 'self' instance, not in any superclasses.
@@ -148,7 +142,7 @@ module Hoodoo; module Services
         protected
 
         # When passed a request context, extracts information that can be given
-        # as "user data" (or similar) to the exception reporting endpoint, if it
+        # as "user data" (or similar) to a exception reporting endpoint, if it
         # supports such a concept.
         #
         # +context+:: Hoodoo::Services::Context instance describing an
