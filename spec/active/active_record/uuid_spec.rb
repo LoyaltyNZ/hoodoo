@@ -69,4 +69,15 @@ describe Hoodoo::ActiveRecord::UUID do
     m.reload
     expect( m.id ).to eq( id )
   end
+
+  it 'should not allow a duplicate UUID at the application level' do
+    m = RSpecModelUUIDTest.new
+    m.save
+
+    n = RSpecModelUUIDTest.new
+    n.id = m.id
+
+    expect( n ).to be_invalid
+    expect( n.errors[ :id ] ).to eq( [ 'has already been taken' ] )
+  end
 end

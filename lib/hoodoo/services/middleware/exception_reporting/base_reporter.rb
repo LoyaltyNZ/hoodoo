@@ -142,7 +142,7 @@ module Hoodoo; module Services
         protected
 
         # When passed a request context, extracts information that can be given
-        # as "user data" (or similar) to a exception reporting endpoint, if it
+        # as "user data" (or similar) to an exception reporting endpoint, if it
         # supports such a concept.
         #
         # +context+:: Hoodoo::Services::Context instance describing an

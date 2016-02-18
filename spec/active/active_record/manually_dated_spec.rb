@@ -102,7 +102,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
       [ @uuid_a, 'six',   @now - 5.hours, @now - 1.hour,  @eot            ]
     ].each do | row_data |
       RSpecModelManualDateTest.new( {
-        :id              => row_data[ 0 ],
+        :uuid            => row_data[ 0 ],
         :data            => row_data[ 1 ],
         :created_at      => row_data[ 2 ],
         :updated_at      => row_data[ 2 ],

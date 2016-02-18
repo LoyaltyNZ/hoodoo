@@ -180,26 +180,9 @@ including this module.</p>
     {
       <span class="ruby-value">:uuid</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
       <span class="ruby-value">:presence</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
-      <span class="ruby-value">:uniqueness</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>,
+      <span class="ruby-value">:uniqueness</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>
     }
   )
-
-  <span class="ruby-comment"># We also have to remove ActiveRecord&#39;s default unscoped uniqueness</span>
-  <span class="ruby-comment"># check on &#39;id&#39;. We&#39;ve added an equivalent validator above.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-comment"># Sadly there is no API for this even as late as ActiveRecord 4.2,</span>
-  <span class="ruby-comment"># so we have to resort to fragile hackery.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">_validators</span>.<span class="ruby-identifier">reject!</span>() <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">ignored</span> <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">key</span> <span class="ruby-operator">==</span> <span class="ruby-value">:id</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">id_validation_callback</span> = <span class="ruby-identifier">model</span>.<span class="ruby-identifier">_validate_callbacks</span>.<span class="ruby-identifier">find</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">callback</span> <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">callback</span>.<span class="ruby-identifier">raw_filter</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Validations</span><span class="ruby-operator">::</span><span class="ruby-constant">UniquenessValidator</span> ) <span class="ruby-operator">&amp;&amp;</span>
-    <span class="ruby-identifier">callback</span>.<span class="ruby-identifier">raw_filter</span>.<span class="ruby-identifier">attributes</span> <span class="ruby-operator">==</span> [ <span class="ruby-value">:id</span> ]
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">_validate_callbacks</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">id_validation_callback</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
