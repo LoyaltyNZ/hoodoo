@@ -1,3 +1,7 @@
+## 1.3.1 (2016-02-18)
+
+* Important fix for historic manual dating variants (version 1.2.x and 1.3.0). UUID validation at the application layer for normal, non-dated resources was broken because of an overlooked piece of stale code. Fixed, including previously missing test coverage to ensure no future regression.
+
 ## 1.3.0 (2016-02-17)
 
 * Improved exception reporting through the new `contextual_report` mechanism, which the middleware now uses and the Airbrake and Raygun reporters take advantage of.
