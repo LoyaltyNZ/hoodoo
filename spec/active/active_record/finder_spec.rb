@@ -129,7 +129,90 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'acquire' do
+  context '#scoped_in' do
+    before :each do
+
+      # Get a good-enough-for-test interaction which has a context
+      # that contains a Session we can modify.
+
+      @interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+      @interaction.context = Hoodoo::Services::Context.new(
+        Hoodoo::Services::Session.new,
+        @interaction.context.request,
+        @interaction.context.response,
+        @interaction
+      )
+
+      @context = @interaction.context
+      @session = @interaction.context.session
+    end
+
+    # If security scoping works _and_ we know that it called #full_scope_for
+    # in the "internal"-ish support API, then we consider that good enough
+    # to prove that it's calling the scope engine and that engine has its
+    # own comprehensive test coverage in suport_spec.rb.
+    #
+    it 'generates appropriate scope' do
+      @session.scoping = { :authorised_uuids => [ 'uuid 1', 'uuid 2' ], :authorised_code => 'code 1' }
+
+      expect( Hoodoo::ActiveRecord::Support ).to(
+        receive( :full_scope_for ).once().with(
+          RSpecModelFinderTest, @context
+        ).and_call_original()
+      )
+
+      sql = RSpecModelFinderTest.scoped_in( @context ).to_sql
+
+      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
+                           "FROM \"r_spec_model_finder_tests\" " <<
+                           "WHERE " <<
+                             "\"r_spec_model_finder_tests\".\"uuid\" IN ('uuid 1', 'uuid 2') AND " <<
+                             "\"r_spec_model_finder_tests\".\"code\" = 'code 1'" )
+    end
+  end
+
+  # ==========================================================================
+
+  context 'acquisition scope and overrides' do
+    def expect_sql( sql, id_attr_name )
+      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
+                           "FROM \"r_spec_model_finder_tests\" " <<
+                           "WHERE (" <<
+                             "(" <<
+                               "\"r_spec_model_finder_tests\".\"#{ id_attr_name }\" = '#{ @id }' OR " <<
+                               "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'" <<
+                             ") OR " <<
+                             "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" <<
+                           ")" )
+    end
+
+    context '#acquisition_scope' do
+      it 'SQL generation is as expected' do
+        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+        expect_sql( sql, 'id' )
+      end
+    end
+
+    context '#acquire_with_id_substitute' do
+      before :each do
+        @alt_attr_name = 'foo'
+        RSpecModelFinderTest.acquire_with_id_substitute( @alt_attr_name )
+      end
+
+      after :each do
+        RSpecModelFinderTest.acquire_with_id_substitute( 'id' )
+      end
+
+      it 'SQL generation is as expected' do
+        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
+        expect_sql( sql, @alt_attr_name )
+      end
+    end
+  end
+
+  # ==========================================================================
+
+  context '#acquire' do
     it 'finds from the class' do
       found = RSpecModelFinderTest.acquire( @id )
       expect( found ).to eq(@a)
@@ -203,7 +286,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'acquire_in' do
+  context '#acquire_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
       @scoped_1.id        = 'id 1'
@@ -350,46 +433,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'acquisition scope and overrides' do
-    def expect_sql( sql, id_attr_name )
-      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
-                           "FROM \"r_spec_model_finder_tests\" " <<
-                           "WHERE (" <<
-                             "(" <<
-                               "\"r_spec_model_finder_tests\".\"#{ id_attr_name }\" = '#{ @id }' OR " <<
-                               "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'" <<
-                             ") OR " <<
-                             "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" <<
-                           ")" )
-    end
-
-    context 'acquisition_scope' do
-      it 'SQL generation is as expected' do
-        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
-        expect_sql( sql, 'id' )
-      end
-    end
-
-    context 'acquire_with_id_substitute' do
-      before :each do
-        @alt_attr_name = 'foo'
-        RSpecModelFinderTest.acquire_with_id_substitute( @alt_attr_name )
-      end
-
-      after :each do
-        RSpecModelFinderTest.acquire_with_id_substitute( 'id' )
-      end
-
-      it 'SQL generation is as expected' do
-        sql = RSpecModelFinderTest.acquisition_scope( @id ).to_sql()
-        expect_sql( sql, @alt_attr_name )
-      end
-    end
-  end
-
-  # ==========================================================================
-
-  context 'lists' do
+  context '#list' do
     it 'lists with pages, offsets and counts' do
       @list_params.offset = 1 # 0 is first record
       @list_params.limit  = 1
@@ -695,7 +739,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'list_in' do
+  context '#list_in' do
     before :each do
       @scoped_1 = RSpecModelFinderTest.new
       @scoped_1.id   = 'id 1'
