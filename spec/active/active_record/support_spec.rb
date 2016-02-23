@@ -74,6 +74,14 @@ describe Hoodoo::ActiveRecord::Support do
           t.string :bar
           t.timestamps :null => true
         end
+
+        ActiveRecord::Migration.create_table( :r_spec_full_scope_for_manually_dateds ) do | t |
+          t.string :baz
+          t.string :uuid, :length => 32
+          t.datetime :effective_start
+          t.datetime :effective_end
+          t.timestamps :null => true
+        end
       end
 
       # Note inheritance from plain ActiveRecord::Base, important for
@@ -106,6 +114,16 @@ describe Hoodoo::ActiveRecord::Support do
 
       class RSpecFullScopeForTestBaseSubclassWithoutOverrides < RSpecFullScopeForTestBaseWithDirectives
         # No overrides at all
+      end
+
+      # Manual and automatic effective dating can live in the same mixin
+      # collection but can't both be enabled at the same time, so do this
+      # in a special test class with a database table that meets the
+      # related requirements.
+      #
+      class RSpecFullScopeForManuallyDated < Hoodoo::ActiveRecord::Base
+        secure_with( :baz => :baz )
+        manual_dating_enabled()
       end
     end
 
@@ -219,6 +237,38 @@ describe Hoodoo::ActiveRecord::Support do
         manual_scope = RSpecFullScopeForTestBaseSubclassWithoutOverrides.secure( @context ).dated( @context ).translated( @context ).to_sql()
 
         expect( auto_scope ).to eq( manual_scope )
+      end
+    end
+
+    context '(with manual dating enabled)' do
+      before :each do
+        @session.scoping.baz = [ @test_scoping_value ]
+      end
+
+      context 'gets customised scope:' do
+        it 'manually dated' do
+          manual_scope = RSpecFullScopeForManuallyDated.manually_dated( @context ).to_sql()
+
+          expect( manual_scope ).to include( 'FROM "r_spec_full_scope_for_manually_dateds"' )
+          expect( manual_scope ).to include( "\"effective_end\" > #{ RSpecFullScopeForTestSubclass.sanitize( @test_time_value.to_time.round( Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) ) }" )
+        end
+
+        it 'secure' do
+          manual_scope = RSpecFullScopeForManuallyDated.secure( @context ).to_sql()
+
+          expect( manual_scope ).to include( "\"r_spec_full_scope_for_manually_dateds\".\"baz\" = '#{ @test_scoping_value }'" )
+        end
+
+        pending 'translated' do
+          raise "Scope verification for '\#translated'"
+        end
+
+        it 'everything' do
+          auto_scope   = described_class.full_scope_for( RSpecFullScopeForManuallyDated, @context ).to_sql()
+          manual_scope = RSpecFullScopeForManuallyDated.manually_dated( @context ).secure( @context ).translated( @context ).to_sql()
+
+          expect( auto_scope ).to eq( manual_scope )
+        end
       end
     end
   end

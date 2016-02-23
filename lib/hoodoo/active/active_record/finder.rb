@@ -88,6 +88,27 @@ module Hoodoo
       #
       module ClassMethods
 
+        # Returns an ActiveRecord::Relation instance representing a primitive
+        # base scope that includes various context-related aspects according
+        # to the prevailing mixins included by "this" class, if any - e.g.
+        # security, dating and/or translation.
+        #
+        # See Hoodoo::ActiveRecord::Support#full_scope_for to see the list
+        # of things that get included. If there are no "interesting" mixins,
+        # the returned scope will just return the same thing that the +all+
+        # method in ActiveRecord would have returned. Consequently, a default
+        # scope _will_ be honoured if one has been declared, though default
+        # scopes are generally considered an anti-pattern to be avoided.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        def scoped_in( context )
+          Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
+        end
+
         # "Polymorphic" find - support for finding a model by fields other
         # than just +:id+, based on a single unique identifier. Use #acquire
         # just like you'd use +find_by_id+ and only bother with it if you
@@ -159,10 +180,11 @@ module Hoodoo
         end
 
         # Implicily secure, translated, dated etc. etc. version of #acquire,
-        # according to which modules are mixed into your model class. See
-        # Hoodoo::ActiveRecord::Support#full_scope_for to see the list of
-        # things that get included in the scope according to the mixins
-        # that are in use.
+        # according to which modules are mixed into your model class. Uses
+        # #scoped_in to obtain a base scope in which to operate, so it is
+        # "mixin aware" and incorporates other Hoodoo extensions within the
+        # wider scope chain. See that method's documentation for more
+        # information.
         #
         # For example, if you are using or at some point intend to mix in and
         # use the mechanism described by the likes of
@@ -213,8 +235,7 @@ module Hoodoo
         #     SomeModel.acquire_in( context )
         #
         # The same applies to forgetting dated scopes, translated scopes, or
-        # anything else that Hoodoo::ActiveRecord::Support#full_scope_for
-        # might include for you.
+        # anything else that #scoped_in might include for you.
         #
         # Parameters:
         #
@@ -226,8 +247,7 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match.
         #
         def acquire_in( context )
-          scope = Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
-          return scope.acquire( context.request.ident )
+          return scoped_in( context ).acquire( context.request.ident )
         end
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
@@ -294,11 +314,13 @@ module Hoodoo
         #
         # Normally such a scope could only ever return a single record based
         # on an assuption of uniqueness constraints around columns which one
-        # might use in an equivalent of a +find+ call. In some instances
-        # however - e.g. a table that contains historic representations of a
-        # model as well as its 'current' representation - there may be more
-        # than one result and the returned value from this method may need to
-        # be chained in with other scopes to form a useful query.
+        # might use in an equivalent of a +find+ call. This scope is often
+        # chained on top of a wider listing scope provided by #scoped_in to
+        # create a fully context-aware, secure, dated, translated etc. query.
+        # It is possible however that the chosen +ident+ value might not
+        # resolve to a single unique record depending on how your data works
+        # and you may need to manually apply additional constraints to the
+        # returned ActiveRecord::Relation instance.
         #
         def acquisition_scope( ident )
           extra_fields = self.acquired_with()
@@ -432,9 +454,8 @@ module Hoodoo
 
         # Implicily secure, translated, dated etc. etc. version of #list,
         # according to which modules are mixed into your model class. See
-        # Hoodoo::ActiveRecord::Support#full_scope_for to see the list of
-        # things that get included in the scope according to the mixins
-        # that are in use.
+        # #scoped_in to see the list of things that get included in the
+        # scope according to the mixins that are in use.
         #
         # For example, if you have included Hoodoo::ActiveRecord::Secure,
         # this method provides you with an implicitly secure query. Read the
@@ -450,8 +471,7 @@ module Hoodoo
         #     SomeModel.list_in( context )
         #
         # The same applies to forgetting dated scopes, translated scopes, or
-        # anything else that Hoodoo::ActiveRecord::Support#full_scope_for
-        # might include for you.
+        # anything else that #scoped_in might include for you.
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
         #             context. This is typically a value passed to one of
@@ -462,8 +482,7 @@ module Hoodoo
         # query methods like +where+ or fetching from the database with +all+.
         #
         def list_in( context )
-          scope = Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
-          return scope.list( context.request.list )
+          return scoped_in( context ).list( context.request.list )
         end
 
         # Given some scope - typically that obtained from a prior call to
