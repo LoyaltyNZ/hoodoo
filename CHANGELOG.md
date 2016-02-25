@@ -1,3 +1,7 @@
+## 1.4.1 (2016-02-25)
+
+* Scoping and `require` for use of `SecureRandom` in the UUID module; else Hoodoo could have lookup problems depending on the prevailing Ruby environment.
+
 ## 1.4.0 (2016-02-23)
 
 * Introduces `Hoodoo::ActiveRecord::Finder#scoped_in`. This is essentially a public interface onto the partly-internal Support module's `full_scope_for`, allowing safe use of an interface that accesses the generalised mixin-aware scope without getting too close to the internal implementation.

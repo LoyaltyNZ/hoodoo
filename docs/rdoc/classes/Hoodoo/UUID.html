@@ -126,9 +126,9 @@ href="UUID.html#MATCH_16_PAIRS_OF_HEX_DIGITS">MATCH_16_PAIRS_OF_HEX_DIGITS</a>.<
                 <a href="javascript:toggleSource('method-c-generate_source')" id="l_method-c-generate_source">show</a>
               </p>
               <div id="method-c-generate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/uuid.rb, line 27</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/uuid.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">generate</span>
-  <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">uuid</span>().<span class="ruby-identifier">gsub!</span>( <span class="ruby-string">&#39;-&#39;</span>, <span class="ruby-string">&#39;&#39;</span> )
+  <span class="ruby-operator">::</span><span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">uuid</span>().<span class="ruby-identifier">gsub!</span>( <span class="ruby-string">&#39;-&#39;</span>, <span class="ruby-string">&#39;&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -166,7 +166,7 @@ row in a database.</p>
                 <a href="javascript:toggleSource('method-c-valid-3F_source')" id="l_method-c-valid-3F_source">show</a>
               </p>
               <div id="method-c-valid-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/uuid.rb, line 44</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/uuid.rb, line 46</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">uuid</span> )
   <span class="ruby-identifier">uuid</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">&amp;&amp;</span> ( <span class="ruby-identifier">uuid</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">MATCH_V4_UUID</span> ) <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
