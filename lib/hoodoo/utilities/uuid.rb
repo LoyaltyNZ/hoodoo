@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Hoodoo
 
   # Class that handles generation and validation of UUIDs. Whenever you
@@ -25,7 +27,7 @@ module Hoodoo
     # Generate a unique identifier. Returns a 32 character string.
     #
     def self.generate
-      SecureRandom.uuid().gsub!( '-', '' )
+      ::SecureRandom.uuid().gsub!( '-', '' )
     end
 
     # Checks if a UUID string is valid. Returns +true+ if so, else +false+.
