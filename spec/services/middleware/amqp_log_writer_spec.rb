@@ -84,7 +84,7 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       }
 
       expect( Hoodoo::Services::Middleware::AMQPLogMessage ).to receive( :new ).with( expected_hash ).and_return( {} )
-      expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, body: {} ).once
+      expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, {"body" => {}} ).once
 
       @logger.report( level, component, code, data )
     end

@@ -86,7 +86,7 @@ module Hoodoo; module Services
 
         } ).to_h()
 
-        @alchemy.send_message_to_service( @routing_key, body: message )
+        @alchemy.send_message_to_service( @routing_key, {"body" => message} )
       end
     end
 
