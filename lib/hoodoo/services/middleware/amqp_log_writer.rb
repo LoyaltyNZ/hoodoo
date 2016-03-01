@@ -84,7 +84,7 @@ module Hoodoo; module Services
           :caller_id      => session[ 'caller_id' ],
           :identity       => ( session[ 'identity' ] || {} ).to_h
 
-        } ).to_h()
+        } ).to_json()
 
         @alchemy.send_message_to_service( @routing_key, {"body" => message} )
       end
