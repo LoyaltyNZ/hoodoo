@@ -1,3 +1,7 @@
+## 1.5.0 (2016-03-02)
+
+* The Alchemy Flux gem has reached major version 1, with some API changes. Hoodoo v1.5.0 and later are compatible with that new API. Previous versions of Hoodoo are either compatible with open source Alchemy Flux v0.x, or the old closed source Alchemy AMQ equivalent only.
+
 ## 1.4.1 (2016-02-25)
 
 * Scoping and `require` for use of `SecureRandom` in the UUID module; else Hoodoo could have lookup problems depending on the prevailing Ruby environment.
