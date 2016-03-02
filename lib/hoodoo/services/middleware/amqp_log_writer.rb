@@ -70,13 +70,13 @@ module Hoodoo; module Services
         data[ :id ] ||= Hoodoo::UUID.generate()
 
         session = data[ :session ] || {}
-        message = Hoodoo::Services::Middleware::AMQPLogMessage.new( {
+        message = {
 
           :id             => data[ :id ],
           :level          => level,
           :component      => component,
           :code           => code,
-          :reported_at    => Time.now,
+          :reported_at    => Time.now.iso8601( 12 ),
 
           :data           => data,
 
@@ -84,9 +84,9 @@ module Hoodoo; module Services
           :caller_id      => session[ 'caller_id' ],
           :identity       => ( session[ 'identity' ] || {} ).to_h
 
-        } ).to_h()
+        }.to_json()
 
-        @alchemy.send_message_to_queue( @routing_key, message )
+        @alchemy.send_message_to_service( @routing_key, { "body" => message } )
       end
     end
 

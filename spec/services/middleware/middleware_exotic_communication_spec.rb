@@ -102,7 +102,7 @@ describe Hoodoo::Services::Middleware do
           mock_query[ 'filter' ] = URI.encode_www_form( mock_query[ 'filter' ] ) if ( mock_query[ 'filter' ].is_a?( ::Hash ) )
         end
 
-        expect( @mock_alchemy ).to receive( :send_message_to_resource ).once do | message |
+        expect( @mock_alchemy ).to receive( :send_request_to_resource ).once do | message |
           expect( message ).to eq( {
             'scheme'     => 'http',
             'verb'       => mock_method,

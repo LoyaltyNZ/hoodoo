@@ -214,7 +214,7 @@ describe Hoodoo::Services::Middleware do
     it 'has the expected "development" mode loggers' do
       force_logging_to( 'development' )
 
-      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_queue).at_least(:once)
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_service).at_least(:once)
       spec_helper_silence_stdout() do
         get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       end
@@ -228,7 +228,7 @@ describe Hoodoo::Services::Middleware do
     it 'has the expected "production" mode loggers' do
       force_logging_to( 'production' )
 
-      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_queue).at_least(:once)
+      expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_service).at_least(:once)
       get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
       instances = Hoodoo::Services::Middleware.logger.instances

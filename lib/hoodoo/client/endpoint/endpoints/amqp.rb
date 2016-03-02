@@ -164,7 +164,7 @@ module Hoodoo
               http_message[ 'session_id' ] = self.session_id()
             end
 
-            amqp_response = self.alchemy().send_message_to_resource( http_message )
+            amqp_response = self.alchemy().send_request_to_resource( http_message )
 
             description_of_response              = DescriptionOfResponse.new
             description_of_response.action       = action
