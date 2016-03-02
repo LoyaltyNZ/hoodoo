@@ -60,7 +60,7 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       level          = 'warn'
       component      = 'test_component'
       code           = 'test_code'
-      reported_at    = Time.now
+      reported_at    = Time.now.iso8601
       id             = Hoodoo::UUID.generate
       interaction_id = Hoodoo::UUID.generate
       data           = {
@@ -83,8 +83,8 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
         :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h )
       }
 
-      expect( Hoodoo::Services::Middleware::AMQPLogMessage ).to receive( :new ).with( expected_hash ).and_return( {} )
-      expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, {"body" => {}} ).once
+
+      expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, {"body" => expected_hash.to_json} ).once
 
       @logger.report( level, component, code, data )
     end
