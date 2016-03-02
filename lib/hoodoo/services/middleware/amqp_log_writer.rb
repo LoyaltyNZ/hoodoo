@@ -76,7 +76,7 @@ module Hoodoo; module Services
           :level          => level,
           :component      => component,
           :code           => code,
-          :reported_at    => Time.now.iso8601,
+          :reported_at    => Time.now.strftime('%Y-%m-%d %H:%M:%S.%12N %Z'), #requires more accuracy than iso8601 method
 
           :data           => data,
 
