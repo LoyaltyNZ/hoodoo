@@ -76,7 +76,7 @@ module Hoodoo; module Services
           :level          => level,
           :component      => component,
           :code           => code,
-          :reported_at    => Time.now.strftime('%Y-%m-%d %H:%M:%S.%12N %Z'), #requires more accuracy than iso8601 method
+          :reported_at    => Time.now.iso8601( 12 ),
 
           :data           => data,
 
@@ -86,7 +86,7 @@ module Hoodoo; module Services
 
         }.to_json()
 
-        @alchemy.send_message_to_service( @routing_key, {"body" => message} )
+        @alchemy.send_message_to_service( @routing_key, { "body" => message } )
       end
     end
 
