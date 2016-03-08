@@ -163,10 +163,10 @@ describe Hoodoo::ActiveRecord::Finder do
 
       sql = RSpecModelFinderTest.scoped_in( @context ).to_sql
 
-      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
-                           "FROM \"r_spec_model_finder_tests\" " <<
-                           "WHERE " <<
-                             "\"r_spec_model_finder_tests\".\"uuid\" IN ('uuid 1', 'uuid 2') AND " <<
+      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* " \
+                           "FROM \"r_spec_model_finder_tests\" "     \
+                           "WHERE "                                  \
+                             "\"r_spec_model_finder_tests\".\"uuid\" IN ('uuid 1', 'uuid 2') AND " \
                              "\"r_spec_model_finder_tests\".\"code\" = 'code 1'" )
     end
   end
@@ -175,14 +175,14 @@ describe Hoodoo::ActiveRecord::Finder do
 
   context 'acquisition scope and overrides' do
     def expect_sql( sql, id_attr_name )
-      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* "<<
-                           "FROM \"r_spec_model_finder_tests\" " <<
-                           "WHERE (" <<
-                             "(" <<
-                               "\"r_spec_model_finder_tests\".\"#{ id_attr_name }\" = '#{ @id }' OR " <<
-                               "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'" <<
-                             ") OR " <<
-                             "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" <<
+      expect( sql ).to eq( "SELECT \"r_spec_model_finder_tests\".* " \
+                           "FROM \"r_spec_model_finder_tests\" "     \
+                           "WHERE ("                                 \
+                             "("                                     \
+                               "\"r_spec_model_finder_tests\".\"#{ id_attr_name }\" = '#{ @id }' OR " \
+                               "\"r_spec_model_finder_tests\".\"uuid\" = '#{ @id }'"                  \
+                             ") OR "                                               \
+                             "\"r_spec_model_finder_tests\".\"code\" = '#{ @id }'" \
                            ")" )
     end
 
