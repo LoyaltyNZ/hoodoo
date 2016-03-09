@@ -1,3 +1,7 @@
+## 1.5.1 (2016-03-09)
+
+* No user-facing changes. Internal minor code style change in a test; otherwise, only releasing 1.5.1 to check that an updated RubyGems API key works properly for auto-publishing from Travis.
+
 ## 1.5.0 (2016-03-02)
 
 * The Alchemy Flux gem has reached major version 1, with some API changes. Hoodoo v1.5.0 and later are compatible with that new API. Previous versions of Hoodoo are either compatible with open source Alchemy Flux v0.x, or the old closed source Alchemy AMQ equivalent only.
