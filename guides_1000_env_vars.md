@@ -20,7 +20,7 @@ Hoodoo itself responds to some of these, while the service shell adds a few more
 
 ### Hoodoo
 
-#### `AMQ_ENDPOINT`
+#### `AMQ_URI`
 
 Used by Alchemy to determine the location of the AMQP server; its presence is taken by Hoodoo to indicate that a queue-based environment is in use.
 

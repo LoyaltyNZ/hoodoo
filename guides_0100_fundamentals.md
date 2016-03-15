@@ -424,7 +424,7 @@ The `bin` folder contains optional helpers.
 
 #### Database and environments
 
-The shell is more "opinionated" than Hoodoo by necessity. It needs to know where it's going to include files, the requirement order and so-on, and where to look to get everything set up for running under Rack locally, or in deployed environments over conventional HTTP or HTTP-over-[AMQP](https://www.amqp.org) via [Alchemy](https://github.com/LoyaltyNZ/alchemy-amq). A Rails-like configuration approach is taken with a `config` folder containing database information, environment-specific files -- remember, that's `RACK_ENV`, **NOT** `RAILS_ENV`! -- and the `initializers` folder for custom startup code. It contains out-of-box ways to easily _optionally_ enable [Raygun](https://raygun.io), [Airbrake](https://airbrake.io) and/or [NewRelic](https://newrelic.com).
+The shell is more "opinionated" than Hoodoo by necessity. It needs to know where it's going to include files, the requirement order and so-on, and where to look to get everything set up for running under Rack locally, or in deployed environments over conventional HTTP or HTTP-over-[AMQP](https://www.amqp.org) via [Alchemy](https://github.com/LoyaltyNZ/alchemy-framework). A Rails-like configuration approach is taken with a `config` folder containing database information, environment-specific files -- remember, that's `RACK_ENV`, **NOT** `RAILS_ENV`! -- and the `initializers` folder for custom startup code. It contains out-of-box ways to easily _optionally_ enable [Raygun](https://raygun.io), [Airbrake](https://airbrake.io) and/or [NewRelic](https://newrelic.com).
 
 The Shell introduces the idea of three environments:
 

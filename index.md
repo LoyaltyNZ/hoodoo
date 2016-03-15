@@ -14,7 +14,7 @@ Hoodoo is a [Ruby](https://www.ruby-lang.org/) [Gem](https://www.ruby-lang.org/e
 
 Hoodoo's code has 100% coverage via [RDoc](http://rdoc.rubyforge.org) and 100% non-trivial automated test coverage via [RSpec](http://rspec.info) according to [RCov](https://github.com/relevance/rcov). Out-of-the-box logging support includes I/O stream, file and [LogEntries](https://logentries.com/) writers, and exception reporters include [Raygun](https://raygun.io) and [Airbrake](https://airbrake.io). It's easy to write new log and exception sinks if you need them.
 
-Hoodoo services can run under any Rack-compliant web server but for truly decoupled, scalable and highly available deployments, use [Alchemy](https://github.com/LoyaltyNZ/alchemy-amq/).
+Hoodoo services can run under any Rack-compliant web server but for truly decoupled, scalable and highly available deployments, use [Alchemy](https://github.com/LoyaltyNZ/alchemy-framework/).
 
 ### The Hoodoo API Specification
 
