@@ -968,6 +968,23 @@ describe Hoodoo::Client do
         Hoodoo::Services::Middleware.set_test_session( nil )
 
         result = @endpoint.list()
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
+      end
+
+      it 'handles malformed sessions when retrying' do
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        Hoodoo::Services::Middleware.set_test_session( nil )
+
+        expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ) { | ignored, context |
+          context.response.body = { 'not' => 'a session' }
+        }
+
+        result = @endpoint.list()
+
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
       end
