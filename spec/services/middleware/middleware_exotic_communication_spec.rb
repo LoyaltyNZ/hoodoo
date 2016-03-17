@@ -456,7 +456,7 @@ describe Hoodoo::Services::Middleware do
         expect( errors[ 'errors' ][ 0 ] ).to_not be_nil
 
         expect( errors[ 'errors' ][ 0 ][ 'code'      ] ).to eq( 'platform.fault' )
-        expect( errors[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200' )
+        expect( errors[ 'errors' ][ 0 ][ 'message'   ] ).to eq( 'Could not parse retrieved body data despite receiving HTTP status code 200' )
         expect( errors[ 'errors' ][ 0 ][ 'reference' ] ).to eq( "#{ bad_body_data }" )
       end
     end

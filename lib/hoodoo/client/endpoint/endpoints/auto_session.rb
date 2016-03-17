@@ -128,26 +128,31 @@ module Hoodoo
 
             if @session_endpoint.session_id.nil?
               session_creation_result = acquire_session_for( action )
-              return session_creation_result unless session_creation_result.nil?
+              return session_creation_result unless session_creation_result === :success
             else
               @wrapped_endpoint.session_id = @session_endpoint.session_id
             end
 
-            result = @wrapped_endpoint.send( action, *args )
+            result      = @wrapped_endpoint.send( action, *args )
+            bad_session = result.platform_errors.has_errors? &&
+                          result.platform_errors.errors.find do | error_hash |
+                            error_hash[ 'code' ] == 'platform.invalid_session'
+                          end
 
-            if result.platform_errors.has_errors? &&
-               result.platform_errors.errors.size == 1 &&
-               result.platform_errors.errors[ 0 ][ 'code' ] == 'platform.invalid_session'
-
-              session_creation_result = acquire_session_for( action )
-              return session_creation_result unless session_creation_result.nil?
-              return @wrapped_endpoint.send( action, *args )
-            else
+            if bad_session == false
               return result
+            else
+              session_creation_result = acquire_session_for( action )
+
+              if session_creation_result === :success
+                return @wrapped_endpoint.send( action, *args )
+              else
+                return session_creation_result
+              end
             end
           end
 
-          # Acquire a sessino using the configured session endpoint. If this
+          # Acquire a session using the configured session endpoint. If this
           # fails, the failure result is returned. If it seems to succeed but
           # a session ID cannot be found, an internal 'generic.malformed'
           # result is generated and returned.
@@ -156,11 +161,12 @@ module Hoodoo
           # action at hand - an augmented array for lists, else an augmented
           # hash. It can be returned directly up to the calling layer.
           #
-          # Returns +nil+ if all goes well; #session_id will be updated.
+          # Returns +:success+ if all goes well; #session_id will be updated.
           #
           # +action+:: As given to #auto_retry.
           #
           def acquire_session_for( action )
+
             session_creation_result = @session_endpoint.create(
               'caller_id'             => @caller_id,
               'authentication_secret' => @caller_secret
@@ -184,7 +190,7 @@ module Hoodoo
               return data
             else
               @wrapped_endpoint.session_id = @session_endpoint.session_id
-              return nil
+              return :success
             end
           end
 
