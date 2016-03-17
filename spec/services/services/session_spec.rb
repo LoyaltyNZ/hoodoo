@@ -293,7 +293,13 @@ describe Hoodoo::Services::Session do
       raise 'Mock Memcached connection failure'
     end
 
-    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn ).once.and_call_original
+    expect( Hoodoo::Services::Middleware.logger ).to(
+      receive( :warn ).once.with(
+        'Hoodoo::Services::Session\\#load_from_memcached!: Session loading failed - connection fault or session corrupt',
+        'Mock Memcached connection failure'
+      ).and_call_original
+    )
+
     expect( loader.load_from_memcached!( '1234' ) ).to eq( :fail )
   end
 
@@ -302,6 +308,17 @@ describe Hoodoo::Services::Session do
       :caller_id => '0987',
       :caller_version => 1
     )
+
+
+
+
+    Continue to try and make this test *properly* expect the sequence of failures that
+    should occur and check for the correct exception message. We need to test the new code
+    path of an exception, versus stats from Dalli simply returning 'nil', and see that we
+    do indeed get the Dalli error in the log data.
+
+
+
 
     expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :set ).once do
       raise 'Mock Memcached connection failure'
