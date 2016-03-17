@@ -611,6 +611,9 @@ module Hoodoo
         #                +assign_attributes+ method) in order to perform the
         #                update. If omitted, +context.request.body+ is used.
         #
+        # If both +ident+ _and_ +attributes+ are supplied then the first
+        # parameter providing +context+ may be +nil+.
+        #
         # +scope+::      ActiveRecord::Relation instance providing the scope
         #                to use for database locks and acquiring the record
         #                to update. Defaults to #acquisition_scope for the
