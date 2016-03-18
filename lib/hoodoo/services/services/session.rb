@@ -179,7 +179,7 @@ module Hoodoo
                                                        self.caller_version,
                                                        mclient )
 
-          return result unless result === :ok
+          return result unless result.equal?( :ok )
 
           # Must set this before saving, even though the delay between
           # setting this value and Memcached actually saving the value

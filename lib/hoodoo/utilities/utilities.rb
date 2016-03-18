@@ -125,7 +125,7 @@ module Hoodoo
       # http://stackoverflow.com/questions/9381553/ruby-merge-nested-hash
       #
       merger = proc { | key, v1, v2 |
-        Hash === v1 && Hash === v2 ? v1.merge( v2, &merger ) : v2.nil? ? v1 : v2
+        v1.is_a?( Hash ) && v2.is_a?( Hash ) ? v1.merge( v2, &merger ) : v2.nil? ? v1 : v2
       }
 
       return target_hash.merge( inbound_hash, &merger )

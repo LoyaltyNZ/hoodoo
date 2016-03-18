@@ -1091,7 +1091,7 @@ describe Hoodoo::Services::Middleware do
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.fault')
-      expect(result['errors'][0]['message']).to eq('Could not parse body data returned from inter-resource call despite receiving HTTP status code 200')
+      expect(result['errors'][0]['message']).to eq('Could not parse retrieved body data despite receiving HTTP status code 200')
     end
 
     context 'X-Assume-Identity-Of' do

@@ -94,7 +94,7 @@ module Hoodoo
       #
       #       # ...maybe make other changes to model_instance, then...
       #
-      #       unless model_instance.persist_in( context ) === :success
+      #       unless model_instance.persist_in( context ).equal?( :success )
       #
       #         # Error condition. If you're using the error handler mixin
       #         # in Hoodoo::ActiveRecord::ErrorMapping, do this:

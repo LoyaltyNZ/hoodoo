@@ -92,7 +92,7 @@ module Hoodoo
       #       model         = SomeModel.new
       #       model.param_1 = 'something based on inbound creation data'
       #
-      #       unless model.persist_in( context ) === :success
+      #       unless model.persist_in( context ).equal?( :success )
       #         context.response.add_errors( model.platform_errors )
       #         return
       #       end
@@ -323,7 +323,7 @@ module Hoodoo
             reached_field = field
           end
 
-          if reached_field === fields.last
+          if reached_field == fields.last
             attribute_name  = leaf_field
             target_instance = leaf_instance
           end
