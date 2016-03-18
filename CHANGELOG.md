@@ -1,38 +1,46 @@
+## 1.5.2 (2016-03-18)
+
+* Correct misuse of `===` which wasn't causing any known bugs but might have caused issues for edge cases (spotted by [Rory Stephenson](https://github.com/thelollies)) (https://github.com/LoyaltyNZ/hoodoo/pull/147 / https://github.com/LoyaltyNZ/hoodoo/pull/147/commits/f435aa045444d3bf183e000b3e88b3bc16704863).
+
+* Auto-session acquisition in `Hoodoo::Client` deliberately only retried if an error response came back with just one single "invalid session" entry. More recent changes in Hoodoo introduced middleware conditions under which the payload might contain additional entries, so the client code has been updated to be more resilient and spot any "invalid session" in an error collection. Test coverage bolstered (https://github.com/LoyaltyNZ/hoodoo/pull/147).
+
+* Minor documentation improvement (https://github.com/LoyaltyNZ/hoodoo/pull/146).
+
 ## 1.5.1 (2016-03-09)
 
-* No user-facing changes. Internal minor code style change in a test; otherwise, only releasing 1.5.1 to check that an updated RubyGems API key works properly for auto-publishing from Travis.
+* No user-facing changes. Internal minor code style change in a test; otherwise, only releasing 1.5.1 to check that an updated RubyGems API key works properly for auto-publishing from Travis (https://github.com/LoyaltyNZ/hoodoo/pull/144 with drive-by internal improvement in https://github.com/LoyaltyNZ/hoodoo/pull/143).
 
 ## 1.5.0 (2016-03-02)
 
-* The Alchemy Flux gem has reached major version 1, with some API changes. Hoodoo v1.5.0 and later are compatible with that new API. Previous versions of Hoodoo are either compatible with open source Alchemy Flux v0.x, or the old closed source Alchemy AMQ equivalent only.
+* The Alchemy Flux gem has reached major version 1, with some API changes. Hoodoo v1.5.0 and later are compatible with that new API. Previous versions of Hoodoo are either compatible with open source Alchemy Flux v0.x, or the old closed source Alchemy AMQ equivalent only (https://github.com/LoyaltyNZ/hoodoo/pull/141).
 
 ## 1.4.1 (2016-02-25)
 
-* Scoping and `require` for use of `SecureRandom` in the UUID module; else Hoodoo could have lookup problems depending on the prevailing Ruby environment.
+* Scoping and `require` for use of `SecureRandom` in the UUID module; else Hoodoo could have lookup problems depending on the prevailing Ruby environment (https://github.com/LoyaltyNZ/hoodoo/pull/140).
 
 ## 1.4.0 (2016-02-23)
 
-* Introduces `Hoodoo::ActiveRecord::Finder#scoped_in`. This is essentially a public interface onto the partly-internal Support module's `full_scope_for`, allowing safe use of an interface that accesses the generalised mixin-aware scope without getting too close to the internal implementation.
+* Introduces `Hoodoo::ActiveRecord::Finder#scoped_in`. This is essentially a public interface onto the partly-internal Support module's `full_scope_for`, allowing safe use of an interface that accesses the generalised mixin-aware scope without getting too close to the internal implementation (https://github.com/LoyaltyNZ/hoodoo/pull/139).
 
 ## 1.3.1 (2016-02-18)
 
-* Important fix for historic manual dating variants (version 1.2.x and 1.3.0). UUID validation at the application layer for normal, non-dated resources was broken because of an overlooked piece of stale code. Fixed, including previously missing test coverage to ensure no future regression.
+* Important fix for historic manual dating variants (version 1.2.x and 1.3.0). UUID validation at the application layer for normal, non-dated resources was broken because of an overlooked piece of stale code. Fixed, including previously missing test coverage to ensure no future regression (https://github.com/LoyaltyNZ/hoodoo/pull/138).
 
 ## 1.3.0 (2016-02-17)
 
-* Improved exception reporting through the new `contextual_report` mechanism, which the middleware now uses and the Airbrake and Raygun reporters take advantage of.
+* Improved exception reporting through the new `contextual_report` mechanism, which the middleware now uses and the Airbrake and Raygun reporters take advantage of (https://github.com/LoyaltyNZ/hoodoo/pull/136).
 
 ## 1.2.3 (2016-02-16)
 
-* Oversight in Creator mixin's `new_in` corrected; it was not accounting for manual dating. Test coverage bolstered. Fix for automatic dating module's `dating_enabled?` method, test coverage also bolstered. Improved documentation for manual dating mixin.
+* Oversight in Creator mixin's `new_in` corrected; it was not accounting for manual dating. Test coverage bolstered. Fix for automatic dating module's `dating_enabled?` method, test coverage also bolstered. Improved documentation for manual dating mixin (https://github.com/LoyaltyNZ/hoodoo/pull/133).
 
 ## 1.2.2 (2016-02-15)
 
-* Rapid iteration over 1.2.1 to help avoid a pitfall of inbound timestamps being set to high accuracy but queries based on the same creation time being rounded. If rounded down, the query would fall before the creation time of a resource and 'not find' it. By rounding inbound timestamps, this problem is circumvented.
+* Rapid iteration over 1.2.1 to help avoid a pitfall of inbound timestamps being set to high accuracy but queries based on the same creation time being rounded. If rounded down, the query would fall before the creation time of a resource and 'not find' it. By rounding inbound timestamps, this problem is circumvented (https://github.com/LoyaltyNZ/hoodoo/pull/132).
 
 ## 1.2.1 (2016-02-15)
 
-* Rapid iteration over 1.2.0 to recommend a better indexing strategy and remove an at-publishing known problem with 1.2.0 and updates happening faster than the configured date/time accuracy.
+* Rapid iteration over 1.2.0 to recommend a better indexing strategy and remove an at-publishing known problem with 1.2.0 and updates happening faster than the configured date/time accuracy (https://github.com/LoyaltyNZ/hoodoo/pull/131).
 
 ## 1.2.0 (2016-02-15)
 
@@ -44,9 +52,11 @@
 
 * Routine maintenance `bundle update`.
 
+* https://github.com/LoyaltyNZ/hoodoo/pull/129, https://github.com/LoyaltyNZ/hoodoo/pull/130.
+
 ## 1.1.3 (2016-02-04)
 
-* More efficient `acquire` method in ActiveRecord `Finder` support module. Now uses the AREL table to only ever make a single database query via `OR`. Related new method `acquisition_scope` is provided for convenience.
+* More efficient `acquire` method in ActiveRecord `Finder` support module. Now uses the AREL table to only ever make a single database query via `OR`. Related new method `acquisition_scope` is provided for convenience (https://github.com/LoyaltyNZ/hoodoo/pull/128).
 
 ## 1.1.2 (2016-02-03)
 
@@ -56,13 +66,15 @@
 
 * Unused support methods `sanitised_column_string` and `sanitised_column_string_for` in Dating module removed; internal callers use `quoted_column_name_string` as a replacement for both.
 
+* https://github.com/LoyaltyNZ/hoodoo/pull/126.
+
 ## 1.1.1 (2016-01-29)
 
-* New optional named parameter in ActiveRecord dating support code - `#dated`, `#dated_at` and `#dated_historical_and_current` now let you specify the columns for the underlying `SELECT`s, giving an effect equivalent to that arising when an Array is passed to ActiveRecord's own `#select` method. This can be used to create lighter weight dated queries if only a subset of columns in the result are interesting.
+* New optional named parameter in ActiveRecord dating support code - `#dated`, `#dated_at` and `#dated_historical_and_current` now let you specify the columns for the underlying `SELECT`s, giving an effect equivalent to that arising when an Array is passed to ActiveRecord's own `#select` method. This can be used to create lighter weight dated queries if only a subset of columns in the result are interesting (https://github.com/LoyaltyNZ/hoodoo/pull/125).
 
 ## 1.1.0 (2016-01-26)
 
-* Updated to support new open source Alchemy Flux gem in place of previously stubbed, proprietary Alchemy AMQ gem, for running on-queue under the wider Alchemy architecture.
+* Updated to support new open source Alchemy Flux gem in place of previously stubbed, proprietary Alchemy AMQ gem, for running on-queue under the wider Alchemy architecture (https://github.com/LoyaltyNZ/hoodoo/pull/124).
 
 ## 1.0.5 (2016-01-14)
 
@@ -71,6 +83,8 @@
 * Add `X-Assume-Identity-Of` support, described in the [API specification](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification/#http_x_assume_identity_of) in full.
 
 * RDoc generation update via SDoc changes to avoid file modification times within different repositories causing diff noise.
+
+* https://github.com/LoyaltyNZ/hoodoo/pull/119, https://github.com/LoyaltyNZ/hoodoo/pull/120.
 
 ## 1.0.4 (2016-01-11)
 
