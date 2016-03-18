@@ -264,7 +264,7 @@ module Hoodoo
         #            Hoodoo::Services::Middleware::ALLOWED_ACTIONS.
         #
         def response_class_for( action )
-          return action === :list ? Hoodoo::Client::AugmentedArray : Hoodoo::Client::AugmentedHash
+          return action.equal?( :list ) ? Hoodoo::Client::AugmentedArray : Hoodoo::Client::AugmentedHash
         end
 
         # Utility method to aid subclass authors. Not usually overridden.

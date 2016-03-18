@@ -72,7 +72,7 @@ module Hoodoo; module Services; class Middleware
       # Returns +true+ if Hoodoo has previously called #using_test_session.
       #
       def using_test_session?
-        @using_test_session === true
+        @using_test_session == true
       end
 
       # Create a new Interaction instance, acquiring a new interaction

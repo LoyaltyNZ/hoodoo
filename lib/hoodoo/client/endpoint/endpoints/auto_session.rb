@@ -128,7 +128,7 @@ module Hoodoo
 
             if @session_endpoint.session_id.nil?
               session_creation_result = acquire_session_for( action )
-              return session_creation_result unless session_creation_result === :success
+              return session_creation_result unless session_creation_result.equal?( :success )
             else
               @wrapped_endpoint.session_id = @session_endpoint.session_id
             end
@@ -144,7 +144,7 @@ module Hoodoo
             else
               session_creation_result = acquire_session_for( action )
 
-              if session_creation_result === :success
+              if session_creation_result.equal?( :success )
                 return @wrapped_endpoint.send( action, *args )
               else
                 return session_creation_result

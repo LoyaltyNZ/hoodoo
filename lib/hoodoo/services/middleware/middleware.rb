@@ -169,7 +169,7 @@ module Hoodoo; module Services
       } ).to_h,
       'scoping'        => {
         'authorised_http_headers' => Hoodoo::Client::Headers::HEADER_TO_PROPERTY.map() { | key, sub_hash |
-          sub_hash[ :header ] if sub_hash[ :secured ] === true
+          sub_hash[ :header ] if sub_hash[ :secured ] == true
         }.compact
       }
     } )
@@ -2318,7 +2318,7 @@ module Hoodoo; module Services
         extension = match_data[ 2 ]
 
       elsif ( match_data[ 1 ] == '/' )
-        remaining_path_components = match_data[ 2 ].split( '/' ).reject { | str | str === '' }
+        remaining_path_components = match_data[ 2 ].split( '/' ).reject { | str | str == '' }
         last_item                 = remaining_path_components.last
 
         unless ( last_item.nil? )
