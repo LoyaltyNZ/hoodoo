@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do | s |
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2016-03-09'
+  s.date        = '2016-03-18'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = [ 'Loyalty New Zealand' ]

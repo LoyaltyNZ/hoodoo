@@ -389,7 +389,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_destruction_in_source')" id="l_method-i-manually_dated_destruction_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_destruction_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 741</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 744</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span>,
                                    <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                                    <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span> <span class="ruby-identifier">all</span>() )
@@ -497,7 +497,12 @@ used.</p>
 <p>Hash of attributes to write (via ActiveRecord&#39;s
 <code>assign_attributes</code> method) in order to perform the update. If
 omitted, <code>context.request.body</code> is used.</p>
-</dd><dt><code>scope</code>
+</dd></dl>
+
+<p>If both <code>ident</code> <em>and</em> <code>attributes</code> are
+supplied then the first parameter providing <code>context</code> may be
+<code>nil</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>scope</code>
 <dd>
 <p>ActiveRecord::Relation instance providing the scope to use for database
 locks and acquiring the record to update. Defaults to acquisition_scope for
@@ -513,7 +518,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_update_in_source')" id="l_method-i-manually_dated_update_in_source">show</a>
               </p>
               <div id="method-i-manually_dated_update_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 619</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 622</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">manually_dated_update_in</span>( <span class="ruby-identifier">context</span>,
                               <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                               <span class="ruby-identifier">attributes</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">body</span>,

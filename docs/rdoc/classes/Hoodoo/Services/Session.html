@@ -763,7 +763,7 @@ problem).</p>
                                                  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>,
                                                  <span class="ruby-identifier">mclient</span> )
 
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">===</span> <span class="ruby-value">:ok</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:ok</span> )
 
     <span class="ruby-comment"># Must set this before saving, even though the delay between</span>
     <span class="ruby-comment"># setting this value and Memcached actually saving the value</span>
