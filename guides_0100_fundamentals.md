@@ -38,9 +38,11 @@ At a minimum, a resource implementation consists of between one and five instanc
 
 ### Routing
 
-The interface for a resource names that resource and declares where its endpoint is, in terms of a URI; this is the only sort of routing you get in Hoodoo. Each interface is versioned, with a default version of 1. An example path to a resource `Foo` at path `foos` in version `2` would be: `api.test.com/v2/foos`.
+The interface for a resource names that resource and declares where its endpoint is, in terms of a URI; this is the only sort of routing you get in Hoodoo. Each interface is versioned, with a default version of 1.
 
-Hoodoo uses Rails-like pluralisation for its default routing discovery convention in the Ruby client side component, `Hoodoo::Client`. If you're intending to use this or something like it, sticking to [ActiveSupport pluralisation rules](http://api.rubyonrails.org/classes/ActiveSupport/Inflector.html#method-i-pluralize) for mapping between resource names and endpoint locations will make your life easier.
+* In Hoodoo versions prior to 1.1.0, Hoodoo used Rails-like pluralisation and humanisation for its default route convention. As a result, an example path to version `2` of a resource `Foo` is `.../v2/foos`. Hoodoo uses this as the default route discovery in the Ruby client-side component, `Hoodoo::Client`. If you're intending to use this or something like it, sticking to [ActiveSupport pluralisation rules](http://api.rubyonrails.org/classes/ActiveSupport/Inflector.html#method-i-pluralize) for mapping between resource names and endpoint locations will make your life easier.
+
+* In Hoodoo version 1.1.0 or later, dual-route support is provided. An additional example path to version `2` of a resource `Foo` is simply `.../2/Foo`. The earlier humanised routing is present if you want to use it, but the simpler form is preferred. The newer path format requires no complex string transformations to get from resource name and version to path.
 
 ### Content types
 
