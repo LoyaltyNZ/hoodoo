@@ -1353,6 +1353,35 @@ module Hoodoo; module Services
     def respond_for( interaction, preflight = false )
       interaction.context.response.body = '' if preflight
 
+      # Oddly placed code for efficiency and sanity.
+      #
+      # When #log_outbound_response is called below, it would make sense to
+      # use its existing code path for logging errors and include a variant of
+      # the "if" below to add the X-Error-Logged-Via-Alchemy HTTP header if
+      # required down at that level.
+      #
+      # However, we want the Rack response payload all wrapped up for the log
+      # and it's generated here, then passed in; somehow the logging method
+      # would need to update the now-compiled Rack data, or we generate the
+      # Rack data again on exit, but then the logged Rack data would be wrong.
+      #
+      # To solve all this, just deal with the an-error-was-logged header here,
+      # before we log anything or generate Rack information.
+
+      if (
+           interaction.context.response.halt_processing? &&
+           self.class.on_queue?  &&
+           defined?( @@alchemy ) &&
+           @@logger.include_class?( Hoodoo::Services::Middleware::AMQPLogWriter )
+         )
+
+        interaction.context.response.add_header(
+          'X-Error-Logged-Via-Alchemy',
+          'yes',
+          true
+        )
+      end
+
       rack_data = interaction.context.response.for_rack()
       log_outbound_response( interaction, rack_data )
 

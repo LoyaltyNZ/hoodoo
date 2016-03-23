@@ -235,6 +235,87 @@ describe Hoodoo::Services::Middleware do
       expect( instances[ 0 ] ).to be_a( Hoodoo::Services::Middleware::AMQPLogWriter )
       expect( Hoodoo::Services::Middleware.logger.level ).to eq( :info )
     end
+
+    # When logging to Alchemy, the middleware should set an
+    # "X-Error-Logged-Via-Alchemy" HTTP header. An Alchemy router/edge
+    # splitter component can use this to avoid double-logging error data
+    # if it implements a middleware-based approach to error reporting.
+    #
+    context '"X-Error-Logged-Via-Alchemy" HTTP header is set for' do
+      before :each do
+        force_logging_to( 'development' )
+        expect_any_instance_of(FakeAlchemy).to receive(:send_message_to_service).at_least(:once)
+      end
+
+      it 'service errors' do
+        expect_any_instance_of( TestLogImplementation ).to receive( :show ) do | instance, context |
+          context.response.not_found( context.request.ident )
+        end
+
+        spec_helper_silence_stdout do
+          get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+
+        expect( last_response.headers[ 'X-Error-Logged-Via-Alchemy' ] ).to eq( 'yes' )
+        expect( last_response.status ).to eq( 404 )
+      end
+
+      it 'service exceptions' do
+        expect_any_instance_of( TestLogImplementation ).to receive( :show ) do
+          raise "boo!"
+        end
+
+        spec_helper_silence_stdout do
+          get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+
+        expect( last_response.headers[ 'X-Error-Logged-Via-Alchemy' ] ).to eq( 'yes' )
+        expect( last_response.status ).to eq( 500 )
+      end
+
+      context 'invalid' do
+        before :each do
+          @old_test_session = Hoodoo::Services::Middleware.test_session()
+        end
+
+        after :each do
+          Hoodoo::Services::Middleware.set_test_session( @old_test_session )
+        end
+
+        it 'session errors' do
+          Hoodoo::Services::Middleware.set_test_session( nil )
+
+          spec_helper_silence_stdout do
+            get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          end
+
+          expect( last_response.headers[ 'X-Error-Logged-Via-Alchemy' ] ).to eq( 'yes' )
+          expect( last_response.status ).to eq( 401 )
+        end
+
+        it 'permission errors' do
+          session             = @old_test_session.dup()
+          session.permissions = Hoodoo::Services::Permissions.new # Default is 'deny all'
+
+          Hoodoo::Services::Middleware.set_test_session( session )
+
+          spec_helper_silence_stdout do
+            get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          end
+
+          expect( last_response.headers[ 'X-Error-Logged-Via-Alchemy' ] ).to eq( 'yes' )
+          expect( last_response.status ).to eq( 403 )
+        end
+      end
+
+      # Middleware exceptions are not tested. There's no way to know the kind
+      # of failure that might happen in the real-world and the point at which
+      # the exception occurs in the processing chain may influence whether or
+      # not the header gets set. We might end up with double logging from an
+      # router/edge splitter in such cases, but that's acceptable for what
+      # should be an extremely rare event.
+
+    end
   end
 
   context 'secure logging' do
