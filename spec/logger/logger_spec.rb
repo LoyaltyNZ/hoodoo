@@ -51,7 +51,7 @@ describe Hoodoo::Logger do
       @logger.error( 'Three instances of StreamWriter' )
     end
 
-    it 'removes requested instances' do
+    it 'removes a requested instance' do
       @logger.remove( @stderr_2 )
 
       expect( @stderr_1 ).to receive( :report ).once
@@ -60,6 +60,17 @@ describe Hoodoo::Logger do
       expect( $stderr ).to_not receive( :puts )
 
       @logger.error( 'Two instances of StreamWriter' )
+    end
+
+    it 'removes two requested instances' do
+      @logger.remove( @stderr_3, @stderr_2 )
+
+      expect( @stderr_1 ).to receive( :report ).once
+      expect( @stderr_2 ).to_not receive( :report )
+      expect( @stderr_3 ).to_not receive( :report )
+      expect( $stderr ).to_not receive( :puts )
+
+      @logger.error( 'One instance of StreamWriter' )
     end
 
     it 'removes all instances' do
@@ -156,6 +167,61 @@ describe Hoodoo::Logger do
       @logger.report(:error, :comp, :code, {})
       @logger.level = :error
       @logger.report(:error, :comp, :code, {})
+    end
+  end
+
+  # ===========================================================================
+
+  context 'enquiries' do
+    before :each do
+      @logger = described_class.new
+    end
+
+    it 'via include(s)? work' do
+      a = Hoodoo::Logger::StreamWriter.new( $stderr )
+      b = Hoodoo::Logger::StreamWriter.new( $stderr )
+      c = Hoodoo::Logger::StreamWriter.new( $stderr )
+
+      @logger.add( a, b )
+
+      expect( @logger.include?( a ) ).to eq( true  )
+      expect( @logger.include?( b ) ).to eq( true  )
+      expect( @logger.include?( c ) ).to eq( false )
+
+      expect( @logger.includes?( a ) ).to eq( true  )
+      expect( @logger.includes?( b ) ).to eq( true  )
+      expect( @logger.includes?( c ) ).to eq( false )
+    end
+
+    it 'via include(s)_class? work' do
+      a = Hoodoo::Logger::StreamWriter.new( $stderr )
+      b = Hoodoo::Logger::StreamWriter.new( $stderr )
+      c = Hoodoo::Logger::FileWriter.new( 'file1' )
+      d = Hoodoo::Logger::FileWriter.new( 'file2' )
+
+      @logger.add( a, b )
+
+      expect( @logger.include_class?( Hoodoo::Logger::StreamWriter ) ).to eq( true  )
+      expect( @logger.include_class?( Hoodoo::Logger::FileWriter   ) ).to eq( false )
+
+      expect( @logger.includes_class?( Hoodoo::Logger::StreamWriter ) ).to eq( true  )
+      expect( @logger.includes_class?( Hoodoo::Logger::FileWriter   ) ).to eq( false )
+
+      @logger.add( c, d )
+
+      expect( @logger.include_class?( Hoodoo::Logger::StreamWriter ) ).to eq( true )
+      expect( @logger.include_class?( Hoodoo::Logger::FileWriter   ) ).to eq( true )
+
+      expect( @logger.includes_class?( Hoodoo::Logger::StreamWriter ) ).to eq( true )
+      expect( @logger.includes_class?( Hoodoo::Logger::FileWriter   ) ).to eq( true )
+
+      @logger.remove( a, b )
+
+      expect( @logger.include_class?( Hoodoo::Logger::StreamWriter ) ).to eq( false )
+      expect( @logger.include_class?( Hoodoo::Logger::FileWriter   ) ).to eq( true  )
+
+      expect( @logger.includes_class?( Hoodoo::Logger::StreamWriter ) ).to eq( false )
+      expect( @logger.includes_class?( Hoodoo::Logger::FileWriter   ) ).to eq( true  )
     end
   end
 
