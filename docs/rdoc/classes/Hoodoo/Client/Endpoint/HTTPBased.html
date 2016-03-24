@@ -284,7 +284,7 @@ instance.</p>
       <span class="ruby-keyword">when</span> <span class="ruby-number">200</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
           <span class="ruby-string">&#39;platform.fault&#39;</span>,
-          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Could not parse body data returned from inter-resource call despite receiving HTTP status code 200&#39;</span>,
+          <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Could not parse retrieved body data despite receiving HTTP status code 200&#39;</span>,
           <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
         )
       <span class="ruby-keyword">when</span> <span class="ruby-number">204</span>

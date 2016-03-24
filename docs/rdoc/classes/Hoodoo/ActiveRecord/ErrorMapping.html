@@ -164,7 +164,7 @@ concurrency edge cases.</p>
   model         = SomeModel.new
   model.param_1 = &#39;something based on inbound creation data&#39;
 
-  unless model.persist_in( context ) === :success
+  unless model.persist_in( context ).equal?( :success )
     context.response.add_errors( model.platform_errors )
     return
   end

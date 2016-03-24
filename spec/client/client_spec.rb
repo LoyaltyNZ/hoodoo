@@ -239,9 +239,9 @@ describe Hoodoo::Client do
   # (or not) and a dated-at date/time (or not) given to the Endpoint.
   #
   def set_vars_for( opts )
-    @locale              = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
-    @expected_locale     = @locale.nil? ? 'en-nz' : @locale.downcase
-    @client              = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
+    @locale          = rand( 2 ) == 0 ? nil : SecureRandom.urlsafe_base64(2)
+    @expected_locale = @locale.nil? ? 'en-nz' : @locale.downcase
+    @client          = Hoodoo::Client.new( opts.merge( :locale => @locale ) )
 
     endpoint_opts = {}
 
@@ -833,6 +833,10 @@ describe Hoodoo::Client do
   ##############################################################################
 
   context 'with auto-session' do
+    before :each do
+      Hoodoo::Services::Middleware.set_test_session( nil )
+    end
+
     shared_examples Hoodoo::Client do
       it '(public actions allowed)' do
         mock_ident = Hoodoo::UUID.generate()
@@ -910,6 +914,42 @@ describe Hoodoo::Client do
         expect( result.platform_errors.has_errors? ).to eq( false )
       end
 
+      it 'automatically retries with more than just "platform.invalid_session" present' do
+
+        # When we list first, Client has no session so will acquire one. The
+        # wrapping endpoint is asked to list, it pushes that through the
+        # session mechanism, gets the session and then calls the wrapped
+        # endpoint.
+
+        expect( @endpoint ).to receive( :acquire_session_for ).once.with( :list ).and_call_original
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once.and_call_original
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        # When we list the second time, the wrapping endpoint has a session
+        # but we fake a complex 'invalid session' response from the wrapped
+        # endpoint, as if the session had (say) expired at the server end,
+        # but other errors were being reported too.
+
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once do
+          array = Hoodoo::Client::AugmentedArray.new
+          array.platform_errors.add_error( 'platform.forbidden' )
+          array.platform_errors.add_error( 'platform.invalid_session' )
+          array.platform_errors.add_error( 'platform.method_not_allowed' )
+          array
+        end
+
+        # This means we expect another session acquisition attempt, which is
+        # allowed to succeed, then the wrapped endpoint should be called.
+
+        expect( @endpoint ).to receive( :acquire_session_for ).once.with( :list ).and_call_original
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once.and_call_original
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+      end
+
       it 'handles errors from the session resource' do
         expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ).and_raise( "boo!" )
 
@@ -928,6 +968,23 @@ describe Hoodoo::Client do
         Hoodoo::Services::Middleware.set_test_session( nil )
 
         result = @endpoint.list()
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
+      end
+
+      it 'handles malformed sessions when retrying' do
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        Hoodoo::Services::Middleware.set_test_session( nil )
+
+        expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ) { | ignored, context |
+          context.response.body = { 'not' => 'a session' }
+        }
+
+        result = @endpoint.list()
+
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
       end
@@ -952,10 +1009,6 @@ describe Hoodoo::Client do
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.fault' )
         expect( result.platform_errors.errors[ 0 ][ 'reference' ] ).to include( 'some connection error' )
       end
-    end
-
-    before :each do
-      Hoodoo::Services::Middleware.set_test_session( nil )
     end
 
     context 'and by DRb' do

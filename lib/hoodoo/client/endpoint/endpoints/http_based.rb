@@ -292,7 +292,7 @@ module Hoodoo
                 when 200
                   data.platform_errors.add_error(
                     'platform.fault',
-                    :message   => 'Could not parse body data returned from inter-resource call despite receiving HTTP status code 200',
+                    :message   => 'Could not parse retrieved body data despite receiving HTTP status code 200',
                     :reference => { :exception => RuntimeError.new( "#{ body }" ) }
                   )
                 when 204

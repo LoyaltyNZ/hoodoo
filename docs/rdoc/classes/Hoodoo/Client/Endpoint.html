@@ -852,7 +852,7 @@ references, not instances).</p>
               <div id="method-i-response_class_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">response_class_for</span>( <span class="ruby-identifier">action</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span> <span class="ruby-operator">===</span> <span class="ruby-value">:list</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span>.<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:list</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

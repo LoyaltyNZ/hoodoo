@@ -103,13 +103,17 @@ module Hoodoo
     # Internal default timeouts may even mean that the writer is still running
     # (possibly entirely hung).
     #
-    # +writer_instance+:: An _instance_ of a subclass of
-    #                     Hoodoo::Logger::FastWriter or
-    #                     Hoodoo::Logger::SlowWriter.
+    # +writer_instances+:: One or more _instances_ of a subclass of
+    #                      Hoodoo::Logger::FastWriter or
+    #                      Hoodoo::Logger::SlowWriter, passed as one or
+    #                      more comma-separated parameters.
     #
-    def remove( writer_instance )
-      communicator = @writers[ writer_instance ]
-      @pool.remove( communicator ) unless communicator.nil?
+    def remove( *writer_instances )
+      writer_instances.each do | writer_instance |
+        communicator = @writers[ writer_instance ]
+        @pool.remove( communicator ) unless communicator.nil?
+        @writers.delete( writer_instance )
+      end
     end
 
     # Remove all writer instances from this logger.
@@ -123,6 +127,40 @@ module Hoodoo
       @pool.terminate()
       @writers = {}
     end
+
+    # Does this log instance's collection of writers include the given writer
+    # instance? Returns +true+ if so, else +false+.
+    #
+    # +writer_instance+:: An _instance_ of a subclass of
+    #                     Hoodoo::Logger::FastWriter or
+    #                     Hoodoo::Logger::SlowWriter.
+    #
+    def include?( writer_instance )
+      @writers.has_key?( writer_instance )
+    end
+
+    alias_method( :includes?, :include? )
+
+    # Does this log instance's collection of writers include any writer
+    # instances which are of the given writer _class_? Returns +true+ if so,
+    # else +false+.
+    #
+    # This is slower than #include? so try to work with writer instance
+    # queries rather than writer class queries if you can.
+    #
+    # +writer_class+:: A _subclass_ (class reference, not instance) of
+    #                  Hoodoo::Logger::FastWriter or
+    #                  Hoodoo::Logger::SlowWriter.
+    #
+    def include_class?( writer_class )
+      @writers.keys.each do | writer_instance |
+        return true if writer_instance.is_a?( writer_class )
+      end
+
+      return false
+    end
+
+    alias_method( :includes_class?, :include_class? )
 
     # Returns an array of all log writer instances currently in use, in order
     # of addition. See #add.
