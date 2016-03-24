@@ -200,7 +200,7 @@ module Hoodoo
                                      self.to_h(),
                                      TTL )
 
-        rescue Exception => exception
+        rescue => exception
 
           # Log error and return nil if the session can't be parsed
           #
@@ -253,7 +253,7 @@ module Hoodoo
             end
           end
 
-        rescue Exception => exception
+        rescue => exception
 
           # Log error and return nil if the session can't be parsed
           #
@@ -309,7 +309,7 @@ module Hoodoo
             return :ok
           end
 
-        rescue Exception => exception
+        rescue => exception
 
           # Log error and return nil if the session can't be parsed
           #
@@ -345,7 +345,7 @@ module Hoodoo
             return :not_found
           end
 
-        rescue Exception => exception
+        rescue => exception
 
           # Log error and return nil if the session can't be parsed
           #
@@ -576,16 +576,16 @@ module Hoodoo
 
           stats = @@dalli_clients[ host ].stats()
 
-        rescue Exception => e
+        rescue => e
           exception = e
 
         end
 
         if stats.nil?
-          if ( exception )
-            raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
-          else
+          if exception.nil?
             raise "Hoodoo::Services::Session.connect_to_memcached: Did not get back meaningful data from Memcached at '#{ host }'"
+          else
+            raise "Hoodoo::Services::Session.connect_to_memcached: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
           end
         else
           return @@dalli_clients[ host ]
