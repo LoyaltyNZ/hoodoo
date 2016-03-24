@@ -67,10 +67,9 @@ module Hoodoo; module Services
 
         # Take care with Symbol keys in 'data' vs string keys in e.g. 'session'.
 
-        uuid    = data[ :id      ] || Hoodoo::UUID.generate()
         session = data[ :session ] || {}
         message = {
-          :id                   => uuid,
+          :id                   => data[ :id ],
           :level                => level,
           :component            => component,
           :code                 => code,

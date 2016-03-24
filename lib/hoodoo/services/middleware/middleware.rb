@@ -1080,6 +1080,7 @@ module Hoodoo; module Services
       action    = interaction.requested_action
 
       data = {
+        :id             => Hoodoo::UUID.generate(),
         :interaction_id => interaction.interaction_id
       }
 
@@ -1309,7 +1310,9 @@ module Hoodoo; module Services
             # persistence layers store the item as an error with the correct ID.
 
             body = ::JSON.parse( body )
-            data[ :id ] = body[ 'id' ]
+
+            uuid = body[ 'id' ]
+            data[ :id ] = uuid unless uuid.nil?
           rescue
           end
 
