@@ -293,7 +293,13 @@ describe Hoodoo::Services::Session do
       raise 'Mock Memcached connection failure'
     end
 
-    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn ).once.and_call_original
+    expect( Hoodoo::Services::Middleware.logger ).to(
+      receive( :warn ).once.with(
+        'Hoodoo::Services::Session\\#load_from_memcached!: Session loading failed - connection fault or session corrupt',
+        'Mock Memcached connection failure'
+      ).and_call_original
+    )
+
     expect( loader.load_from_memcached!( '1234' ) ).to eq( :fail )
   end
 
@@ -303,11 +309,20 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
+    # The first 'set' call is an attempt to update the caller version before
+    # the updated session is saved.
+
     expect_any_instance_of( Hoodoo::Services::Session::MockDalliClient ).to receive( :set ).once do
       raise 'Mock Memcached connection failure'
     end
 
-    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn ).once.and_call_original
+    expect( Hoodoo::Services::Middleware.logger ).to(
+      receive( :warn ).once.with(
+        'Hoodoo::Services::Session\\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record',
+        'Mock Memcached connection failure'
+      ).and_call_original
+    )
+
     expect( s.save_to_memcached() ).to eq( :fail )
   end
 
@@ -322,7 +337,13 @@ describe Hoodoo::Services::Session do
       raise 'Mock Memcached connection failure'
     end
 
-    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn ).once.and_call_original
+    expect( Hoodoo::Services::Middleware.logger ).to(
+      receive( :warn ).once.with(
+        'Hoodoo::Services::Session\\#save_to_memcached: Session saving failed - connection fault or session corrupt',
+        'Mock Memcached connection failure'
+      ).and_call_original
+    )
+
     expect( s.save_to_memcached() ).to eq( :fail )
   end
 
