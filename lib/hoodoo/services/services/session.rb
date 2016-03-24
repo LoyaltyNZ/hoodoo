@@ -32,6 +32,14 @@ module Hoodoo
       #
       attr_accessor :caller_id
 
+      # An optional property of a session is the Caller's "identity name",
+      # a generic way to refer to this Caller which will appear in logs.
+      # The use is up to the session creator, in combination with whatever
+      # logging engine is in use; if it ascribes meaning to the identity
+      # name, then the session creator must ensure it comforms.
+      #
+      attr_accessor :caller_identity_name
+
       # Callers can change; if so, related sessions must be invalidated.
       # This must be achieved by keeping a version count on the Caller. A
       # session is associated with a particular Caller version and if the
@@ -376,6 +384,7 @@ module Hoodoo
           session_id
           caller_id
           caller_version
+          caller_identity_name
 
         ).each do | property |
           value = self.send( property )
@@ -420,6 +429,7 @@ module Hoodoo
           session_id
           caller_id
           caller_version
+          caller_identity_name
 
         ).each do | property |
           value = hash[ property ]

@@ -159,15 +159,16 @@ module Hoodoo; module Services
     # middleware for simplicity/speed at parse time.
     #
     DEFAULT_TEST_SESSION.from_h!( {
-      'session_id'     => '01234567890123456789012345678901',
-      'expires_at'     => ( Time.now + 172800 ).utc.iso8601,
-      'caller_version' => 1,
-      'caller_id'      =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
-      'identity'       => { 'caller_id' => 'c5ea12fb7f414a46850e73ee1bf6d95e' },
-      'permissions'    => Hoodoo::Services::Permissions.new( {
+      'session_id'           => '01234567890123456789012345678901',
+      'expires_at'           => ( Time.now + 172800 ).utc.iso8601,
+      'caller_version'       => 1,
+      'caller_id'            =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
+      'caller_identity_name' =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
+      'identity'             => { 'caller_id' => 'c5ea12fb7f414a46850e73ee1bf6d95e' },
+      'permissions'          => Hoodoo::Services::Permissions.new( {
         'default' => { 'else' => Hoodoo::Services::Permissions::ALLOW }
       } ).to_h,
-      'scoping'        => {
+      'scoping' => {
         'authorised_http_headers' => Hoodoo::Client::Headers::HEADER_TO_PROPERTY.map() { | key, sub_hash |
           sub_hash[ :header ] if sub_hash[ :secured ] == true
         }.compact
@@ -320,6 +321,29 @@ module Hoodoo; module Services
     #
     def self.set_log_folder( base_path )
       self.send( :add_file_logging, base_path )
+    end
+
+    # Set verbose logging. With verbose logging enabled, additional payload
+    # data is added - most notably, full session details (where possible)
+    # are included in each log message. These can increase log data size
+    # considerably, but may be useful if you encounter session-related
+    # errors or general operational issues and need log data to provide more
+    # insights.
+    #
+    # Verbose logging is _disabled_ by default.
+    #
+    # +verbose+:: +true+ to enable verbose logging, +false+ to disable it.
+    #             The default is +false+.
+    #
+    def self.set_verbose_logging( verbose )
+      @@verbose_logging = verbose
+    end
+
+    # Returns +true+ if verbose logging is enabled, else +false+. For more,
+    # see ::set_verbose_logging.
+    #
+    def self.verbose_logging?
+      defined?( @@verbose_logging ) ? @@verbose_logging : false
     end
 
     # A Hoodoo::Services::Session instance to use for tests or when no
@@ -1037,6 +1061,54 @@ module Hoodoo; module Services
       end
     end
 
+    # Build common log information for the 'data' part of a payload based
+    # on the given interaction. Returned as a Hash with Symbol keys.
+    #
+    # +interaction+:: Hoodoo::Services::Interaction describing a request.
+    #                 A +context+ and +interaction_id+ are expected. The
+    #                 +target_interface+ and +requested_action+ are optional
+    #                 and if present result in a <tt>:target</tt> entry in
+    #                 the returned Hash. The +context.session+ value if
+    #                 present will be included in a <tt>:session</tt> entry;
+    #                 if verbose logging is enabled this will be quoted in
+    #                 full, else only identity-related parts are recorded.
+    #
+    def build_common_log_data_for( interaction )
+
+      session   = interaction.context.session
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+
+      data = {
+        :interaction_id => interaction.interaction_id
+      }
+
+      unless session.nil?
+        if self.class.verbose_logging?
+          data[ :session ] = session.to_h
+        else
+          data[ :session ] =
+          {
+            'session_id'           => session.session_id,
+            'caller_id'            => session.caller_id,
+            'caller_version'       => session.caller_version,
+            'caller_identity_name' => session.caller_identity_name,
+            'identity'             => Hoodoo::Utilities.stringify( ( session.identity || {} ).to_h() )
+          }
+        end
+      end
+
+      unless interface.nil? || action.nil?
+        data[ :target ] = {
+          :resource => ( interface.resource || '' ).to_s,
+          :version  =>   interface.version,
+          :action   => ( action || '' ).to_s,
+        }
+      end
+
+      return data
+    end
+
     # Make an "inbound" call log based on the given interaction.
     #
     # +interaction+:: Hoodoo::Services::Interaction describing the inbound
@@ -1049,6 +1121,8 @@ module Hoodoo; module Services
     #
     def log_inbound_request( interaction )
 
+      data = build_common_log_data_for( interaction )
+
       # Annoying dance required to extract all HTTP header data from Rack.
 
       env     = interaction.rack_request.env
@@ -1059,27 +1133,26 @@ module Hoodoo; module Services
       headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
       headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
 
-      data = {
-        :interaction_id => interaction.interaction_id,
-        :payload        => {
-          :method  => env[ 'REQUEST_METHOD', ],
-          :scheme  => env[ 'rack.url_scheme' ],
-          :host    => env[ 'SERVER_NAME'     ],
-          :port    => env[ 'SERVER_PORT'     ],
-          :script  => env[ 'SCRIPT_NAME'     ],
-          :path    => env[ 'PATH_INFO'       ],
-          :query   => env[ 'QUERY_STRING'    ],
-          :headers => headers
-        }
+      data[ :payload ] = {
+        :method  => env[ 'REQUEST_METHOD', ],
+        :scheme  => env[ 'rack.url_scheme' ],
+        :host    => env[ 'SERVER_NAME'     ],
+        :port    => env[ 'SERVER_PORT'     ],
+        :script  => env[ 'SCRIPT_NAME'     ],
+        :path    => env[ 'PATH_INFO'       ],
+        :query   => env[ 'QUERY_STRING'    ],
+        :headers => headers
       }
 
       # Deal with body data and security issues.
 
-      secure = true
+      secure    = true
+      interface = interaction.target_interface
+      action    = interaction.requested_action
 
-      unless interaction.target_interface.nil? || interaction.requested_action.nil?
-        secure_log_actions = interaction.target_interface.secure_log_for()
-        secure_type = secure_log_actions[ interaction.requested_action ]
+      unless interface.nil? || action.nil?
+        secure_log_actions = interface.secure_log_for()
+        secure_type        = secure_log_actions[ action ]
 
         # Allow body logging if there's no security specified for this action
         # or the security is specified for the response only (since we log the
@@ -1089,14 +1162,6 @@ module Hoodoo; module Services
         # as will any other unexpected value that might get specified.
 
         secure = false if secure_type.nil? || secure_type == :response
-
-        # Fill in unrelated useful data since we know it is available here.
-
-        data[ :target ] = {
-          :resource => ( interaction.target_interface.resource || '' ).to_s,
-          :version  =>   interaction.target_interface.version,
-          :action   => ( interaction.requested_action || '' ).to_s
-        }
       end
 
       # Compile the remaining log payload and send it.
@@ -1143,17 +1208,7 @@ module Hoodoo; module Services
       #
       return if ( context.response.halt_processing? )
 
-      # Data as per Hoodoo::Logger.
-
-      data = {
-        :interaction_id => interaction.interaction_id,
-        :session        => ( interaction.context.session || {} ).to_h,
-        :target         => {
-          :resource => ( interface.resource || '' ).to_s,
-          :version  =>   interface.version,
-          :action   => ( action || '' ).to_s,
-        }
-      }
+      data = build_common_log_data_for( interaction )
 
       # Don't bother logging list responses - they could be huge - instead
       # log all list-related parameters from the inbound request. At least
@@ -1174,7 +1229,7 @@ module Hoodoo; module Services
 
         unless interface.nil? || action.nil?
           secure_log_actions = interface.secure_log_for()
-          secure_type = secure_log_actions[ action ]
+          secure_type        = secure_log_actions[ action ]
 
           # Allow body logging if there's no security specified for this action
           # or the security is specified for the request only (since we log the
@@ -1211,25 +1266,22 @@ module Hoodoo; module Services
     #                 the interaction currently being logged.
     #
     def log_outbound_response( interaction, rack_data )
-      secure = true
-      id     = nil
-      level  = if interaction.context.response.halt_processing?
-        :error
-      else
-        :info
-      end
 
-      data = {
-        :interaction_id => interaction.interaction_id,
-        :payload        => {
-          :http_status_code => rack_data[ 0 ].to_i,
-          :http_headers     => rack_data[ 1 ]
-        }
+      level = interaction.context.response.halt_processing? ? :error : :info
+      data  = build_common_log_data_for( interaction )
+
+      data[ :payload ] = {
+        :http_status_code => rack_data[ 0 ].to_i,
+        :http_headers     => rack_data[ 1 ]
       }
 
-      unless interaction.target_interface.nil? || interaction.requested_action.nil?
-        secure_log_actions = interaction.target_interface.secure_log_for()
-        secure_type = secure_log_actions[ interaction.requested_action ]
+      secure    = true
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+
+      unless interface.nil? || action.nil?
+        secure_log_actions = interface.secure_log_for()
+        secure_type = secure_log_actions[ action ]
 
         # Allow body logging if there's no security specified for this action
         # or the security is specified for the request only (since we log the
@@ -1239,12 +1291,6 @@ module Hoodoo; module Services
         # as will any other unexpected value that might get specified.
 
         secure = false if secure_type.nil? || secure_type == :request
-
-        data[ :target ] = {
-          :resource => ( interaction.target_interface.resource || '' ).to_s,
-          :version  =>   interaction.target_interface.version,
-          :action   => ( interaction.requested_action || '' ).to_s
-        }
       end
 
       if secure == false || level == :error
@@ -1263,7 +1309,7 @@ module Hoodoo; module Services
             # persistence layers store the item as an error with the correct ID.
 
             body = ::JSON.parse( body )
-            id   = body[ 'id' ]
+            data[ :id ] = body[ 'id' ]
           rescue
           end
 
@@ -1274,9 +1320,6 @@ module Hoodoo; module Services
 
         data[ :payload ][ :response_body ] = body
       end
-
-      data[ :id      ] = id unless id.nil?
-      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
 
       @@logger.report(
         level,
@@ -1310,17 +1353,14 @@ module Hoodoo; module Services
 
       return unless @@logger.report?( :debug )
 
+      data = build_common_log_data_for( interaction )
+
       scheme         = interaction.rack_request.scheme         || 'unknown_scheme'
       host_with_port = interaction.rack_request.host_with_port || 'unknown_host'
       full_path      = interaction.rack_request.fullpath       || '/unknown_path'
 
-      data = {
-        :full_uri       => "#{ scheme }://#{ host_with_port }#{ full_path }",
-        :interaction_id => interaction.interaction_id,
-        :payload        => { 'args' => args }
-      }
-
-      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
+      data[ :full_uri ] = "#{ scheme }://#{ host_with_port }#{ full_path }"
+      data[ :payload  ] = { 'args' => args }
 
       @@logger.report(
         :debug,

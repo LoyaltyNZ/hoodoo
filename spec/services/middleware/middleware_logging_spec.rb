@@ -123,13 +123,6 @@ describe Hoodoo::Services::Middleware do
       end
     end
 
-    def app
-      Rack::Builder.new do
-        use Hoodoo::Services::Middleware
-        run TestLogService.new
-      end
-    end
-
     it 'has the expected "test" mode loggers' do
       instances = force_logging_to( 'test' )
 
@@ -318,7 +311,8 @@ describe Hoodoo::Services::Middleware do
     end
   end
 
-  context 'secure logging' do
+  context 'with' do
+
     class HashLogger < Hoodoo::Logger::FastWriter
       @@log_data = []
 
@@ -382,56 +376,109 @@ describe Hoodoo::Services::Middleware do
       end
     end
 
-    # To test_log, 'create' says secure for 'request'
-    #
-    it 'does not log creation requests unexpectedly' do
-      post '/v1/test_log', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    context 'verbose logging' do
+      context 'which is turned off' do
+        it 'by default' do
+          expect( Hoodoo::Services::Middleware.verbose_logging? ).to eq( false )
+        end
 
-      inbound, result, outbound = get_data_for( :create )
-      check_common_entries( 'TestLog', 1, 'create', inbound.last, result.first, outbound.first )
+        it 'and omits non-identity information in the session section' do
+          get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
-      entry = result.first;   expect( entry[ :data ]             ).to     have_key( :payload )
-      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to     have_key( :response_body )
+          inbound, result, outbound = get_data_for( :show )
+          data = result.first[ :data ]
+
+          expect( data[ :session ][ 'session_id'           ] ).to be_present
+          expect( data[ :session ][ 'caller_id'            ] ).to be_present
+          expect( data[ :session ][ 'caller_version'       ] ).to be_present
+          expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+          expect( data[ :session ][ 'identity'             ] ).to be_present
+
+          expect( data[ :session ][ 'permissions' ] ).to_not be_present
+          expect( data[ :session ][ 'scoping'     ] ).to_not be_present
+        end
+      end
+
+      context 'which is turned on' do
+        before :each do
+          @old_verbose = Hoodoo::Services::Middleware.verbose_logging?
+          Hoodoo::Services::Middleware.set_verbose_logging( true )
+        end
+
+        after :each do
+          Hoodoo::Services::Middleware.set_verbose_logging( @old_verbose )
+        end
+
+        it 'and includes non-identity information in the session section' do
+          get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+          inbound, result, outbound = get_data_for( :show )
+          data = result.first[ :data ]
+
+          expect( data[ :session ][ 'session_id'           ] ).to be_present
+          expect( data[ :session ][ 'caller_id'            ] ).to be_present
+          expect( data[ :session ][ 'caller_version'       ] ).to be_present
+          expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+          expect( data[ :session ][ 'identity'             ] ).to be_present
+          expect( data[ :session ][ 'permissions'          ] ).to be_present
+          expect( data[ :session ][ 'scoping'              ] ).to be_present
+        end
+      end
     end
 
-    # To test_log, 'update' says secure for 'request'
-    #
-    it 'does not log update responses unexpectedly' do
-      patch '/v1/test_log/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+    context 'secure logging' do
 
-      inbound, result, outbound = get_data_for( :update )
-      check_common_entries( 'TestLog', 1, 'update', inbound.last, result.first, outbound.first )
+      # To test_log, 'create' says secure for 'request'
+      #
+      it 'does not log creation requests unexpectedly' do
+        post '/v1/test_log', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to     have_key( :body )
-      entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
-      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
-    end
+        inbound, result, outbound = get_data_for( :create )
+        check_common_entries( 'TestLog', 1, 'create', inbound.last, result.first, outbound.first )
 
-    # To test_log_b, 'create' says secure for 'both'.
-    #
-    it 'does not log requests or responses unexpectedly' do
-      post '/v2/test_log_b', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
+        entry = result.first;   expect( entry[ :data ]             ).to     have_key( :payload )
+        entry = outbound.first; expect( entry[ :data ][ :payload ] ).to     have_key( :response_body )
+      end
 
-      inbound, result, outbound = get_data_for( :create )
-      check_common_entries( 'TestLogB', 2, 'create', inbound.last, result.first, outbound.first )
+      # To test_log, 'update' says secure for 'request'
+      #
+      it 'does not log update responses unexpectedly' do
+        patch '/v1/test_log/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
-      entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
-      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
-    end
+        inbound, result, outbound = get_data_for( :update )
+        check_common_entries( 'TestLog', 1, 'update', inbound.last, result.first, outbound.first )
 
-    # To test_log_b, 'update' does not ask for security.
-    #
-    it 'does not log requests or responses unexpectedly' do
-      patch '/v2/test_log_b/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to     have_key( :body )
+        entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
+        entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
+      end
 
-      inbound, result, outbound = get_data_for( :update )
-      check_common_entries( 'TestLogB', 2, 'update', inbound.last, result.first, outbound.first )
+      # To test_log_b, 'create' says secure for 'both'.
+      #
+      it 'does not log requests or responses unexpectedly' do
+        post '/v2/test_log_b', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
-      entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to have_key( :body )
-      entry = result.first;   expect( entry[ :data ]             ).to have_key( :payload )
-      entry = outbound.first; expect( entry[ :data ][ :payload ] ).to have_key( :response_body )
+        inbound, result, outbound = get_data_for( :create )
+        check_common_entries( 'TestLogB', 2, 'create', inbound.last, result.first, outbound.first )
+
+        entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to_not have_key( :body )
+        entry = result.first;   expect( entry[ :data ]             ).to_not have_key( :payload )
+        entry = outbound.first; expect( entry[ :data ][ :payload ] ).to_not have_key( :response_body )
+      end
+
+      # To test_log_b, 'update' does not ask for security.
+      #
+      it 'does not log requests or responses unexpectedly' do
+        patch '/v2/test_log_b/foo', '{ "foo": "bar" }', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+        inbound, result, outbound = get_data_for( :update )
+        check_common_entries( 'TestLogB', 2, 'update', inbound.last, result.first, outbound.first )
+
+        entry = inbound.last;   expect( entry[ :data ][ :payload ] ).to have_key( :body )
+        entry = result.first;   expect( entry[ :data ]             ).to have_key( :payload )
+        entry = outbound.first; expect( entry[ :data ][ :payload ] ).to have_key( :response_body )
+      end
     end
   end
 end
