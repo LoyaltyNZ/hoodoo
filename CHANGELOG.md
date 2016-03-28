@@ -1,3 +1,11 @@
+## 1.6.0 (2016-03-29)
+
+* Sets HTTP response header `X-Error-Logged-Via-Alchemy: yes` if an error has occurred and this error has been reported through at least one `Hoodoo::Services::Middleware::AMQPLogWriter` instance. Some queue-based architectures might include a router/edge splitter component which auto-logs any non-200 response to the queue itself; the new header allows it to detect cases where Hoodoo believes such logging has already taken place and avoid double-logging the error information (https://github.com/LoyaltyNZ/hoodoo/pull/153).
+
+* In the session engine, exceptions raised during attempts to communicate with Memcached sometimes had the originating exception's message omitted in a forwarded exception report. This made connection failure diagnosis very difficult. The originating exception message is now always included (https://github.com/LoyaltyNZ/hoodoo/pull/154 - related drive-by improvement in https://github.com/LoyaltyNZ/hoodoo/pull/155).
+
+* Logging improvements - Alchemy-generic `caller_identity_name` is now included; inbound/result/outbound payloads contain more consistent information; full verbose session detail logging is now switchable through `Hoodoo::Services::Middleware.set_verbose_logging` and by default, verbose logging is now _disabled_. This currently just prevents logging of potentially very verbose permissions and scoping payloads unless you specifically request it. Use `Hoodoo::Services::Middleware.verbose_logging?` to read the setting's current value (https://github.com/LoyaltyNZ/hoodoo/pull/156).
+
 ## 1.5.2 (2016-03-18)
 
 * Correct misuse of `===` which wasn't causing any known bugs but might have caused issues for edge cases (spotted by [Rory Stephenson](https://github.com/thelollies)) (https://github.com/LoyaltyNZ/hoodoo/pull/147 / https://github.com/LoyaltyNZ/hoodoo/pull/147/commits/f435aa045444d3bf183e000b3e88b3bc16704863).

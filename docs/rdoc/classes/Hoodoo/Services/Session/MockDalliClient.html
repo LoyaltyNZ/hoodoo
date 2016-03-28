@@ -145,7 +145,7 @@ otherwise.</p>
                 <a href="javascript:toggleSource('method-c-bypass_source')" id="l_method-c-bypass_source">show</a>
               </p>
               <div id="method-c-bypass_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 662</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 677</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass</span>( <span class="ruby-identifier">bypass_boolean</span> )
   <span class="ruby-identifier">@@bypass</span> = <span class="ruby-identifier">bypass_boolean</span>
 <span class="ruby-keyword">end</span></pre>
@@ -171,7 +171,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-bypass-3F_source')" id="l_method-c-bypass-3F_source">show</a>
               </p>
               <div id="method-c-bypass-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 671</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 686</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">bypass?</span>
   <span class="ruby-identifier">@@bypass</span>
 <span class="ruby-keyword">end</span></pre>
@@ -196,7 +196,7 @@ don&#39;t. Default return value is <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-reset_source')" id="l_method-c-reset_source">show</a>
               </p>
               <div id="method-c-reset_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 654</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 669</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">reset</span>
   <span class="ruby-identifier">@@store</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -225,7 +225,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-c-store_source')" id="l_method-c-store_source">show</a>
               </p>
               <div id="method-c-store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 648</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 663</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">store</span>
   <span class="ruby-identifier">@@store</span>
 <span class="ruby-keyword">end</span></pre>
@@ -251,7 +251,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 712</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 727</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
@@ -286,7 +286,7 @@ found / expired.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 680</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 695</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
@@ -329,7 +329,7 @@ If omitted, the data does not expire.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 700</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 715</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">data</span> = {
     <span class="ruby-value">:expires_at</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ttl</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>,
@@ -360,7 +360,7 @@ If omitted, the data does not expire.</p>
                 <a href="javascript:toggleSource('method-i-stats_source')" id="l_method-i-stats_source">show</a>
               </p>
               <div id="method-i-stats_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 723</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 738</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stats</span>
   <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
