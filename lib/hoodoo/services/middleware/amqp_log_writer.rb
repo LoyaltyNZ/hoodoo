@@ -65,25 +65,22 @@ module Hoodoo; module Services
       def report( level, component, code, data )
         return if @alchemy.nil?
 
-        # Take care with Symbol keys in 'data' vs string keys in e.g. 'Session'.
-
-        data[ :id ] ||= Hoodoo::UUID.generate()
+        # Take care with Symbol keys in 'data' vs string keys in e.g. 'session'.
 
         session = data[ :session ] || {}
         message = {
+          :id                   => data[ :id ],
+          :level                => level,
+          :component            => component,
+          :code                 => code,
+          :reported_at          => Time.now.iso8601( 12 ),
 
-          :id             => data[ :id ],
-          :level          => level,
-          :component      => component,
-          :code           => code,
-          :reported_at    => Time.now.iso8601( 12 ),
+          :interaction_id       => data[ :interaction_id ],
+          :data                 => data,
 
-          :data           => data,
-
-          :interaction_id => data[ :interaction_id ],
-          :caller_id      => session[ 'caller_id' ],
-          :identity       => ( session[ 'identity' ] || {} ).to_h
-
+          :caller_id            => session[ 'caller_id'            ],
+          :caller_identity_name => session[ 'caller_identity_name' ],
+          :identity             => ( session[ 'identity' ] || {} ).to_h
         }.to_json()
 
         @alchemy.send_message_to_service( @routing_key, { "body" => message } )

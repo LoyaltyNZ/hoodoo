@@ -35,6 +35,7 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
     @identity_id_1    = Hoodoo::UUID.generate
     @identity_id_2    = Hoodoo::UUID.generate
     @identity_id_3    = Hoodoo::UUID.generate
+    @identity_id_4    = Hoodoo::UUID.generate
 
     @authorised_ids   = [ Hoodoo::UUID.generate, Hoodoo::UUID.generate ]
     @authorised_codes = [ 'CODE_A', 'CODE_B' ]
@@ -49,6 +50,8 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       :authorised_ids   => @authorised_ids,
       :authorised_codes => @authorised_codes
     }
+
+    @session.caller_identity_name = @identity_id_4
 
     @alchemy = OpenStruct.new
     @queue   = 'foo.bar'
@@ -65,22 +68,28 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
       interaction_id = Hoodoo::UUID.generate
       data           = {
         :id             => id,
-        :session        => @session.to_h(),
-        :interaction_id => interaction_id
+        :interaction_id => interaction_id,
+        :session        =>
+        {
+          'caller_id'            => @session.caller_id,
+          'caller_identity_name' => @session.caller_identity_name,
+          'identity'             => @session.identity.to_h()
+        }
       }
 
       expected_hash  = {
-        :id             => id,
-        :level          => 'warn',
-        :component      => component,
-        :code           => code,
-        :reported_at    => reported_at,
+        :id                   => id,
+        :level                => 'warn',
+        :component            => component,
+        :code                 => code,
+        :reported_at          => reported_at,
 
-        :data           => data,
+        :interaction_id       => interaction_id,
+        :data                 => data,
 
-        :interaction_id => interaction_id,
-        :caller_id      => @session.caller_id,
-        :identity       => Hoodoo::Utilities.stringify( @session.identity.to_h )
+        :caller_id            => @caller_id,
+        :caller_identity_name => @identity_id_4,
+        :identity             => Hoodoo::Utilities.stringify( @session.identity.to_h )
       }
 
       expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, { "body" => expected_hash.to_json } ).once
