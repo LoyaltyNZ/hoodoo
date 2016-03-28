@@ -113,7 +113,7 @@ this communicator instance.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 331</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 369</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">writer_instance</span>, <span class="ruby-identifier">owning_logger</span> )
   <span class="ruby-ivar">@writer_instance</span> = <span class="ruby-identifier">writer_instance</span>
   <span class="ruby-ivar">@owning_logger</span>   = <span class="ruby-identifier">owning_logger</span>
@@ -146,7 +146,7 @@ report implementation.</p>
                 <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
               </p>
               <div id="method-i-communicate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 343</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 381</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">payload</span> )
   <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
     <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">log_level</span>,
@@ -184,7 +184,7 @@ through.</p>
                 <a href="javascript:toggleSource('method-i-dropped_source')" id="l_method-i-dropped_source">show</a>
               </p>
               <div id="method-i-dropped_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 360</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/logger/logger.rb, line 398</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped</span>( <span class="ruby-identifier">number</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@owning_logger</span>.<span class="ruby-identifier">report?</span>( <span class="ruby-value">:warn</span> )
     <span class="ruby-ivar">@writer_instance</span>.<span class="ruby-identifier">report</span>(
