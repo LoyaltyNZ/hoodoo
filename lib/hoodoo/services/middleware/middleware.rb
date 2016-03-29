@@ -1174,8 +1174,6 @@ module Hoodoo; module Services
         data[ :payload ][ :body ] = body
       end
 
-      data[ :session ] = interaction.context.session.to_h unless interaction.context.session.nil?
-
       @@logger.report(
         :info,
         :Middleware,
