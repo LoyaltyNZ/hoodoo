@@ -1,3 +1,7 @@
+## 1.6.1 (2016-03-29)
+
+* Rapid iteration over 1.6.0. Once I ran it up in a real service test grid I noticed that one of the various automatically logged reports still included full session data regardless of verbose setting. Test coverage improved to spot this and bug fixed.
+
 ## 1.6.0 (2016-03-29)
 
 * Sets HTTP response header `X-Error-Logged-Via-Alchemy: yes` if an error has occurred and this error has been reported through at least one `Hoodoo::Services::Middleware::AMQPLogWriter` instance. Some queue-based architectures might include a router/edge splitter component which auto-logs any non-200 response to the queue itself; the new header allows it to detect cases where Hoodoo believes such logging has already taken place and avoid double-logging the error information (https://github.com/LoyaltyNZ/hoodoo/pull/153).

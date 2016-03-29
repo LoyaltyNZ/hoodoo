@@ -386,16 +386,20 @@ describe Hoodoo::Services::Middleware do
           get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
           inbound, result, outbound = get_data_for( :show )
-          data = result.first[ :data ]
 
-          expect( data[ :session ][ 'session_id'           ] ).to be_present
-          expect( data[ :session ][ 'caller_id'            ] ).to be_present
-          expect( data[ :session ][ 'caller_version'       ] ).to be_present
-          expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
-          expect( data[ :session ][ 'identity'             ] ).to be_present
+          ( inbound + result + outbound ).each do | log_packet |
+            data = log_packet[ :data ]
+            next unless data.has_key?( :session )
 
-          expect( data[ :session ][ 'permissions' ] ).to_not be_present
-          expect( data[ :session ][ 'scoping'     ] ).to_not be_present
+            expect( data[ :session ][ 'session_id'           ] ).to be_present
+            expect( data[ :session ][ 'caller_id'            ] ).to be_present
+            expect( data[ :session ][ 'caller_version'       ] ).to be_present
+            expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+            expect( data[ :session ][ 'identity'             ] ).to be_present
+
+            expect( data[ :session ][ 'permissions' ] ).to_not be_present
+            expect( data[ :session ][ 'scoping'     ] ).to_not be_present
+          end
         end
       end
 
@@ -413,15 +417,19 @@ describe Hoodoo::Services::Middleware do
           get '/v1/test_log/hello', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
 
           inbound, result, outbound = get_data_for( :show )
-          data = result.first[ :data ]
 
-          expect( data[ :session ][ 'session_id'           ] ).to be_present
-          expect( data[ :session ][ 'caller_id'            ] ).to be_present
-          expect( data[ :session ][ 'caller_version'       ] ).to be_present
-          expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
-          expect( data[ :session ][ 'identity'             ] ).to be_present
-          expect( data[ :session ][ 'permissions'          ] ).to be_present
-          expect( data[ :session ][ 'scoping'              ] ).to be_present
+          ( inbound + result + outbound ).each do | log_packet |
+            data = log_packet[ :data ]
+            next unless data.has_key?( :session )
+
+            expect( data[ :session ][ 'session_id'           ] ).to be_present
+            expect( data[ :session ][ 'caller_id'            ] ).to be_present
+            expect( data[ :session ][ 'caller_version'       ] ).to be_present
+            expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+            expect( data[ :session ][ 'identity'             ] ).to be_present
+            expect( data[ :session ][ 'permissions'          ] ).to be_present
+            expect( data[ :session ][ 'scoping'              ] ).to be_present
+          end
         end
       end
     end
