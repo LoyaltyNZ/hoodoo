@@ -319,7 +319,7 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
   }
   ```
 
-  The estimation is made at the instant the call is processed by the system. Use of an estimation rather than an accurate count is a choice made by the implementation of a particular resource endpoint and is usually employed for performance reasons. This is especially likely to be used if the resource in practice is comparatively "high volume" and is likely to become associated with very large number of entries in a persistent storage layer.
+  Use of an estimation rather than an accurate count is a choice made by the implementation of a particular resource endpoint and is usually employed for performance reasons. This is especially likely to be used if the resource in practice is comparatively "high volume" and is likely to become associated with very large number of entries in a persistent storage layer.
 
   No guarantees can be given about accuracy at the Hoodoo level. If an API client needs the count in order to produce, say, a page-based GUI that shows lists of resource instances, a page count derived from the dataset size estimation will of course itself be an estimation. An implementation would need to handle the cases that:
 

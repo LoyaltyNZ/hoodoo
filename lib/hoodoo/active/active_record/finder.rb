@@ -53,7 +53,7 @@ module Hoodoo
         model.class_attribute(
           :nz_co_loyalty_hoodoo_show_id_fields,
           :nz_co_loyalty_hoodoo_show_id_substitute,
-          :nz_co_loyalty_hoodoo_fast_count_with,
+          :nz_co_loyalty_hoodoo_estimate_counts_with,
           :nz_co_loyalty_hoodoo_search_with,
           :nz_co_loyalty_hoodoo_filter_with,
           {
@@ -375,9 +375,9 @@ module Hoodoo
         #
         # Note the use of helper method #dataset_size to count the total
         # amount of results in the dataset without pagination. A resource may
-        # alternatively choose touse #estimated_dataset_size for a fast count
+        # alternatively choose to use #estimated_dataset_size for a fast count
         # estimation, or neither (though this is generally not recommended) or
-        # - permissable but unusual - include both).
+        # - permissible but unusual - include both.
         #
         #     context.response.set_resources( results, nil, finder.estimated_dataset_size )
         #
@@ -505,16 +505,12 @@ module Hoodoo
         end
 
         # As #dataset_size, but allows a configurable counting back-end via
-        # #fast_count and #fast_count_with. This method is intended to be used
-        # for fast count estimations, usually for performance reasons where
-        # the accurate #dataset_size count is too slow to compute.
-        #
-        # The implementation leans on #fast_count, so if your fast counting
-        # mechanism provides only estimations, then the computed dataset size
-        # will be an estimation too.
+        # #estimated_count and #estimate_counts_with. This method is intended
+        # to be used for fast count estimations, usually for performance
+        # reasons if an accurate #dataset_size count is too slow to compute.
         #
         def estimated_dataset_size
-          return all.limit( nil ).offset( nil ).fast_count()
+          return all.limit( nil ).offset( nil ).estimated_count()
         end
 
         # In absence of other configuration, this method just calls through
@@ -535,10 +531,10 @@ module Hoodoo
         # instances of the model at hand, within the service code that uses
         # that model.
         #
-        # Specify a count estimation method with #fast_count_with.
+        # Specify a count estimation method with #estimate_counts_with.
         #
-        def fast_count
-          counter = self.nz_co_loyalty_hoodoo_fast_count_with
+        def estimated_count
+          counter = self.nz_co_loyalty_hoodoo_estimate_counts_with
 
           if ( counter.nil? )
             return all.count
@@ -547,12 +543,12 @@ module Hoodoo
           end
         end
 
-        # This method is related to #fast_count, so read the documentation for
-        # that as an introduction first.
+        # This method is related to #estimated_count, so read the documentation
+        # for that as an introduction first.
         #
-        # In #fast_count, a PostgreSQL example is given. Continuing with this,
-        # we could implement an estimation mechanism via Hoodoo's fast counter
-        # with something like the approach described here:
+        # In #estimated_count, a PostgreSQL example is given. Continuing with
+        # this, we could implement an estimation mechanism via Hoodoo's fast
+        # counter with something like the approach described here:
         #
         # http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries/
         #
@@ -585,8 +581,8 @@ module Hoodoo
         #     end
         #
         # This takes arbitrary query text so should cope with pretty much any
-        # kind of ActiveRecord query chain and resulting SQL. With the database
-        # migration run, next define a Proc which calls this new function:
+        # kind of ActiveRecord query chain and resulting SQL. Run the database
+        # migration, then define a Proc which calls the new function:
         #
         #     counter = Proc.new do | sql |
         #       begin
@@ -597,26 +593,26 @@ module Hoodoo
         #         0
         #     end
         #
-        # Suppose we have a model called +Purchase+; next tell this model to use
-        # the above Proc for fast counting and use it:
+        # Suppose we have a model called +Purchase+; next tell this model to
+        # use the above Proc for fast counting and use it:
         #
-        #     Purchase.fast_count_with( counter )
+        #     Purchase.estimate_counts_with( counter )
         #
-        #     Purchase.fast_count()
+        #     Purchase.estimated_count()
         #     # => An integer; and you can use scope chains, just like #count:
-        #     Purchase.where(...conditions...).fast_count()
+        #     Purchase.where(...conditions...).estimated_count()
         #     # => An integer
         #
         # A real-life example showing how running PostgreSQL's +ANALYZE+
         # command can make a difference:
         #
-        #     [1] pry(main)> Purchase.fast_count
+        #     [1] pry(main)> Purchase.estimated_count
         #     => 68
         #     [2] pry(main)> Purchase.count
         #     => 76
         #     [3] pry(main)> ActiveRecord::Base.connection.execute("ANALYZE")
         #     => #<PG::Result:0x007f89b62cdcc8 status=PGRES_COMMAND_OK ntuples=0 nfields=0 cmd_tuples=0>
-        #     [4] pry(main)> Purchase.fast_count
+        #     [4] pry(main)> Purchase.estimated_count
         #     => 76
         #
         # Parameters:
@@ -626,8 +622,8 @@ module Hoodoo
         #          must evaluate to an Integer. Pass +nil+ to remove the custom
         #          counter method and restore default behaviour.
         #
-        def fast_count_with( proc )
-          self.nz_co_loyalty_hoodoo_fast_count_with = proc
+        def estimate_counts_with( proc )
+          self.nz_co_loyalty_hoodoo_estimate_counts_with = proc
         end
 
         # Specify a search mapping for use by #list to automatically restrict

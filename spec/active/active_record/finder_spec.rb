@@ -463,7 +463,7 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to receive( :count        ).at_least( :once ).and_call_original
 
       expect( finder ).to_not receive( :estimated_dataset_size )
-      expect( finder ).to_not receive( :fast_count             )
+      expect( finder ).to_not receive( :estimated_count        )
 
       result = finder.dataset_size()
 
@@ -476,7 +476,7 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to_not receive( :dataset_size )
 
       expect( finder ).to receive( :estimated_dataset_size ).at_least( :once ).and_call_original
-      expect( finder ).to receive( :fast_count             ).at_least( :once ).and_call_original
+      expect( finder ).to receive( :estimated_count        ).at_least( :once ).and_call_original
       expect( finder ).to receive( :count                  ).at_least( :once ).and_call_original
 
       result = finder.estimated_dataset_size
@@ -509,7 +509,7 @@ describe Hoodoo::ActiveRecord::Finder do
           ).first[ 'estimated_count' ].to_i
         end
 
-        RSpecModelFinderTest.fast_count_with( @counter )
+        RSpecModelFinderTest.estimate_counts_with( @counter )
 
         # Tests start by ensuring the database knows about the current object count.
         #
@@ -518,7 +518,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
       after :each do
         ActiveRecord::Base.connection.execute "DROP FUNCTION estimated_count(query text);"
-        RSpecModelFinderTest.fast_count_with( nil )
+        RSpecModelFinderTest.estimate_counts_with( nil )
       end
 
       context 'initial' do
