@@ -8,6 +8,7 @@ describe Hoodoo::Services::Middleware do
 
   class RSpecTestServiceExoticStubImplementation < Hoodoo::Services::Implementation
     def list( context )
+      context.response.set_estimated_resources( [], 88 )
       context.response.set_resources( [], 99 )
     end
   end
@@ -151,11 +152,13 @@ describe Hoodoo::Services::Middleware do
         endpoint = @mw.inter_resource_endpoint_for( 'Version', 2, @interaction )
 
         # The endpoint should've been called locally; the implementation at
-        # the top of this file sets an empty array with dataset size 99.
+        # the top of this file sets an empty array with dataset size 99 *and*
+        # an estimated dataset size of 88.
 
         mock_result = endpoint.list()
         expect( mock_result ).to be_empty
         expect( mock_result.dataset_size ).to eq( 99 )
+        expect( mock_result.estimated_dataset_size ).to eq( 88 )
       end
 
       it 'complains about a missing Alchemy instance' do
@@ -558,6 +561,7 @@ describe Hoodoo::Services::Middleware do
 
       expect( mock_result ).to eq( Hoodoo::Client::AugmentedArray.new )
       expect( mock_result.dataset_size ).to eq(99)
+      expect( mock_result.estimated_dataset_size ).to eq( 88 )
       expect( mock_result.platform_errors.has_errors? ).to eq( false )
     end
   end

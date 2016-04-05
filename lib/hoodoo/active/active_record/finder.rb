@@ -53,6 +53,7 @@ module Hoodoo
         model.class_attribute(
           :nz_co_loyalty_hoodoo_show_id_fields,
           :nz_co_loyalty_hoodoo_show_id_substitute,
+          :nz_co_loyalty_hoodoo_fast_count_with,
           :nz_co_loyalty_hoodoo_search_with,
           :nz_co_loyalty_hoodoo_filter_with,
           {
@@ -373,7 +374,12 @@ module Hoodoo
         #     end
         #
         # Note the use of helper method #dataset_size to count the total
-        # amount of results in the dataset without pagination.
+        # amount of results in the dataset without pagination. A resource may
+        # alternatively choose touse #estimated_dataset_size for a fast count
+        # estimation, or neither (though this is generally not recommended) or
+        # - permissable but unusual - include both).
+        #
+        #     context.response.set_resources( results, nil, finder.estimated_dataset_size )
         #
         # The service middleware enforces sane values for things like list
         # offsets, sort keys and so-on according to service interface
@@ -495,7 +501,133 @@ module Hoodoo
         # +dataset_size+ parameter.
         #
         def dataset_size
-          return all.limit( nil ).offset( nil ).count
+          return all.limit( nil ).offset( nil ).count()
+        end
+
+        # As #dataset_size, but allows a configurable counting back-end via
+        # #fast_count and #fast_count_with. This method is intended to be used
+        # for fast count estimations, usually for performance reasons where
+        # the accurate #dataset_size count is too slow to compute.
+        #
+        # The implementation leans on #fast_count, so if your fast counting
+        # mechanism provides only estimations, then the computed dataset size
+        # will be an estimation too.
+        #
+        def estimated_dataset_size
+          return all.limit( nil ).offset( nil ).fast_count()
+        end
+
+        # In absence of other configuration, this method just calls through
+        # to Active Record's #count, but you can override the counting
+        # mechanism with a Proc which gets called to do the counting instead.
+        #
+        # The use case is for databases where counting may be slow for some
+        # reason. For example, in PostgreSQL 9, the MVCC model means that big
+        # tables under heavy write load may take extremely long times to be
+        # counted as a full sequential row scan gets activated. In the case
+        # of PostgreSQL, there's an estimation available as an alternative;
+        # its accuracy depends on how often the +ANALYZE+ command is run, but
+        # at least its execution speed is always very small.
+        #
+        # The #estimated_dataset_size method runs through here for counting so
+        # you need to ensure that your count estimation method can cope with
+        # whatever queries that might arise from the scope chains involved in
+        # instances of the model at hand, within the service code that uses
+        # that model.
+        #
+        # Specify a count estimation method with #fast_count_with.
+        #
+        def fast_count
+          counter = self.nz_co_loyalty_hoodoo_fast_count_with
+
+          if ( counter.nil? )
+            return all.count
+          else
+            return counter.call( all.to_sql )
+          end
+        end
+
+        # This method is related to #fast_count, so read the documentation for
+        # that as an introduction first.
+        #
+        # In #fast_count, a PostgreSQL example is given. Continuing with this,
+        # we could implement an estimation mechanism via Hoodoo's fast counter
+        # with something like the approach described here:
+        #
+        # http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries/
+        #
+        # First, you would need a migration in your service to implement the
+        # estimation method as a PLPGSQL function:
+        #
+        #     class CreateFastCountFunction < ActiveRecord::Migration
+        #       def up
+        #         execute <<-SQL
+        #           CREATE FUNCTION estimated_count(query text) RETURNS integer AS
+        #           $func$
+        #           DECLARE
+        #               rec   record;
+        #               rows  integer;
+        #           BEGIN
+        #               FOR rec IN EXECUTE 'EXPLAIN ' || query LOOP
+        #                   rows := substring(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+        #                   EXIT WHEN rows IS NOT NULL;
+        #               END LOOP;
+        #
+        #               RETURN rows;
+        #           END
+        #           $func$ LANGUAGE plpgsql;
+        #         SQL
+        #       end
+        #
+        #       def down
+        #         execute "DROP FUNCTION estimated_count(query text);"
+        #       end
+        #     end
+        #
+        # This takes arbitrary query text so should cope with pretty much any
+        # kind of ActiveRecord query chain and resulting SQL. With the database
+        # migration run, next define a Proc which calls this new function:
+        #
+        #     counter = Proc.new do | sql |
+        #       begin
+        #         ActiveRecord::Base.connection.execute(
+        #           "SELECT estimated_count('#{ sql }')"
+        #         ).first[ 'estimated_count' ].to_i
+        #       rescue
+        #         0
+        #     end
+        #
+        # Suppose we have a model called +Purchase+; next tell this model to use
+        # the above Proc for fast counting and use it:
+        #
+        #     Purchase.fast_count_with( counter )
+        #
+        #     Purchase.fast_count()
+        #     # => An integer; and you can use scope chains, just like #count:
+        #     Purchase.where(...conditions...).fast_count()
+        #     # => An integer
+        #
+        # A real-life example showing how running PostgreSQL's +ANALYZE+
+        # command can make a difference:
+        #
+        #     [1] pry(main)> Purchase.fast_count
+        #     => 68
+        #     [2] pry(main)> Purchase.count
+        #     => 76
+        #     [3] pry(main)> ActiveRecord::Base.connection.execute("ANALYZE")
+        #     => #<PG::Result:0x007f89b62cdcc8 status=PGRES_COMMAND_OK ntuples=0 nfields=0 cmd_tuples=0>
+        #     [4] pry(main)> Purchase.fast_count
+        #     => 76
+        #
+        # Parameters:
+        #
+        # +proc+:: The Proc to call. It must accept one parameter, which is the
+        #          SQL query for which the count is to be run, as a String. It
+        #          must evaluate to an Integer. Pass +nil+ to remove the custom
+        #          counter method and restore default behaviour.
+        #
+        def fast_count_with( proc )
+          self.nz_co_loyalty_hoodoo_fast_count_with = proc
         end
 
         # Specify a search mapping for use by #list to automatically restrict

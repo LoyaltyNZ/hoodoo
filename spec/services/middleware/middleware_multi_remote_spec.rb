@@ -28,14 +28,15 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
         return
       end
 
-      context.response.set_resources(
-        [
-          { 'list0' => TestEchoImplementation.to_h( context ) },
-          { 'list1' => TestEchoImplementation.to_h( context ) },
-          { 'list2' => TestEchoImplementation.to_h( context ) }
-        ],
-        49
-      )
+      array =
+      [
+        { 'list0' => TestEchoImplementation.to_h( context ) },
+        { 'list1' => TestEchoImplementation.to_h( context ) },
+        { 'list2' => TestEchoImplementation.to_h( context ) }
+      ]
+
+      context.response.set_resources( array, 49 )
+      context.response.set_estimated_resources( array, 50 )
     end
 
     def show( context )
@@ -189,15 +190,16 @@ class TestCallImplementation < Hoodoo::Services::Implementation
 
     return if result.adds_errors_to?( context.response.errors )
 
-    context.response.set_resources(
-      [
-        { 'listA'   => result                  },
-        { 'listB'   => result                  },
-        { 'listC'   => result                  },
-        { 'options' => result.response_options }
-      ],
-      ( result.dataset_size || 0 ) + 2
-    )
+    array =
+    [
+      { 'listA'   => result                  },
+      { 'listB'   => result                  },
+      { 'listC'   => result                  },
+      { 'options' => result.response_options }
+    ]
+
+    context.response.set_resources( array, ( result.dataset_size || 0 ) + 2 )
+    context.response.set_estimated_resources( array, ( result.estimated_dataset_size || 0 ) + 2 )
   end
 
   def show( context )
@@ -434,6 +436,7 @@ describe Hoodoo::Services::Middleware do
         }
       )
       expect( parsed[ '_dataset_size' ] ).to eq( 49 )
+      expect( parsed[ '_estimated_dataset_size' ] ).to eq( 50 )
     end
 
     it 'lists things with callbacks', :check_callbacks => true do
@@ -957,6 +960,7 @@ describe Hoodoo::Services::Middleware do
       )
 
       expect( parsed[ '_dataset_size' ]).to eq( 51 )
+      expect( parsed[ '_estimated_dataset_size' ] ).to eq( 52 )
 
       expect( parsed[ '_data' ][ 3 ] ).to_not be_nil
       expect_response_options_for( parsed[ '_data' ][ 3 ][ 'options' ] )

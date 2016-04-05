@@ -923,8 +923,9 @@ module Hoodoo; module Services
         body = local_response.body
 
         if action == :list && body.is_a?( ::Array )
-          result              = Hoodoo::Client::AugmentedArray.new( body )
-          result.dataset_size = local_response.dataset_size
+          result                        = Hoodoo::Client::AugmentedArray.new( body )
+          result.dataset_size           = local_response.dataset_size
+          result.estimated_dataset_size = local_response.estimated_dataset_size
 
         elsif action != :list && body.is_a?( ::Hash )
           result = Hoodoo::Client::AugmentedHash[ body ]

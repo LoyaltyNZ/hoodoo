@@ -80,10 +80,13 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
         return
       end
 
-      context.response.set_resources(
-        [ mock( context ), mock( context ), mock( context ) ],
-        3
-      )
+      resources = [ mock( context ), mock( context ), mock( context ) ]
+
+      if context.request.embeds.include?( 'estimated_counts_please' )
+        context.response.set_estimated_resources( resources, resources.count )
+      else
+        context.response.set_resources( resources, resources.count )
+      end
     end
 
     def create( context )
@@ -171,7 +174,7 @@ class RSpecClientTestTargetInterface < Hoodoo::Services::Interface
     endpoint :r_spec_client_test_targets, RSpecClientTestTargetImplementation
     public_actions :show
     actions :list, :create, :update, :delete
-    embeds :foo, :bar, :baz
+    embeds :foo, :bar, :baz, :estimated_counts_please
   end
 end
 
@@ -588,6 +591,7 @@ describe Hoodoo::Client do
         result = @endpoint.list( query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result.dataset_size ).to eq( result.size )
+        expect( result.estimated_dataset_size ).to be_nil
 
         expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
@@ -633,6 +637,19 @@ describe Hoodoo::Client do
         expect( result[ 'id'       ] ).to eq( mock_ident )
         expect( result[ 'embeds'   ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
+      end
+
+      it "provides estimations" do
+        query_hash = { '_embed' => 'estimated_counts_please' }
+
+        result = @endpoint.list( query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.dataset_size ).to be_nil
+        expect( result.estimated_dataset_size ).to eq( result.size )
+
+        expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
 
         option_based_expectations( result )
       end
@@ -854,6 +871,7 @@ describe Hoodoo::Client do
         result = @endpoint.list( query_hash )
         expect( result.platform_errors.has_errors? ).to eq( false )
         expect( result.dataset_size ).to eq( result.size )
+        expect( result.estimated_dataset_size ).to be_nil
 
         expect( result[ 0 ][ 'embeds'   ] ).to eq( embeds )
         expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
@@ -899,6 +917,19 @@ describe Hoodoo::Client do
         expect( result[ 'id'       ] ).to eq( mock_ident )
         expect( result[ 'embeds'   ] ).to eq( embeds )
         expect( result[ 'language' ] ).to eq( @expected_locale )
+
+        option_based_expectations( result )
+      end
+
+      it "provides estimations" do
+        query_hash = { '_embed' => 'estimated_counts_please' }
+
+        result = @endpoint.list( query_hash )
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result.dataset_size ).to be_nil
+        expect( result.estimated_dataset_size ).to eq( result.size )
+
+        expect( result[ 0 ][ 'language' ] ).to eq( @expected_locale )
 
         option_based_expectations( result )
       end

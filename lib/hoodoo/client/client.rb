@@ -76,7 +76,8 @@ module Hoodoo
       # call and supports Hoodoo::Client::AugmentedArray#dataset_size which
       # (if the called Resource endpoint implementation provides the
       # information) gives the total size of the data set at the time of
-      # calling.
+      # calling. Hoodoo::Client::AugmentedArray#estimated_dataset_size
+      # likewise gives access to the estimated count, if available.
       #
       # The other 4 methods return a Hoodoo::Client::AugmentedHash. This is a
       # Hash subclass. Both the Array and Hash subclasses provide a common

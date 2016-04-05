@@ -307,6 +307,28 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
   The count is accurate at the instant the call is processed by the system.
 
+* Lists MAY (but will not always) contain a rough count of the number of records available across the entire selected set of resources through an `_estimated_dataset_size` property. For example, regardless of pagination (`offset` / `limit`), if a given query identified roughly 141,419,500 resource instances, then the returned data _may_ include the size as follows:
+
+  ```javascript
+  {
+    "_data": [
+      {::resource::*},
+      // ...
+    ],
+    "_estimated_dataset_size": 141419500
+  }
+  ```
+
+  The estimation is made at the instant the call is processed by the system. Use of an estimation rather than an accurate count is a choice made by the implementation of a particular resource endpoint and is usually employed for performance reasons. This is especially likely to be used if the resource in practice is comparatively "high volume" and is likely to become associated with very large number of entries in a persistent storage layer.
+
+  No guarantees can be given about accuracy at the Hoodoo level. If an API client needs the count in order to produce, say, a page-based GUI that shows lists of resource instances, a page count derived from the dataset size estimation will of course itself be an estimation. An implementation would need to handle the cases that:
+
+  * The actual dataset size is slightly or much smaller than estimated: Any number of pages at the end of the estimated page range might be empty.
+
+  * The actual dataset size is slightly or much greater than estimated: The last page in the estimated range may be full, so an option to fetch even more pages needs to be made visible to the user.
+
+  This is a decision that can only be made at run-time as paged lists are fetched.
+
 #### <a name="apicbre"></a>Embedding
 
 Any given resource supports a list of zero or more things that can be embedded within its representation, *in an API call response*. This avoids the need for either multiple API calls ("get me the details of a user", "get the details of the user account", "get the user's account balance") or hard-wired "combinatorial" / "variation" API calls ("get me the details of a user, including account number and account balance" vs "get me the details of the user and account in full" etc.).
