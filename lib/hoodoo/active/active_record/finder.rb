@@ -590,6 +590,7 @@ module Hoodoo
         #
         #     counter = Proc.new do | sql |
         #       begin
+        #         sql = sql.gsub( "'", "''" ) # Escape SQL for insertion below
         #         ActiveRecord::Base.connection.execute(
         #           "SELECT estimated_count('#{ sql }')"
         #         ).first[ 'estimated_count' ].to_i
