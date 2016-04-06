@@ -72,7 +72,18 @@ details.</p>
             <td class='attr-name'>dataset_size</td>
             <td class='attr-desc'><p>For lists, the (optional) total size of the data set, of which the contents
 of this Array will often only represent a single page. If unknown, the
-value is <code>nil</code>.</p></td>
+value is <code>nil</code>, but as an alternative, an estimated size may be
+available in <a
+href="AugmentedArray.html#attribute-i-estimated_dataset_size">estimated_dataset_size</a>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-estimated_dataset_size'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>estimated_dataset_size</td>
+            <td class='attr-desc'><p>For lists, the (optional) estimated size of the data set, of which the
+contents of this Array will often only represent a single page. If unknown,
+the value is <code>nil</code>. The accuracy of the estimation is unknown.</p></td>
           </tr>
       </table>
 

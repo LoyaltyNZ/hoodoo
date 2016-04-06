@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.6.1)
+    hoodoo (1.7.0)
       dalli (~> 2.7)
       kgio (~> 2.9)
 
@@ -39,9 +39,9 @@ GEM
       eventmachine (~> 1.0)
       rack (~> 1.6)
       uuidtools (~> 2.1)
-    amq-protocol (1.9.2)
-    amqp (1.5.1)
-      amq-protocol (~> 1.9)
+    amq-protocol (2.0.1)
+    amqp (1.6.0)
+      amq-protocol (>= 2.0.1)
       eventmachine
     arel (6.0.3)
     builder (3.2.2)
@@ -100,7 +100,7 @@ GEM
       simplecov (>= 0.4.1)
     slop (3.6.0)
     thread_safe (0.3.5)
-    timecop (0.8.0)
+    timecop (0.8.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uuidtools (2.1.5)

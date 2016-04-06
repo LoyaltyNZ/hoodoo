@@ -120,6 +120,9 @@ code or response body data previously set by the service will be ignored.</p>
         <dd>
           <ul>
               <li>
+                <a href="#method-i-set_estimated_resources">set_estimated_resources</a>,
+              </li>
+              <li>
                 <a href="#method-i-set_resources">set_resources</a>
               </li>
           </ul>
@@ -170,11 +173,13 @@ returns <code>false</code>.</p></td>
               [R]
             </td>
             <td class='attr-name'>dataset_size</td>
-            <td class='attr-desc'><p>Read back a the dataset size given by a prior call to <a
+            <td class='attr-desc'><p>Read back a dataset size given by a prior call to <a
 href="Response.html#method-i-set_resources">set_resources</a>, or
 <code>nil</code> if none has been provided (either the response contains no
 list yet/at all, or an Array was given but the dataset size was not
-supplied).</p></td>
+supplied). If the dataset size is absent, an estimation may be present; see
+<a
+href="Response.html#attribute-i-estimated_dataset_size">estimated_dataset_size</a>.</p></td>
           </tr>
           <tr valign='top' id='attribute-i-errors'>
             <td class='attr-rw'>
@@ -194,6 +199,17 @@ any reason, though this is generally discouraged - especially if the
 existing errors collection isn&#39;t empty. The middleware does this as
 part of request handling, but generally speaking nobody else should need
 to.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-estimated_dataset_size'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>estimated_dataset_size</td>
+            <td class='attr-desc'><p>Read back an estimated dataset size given by a prior call to <a
+href="Response.html#method-i-set_resources">set_resources</a>, or
+<code>nil</code> if none has been provided (either the response contains no
+list yet/at all, or an Array was given but a dataset size estimation was
+not supplied).</p></td>
           </tr>
           <tr valign='top' id='attribute-i-http_status_code'>
             <td class='attr-rw'>
@@ -264,19 +280,20 @@ which a response is required.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 87</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">interaction_id</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">interaction_id</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Response.new must be given a valid Interaction ID (got &#39;#{ interaction_id.inspect }&#39;)&quot;</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-ivar">@interaction_id</span>   = <span class="ruby-identifier">interaction_id</span>
-  <span class="ruby-ivar">@errors</span>           = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>()
-  <span class="ruby-ivar">@headers</span>          = {}
-  <span class="ruby-ivar">@http_status_code</span> = <span class="ruby-number">200</span>
-  <span class="ruby-ivar">@body</span>             = {}
-  <span class="ruby-ivar">@dataset_size</span>     = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@interaction_id</span>         = <span class="ruby-identifier">interaction_id</span>
+  <span class="ruby-ivar">@errors</span>                 = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>()
+  <span class="ruby-ivar">@headers</span>                = {}
+  <span class="ruby-ivar">@http_status_code</span>       = <span class="ruby-number">200</span>
+  <span class="ruby-ivar">@body</span>                   = {}
+  <span class="ruby-ivar">@dataset_size</span>           = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@estimated_dataset_size</span> = <span class="ruby-keyword">nil</span>
 
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -333,7 +350,7 @@ API.</p>
                 <a href="javascript:toggleSource('method-i-add_error_source')" id="l_method-i-add_error_source">show</a>
               </p>
               <div id="method-i-add_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 212</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 262</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
@@ -368,7 +385,7 @@ error collection of &#39;this&#39; response object.</p>
                 <a href="javascript:toggleSource('method-i-add_errors_source')" id="l_method-i-add_errors_source">show</a>
               </p>
               <div id="method-i-add_errors_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 248</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 298</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_errors</span>( <span class="ruby-identifier">errors_object</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">errors_object</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -410,7 +427,7 @@ overwrites.</p>
                 <a href="javascript:toggleSource('method-i-add_header_source')" id="l_method-i-add_header_source">show</a>
               </p>
               <div id="method-i-add_header_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 151</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 201</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_header</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">overwrite</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">dname</span> = <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span>
@@ -464,7 +481,7 @@ stored error. If this is omitted, 500 is kept as the default.</p>
                 <a href="javascript:toggleSource('method-i-add_precompiled_error_source')" id="l_method-i-add_precompiled_error_source">show</a>
               </p>
               <div id="method-i-add_precompiled_error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 234</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 284</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> = <span class="ruby-number">500</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_precompiled_error</span>( <span class="ruby-identifier">code</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">reference</span>, <span class="ruby-identifier">http_status</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">for_rack</span>()
@@ -495,7 +512,7 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
                 <a href="javascript:toggleSource('method-i-for_rack_source')" id="l_method-i-for_rack_source">show</a>
               </p>
               <div id="method-i-for_rack_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 271</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 321</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">for_rack</span>
 
   <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
@@ -517,14 +534,19 @@ href="Middleware.html">Hoodoo::Services::Middleware</a>.</p>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
     <span class="ruby-identifier">response_hash</span> = { <span class="ruby-string">&#39;_data&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">body_data</span> }
-    <span class="ruby-identifier">response_hash</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span> ] = <span class="ruby-ivar">@dataset_size</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@dataset_size</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">response_hash</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span>           ] = <span class="ruby-ivar">@dataset_size</span>           <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@dataset_size</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">response_hash</span>[ <span class="ruby-string">&#39;_estimated_dataset_size&#39;</span> ] = <span class="ruby-ivar">@estimated_dataset_size</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@estimated_dataset_size</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">response_string</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">response_hash</span> )
+
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> )
     <span class="ruby-identifier">response_string</span> = <span class="ruby-operator">::</span><span class="ruby-constant">JSON</span>.<span class="ruby-identifier">generate</span>( <span class="ruby-identifier">body_data</span> )
+
   <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">body_data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> )
     <span class="ruby-identifier">response_string</span> = <span class="ruby-identifier">body_data</span>
+
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Services::Response\#for_rack given unrecognised body data class &#39;#{ body_data.class.name }&#39;&quot;</span>
+
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-identifier">response_string</span> )
@@ -568,7 +590,7 @@ href="Response.html#method-i-add_header">add_header</a> call, or
                 <a href="javascript:toggleSource('method-i-get_header_source')" id="l_method-i-get_header_source">show</a>
               </p>
               <div id="method-i-get_header_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 172</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_header</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-identifier">value_hash</span> = <span class="ruby-ivar">@headers</span>[ <span class="ruby-identifier">name</span>.<span class="ruby-identifier">downcase</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value_hash</span>.<span class="ruby-identifier">nil?</span>
@@ -598,7 +620,7 @@ will just continue to accumulate).</p>
                 <a href="javascript:toggleSource('method-i-halt_processing-3F_source')" id="l_method-i-halt_processing-3F_source">show</a>
               </p>
               <div id="method-i-halt_processing-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 107</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 116</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">halt_processing?</span>
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">has_errors?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -623,7 +645,7 @@ will just continue to accumulate).</p>
                 <a href="javascript:toggleSource('method-i-headers_source')" id="l_method-i-headers_source">show</a>
               </p>
               <div id="method-i-headers_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 180</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 230</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">headers</span>
   <span class="ruby-ivar">@headers</span>.<span class="ruby-identifier">inject</span>( {} ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">result</span>, <span class="ruby-identifier">kv_array</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">result</span>.<span class="ruby-identifier">merge</span>( <span class="ruby-identifier">kv_array</span>[ <span class="ruby-number">1</span> ] )
@@ -660,9 +682,69 @@ durning a &#39;show&#39; call when the requested resource does not exist.</p>
                 <a href="javascript:toggleSource('method-i-not_found_source')" id="l_method-i-not_found_source">show</a>
               </p>
               <div id="method-i-not_found_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 262</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 312</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">not_found</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-ivar">@errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;generic.not_found&#39;</span>, <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:ident</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">ident</span> } )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-set_estimated_resources">
+              <b>set_estimated_resources</b>( array, estimated_dataset_size = nil )
+            <a href="../../../classes/Hoodoo/Services/Response.html#method-i-set_estimated_resources" name="method-i-set_estimated_resources" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>A companion to <a
+href="Response.html#method-i-set_resources">set_resources</a>. See the
+documentation of that method for background information.</p>
+
+<p>If the persistence layer in use and data volumes expected for a given
+resource make accurate counting too slow to compute, your persistence layer
+might support a mechanism for producing an <em>estimated</em> count quickly
+instead. For example, PostgreSQL 9&#39;s row counting can be slow due to
+MVCC but there are PostgreSQL-specific ways of obtaining a row count
+estimation quickly. If this applies to you, call here to correctly specify
+the estimation in a way that makes it clear to the calling client that
+it&#39;s not an accurate result.</p>
+
+<p>Technically you could call <strong>both</strong> this <strong>and</strong>
+<a href="Response.html#method-i-set_resources">set_resources</a> to set
+both an accurate and an estimated count, though it&#39;s hard to imagine a
+use case for this outside of testing scenarios; but note that each call
+will override any previous setting of the <a
+href="Response.html#attribute-i-body">body</a> property.</p>
+
+<p>If using the <a href="../ActiveRecord.html">Hoodoo::ActiveRecord</a>
+extensions for your persistence layer, then please also see
+Hoodoo::ActiveRecord::Finder::ClassMethods::estimated_dataset_size.</p>
+<dl class="rdoc-list note-list"><dt><code>array</code>
+<dd>
+<p>Array of resource representations (Ruby Array with Ruby Hash entries
+representing rendered resources, ideally through the <a
+href="../Presenters.html">Hoodoo::Presenters</a> framework).</p>
+</dd><dt><code>estimated_dataset_size</code>
+<dd>
+<p>Optional <em>total</em> number of items in the entire dataset of which
+<code>array</code> is, most likely, just a subset due to paginated lists
+via offset and limit parameters; this value is an estimation with undefined
+accuracy.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-set_estimated_resources_source')" id="l_method-i-set_estimated_resources_source">show</a>
+              </p>
+              <div id="method-i-set_estimated_resources_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 180</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_estimated_resources</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">estimated_dataset_size</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">array</span>
+  <span class="ruby-ivar">@estimated_dataset_size</span> = <span class="ruby-identifier">estimated_dataset_size</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -681,12 +763,18 @@ array to either of <a href="Response.html#attribute-i-body">body</a> or <a
 href="Response.html#attribute-i-set_resource">set_resource</a>, calling <a
 href="Response.html#method-i-set_resources">set_resources</a> is more
 semantically correct and provides an additional feature; you can specify
-the total number of items in the dataset.</p>
+the total number of items in the dataset either precisely, or as an
+estimation.</p>
 
 <p>For example, if you were listing a page of 50 resource instances but the
 total matching dataset of that list included 344 instances, you would pass
 344 in the <code>dataset_size</code> input parameter. This is optional but
 highly recommended as it is often very useful for calling clients.</p>
+
+<p>If for any reason you aren&#39;t able to quickly produce an accurate count
+but <em>can</em> produce an estimation, call <a
+href="Response.html#method-i-set_estimated_resources">set_estimated_resources</a>
+instead.</p>
 <dl class="rdoc-list note-list"><dt><code>array</code>
 <dd>
 <p>Array of resource representations (Ruby Array with Ruby Hash entries
@@ -696,7 +784,8 @@ href="../Presenters.html">Hoodoo::Presenters</a> framework).</p>
 <dd>
 <p>Optional <em>total</em> number of items in the entire dataset of which
 <code>array</code> is, most likely, just a subset due to paginated lists
-via offset and limit parameters.</p>
+via offset and limit parameters. This value was accurate at the instant of
+counting.</p>
 </dd></dl>
             </div>
 
@@ -708,7 +797,7 @@ via offset and limit parameters.</p>
                 <a href="javascript:toggleSource('method-i-set_resources_source')" id="l_method-i-set_resources_source">show</a>
               </p>
               <div id="method-i-set_resources_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 130</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/response.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resources</span>( <span class="ruby-identifier">array</span>, <span class="ruby-identifier">dataset_size</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">body</span> = <span class="ruby-identifier">array</span>
   <span class="ruby-ivar">@dataset_size</span> = <span class="ruby-identifier">dataset_size</span>

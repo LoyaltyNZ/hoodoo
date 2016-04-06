@@ -317,9 +317,12 @@ instance.</p>
   <span class="ruby-comment"># part, else the hash part.</span>
 
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> ) )
-    <span class="ruby-identifier">size</span>   = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span> ]
-    <span class="ruby-identifier">parsed</span> = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span>         ]
-    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">dataset_size</span> = <span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">size</span>           = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_dataset_size&#39;</span>           ]
+    <span class="ruby-identifier">estimated_size</span> = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_estimated_dataset_size&#39;</span> ]
+
+    <span class="ruby-identifier">parsed</span>                        = <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;_data&#39;</span> ]
+    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">dataset_size</span>           = <span class="ruby-identifier">size</span>
+    <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">estimated_dataset_size</span> = <span class="ruby-identifier">estimated_size</span>
 
   <span class="ruby-keyword">elsif</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;kind&#39;</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Errors&#39;</span> )
 

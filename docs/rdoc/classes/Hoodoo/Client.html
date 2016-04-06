@@ -194,7 +194,10 @@ is an Array subclass which will contain the (up to) 25 results from the
 above call and supports <a
 href="Client/AugmentedArray.html#attribute-i-dataset_size">Hoodoo::Client::AugmentedArray#dataset_size</a>
 which (if the called Resource endpoint implementation provides the
-information) gives the total size of the data set at the time of calling.</p>
+information) gives the total size of the data set at the time of calling.
+<a
+href="Client/AugmentedArray.html#attribute-i-estimated_dataset_size">Hoodoo::Client::AugmentedArray#estimated_dataset_size</a>
+likewise gives access to the estimated count, if available.</p>
 
 <p>The other 4 methods return a <a
 href="Client/AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>. This is
@@ -378,7 +381,7 @@ code.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 241</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 242</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">base_uri</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
                 <span class="ruby-identifier">drb_uri</span><span class="ruby-operator">:</span>               <span class="ruby-keyword">nil</span>,
                 <span class="ruby-identifier">drb_port</span><span class="ruby-operator">:</span>              <span class="ruby-keyword">nil</span>,
@@ -479,7 +482,7 @@ option keys <em>MUST</em> be Symbols.</p>
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 314</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 315</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">endpoint_options</span> = {
