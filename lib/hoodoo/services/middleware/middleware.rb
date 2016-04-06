@@ -1948,8 +1948,24 @@ module Hoodoo; module Services
     #                 describing the current interaction. Updated on exit.
     #
     def deal_with_content_type_header( interaction )
-      content_type      = interaction.rack_request.media_type
-      content_encoding  = interaction.rack_request.content_charset
+
+      # An in-the-wild Content-Type header value of
+      # "application/json; charset=utf-8, application/x-www-form-urlencoded"
+      # from Postman caused Rack 1.6.4 to break and raise an exception. Trap
+      # any exceptions from the Rack request calls below and assume that they
+      # indicate a malformed header.
+      #
+      begin
+        content_type     = interaction.rack_request.media_type
+        content_encoding = interaction.rack_request.content_charset
+      rescue
+        interaction.context.response.errors.add_error(
+          'platform.malformed',
+          'message' => "Content-Type '#{ interaction.rack_request.content_type || "<unknown>" }' is malformed"
+        )
+
+        return
+      end
 
       content_type.downcase!     unless content_type.nil?
       content_encoding.downcase! unless content_encoding.nil?
