@@ -225,7 +225,7 @@ describe Hoodoo::Services::Middleware do
       expect(result['errors'][0]['message']).to eq("Content-Type 'application/json' does not match supported types '[\"application/json\"]' and/or encodings '[\"utf-8\"]'")
     end
 
-    it 'should complain about incorrect content type' do
+    it 'complains about incorrect content types' do
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'some/thing; charset=utf-8' }
 
       expect(last_response.status).to eq(422)
@@ -235,7 +235,7 @@ describe Hoodoo::Services::Middleware do
       expect(result['errors'][0]['message']).to eq("Content-Type 'some/thing; charset=utf-8' does not match supported types '[\"application/json\"]' and/or encodings '[\"utf-8\"]'")
     end
 
-    it 'should complain about incorrect content type' do
+    it 'complains about incorrect content type charsets' do
       get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=madeup' }
 
       expect(last_response.status).to eq(422)
@@ -243,6 +243,25 @@ describe Hoodoo::Services::Middleware do
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.malformed')
       expect(result['errors'][0]['message']).to eq("Content-Type 'application/json; charset=madeup' does not match supported types '[\"application/json\"]' and/or encodings '[\"utf-8\"]'")
+    end
+
+    it 'rejects malformed attempts to specify a list of options' do
+      types =
+      [
+        'application/json; charset=utf-8, application/x-www-form-urlencoded',
+        'application/x-www-form-urlencoded, application/json; charset=utf-8',
+        'application/x-www-form-urlencoded, application/json; charset=utf-8, application/json; charset=madeup'
+      ]
+
+      types.each do | type |
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => type }
+
+        expect(last_response.status).to eq(422)
+
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq("Content-Type '#{ type }' is malformed")
+      end
     end
 
     it 'should generate interaction IDs and other standard headers even for error states' do
