@@ -23,7 +23,9 @@ class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementat
     if search_offset > 0
       context.response.add_error( 'service_calls_a.triggered', 'reference' => { :offset => search_offset } )
     else
-      context.response.set_resources( [1,2,3,4], 4321 )
+      array = [ 1, 2, 3, 4 ]
+      context.response.set_estimated_resources( array, 1234 )
+      context.response.set_resources( array, 4321 )
       expectable_hook( context )
     end
   end
@@ -415,6 +417,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
       expect(result).to eq([1,2,3,4])
       expect(result.dataset_size).to eq(4321)
+      expect(result.estimated_dataset_size).to eq(1234)
     end
 
     get '/v1/rspec_test_inter_resource_calls_b',

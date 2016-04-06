@@ -20,9 +20,18 @@ module Hoodoo
 
       # For lists, the (optional) total size of the data set, of which
       # the contents of this Array will often only represent a single
-      # page. If unknown, the value is +nil+.
+      # page. If unknown, the value is +nil+, but as an alternative, an
+      # estimated size may be available in #estimated_dataset_size.
       #
       attr_accessor :dataset_size
+
+      # For lists, the (optional) estimated size of the data set, of
+      # which the contents of this Array will often only represent a
+      # single page. If unknown, the value is +nil+. The accuracy of
+      # the estimation is unknown.
+      #
+      attr_accessor :estimated_dataset_size
+
     end
 
   end

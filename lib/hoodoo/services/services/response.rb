@@ -71,12 +71,20 @@ module Hoodoo; module Services
     attr_accessor :body
     alias_method  :set_resource, :body=
 
-    # Read back a the dataset size given by a prior call to #set_resources,
+    # Read back a dataset size given by a prior call to #set_resources,
     # or +nil+ if none has been provided (either the response contains no
     # list yet/at all, or an Array was given but the dataset size was not
-    # supplied).
+    # supplied). If the dataset size is absent, an estimation may be
+    # present; see #estimated_dataset_size.
     #
     attr_reader :dataset_size
+
+    # Read back an estimated dataset size given by a prior call to
+    # #set_resources, or +nil+ if none has been provided (either the
+    # response contains no list yet/at all, or an Array was given but
+    # a dataset size estimation was not supplied).
+    #
+    attr_reader :estimated_dataset_size
 
     # Create a new instance, ready to take on a response. The service
     # middleware is responsible for doing this.
@@ -90,12 +98,13 @@ module Hoodoo; module Services
         raise "Hoodoo::Services::Response.new must be given a valid Interaction ID (got '#{ interaction_id.inspect }')"
       end
 
-      @interaction_id   = interaction_id
-      @errors           = Hoodoo::Errors.new()
-      @headers          = {}
-      @http_status_code = 200
-      @body             = {}
-      @dataset_size     = nil
+      @interaction_id         = interaction_id
+      @errors                 = Hoodoo::Errors.new()
+      @headers                = {}
+      @http_status_code       = 200
+      @body                   = {}
+      @dataset_size           = nil
+      @estimated_dataset_size = nil
 
     end
 
@@ -112,12 +121,15 @@ module Hoodoo; module Services
     # array of items. Although you can just assign an array to either of
     # #body or #set_resource, calling #set_resources is more semantically
     # correct and provides an additional feature; you can specify the total
-    # number of items in the dataset.
+    # number of items in the dataset either precisely, or as an estimation.
     #
     # For example, if you were listing a page of 50 resource instances but
     # the total matching dataset of that list included 344 instances, you
     # would pass 344 in the +dataset_size+ input parameter. This is optional
     # but highly recommended as it is often very useful for calling clients.
+    #
+    # If for any reason you aren't able to quickly produce an accurate count
+    # but _can_ produce an estimation, call #set_estimated_resources instead.
     #
     # +array+::        Array of resource representations (Ruby Array with
     #                  Ruby Hash entries representing rendered resources,
@@ -125,11 +137,49 @@ module Hoodoo; module Services
     #
     # +dataset_size+:: Optional _total_ number of items in the entire dataset
     #                  of which +array+ is, most likely, just a subset due to
-    #                  paginated lists via offset and limit parameters.
+    #                  paginated lists via offset and limit parameters. This
+    #                  value was accurate at the instant of counting.
     #
     def set_resources( array, dataset_size = nil )
       self.body = array
       @dataset_size = dataset_size
+    end
+
+    # A companion to #set_resources. See the documentation of that method for
+    # background information.
+    #
+    # If the persistence layer in use and data volumes expected for a given
+    # resource make accurate counting too slow to compute, your persistence
+    # layer might support a mechanism for producing an _estimated_ count
+    # quickly instead. For example, PostgreSQL 9's row counting can be slow
+    # due to MVCC but there are PostgreSQL-specific ways of obtaining a row
+    # count estimation quickly. If this applies to you, call here to
+    # correctly specify the estimation in a way that makes it clear to the
+    # calling client that it's not an accurate result.
+    #
+    # Technically you could call *both* this *and* #set_resources to set both
+    # an accurate and an estimated count, though it's hard to imagine a use
+    # case for this outside of testing scenarios; but note that each call
+    # will override any previous setting of the #body property.
+    #
+    # If using the Hoodoo::ActiveRecord extensions for your persistence layer,
+    # then please also see
+    # Hoodoo::ActiveRecord::Finder::ClassMethods::estimated_dataset_size.
+    #
+    # +array+::                  Array of resource representations (Ruby Array
+    #                            with Ruby Hash entries representing rendered
+    #                            resources, ideally through the
+    #                            Hoodoo::Presenters framework).
+    #
+    # +estimated_dataset_size+:: Optional _total_ number of items in the
+    #                            entire dataset of which +array+ is, most
+    #                            likely, just a subset due to paginated lists
+    #                            via offset and limit parameters; this value
+    #                            is an estimation with undefined accuracy.
+    #
+    def set_estimated_resources( array, estimated_dataset_size = nil )
+      self.body = array
+      @estimated_dataset_size = estimated_dataset_size
     end
 
     # Add an HTTP header to the internal collection that will be used for the
@@ -289,14 +339,19 @@ module Hoodoo; module Services
 
       if body_data.is_a?( ::Array )
         response_hash = { '_data' => body_data }
-        response_hash[ '_dataset_size' ] = @dataset_size unless @dataset_size.nil?
+        response_hash[ '_dataset_size'           ] = @dataset_size           unless @dataset_size.nil?
+        response_hash[ '_estimated_dataset_size' ] = @estimated_dataset_size unless @estimated_dataset_size.nil?
         response_string = ::JSON.generate( response_hash )
+
       elsif body_data.is_a?( ::Hash )
         response_string = ::JSON.generate( body_data )
+
       elsif body_data.is_a?( ::String )
         response_string = body_data
+
       else
         raise "Hoodoo::Services::Response\#for_rack given unrecognised body data class '#{ body_data.class.name }'"
+
       end
 
       rack_response.write( response_string )

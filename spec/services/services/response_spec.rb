@@ -202,7 +202,7 @@ describe Hoodoo::Services::Response do
       expect(body.body).to eq([expected])
     end
 
-    it 'should return non-error condition Rack data correctly with an Array body' do
+    it 'returns non-error condition Rack data correctly with an Array body' do
       response_array = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
       @r.body = response_array
 
@@ -212,6 +212,47 @@ describe Hoodoo::Services::Response do
       expect(status).to eq(200) # From the first error we stored, not the second
       expect(headers).to eq({'Content-Length' => expected.length.to_s})
       expect(body.body).to eq([expected])
+    end
+
+    it 'returns non-error condition Rack data correctly with a dataset size' do
+      response_array = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
+      @r.set_resources( response_array, response_array.count )
+
+      status, headers, body = @r.for_rack
+
+      expected = JSON.generate( { '_data' => response_array, '_dataset_size' => response_array.count } )
+      expect( status    ).to eq( 200 )
+      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( body.body ).to eq( [ expected ] )
+    end
+
+    it 'returns non-error condition Rack data correctly with an estimated dataset size' do
+      response_array = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
+      @r.set_estimated_resources( response_array, response_array.count )
+
+      status, headers, body = @r.for_rack
+
+      expected = JSON.generate( { '_data' => response_array, '_estimated_dataset_size' => response_array.count } )
+      expect( status    ).to eq( 200 )
+      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( body.body ).to eq( [ expected ] )
+    end
+
+    it 'returns non-error condition Rack data correctly with both an accurate and an estimated dataset size' do
+      response_array = [ { this: 'should not be ignored' }, { neither: 'should this' } ]
+
+                @r.set_resources( response_array, response_array.count )
+      @r.set_estimated_resources( response_array, response_array.count )
+
+      status, headers, body = @r.for_rack
+
+      expected = JSON.generate( { '_data'                   => response_array,
+                                  '_dataset_size'           => response_array.count,
+                                  '_estimated_dataset_size' => response_array.count } )
+
+      expect( status    ).to eq( 200 )
+      expect( headers   ).to eq( { 'Content-Length' => expected.length.to_s } )
+      expect( body.body ).to eq( [ expected ] )
     end
 
     it 'should allow pre-encoded strings in the body' do
@@ -232,7 +273,7 @@ describe Hoodoo::Services::Response do
     end
   end
 
-  context "#not_found" do
+  context '#not_found' do
 
     let(:ident) { 'an_ident' }
     before { @r.not_found(ident) }
@@ -245,6 +286,36 @@ describe Hoodoo::Services::Response do
     end
     it 'sets halt processing to true' do
       expect(@r.halt_processing?).to eq(true)
+    end
+  end
+
+  context '#set_resources and #set_estimated_resources' do
+    it '#set_resources sets #body and #dataset_size' do
+      array = [ 1, 2, 3, 4 ]
+      @r.set_resources( array, 4321 )
+      expect( @r.body ).to match_array( array )
+      expect( @r.dataset_size ).to eq( 4321 )
+      expect( @r.estimated_dataset_size ).to be_nil
+    end
+
+    it '#set_estimated_resources sets #body and #estimated_dataset_size' do
+      array = [ 4, 3, 2, 1 ]
+      @r.set_estimated_resources( array, 1234 )
+      expect( @r.body ).to match_array( array )
+      expect( @r.dataset_size ).to be_nil
+      expect( @r.estimated_dataset_size ).to eq( 1234 )
+    end
+
+    it 'both together set all properties with the most recent call setting #body' do
+      array_1 = [ 1, 2, 3, 4 ]
+      @r.set_resources( array_1, 4321 )
+
+      array_2 = [ 4, 3, 2, 1 ]
+      @r.set_estimated_resources( array_2, 1234 )
+
+      expect( @r.body ).to match_array( array_2 )
+      expect( @r.dataset_size ).to eq( 4321 )
+      expect( @r.estimated_dataset_size ).to eq( 1234 )
     end
   end
 end

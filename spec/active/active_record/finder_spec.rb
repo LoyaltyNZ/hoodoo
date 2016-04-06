@@ -435,6 +435,8 @@ describe Hoodoo::ActiveRecord::Finder do
 
   context '#list' do
     it 'lists with pages, offsets and counts' do
+      expect_any_instance_of( RSpecModelFinderTest ).to_not receive( :estimated_dataset_size )
+
       @list_params.offset = 1 # 0 is first record
       @list_params.limit  = 1
 
@@ -448,6 +450,121 @@ describe Hoodoo::ActiveRecord::Finder do
       finder = RSpecModelFinderTest.order( :field_three => :asc ).list( @list_params )
       expect( finder ).to eq([@b, @c])
       expect( finder.dataset_size).to eq(3)
+    end
+  end
+
+  # ==========================================================================
+
+  context 'counting' do
+    it 'lists with a normal count' do
+      finder = RSpecModelFinderTest.list( @list_params )
+
+      expect( finder ).to receive( :dataset_size ).at_least( :once ).and_call_original
+      expect( finder ).to receive( :count        ).at_least( :once ).and_call_original
+
+      expect( finder ).to_not receive( :estimated_dataset_size )
+      expect( finder ).to_not receive( :estimated_count        )
+
+      result = finder.dataset_size()
+
+      expect( result ).to_not be_nil
+    end
+
+    it 'lists with an estimated count' do
+      finder = RSpecModelFinderTest.list( @list_params )
+
+      expect( finder ).to_not receive( :dataset_size )
+
+      expect( finder ).to receive( :estimated_dataset_size ).at_least( :once ).and_call_original
+      expect( finder ).to receive( :estimated_count        ).at_least( :once ).and_call_original
+      expect( finder ).to receive( :count                  ).at_least( :once ).and_call_original
+
+      result = finder.estimated_dataset_size
+
+      expect( result ).to_not be_nil
+    end
+
+    context 'RDoc-recommended PostgreSQL migration example' do
+      before :each do
+        ActiveRecord::Base.connection.execute <<-SQL
+          CREATE FUNCTION estimated_count(query text) RETURNS integer AS
+          $func$
+          DECLARE
+              rec  record;
+              rows integer;
+          BEGIN
+              FOR rec IN EXECUTE 'EXPLAIN ' || query LOOP
+                  rows := substring(rec."QUERY PLAN" FROM ' rows=([[:digit:]]+)');
+                  EXIT WHEN rows IS NOT NULL;
+              END LOOP;
+
+              RETURN rows;
+          END
+          $func$ LANGUAGE plpgsql;
+        SQL
+
+        counter = Proc.new do | sql |
+          begin
+            ActiveRecord::Base.connection.execute(
+              "SELECT estimated_count('#{ sql}')"
+            ).first[ 'estimated_count' ].to_i
+          rescue
+            nil
+          end
+        end
+
+        RSpecModelFinderTest.estimate_counts_with( counter )
+
+        # Tests start by ensuring the database knows about the current object count.
+        #
+        ActiveRecord::Base.connection.execute "ANALYZE;"
+      end
+
+      after :each do
+        ActiveRecord::Base.connection.execute "DROP FUNCTION estimated_count(query text);"
+        RSpecModelFinderTest.estimate_counts_with( nil )
+      end
+
+      context 'estimate' do
+        before :each do
+          @initial_accurate_count = RSpecModelFinderTest.count
+
+          # The outer 'before' code ensures an accurate initial count of 3,
+          # but we're going add in a few more unestimated items.
+          #
+          @uncounted1 = RSpecModelFinderTest.new.save!
+          @uncounted2 = RSpecModelFinderTest.new.save!
+          @uncounted3 = RSpecModelFinderTest.new.save!
+
+          @subsequent_accurate_count = RSpecModelFinderTest.count
+        end
+
+        it 'is initially inaccurate' do
+          finder = RSpecModelFinderTest.list( @list_params )
+          result = finder.estimated_dataset_size
+          expect( result ).to eq( @initial_accurate_count )
+        end
+
+        # The outer 'before' code kind of already tests this anyway since if
+        # the analyze call therein didn't work, prerequisites in the tests
+        # would be wrong and other tests would fail. It's useful to
+        # double-check something this important though.
+        #
+        it 'is accurate after ANALYZE' do
+          ActiveRecord::Base.connection.execute "ANALYZE;"
+
+          finder = RSpecModelFinderTest.list( @list_params )
+          result = finder.estimated_dataset_size
+          expect( result ).to eq( @subsequent_accurate_count )
+        end
+
+        it 'is "nil" if the Proc evaluates thus' do
+          RSpecModelFinderTest.estimate_counts_with( Proc.new() { | sql | nil } )
+          finder = RSpecModelFinderTest.list( @list_params )
+          result = finder.estimated_dataset_size
+          expect( result ).to be_nil
+        end
+      end
     end
   end
 

@@ -325,9 +325,12 @@ module Hoodoo
             # part, else the hash part.
 
             if ( parsed[ '_data' ].is_a?( ::Array ) )
-              size   = parsed[ '_dataset_size' ]
-              parsed = parsed[ '_data'         ]
-              parsed.dataset_size = size
+              size           = parsed[ '_dataset_size'           ]
+              estimated_size = parsed[ '_estimated_dataset_size' ]
+
+              parsed                        = parsed[ '_data' ]
+              parsed.dataset_size           = size
+              parsed.estimated_dataset_size = estimated_size
 
             elsif ( parsed[ 'kind' ] == 'Errors' )
 
