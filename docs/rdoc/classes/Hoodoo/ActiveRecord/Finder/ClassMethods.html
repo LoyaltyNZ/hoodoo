@@ -75,6 +75,20 @@ href="../Finder.html#method-c-included">Hoodoo::ActiveRecord::Finder.included</a
               </li>
           </ul>
         </dd>
+        <dt>E</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-estimate_counts_with">estimate_counts_with</a>,
+              </li>
+              <li>
+                <a href="#method-i-estimated_count">estimated_count</a>,
+              </li>
+              <li>
+                <a href="#method-i-estimated_dataset_size">estimated_dataset_size</a>
+              </li>
+          </ul>
+        </dd>
         <dt>F</dt>
         <dd>
           <ul>
@@ -235,7 +249,7 @@ using calls to <code>where( attr =&gt; ident )</code>.</p>
                 <a href="javascript:toggleSource('method-i-acquire_source')" id="l_method-i-acquire_source">show</a>
               </p>
               <div id="method-i-acquire_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 178</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 179</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquire</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">acquisition_scope</span>( <span class="ruby-identifier">ident</span> ).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
@@ -333,7 +347,7 @@ instance methods that a resource subclass implements.</p>
                 <a href="javascript:toggleSource('method-i-acquire_in_source')" id="l_method-i-acquire_in_source">show</a>
               </p>
               <div id="method-i-acquire_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 249</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 250</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquire_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -375,7 +389,7 @@ href="ClassMethods.html#method-i-acquired_with">acquired_with</a></p>
                 <a href="javascript:toggleSource('method-i-acquire_with_source')" id="l_method-i-acquire_with_source">show</a>
               </p>
               <div id="method-i-acquire_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 265</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 266</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span>.<span class="ruby-identifier">uniq!</span>()
@@ -426,7 +440,7 @@ href="ClassMethods.html#method-i-acquisition_scope">acquisition_scope</a>.</p>
                 <a href="javascript:toggleSource('method-i-acquire_with_id_substitute_source')" id="l_method-i-acquire_with_id_substitute_source">show</a>
               </p>
               <div id="method-i-acquire_with_id_substitute_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 300</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 301</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquire_with_id_substitute</span>( <span class="ruby-identifier">attr</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_substitute</span> = <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_sym</span>
 <span class="ruby-keyword">end</span></pre>
@@ -461,7 +475,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a></p>
                 <a href="javascript:toggleSource('method-i-acquired_with_source')" id="l_method-i-acquired_with_source">show</a>
               </p>
               <div id="method-i-acquired_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 278</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 279</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquired_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_show_id_fields</span> <span class="ruby-operator">||</span> []
 <span class="ruby-keyword">end</span></pre>
@@ -511,7 +525,7 @@ instance.</p>
                 <a href="javascript:toggleSource('method-i-acquisition_scope_source')" id="l_method-i-acquisition_scope_source">show</a>
               </p>
               <div id="method-i-acquisition_scope_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 325</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 326</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">acquisition_scope</span>( <span class="ruby-identifier">ident</span> )
   <span class="ruby-identifier">extra_fields</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">acquired_with</span>()
   <span class="ruby-identifier">arel_table</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">arel_table</span>()
@@ -553,9 +567,214 @@ and want to fill in its <code>dataset_size</code> parameter.</p>
                 <a href="javascript:toggleSource('method-i-dataset_size_source')" id="l_method-i-dataset_size_source">show</a>
               </p>
               <div id="method-i-dataset_size_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 497</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 503</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dataset_size</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">count</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">count</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-estimate_counts_with">
+              <b>estimate_counts_with</b>( proc )
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-estimate_counts_with" name="method-i-estimate_counts_with" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>This method is related to <a
+href="ClassMethods.html#method-i-estimated_count">estimated_count</a>, so
+read the documentation for that as an introduction first.</p>
+
+<p>In <a
+href="ClassMethods.html#method-i-estimated_count">estimated_count</a>, a
+PostgreSQL example is given. Continuing with this, we could implement an
+estimation mechanism via Hoodoo&#39;s fast counter with something like the
+approach described here:</p>
+<ul><li>
+<p><a
+href="https://wiki.postgresql.org/wiki/Count_estimate">wiki.postgresql.org/wiki/Count_estimate</a></p>
+</li><li>
+<p><a
+href="http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries">www.verygoodindicators.com/blog/2015/04/07/faster-count-queries</a>/</p>
+</li></ul>
+
+<p>First, you would need a migration in your service to implement the
+estimation method as a PLPGSQL function:</p>
+
+<pre><code>class CreateFastCountFunction &lt; ActiveRecord::Migration
+  def up
+    execute &lt;&lt;-SQL
+      CREATE FUNCTION estimated_count(query text) RETURNS integer AS
+      $func$
+      DECLARE
+          rec   record;
+          rows  integer;
+      BEGIN
+          FOR rec IN EXECUTE &#39;EXPLAIN &#39; || query LOOP
+              rows := substring(rec.&quot;QUERY PLAN&quot; FROM &#39; rows=([[:digit:]]+)&#39;);
+              EXIT WHEN rows IS NOT NULL;
+          END LOOP;
+
+          RETURN rows;
+      END
+      $func$ LANGUAGE plpgsql;
+    SQL
+  end
+
+  def down
+    execute &quot;DROP FUNCTION estimated_count(query text);&quot;
+  end
+end
+</code></pre>
+
+<p>This takes arbitrary query text so should cope with pretty much any kind of
+<a href="../../ActiveRecord.html">ActiveRecord</a> query chain and
+resulting SQL. Run the database migration, then define a Proc which calls
+the new function:</p>
+
+<pre><code>counter = Proc.new do | sql |
+  begin
+    sql = sql.gsub( &quot;&#39;&quot;, &quot;&#39;&#39;&quot; ) # Escape SQL for insertion below
+    ActiveRecord::Base.connection.execute(
+      &quot;SELECT estimated_count(&#39;#{ sql }&#39;)&quot;
+    ).first[ &#39;estimated_count&#39; ].to_i
+  rescue
+    nil
+end</code></pre>
+
+<p>Suppose we have a model called <code>Purchase</code>; next tell this model
+to use the above Proc for fast counting and use it:</p>
+
+<pre><code>Purchase.estimate_counts_with( counter )
+
+Purchase.estimated_count()
+# =&gt; An integer; and you can use scope chains, just like #count:
+Purchase.where(...conditions...).estimated_count()
+# =&gt; An integer</code></pre>
+
+<p>A real-life example showing how running PostgreSQL&#39;s
+<code>ANALYZE</code> command can make a difference:</p>
+
+<pre><code>[1] pry(main)&gt; Purchase.estimated_count
+=&gt; 68
+[2] pry(main)&gt; Purchase.count
+=&gt; 76
+[3] pry(main)&gt; ActiveRecord::Base.connection.execute( &#39;ANALYZE&#39; )
+=&gt; #&lt;PG::Result:0x007f89b62cdcc8 status=PGRES_COMMAND_OK ntuples=0 nfields=0 cmd_tuples=0&gt;
+[4] pry(main)&gt; Purchase.estimated_count
+=&gt; 76</code></pre>
+
+<p>Parameters:</p>
+<dl class="rdoc-list note-list"><dt><code>proc</code>
+<dd>
+<p>The Proc to call. It must accept one parameter, which is the SQL query for
+which the count is to be run, as a String. It must evaluate to an Integer
+estimation, or <code>nil</code> if it is not able to provide any/useful
+estimations, in its opinion.</p>
+
+<p>Pass <code>nil</code> to remove the custom counter method and restore
+default behaviour.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-estimate_counts_with_source')" id="l_method-i-estimate_counts_with_source">show</a>
+              </p>
+              <div id="method-i-estimate_counts_with_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 633</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimate_counts_with</span>( <span class="ruby-identifier">proc</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span> = <span class="ruby-identifier">proc</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-estimated_count">
+              <b>estimated_count</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-estimated_count" name="method-i-estimated_count" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>In absence of other configuration, this method just calls through to Active
+Record&#39;s count, but you can override the counting mechanism with a Proc
+which gets called to do the counting instead.</p>
+
+<p>The use case is for databases where counting may be slow for some reason.
+For example, in PostgreSQL 9, the MVCC model means that big tables under
+heavy write load may take extremely long times to be counted as a full
+sequential row scan gets activated. In the case of PostgreSQL, there&#39;s
+an estimation available as an alternative; its accuracy depends on how
+often the <code>ANALYZE</code> command is run, but at least its execution
+speed is always very small.</p>
+
+<p>The <a
+href="ClassMethods.html#method-i-estimated_dataset_size">estimated_dataset_size</a>
+method runs through here for counting so you need to ensure that your count
+estimation method can cope with whatever queries that might arise from the
+scope chains involved in instances of the model at hand, within the service
+code that uses that model.</p>
+
+<p>Specify a count estimation Proc with <a
+href="ClassMethods.html#method-i-estimate_counts_with">estimate_counts_with</a>.
+Such blocks are permitted to return <code>nil</code> if the estimation is
+considered to be wildly wrong or unobtainable; in that case, the returned
+value for the estimated count will be <code>nil</code> too.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-estimated_count_source')" id="l_method-i-estimated_count_source">show</a>
+              </p>
+              <div id="method-i-estimated_count_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 539</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimated_count</span>
+  <span class="ruby-identifier">counter</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span>
+
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">counter</span>.<span class="ruby-identifier">nil?</span> )
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">count</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">counter</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">all</span>.<span class="ruby-identifier">to_sql</span> )
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-estimated_dataset_size">
+              <b>estimated_dataset_size</b>()
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-estimated_dataset_size" name="method-i-estimated_dataset_size" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>As <a href="ClassMethods.html#method-i-dataset_size">dataset_size</a>, but
+allows a configurable counting back-end via <a
+href="ClassMethods.html#method-i-estimated_count">estimated_count</a> and
+<a
+href="ClassMethods.html#method-i-estimate_counts_with">estimate_counts_with</a>.
+This method is intended to be used for fast count estimations, usually for
+performance reasons if an accurate <a
+href="ClassMethods.html#method-i-dataset_size">dataset_size</a> count is
+too slow to compute.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-estimated_dataset_size_source')" id="l_method-i-estimated_dataset_size_source">show</a>
+              </p>
+              <div id="method-i-estimated_dataset_size_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 512</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimated_dataset_size</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">estimated_count</span>()
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -600,7 +819,7 @@ href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</
                 <a href="javascript:toggleSource('method-i-filter_with_source')" id="l_method-i-filter_with_source">show</a>
               </p>
               <div id="method-i-filter_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 601</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 737</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">filter_with</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -659,7 +878,17 @@ end
 
 <p>Note the use of helper method <a
 href="ClassMethods.html#method-i-dataset_size">dataset_size</a> to count
-the total amount of results in the dataset without pagination.</p>
+the total amount of results in the dataset without pagination. A resource
+may alternatively choose to use <a
+href="ClassMethods.html#method-i-estimated_dataset_size">estimated_dataset_size</a>
+for a fast count estimation, or neither (though this is generally not
+recommended) or</p>
+<ul><li>
+<p>permissible but unusual - include both.</p>
+
+<pre><code>context.response.set_resources( results, nil, finder.estimated_dataset_size )
+</code></pre>
+</li></ul>
 
 <p>The service middleware enforces sane values for things like list offsets,
 sort keys and so-on according to service interface definitions, so if using
@@ -719,7 +948,7 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
                 <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 421</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 427</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_data</span> )
@@ -780,7 +1009,7 @@ alias).</p>
                 <a href="javascript:toggleSource('method-i-list_filter_map_source')" id="l_method-i-list_filter_map_source">show</a>
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 658</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 794</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to &quot;#filter_with&quot;&#39;</span> )
   <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">map</span> )
@@ -811,7 +1040,7 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
                 <a href="javascript:toggleSource('method-i-list_finder_source')" id="l_method-i-list_finder_source">show</a>
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 640</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 776</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to &quot;#list&quot;&#39;</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
@@ -875,7 +1104,7 @@ methods like <code>where</code> or fetching from the database with
                 <a href="javascript:toggleSource('method-i-list_in_source')" id="l_method-i-list_in_source">show</a>
               </p>
               <div id="method-i-list_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 484</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 490</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">list</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -906,7 +1135,7 @@ alias).</p>
                 <a href="javascript:toggleSource('method-i-list_search_map_source')" id="l_method-i-list_search_map_source">show</a>
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 649</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 785</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to &quot;#search_with&quot;&#39;</span> )
   <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">map</span> )
@@ -953,7 +1182,7 @@ href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
                 <a href="javascript:toggleSource('method-i-polymorphic_find_source')" id="l_method-i-polymorphic_find_source">show</a>
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 622</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 758</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
   <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> ) <span class="ruby-comment"># Ignore &#39;finder&#39;</span>
@@ -986,7 +1215,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
                 <a href="javascript:toggleSource('method-i-polymorphic_id_fields_source')" id="l_method-i-polymorphic_id_fields_source">show</a>
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 631</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 767</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to &quot;#acquire_with&quot;&#39;</span> )
   <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
@@ -1031,7 +1260,7 @@ instance methods that a resource subclass implements.</p>
                 <a href="javascript:toggleSource('method-i-scoped_in_source')" id="l_method-i-scoped_in_source">show</a>
               </p>
               <div id="method-i-scoped_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 108</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">scoped_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-keyword">self</span>, <span class="ruby-identifier">context</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1146,7 +1375,7 @@ methods which assist with filling in non-nil values for this Hash.</p>
                 <a href="javascript:toggleSource('method-i-search_with_source')" id="l_method-i-search_with_source">show</a>
               </p>
               <div id="method-i-search_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 580</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 716</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">search_with</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>

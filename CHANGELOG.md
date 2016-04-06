@@ -1,3 +1,9 @@
+## 1.7.0 (2016-04-06)
+
+* New mechanism for estimated, rather than accurate, dataset size counts in lists. This is useful for cases where a persistent storage layer may not be able to provide precise counts in certain circumstances (e.g. persistently high write rates) but can rapidly give estimates. See `Hoodoo::ActiveRecord::Finder::ClassMethods#estimated_count` (https://github.com/LoyaltyNZ/hoodoo/pull/159).
+
+* Fix an issue where Rack would raise an exception for certain malformed `Content-Type` headers. Hoodoo now catches this and returns a more elegant response (https://github.com/LoyaltyNZ/hoodoo/pull/160).
+
 ## 1.6.1 (2016-03-29)
 
 * Rapid iteration over 1.6.0. Once I ran it up in a real service test grid I noticed that one of the various automatically logged reports still included full session data regardless of verbose setting. Test coverage improved to spot this and bug fixed.
