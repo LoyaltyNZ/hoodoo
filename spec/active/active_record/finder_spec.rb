@@ -517,7 +517,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
         # Tests start by ensuring the database knows about the current object count.
         #
-        ActiveRecord::Base.connection.execute "ANALYZE;"
+        ActiveRecord::Base.connection.execute( 'ANALYZE' )
       end
 
       after :each do
@@ -551,7 +551,7 @@ describe Hoodoo::ActiveRecord::Finder do
         # double-check something this important though.
         #
         it 'is accurate after ANALYZE' do
-          ActiveRecord::Base.connection.execute "ANALYZE;"
+          ActiveRecord::Base.connection.execute( 'ANALYZE' )
 
           finder = RSpecModelFinderTest.list( @list_params )
           result = finder.estimated_dataset_size
