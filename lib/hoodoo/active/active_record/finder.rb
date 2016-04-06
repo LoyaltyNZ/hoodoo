@@ -531,7 +531,10 @@ module Hoodoo
         # instances of the model at hand, within the service code that uses
         # that model.
         #
-        # Specify a count estimation method with #estimate_counts_with.
+        # Specify a count estimation Proc with #estimate_counts_with. Such
+        # blocks are permitted to return +nil+ if the estimation is considered
+        # to be wildly wrong or unobtainable; in that case, the returned value
+        # for the estimated count will be +nil+ too.
         #
         def estimated_count
           counter = self.nz_co_loyalty_hoodoo_estimate_counts_with
@@ -550,7 +553,8 @@ module Hoodoo
         # this, we could implement an estimation mechanism via Hoodoo's fast
         # counter with something like the approach described here:
         #
-        # http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries/
+        # * https://wiki.postgresql.org/wiki/Count_estimate
+        # * http://www.verygoodindicators.com/blog/2015/04/07/faster-count-queries/
         #
         # First, you would need a migration in your service to implement the
         # estimation method as a PLPGSQL function:
@@ -590,7 +594,7 @@ module Hoodoo
         #           "SELECT estimated_count('#{ sql }')"
         #         ).first[ 'estimated_count' ].to_i
         #       rescue
-        #         0
+        #         nil
         #     end
         #
         # Suppose we have a model called +Purchase+; next tell this model to
@@ -619,8 +623,11 @@ module Hoodoo
         #
         # +proc+:: The Proc to call. It must accept one parameter, which is the
         #          SQL query for which the count is to be run, as a String. It
-        #          must evaluate to an Integer. Pass +nil+ to remove the custom
-        #          counter method and restore default behaviour.
+        #          must evaluate to an Integer estimation, or +nil+ if it is
+        #          not able to provide any/useful estimations, in its opinion.
+        #
+        #          Pass +nil+ to remove the custom counter method and restore
+        #          default behaviour.
         #
         def estimate_counts_with( proc )
           self.nz_co_loyalty_hoodoo_estimate_counts_with = proc

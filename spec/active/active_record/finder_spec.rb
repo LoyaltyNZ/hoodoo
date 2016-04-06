@@ -503,13 +503,17 @@ describe Hoodoo::ActiveRecord::Finder do
           $func$ LANGUAGE plpgsql;
         SQL
 
-        @counter = Proc.new do | sql |
-          ActiveRecord::Base.connection.execute(
-            "SELECT estimated_count('#{ sql}')"
-          ).first[ 'estimated_count' ].to_i
+        counter = Proc.new do | sql |
+          begin
+            ActiveRecord::Base.connection.execute(
+              "SELECT estimated_count('#{ sql}')"
+            ).first[ 'estimated_count' ].to_i
+          rescue
+            nil
+          end
         end
 
-        RSpecModelFinderTest.estimate_counts_with( @counter )
+        RSpecModelFinderTest.estimate_counts_with( counter )
 
         # Tests start by ensuring the database knows about the current object count.
         #
@@ -521,7 +525,7 @@ describe Hoodoo::ActiveRecord::Finder do
         RSpecModelFinderTest.estimate_counts_with( nil )
       end
 
-      context 'initial' do
+      context 'estimate' do
         before :each do
           @initial_accurate_count = RSpecModelFinderTest.count
 
@@ -535,7 +539,7 @@ describe Hoodoo::ActiveRecord::Finder do
           @subsequent_accurate_count = RSpecModelFinderTest.count
         end
 
-        it 'estimate is inaccurate' do
+        it 'is initially inaccurate' do
           finder = RSpecModelFinderTest.list( @list_params )
           result = finder.estimated_dataset_size
           expect( result ).to eq( @initial_accurate_count )
@@ -546,12 +550,19 @@ describe Hoodoo::ActiveRecord::Finder do
         # would be wrong and other tests would fail. It's useful to
         # double-check something this important though.
         #
-        it 'post-ANALYZE estimate is accurate' do
+        it 'is accurate after ANALYZE' do
           ActiveRecord::Base.connection.execute "ANALYZE;"
 
           finder = RSpecModelFinderTest.list( @list_params )
           result = finder.estimated_dataset_size
           expect( result ).to eq( @subsequent_accurate_count )
+        end
+
+        it 'is "nil" if the Proc evaluates thus' do
+          RSpecModelFinderTest.estimate_counts_with( Proc.new() { | sql | nil } )
+          finder = RSpecModelFinderTest.list( @list_params )
+          result = finder.estimated_dataset_size
+          expect( result ).to be_nil
         end
       end
     end
