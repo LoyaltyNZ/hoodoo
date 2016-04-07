@@ -164,7 +164,19 @@ module Hoodoo
               http_message[ 'session_id' ] = self.session_id()
             end
 
-            amqp_response = self.alchemy().send_request_to_resource( http_message )
+            # Enable New Relic cross-app transaction traces.
+            amqp_response = nil
+            new_relic_request = Hoodoo::Client::AMQPNewRelicWrapper.new(
+              http_message,
+              full_uri
+            )
+            NewRelic::Agent::CrossAppTracing.tl_trace_http_request( new_relic_request ) do
+              # Disable further tracing in request to avoid double counting if
+              # connection wasn't started (which calls request again).
+              NewRelic::Agent.disable_all_tracing do
+                amqp_response = self.alchemy().send_message_to_resource( http_message )
+              end
+            end
 
             description_of_response              = DescriptionOfResponse.new
             description_of_response.action       = action
@@ -191,6 +203,39 @@ module Hoodoo
 
             return get_data_for_response( description_of_response )
           end
+
+      end
+
+      class AMQPNewRelicWrapper
+
+        def initialize( http_message, full_uri )
+          @http_message = http_message
+          @full_uri     = full_uri
+        end
+
+        def type
+          'Hoodoo::Client::Endpoint::AMQPNewRelicWrapper'
+        end
+
+        def host
+          @http_message[ 'host' ]
+        end
+
+        def method
+          @http_message[ 'verb' ]
+        end
+
+        def [](key)
+          @http_message[ 'headers' ][ key ]
+        end
+
+        def []=(key, value)
+          @http_message[ 'headers' ][ key ] = value
+        end
+
+        def uri
+          @full_uri
+        end
 
       end
     end
