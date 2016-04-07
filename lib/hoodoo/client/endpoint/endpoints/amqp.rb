@@ -166,7 +166,7 @@ module Hoodoo
 
             # Enable New Relic cross-app transaction traces.
             amqp_response = nil
-            new_relic_request = Hoodoo::Client::AMQPNewRelicWrapper.new(
+            new_relic_request = Hoodoo::Client::Endpoint::AMQPNewRelicWrapper.new(
               http_message,
               full_uri
             )
