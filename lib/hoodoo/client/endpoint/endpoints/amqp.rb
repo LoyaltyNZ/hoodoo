@@ -170,11 +170,11 @@ module Hoodoo
               http_message,
               data.full_uri
             )
-            NewRelic::Agent::CrossAppTracing.tl_trace_http_request( new_relic_request ) do
+            ::NewRelic::Agent::CrossAppTracing.tl_trace_http_request( new_relic_request ) do
               # Disable further tracing in request to avoid double counting if
               # connection wasn't started (which calls request again).
-              NewRelic::Agent.disable_all_tracing do
-                amqp_response = self.alchemy().send_message_to_resource( http_message )
+              ::NewRelic::Agent.disable_all_tracing do
+                amqp_response = self.alchemy().send_request_to_resource( http_message )
               end
             end
 
