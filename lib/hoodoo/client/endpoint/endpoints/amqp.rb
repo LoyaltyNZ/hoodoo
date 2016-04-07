@@ -168,7 +168,7 @@ module Hoodoo
             amqp_response = nil
             new_relic_request = Hoodoo::Client::Endpoint::AMQPNewRelicWrapper.new(
               http_message,
-              full_uri
+              data.full_uri
             )
             NewRelic::Agent::CrossAppTracing.tl_trace_http_request( new_relic_request ) do
               # Disable further tracing in request to avoid double counting if
