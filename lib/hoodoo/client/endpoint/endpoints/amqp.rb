@@ -165,7 +165,7 @@ module Hoodoo
             end
 
             # Enable New Relic cross-app transaction traces.
-            amqp_response = send_request( http_message )
+            amqp_response = send_request( http_message, data.full_uri )
 
             description_of_response              = DescriptionOfResponse.new
             description_of_response.action       = action
@@ -193,11 +193,16 @@ module Hoodoo
             return get_data_for_response( description_of_response )
           end
 
-          # Call Alchemy to with the specified +http_message+.
+          # Call Alchemy to with the specified +http_message+. This is extracted
+          # in to its own method to allow it to be wrapped but NewRelic tracing
+          # if desired.
           #
           # +http_message+:: Hash describing the message to send.
           #
-          def send_request( http_message )
+          # +full_uri+::     URI. This is only used when NewRelic cross-app
+          #                  transaction tracing is used.
+          #
+          def send_request( http_message, full_uri )
             self.alchemy().send_request_to_resource( http_message )
           end
 
