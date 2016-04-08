@@ -165,24 +165,7 @@ module Hoodoo
             end
 
             # Enable New Relic cross-app transaction traces.
-            amqp_response = nil
-            new_relic_request = Hoodoo::Client::Endpoint::AMQPNewRelicRequestWrapper.new(
-              http_message,
-              data.full_uri
-            )
-            ::NewRelic::Agent::CrossAppTracing.tl_trace_http_request( new_relic_request ) do
-              # Disable further tracing in request to avoid double counting if
-              # connection wasn't started (which calls request again).
-              ::NewRelic::Agent.disable_all_tracing do
-                amqp_response = self.alchemy().send_request_to_resource( http_message )
-
-                # The outer block checks for required attributes in the
-                # response.
-                Hoodoo::Client::Endpoint::AMQPNewRelicResponseWrapper.new(
-                  amqp_response
-                )
-              end
-            end
+            amqp_response = send_request( http_message )
 
             description_of_response              = DescriptionOfResponse.new
             description_of_response.action       = action
@@ -210,56 +193,16 @@ module Hoodoo
             return get_data_for_response( description_of_response )
           end
 
-      end
-
-      class AMQPNewRelicRequestWrapper
-
-        def initialize( http_message, full_uri )
-          @http_message = http_message
-          @full_uri     = full_uri
-        end
-
-        def type
-          'Hoodoo::Client::Endpoint::AMQPNewRelicWrapper'
-        end
-
-        def host
-          @http_message[ 'host' ]
-        end
-
-        def method
-          @http_message[ 'verb' ]
-        end
-
-        def [](key)
-          @http_message[ 'headers' ][ key ]
-        end
-
-        def []=(key, value)
-          @http_message[ 'headers' ][ key ] = value
-        end
-
-        def uri
-          @full_uri
-        end
-
-      end
-
-      class AMQPNewRelicResponseWrapper
-
-        def initialize( response_hash )
-          @response_hash = response_hash
-        end
-
-        def [](key)
-          if key == NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER
-            @response_hash[ 'headers' ][ key ]
-          else
-            @response_hash[ key ]
+          # Call Alchemy to with the specified +http_message+.
+          #
+          # +http_message+:: Hash describing the message to send.
+          #
+          def send_request( http_message )
+            self.alchemy().send_request_to_resource( http_message )
           end
-        end
 
       end
+
     end
   end
 end
