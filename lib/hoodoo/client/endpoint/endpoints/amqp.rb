@@ -166,7 +166,7 @@ module Hoodoo
 
             # Enable New Relic cross-app transaction traces.
             amqp_response = nil
-            new_relic_request = Hoodoo::Client::Endpoint::AMQPNewRelicWrapper.new(
+            new_relic_request = Hoodoo::Client::Endpoint::AMQPNewRelicRequestWrapper.new(
               http_message,
               data.full_uri
             )
@@ -175,6 +175,12 @@ module Hoodoo
               # connection wasn't started (which calls request again).
               ::NewRelic::Agent.disable_all_tracing do
                 amqp_response = self.alchemy().send_request_to_resource( http_message )
+
+                # The outer block checks for required attributes in the
+                # response.
+                Hoodoo::Client::Endpoint::AMQPNewRelicResponseWrapper.new(
+                  amqp_response
+                )
               end
             end
 
@@ -206,7 +212,7 @@ module Hoodoo
 
       end
 
-      class AMQPNewRelicWrapper
+      class AMQPNewRelicRequestWrapper
 
         def initialize( http_message, full_uri )
           @http_message = http_message
@@ -235,6 +241,22 @@ module Hoodoo
 
         def uri
           @full_uri
+        end
+
+      end
+
+      class AMQPNewRelicResponseWrapper
+
+        def initialize( response_hash )
+          @response_hash = response_hash
+        end
+
+        def [](key)
+          if key == NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER
+            @response_hash[ 'headers' ][ key ]
+          else
+            @response_hash[ key ]
+          end
         end
 
       end
