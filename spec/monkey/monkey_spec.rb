@@ -268,7 +268,45 @@ describe Hoodoo::Monkey do
   # them.
   #
   context 'performance impact' do
+    class FooPerformanceWithoutExtensions < Foo; end
+    class FooPerformanceWithExtensionsCycled < Foo; end
+
+    before :all do
+      @iterations      = 250000
+      @original_result = Benchmark.realtime do
+        @iterations.times do
+          expect( FooPerformanceWithoutExtensions.new.bar( 3, 4, 5 ) { 6 } ).to eq( 18 )
+          expect( FooPerformanceWithoutExtensions.bar( 1 ) { 2 } ).to eq( 3 )
+        end
+      end
+
+      Hoodoo::Monkey.register(
+        target_unit:      FooPerformanceWithExtensionsCycled,
+        extension_module: ExtendedFoo
+      )
+
+      Hoodoo::Monkey.enable( extension_module: ExtendedFoo )
+
+      expect( FooPerformanceWithExtensionsCycled.new.bar( 3, 4, 5 ) { 6 } ).to eq( 36 )
+      expect( FooPerformanceWithExtensionsCycled.bar( 1 ) { 2 } ).to eq( 6 )
+    end
+
     it 'is undetectable' do
+      1.upto( 100 ) do
+        Hoodoo::Monkey.enable( extension_module: ExtendedFoo )
+        Hoodoo::Monkey.disable( extension_module: ExtendedFoo )
+      end
+
+      new_result = Benchmark.realtime do
+        @iterations.times do
+          expect( FooPerformanceWithExtensionsCycled.new.bar( 3, 4, 5 ) { 6 } ).to eq( 18 )
+          expect( FooPerformanceWithExtensionsCycled.bar( 1 ) { 2 } ).to eq( 3 )
+        end
+      end
+
+      percentage_change = ( ( 100.0 * ( new_result - @original_result ) ) / new_result ).abs()
+
+      expect( percentage_change ).to be < 5
     end
   end
 end
