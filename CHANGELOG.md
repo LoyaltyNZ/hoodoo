@@ -1,3 +1,9 @@
+## 1.8.0 (2016-04-13)
+
+* New `Hoodoo::Monkey` engine for official monkey patching. NewRelic cross-application tracing for on-queue inter-resource calls makes use of this mechanism and there is likely to be more to come. The module may be useful for various applications outside the core Hoodoo remit of API services (https://github.com/LoyaltyNZ/hoodoo/pull/162).
+
+* Address https://github.com/LoyaltyNZ/hoodoo/issues/150 in passing (https://github.com/LoyaltyNZ/hoodoo/pull/162/commits/e9c70235bf9e437a681f1b1a8c2182ad0091867c).
+
 ## 1.7.0 (2016-04-06)
 
 * New mechanism for estimated, rather than accurate, dataset size counts in lists. This is useful for cases where a persistent storage layer may not be able to provide precise counts in certain circumstances (e.g. persistently high write rates) but can rapidly give estimates. See `Hoodoo::ActiveRecord::Finder::ClassMethods#estimated_count` (https://github.com/LoyaltyNZ/hoodoo/pull/159).

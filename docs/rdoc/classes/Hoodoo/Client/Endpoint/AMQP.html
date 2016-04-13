@@ -85,6 +85,14 @@ discovery result instance.</p>
               </li>
           </ul>
         </dd>
+        <dt>M</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-monkey_send_request">monkey_send_request</a>
+              </li>
+          </ul>
+        </dd>
         <dt>S</dt>
         <dd>
           <ul>
@@ -225,6 +233,54 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_amqp</span>( <span class="ruby-identifier">d</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-monkey_send_request">
+              <b>monkey_send_request</b>( http_message, full_uri )
+            <a href="../../../../classes/Hoodoo/Client/Endpoint/AMQP.html#method-i-monkey_send_request" name="method-i-monkey_send_request" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Ask Alchemy Flux to send a given <a href="HTTP.html">HTTP</a> message to a
+resource.</p>
+
+<p>This method is available for <a href="../../../Hoodoo.html">Hoodoo</a>
+monkey patching but must not be called by third party code; it&#39;s a
+private method exposed in the public <code>monkey_</code> namespace for
+patching only. For more, see:</p>
+<ul><li>
+<p><a href="../../Monkey.html">Hoodoo::Monkey</a></p>
+</li><li>
+<p><a
+href="../../Monkey/Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a></p>
+</li></ul>
+<dl class="rdoc-list note-list"><dt><code>http_message</code>
+<dd>
+<p>Hash describing the message to send.</p>
+</dd><dt><code>full_uri</code>
+<dd>
+<p>Equivalent full URI of the request (information only; the
+<code>http_message</code> tells Alchemy Flux how to route the message; it
+does not consult this parameter).</p>
+</dd></dl>
+
+<p>The return value is an Alchemy Flux response object.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-monkey_send_request_source')" id="l_method-i-monkey_send_request_source">show</a>
+              </p>
+              <div id="method-i-monkey_send_request_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 134</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">alchemy</span>().<span class="ruby-identifier">send_request_to_resource</span>( <span class="ruby-identifier">http_message</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

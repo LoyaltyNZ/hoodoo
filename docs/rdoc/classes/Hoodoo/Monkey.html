@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Monkey</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::Monkey
+        </h1>
+        <ul class="files">
+            <li><a href="../../files/lib/hoodoo/monkey/monkey_rb.html">lib/hoodoo/monkey/monkey.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/monkey/patch/newrelic_traced_amqp_rb.html">lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p><a href="../Hoodoo.html">Hoodoo</a> provides monkey patching hook points as
+first class citizens and includes a registration, enabling and disabling
+mechanism through the <a href="Monkey.html">Hoodoo::Monkey</a> class.</p>
+
+<p>You encapsulate monkey patch code inside a module. This module will be used
+to patch one or more target other classes or modules. Usually, one module
+will only be used to patch one other kind of class or module; re-use of a
+patch module usually only makes sense when patching one or more subclasses
+from a common ancestor where some, but not all of the subclass types are to
+be patched (if you wanted to patch all of them you&#39;d just patch the
+base class).</p>
+
+<p>Inside your module, you write one or two sub-modules. One of these patches
+instance methods in the target, the other patches class methods. The
+mechanism used to patch instance or class methods is different in Ruby,
+thus the distinct module use; it also helps keep your code clear of
+distracting syntax and make it very obvious what kind of “thing” is being
+replaced.</p>
+
+<p><a href="Monkey.html">Monkey</a> patch methods are sent to the patch target
+using `prepend`, the Ruby 2 mechanism which means the original overriden
+implementation can be called via <code>super</code>, just as if you were
+writing a subclass.</p>
+
+<p>For examples, see method <a
+href="Monkey.html#method-c-register">::register</a>.</p>
+
+<p>Any public method in the API can be patched, since the public API is by
+definition public and stable. Sometimes, normally-private methods are
+exposed for monkey patching as public methods with the name prefix of
+“<code>monkey_</code>” - such methods are <strong>NOT</strong> intended to
+be called by client code in general, but can be patched. It is only
+completely safe to to patch a method in a wrapper fashion, e.g. to filter
+inputs or outputs; thus whenever possible, always call <code>super</code>
+at some point within your replacement implementation. If you completely
+replace an implementation with a custom version, you risk your code
+breaking even with patch level changes to <a
+href="../Hoodoo.html">Hoodoo</a>, since only the public <em>interface</em>
+is guaranteed; the way in which it is <em>implemented</em> is not.</p>
+
+<p>You tell the monkey patching system about the outer container module, the
+instance and/or class patch modules and the target entity via a call to <a
+href="Monkey.html#method-c-register">::register</a>. See this for more
+details. Use <a href="Monkey.html#method-c-enable">::enable</a> to actually
+&#39;switch on&#39; the patch and <a
+href="Monkey.html#method-c-disable">::disable</a> to &#39;switch off&#39;
+the patch again.</p>
+
+<p>The patch engine is “require&#39;d” by <a href="../Hoodoo.html">Hoodoo</a>
+as the very last thing in all of its other inclusion steps when
+&#39;hoodoo.rb&#39; (“everything”) is included by code. If individual
+sub-modules of <a href="../Hoodoo.html">Hoodoo</a> are included by client
+code, it will be up to them when (and if) the monkey patch engine is
+brought in.</p>
+
+<p><a href="../Hoodoo.html">Hoodoo</a> authors should note namespaces <a
+href="Monkey/Patch.html">Hoodoo::Monkey::Patch</a> and <a
+href="Monkey/Chaos.html">Hoodoo::Monkey::Chaos</a> inside which
+out-of-the-box <a href="../Hoodoo.html">Hoodoo</a> patch code should be
+defined. Third party patches must use their own namespaces to avoid any
+potential for collision with future new <a href="../Hoodoo.html">Hoodoo</a>
+patch modules.</p>
+
+    </div>
+
+
+
+
+
+
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Monkey/Chaos.html">Hoodoo::Monkey::Chaos</a>
+        </li>
+        <li>
+          <span class="type">MODULE</span>
+          <a href="Monkey/Patch.html">Hoodoo::Monkey::Patch</a>
+        </li>
+    </ul>
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-disable">disable</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>E</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-enable">enable</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-register">register</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-disable">
+              <b>disable</b>( target_unit: nil, extension_module: )
+            <a href="../../classes/Hoodoo/Monkey.html#method-c-disable" name="method-c-disable" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Disable a patch previously enabled with <a
+href="Monkey.html#method-c-enable">::enable</a> (see there for more
+information).</p>
+
+<p>A disabled patch will still be present in a target unit&#39;s
+<code>ancestors</code> list, but has no performance impact. Repeated
+enable/disable cycles incur no additional runtime performance penalties.</p>
+
+<p><em>Named</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>extension_module</code>
+<dd>
+<p>A module previously passed in the same-named parameter to <a
+href="Monkey.html#method-c-register">::register</a>. The instance and/or
+class methods defined therein will be removed from the previously
+registered target.</p>
+</dd></dl>
+
+<p>Disabling the same extension multiple times has no side effects.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-disable_source')" id="l_method-c-disable_source">show</a>
+              </p>
+              <div id="method-c-disable_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 264</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">disable</span>( <span class="ruby-identifier">target_unit</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::disable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">target_units_hash</span>.<span class="ruby-identifier">each_value</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">target_and_module_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">target_and_module_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">target_and_module_array_entry</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">patch_module</span> = <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:patch_module</span> ]
+      <span class="ruby-identifier">patch_target</span> = <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:patch_target</span> ]
+
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">target_and_module_array_entry</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:unbound_methods</span> )
+
+      <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:unbound_methods</span> ] = {}
+
+      <span class="ruby-comment"># We take unbound method references to every patch module method,</span>
+      <span class="ruby-comment"># then remove the originals. In the re-enable code, the methods</span>
+      <span class="ruby-comment"># are redefined in the module. This approach means that any</span>
+      <span class="ruby-comment"># target unit with the module in its ancestors chain will see the</span>
+      <span class="ruby-comment"># change immediately. We don&#39;t need to iterate over them.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">instance_methods</span>( <span class="ruby-keyword">false</span> ).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">method_name</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">unbound_method</span> = <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">instance_method</span>( <span class="ruby-identifier">method_name</span> )
+        <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:unbound_methods</span> ][ <span class="ruby-identifier">method_name</span> ] = <span class="ruby-identifier">unbound_method</span>
+        <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:remove_method</span>, <span class="ruby-identifier">method_name</span> )
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-enable">
+              <b>enable</b>( extension_module: )
+            <a href="../../classes/Hoodoo/Monkey.html#method-c-enable" name="method-c-enable" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Enable a given monkey patch, using the extension module parameter value
+given to a prior call to <a
+href="Monkey.html#method-c-register">::register</a> (see there for more
+information).</p>
+
+<p>The initial patch installation is done via <code>Module#prepend</code>, so
+you are able to call <code>super</code> to invoke the original
+implementation from the overriding implementation, as if you were writing a
+subclass.</p>
+
+<p>Instance and class method monkey patches should try very hard to always
+call “super” so that an overridden/patched public API method will still
+call back to its original implementation; the wrapper just filters inputs
+and outputs or adds additional behaviour. This way, changes to the <a
+href="../Hoodoo.html">Hoodoo</a> implementation will not break the patch.</p>
+
+<p>Patching is global; it is not lexically scoped. Use Ruby refinements
+manually if you want lexically scoped patches.</p>
+
+<p><em>Named</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>extension_module</code>
+<dd>
+<p>A module previously passed in the same-named parameter to <a
+href="Monkey.html#method-c-register">::register</a>. The instance and/or
+class methods defined therein will be applied to the previously registered
+target.</p>
+</dd></dl>
+
+<p>Enabling the same extension multiple times has no side effects.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-enable_source')" id="l_method-c-enable_source">show</a>
+              </p>
+              <div id="method-c-enable_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 205</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+  <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::enable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">target_units_hash</span>.<span class="ruby-identifier">each_value</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">target_and_module_array</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">target_and_module_array</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">target_and_module_array_entry</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">patch_module</span> = <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:patch_module</span> ]
+      <span class="ruby-identifier">patch_target</span> = <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:patch_target</span> ]
+
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-comment"># If the patch contains a target-based collection of unbound</span>
+      <span class="ruby-comment"># methods, it was disabled previously (see the &#39;disable&#39; code).</span>
+      <span class="ruby-comment"># Re-enable by re-building the module&#39;s methods.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">target_and_module_array_entry</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:unbound_methods</span> )
+
+        <span class="ruby-identifier">target_and_module_array_entry</span>[ <span class="ruby-value">:unbound_methods</span> ].<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">method_name</span>, <span class="ruby-identifier">unbound_method</span> <span class="ruby-operator">|</span>
+          <span class="ruby-identifier">patch_module</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:define_method</span>, <span class="ruby-identifier">method_name</span>, <span class="ruby-identifier">unbound_method</span> )
+        <span class="ruby-keyword">end</span>
+
+        <span class="ruby-comment"># Discard the references to the now-unneeded unbound methods.</span>
+        <span class="ruby-comment">#</span>
+        <span class="ruby-identifier">target_and_module_array_entry</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:unbound_methods</span> )
+
+      <span class="ruby-keyword">end</span>
+
+      <span class="ruby-comment"># *Always* call &quot;prepend&quot;. If the same patch modules are being used</span>
+      <span class="ruby-comment"># against multiple targets, the fact that the code above saw that a</span>
+      <span class="ruby-comment"># module had been disabled for one particular target doesn&#39;t mean</span>
+      <span class="ruby-comment"># that the module had previously been inserted into the ancestors</span>
+      <span class="ruby-comment"># for &quot;this&quot; target. It might have been registered later.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-comment"># This is safe as repeat calls do nothing; they don&#39;t even reorder</span>
+      <span class="ruby-comment"># the ancestor chain.</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-identifier">patch_target</span>.<span class="ruby-identifier">prepend</span>( <span class="ruby-identifier">patch_module</span> )
+
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-register">
+              <b>register</b>( target_unit:, extension_module: )
+            <a href="../../classes/Hoodoo/Monkey.html#method-c-register" name="method-c-register" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Register a set of monkey patch modules with <a
+href="Monkey.html">Hoodoo::Monkey</a> - see the top-level <a
+href="Monkey.html">Hoodoo::Monkey</a> documentation for an introduction and
+some high level guidelines for monkey patch code.</p>
+
+<p><em>Named</em> parameters are:</p>
+<dl class="rdoc-list note-list"><dt><code>target_unit</code>
+<dd>
+<p>The Class or Module to be patched.</p>
+</dd><dt><code>extension_module</code>
+<dd>
+<p>The module that identifies the collection of instance and/or class methods
+to overwrite inside the targeted unit. This MUST define a nested module
+called “InstanceExtensions” containing method definitions that will
+override same-name instance methods in the targeted unit, or a nested
+module called “ClassExtensions” to override class methods, or both.</p>
+</dd></dl>
+
+<p>For example, suppose we have this class:</p>
+
+<pre><code>class Foo
+  def bar
+    2 * 2
+  end
+
+  def self.bar
+    3 * 3
+  end
+end
+
+Foo.new.bar
+# =&gt; 4
+Foo.bar
+# =&gt; 9
+</code></pre>
+
+<p>Next define modules which extend/override methods in the above class:</p>
+
+<pre><code>module ExtendedFoo
+  module InstanceExtensions
+    def bar
+      5 * 5
+    end
+  end
+
+  module ClassExtensions
+
+    # Even though this module will be used to override class methods
+    # in the target, we define the module methods with &quot;def bar&quot;, not
+    # &quot;def self.bar&quot;.
+    #
+    def bar
+      7 * 7
+    end
+  end
+end
+</code></pre>
+
+<p>At this point, the extension is defined, but not registered with <a
+href="../Hoodoo.html">Hoodoo</a> and not yet enabled. Register it with:</p>
+
+<pre><code>Hoodoo::Monkey.register(
+  target_unit:      Foo,
+  extension_module: ExtendedFoo
+)
+</code></pre>
+
+<p>The code is now registered so that it can be easily enabled or disabled via
+the given <code>extension_module</code> value:</p>
+
+<pre><code>Hoodoo::Monkey.enable( ExtendedFoo )
+
+Foo.new.bar
+# =&gt; 25
+Foo.bar
+# =&gt; 49
+
+Hoodoo::Monkey.disable( ExtendedFoo )
+
+Foo.new.bar
+# =&gt; 4
+Foo.bar
+# =&gt; 9
+</code></pre>
+
+<p>You can register the same extension modules for multiple target units, but
+it can only be enabled or disabled all in one go for all targets.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-register_source')" id="l_method-c-register_source">show</a>
+              </p>
+              <div id="method-c-register_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 151</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">target_unit</span>,, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_defined?</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span>, <span class="ruby-keyword">false</span> )
+    <span class="ruby-identifier">instance_methods_module</span> = <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_defined?</span>( <span class="ruby-string">&#39;ClassExtensions&#39;</span>, <span class="ruby-keyword">false</span> )
+    <span class="ruby-identifier">class_methods_module</span> = <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-string">&#39;ClassExtensions&#39;</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">instance_methods_module</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">class_methods_module</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::register: You must define either an InstanceExtensions module ClassExtensions module or both inside &#39;#{ extension_module.inspect }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] <span class="ruby-operator">||=</span> {}
+  <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ][ <span class="ruby-identifier">target_unit</span> ] =
+  [
+    {
+      <span class="ruby-value">:patch_module</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">instance_methods_module</span>,
+      <span class="ruby-value">:patch_target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">target_unit</span>
+    },
+    {
+      <span class="ruby-value">:patch_module</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">class_methods_module</span>,
+      <span class="ruby-value">:patch_target</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">target_unit</span>.<span class="ruby-identifier">singleton_class</span>
+    }
+  ]
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

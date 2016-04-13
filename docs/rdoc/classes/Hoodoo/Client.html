@@ -36,6 +36,7 @@
             <li><a href="../../files/lib/hoodoo/client/endpoint/endpoints/http_based_rb.html">lib/hoodoo/client/endpoint/endpoints/http_based.rb</a></li>
             <li><a href="../../files/lib/hoodoo/client/endpoint/endpoints/not_found_rb.html">lib/hoodoo/client/endpoint/endpoints/not_found.rb</a></li>
             <li><a href="../../files/lib/hoodoo/client/headers_rb.html">lib/hoodoo/client/headers.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/monkey/patch/newrelic_traced_amqp_rb.html">lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb</a></li>
             <li><a href="../../files/lib/hoodoo/services/middleware/middleware_rb.html">lib/hoodoo/services/middleware/middleware.rb</a></li>
             <li><a href="../../files/lib/hoodoo/services/services/context_rb.html">lib/hoodoo/services/services/context.rb</a></li>
             <li><a href="../../files/lib/hoodoo/services/services/request_rb.html">lib/hoodoo/services/services/request.rb</a></li>
@@ -405,9 +406,13 @@ code.</p>
   <span class="ruby-ivar">@discoverer</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">discoverer</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-identifier">discoverer</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@base_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
-    <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
-      <span class="ruby-value">:base_uri</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@base_uri</span>
-    )
+    <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span> )
+      <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByConvention</span>.<span class="ruby-identifier">new</span>(
+        <span class="ruby-value">:base_uri</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@base_uri</span>
+      )
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client: The constructor parameters indicate the use of a &quot;by convention&quot; discoverer. This discoverer requires ActiveSupport; ensure the ActiveSupport gem is present and &quot;require&quot;-able.&#39;</span>
+    <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@drb_uri</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@drb_port</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ByDRb</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">:drb_uri</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@drb_uri</span>,
@@ -482,7 +487,7 @@ option keys <em>MUST</em> be Symbols.</p>
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 315</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/client.rb, line 319</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">endpoint_options</span> = {

@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.7.0)
+    hoodoo (1.8.0)
       dalli (~> 2.7)
       kgio (~> 2.9)
 
