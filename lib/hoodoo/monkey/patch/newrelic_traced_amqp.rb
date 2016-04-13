@@ -92,7 +92,7 @@ module Hoodoo
             # String describing what kind of request this is.
             #
             def type
-              'Hoodoo::Client::Endpoint::AMQPNewRelicWrapper'
+              self.class.to_s()
             end
 
             # String describing this request's intended host.

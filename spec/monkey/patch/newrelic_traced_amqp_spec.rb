@@ -28,6 +28,11 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
   end
 
+  after :all do
+    Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
+    Object.send( :remove_const, :NewRelic )
+  end
+
   before :each do
     expect( Hoodoo::Client::Endpoint::AMQP.ancestors ).to include( Hoodoo::Monkey::Patch::NewRelicTracedAMQP::InstanceExtensions )
 
@@ -62,11 +67,6 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     end
   end
 
-  after :all do
-    Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
-    Object.send( :remove_const, :NewRelic )
-  end
-
   it_behaves_like 'an AMQP-based middleware/client endpoint'
 
   context 'afterwards' do
@@ -75,5 +75,86 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
       expect( @@newrelic_crossapp_count      ).to eq( @@endpoint_do_amqp_count )
       expect( @@newrelic_agent_disable_count ).to eq( @@endpoint_do_amqp_count )
     end
+  end
+end
+
+describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper do
+  before :each do
+    @full_uri     = 'https://test.com:8080/1/Person/1234?_embed=Birthday'
+    @http_message = {
+      'scheme'  => 'http',
+      'verb'    => 'GET',
+
+      'host'    => 'test.com',
+      'port'    => '8080',
+      'path'    => '/1/Person/1234',
+      'query'   => { '_embed' => 'Birthday' },
+
+      'headers' => { 'CONTENT_TYPE' => 'application/json; charset=utf-8' },
+      'body'    => ''
+    }
+
+    @wrapper = described_class.new( @http_message, @full_uri )
+  end
+
+  it 'reports the correct "type" value' do
+    expect( @wrapper.type ).to eq( 'Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper' )
+  end
+
+  it 'reports the correct "host" value' do
+    expect( @wrapper.host ).to eq( @http_message[ 'host' ] )
+  end
+
+  it 'reports the correct "method" value' do
+    expect( @wrapper.method ).to eq( @http_message[ 'verb' ] )
+  end
+
+  it 'reports the correct "uri" value' do
+    expect( @wrapper.uri ).to eq( @full_uri )
+  end
+
+  it 'can read headers' do
+    expect( @wrapper[ 'CONTENT_TYPE' ] ).to eq( @http_message[ 'headers' ][ 'CONTENT_TYPE' ] )
+  end
+
+  it 'can write headers' do
+    @wrapper[ 'HTTP_X_FOO' ] = '23'
+    expect( @http_message[ 'headers' ][ 'HTTP_X_FOO' ] ).to eq( '23' )
+  end
+end
+
+describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper do
+
+  before :all do
+    module NewRelic
+      class Agent
+        class CrossAppTracing
+          NR_APPDATA_HEADER = 'X_Foo_AppData'
+        end
+      end
+    end
+  end
+
+  before :each do
+    @http_response = {
+      'headers'      => { NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER => '4321' },
+      'CONTENT_TYPE' => 'application/json; charset=utf-8',
+      'HTTP_X_FOO'   => '46'
+    }
+
+    @wrapper = described_class.new( @http_response )
+  end
+
+  after :all do
+    Object.send( :remove_const, :NewRelic )
+  end
+
+  it 'accesses the NewRelic NR_APPDATA_HEADER correctly' do
+    expect( @wrapper[ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] ).to eq( @http_response[ 'headers' ][ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] )
+  end
+
+  it 'accesses other headers correctly' do
+    expect( @wrapper[ 'CONTENT_TYPE' ] ).to eq( @http_response[ 'CONTENT_TYPE' ] )
+    expect( @wrapper[ 'HTTP_X_FOO'   ] ).to eq( @http_response[ 'HTTP_X_FOO'   ] )
   end
 end
