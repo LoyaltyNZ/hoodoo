@@ -17,7 +17,6 @@ require 'hoodoo/client/endpoint/endpoint'
 require 'hoodoo/client/endpoint/endpoints/http_based'
 require 'hoodoo/client/endpoint/endpoints/http'
 require 'hoodoo/client/endpoint/endpoints/amqp'
-require 'hoodoo/client/endpoint/endpoints/newrelic_traced_amqp'
 require 'hoodoo/client/endpoint/endpoints/not_found'
 require 'hoodoo/client/endpoint/endpoints/auto_session'
 
