@@ -1,6 +1,6 @@
 ## 1.8.0 (2016-04-13)
 
-* New `Hoodoo::Monkey` engine for official monkey patching. NewRelic cross-application tracing for on-queue inter-resource calls makes use of this mechanism and there is likely to be more to come. The module may be useful for various applications outside the core Hoodoo remit of API services (https://github.com/LoyaltyNZ/hoodoo/pull/162).
+* New `Hoodoo::Monkey` engine for official monkey patching. NewRelic cross-application tracing for on-queue inter-resource calls makes use of this mechanism and there are likely to be more to come. The module may be useful for various applications outside the core Hoodoo remit of API services (https://github.com/LoyaltyNZ/hoodoo/pull/162).
 
 * Address https://github.com/LoyaltyNZ/hoodoo/issues/150 in passing (https://github.com/LoyaltyNZ/hoodoo/pull/162/commits/e9c70235bf9e437a681f1b1a8c2182ad0091867c).
 
