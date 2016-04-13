@@ -12,6 +12,6 @@ module Hoodoo
   # The Hoodoo gem version. If this changes, ensure that the date in
   # "hoodoo.gemspec" is correct and run "bundle install" (or "update").
   #
-  VERSION = '1.7.0'
+  VERSION = '1.8.0'
 
 end
