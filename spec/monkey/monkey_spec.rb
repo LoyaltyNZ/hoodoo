@@ -306,7 +306,7 @@ describe Hoodoo::Monkey do
 
       percentage_change = ( ( 100.0 * ( new_result - @original_result ) ) / new_result ).abs()
 
-      expect( percentage_change ).to be < 5
+      expect( percentage_change ).to be < 11
     end
   end
 end
