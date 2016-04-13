@@ -25,3 +25,6 @@ require 'hoodoo/services'
 require 'hoodoo/middleware'
 
 require 'hoodoo/version'
+
+require 'hoodoo/monkey'
+

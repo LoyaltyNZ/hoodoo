@@ -113,6 +113,28 @@ module Hoodoo
             return do_amqp( d )
           end
 
+          # Ask Alchemy Flux to send a given HTTP message to a resource.
+          #
+          # This method is available for Hoodoo monkey patching but must not
+          # be called by third party code; it's a private method exposed in
+          # the public <tt>monkey_</tt> namespace for patching only. For more,
+          # see:
+          #
+          # * Hoodoo::Monkey
+          # * Hoodoo::Monkey::Patch::NewRelicTracedAMQP
+          #
+          # +http_message+:: Hash describing the message to send.
+          # +full_uri+::     Equivalent full URI of the request (information
+          #                  only; the +http_message+ tells Alchemy Flux how
+          #                  to route the message; it does not consult this
+          #                  parameter).
+          #
+          # The return value is an Alchemy Flux response object.
+          #
+          def monkey_send_request( http_message, full_uri )
+            self.alchemy().send_request_to_resource( http_message )
+          end
+
         private
 
           # Call Alchemy to make an HTTP simulated request over AMQP to a
@@ -164,7 +186,7 @@ module Hoodoo
               http_message[ 'session_id' ] = self.session_id()
             end
 
-            amqp_response = self.alchemy().send_request_to_resource( http_message )
+            amqp_response = monkey_send_request( http_message, data.full_uri )
 
             description_of_response              = DescriptionOfResponse.new
             description_of_response.action       = action
@@ -193,6 +215,7 @@ module Hoodoo
           end
 
       end
+
     end
   end
 end

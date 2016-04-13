@@ -262,9 +262,13 @@ module Hoodoo
         @discoverer = if discoverer != nil
           discoverer
         elsif @base_uri != nil
-          Hoodoo::Services::Discovery::ByConvention.new(
-            :base_uri => @base_uri
-          )
+          if defined?( Hoodoo::Services::Discovery::ByConvention )
+            Hoodoo::Services::Discovery::ByConvention.new(
+              :base_uri => @base_uri
+            )
+          else
+            raise 'Hoodoo::Client: The constructor parameters indicate the use of a "by convention" discoverer. This discoverer requires ActiveSupport; ensure the ActiveSupport gem is present and "require"-able.'
+          end
         elsif @drb_uri != nil || @drb_port != nil
           Hoodoo::Services::Discovery::ByDRb.new(
             :drb_uri  => @drb_uri,

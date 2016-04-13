@@ -161,6 +161,20 @@ RSpec.configure do | config |
   end
 end
 
+# Ensure known monkey patches are disabled; tests for the patches
+# will enable them for the duration of the test only.
+#
+[ Hoodoo::Monkey::Patch, Hoodoo::Monkey::Chaos ].each do | monkey |
+  monkey.constants.each do | extension_module_name |
+    extension_module = monkey.const_get( extension_module_name )
+    Hoodoo::Monkey.disable( extension_module: extension_module )
+  end
+end
+
+# Load all global shared examples.
+#
+Dir[ "#{ File.dirname( __FILE__ ) }/shared_examples/**/*.rb" ].sort.each { | f | require f }
+
 # Connect to PostgreSQL for test purposes. Generally only used within
 # the "spec_helper.rb" file for environment setup and teardown.
 #

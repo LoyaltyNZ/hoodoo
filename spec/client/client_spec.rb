@@ -1079,5 +1079,22 @@ describe Hoodoo::Client do
         Hoodoo::Client.new
       }.to raise_error( RuntimeError, 'Hoodoo::Client: Please pass one of the "discoverer", "base_uri", "drb_uri" or "drb_port" parameters.' )
     end
+
+    context 'with ActiveSupport absent' do
+      before :all do
+        @old_discoverer = Hoodoo::Services::Discovery::ByConvention
+        Hoodoo::Services::Discovery.send( :remove_const, :ByConvention )
+      end
+
+      it 'lead to a useful exception if the ByDiscovery discoverer is requested' do
+        expect {
+          Hoodoo::Client.new( base_uri: 'http://localhost' )
+        }.to raise_error( RuntimeError, 'Hoodoo::Client: The constructor parameters indicate the use of a "by convention" discoverer. This discoverer requires ActiveSupport; ensure the ActiveSupport gem is present and "require"-able.' )
+      end
+
+      after :all do
+        Hoodoo::Services::Discovery.send( :const_set, :ByConvention, @old_discoverer )
+      end
+    end
   end
 end
