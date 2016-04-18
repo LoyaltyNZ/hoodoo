@@ -179,7 +179,8 @@ module Hoodoo
           )
 
           if defined?( Hoodoo::Services ) &&
-             defined?( Hoodoo::Services::Middleware) &&
+             defined?( Hoodoo::Services::Middleware ) &&
+             Hoodoo::Services::Middleware.respond_to?( :environment ) &&
              Hoodoo::Services::Middleware.environment.production? != true
 
             Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
