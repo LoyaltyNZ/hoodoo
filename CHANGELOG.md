@@ -1,3 +1,7 @@
+## 1.8.1 (2016-04-18)
+
+* NewRelic cross-application tracing patch does one extra check on availability of a method before enabling itself. This stops service code having to work around edge cases in e.g. migration files, where parts of Hoodoo get included and the monkey patch activates but other parts haven't been included and the patch doesn't see what it expects (https://github.com/LoyaltyNZ/hoodoo/pull/164).
+
 ## 1.8.0 (2016-04-13)
 
 * New `Hoodoo::Monkey` engine for official monkey patching. NewRelic cross-application tracing for on-queue inter-resource calls makes use of this mechanism and there are likely to be more to come. The module may be useful for various applications outside the core Hoodoo remit of API services (https://github.com/LoyaltyNZ/hoodoo/pull/162).
