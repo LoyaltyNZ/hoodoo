@@ -482,6 +482,7 @@ Now we get into the more interesting bits! The shell is quite small so it is eas
   * Loads files in `service/resources` (see later) _in alphabetical order_
   * Loads files in `service/implementations` (see later) _in alphabetical order_
   * Loads files in `service/interfaces` (see later) _in alphabetical order_
+  * Loads files in `service/monkeys` (see later) _in alphabetical order_
 * `config.ru` then tells Rack to use NewRelic monitoring, if present
 * It then tells Rack to use the Hoodoo framework
 * It then loads file `service.rb` in the service root folder, which _must define a class called `ServiceApplication`_ that is a subclass of `Hoodoo::Services::Service`. This class is instantiated and passed to Rack as the runnable application. Rack runs this with whatever web server it has been told to use, or uses by default.
@@ -500,6 +501,7 @@ For each resource endpoint you want to create you should do the following. Suppo
 * Create a file for the interface class, containing a subclass of `Hoodoo::Services::Interface` called `AccountInterface`, in `service/implementations/account_interface.rb`.
 * Create a representation of the API resource which represents an Account in `service/resources/account_resource.rb`, probably namespaced; see the [Presenters Guide]({{ site.baseurl }}/guides_0400_presenters.html) for details and the [Active Record Guide]({{ site.baseurl }}/guides_0300_active_record.html) for a worked example.
 * If the resource Account has one or more Active Record (or other ORM) models that support it, create file(s) for these inside `service/models`. There's no requirement to have anything in common between resource names and persistence layer names; they're entirely decoupled, connected only by the way in which you write your implementation code; but often one resource has one associated model of a similar name, so you'd probably end up writing a file `service/models/account_model.rb` containing a class called `Account`, subclassing either `Active Record::Base` or `Hoodoo::ActiveRecord::Base` if you wanted to include all Hoodoo mixins -- see the [Active Record Guide]({{ site.baseurl }}/guides_0300_active_record.html) for details.
+* In special cases you might want to write monkey patches; place them in the `monkeys` folder. See the [Hoodoo::Monkey Guide]({{ site.baseurl }}/guides_0850_monkey.html) for details.
 * Edit `service.rb` so that it has a `comprised_of` line that includes the new interface class you defined -- e.g. `comprised_of AccountInterface`.
 
 ```
@@ -509,6 +511,8 @@ For each resource endpoint you want to create you should do the following. Suppo
 │   ├── interfaces         - Conventional location of interface classes
 │   │   └── .gitkeep
 │   ├── models             - Conventional location of Active Record models
+│   │   └── .gitkeep
+│   ├── monkeys            - Conventional location of Hoodoo::Monkey code
 │   │   └── .gitkeep
 │   └── resources          - Conventional location of resource classes
 │       └── .gitkeep
@@ -549,6 +553,8 @@ The folder structure for the service's test suite is:
     │   ├── interfaces             - Extremely rare tests for interface code
     │   │   └── .gitkeep
     │   ├── models                 - Tests of model logic, if any is present
+    │   │   └── .gitkeep
+    │   ├── monkeys                - Tests of monkey patches, if any exist
     │   │   └── .gitkeep
     │   └── resources              - Tests to verify resource schema
     │       └── .gitkeep
