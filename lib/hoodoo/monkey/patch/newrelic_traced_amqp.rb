@@ -23,9 +23,8 @@ module Hoodoo
         # together in NewRelic's view of the world.
         #
         # This module self-registers with Hooodoo::Monkey and, provided
-        # that Hoodoo::Services::Middleware is defined at parse-time and
-        # Hoodoo::Services::Middleware.environment.production? reports
-        # +false+, will be enabled by default.
+        # that Hoodoo::Services::Middleware is defined at parse-time,
+        # will be enabled by default.
         #
         module NewRelicTracedAMQP
 
@@ -166,8 +165,7 @@ module Hoodoo
           end
         end
 
-        # Register this class with the Hoodoo monkey patch engine in any
-        # non-production environment.
+        # Register this class with the Hoodoo monkey patch engine.
         #
         if defined?( Hoodoo::Client ) &&
            defined?( Hoodoo::Client::Endpoint ) &&
@@ -179,9 +177,7 @@ module Hoodoo
           )
 
           if defined?( Hoodoo::Services ) &&
-             defined?( Hoodoo::Services::Middleware ) &&
-             Hoodoo::Services::Middleware.respond_to?( :environment ) &&
-             Hoodoo::Services::Middleware.environment.production? != true
+             defined?( Hoodoo::Services::Middleware )
 
             Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
           end
