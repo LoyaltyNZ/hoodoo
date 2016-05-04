@@ -530,7 +530,7 @@ describe Hoodoo::ActiveRecord::Finder do
       #
       context 'estimate', :order => :defined do
         before :each do
-          @initial_accurate_count = RSpecModelFinderTest.count
+          @initial_count = RSpecModelFinderTest.count
 
           # The outer 'before' code ensures an accurate initial count of 3,
           # but we're going add in a few more unestimated items.
@@ -542,10 +542,10 @@ describe Hoodoo::ActiveRecord::Finder do
           @subsequent_accurate_count = RSpecModelFinderTest.count
         end
 
-        it 'is initially inaccurate' do
+        it 'may be initially inaccurate' do
           finder = RSpecModelFinderTest.list( @list_params )
           result = finder.estimated_dataset_size
-          expect( result ).to eq( @initial_accurate_count )
+          expect( result ).to eq( @initial_count ).or( eq( @subsequent_accurate_count ) )
         end
 
         # The outer 'before' code kind of already tests this anyway since if

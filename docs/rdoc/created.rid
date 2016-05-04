@@ -1,4 +1,4 @@
-Mon, 18 Apr 2016 14:46:49 +1200
+Wed, 04 May 2016 15:20:49 +1200
 README.md	Thu, 14 Jan 2016 15:40:47 +1300
 lib/hoodoo.rb	Wed, 13 Apr 2016 14:55:13 +1200
 lib/hoodoo/active.rb	Mon, 15 Feb 2016 10:21:55 +1300
@@ -58,7 +58,7 @@ lib/hoodoo/logger/writers/stream_writer.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/middleware.rb	Wed, 02 Mar 2016 15:41:21 +1300
 lib/hoodoo/monkey.rb	Wed, 13 Apr 2016 14:55:13 +1200
 lib/hoodoo/monkey/monkey.rb	Wed, 13 Apr 2016 14:55:13 +1200
-lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Mon, 18 Apr 2016 14:42:28 +1200
+lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Wed, 04 May 2016 10:43:53 +1200
 lib/hoodoo/presenters.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/presenters/base.rb	Thu, 14 Jan 2016 15:15:01 +1300
 lib/hoodoo/presenters/base_dsl.rb	Thu, 14 Jan 2016 15:15:01 +1300
@@ -112,4 +112,4 @@ lib/hoodoo/utilities.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/utilities.rb	Thu, 24 Mar 2016 14:34:33 +1300
 lib/hoodoo/utilities/uuid.rb	Wed, 02 Mar 2016 15:18:24 +1300
-lib/hoodoo/version.rb	Mon, 18 Apr 2016 14:46:07 +1200
+lib/hoodoo/version.rb	Wed, 04 May 2016 13:58:41 +1200

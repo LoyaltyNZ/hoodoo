@@ -1,3 +1,8 @@
+## 1.8.2 (2016-05-04)
+
+* NewRelic cross-application tracing is now enabled in all environments including Production, after it was verified that the performance impact on something already instrumented by NewRelic was undetectable.
+* Travis Ruby build versions extended to 2.1.9, 2.2.5 and 2.3.1.
+
 ## 1.8.1 (2016-04-18)
 
 * NewRelic cross-application tracing patch does one extra check on availability of a method before enabling itself. This stops service code having to work around edge cases in e.g. migration files, where parts of Hoodoo get included and the monkey patch activates but other parts haven't been included and the patch doesn't see what it expects (https://github.com/LoyaltyNZ/hoodoo/pull/164).
