@@ -525,7 +525,10 @@ describe Hoodoo::ActiveRecord::Finder do
         RSpecModelFinderTest.estimate_counts_with( nil )
       end
 
-      context 'estimate' do
+      # These must run in order else e.g. the ANALYZE might happen before the
+      # pre-ANALYZE test, breaking the results.
+      #
+      context 'estimate', :order => :defined do
         before :each do
           @initial_accurate_count = RSpecModelFinderTest.count
 
