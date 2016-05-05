@@ -1753,6 +1753,14 @@ module Hoodoo; module Services
       action                       = determine_action( http_method, uri_path_components.empty? )
       interaction.requested_action = action
 
+      # New relic loc action variable and uri_path
+      ::NewRelic::Agent.add_custom_attributes(
+        {
+          :target_action => action,
+          :target_path   => uri_path
+        }
+      )
+
       # We finally have enough data to log the inbound call again, with body
       # data included if allowed by the target resource.
 
