@@ -12,27 +12,32 @@
 #           06-May-2016 (RJS): Created.
 ########################################################################
 
+
+begin
+  # Raises LoadError if NewRelic is absent
+  require 'new_relic/agent/method_tracer'
+
+  # Add a method tracer on the dispatch method so that the time spent
+  # executing middleware can be distinguished from the time spent
+  # executing the service implementation.
+  #
+  module Hoodoo
+    module Services
+      class Middleware
+        include ::NewRelic::Agent::MethodTracer
+
+        add_method_tracer :dispatch, 'Custom/dispatch'
+      end
+    end
+  end
+rescue LoadError; end
+
 module Hoodoo
   module Monkey
     module Patch
 
       begin
         require 'newrelic_rpm' # Raises LoadError if NewRelic is absent
-
-        # Add a method tracer on the dispatch method so that the time spent
-        # executing middleware can be distinguished from the time spent
-        # executing the service implementation.
-        #
-        module Hoodoo
-          module Services
-            class Middleware
-              require 'new_relic/agent/method_tracer'
-              include ::NewRelic::Agent::MethodTracer
-
-              add_method_tracer :dispatch, 'Custom/dispatch'
-            end
-          end
-        end
 
         # This module adds custom attributes to NewRelic transaction traces such
         # that transactions can be filtered by target resource and request
