@@ -74,20 +74,19 @@ module Hoodoo
               super( interaction )
 
             end
-
           end
 
         end
 
         if defined?( Hoodoo::Services ) &&
-          defined?( Hoodoo::Services::Middleware )
+           defined?( Hoodoo::Services::Middleware )
 
-          Hoodoo::Monkey.register(
+          ::Hoodoo::Monkey.register(
             target_unit:      Hoodoo::Services::Middleware,
             extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics
           )
 
-          Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics )
+          ::Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics )
         end
 
       rescue LoadError
