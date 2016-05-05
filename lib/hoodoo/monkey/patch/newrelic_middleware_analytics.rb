@@ -71,7 +71,7 @@ module Hoodoo
               ::NewRelic::Agent.add_custom_attributes(
                 {
                   :target_action => interaction.requested_action,
-                  :target_path   => interaction.target_interface.endpoint.try( :to_s )
+                  :target_path   => CGI.unescape( interaction.rack_request.path() )
                 }
               )
 
