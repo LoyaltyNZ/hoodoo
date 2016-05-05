@@ -21,6 +21,8 @@ require 'hoodoo/services/services/session'
 require 'hoodoo/discovery'
 require 'hoodoo/client'
 
+require 'new_relic/agent/method_tracer'
+
 module Hoodoo; module Services
 
   # Rack middleware, declared in (e.g.) a +config.ru+ file in the usual way:
@@ -56,6 +58,8 @@ module Hoodoo; module Services
   # Alchemy endpoint (see the Alchemy Flux gem).
   #
   class Middleware
+
+    include ::NewRelic::Agent::MethodTracer
 
     # The "category" directive below is required to work around an RDoc
     # bug where Middleware is viewed as a namespace rather than a class in
@@ -1753,7 +1757,7 @@ module Hoodoo; module Services
       action                       = determine_action( http_method, uri_path_components.empty? )
       interaction.requested_action = action
 
-      # New relic loc action variable and uri_path
+      # Add custom attributes to the NewRelic transaction trace.
       ::NewRelic::Agent.add_custom_attributes(
         {
           :target_action => action,
@@ -1907,6 +1911,8 @@ module Hoodoo; module Services
         true # Overwrite
       )
     end
+
+    add_method_tracer :dispatch, 'Custom/dispatch'
 
     # Run request preprocessing - common actions that occur after service
     # instance selection and service-specific processing.
