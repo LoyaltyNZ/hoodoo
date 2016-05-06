@@ -12,7 +12,6 @@
 #           06-May-2016 (RJS): Created.
 ########################################################################
 
-
 begin
   # Raises LoadError if NewRelic is absent
   require 'new_relic/agent/method_tracer'
