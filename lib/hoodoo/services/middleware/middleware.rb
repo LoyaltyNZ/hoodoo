@@ -413,7 +413,6 @@ module Hoodoo; module Services
          service_container.is_a?( NewRelic::Agent::Instrumentation::MiddlewareProxy )
 
         if service_container.respond_to?( :target )
-          newrelic_wrapper  = service_container
           service_container = service_container.target()
         else
           raise "Hoodoo::Services::Middleware instance created with NewRelic-wrapped Service entity, but NewRelic API is not as expected by Hoodoo; incompatible NewRelic version."
@@ -947,6 +946,80 @@ module Hoodoo; module Services
       return result
     end
 
+    # Make an "inbound" call log based on the given interaction.
+    #
+    # +interaction+:: Hoodoo::Services::Interaction describing the inbound
+    #                 request. The +interaction_id+, +rack_request+ and
+    #                 +session+ data is used (the latter being optional).
+    #                 If +target_interface+ and +requested_action+ are
+    #                 available, body data _might_ be logged according to
+    #                 secure log settings in the interface; if these
+    #                 values are unset, body data is _not_ logged.
+    #
+    def monkey_log_inbound_request( interaction )
+
+      data = build_common_log_data_for( interaction )
+
+      # Annoying dance required to extract all HTTP header data from Rack.
+
+      env     = interaction.rack_request.env
+      headers = env.select do | key, value |
+        key.to_s.match( /^HTTP_/ )
+      end
+
+      headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
+      headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
+
+      data[ :payload ] = {
+        :method  => env[ 'REQUEST_METHOD', ],
+        :scheme  => env[ 'rack.url_scheme' ],
+        :host    => env[ 'SERVER_NAME'     ],
+        :port    => env[ 'SERVER_PORT'     ],
+        :script  => env[ 'SCRIPT_NAME'     ],
+        :path    => env[ 'PATH_INFO'       ],
+        :query   => env[ 'QUERY_STRING'    ],
+        :headers => headers
+      }
+
+      # Deal with body data and security issues.
+
+      secure    = true
+      interface = interaction.target_interface
+      action    = interaction.requested_action
+
+      unless interface.nil? || action.nil?
+        secure_log_actions = interface.secure_log_for()
+        secure_type        = secure_log_actions[ action ]
+
+        # Allow body logging if there's no security specified for this action
+        # or the security is specified for the response only (since we log the
+        # request here).
+        #
+        # This means values of :both or :request will leave "secure" unchanged,
+        # as will any other unexpected value that might get specified.
+
+        secure = false if secure_type.nil? || secure_type == :response
+      end
+
+      # Compile the remaining log payload and send it.
+
+      unless secure
+        body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
+               interaction.rack_request.body.rewind()
+
+        data[ :payload ][ :body ] = body
+      end
+
+      @@logger.report(
+        :info,
+        :Middleware,
+        :inbound,
+        data
+      )
+
+      return nil
+    end
+
   private
 
     @@interfaces_have_public_methods = false
@@ -1109,80 +1182,6 @@ module Hoodoo; module Services
       end
 
       return data
-    end
-
-    # Make an "inbound" call log based on the given interaction.
-    #
-    # +interaction+:: Hoodoo::Services::Interaction describing the inbound
-    #                 request. The +interaction_id+, +rack_request+ and
-    #                 +session+ data is used (the latter being optional).
-    #                 If +target_interface+ and +requested_action+ are
-    #                 available, body data _might_ be logged according to
-    #                 secure log settings in the interface; if these
-    #                 values are unset, body data is _not_ logged.
-    #
-    def log_inbound_request( interaction )
-
-      data = build_common_log_data_for( interaction )
-
-      # Annoying dance required to extract all HTTP header data from Rack.
-
-      env     = interaction.rack_request.env
-      headers = env.select do | key, value |
-        key.to_s.match( /^HTTP_/ )
-      end
-
-      headers[ 'CONTENT_TYPE'   ] = env[ 'CONTENT_TYPE'   ]
-      headers[ 'CONTENT_LENGTH' ] = env[ 'CONTENT_LENGTH' ]
-
-      data[ :payload ] = {
-        :method  => env[ 'REQUEST_METHOD', ],
-        :scheme  => env[ 'rack.url_scheme' ],
-        :host    => env[ 'SERVER_NAME'     ],
-        :port    => env[ 'SERVER_PORT'     ],
-        :script  => env[ 'SCRIPT_NAME'     ],
-        :path    => env[ 'PATH_INFO'       ],
-        :query   => env[ 'QUERY_STRING'    ],
-        :headers => headers
-      }
-
-      # Deal with body data and security issues.
-
-      secure    = true
-      interface = interaction.target_interface
-      action    = interaction.requested_action
-
-      unless interface.nil? || action.nil?
-        secure_log_actions = interface.secure_log_for()
-        secure_type        = secure_log_actions[ action ]
-
-        # Allow body logging if there's no security specified for this action
-        # or the security is specified for the response only (since we log the
-        # request here).
-        #
-        # This means values of :both or :request will leave "secure" unchanged,
-        # as will any other unexpected value that might get specified.
-
-        secure = false if secure_type.nil? || secure_type == :response
-      end
-
-      # Compile the remaining log payload and send it.
-
-      unless secure
-        body = interaction.rack_request.body.read( MAXIMUM_LOGGED_PAYLOAD_SIZE )
-               interaction.rack_request.body.rewind()
-
-        data[ :payload ][ :body ] = body
-      end
-
-      @@logger.report(
-        :info,
-        :Middleware,
-        :inbound,
-        data
-      )
-
-      return nil
     end
 
     # This is part of the formalised structured logging interface upon which
@@ -1637,7 +1636,7 @@ module Hoodoo; module Services
     # order to give later processing stages a chance to determine if the
     # body data could be safely logged (since it's useful to have). Thus,
     # later processing stages will still need to make a call to
-    # "log_inbound_request".
+    # "monkey_log_inbound_request".
     #
     # +interaction+:: Hoodoo::Services::Middleware::Interaction instance
     #                 describing the current interaction. Parts of this may
@@ -1657,7 +1656,7 @@ module Hoodoo; module Services
       # target resource or action, so we won't accidentally log secure data in
       # the inbound payload (if any).
 
-      log_inbound_request( interaction )
+      monkey_log_inbound_request( interaction )
       set_common_response_headers( interaction )
 
       # Potential special-case early exit for CORS preflight.
@@ -1756,7 +1755,7 @@ module Hoodoo; module Services
       # We finally have enough data to log the inbound call again, with body
       # data included if allowed by the target resource.
 
-      log_inbound_request( interaction )
+      monkey_log_inbound_request( interaction )
 
       authorisation = determine_authorisation( interaction )
       return if response.halt_processing?
@@ -1857,7 +1856,6 @@ module Hoodoo; module Services
 
       # Set up some convenience variables
 
-      interface      = interaction.target_interface
       implementation = interaction.target_implementation
       action         = interaction.requested_action
       context        = interaction.context
@@ -2831,7 +2829,7 @@ module Hoodoo; module Services
 
         end
 
-      rescue => e
+      rescue
         payload_hash = {}
         interaction.context.response.errors.add_error( 'generic.malformed' )
 

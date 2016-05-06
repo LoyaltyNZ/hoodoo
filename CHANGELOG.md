@@ -1,3 +1,9 @@
+## 1.8.3 (2016-05-06)
+
+* NewRelic traces now include the action and path to enable better filtering.
+* The `dispatch` method in Hoodoo::Services::Middleware is marked for tracing so that the time spent in the implementation can be distinguished from the time spent in the middleware.
+* `log_inbound_request` in Hoodoo::Services::Middleware is now a public monkey patchable method called `monkey_log_inbound_request`.
+
 ## 1.8.2 (2016-05-04)
 
 * NewRelic cross-application tracing is now enabled in all environments including Production, after it was verified that the performance impact on something already instrumented by NewRelic was undetectable.

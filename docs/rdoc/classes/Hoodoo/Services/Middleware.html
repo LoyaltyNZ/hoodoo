@@ -26,6 +26,7 @@
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/monkey/patch/newrelic_middleware_analytics_rb.html">lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/discovery/discoverers/by_flux_rb.html">lib/hoodoo/services/discovery/discoverers/by_flux.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/middleware/amqp_log_writer_rb.html">lib/hoodoo/services/middleware/amqp_log_writer.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/services/middleware/endpoints/inter_resource_local_rb.html">lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb</a></li>
@@ -189,7 +190,10 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
         <dd>
           <ul>
               <li>
-                <a href="#method-c-memcached_host">memcached_host</a>
+                <a href="#method-c-memcached_host">memcached_host</a>,
+              </li>
+              <li>
+                <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
               </li>
           </ul>
         </dd>
@@ -255,6 +259,13 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
         </dd>
     </dl>
 
+    <!-- Includes -->
+    <div class="sectiontitle">Included Modules</div>
+    <ul>
+        <li>
+            ::NewRelic::Agent::MethodTracer
+        </li>
+    </ul>
 
 
 
@@ -542,7 +553,6 @@ calls should be passed.</p>
      <span class="ruby-identifier">service_container</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span><span class="ruby-operator">::</span><span class="ruby-constant">Instrumentation</span><span class="ruby-operator">::</span><span class="ruby-constant">MiddlewareProxy</span> )
 
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">service_container</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:target</span> )
-      <span class="ruby-identifier">newrelic_wrapper</span>  = <span class="ruby-identifier">service_container</span>
       <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">service_container</span>.<span class="ruby-identifier">target</span>()
     <span class="ruby-keyword">else</span>
       <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Services::Middleware instance created with NewRelic-wrapped Service entity, but NewRelic API is not as expected by Hoodoo; incompatible NewRelic version.&quot;</span>
@@ -956,7 +966,7 @@ protocol requirements.</p>
                 <a href="javascript:toggleSource('method-i-call_source')" id="l_method-i-call_source">show</a>
               </p>
               <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 501</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 500</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -1064,7 +1074,7 @@ an endpoint implementation.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_endpoint_for_source')" id="l_method-i-inter_resource_endpoint_for_source">show</a>
               </p>
               <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 586</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 585</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1220,7 +1230,7 @@ ignore inter-resource call errors.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 714</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 713</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,
@@ -1455,6 +1465,101 @@ ignore inter-resource call errors.</p>
   )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-monkey_log_inbound_request">
+              <b>monkey_log_inbound_request</b>( interaction )
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-monkey_log_inbound_request" name="method-i-monkey_log_inbound_request" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Make an “inbound” call log based on the given interaction.</p>
+<dl class="rdoc-list note-list"><dt>interaction
+<dd>
+<p>Hoodoo::Services::Interaction describing the inbound request. The
+<code>interaction_id</code>, <code>rack_request</code> and
+<code>session</code> data is used (the latter being optional). If
+<code>target_interface</code> and <code>requested_action</code> are
+available, body data <em>might</em> be logged according to secure log
+settings in the interface; if these values are unset, body data is
+<em>not</em> logged.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
+              </p>
+              <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 959</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
+
+  <span class="ruby-identifier">data</span> = <span class="ruby-identifier">build_common_log_data_for</span>( <span class="ruby-identifier">interaction</span> )
+
+  <span class="ruby-comment"># Annoying dance required to extract all HTTP header data from Rack.</span>
+
+  <span class="ruby-identifier">env</span>     = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>
+  <span class="ruby-identifier">headers</span> = <span class="ruby-identifier">env</span>.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> <span class="ruby-operator">|</span>
+    <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">match</span>( <span class="ruby-regexp">/^HTTP_/</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;CONTENT_TYPE&#39;</span>   ] = <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;CONTENT_TYPE&#39;</span>   ]
+  <span class="ruby-identifier">headers</span>[ <span class="ruby-string">&#39;CONTENT_LENGTH&#39;</span> ] = <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;CONTENT_LENGTH&#39;</span> ]
+
+  <span class="ruby-identifier">data</span>[ <span class="ruby-value">:payload</span> ] = {
+    <span class="ruby-value">:method</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;REQUEST_METHOD&#39;</span>, ],
+    <span class="ruby-value">:scheme</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;rack.url_scheme&#39;</span> ],
+    <span class="ruby-value">:host</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;SERVER_NAME&#39;</span>     ],
+    <span class="ruby-value">:port</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;SERVER_PORT&#39;</span>     ],
+    <span class="ruby-value">:script</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;SCRIPT_NAME&#39;</span>     ],
+    <span class="ruby-value">:path</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;PATH_INFO&#39;</span>       ],
+    <span class="ruby-value">:query</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">env</span>[ <span class="ruby-string">&#39;QUERY_STRING&#39;</span>    ],
+    <span class="ruby-value">:headers</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">headers</span>
+  }
+
+  <span class="ruby-comment"># Deal with body data and security issues.</span>
+
+  <span class="ruby-identifier">secure</span>    = <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">interface</span> = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">target_interface</span>
+  <span class="ruby-identifier">action</span>    = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">action</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">secure_log_actions</span> = <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">secure_log_for</span>()
+    <span class="ruby-identifier">secure_type</span>        = <span class="ruby-identifier">secure_log_actions</span>[ <span class="ruby-identifier">action</span> ]
+
+    <span class="ruby-comment"># Allow body logging if there&#39;s no security specified for this action</span>
+    <span class="ruby-comment"># or the security is specified for the response only (since we log the</span>
+    <span class="ruby-comment"># request here).</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># This means values of :both or :request will leave &quot;secure&quot; unchanged,</span>
+    <span class="ruby-comment"># as will any other unexpected value that might get specified.</span>
+
+    <span class="ruby-identifier">secure</span> = <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">secure_type</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">secure_type</span> <span class="ruby-operator">==</span> <span class="ruby-value">:response</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># Compile the remaining log payload and send it.</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">secure</span>
+    <span class="ruby-identifier">body</span> = <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">read</span>( <span class="ruby-constant">MAXIMUM_LOGGED_PAYLOAD_SIZE</span> )
+           <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">body</span>.<span class="ruby-identifier">rewind</span>()
+
+    <span class="ruby-identifier">data</span>[ <span class="ruby-value">:payload</span> ][ <span class="ruby-value">:body</span> ] = <span class="ruby-identifier">body</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">@@logger</span>.<span class="ruby-identifier">report</span>(
+    <span class="ruby-value">:info</span>,
+    <span class="ruby-value">:Middleware</span>,
+    <span class="ruby-value">:inbound</span>,
+    <span class="ruby-identifier">data</span>
+  )
+
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

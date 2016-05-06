@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics::InstanceExtensions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics::InstanceExtensions
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../../files/lib/hoodoo/monkey/patch/newrelic_middleware_analytics_rb.html">lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Instance methods to patch over <a
+href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>M</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-monkey_log_inbound_request">
+              <b>monkey_log_inbound_request</b>( interaction )
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicMiddlewareAnalytics/InstanceExtensions.html#method-i-monkey_log_inbound_request" name="method-i-monkey_log_inbound_request" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Add custom attributes to the NewRelic transaction. The original
+implementation is called via <code>super</code>.</p>
+<dl class="rdoc-list note-list"><dt>interaction
+<dd>
+<p>Hoodoo::Services::Interaction describing the inbound request. The
+<code>interaction_id</code>, <code>rack_request</code> and
+<code>session</code> data is used (the latter being optional). If
+<code>target_interface</code> and <code>requested_action</code> are
+available, body data <em>might</em> be logged according to secure log
+settings in the interface; if these values are unset, body data is
+<em>not</em> logged.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
+              </p>
+              <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
+
+  <span class="ruby-comment"># Add custom attributes to the NewRelic transaction.</span>
+  <span class="ruby-operator">::</span><span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">add_custom_attributes</span>(
+    {
+      <span class="ruby-value">:target_action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>,
+      <span class="ruby-value">:target_path</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">CGI</span>.<span class="ruby-identifier">unescape</span>( <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">path</span>() )
+    }
+  )
+
+  <span class="ruby-comment"># Call the original logging method.</span>
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">interaction</span> )
+
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

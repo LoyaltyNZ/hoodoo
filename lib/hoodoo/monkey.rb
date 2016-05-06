@@ -10,4 +10,5 @@
 ########################################################################
 
 require 'hoodoo/monkey/monkey'
+require 'hoodoo/monkey/patch/newrelic_middleware_analytics'
 require 'hoodoo/monkey/patch/newrelic_traced_amqp'

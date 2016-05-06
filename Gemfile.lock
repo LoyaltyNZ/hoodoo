@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.8.2)
+    hoodoo (1.8.3)
       dalli (~> 2.7)
       kgio (~> 2.9)
 
@@ -129,4 +129,4 @@ DEPENDENCIES
   timecop (~> 0.8)
 
 BUNDLED WITH
-   1.12.1
+   1.12.2
