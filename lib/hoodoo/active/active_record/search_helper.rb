@@ -150,6 +150,17 @@ module Hoodoo
           }
         end
 
+        # As #ciaw_match_generic, but is case-sensitive.
+        #
+        def self.csaw_match_generic( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+            value  = ( value || '' ).to_s
+
+            [ "#{ column } LIKE ? AND #{ column } IS NOT NULL", "%#{ value }%" ]
+          }
+        end
+
         # Case-insensitive match which requires PostgreSQL but should run
         # quickly. If you need a database agnostic solution, consider using
         # the slower #ci_match_generic method instead.
