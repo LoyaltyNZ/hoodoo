@@ -288,48 +288,48 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
 
   #############################################################################
 
-  context '#csaw_match_generic' do
+  context '#csaw_match' do
     it 'generates expected no-input-parameter output' do
-      result = described_class.csaw_match_generic()
+      result = described_class.csaw_match()
       expect( result.call( 'a', 'B' ) ).to eq( [ 'a LIKE ? AND a IS NOT NULL', '%B%' ] )
     end
 
     it 'generates expected one-input-parameter output' do
-      result = described_class.csaw_match_generic( :bar )
+      result = described_class.csaw_match( :bar )
       expect( result.call( 'a', 'B' ) ).to eq( [ 'bar LIKE ? AND bar IS NOT NULL', '%B%' ] )
     end
 
     it 'finds expected things' do
-      result = find( described_class.csaw_match_generic.call( 'field', 'hello' ) )
+      result = find( described_class.csaw_match.call( 'field', 'hello' ) )
       expect( result ).to match_array( [ @f2, @f3 ] )
 
-      result = find( described_class.csaw_match_generic.call( 'field', 'HELLO' ) )
+      result = find( described_class.csaw_match.call( 'field', 'HELLO' ) )
       expect( result ).to match_array( [ @f4 ] )
 
-      result = find( described_class.csaw_match_generic.call( 'field', 'hell' ) )
+      result = find( described_class.csaw_match.call( 'field', 'hell' ) )
       expect( result ).to match_array( [ @f2, @f3 ] )
 
-      result = find( described_class.csaw_match_generic.call( 'field', 'llo' ) )
+      result = find( described_class.csaw_match.call( 'field', 'llo' ) )
       expect( result ).to match_array( [ @f2, @f3 ] )
 
-      result = find( described_class.csaw_match_generic.call( 'field', 'heLLo' ) )
+      result = find( described_class.csaw_match.call( 'field', 'heLLo' ) )
       expect( result ).to match_array( [  ] )
     end
 
     it 'finds expected things negated' do
-      result = find_not( described_class.csaw_match_generic.call( 'field', 'hello' ) )
+      result = find_not( described_class.csaw_match.call( 'field', 'hello' ) )
       expect( result ).to match_array( [ @f1, @f4, @f5, @f6, @f7, @f8 ] )
 
-      result = find_not( described_class.csaw_match_generic.call( 'field', 'HELLO' ) )
+      result = find_not( described_class.csaw_match.call( 'field', 'HELLO' ) )
       expect( result ).to match_array( [ @f1, @f2, @f3, @f5, @f6, @f7, @f8 ] )
 
-      result = find_not( described_class.csaw_match_generic.call( 'field', 'hell' ) )
+      result = find_not( described_class.csaw_match.call( 'field', 'hell' ) )
       expect( result ).to match_array( [ @f1, @f4, @f5, @f6, @f7, @f8 ] )
 
-      result = find_not( described_class.csaw_match_generic.call( 'field', 'llo' ) )
+      result = find_not( described_class.csaw_match.call( 'field', 'llo' ) )
       expect( result ).to match_array( [ @f1, @f4, @f5, @f6, @f7, @f8 ] )
 
-      result = find_not( described_class.csaw_match_generic.call( 'field', 'heLLo' ) )
+      result = find_not( described_class.csaw_match.call( 'field', 'heLLo' ) )
       expect( result ).to match_array( [ @f1, @f2, @f3, @f4, @f5, @f6, @f7, @f8 ] )
     end
   end
