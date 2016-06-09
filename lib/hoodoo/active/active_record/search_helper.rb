@@ -113,6 +113,18 @@ module Hoodoo
           }
         end
 
+        # As #cs_match, but adds wildcards at the front and end of the string
+        # for a case-sensitive-all-wildcard match.
+        #
+        def self.csaw_match( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+            value  = ( value || '' ).to_s
+
+            [ "#{ column } LIKE ? AND #{ column } IS NOT NULL", "%#{ value }%" ]
+          }
+        end
+
         # Case-insensitive match which should be fairly database independent
         # but will run relatively slowly as a result. If you are using
         # PostgreSQL, consider using the faster #ci_match_postgres method
