@@ -1,4 +1,4 @@
-Fri, 10 Jun 2016 10:50:22 +1200
+Fri, 10 Jun 2016 11:08:20 +1200
 README.md	Fri, 29 Apr 2016 15:16:46 +1200
 lib/hoodoo.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active.rb	Fri, 29 Apr 2016 15:16:47 +1200
@@ -9,7 +9,7 @@ lib/hoodoo/active/active_record/dated.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active/active_record/error_mapping.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active/active_record/finder.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active/active_record/manually_dated.rb	Fri, 29 Apr 2016 15:16:47 +1200
-lib/hoodoo/active/active_record/search_helper.rb	Fri, 10 Jun 2016 10:48:47 +1200
+lib/hoodoo/active/active_record/search_helper.rb	Fri, 10 Jun 2016 11:01:41 +1200
 lib/hoodoo/active/active_record/secure.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active/active_record/support.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/active/active_record/translated.rb	Fri, 29 Apr 2016 15:16:47 +1200
@@ -113,4 +113,4 @@ lib/hoodoo/utilities.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/utilities/string_inquirer.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/utilities/utilities.rb	Fri, 29 Apr 2016 15:16:47 +1200
 lib/hoodoo/utilities/uuid.rb	Fri, 29 Apr 2016 15:16:47 +1200
-lib/hoodoo/version.rb	Tue, 10 May 2016 16:25:00 +1200
+lib/hoodoo/version.rb	Fri, 10 Jun 2016 11:04:34 +1200
