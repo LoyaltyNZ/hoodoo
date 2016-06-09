@@ -1,3 +1,7 @@
+## 1.9.0 (2016-06-10)
+
+* Added a `csaw_match` method to Hoodoo::ActiveRecord::Finder::SearchHelper that searches for case-sensitive matches with surrounding wildcards.
+
 ## 1.8.3 (2016-05-06)
 
 * NewRelic traces now include the action and path to enable better filtering.
