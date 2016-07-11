@@ -3,10 +3,14 @@
 # is also supported.
 #
 language: ruby
-rvm:
-  - 2.1.9
-  - 2.2.5
-  - 2.3.1
+matrix:
+  include:
+    - rvm: 2.3.1
+      gemfile: Gemfile 
+    - rvm: 2.2.5
+      gemfile: Gemfile
+    - rvm: 2.1.9
+      gemfile: rack_1.gemfile
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
