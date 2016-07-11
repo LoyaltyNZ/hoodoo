@@ -1,3 +1,7 @@
+## 1.9.1 (2016-07-11)
+
+* Maintenance `bundle update` and developer default to Ruby 2.2 so that Rack 2 can be used. No API changes.
+
 ## 1.9.0 (2016-06-10)
 
 * Added a `csaw_match` method to Hoodoo::ActiveRecord::Finder::SearchHelper that searches for case-sensitive matches with surrounding wildcards.

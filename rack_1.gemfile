@@ -5,11 +5,11 @@ source "https://rubygems.org"
 
 gem 'sdoc', :git => 'https://github.com/pond/sdoc.git', :branch => 'master'
 
-# Alchemy Flux > 1.0 uses Rake 2.x but only works on Ruby > 2.1.
+# Alchemy Flux < 1.1 allows Rake 1.6.x but only works on Ruby < 2.2.
 
 group :development, :test do
-  gem 'rack',         '~> 2.0'
-  gem 'alchemy-flux', '1.1'
+  gem 'rack',         '~> 1.6.0'
+  gem 'alchemy-flux', '1.0'
 end
 
 # Get other non-test dependencies via the gemspec.
