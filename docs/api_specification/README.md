@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 2, 2016-01-14_
+_Release 3, 2016-07-12_
 
 [](TOCS)
 * [Overview](#ao)
@@ -43,9 +43,15 @@ _Release 2, 2016-01-14_
   * [Resources](#authentication.api.resources)
     * [Caller `::resource::caller`](#caller.resource)
       * [Interface](#caller.resource.interface)
+        * [Creation](#caller.resource.interface.creation)
         * [Identity maps](#caller.resource.interface.identity_maps)
+        * [Updates](#caller.resource.interface.updates)
+      * [Representation](#caller.resource.representation)
+      * [Discussion](#caller.resource.discussion)
     * [Session `::resource::session`](#session.resource)
       * [Interface](#session.resource.interface)
+        * [Creation](#session.resource.interface.creation)
+      * [Representation](#session.resource.representation)
 * [Analytical API](#analytical.api)
   * [Persistence](#analytical.api.persistence)
     * [Information for API callers](#analytical.api.persistence.information_for_callers)
@@ -55,6 +61,7 @@ _Release 2, 2016-01-14_
   * [Resources](#analytical.api.resources)
     * [Errors `::resource::errors`](#errors.resource)
       * [Interface](#errors.resource.interface)
+      * [Representation](#errors.resource.representation)
 * [Change history](#change_history)
 [](TOCE)
 
@@ -869,49 +876,7 @@ When considering full such permissions, the system:
 
 #### <a name="caller.resource"></a>Caller `::resource::caller`
 
-A `Caller` is a representation of some actor which interacts with the Loyalty Platform API. The generic representation is as follows:
-
-```javascript
-{
-  "kind":                  "Caller",
-  "id":                    "{uuid}",
-  "created_at":            "{datetime}",
-
-  "authentication_secret": "{string}", // Only retrievable when creating; see POST description
-  "name":                  "{string}", // Optional, for a human to understand what a Caller is for
-
-  "identity": {
-    // Domain-defined by derived customised resource variants
-  },
-
-  "permissions": {
-    {::type::permissions_resources}, // Fields are *inline*
-  },
-
-  "scoping": {
-    // Domain-defined by derived customised resource variants, plus
-    // standardised optional entries:
-
-    "authorised_http_headers": [ "{string}", ... ],
-    "authorised_identities":   {identity-map}
-  }
-}
-```
-
-The Caller's `authentication_secret` is a value that _only the intended user of this Caller instance must ever know_. The value is only returned when a Caller resource instance is _created_ and can _never be retrieved again_ by any mechanism. If you lose a Caller's secret, the Caller instance becomes useless. If a Caller's UUID and secret are known, then a [Session](#session.resource) can be created to make API calls under that Caller's identity. If a malicious third party learned these values, they could "impersonate you" with potential for _substantial_ financial repercussions. Consequently, a Caller's secret *MUST NEVER, EVER* be made public or transmitted over insecure communications channels such as e-mail, plain FTP or plain HTTP. Use things like SFTP, HTTPS, or PGP encryption and minimise the number of places that the secret is known.
-
-The resource contains an `identity` section that in the generic description of a Caller contains no information, because the significance of quantities in terms of identity is up to individual APIs to define. From an [earlier example](#access_security) with User and Photo resources, a `user_id` field would go here. The implementation for that photo management example platform of the Caller resource endpoint would document, require and understand this quantity.
-
-The embedded [PermissionsResources](#permissions_resources.type) data describes "what you can do" at a high level - the basic set of resources it can access and the actions it can perform upon those resources. The default behaviour cannot be specified at this time - any unspecified resource action will always be denied by default.
-
-Within this permissions constraint, the `scoping` section can contain further domain-defined fields as with the `identity` section. There are very few reserved, generic entries:
-
-* `authorised_http_headers`: This supports some [special HTTP headers](#special_http_headers) used to provide unusual functionality to special case callers. Some of these are _secured_ and only permitted when a Session is related to a Caller that includes a particular header in its `authorised_http_headers` array. Currently the following HTTP headers have meaning in the `authorised_http_headers` array:
-
-  * [`X-Resource-UUID`](#http_x_resource_uuid)
-  * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
-
-* `authorised_identities`: Information on identities which are allowed to be assumed via the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured header. See the [identity map section later](#caller.resource.interface.identity_maps) for details.
+A `Caller` is a representation of some actor which interacts with the Loyalty Platform API.
 
 ##### <a name="caller.resource.interface"></a>Interface
 
@@ -929,6 +894,8 @@ Within this permissions constraint, the `scoping` section can contain further do
 * No resources are embeddable.
 
 Domain-specific variants of the Caller resource implemented within platforms may state scoping rules and/or provide additional search/filter abilities.
+
+###### <a name="caller.resource.interface.creation"></a>Creation
 
 To create an instance, `POST` this JSON data:
 
@@ -955,28 +922,6 @@ To create an instance, `POST` this JSON data:
 ```
 
 The response to a `POST` will include a generated `authentication_secret`. ***The `authentication_secret` must be stored as it is not retrievable via any subsequent API calls or by Loyalty NZ. Loss of the `authentication_secret` will mean a new Client must be created.***
-
-Only a subset of fields may be modified - in particular, note that the `identity` section is immutable. To alter an existing Caller, `PATCH` this JSON data:
-
-```javascript
-{
-  "name": "{string}", // Optional, for a human to understand what a Caller is for
-
-  "permissions": {
-    {::type::permissions_resources}, // Fields are *inline*
-  },
-
-  "scoping": {
-    // Domain-defined by derived customised resource variants, plus
-    // standardised optional entries:
-
-    "authorised_http_headers": [ "{string}", ... ],
-    "authorised_identities":   {identity-map}
-  }
-}
-```
-
-**Note:** When a Caller instance is modified or deleted, the platform provider's implementation should ensure that any [Sessions](#session.resource) that refer to the Caller will automatically be invalidated.
 
 ###### <a name="caller.resource.interface.identity_maps"></a>Identity maps
 
@@ -1114,26 +1059,85 @@ This map includes the same nested data as before, but would also allow an HTTP h
 
 Finally, beware the combination of the Caller's own saved identity and the possibilities for assumed identities, if it defines any, when those assumed identities may not be fully specified (e.g. only an account ID is given and nothing else). The assumed values are merged on top of anything the Caller already defines, so you might still have a vector for accidental code errors yielding invalid identity key/value entry combinations. It may be best to have a specialised Caller with no defined identity of its own, with non-null constraints in any places where identity matters to your resource implementations to catch cases where assumed identity is in use, but incomplete.
 
+###### <a name="caller.resource.interface.updates"></a>Updates
+
+Only a subset of fields may be modified - in particular, note that the `identity` section is immutable. To alter an existing Caller, `PATCH` this JSON data:
+
+```javascript
+{
+  "name": "{string}", // Optional, for a human to understand what a Caller is for
+
+  "permissions": {
+    {::type::permissions_resources}, // Fields are *inline*
+  },
+
+  "scoping": {
+    // Domain-defined by derived customised resource variants, plus
+    // standardised optional entries:
+
+    "authorised_http_headers": [ "{string}", ... ],
+    "authorised_identities":   {identity-map}
+  }
+}
+```
+
+##### <a name="caller.resource.representation"></a>Representation
+
+The generic representation is as follows:
+
+```javascript
+{
+  "kind":                  "Caller",
+  "id":                    "{uuid}",
+  "created_at":            "{datetime}",
+
+  "authentication_secret": "{string}", // Only retrievable when creating; see POST description
+  "name":                  "{string}", // Optional, for a human to understand what a Caller is for
+
+  "identity": {
+    // Domain-defined by derived customised resource variants
+  },
+
+  "permissions": {
+    {::type::permissions_resources}, // Fields are *inline*
+  },
+
+  "scoping": {
+    // Domain-defined by derived customised resource variants, plus
+    // standardised optional entries:
+
+    "authorised_http_headers": [ "{string}", ... ],
+    "authorised_identities":   {identity-map}
+  }
+}
+```
+
+##### <a name="caller.resource.discussion"></a>Discussion
+
+**Important:** When a Caller instance is modified or deleted, the platform provider's implementation should ensure that any [Sessions](#session.resource) that refer to the Caller are automatically invalidated.
+
+The Caller's `authentication_secret` is a value that _only the intended user of this Caller instance must ever know_. The value is only returned when a Caller resource instance is _created_ and can _never be retrieved again_ by any mechanism. If you lose a Caller's secret, the Caller instance becomes useless. If a Caller's UUID and secret are known, then a [Session](#session.resource) can be created to make API calls under that Caller's identity. If a malicious third party learned these values, they could "impersonate you" with potential for _substantial_ financial repercussions. Consequently, a Caller's secret *MUST NEVER, EVER* be made public or transmitted over insecure communications channels such as e-mail, plain FTP or plain HTTP. Use things like SFTP, HTTPS, or PGP encryption and minimise the number of places that the secret is known.
+
+The resource contains an `identity` section that in the generic description of a Caller contains no information, because the significance of quantities in terms of identity is up to individual APIs to define. From an [earlier example](#access_security) with User and Photo resources, a `user_id` field would go here. The implementation for that photo management example platform of the Caller resource endpoint would document, require and understand this quantity.
+
+The embedded [PermissionsResources](#permissions_resources.type) data describes "what you can do" at a high level - the basic set of resources it can access and the actions it can perform upon those resources. The default behaviour cannot be specified at this time - any unspecified resource action will always be denied by default.
+
+Within this permissions constraint, the `scoping` section can contain further domain-defined fields as with the `identity` section. There are very few reserved, generic entries:
+
+* `authorised_http_headers`: This supports some [special HTTP headers](#special_http_headers) used to provide unusual functionality to special case callers. Some of these are _secured_ and only permitted when a Session is related to a Caller that includes a particular header in its `authorised_http_headers` array. Currently the following HTTP headers have meaning in the `authorised_http_headers` array:
+
+  * [`X-Resource-UUID`](#http_x_resource_uuid)
+  * [`X-Assume-Identity-Of`](#http_x_assume_identity_of)
+
+* `authorised_identities`: Information on identities which are allowed to be assumed via the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secured header. See the [identity map section later](#caller.resource.interface.identity_maps) for details.
+
 
 
 #### <a name="session.resource"></a>Session `::resource::session`
 
 **Important:** POSTing to this resource does not require inclusion of the `X-Session-ID` header field.
 
-Permissions and other Caller information which apply to the user of a `Session` instance.
-
-```javascript
-{
-  "kind":       "Session",
-  "id":         "{uuid}",
-  "created_at": "{datetime}",
-
-  "caller_id":  "{uuid}",
-  "expires_at": "{datetime}" // When this session expires
-}
-```
-
-The session is considered expired if the current time is greater than or equal to `expires_at`. Sessions expire _at most_ after two days, but may expire sooner if other platform activity causes them to be invalidated (see later).
+A Session resource instance represents the successful grant of protected API access to a particular Caller.
 
 ##### <a name="session.resource.interface"></a>Interface
 
@@ -1144,10 +1148,9 @@ The session is considered expired if the current time is greater than or equal t
 | `DELETE`    | /sessions/{uuid} | Delete Session instance |
 
 * API callers can only delete or show their own Session.
-* The `GET` 'list' call accepts [common query string parameters](#lppsf).
-* No additional sort fields are defined.
-* No search or filter fields are defined.
 * The [Caller](#caller.resource) resource is embeddable via `caller`.
+
+###### <a name="session.resource.interface.creation"></a>Creation
 
 To create an instance, `POST` this JSON data:
 
@@ -1160,7 +1163,22 @@ To create an instance, `POST` this JSON data:
 
 An `X-Session-ID` HTTP header is (obviously) _not_ required for this operation. The `caller_id` is the `id` value (UUID) of a [Caller](#caller.resource) instance, which must exist. The `authentication_secret` is that Caller's secret value. The new Session will inherit the identity and abilities of that Caller. If that Caller is changed or deleted, any Sessions referring to it will be automatically invalidated.
 
+##### <a name="session.resource.representation"></a>Representation
+
+```javascript
+{
+  "kind":       "Session",
+  "id":         "{uuid}",
+  "created_at": "{datetime}",
+
+  "caller_id":  "{uuid}",
+  "expires_at": "{datetime}" // When this session expires
+}
+```
+
 When a new Session is created, the returned Session representation's `id` value (UUID) should be sent as the `X-Session-ID` HTTP header value in subsequent API calls. This is how your API calls are matched to a valid (or not!) Session inside the platform and in turn the abilities and identity of "you" are known as a referenced Caller.
+
+The session is considered expired if the current time is greater than or equal to `expires_at`. Sessions expire _at most_ after two days, but may expire sooner if other platform activity causes them to be invalidated (see later).
 
 
 
@@ -1227,20 +1245,6 @@ API calls return details of error conditions through one or more of these object
 
 The errors resource contains one or more [ErrorPrimitive Types](#error_primitive.type) in an array.
 
-```javascript
-{
-  "kind":           "Errors",
-  "id":             "{uuid}",
-  "created_at":     "{datetime}",
-
-  "interaction_id": "{uuid}",
-  "errors":         [
-    {::type::error_primitive},
-    // ...
-  ]
-}
-```
-
 ##### <a name="errors.resource.interface"></a>Interface
 
 If a platform creator chooses to provide an Errors resource endpoint, the recommend interface is as follows:
@@ -1257,6 +1261,22 @@ If a platform creator chooses to provide an Errors resource endpoint, the recomm
 
 It is likely to be helpful if you augment this with your own selection of search and filter strings. For example, you might allow someone to search for a particular `interaction_id` or list Errors instances that contain a particular error `code` somewhere in their payload.
 
+##### <a name="errors.resource.representation"></a>Representation
+
+```javascript
+{
+  "kind":           "Errors",
+  "id":             "{uuid}",
+  "created_at":     "{datetime}",
+
+  "interaction_id": "{uuid}",
+  "errors":         [
+    {::type::error_primitive},
+    // ...
+  ]
+}
+```
+
 
 
 ## <a name="change_history"></a>Change history
@@ -1265,3 +1285,4 @@ It is likely to be helpful if you augment this with your own selection of search
 |------------|--------------------|--------------------|---------|
 | 2015-12-10 | Release 1          | ADH                | Created by splitting out content from an internal API document. |
 | 2016-01-14 | Release 2          | ADH                | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
+| 2016-07-12 | Release 3          | ADH                | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
