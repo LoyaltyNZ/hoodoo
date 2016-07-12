@@ -876,7 +876,7 @@ When considering full such permissions, the system:
 
 #### <a name="caller.resource"></a>Caller `::resource::caller`
 
-A `Caller` is a representation of some actor which interacts with the Loyalty Platform API.
+A `Caller` is a representation of some actor which interacts with a Hoodoo-implemented API.
 
 ##### <a name="caller.resource.interface"></a>Interface
 
@@ -921,7 +921,7 @@ To create an instance, `POST` this JSON data:
 }
 ```
 
-The response to a `POST` will include a generated `authentication_secret`. ***The `authentication_secret` must be stored as it is not retrievable via any subsequent API calls or by Loyalty NZ. Loss of the `authentication_secret` will mean a new Client must be created.***
+The response to a `POST` will include a generated `authentication_secret`. ***The `authentication_secret` must be stored as it is not retrievable via any subsequent API calls or the system administrator. Loss of the `authentication_secret` will mean a new Client must be created.***
 
 ###### <a name="caller.resource.interface.identity_maps"></a>Identity maps
 
