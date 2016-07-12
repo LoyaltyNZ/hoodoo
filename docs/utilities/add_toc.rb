@@ -20,7 +20,7 @@ paths = []
 
 args = if ARGV.empty?
   [
-    'api_specification.md'
+    '../api_specification/README.md'
   ] # Add other docs to this array if required
 else
   ARGV
