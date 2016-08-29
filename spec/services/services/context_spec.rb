@@ -1,19 +1,23 @@
 require 'spec_helper'
 
-class RSpecTestContextImplementation < Hoodoo::Services::Implementation
-end
-
-class RSpecTestContextInterface < Hoodoo::Services::Interface
-  interface :RSpecTestResource do
-    endpoint :rspec_test_service_stub, RSpecTestContextImplementation
-  end
-end
-
-class RSpecTestContext < Hoodoo::Services::Service
-  comprised_of RSpecTestContextInterface
-end
-
 describe Hoodoo::Services::Context do
+
+  before :all do
+    Hoodoo::Services::Middleware.flush_services_for_test()
+  end
+
+  class RSpecTestContextImplementation < Hoodoo::Services::Implementation
+  end
+
+  class RSpecTestContextInterface < Hoodoo::Services::Interface
+    interface :RSpecTestResource do
+      endpoint :rspec_test_service_stub, RSpecTestContextImplementation
+    end
+  end
+
+  class RSpecTestContext < Hoodoo::Services::Service
+    comprised_of RSpecTestContextInterface
+  end
 
   it 'should initialise correctly' do
     ses = Hoodoo::Services::Session.new
