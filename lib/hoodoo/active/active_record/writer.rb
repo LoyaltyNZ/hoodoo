@@ -85,8 +85,8 @@ module Hoodoo
       # As an instance-based method, the return value and error handling
       # semantics differ from the class-based counterpart. Instead of
       # checking "persisted?", check the return value of +persist_in+. This
-      # means you can also use +persist_in+ to save a previousl persisted, but
-      # now updated record, should you so wish.
+      # means you can also use +persist_in+ to save a previously persisted,
+      # but now updated record, should you so wish.
       #
       #     def create( context )
       #       attributes = mapping_of( context.request.body )
@@ -217,7 +217,7 @@ module Hoodoo
         # must-be-unique fields (within your defined scope) automatically.
         #
         # Using this method for data storage instead of plain ActiveRecord
-        # +send+ or <tt>send!</tt> will also help your code auto-inherit any
+        # +save+ or <tt>save!</tt> will also help your code auto-inherit any
         # additional future write-related enhancements in Hoodoo should they
         # arise, without necessarily needing service code changes.
         #

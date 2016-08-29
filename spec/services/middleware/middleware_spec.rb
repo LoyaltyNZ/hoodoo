@@ -29,7 +29,8 @@ class RSpecTestServiceStubInterface < Hoodoo::Services::Interface
     endpoint :rspec_test_service_stub, RSpecTestServiceStubImplementation
     embeds :emb, :embs
     to_list do
-      sort :extra => [:up, :down]
+      sort :extra        => [:up, :down]
+      sort :conventional => [:asc, :desc]
       search :foo, :bar
       filter :baz, :boo
     end
@@ -681,16 +682,43 @@ describe Hoodoo::Services::Middleware do
           expect(context.request.list.sort_data).to eq({'extra'=>'up', 'created_at'=>'desc'})
         end
 
-        get '/v2/rspec_test_service_stub?sort=extra&sort=created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=extra&sort=created_at&direction=up&direction=desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 
-      it 'should respond to several sort query parameters, with duplicates' do
+      it 'should handle legitimate duplicated sort values (form 1)' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.sort_data).to eq({'created_at'=>'desc', 'extra'=>'up'})
+          expect(context.request.list.sort_data).to eq({'conventional' => 'desc', 'extra'=>'up', 'created_at'=>'desc'})
         end
 
-        get '/v2/rspec_test_service_stub?sort=extra,extra&sort=created_at&sort=extra&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        get '/v2/rspec_test_service_stub?sort=conventional,extra,created_at&direction=desc,up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should handle legitimate duplicated sort values (form 2)' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+                expect(context.request.list.sort_data).to eq({'conventional' => 'desc', 'extra'=>'up', 'created_at'=>'desc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=conventional&direction=desc&sort=extra&sort=created_at&direction=up&direction=desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should handle a mixture of sort forms' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+                expect(context.request.list.sort_data).to eq({'conventional' => 'desc', 'extra'=>'up', 'created_at'=>'desc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=conventional&direction=desc&sort=extra,created_at&direction=up,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should de-duplicate unnecessarily duplicated sort query parameters' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.sort_data).to eq({'created_at'=>'desc', 'extra'=>'down', 'conventional' => 'desc'})
+        end
+
+        get '/v2/rspec_test_service_stub?sort=created_at,extra,extra&sort=conventional&direction=desc,down,down,desc', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(200)
       end
 

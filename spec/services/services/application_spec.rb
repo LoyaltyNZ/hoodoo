@@ -43,7 +43,7 @@ describe Hoodoo::Services::Service do
 
   it 'should correctly report its component classes' do
     RSpecTestService.comprised_of( RSpecTestInterfaceA,
-                                              RSpecTestInterfaceB )
+                                   RSpecTestInterfaceB )
 
     expect(RSpecTestService.component_interfaces).to eq([
       RSpecTestInterfaceA,
