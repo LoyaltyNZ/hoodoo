@@ -1,3 +1,7 @@
+## 1.9.2 (2016-08-29)
+
+* The de-duplication pass for URI query strings would accidentally de-duplicate legitimate duplication strings such as `...?sort=name,created_at&direction=desc,desc` causing incorrect 422 errors. Fixed.
+
 ## 1.9.1 (2016-07-11)
 
 * Maintenance `bundle update` and developer default to Ruby 2.2 so that Rack 2 can be used. No API changes.
