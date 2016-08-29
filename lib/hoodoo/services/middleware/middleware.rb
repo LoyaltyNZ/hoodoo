@@ -2637,11 +2637,13 @@ module Hoodoo; module Services
         end
       end
 
-      # Flatten the resulting sub-arrays and make sure values are unique.
+      # Flatten remaining sub-arrays and make sure values are unique. Sort
+      # keys and sort directions are deduplicated intelligently within the
+      # #process_query_hash method.
 
       query_hash.each do | key, value |
         value.flatten!
-        value.uniq!
+        value.uniq! unless key == 'sort' || key == 'direction'
       end
 
       # For search and filter strings, decode the key/value pairs as a
@@ -2720,11 +2722,11 @@ module Hoodoo; module Services
       #   0 created  asc
       #   1 name     desc
       #   2 title
-      #   => as specified with default direction for sort key 'title'
+      #   => mismatched sort vs direction list length
       #
       #   0 created asc
       #   1         desc
-      #   => error as there's no way to guess the sort key for the 'desc'
+      #   => mismatched sort vs direction list length
 
       sort_keys       = query_hash[ 'sort'      ] || [ interface.to_list.default_sort_key ]
       sort_directions = query_hash[ 'direction' ] || []
