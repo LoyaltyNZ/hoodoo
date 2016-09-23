@@ -1,4 +1,4 @@
-Mon, 29 Aug 2016 13:55:15 +1200
+Fri, 23 Sep 2016 15:43:35 +1200
 README.md	Thu, 14 Jan 2016 15:40:47 +1300
 lib/hoodoo.rb	Wed, 13 Apr 2016 14:55:13 +1200
 lib/hoodoo/active.rb	Mon, 15 Feb 2016 10:21:55 +1300
@@ -14,7 +14,7 @@ lib/hoodoo/active/active_record/secure.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/support.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/translated.rb	Mon, 15 Feb 2016 10:21:55 +1300
 lib/hoodoo/active/active_record/uuid.rb	Thu, 18 Feb 2016 14:26:51 +1300
-lib/hoodoo/active/active_record/writer.rb	Mon, 29 Aug 2016 11:21:11 +1200
+lib/hoodoo/active/active_record/writer.rb	Tue, 30 Aug 2016 11:10:22 +1200
 lib/hoodoo/client.rb	Tue, 12 Apr 2016 14:16:20 +1200
 lib/hoodoo/client/augmented_array.rb	Wed, 06 Apr 2016 13:08:41 +1200
 lib/hoodoo/client/augmented_base.rb	Thu, 14 Jan 2016 15:15:01 +1300
@@ -91,7 +91,7 @@ lib/hoodoo/services/discovery/results/for_amqp.rb	Tue, 26 Jan 2016 14:26:24 +130
 lib/hoodoo/services/discovery/results/for_http.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/services/discovery/results/for_local.rb	Tue, 26 Jan 2016 14:26:24 +1300
 lib/hoodoo/services/discovery/results/for_remote.rb	Thu, 14 Jan 2016 15:15:02 +1300
-lib/hoodoo/services/middleware/amqp_log_writer.rb	Tue, 29 Mar 2016 11:38:09 +1300
+lib/hoodoo/services/middleware/amqp_log_writer.rb	Fri, 23 Sep 2016 15:35:28 +1200
 lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Fri, 29 Jan 2016 15:42:39 +1300
 lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Thu, 18 Feb 2016 14:26:51 +1300
@@ -99,7 +99,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Thu, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 18 Feb 2016 09:28:54 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Thu, 18 Feb 2016 09:28:54 +1300
 lib/hoodoo/services/middleware/interaction.rb	Thu, 24 Mar 2016 14:34:33 +1300
-lib/hoodoo/services/middleware/middleware.rb	Mon, 29 Aug 2016 13:25:59 +1200
+lib/hoodoo/services/middleware/middleware.rb	Tue, 30 Aug 2016 11:10:22 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/services/services/context.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/services/services/implementation.rb	Thu, 14 Jan 2016 15:15:02 +1300
@@ -113,4 +113,4 @@ lib/hoodoo/utilities.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 14 Jan 2016 15:15:02 +1300
 lib/hoodoo/utilities/utilities.rb	Thu, 24 Mar 2016 14:34:33 +1300
 lib/hoodoo/utilities/uuid.rb	Wed, 02 Mar 2016 15:18:24 +1300
-lib/hoodoo/version.rb	Mon, 29 Aug 2016 13:54:55 +1200
+lib/hoodoo/version.rb	Fri, 23 Sep 2016 15:42:03 +1200
