@@ -53,16 +53,17 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
 
     @session.caller_identity_name = @identity_id_4
 
-    @alchemy = OpenStruct.new
-    @queue   = 'foo.bar'
-    @logger  = described_class.new( @alchemy, @queue )
+    @alchemy             = OpenStruct.new
+    @default_routing_key = 'foo.bar'
+    @custom_routing_key  = 'baz.foo'
+    @logger              = described_class.new( @alchemy, @default_routing_key )
   end
 
-  it 'sends expected data' do
+  def test_with_code( code, expected_routing_key )
     Timecop.freeze do
       level          = 'warn'
       component      = 'test_component'
-      code           = 'test_code'
+      code           = 'analytics'
       reported_at    = Time.now.iso8601( 12 )
       id             = Hoodoo::UUID.generate
       interaction_id = Hoodoo::UUID.generate
@@ -92,9 +93,51 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
         :identity             => Hoodoo::Utilities.stringify( @session.identity.to_h )
       }
 
-      expect( @alchemy ).to receive( :send_message_to_service ).with( @queue, { "body" => expected_hash.to_json } ).once
+      expect( @alchemy ).to receive( :send_message_to_service ).with(
+        expected_routing_key,
+        { "body" => expected_hash.to_json }
+      ).once
 
       @logger.report( level, component, code, data )
+    end
+  end
+
+  it 'sends expected data' do
+    test_with_code( 'test_code', @default_routing_key )
+  end
+
+  context 'sends analytics data' do
+    context 'to default queue' do
+      it 'with no routing override (by String)' do
+        test_with_code( 'analytics', @default_routing_key )
+      end
+
+      it 'with no routing override (by Symbol)' do
+        test_with_code( :analytics, @default_routing_key )
+      end
+    end
+
+    context 'to custom queue' do
+      before :each do
+        ENV[ 'AMQ_ANALYTICS_LOGGING_ENDPOINT' ] = @custom_routing_key
+
+        # Recreate the logger instance from the outermost 'before each'
+        # block in order to re-run the initialiser and re-check ENV.
+        #
+        @logger = described_class.new( @alchemy, @default_routing_key )
+      end
+
+      after :each do
+        ENV.delete( 'AMQ_ANALYTICS_LOGGING_ENDPOINT' )
+      end
+
+      it 'with routing override (by String)' do
+        test_with_code( 'analytics', @custom_routing_key )
+      end
+
+      it 'with routing override (by Symbol)' do
+        test_with_code( :analytics, @custom_routing_key )
+      end
     end
   end
 end
