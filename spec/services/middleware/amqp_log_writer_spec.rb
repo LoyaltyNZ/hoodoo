@@ -63,7 +63,6 @@ describe Hoodoo::Services::Middleware::AMQPLogWriter do
     Timecop.freeze do
       level          = 'warn'
       component      = 'test_component'
-      code           = 'analytics'
       reported_at    = Time.now.iso8601( 12 )
       id             = Hoodoo::UUID.generate
       interaction_id = Hoodoo::UUID.generate
