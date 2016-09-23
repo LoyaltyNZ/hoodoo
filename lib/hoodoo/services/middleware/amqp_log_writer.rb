@@ -27,8 +27,8 @@ module Hoodoo; module Services
       #                 AMQP-based queue.
       #
       # +routing_key+:: The routing key (as a String) to use. Optional. If
-      #                 omitted, reads +ENV[ 'AMQ_LOGGING_ENDPOINT' ]+ or if
-      #                 that is unset, defaults to +platform.logging+.
+      #                 omitted, reads <tt>ENV['AMQ_LOGGING_ENDPOINT']</tt> or
+      #                 if that is unset, defaults to +platform.logging+.
       #
       # If you're running with Rack on top of Alchemy, then the +call+ method's
       # +env+ parameter containing the Rack environment _MUST_ have a key of
@@ -37,8 +37,8 @@ module Hoodoo; module Services
       # parameter. The logger will then use this active Alchemy service to send
       # messages to its configured routing key.
       #
-      # If +ENV[ 'AMQ_ANALYTICS_LOGGING_ENDPOINT' ]+ is defined then its value
-      # will be used for a routing key in the case, very specifically, of a
+      # If <tt>ENV['AMQ_ANALYTICS_LOGGING_ENDPOINT']</tt> is defined then its
+      # value is used for a routing key in the case, very specifically, of a
       # message logged with a +code+ of +analytics+. If the variable is not set,
       # the same routing key is used for all messages regardless of code; else
       # that particular code can be streamed off to another Rabbit queue via the

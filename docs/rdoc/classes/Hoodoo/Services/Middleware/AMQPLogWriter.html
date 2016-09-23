@@ -95,8 +95,8 @@ Thread for this logger.</p>
 <p>The Alchemy endpoint to use for sending messages to the AMQP-based queue.</p>
 </dd><dt><code>routing_key</code>
 <dd>
-<p>The routing key (as a String) to use. Optional. If omitted, reads +ENV[
-&#39;AMQ_LOGGING_ENDPOINT&#39; ]+ or if that is unset, defaults to
+<p>The routing key (as a String) to use. Optional. If omitted, reads
+<code>ENV['AMQ_LOGGING_ENDPOINT']</code> or if that is unset, defaults to
 <code>platform.logging</code>.</p>
 </dd></dl>
 
@@ -109,8 +109,8 @@ This is assigned to the <code>alchemy</code> parameter. The logger will
 then use this active Alchemy service to send messages to its configured
 routing key.</p>
 
-<p>If +ENV[ &#39;AMQ_ANALYTICS_LOGGING_ENDPOINT&#39; ]+ is defined then its
-value will be used for a routing key in the case, very specifically, of a
+<p>If <code>ENV['AMQ_ANALYTICS_LOGGING_ENDPOINT']</code> is defined then its
+value is used for a routing key in the case, very specifically, of a
 message logged with a <code>code</code> of <code>analytics</code>. If the
 variable is not set, the same routing key is used for all messages
 regardless of code; else that particular code can be streamed off to
