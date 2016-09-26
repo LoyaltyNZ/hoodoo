@@ -141,17 +141,9 @@ describe Hoodoo::Client do
 
   context 'verify "list_in_batches" behaviour' do
 
-    it 'errors when the batch_size is invalid' do
-
-      expect { @number_endpoint.list_in_batches( 1.0 ) }.to   raise_error( RuntimeError, 'batch_size must be an Integer' )
-      expect { @number_endpoint.list_in_batches( 'abc' ) }.to raise_error( RuntimeError, 'batch_size must be an Integer' )
-
-    end
-
-    it 'takes a block' do
-
-      # Test with different batch sizes
-      expected_results = [
+    # Test with different batch sizes
+    let(:expected_results) {
+      [
         # This first example takes about 20s to run on its own !
         {
           batch_size: 1,
@@ -182,12 +174,43 @@ describe Hoodoo::Client do
           result_size: [ 1000 ],
         },
       ]
+    }
+
+    it 'errors when the batch_size is invalid' do
+
+      expect { @number_endpoint.list_in_batches( 1.0 ) }.to   raise_error( RuntimeError, 'batch_size must be an Integer' )
+      expect { @number_endpoint.list_in_batches( 'abc' ) }.to raise_error( RuntimeError, 'batch_size must be an Integer' )
+
+    end
+
+    it 'takes a block' do
 
       expected_results.each do | expected |
         i = 0
         @number_endpoint.list_in_batches(expected[ :batch_size ]) do | results |
           expect( results.platform_errors.has_errors? ).to eq( false )
           expect( results.size                        ).to eq( expected[ :result_size ][ i ])
+          i += 1
+        end
+        expect( i ).to eq( expected[ :result_size ].size )
+      end
+
+    end
+
+    it 'returns an Enumerator object' do
+
+      expect( @number_endpoint.list_in_batches( 500 ) ).to be_a_kind_of( Enumerator )
+
+    end
+
+    it 'allows for enumeration' do
+
+      expected_results.each do | expected |
+        i = 0
+        @number_endpoint.list_in_batches(expected[ :batch_size ]).with_index do | results, idx |
+          expect( results.platform_errors.has_errors? ).to eq( false )
+          expect( results.size                        ).to eq( expected[ :result_size ][ i ])
+          expect( idx                                 ).to eq( i )
           i += 1
         end
         expect( i ).to eq( expected[ :result_size ].size )
