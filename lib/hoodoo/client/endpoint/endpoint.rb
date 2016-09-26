@@ -341,6 +341,57 @@ module Hoodoo
           raise "Subclasses must implement Hoodoo::Client::Endpoint\#list"
         end
 
+        # Obtain a list of resource instance representations, in batches
+        #
+        # +query_hash+:: See the constructor for more. This is the only way
+        #                to search or filter the list, via the target
+        #                Resource's documented supported search/filter
+        #                parameters and the platform's common all-Resources
+        #                behaviour.
+        #
+        # Returns a Hoodoo::Client::AugmentedArray representation of the
+        # requested list of resource instances.
+        #
+        # Call Hoodoo::Client::AugmentedArray#platform_errors (or for
+        # service authors implementing resource endpoints, possibly call
+        # Hoodoo::Client::AugmentedArray#adds_errors_to? instead) on the
+        # returned instance to detect and resolve error conditions _before_
+        # examining its Array-derived contents.
+        #
+        # The array will be empty in successful responses if no items
+        # satisfying the list conditions were found. The array contents
+        # are undefined in the case of errors.
+        #
+        def list_in_batches(batch_size, query_hash)
+
+          unless block_given?
+            return to_enum(:list_in_batches, batch_size, query_hash) do
+              # no-op
+            end
+          end
+
+          batch_query_hash = query_hash.dup
+          batch_query_hash[:limit] = batch_size
+          offset = 0
+
+          loop do
+            batch_query_hash[:offset] = offset
+            result = list(batch_query_hash)
+
+            if result.platform_errors.has_errors? || result.size == 0
+              break
+            end
+
+            yield result
+
+            # Service implementation decides the :batch_size
+            batch_size = max(1, result.size)
+
+            offset += batch_size
+          end
+
+        end
+
         # Obtain a resource instance representation.
         #
         # +ident+::      See the constructor for details.
