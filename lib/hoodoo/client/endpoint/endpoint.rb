@@ -369,9 +369,12 @@ module Hoodoo
             batch_query_hash[:offset] = offset
             result = list(batch_query_hash)
 
-            if result.platform_errors.has_errors? || result.size == 0
+            if result.platform_errors.has_errors?
+              yield result
               break
             end
+
+            break if result.size == 0
 
             yield result
 

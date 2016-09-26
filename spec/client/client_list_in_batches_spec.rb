@@ -2,12 +2,11 @@ require 'securerandom'
 require 'spec_helper.rb'
 
 #
-# Create a 'Number' Service with the folloiwng properties:
+# Create a 'Number' Service with the following properties:
 #
-# - manages 'Number' resources ie: { 'number': 3 }, for numbers between 1 & 1000
+# - manages 'Number' resources ie: { 'number': 3 }, for numbers between 0 & 999
 # - provides a public 'list' endpoint (no session needed)
-# - provide many pages of data when asked to 'list' its resource
-# - will error if asked for
+# - pagination
 #
 class RSpecNumberImplementation < Hoodoo::Services::Implementation
 
@@ -23,9 +22,6 @@ class RSpecNumberImplementation < Hoodoo::Services::Implementation
         num = context.request.list.offset + i
         resources << { 'number' => num } if NUMBER_RANGE.include?( num )
       end
-
-      # Only error if _all_ the resources asked for are outside the limit
-      #errors.add_error( 'synthetic error' ) if NUMBER_RANGE.include?( context.request.list.offset )
 
       context.response.set_resources( resources, resources.count )
     end
@@ -43,16 +39,39 @@ class RSpecNumberInterface < Hoodoo::Services::Interface
 end
 
 #
-# Create an 'Imploder' Service that will error every time its called.
+# Create a 'Imploder' Service with the following properties:
+#
+# - manages 'Number' resources ie: { 'number': 3 }, for numbers between 0 & 999
+# - provides a public 'list' endpoint (no session needed)
+# - pagination
+# - will generate an error when asked to retrieve any 'Number' resource with a
+#   number value >= 500
+#
 #
 class RSpecImploderImplementation < Hoodoo::Services::Implementation
 
   public
 
+    # Number resources are all in this range
+    NUMBER_RANGE = 0..999
+
+    # Number resources that generate errors are all in this range
+    ERROR_RANGE  = 500..999
+
     def list( context )
 
-      errors.add_error( 'Imploded!' )
+      resources = []
+      implode = false
+      0.upto( context.request.list.limit - 1 ) do |i|
+        num = context.request.list.offset + i
+        resources << { 'number' => num } if NUMBER_RANGE.include?( num )
+        implode = implode || ERROR_RANGE.include?( num )
+      end
 
+      context.response.add_error( 'platform.malformed' ) if implode
+      return if context.response.halt_processing?
+
+      context.response.set_resources( resources, resources.count )
     end
 
 end
@@ -96,58 +115,98 @@ describe Hoodoo::Client do
     @imploder_endpoint = client.resource( :RSpecImploderTarget, 1)
   end
 
-  context 'verify standard "list" behaviour' do
+  context 'verify the test service endpoints implement standard "list" behaviour' do
 
-    it 'acts like a resource' do
+    context 'RSpecNumber' do
 
-      results = @number_endpoint.list
-      expect( results.platform_errors.has_errors? ).to eq( false )
-      expect( results.size                        ).to eq( 50)
-      expect( results[0]                          ).to eq( { 'number' => 0 } )
-      expect( results[-1]                         ).to eq( { 'number' => 49 } )
+      it 'acts like a resource' do
 
-    end
-
-    it 'serves up paginated results' do
-
-      0.upto( 3 ) do |page|
-        results = @number_endpoint.list( { limit: 250, offset: 250 * page } )
+        results = @number_endpoint.list
         expect( results.platform_errors.has_errors? ).to eq( false )
-        expect( results.size                        ).to eq( 250)
-        expect( results[0]                          ).to eq( { 'number' => page * 250 } )
-        expect( results[-1]                         ).to eq( { 'number' => (page * 250) + 249 } )
+        expect( results.size                        ).to eq( 50)
+        expect( results[0]                          ).to eq( { 'number' => 0 } )
+        expect( results[-1]                         ).to eq( { 'number' => 49 } )
+
+      end
+
+      it 'serves up paginated results' do
+
+        0.upto( 3 ) do | page |
+          results = @number_endpoint.list( { limit: 250, offset: 250 * page } )
+          expect( results.platform_errors.has_errors? ).to eq( false )
+          expect( results.size                        ).to eq( 250)
+          expect( results[0]                          ).to eq( { 'number' => page * 250 } )
+          expect( results[-1]                         ).to eq( { 'number' => (page * 250) + 249 } )
+        end
+
+      end
+
+      it 'paginates correctly if we go beyond the last resource' do
+
+        results = @number_endpoint.list( { limit: 100, offset: 950 } )
+        expect( results.platform_errors.has_errors? ).to eq( false )
+        expect( results.size                        ).to eq( 50 )
+        expect( results[0]                          ).to eq( { 'number' => 950 } )
+        expect( results[-1]                         ).to eq( { 'number' => 999 } )
+
+      end
+
+      it 'paginates correctly if we go beyond the last resource' do
+
+        results = @number_endpoint.list( { limit: 100, offset: 950 } )
+        expect( results.platform_errors.has_errors? ).to eq( false )
+        expect( results.size                        ).to eq( 50 )
+        expect( results[0]                          ).to eq( { 'number' => 950 } )
+        expect( results[-1]                         ).to eq( { 'number' => 999 } )
+
       end
 
     end
 
-    it 'paginates correctly if we go beyond the last resource' do
+    context 'RSpecImploder' do
 
-      results = @number_endpoint.list( { limit: 100, offset: 950 } )
-      expect( results.platform_errors.has_errors? ).to eq( false )
-      expect( results.size                        ).to eq( 50 )
-      expect( results[0]                          ).to eq( { 'number' => 950 } )
-      expect( results[-1]                         ).to eq( { 'number' => 999 } )
+      it 'acts like a resource' do
 
-    end
+        results = @imploder_endpoint.list
+        expect( results.platform_errors.has_errors? ).to eq( false )
+        expect( results.size                        ).to eq( 50 )
+        expect( results[0]                          ).to eq( { 'number' => 0 } )
+        expect( results[-1]                         ).to eq( { 'number' => 49 } )
 
-    it 'returns an error when forced' do
+      end
 
-      results = @imploder_endpoint.list( { limit: 100, offset: 950 } )
-      expect( results.platform_errors.has_errors? ).to eq( true )
+      it 'generates errors, when asked for numbers >= 500' do
+
+        0.upto( 3 ) do | page |
+          results = @imploder_endpoint.list( { limit: 250, offset: 250 * page } )
+          if page < 2
+            expect( results.platform_errors.has_errors? ).to eq( false )
+            expect( results.size                        ).to eq( 250 )
+            expect( results[0]                          ).to eq( { 'number' => page * 250 } )
+            expect( results[-1]                         ).to eq( { 'number' => (page * 250) + 249 } )
+          else
+            expect( results.platform_errors.has_errors? ).to eq( true )
+            expect( results.size                        ).to eq( 0 )
+          end
+        end
+
+      end
 
     end
 
   end
 
-  context 'verify "list_in_batches" behaviour' do
+  context 'happy path behaviour' do
 
     # Test with different batch sizes
     let(:expected_results) {
       [
-        # This first example takes about 20s to run on its own !
+        # If the batch_size is 1, this example takes about 20s to run on its own !
+        # Batches of size 10 seems like a reasonable compromise of small batch size
+        # and fast execution
         {
-          batch_size: 1,
-          result_size: 1000.times.collect{ |i| 1 },
+          batch_size: 10,
+          result_size: 100.times.collect{ |i| 10 },
         },
         {
           batch_size: 250,
@@ -183,6 +242,27 @@ describe Hoodoo::Client do
 
     end
 
+    it 'returns every single result with the correct value' do
+
+      next_num = 0
+      @number_endpoint.list_in_batches(250) do | results |
+
+        expect( results.platform_errors.has_errors? ).to eq( false )
+
+        # Check each result in the batch
+        results.each do | result |
+          expect( result[ 'number' ] ).to eq( next_num )
+          next_num += 1
+        end
+
+      end
+
+      # Correct number of results returned
+      expect( next_num ).to eq( 1000 )
+
+    end
+
+
     it 'takes a block' do
 
       expected_results.each do | expected |
@@ -214,6 +294,59 @@ describe Hoodoo::Client do
           i += 1
         end
         expect( i ).to eq( expected[ :result_size ].size )
+      end
+
+    end
+
+  end
+
+  context 'error handling behaviour' do
+
+    # Test with different batch sizes
+    let(:expected_results) {
+      [
+        {
+          batch_size: 10,
+          result_size: 50.times.collect{ |i| 10 },
+        },
+        {
+          batch_size: 250,
+          result_size: [ 250, 250 ],
+        },
+        {
+          batch_size: 499,
+          result_size: [ 499 ],
+        },
+        {
+          batch_size: 500,
+          result_size: [ 500 ],
+        },
+        {
+          batch_size: 501,
+          result_size: [  ],
+        },
+      ]
+    }
+
+    it 'returns batches until an error occurs' do
+
+      expected_results.each do | expected |
+        i = 0
+        imploded = false
+        @imploder_endpoint.list_in_batches( expected[ :batch_size ] ) do | results |
+          if results.platform_errors.has_errors?
+            # No more batches should be delivered once an error occurs
+            expect( imploded ).to eq( false )
+            imploded = true
+          else
+            expect( results.size ).to eq( expected[ :result_size ][ i ])
+            i += 1
+          end
+        end
+        # Check delivered the correct number of batches
+        expect( i ).to eq( expected[ :result_size ].size )
+        # Check that an error is returned
+        expect( imploded ).to eq( true )
       end
 
     end
