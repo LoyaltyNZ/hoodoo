@@ -343,14 +343,15 @@ module Hoodoo
 
         # Obtain a list of resource instance representations, in batches
         #
-        # +batch_size+:: The size of each batch returned, an Integer.
+        # +batch_size+:: The size of each batch returned, an Integer which
+        #                defaults to 50
         #
         # +query_hash+:: Search and filter options, see the #list method
         #                for details.
         #
         # TODO - usage passing block + enumeration
         #
-        def list_in_batches(batch_size, query_hash = nil)
+        def list_in_batches(batch_size = 50, query_hash = nil)
 
           raise "batch_size must be an Integer" unless batch_size.is_a? Integer
 
