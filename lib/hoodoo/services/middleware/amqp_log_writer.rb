@@ -27,8 +27,8 @@ module Hoodoo; module Services
       #                 AMQP-based queue.
       #
       # +routing_key+:: The routing key (as a String) to use. Optional. If
-      #                 omitted, reads +ENV[ 'AMQ_LOGGING_ENDPOINT' ]+ or if
-      #                 that is unset, defaults to +platform.logging+.
+      #                 omitted, reads <tt>ENV['AMQ_LOGGING_ENDPOINT']</tt> or
+      #                 if that is unset, defaults to +platform.logging+.
       #
       # If you're running with Rack on top of Alchemy, then the +call+ method's
       # +env+ parameter containing the Rack environment _MUST_ have a key of
@@ -37,9 +37,21 @@ module Hoodoo; module Services
       # parameter. The logger will then use this active Alchemy service to send
       # messages to its configured routing key.
       #
+      # If <tt>ENV['AMQ_ANALYTICS_LOGGING_ENDPOINT']</tt> is defined then its
+      # value is used for a routing key in the case, very specifically, of a
+      # message logged with a +code+ of +analytics+. If the variable is not set,
+      # the same routing key is used for all messages regardless of code; else
+      # that particular code can be streamed off to another Rabbit queue via the
+      # given alternative routing key.
+      #
       def initialize( alchemy, routing_key = nil )
-        @alchemy     = alchemy
-        @routing_key = routing_key || ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
+        routing_key           = routing_key || ENV[ 'AMQ_LOGGING_ENDPOINT' ] || 'platform.logging'
+        analytics_routing_key = ENV[ 'AMQ_ANALYTICS_LOGGING_ENDPOINT' ]
+
+        @alchemy      = alchemy
+        @routing_keys = Hash.new( routing_key ) # Use "routing_key" as a default value
+
+        @routing_keys[ :analytics ] = analytics_routing_key || routing_key
       end
 
       # Custom implementation of the Hoodoo::Logger::WriterMixin#report
@@ -83,7 +95,10 @@ module Hoodoo; module Services
           :identity             => ( session[ 'identity' ] || {} ).to_h
         }.to_json()
 
-        @alchemy.send_message_to_service( @routing_key, { "body" => message } )
+        @alchemy.send_message_to_service(
+          @routing_keys[ code.to_sym ],
+          { "body" => message }
+        )
       end
     end
 
