@@ -343,26 +343,16 @@ module Hoodoo
 
         # Obtain a list of resource instance representations, in batches
         #
-        # +query_hash+:: See the constructor for more. This is the only way
-        #                to search or filter the list, via the target
-        #                Resource's documented supported search/filter
-        #                parameters and the platform's common all-Resources
-        #                behaviour.
+        # +batch_size+:: The size of each batch returned, an Integer.
         #
-        # Returns a Hoodoo::Client::AugmentedArray representation of the
-        # requested list of resource instances.
+        # +query_hash+:: Search and filter options, see the #list method
+        #                for details.
         #
-        # Call Hoodoo::Client::AugmentedArray#platform_errors (or for
-        # service authors implementing resource endpoints, possibly call
-        # Hoodoo::Client::AugmentedArray#adds_errors_to? instead) on the
-        # returned instance to detect and resolve error conditions _before_
-        # examining its Array-derived contents.
+        # TODO - usage passing block + enumeration
         #
-        # The array will be empty in successful responses if no items
-        # satisfying the list conditions were found. The array contents
-        # are undefined in the case of errors.
-        #
-        def list_in_batches(batch_size, query_hash)
+        def list_in_batches(batch_size, query_hash = nil)
+
+          raise "batch_size must be an Integer" unless batch_size.is_a? Integer
 
           unless block_given?
             return to_enum(:list_in_batches, batch_size, query_hash) do
@@ -370,7 +360,7 @@ module Hoodoo
             end
           end
 
-          batch_query_hash = query_hash.dup
+          batch_query_hash = query_hash.nil? ? {} : query_hash.dup
           batch_query_hash[:limit] = batch_size
           offset = 0
 
@@ -385,7 +375,7 @@ module Hoodoo
             yield result
 
             # Service implementation decides the :batch_size
-            batch_size = max(1, result.size)
+            batch_size = [1, result.size].max
 
             offset += batch_size
           end
