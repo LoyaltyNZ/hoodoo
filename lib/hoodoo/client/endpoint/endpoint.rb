@@ -341,24 +341,47 @@ module Hoodoo
           raise "Subclasses must implement Hoodoo::Client::Endpoint\#list"
         end
 
-        # Obtain a list of resource instance representations, in batches
+        # Obtain a list of resource instance representations, in batches.
         #
-        # +batch_size+:: The size of each batch returned, an Integer which
-        #                defaults to 50
+        # +batch_size+:: The size of each batch returned. Integer.
+        # +query_hash+:: See the constructor for more. This is the only way
+        #                to search or filter the list, via the target
+        #                Resource's documented supported search/filter
+        #                parameters and the platform's common all-Resources
+        #                behaviour.
         #
-        # +query_hash+:: Search and filter options, see the #list method
-        #                for details.
+        # If you provide a block to list_in_batches, it will 'yield' a
+        # Hoodoo::Client::AugmentedArray object to the block as each batch
+        # is retrieved.
         #
-        # TODO - usage passing block + enumeration
+        #   endpoint.list_in_batches(50, { 'search' => { 'name' => 'bob' } }) do | result |
+        #     return if result.platform_errors.has_errors?
+        #     results.each do | a_result |
+        #       #... process a_result ....
+        #     end
+        #   end
         #
-        def list_in_batches(batch_size = 50, query_hash = nil)
+        # If you do not provide a block to list_in_batches, it will return an
+        # Enumerator. The Enumerator iterates through
+        # Hoodoo::Client::AugmentedArray objects, as each batch is retrieved.
+        #
+        #   endpoint.list_in_batches(50, { 'search' => { 'name' => 'bob' } }).with_index do | result, idx |
+        #     return if result.platform_errors.has_errors?
+        #     results.each do | a_result |
+        #       # ... process a_result ....
+        #     end
+        #   end
+        #
+        # NOTE: list_in_batches calls +:list+ to retrieve the underlying resource
+        # instances. If the call to list returns errors, the error is
+        # returned, and no more batches will be yielded.
+        #
+        def list_in_batches(batch_size, query_hash = nil)
 
           raise "batch_size must be an Integer" unless batch_size.is_a? Integer
 
           unless block_given?
-            return to_enum(:list_in_batches, batch_size, query_hash) do
-              # no-op
-            end
+            return to_enum(:list_in_batches, batch_size, query_hash)
           end
 
           batch_query_hash = query_hash.nil? ? {} : query_hash.dup
@@ -378,7 +401,7 @@ module Hoodoo
 
             yield result
 
-            # Service implementation decides the :batch_size
+            # Resource implementation decides the :batch_size
             batch_size = [1, result.size].max
 
             offset += batch_size
