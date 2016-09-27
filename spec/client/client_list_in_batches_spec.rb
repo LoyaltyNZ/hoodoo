@@ -68,10 +68,8 @@ class RSpecImploderImplementation < Hoodoo::Services::Implementation
         implode = implode || ERROR_RANGE.include?( num )
       end
 
-      context.response.add_error( 'platform.malformed' ) if implode
-      return if context.response.halt_processing?
-
       context.response.set_resources( resources, resources.count )
+      context.response.add_error( 'platform.malformed' ) if implode
     end
 
 end
@@ -201,59 +199,39 @@ describe Hoodoo::Client do
     # Test with different batch sizes
     let(:expected_results) {
       [
-        # If the batch_size is 1, this example takes about 20s to run on its own !
-        # Batches of size 10 seems like a reasonable compromise of small batch size
-        # and fast execution
         {
-          batch_size: 10,
-          result_size: 100.times.collect{ |i| 10 },
+          limit: 10,
         },
         {
-          batch_size: 250,
-          result_size: [ 250, 250, 250, 250 ],
+          limit: 250,
         },
         {
-          batch_size: 500,
-          result_size: [ 500, 500 ],
+          limit: 500,
         },
         {
-          batch_size: 750,
-          result_size: [ 750, 250 ],
+          limit: 750,
         },
         {
-          batch_size: 999,
-          result_size: [ 999, 1 ],
+          limit: 999,
         },
         {
-          batch_size: 1000,
-          result_size: [ 1000],
+          limit: 1000,
         },
         {
-          batch_size: 10001,
-          result_size: [ 1000 ],
+          limit: 10001,
         },
       ]
     }
 
-    it 'errors when the batch_size is invalid' do
-
-      expect { @number_endpoint.list_in_batches( 1.0 ) }.to   raise_error( RuntimeError, 'batch_size must be an Integer' )
-      expect { @number_endpoint.list_in_batches( 'abc' ) }.to raise_error( RuntimeError, 'batch_size must be an Integer' )
-
-    end
-
     it 'returns every single result with the correct value' do
 
       next_num = 0
-      @number_endpoint.list_in_batches(250) do | results |
+      results = @number_endpoint.list.enumerate_all do | result |
 
-        expect( results.platform_errors.has_errors? ).to eq( false )
+        expect( result.platform_errors.has_errors? ).to eq( false )
 
-        # Check each result in the batch
-        results.each do | result |
-          expect( result[ 'number' ] ).to eq( next_num )
-          next_num += 1
-        end
+        expect( result[ 'number' ] ).to eq( next_num )
+        next_num += 1
 
       end
 
@@ -267,33 +245,11 @@ describe Hoodoo::Client do
 
       expected_results.each do | expected |
         i = 0
-        @number_endpoint.list_in_batches(expected[ :batch_size ]) do | results |
-          expect( results.platform_errors.has_errors? ).to eq( false )
-          expect( results.size                        ).to eq( expected[ :result_size ][ i ])
+        results = @number_endpoint.list( { 'limit' => expected[:limit] } ).enumerate_all do | result |
+          expect( result.platform_errors.has_errors? ).to eq( false )
           i += 1
         end
-        expect( i ).to eq( expected[ :result_size ].size )
-      end
-
-    end
-
-    it 'returns an Enumerator object' do
-
-      expect( @number_endpoint.list_in_batches( 500 ) ).to be_a_kind_of( Enumerator )
-
-    end
-
-    it 'allows for enumeration' do
-
-      expected_results.each do | expected |
-        i = 0
-        @number_endpoint.list_in_batches(expected[ :batch_size ]).with_index do | results, idx |
-          expect( results.platform_errors.has_errors? ).to eq( false )
-          expect( results.size                        ).to eq( expected[ :result_size ][ i ])
-          expect( idx                                 ).to eq( i )
-          i += 1
-        end
-        expect( i ).to eq( expected[ :result_size ].size )
+        expect( i ).to eq( 1000 )
       end
 
     end
@@ -306,47 +262,48 @@ describe Hoodoo::Client do
     let(:expected_results) {
       [
         {
-          batch_size: 10,
-          result_size: 50.times.collect{ |i| 10 },
+          limit: 10,
+          errors: 1,
+          results: 500,
         },
         {
-          batch_size: 250,
-          result_size: [ 250, 250 ],
+          limit: 250,
+          errors: 1,
+          results: 500,
         },
         {
-          batch_size: 499,
-          result_size: [ 499 ],
+          limit: 499,
+          errors: 1,
+          results: 499,
         },
         {
-          batch_size: 500,
-          result_size: [ 500 ],
+          limit: 500,
+          errors: 1,
+          results: 500,
         },
         {
-          batch_size: 501,
-          result_size: [  ],
+          limit: 501,
+          errors: 1,
+          results: 0,
         },
       ]
     }
 
-    it 'returns batches until an error occurs' do
+    it 'returns values until an error occurs in the batch' do
 
       expected_results.each do | expected |
-        i = 0
-        imploded = false
-        @imploder_endpoint.list_in_batches( expected[ :batch_size ] ) do | results |
-          if results.platform_errors.has_errors?
-            # No more batches should be delivered once an error occurs
-            expect( imploded ).to eq( false )
-            imploded = true
-          else
-            expect( results.size ).to eq( expected[ :result_size ][ i ])
-            i += 1
-          end
+        #puts expected.inspect
+        results = 0
+        errors  = 0
+        @imploder_endpoint.list( { limit: expected[:limit] } ).enumerate_all do | result |
+          results += 1 if result.has_key? 'number'
+          errors  += 1 if result.platform_errors.has_errors?
         end
-        # Check delivered the correct number of batches
-        expect( i ).to eq( expected[ :result_size ].size )
+        # Check delivered the correct number of results - note
+        # client returns errors or resources, never both
+        expect( results ).to eq( expected[ :results ] )
         # Check that an error is returned
-        expect( imploded ).to eq( true )
+        expect( errors ).to eq( expected[ :errors ] )
       end
 
     end
