@@ -1,30 +1,32 @@
 ########################################################################
-# File::    augmented_array.rb.rb
-# (C)::     Loyalty New Zealand 2014
+# File::    enumeration_state.rb.rb
+# (C)::     Loyalty New Zealand 2016
 #
-# Purpose:: A subclass of Ruby standard library Array used by the
-#           Hoodoo::Client::Endpoint family.
+# Purpose:: TODO
 # ----------------------------------------------------------------------
-#           11-Dec-2014 (ADH): Created.
-#           05-Mar-2015 (ADH): Moved to Hoodoo::Client.
+#           07-Sep-2016 (DJO): Created.
 ########################################################################
 
 module Hoodoo
   class Client # Just used as a namespace here
 
+    # TODO document
     module EnumerationState
 
       attr_reader :query_hash, :endpoint
 
+      # TODO document
       def query_hash=( query_hash )
         @query_hash           = query_hash.nil? ? {} : query_hash.dup
         @query_hash[ :limit ] = 50 unless @query_hash.has_key?( :limit )
       end
 
+      # TODO document
       def endpoint=( endpoint )
         @endpoint = endpoint
       end
 
+      # TODO document
       def enumerate_all
 
         raise "Must provide a block to enumerate_all" unless block_given?
@@ -68,6 +70,7 @@ module Hoodoo
 
       private
 
+      # TODO document
       def copy_hash_errors_and_options( dest, src )
         dest.set_platform_errors( src.platform_errors )
         dest.response_options = src.response_options.dup

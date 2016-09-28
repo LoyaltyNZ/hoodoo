@@ -314,6 +314,7 @@ module Hoodoo
           end
         end
 
+        # TODO document
         def inject_enumeration_state ( response, query_hash )
           # Inject the state needed for enumerating over all results
           response.query_hash = query_hash
