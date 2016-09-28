@@ -267,7 +267,7 @@ module Hoodoo
           #
           # +description_of_response+:: DescriptionOfResponse instance.
           #
-          def get_data_for_response( description_of_request, description_of_response )
+          def get_data_for_response( description_of_response )
             code = description_of_response.http_status_code
             body = description_of_response.raw_body_data
 
@@ -331,8 +331,6 @@ module Hoodoo
               parsed                        = parsed[ '_data' ]
               parsed.dataset_size           = size
               parsed.estimated_dataset_size = estimated_size
-              parsed.description_of_request = description_of_request
-              parsed.endpoint               = self
 
             elsif ( parsed[ 'kind' ] == 'Errors' )
 

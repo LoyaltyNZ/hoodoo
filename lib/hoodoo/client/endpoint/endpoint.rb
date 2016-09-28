@@ -314,6 +314,15 @@ module Hoodoo
           end
         end
 
+        def inject_enumeration_state ( response, query_hash )
+          # Inject the state needed for enumerating over all results
+          response.query_hash = query_hash
+          response.endpoint   = self
+
+          return response
+        end
+
+
       public
 
         # Obtain a list of resource instance representations.
