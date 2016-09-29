@@ -1,5 +1,6 @@
 #
 # This script defines the following Services.
+#
 # Clients can call into any of them to invoke the different calling semantics
 # between them.
 #
@@ -24,6 +25,14 @@
 # │  RSpecNonHoodooService   │
 # │                          │
 # └──────────────────────────┘
+#
+#
+# To start the services in your specs do:
+#
+#     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
+#     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
+#     spec_helper_start_svc_app_in_thread_for( RSpecNonHoodooService, skip_hoodoo_middleware: true)
+#
 
 ################################################################################
 #
@@ -84,7 +93,7 @@ end
 # Create a 'RSpecEvenNumber' Resource with the following properties:
 #
 # - Calls RSpecNumber via the 'inter_resource_local' calling mechanism
-# - Only returns 'even' numbers, 0, 2, 4...
+# - Only returns 'even' numbers, 0, 2, 4... for numbers between 0 & 999
 # - provides a public 'list' endpoint (no session needed)
 #
 # See RSpecNumberImplementation for error handling etc
@@ -146,7 +155,7 @@ end
 # Create a 'RSpecOddNumber' Resource with the following properties:
 #
 # - Calls RSpecNumber via the 'inter_resource_remote' calling mechanism
-# - Only returns 'odd' numbers, 1, 3, 5 ...
+# - Only returns 'odd' numbers, 1, 3, 5 ... for numbers between 0 & 999
 # - provides a public 'list' endpoint (no session needed)
 #
 # See RSpecNumberImplementation for error handling etc

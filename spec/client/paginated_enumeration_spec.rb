@@ -12,7 +12,7 @@ describe Hoodoo::Client do
   before :all do
     # Start our services in background threads
     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
-    #spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
+    spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
     #spec_helper_start_svc_app_in_thread_for( RSpecNonHoodooService, skip_hoodoo_middleware: true)
   end
 
@@ -25,53 +25,62 @@ describe Hoodoo::Client do
 
   context 'happy path behaviour' do
 
-    let( :endpoints_data ) { [
-      # HTTP Call -> Service
+    let( :resources ) { [
       {
-        endpoint: @client.resource( :RSpecNumber, 1),
-        data:     (0..999).to_a
+        description:  'Client -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecNumber, 1),
+        data:         (0..999).to_a
       },
-      # HTTP Call -> Service -> local service call -> Service
       {
-        endpoint: @client.resource( :RSpecEvenNumber, 1),
-        data:     (0..999).step(2).to_a
+        description:  'Client -> RSpecEvenNumber -> local service call -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecEvenNumber, 1),
+        data:         (0..999).step(2).to_a
       },
-      # # HTTP Call -> Service -> remote service call -> Service
-      # {
-      #   endpoint: @client.resource( :RSpecOddNumber, 1),
-      #   data:     (1..2000).step(2).to_a.map{ | num | { 'number' => num } }
-      # },
+      {
+        description:  'Client -> RSpecOddNumber -> remote service call -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecOddNumber, 1),
+        data:         (1..999).step(2).to_a
+      },
     ] }
 
     it 'returns every single result with the correct value' do
 
-      endpoints_data.each do | epd |
+      resources.each do | resource |
         numbers = []
-        epd[:endpoint].list.enumerate_all do | result |
+        resource[ :endpoint ].list.enumerate_all do | result |
           expect( result.platform_errors.errors ).to eq( [] )
           break if result.platform_errors.has_errors?
           numbers << result[ 'number' ]
         end
 
-        expect( numbers ).to eq( epd[ :data ] )
+        expect( numbers ).to eq( resource[ :data ] )
       end
+
     end
 
-  #
-  #   it 'takes a block' do
-  #
-  #     expected_results.each do | expected |
-  #       i = 0
-  #       results = @number_endpoint.list( { 'limit' => expected[:limit] } ).enumerate_all do | result |
-  #         expect( result.platform_errors.has_errors? ).to eq( false )
-  #         i += 1
-  #       end
-  #       expect( i ).to eq( 1000 )
-  #     end
-  #
-  #   end
-  #
-  # end
+    context 'different batch sizes' do
+
+      let(:limits) {
+        [ 25, 250, 500, 750, 999, 1000, 1001 ]
+      }
+
+      it 'enumerates correctly with different batch sizes' do
+
+        resources.each do | resource |
+          limits.each do | limit |
+            numbers = []
+            resource[ :endpoint ].list( { 'limit' => limit } ).enumerate_all do | result |
+              expect( result.platform_errors.errors ).to eq( [] )
+              break if result.platform_errors.has_errors?
+              numbers << result[ 'number' ]
+            end
+            expect( numbers ).to eq( resource[ :data ] )
+          end
+        end
+
+      end
+
+    end
   #
   # context 'error handling behaviour' do
   #
