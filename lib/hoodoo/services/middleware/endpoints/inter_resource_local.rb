@@ -53,7 +53,7 @@ module Hoodoo; module Services
         # See Hoodoo::Client::Endpoint#list.
         #
         def list( query_hash = nil )
-          return @middleware.inter_resource_local(
+          result =  @middleware.inter_resource_local(
             :source_interaction => self.interaction(),
             :discovery_result   => @discovery_result,
             :endpoint           => self,
@@ -62,6 +62,7 @@ module Hoodoo; module Services
 
             :query_hash         => query_hash
           )
+          return inject_enumeration_state( result, query_hash )
         end
 
         # See Hoodoo::Client::Endpoint#show.

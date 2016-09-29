@@ -314,13 +314,22 @@ module Hoodoo
           end
         end
 
-        # TODO document
-        def inject_enumeration_state ( response, query_hash )
-          # Inject the state needed for enumerating over all results
-          response.query_hash = query_hash
-          response.endpoint   = self
+        # Set the augmented_array next_page_proc attribute to a Proc that
+        # calls the list endpoint to get the next batch of of resources
+        # using the same query_hash parameters.
+        #
+        def inject_enumeration_state ( augmented_array, query_hash )
 
-          return response
+          endpoint                       = self
+          query_hash                     = query_hash.nil? ? {} : query_hash.dup
+          batch_size                     = [ 1, augmented_array.size ].max
+          augmented_array.next_page_proc = Proc.new do
+            query_hash[ :offset ] = ( query_hash[ :offset ] || 0 ) + batch_size
+            endpoint.list( query_hash )
+          end
+
+          return augmented_array
+
         end
 
 
@@ -346,6 +355,9 @@ module Hoodoo
         # The array will be empty in successful responses if no items
         # satisfying the list conditions were found. The array contents
         # are undefined in the case of errors.
+        #
+        # Call Hoodoo::Client::PaginatedEnumeration#enumerate_all to enumerate
+        # over the list of resource instances with automatically pagination.
         #
         def list( query_hash = nil )
           raise "Subclasses must implement Hoodoo::Client::Endpoint\#list"
