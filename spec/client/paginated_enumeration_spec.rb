@@ -81,60 +81,136 @@ describe Hoodoo::Client do
       end
 
     end
-  #
-  # context 'error handling behaviour' do
-  #
-  #   # Test with different batch sizes
-  #   let(:expected_results) {
-  #     [
-  #       {
-  #         limit: 10,
-  #         results: 500,
-  #       },
-  #       {
-  #         limit: 250,
-  #         results: 500,
-  #       },
-  #       {
-  #         limit: 499,
-  #         results: 499,
-  #       },
-  #       {
-  #         limit: 500,
-  #         results: 500,
-  #       },
-  #       {
-  #         limit: 501,
-  #         results: 0,
-  #       },
-  #     ]
-  #   }
-  #
-  #   it 'returns values until an error occurs in the batch' do
-  #
-  #     expected_results.each do | expected |
-  #       results = 0
-  #       errors  = 0
-  #       @imploder_endpoint.list( { limit: expected[:limit] } ).enumerate_all do | result |
-  #         results += 1 if result.has_key? 'number'
-  #         errors  += 1 if result.platform_errors.has_errors?
-  #       end
-  #       # Check delivered the correct number of results - note
-  #       # client returns errors or resources, never both
-  #       expect( results ).to eq( expected[ :results ] )
-  #       # Check that an error is returned
-  #       expect( errors ).to eq( 1 )
-  #     end
-  #
-  #   end
-  #
-  #   it 'raises an exception if no block supplied' do
-  #     expect {
-  #       @imploder_endpoint.list.enumerate_all
-  #     }.to raise_exception( RuntimeError, 'Must provide a block to enumerate_all' )
-  #
-  #   end
-  #
+
+  end
+
+  context 'error handling behaviour' do
+
+    let( :resources ) { [
+      {
+        description:  'Client -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecNumber, 1),
+        expected_results:     [
+                        {
+                          limit: 10,
+                          results: 500,
+                        },
+                        {
+                          limit: 250,
+                          results: 500,
+                        },
+                        {
+                          limit: 499,
+                          results: 499,
+                        },
+                        {
+                          limit: 500,
+                          results: 500,
+                        },
+                        {
+                          limit: 501,
+                          results: 0,
+                        },
+                      ]
+      },
+      {
+        description:  'Client -> RSpecEvenNumber -> local service call -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecEvenNumber, 1),
+        expected_results:     [
+                        {
+                          limit: 10,
+                          results: 250,
+                        },
+                        {
+                          limit: 249,
+                          results: 249,
+                        },
+                        {
+                          limit: 250,
+                          results: 250,
+                        },
+                        {
+                          limit: 251,
+                          results: 0,
+                        },
+                      ]
+      },
+      {
+        description:  'Client -> RSpecOddNumber -> remote service call -> RSpecNumber',
+        endpoint:     @client.resource( :RSpecOddNumber, 1),
+        expected_results:     [
+                        {
+                          limit: 10,
+                          results: 250,
+                        },
+                        {
+                          limit: 249,
+                          results: 249,
+                        },
+                        {
+                          limit: 250,
+                          results: 250,
+                        },
+                        {
+                          limit: 251,
+                          results: 0,
+                        },
+                      ]
+      },
+    ] }
+
+    it 'returns values until an error occurs in the list' do
+
+      resources.each do | resource |
+        resource[ :expected_results ].each do | expected |
+          results = 0
+          errors  = 0
+          query_hash = {
+            'limit' => expected[ :limit ],
+            'filter' => {
+              'force_error' => 'true'
+            }
+          }
+          resource[ :endpoint ].list( query_hash ).enumerate_all do | result |
+            results += 1 if result.has_key? 'number'
+            errors  += 1 if result.platform_errors.has_errors?
+          end
+          # The number of valid resources that you recieve is dependent on
+          # the 'limit' size that is passed through on the 'list' call
+          #
+          # Thats because the system will enumerate through an entire batch of
+          # resources (of size limit), OR return an error.
+          #
+          # So the underlying service retrieves 50 valid resources and returns
+          # then the caller will enumerate through those 50. On the other hand if
+          # the service reads 50 resources, and then detects an error on the 51st
+          # then 0 resources are retuned, only an error!
+          #
+          expect( results ).to eq( expected[ :results ] )
+          # Check that an error is returned
+          expect( errors ).to eq( 1 )
+        end
+      end
+
+    end
+
+
+    it 'raises an exception if no block supplied' do
+
+      endpoints = [
+          @client.resource( :RSpecNumber, 1),
+          @client.resource( :RSpecEvenNumber, 1),
+          @client.resource( :RSpecOddNumber, 1),
+      ]
+
+      endpoints.each do | endpoint |
+        expect {
+          endpoint.list.enumerate_all
+        }.to raise_exception( RuntimeError, 'Must provide a block to enumerate_all' )
+      end
+
+    end
+
   end
 
 end

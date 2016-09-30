@@ -83,6 +83,9 @@ end
 class RSpecNumberInterface < Hoodoo::Services::Interface
   interface :RSpecNumber do
     endpoint       :numbers, RSpecNumberImplementation
+    to_list do
+      filter :force_error
+    end
     public_actions :list
   end
 end
@@ -136,6 +139,9 @@ end
 class RSpecEvenNumberInterface < Hoodoo::Services::Interface
   interface :RSpecEvenNumber do
     endpoint       :even_numbers, RSpecEvenNumberImplementation
+    to_list do
+      filter :force_error
+    end
     public_actions :list
   end
 end
@@ -198,6 +204,9 @@ end
 class RSpecOddNumberInterface < Hoodoo::Services::Interface
   interface :RSpecOddNumber do
     endpoint       :odd_numbers, RSpecOddNumberImplementation
+    to_list do
+      filter :force_error
+    end
     public_actions :list
   end
 end
