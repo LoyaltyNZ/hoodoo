@@ -13,7 +13,6 @@ describe Hoodoo::Client do
     # Start our services in background threads
     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
-    #spec_helper_start_svc_app_in_thread_for( RSpecNonHoodooService, skip_hoodoo_middleware: true)
   end
 
   before :each do

@@ -20,18 +20,11 @@
 # │         └───────────────────────────resource ┼─┼────────────┘             │
 # │                                      remote  │ │                          │
 # └──────────────────────────────────────────────┘ └──────────────────────────┘
-# ┌──────────────────────────┐
-# │                          │
-# │  RSpecNonHoodooService   │
-# │                          │
-# └──────────────────────────┘
-#
 #
 # To start the services in your specs do:
 #
 #     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
 #     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
-#     spec_helper_start_svc_app_in_thread_for( RSpecNonHoodooService, skip_hoodoo_middleware: true)
 #
 
 ################################################################################
@@ -219,15 +212,3 @@ class RSpecRemoteNumberService < Hoodoo::Services::Service
   comprised_of RSpecOddNumberInterface
 end
 
-################################################################################
-#
-# Define a non Hoodoo style app that will:
-#
-# - respond to a 'list' request, with a response that does NOT conform to Hoodoo
-#   response standards
-#
-class RSpecNonHoodooService
-  def call(env)
-    return [200, {'Content-Type' => 'application/json'}, ['{ "message": "Hello" }'] ]
-  end
-end
