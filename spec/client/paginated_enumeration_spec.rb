@@ -10,33 +10,34 @@ require 'spec_helper.rb'
 describe Hoodoo::Client do
 
   before :all do
+
     # Start our services in background threads
     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
+
   end
 
   before :each do
+
     @client = Hoodoo::Client.new({
       drb_port:     URI.parse( Hoodoo::Services::Discovery::ByDRb::DRbServer.uri() ).port,
       auto_session: false
     })
+
   end
 
   context 'happy path behaviour' do
 
     let( :resources ) { [
       {
-        description:  'Client -> RSpecNumber',
         endpoint:     @client.resource( :RSpecNumber, 1),
         data:         (0..999).to_a
       },
       {
-        description:  'Client -> RSpecEvenNumber -> local service call -> RSpecNumber',
         endpoint:     @client.resource( :RSpecEvenNumber, 1),
         data:         (0..999).step(2).to_a
       },
       {
-        description:  'Client -> RSpecOddNumber -> remote service call -> RSpecNumber',
         endpoint:     @client.resource( :RSpecOddNumber, 1),
         data:         (1..999).step(2).to_a
       },
@@ -46,6 +47,7 @@ describe Hoodoo::Client do
 
       resources.each do | resource |
         numbers = []
+
         resource[ :endpoint ].list.enumerate_all do | result |
           expect( result.platform_errors.errors ).to eq( [] )
           break if result.platform_errors.has_errors?
@@ -57,9 +59,10 @@ describe Hoodoo::Client do
 
     end
 
-    context 'different batch sizes' do
+    context 'different "limit" sizes' do
 
       let(:limits) {
+        # Note: Smaller limits will make the tests very slooooow
         [ 25, 250, 500, 750, 999, 1000, 1001 ]
       }
 
@@ -68,11 +71,13 @@ describe Hoodoo::Client do
         resources.each do | resource |
           limits.each do | limit |
             numbers = []
+
             resource[ :endpoint ].list( { 'limit' => limit } ).enumerate_all do | result |
               expect( result.platform_errors.errors ).to eq( [] )
               break if result.platform_errors.has_errors?
               numbers << result[ 'number' ]
             end
+
             expect( numbers ).to eq( resource[ :data ] )
           end
         end
@@ -87,93 +92,93 @@ describe Hoodoo::Client do
 
     let( :resources ) { [
       {
-        description:  'Client -> RSpecNumber',
-        endpoint:     @client.resource( :RSpecNumber, 1),
-        expected_results:     [
-                        {
-                          limit: 10,
-                          results: 500,
-                        },
-                        {
-                          limit: 250,
-                          results: 500,
-                        },
-                        {
-                          limit: 499,
-                          results: 499,
-                        },
-                        {
-                          limit: 500,
-                          results: 500,
-                        },
-                        {
-                          limit: 501,
-                          results: 0,
-                        },
-                      ]
+        endpoint:         @client.resource( :RSpecNumber, 1),
+        expected_results: [
+                            {
+                              limit:  10,
+                              data:   (0..499).to_a,
+                            },
+                            {
+                              limit:  250,
+                              data:   (0..499).to_a,
+                            },
+                            {
+                              limit:  499,
+                              data:   (0..498).to_a,
+                            },
+                            {
+                              limit:  500,
+                              data:   (0..499).to_a,
+                            },
+                            {
+                              limit:  501,
+                              data:   [],
+                            },
+                          ]
       },
       {
-        description:  'Client -> RSpecEvenNumber -> local service call -> RSpecNumber',
-        endpoint:     @client.resource( :RSpecEvenNumber, 1),
-        expected_results:     [
-                        {
-                          limit: 10,
-                          results: 250,
-                        },
-                        {
-                          limit: 249,
-                          results: 249,
-                        },
-                        {
-                          limit: 250,
-                          results: 250,
-                        },
-                        {
-                          limit: 251,
-                          results: 0,
-                        },
-                      ]
+        endpoint:         @client.resource( :RSpecEvenNumber, 1),
+        expected_results: [
+                            {
+                              limit:  10,
+                              data:   (0..498).step(2).to_a
+                            },
+                            {
+                              limit:  249,
+                              data:   (0..496).step(2).to_a
+                            },
+                            {
+                              limit:  250,
+                              data:   (0..498).step(2).to_a
+                            },
+                            {
+                              limit:  251,
+                              data:   []
+                            },
+                          ]
       },
       {
-        description:  'Client -> RSpecOddNumber -> remote service call -> RSpecNumber',
-        endpoint:     @client.resource( :RSpecOddNumber, 1),
-        expected_results:     [
-                        {
-                          limit: 10,
-                          results: 250,
-                        },
-                        {
-                          limit: 249,
-                          results: 249,
-                        },
-                        {
-                          limit: 250,
-                          results: 250,
-                        },
-                        {
-                          limit: 251,
-                          results: 0,
-                        },
-                      ]
+        endpoint:         @client.resource( :RSpecOddNumber, 1),
+        expected_results: [
+                            {
+                              limit:  10,
+                              data:   (1..499).step(2).to_a
+                            },
+                            {
+                              limit:  249,
+                              data:   (1..497).step(2).to_a
+                            },
+                            {
+                              limit:  250,
+                              data:   (1..499).step(2).to_a
+                            },
+                            {
+                              limit:  251,
+                              data:   []
+                            },
+                          ]
       },
     ] }
 
-    it 'returns values until an error occurs in the list' do
+    it 'returns values until an error occurs in the "list" call' do
 
       resources.each do | resource |
         resource[ :expected_results ].each do | expected |
-          results = 0
-          errors  = 0
+
+          numbers    = []
+          errors     = 0
           query_hash = {
-            'limit' => expected[ :limit ],
-            'filter' => {
+            'limit'   => expected[ :limit ],
+            'filter'  => {
               'force_error' => 'true'
             }
           }
+
           resource[ :endpoint ].list( query_hash ).enumerate_all do | result |
-            results += 1 if result.has_key? 'number'
+            numbers << result[ 'number' ] if result.has_key? 'number'
             errors  += 1 if result.platform_errors.has_errors?
           end
+
           # The number of valid resources that you recieve is dependent on
           # the 'limit' size that is passed through on the 'list' call
           #
@@ -185,7 +190,7 @@ describe Hoodoo::Client do
           # the service reads 50 resources, and then detects an error on the 51st
           # then 0 resources are retuned, only an error!
           #
-          expect( results ).to eq( expected[ :results ] )
+          expect( numbers ).to eq( expected[ :data ] )
           # Check that an error is returned
           expect( errors ).to eq( 1 )
         end
