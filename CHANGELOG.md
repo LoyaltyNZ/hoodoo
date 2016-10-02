@@ -1,3 +1,8 @@
+## 1.11.0 (2016-10-03)
+
+* Added enumeration across all values returned by list method with automatic pagination.
+  See `enumerate_all` method in Hoodoo::Client::PaginatedEnumeration.
+
 ## 1.10.0 (2016-09-23)
 
 * The AMQP log writer back-end ([`Hoodoo::Services::Middleware::AMQPLogWriter`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware/AMQPLogWriter.html)) now allows an alternative routing key to be defined via environment variable `AMQ_ANALYTICS_LOGGING_ENDPOINT`. The default routing key is (still) `platform.logging`, overridden by environment variable `AMQ_LOGGING_ENDPOINT` or by the AMQP log writer being instantiated with an explicit override routing key parameter, as before; however, the additional new environment variable allows, specifically, log data with a code of `analytics` to be sent to a different queue. This means log messages can be "tagged" as for analytical purposes (of some domain defined by the entity creating the software making the log calls) via a code of `analytics` and either left mixed in with all the other log data on the default routing key, or pushed out into its own stream for special case use - e.g. higher or lower priority examination by log data sinks. Only log data with a code (as String or Symbol) of `analytics` is sent via the alternative routing key, assuming one is defined. All other log data is unaffected.
