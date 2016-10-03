@@ -314,7 +314,7 @@ module Hoodoo
           end
         end
 
-        # Set the +augmented_array+'s' +next_page_proc+ attribute to a Proc that
+        # Set the +augmented_array+'s +next_page_proc+ attribute to a Proc that
         # will call the list endpoint to retrieve the next batch of of Resources
         # using the same query parameters.
         #
