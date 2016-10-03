@@ -1,7 +1,7 @@
 ## 1.11.0 (2016-10-03)
 
 * Added enumeration across all values returned by list method with automatic pagination.
-  See `enumerate_all` method in Hoodoo::Client::PaginatedEnumeration.
+  See `enumerate_all` method in [Hoodoo::Client::PaginatedEnumeration](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client/PaginatedEnumeration.html).
 
 ## 1.10.0 (2016-09-23)
 

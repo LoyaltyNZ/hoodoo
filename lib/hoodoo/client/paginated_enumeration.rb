@@ -18,7 +18,7 @@ module Hoodoo
     module PaginatedEnumeration
 
       # Proc called by enumerate_all to provide the next 'page' of values
-      # to be enumerated through. Returns an Hoodoo::Client::AugmentedArray
+      # to be enumerated through. Returns an Hoodoo::Client::AugmentedArray.
       #
       attr_accessor :next_page_proc
 
@@ -50,7 +50,11 @@ module Hoodoo
         loop do
 
           if results.size > 0
-            raise "Illegal state: error + result" if results.platform_errors.has_errors?
+
+            if results.platform_errors.has_errors?
+              raise "Hoodoo::Client:: PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication"
+            end
+
             # Yield a resource at a time to the caller
             #
             # Note: An inter-resource call in a single service returns each
