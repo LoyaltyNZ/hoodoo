@@ -190,7 +190,7 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">result</span> = <span class="ruby-identifier">preprocess</span>( <span class="ruby-value">:list</span> )
   <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@wrapped_endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">postprocess</span>( <span class="ruby-identifier">result</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">postprocess</span>( <span class="ruby-identifier">result</span> ), <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

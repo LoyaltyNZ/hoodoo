@@ -124,6 +124,14 @@ class instance variables recording a reference to a single endpoint object.</p>
               </li>
           </ul>
         </dd>
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-inject_enumeration_state">inject_enumeration_state</a>
+              </li>
+          </ul>
+        </dd>
         <dt>L</dt>
         <dd>
           <ul>
@@ -509,7 +517,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 380</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 412</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -554,7 +562,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 421</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 453</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -589,6 +597,10 @@ instead) on the returned instance to detect and resolve error conditions
 <p>The array will be empty in successful responses if no items satisfying the
 list conditions were found. The array contents are undefined in the case of
 errors.</p>
+
+<p>Call <a
+href="PaginatedEnumeration.html#method-i-enumerate_all">Hoodoo::Client::PaginatedEnumeration#enumerate_all</a>
+to enumerate over the list of resource instances with automatic pagination.</p>
             </div>
 
 
@@ -599,7 +611,7 @@ errors.</p>
                 <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
               </p>
               <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 340</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 372</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -643,7 +655,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 360</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 392</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -690,7 +702,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 401</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 433</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -820,6 +832,55 @@ Found&#39; for the target resource, version and given action.</p>
   )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-inject_enumeration_state">
+              <b>inject_enumeration_state</b>( augmented_array, query_hash )
+            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-inject_enumeration_state" name="method-i-inject_enumeration_state" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set the <code>augmented_array</code>&#39;s <code>next_page_proc</code>
+attribute to a Proc that will call the list endpoint to retrieve the next
+batch of of Resources using the same query parameters.</p>
+<dl class="rdoc-list note-list"><dt><code>augmented_array</code>
+<dd>
+<p>The <a href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
+instance containing the initial set of Resources to be enumerated through.</p>
+</dd><dt><code>query_hash</code>
+<dd>
+<p>The query parameters to be used for this enumeration. See the constructor
+for more.</p>
+</dd></dl>
+
+<p>Returns the <code>augmented_array</code> passed in, with the
+<code>next_page_proc</code> value set.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-inject_enumeration_state_source')" id="l_method-i-inject_enumeration_state_source">show</a>
+              </p>
+              <div id="method-i-inject_enumeration_state_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inject_enumeration_state</span> ( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+
+  <span class="ruby-identifier">endpoint</span>                       = <span class="ruby-keyword">self</span>
+  <span class="ruby-identifier">query_hash</span>                     = <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> {} <span class="ruby-operator">:</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">dup</span>
+  <span class="ruby-identifier">batch_size</span>                     = [ <span class="ruby-number">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
+  <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">next_page_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
+    <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">augmented_array</span>
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

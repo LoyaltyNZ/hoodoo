@@ -124,7 +124,7 @@ href="../../Client/Endpoint.html#method-i-create">Hoodoo::Client::Endpoint#creat
                 <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
               </p>
               <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 84</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 85</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
@@ -159,7 +159,7 @@ href="../../Client/Endpoint.html#method-i-delete">Hoodoo::Client::Endpoint#delet
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 115</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 116</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
@@ -196,7 +196,7 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
               <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
+  <span class="ruby-identifier">result</span> =  <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
     <span class="ruby-value">:discovery_result</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@discovery_result</span>,
     <span class="ruby-value">:endpoint</span>           =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>,
@@ -205,6 +205,7 @@ href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a
 
     <span class="ruby-value">:query_hash</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">query_hash</span>
   )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">result</span>, <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -228,7 +229,7 @@ href="../../Client/Endpoint.html#method-i-show">Hoodoo::Client::Endpoint#show</a
                 <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
               </p>
               <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 69</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 70</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),
@@ -263,7 +264,7 @@ href="../../Client/Endpoint.html#method-i-update">Hoodoo::Client::Endpoint#updat
                 <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
               </p>
               <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 99</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb, line 100</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-ivar">@middleware</span>.<span class="ruby-identifier">inter_resource_local</span>(
     <span class="ruby-value">:source_interaction</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interaction</span>(),

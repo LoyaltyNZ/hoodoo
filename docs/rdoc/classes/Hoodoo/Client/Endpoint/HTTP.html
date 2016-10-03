@@ -194,7 +194,7 @@ href="../Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>.</p>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">action</span>     = <span class="ruby-value">:list</span>
   <span class="ruby-identifier">d</span>.<span class="ruby-identifier">query_hash</span> = <span class="ruby-identifier">query_hash</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">do_http</span>( <span class="ruby-identifier">d</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">do_http</span>( <span class="ruby-identifier">d</span> ), <span class="ruby-identifier">query_hash</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
