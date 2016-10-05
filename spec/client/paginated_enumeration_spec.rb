@@ -276,8 +276,8 @@ describe Hoodoo::Client do
     context 'different "limit" sizes' do
 
       let(:limits) {
-        # Note: Smaller limits will make the tests very slooooow
-        [ 1, 25, 250, 500, 750, 999, 1000, 1001 ]
+        # Note: Smaller limits will make the tests very slow
+        [ 250, 500, 750, 999, 1000, 1001 ]
       }
 
       it 'enumerates correctly with different batch sizes' do
