@@ -939,11 +939,11 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
       # spec :-(
       #
       expect( ActiveRecord::Base.connection_pool.size ).to be >= values.size
+      # Reclaim old, unused connections
+      ActiveRecord::Base.connection_pool.reap()
 
       @uuids.each do | uuid |
         values.each do | value |
-          # Reclaim old, unused connections
-          ActiveRecord::Base.connection_pool.reap()
           threads << Thread.new do
             ActiveRecord::Base.connection_pool.with_connection do
               sleep 0.001 # Force Thread scheduler to run
