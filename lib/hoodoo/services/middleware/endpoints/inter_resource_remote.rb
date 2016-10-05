@@ -71,7 +71,7 @@ module Hoodoo
           def list( query_hash = nil )
             result = preprocess( :list )
             result = @wrapped_endpoint.list( query_hash ) if result.nil?
-            return postprocess( result )
+            return inject_enumeration_state( postprocess( result ), query_hash )
           end
 
           # See Hoodoo::Client::Endpoint#show.

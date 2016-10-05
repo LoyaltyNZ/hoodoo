@@ -32,7 +32,7 @@ describe Hoodoo::Client::Endpoint::HTTP do
     it 'should successfuly connect with valid certificate chain' do
       endpoint = connect_to_real_https_endpoint('127.0.0.1', 'spec/files/ca/ca-cert.pem')
       response = endpoint.list()
-      expect(response["message"]).to eq("This data is a secret")
+      expect(response[0]["message"]).to eq("This data is a secret")
     end
 
     it "should fail when certificate doesn't match the hostname" do
@@ -51,7 +51,8 @@ describe Hoodoo::Client::Endpoint::HTTP do
 
     class SslSelfSignedApp
       def call(env)
-        return [200, {'Content-Type' => 'application/json'}, ['{"message": "This data is a secret"}'] ]
+        # Note: Respond to 'list' calls with correct Hoodoo semantics
+        return [200, {'Content-Type' => 'application/json'}, ['{ "_data" : [ { "message": "This data is a secret" } ] }'] ]
       end
     end
 

@@ -50,7 +50,7 @@ module Hoodoo
             d.action     = :list
             d.query_hash = query_hash
 
-            return do_http( d )
+            return inject_enumeration_state( do_http( d ), query_hash )
           end
 
           # See Hoodoo::Client::Endpoint#show.

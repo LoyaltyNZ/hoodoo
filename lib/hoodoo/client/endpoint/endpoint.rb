@@ -314,6 +314,35 @@ module Hoodoo
           end
         end
 
+        # Set the +augmented_array+'s +next_page_proc+ attribute to a Proc that
+        # will call the list endpoint to retrieve the next batch of of Resources
+        # using the same query parameters.
+        #
+        # +augmented_array+:: The Hoodoo::Client::AugmentedArray instance
+        #                     containing the initial set of Resources to
+        #                     be enumerated through.
+        #
+        # +query_hash+::      The query parameters to be used for this
+        #                     enumeration. See the constructor for more.
+        #
+        # Returns the +augmented_array+ passed in, with the +next_page_proc+
+        # value set.
+        #
+        def inject_enumeration_state ( augmented_array, query_hash )
+
+          endpoint                       = self
+          query_hash                     = query_hash.nil? ? {} : query_hash.dup
+          batch_size                     = [ 1, augmented_array.size ].max
+          augmented_array.next_page_proc = Proc.new do
+            query_hash[ :offset ] = ( query_hash[ :offset ] || 0 ) + batch_size
+            endpoint.list( query_hash )
+          end
+
+          return augmented_array
+
+        end
+
+
       public
 
         # Obtain a list of resource instance representations.
@@ -336,6 +365,9 @@ module Hoodoo
         # The array will be empty in successful responses if no items
         # satisfying the list conditions were found. The array contents
         # are undefined in the case of errors.
+        #
+        # Call Hoodoo::Client::PaginatedEnumeration#enumerate_all to enumerate
+        # over the list of resource instances with automatic pagination.
         #
         def list( query_hash = nil )
           raise "Subclasses must implement Hoodoo::Client::Endpoint\#list"

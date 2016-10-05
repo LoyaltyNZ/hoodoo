@@ -17,6 +17,7 @@ module Hoodoo
     #
     class AugmentedArray < ::Array
       include Hoodoo::Client::AugmentedBase
+      include Hoodoo::Client::PaginatedEnumeration
 
       # For lists, the (optional) total size of the data set, of which
       # the contents of this Array will often only represent a single

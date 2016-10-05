@@ -10,6 +10,7 @@
 require 'hoodoo/client/headers'
 
 require 'hoodoo/client/augmented_base'
+require 'hoodoo/client/paginated_enumeration'
 require 'hoodoo/client/augmented_hash'
 require 'hoodoo/client/augmented_array'
 

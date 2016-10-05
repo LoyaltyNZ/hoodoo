@@ -927,8 +927,20 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
     #   history entries
     #
     it 'updates work' do
-      values  = ( '1'..'9' ).to_a
+      values  = ( '1'..'5' ).to_a
       threads = []
+
+      # The loop below creates a Thread for each 'value', and each Thread
+      # consumes a db connection, so we have to check that the pool is big enough
+      # to ensure that each thread gets a connection.
+      #
+      # A better solution would be to temporarily create a connection pool with
+      # more connections in it, but attempts to do that broke other parts of this
+      # spec :-(
+      #
+      expect( ActiveRecord::Base.connection_pool.size ).to be >= values.size
+      # Reclaim old, unused connections
+      ActiveRecord::Base.connection_pool.reap()
 
       @uuids.each do | uuid |
         values.each do | value |
@@ -946,9 +958,9 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
             end
           end
         end
+        threads.each { | thread | thread.join() }
       end
 
-      threads.each { | thread | thread.join() }
 
       @uuids.each do | uuid |
         contemporary = RSpecModelManualDateTest.manually_dated_contemporary.where( :uuid => uuid ).to_a
