@@ -94,6 +94,26 @@ endpoint = client.resource( :DoesNotExist )
 result = endpoint.list()
 ```
 
+#### Enumerating over Resources
+
+The list method provides access to a single page within a collection of resources, and its often useful to retrieve the entire collection.  To save callers from having to manually paginate through the resources,  [`Hoodoo::Client::AugmentedArray`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedArray.html) provides the [`Hoodoo::Client::PaginatedEnumeration#enumerate_all`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Client/PaginatedEnumeration.html#method-i-enumerate-all) method that will yield each of Resources instances to the supplied block individually, and perform the pagination automatically.  It is important for the caller to check for errors on each iteration.
+
+Example:
+
+```ruby
+book_endpoint = client.resource( :Book )
+
+endpoint.list().enumerate_all do | book |
+  # Must check for error on each iteration
+  if book.platform_errors.has_errors?
+    # Deal with error
+    break
+  end
+  # Process book - a Hoodoo::Client::AugmentedHash
+
+end
+```
+
 #### Feature discovery
 
 If a resource does not support a particular action, you can still call the endpoint asking for it; the returned result will include an appropriate error. At the time of writing, there is no generic feature discovery mechanism. When you call an endpoint you're expected to know why you're calling it and what it can (or cannot) do. Individual APIs might offer their own strategies for feature detection, or just rely on some kind of API version.
