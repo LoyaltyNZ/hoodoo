@@ -94,9 +94,9 @@ endpoint = client.resource( :DoesNotExist )
 result = endpoint.list()
 ```
 
-#### Enumerating over Resources
+#### Enumerating over resources
 
-The list method provides access to a single page within a collection of resources, and its often useful to retrieve the entire collection.  To save callers from having to manually paginate through the resources,  [`Hoodoo::Client::AugmentedArray`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedArray.html) provides the [`Hoodoo::Client::PaginatedEnumeration#enumerate_all`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Client/PaginatedEnumeration.html#method-i-enumerate-all) method that will yield each of Resources instances to the supplied block individually, and perform the pagination automatically.  It is important for the caller to check for errors on each iteration.
+The +list+ method provides access to a single page within a collection of resources, and its often useful to retrieve the entire collection. To save callers from having to manually paginate through the resources,  [`Hoodoo::Client::AugmentedArray`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedArray.html) provides the [`Hoodoo::Client::PaginatedEnumeration#enumerate_all`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Client/PaginatedEnumeration.html#method-i-enumerate-all) method that will yield each of Resources instances to the supplied block individually, and perform the pagination automatically.  It is important for the caller to check for errors on each iteration.
 
 Example:
 
@@ -110,7 +110,6 @@ endpoint.list().enumerate_all do | book |
     break
   end
   # Process book - a Hoodoo::Client::AugmentedHash
-
 end
 ```
 
