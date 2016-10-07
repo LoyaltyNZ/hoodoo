@@ -5,3 +5,5 @@ log/*.log
 test.log
 *.gem
 tags
+_site
+.sass-cache
