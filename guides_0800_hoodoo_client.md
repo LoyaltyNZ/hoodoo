@@ -94,6 +94,27 @@ endpoint = client.resource( :DoesNotExist )
 result = endpoint.list()
 ```
 
+#### Enumerating over resources
+
+The `list` method provides access to a single page within a collection of resources, and it is often useful to retrieve the entire collection. To save callers from having to manually paginate through the resources,  [`Hoodoo::Client::AugmentedArray`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedArray.html) provides the [`Hoodoo::Client::PaginatedEnumeration#enumerate_all`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Client/PaginatedEnumeration.html#method-i-enumerate-all) method that will yield each of resources instances to the supplied block individually and perform the pagination automatically.  It is important for the caller to check for errors on each iteration.
+
+> Using `enumerate_all` has the following performance overheads, when compared to paginating manually.  Local inter-resource calls will have each Resource in the collection converted from a `Hash` to a [`Hoodoo::Client::AugmentedHash`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedHash.html) in order to provide a consistent interface to callers. The  [`Hoodoo::Client::AugmentedHash`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedHash.html) can hold data or errors. In the situation when an error does occurs in the underlying `list` call, then the error is copied into the [`Hoodoo::Client::AugmentedHash`]({{site.custom.rdoc_root_url}}/classes/Hoodoo/Client/AugmentedHash.html) that is yielded to the block.
+
+Example:
+
+```ruby
+book_endpoint = client.resource( :Book )
+
+endpoint.list().enumerate_all do | book |
+  # Must check for error on each iteration
+  if book.platform_errors.has_errors?
+    # Deal with error
+    break
+  end
+  # Process book - a Hoodoo::Client::AugmentedHash
+end
+```
+
 #### Feature discovery
 
 If a resource does not support a particular action, you can still call the endpoint asking for it; the returned result will include an appropriate error. At the time of writing, there is no generic feature discovery mechanism. When you call an endpoint you're expected to know why you're calling it and what it can (or cannot) do. Individual APIs might offer their own strategies for feature detection, or just rely on some kind of API version.
