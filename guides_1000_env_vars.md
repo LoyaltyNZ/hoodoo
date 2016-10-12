@@ -28,6 +28,12 @@ Used by Alchemy to determine the location of the AMQP server; its presence is ta
 
 If running in an AMQP/Alchemy based environment, service log data is sent to queue name `platform.logging` by default, unless you set this variable to an alternative queue name.
 
+#### `AMQ_ANALYTICS_LOGGING_ENDPOINT`
+
+Related to `AMQ_LOGGING_ENDPOINT`, this variable is optional. If defined, its value is used as a RabbitMQ routing key in the case, very specifically, of a message logged with a `code` of `analytics`. If the variable is not set, the same routing key is used for all messages regardless of logged code; else log data using that particular logged code will be streamed off to another Rabbit queue using the given alternative routing key.
+
+If unset, the default value falls back to the routing key determined from `AMQ_LOGGING_ENDPOINT`. If leaning on the default log key of `platform.logging`, the recommended analytics key is `platform.analytics`.
+
 #### `MEMCACHED_HOST`
 
 Used by the service session engine and the Dalli gem to talk to a Memcached instance at the indicated URL. If absent, Hoodoo assumes that Memcached is not available.
