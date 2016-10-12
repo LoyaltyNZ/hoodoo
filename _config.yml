@@ -10,9 +10,7 @@ baseurl: /hoodoo
 
 # Markup engine and configuration
 
-markdown: redcarpet
-redcarpet:
-  extensions: [smart]
+markdown: kramdown
 
 # Tell Jekyll where to find @imports and set CSS output style
 
