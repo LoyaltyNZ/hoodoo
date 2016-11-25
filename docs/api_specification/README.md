@@ -1156,7 +1156,7 @@ To create an instance, `POST` this JSON data:
 
 ```javascript
 {
-  "caller_id":            "{uuid}",
+  "caller_id":             "{uuid}",
   "authentication_secret": "{string}"
 }
 ```
