@@ -175,6 +175,24 @@ module Hoodoo; module Services
       }
     } )
 
+    # Out-of-box search and filter query keys. Interfaces can override the
+    # support for these inside the Hoodoo::Services::Interface.to_list block
+    # using Hoodoo::Services::Interface::ToListDSL.do_not_search and
+    # Hoodoo::Services::Interface::ToListDSL.do_not_filter.
+    #
+    # Items, in order, are:
+    #
+    # * Query key to detect records with a +created_at+ date that is after the
+    #   given value, in supporting resource
+    #
+    # * Query key to detect records with a +created_at+ date that is on or
+    #   before the given value, in supporting resource
+    #
+    FRAMEWORK_QUERY_KEYS = [
+      'created_after',
+      'created_on_or_before'
+    ]
+
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
     # or +false+ according to the +RACK_ENV+ environment variable setting.
@@ -2770,21 +2788,24 @@ module Hoodoo; module Services
         end
       end
 
-      search = query_hash[ 'search' ] || {}
-      unrecognised_search_keys = search.keys - interface.to_list.search
-      malformed << "search: #{ unrecognised_search_keys.join(', ') }" unless unrecognised_search_keys.empty?
+      search                   = query_hash[ 'search' ] || {}
+      framework_search         = FRAMEWORK_QUERY_KEYS - interface.to_list.do_not_search
+      unrecognised_search_keys = search.keys - framework_search - interface.to_list.search
 
-      filter = query_hash[ 'filter' ] || {}
-      unrecognised_filter_keys = filter.keys - interface.to_list.filter
-      malformed << "filter: #{ unrecognised_filter_keys.join(', ') }" unless unrecognised_filter_keys.empty?
+      filter                   = query_hash[ 'filter' ] || {}
+      framework_filter         = FRAMEWORK_QUERY_KEYS - interface.to_list.do_not_filter
+      unrecognised_filter_keys = filter.keys - framework_filter - interface.to_list.filter
 
-      embeds = query_hash[ '_embed' ] || []
-      unrecognised_embeds = embeds - interface.embeds
-      malformed << "_embed: #{ unrecognised_embeds.join(', ') }" unless unrecognised_embeds.empty?
+      embeds                   = query_hash[ '_embed' ] || []
+      unrecognised_embeds      = embeds - interface.embeds
 
-      references = query_hash[ '_reference' ] || []
-      unrecognised_references = references - interface.embeds # (sic.)
-      malformed << "_reference: #{ unrecognised_references.join(', ') }" unless unrecognised_references.empty?
+      references               = query_hash[ '_reference' ] || []
+      unrecognised_references  = references - interface.embeds # (sic.)
+
+      malformed <<     "search: #{ unrecognised_search_keys.join( ', ' ) }" unless unrecognised_search_keys.empty?
+      malformed <<     "filter: #{ unrecognised_filter_keys.join( ', ' ) }" unless unrecognised_filter_keys.empty?
+      malformed <<     "_embed: #{ unrecognised_embeds.join( ', ' ) }"      unless unrecognised_embeds.empty?
+      malformed << "_reference: #{ unrecognised_references.join( ', ' ) }"  unless unrecognised_references.empty?
 
       return response.add_error(
         'platform.malformed',

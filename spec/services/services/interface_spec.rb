@@ -18,6 +18,8 @@ class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
       sort   :sort_one => [ :left, :right ], default( :sort_two ) => [ :up, :down ]
       search :search_one, :search_two, :search_three
       filter :filter_one, :filter_two, :filter_three
+      do_not_search :created_after, :created_on_or_before
+      do_not_filter :created_after
     end
 
     to_create do
@@ -74,6 +76,8 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_direction).to eq('desc')
       expect(RSpecTestInterfaceInterfaceDefault.to_list.search).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_list.filter).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.do_not_search).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.do_not_filter).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_create).to be_nil
       expect(RSpecTestInterfaceInterfaceDefault.to_update).to be_nil
     end
@@ -94,6 +98,8 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_direction).to eq('up')
       expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(['search_one', 'search_two', 'search_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(['filter_one', 'filter_two', 'filter_three'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_search).to eq(['created_after', 'created_on_or_before'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_filter).to eq(['created_after'])
       expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
