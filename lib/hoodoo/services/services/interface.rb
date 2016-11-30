@@ -258,13 +258,22 @@ module Hoodoo; module Services
         @tl.send( :search=, keys.map { | item | item.to_s } )
       end
 
-      # Similar to #search, but for default Hoodoo framework exclusions.
+      # Similar to #search, but for default Hoodoo framework exclusions. The
+      # Hoodoo::Services::Middleware::FRAMEWORK_QUERY_KEYS array lists the
+      # known framework keys for a given Hoodoo version. An exception is
+      # raised if an attempt is made to exclude unknown keys.
       #
       # +keys+:: Array of prohibited framework search keys, as symbols or
       #          strings. The order of array entries is arbitrary.
       #
       def do_not_search( *keys )
         @tl.send( :do_not_search=, keys.map { | item | item.to_s } )
+
+        unknown = @tl.do_not_search() - Hoodoo::Services::Middleware::FRAMEWORK_QUERY_KEYS
+
+        unless unknown.empty?
+          raise "Hoodoo::Services::Interface::ToListDSL\#do_not_search was given one or more unknown keys: #{ unknown.join( ', ' ) }"
+        end
       end
 
       # As #search, but for filtering.
@@ -283,6 +292,12 @@ module Hoodoo; module Services
       #
       def do_not_filter( *keys )
         @tl.send( :do_not_filter=, keys.map { | item | item.to_s } )
+
+        unknown = @tl.do_not_filter() - Hoodoo::Services::Middleware::FRAMEWORK_QUERY_KEYS
+
+        unless unknown.empty?
+          raise "Hoodoo::Services::Interface::ToListDSL\#do_not_filter was given one or more unknown keys: #{ unknown.join( ', ' ) }"
+        end
       end
 
     end # 'class ToListDSL'

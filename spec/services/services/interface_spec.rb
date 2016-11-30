@@ -264,5 +264,25 @@ describe Hoodoo::Services::Interface do
         }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
       end
     end
+
+    context 'in #do_not_search' do
+      it 'should complain about unknown keys' do
+        expect {
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
+            do_not_search 'foo', 'bar'
+          end
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#do_not_search was given one or more unknown keys: foo, bar")
+      end
+    end
+
+    context 'in #do_not_filter' do
+      it 'should complain about unknown keys' do
+        expect {
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
+            do_not_filter 'baz', 'boo'
+          end
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#do_not_filter was given one or more unknown keys: baz, boo")
+      end
+    end
   end
 end
