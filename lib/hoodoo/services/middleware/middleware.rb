@@ -176,10 +176,13 @@ module Hoodoo; module Services
     } )
 
     # A validation Proc for FRAMEWORK_QUERY_DATA - see that for details. This
-    # one ensures that the value is a valid ISO 8601 subset date/time string.
+    # one ensures that the value is a valid ISO 8601 subset date/time string
+    # and evalutes to the parsed version of that string if so.
     #
     FRAMEWORK_QUERY_VALUE_DATE_PROC = -> ( value ) {
-      Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ? value : nil
+      Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ?
+      Hoodoo::Utilities.rationalise_datetime( value )           :
+      nil
     }
 
     # Out-of-box search and filter query keys. Interfaces can override the
@@ -198,7 +201,10 @@ module Hoodoo; module Services
     # Values are either a validation Proc or +nil+ for no validation. The
     # Proc takes the search query value as its sole input paraeter and must
     # evaluate to the input value either unmodified or in some canonicalised
-    # form if it is valid, else to +nil+ if the input value is invalid.
+    # form if it is valid, else to +nil+ if the input value is invalid. The
+    # canonicalisation is typically used to coerce a URI query string based
+    # String type into a more useful comparable entity such as an Integer or
+    # DateTime.
     #
     FRAMEWORK_QUERY_DATA = {
       'created_after'        => FRAMEWORK_QUERY_VALUE_DATE_PROC,
@@ -2809,7 +2815,13 @@ module Hoodoo; module Services
 
         search_value = search[ search_key ]
         validator    = FRAMEWORK_QUERY_DATA[ search_key ]
-        bad_search_keys << search_key if validator.call( search_value ).nil?
+        canonical    = validator.call( search_value )
+
+        if canonical.nil?
+          bad_search_keys << search_key
+        else
+          search[ search_key ] = canonical
+        end
       end
 
       filter           = query_hash[ 'filter' ] || {}
@@ -2821,7 +2833,13 @@ module Hoodoo; module Services
 
         filter_value = filter[ filter_key ]
         validator    = FRAMEWORK_QUERY_DATA[ filter_key ]
-        bad_filter_keys << filter_key if validator.call( filter_value ).nil?
+        canonical    = validator.call( filter_value )
+
+        if canonical.nil?
+          bad_filter_keys << filter_key
+        else
+          filter[ filter_key ] = canonical
+        end
       end
 
       embeds           = query_hash[ '_embed' ] || []

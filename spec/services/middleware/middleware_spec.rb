@@ -854,11 +854,12 @@ describe Hoodoo::Services::Middleware do
       end
 
       it 'should respond to permitted framework search query parameter' do
-        str    = Time.now.iso8601
+        dt     = DateTime.parse( Time.now.round.iso8601 )
+        str    = dt.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.search_data).to eq({'created_after' => str})
+          expect(context.request.list.search_data).to eq({'created_after' => dt})
         end
 
         get "/v2/rspec_test_service_stub?search=created_after%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
@@ -946,11 +947,12 @@ describe Hoodoo::Services::Middleware do
       end
 
       it 'should respond to permitted framework filter query parameter' do
-        str    = Time.now.iso8601
+        dt     = DateTime.parse( Time.now.round.iso8601 )
+        str    = dt.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
 
         expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
-          expect(context.request.list.filter_data).to eq({'created_on_or_before' => str})
+          expect(context.request.list.filter_data).to eq({'created_on_or_before' => dt})
         end
 
         get "/v2/rspec_test_service_stub?filter=created_on_or_before%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
