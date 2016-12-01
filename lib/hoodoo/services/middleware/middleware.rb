@@ -175,12 +175,19 @@ module Hoodoo; module Services
       }
     } )
 
+    # A validation Proc for FRAMEWORK_QUERY_DATA - see that for details. This
+    # one ensures that the value is a valid ISO 8601 subset date/time string.
+    #
+    FRAMEWORK_QUERY_VALUE_DATE_PROC = -> ( value ) {
+      Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ? value : nil
+    }
+
     # Out-of-box search and filter query keys. Interfaces can override the
     # support for these inside the Hoodoo::Services::Interface.to_list block
     # using Hoodoo::Services::Interface::ToListDSL.do_not_search and
     # Hoodoo::Services::Interface::ToListDSL.do_not_filter.
     #
-    # Items, in order, are:
+    # Keys, in order, are:
     #
     # * Query key to detect records with a +created_at+ date that is after the
     #   given value, in supporting resource
@@ -188,10 +195,15 @@ module Hoodoo; module Services
     # * Query key to detect records with a +created_at+ date that is on or
     #   before the given value, in supporting resource
     #
-    FRAMEWORK_QUERY_KEYS = [
-      'created_after',
-      'created_on_or_before'
-    ]
+    # Values are either a validation Proc or +nil+ for no validation. The
+    # Proc takes the search query value as its sole input paraeter and must
+    # evaluate to the input value either unmodified or in some canonicalised
+    # form if it is valid, else to +nil+ if the input value is invalid.
+    #
+    FRAMEWORK_QUERY_DATA = {
+      'created_after'        => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'created_on_or_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+    }
 
     # Utility - returns the execution environment as a Rails-like environment
     # object which answers queries like +production?+ or +staging?+ with +true+
@@ -2788,24 +2800,40 @@ module Hoodoo; module Services
         end
       end
 
-      search                   = query_hash[ 'search' ] || {}
-      framework_search         = FRAMEWORK_QUERY_KEYS - interface.to_list.do_not_search
-      unrecognised_search_keys = search.keys - framework_search - interface.to_list.search
+      search           = query_hash[ 'search' ] || {}
+      framework_search = FRAMEWORK_QUERY_DATA.keys - interface.to_list.do_not_search
+      bad_search_keys  = search.keys - framework_search - interface.to_list.search
 
-      filter                   = query_hash[ 'filter' ] || {}
-      framework_filter         = FRAMEWORK_QUERY_KEYS - interface.to_list.do_not_filter
-      unrecognised_filter_keys = filter.keys - framework_filter - interface.to_list.filter
+      framework_search.each do | search_key |
+        next unless search.has_key?( search_key )
 
-      embeds                   = query_hash[ '_embed' ] || []
-      unrecognised_embeds      = embeds - interface.embeds
+        search_value = search[ search_key ]
+        validator    = FRAMEWORK_QUERY_DATA[ search_key ]
+        bad_search_keys << search_key if validator.call( search_value ).nil?
+      end
 
-      references               = query_hash[ '_reference' ] || []
-      unrecognised_references  = references - interface.embeds # (sic.)
+      filter           = query_hash[ 'filter' ] || {}
+      framework_filter = FRAMEWORK_QUERY_DATA.keys - interface.to_list.do_not_filter
+      bad_filter_keys  = filter.keys - framework_filter - interface.to_list.filter
 
-      malformed <<     "search: #{ unrecognised_search_keys.join( ', ' ) }" unless unrecognised_search_keys.empty?
-      malformed <<     "filter: #{ unrecognised_filter_keys.join( ', ' ) }" unless unrecognised_filter_keys.empty?
-      malformed <<     "_embed: #{ unrecognised_embeds.join( ', ' ) }"      unless unrecognised_embeds.empty?
-      malformed << "_reference: #{ unrecognised_references.join( ', ' ) }"  unless unrecognised_references.empty?
+      framework_filter.each do | filter_key |
+        next unless filter.has_key?( filter_key )
+
+        filter_value = filter[ filter_key ]
+        validator    = FRAMEWORK_QUERY_DATA[ filter_key ]
+        bad_filter_keys << filter_key if validator.call( filter_value ).nil?
+      end
+
+      embeds           = query_hash[ '_embed' ] || []
+      bad_embeds       = embeds - interface.embeds
+
+      references       = query_hash[ '_reference' ] || []
+      bad_references   = references - interface.embeds # (sic.)
+
+      malformed <<     "search: #{ bad_search_keys.join( ', ' ) }" unless bad_search_keys.empty?
+      malformed <<     "filter: #{ bad_filter_keys.join( ', ' ) }" unless bad_filter_keys.empty?
+      malformed <<     "_embed: #{ bad_embeds.join( ', ' ) }"      unless bad_embeds.empty?
+      malformed << "_reference: #{ bad_references.join( ', ' ) }"  unless bad_references.empty?
 
       return response.add_error(
         'platform.malformed',
