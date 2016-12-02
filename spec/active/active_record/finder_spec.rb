@@ -92,12 +92,15 @@ describe Hoodoo::ActiveRecord::Finder do
   end
 
   before :each do
+    @tn = Time.now.round()
+
     @a = RSpecModelFinderTest.new
     @a.id = "one"
     @a.code = 'A' # Must be set else SQLite fails to find this if you search for "code != 'C'" (!)
     @a.field_one = 'group 1'
     @a.field_two = 'two a'
     @a.field_three = 'three a'
+    @a.created_at = @tn - 1.year
     @a.save!
     @id = @a.id
 
@@ -108,6 +111,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @b.field_one = 'group 1'
     @b.field_two = 'two b'
     @b.field_three = 'three b'
+    @b.created_at = @tn - 1.month
     @b.save!
     @uuid = @b.uuid
 
@@ -117,6 +121,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.field_one = 'group 2'
     @c.field_two = 'two c'
     @c.field_three = 'three c'
+    @c.created_at = @tn
     @c.save!
     @code = @c.code
 
@@ -610,6 +615,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTest.list( @list_params )
       expect( finder ).to eq([@c])
+
+      @list_params.search_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
+
+      @list_params.search_data = {
+        'created_on_or_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
     end
 
     it 'searches with chain' do
@@ -650,6 +669,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = constraint.list( @list_params )
       expect( finder ).to eq([])
+
+      @list_params.search_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
+
+      @list_params.search_data = {
+        'created_on_or_before' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@b, @a])
     end
   end
 
@@ -748,6 +781,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTest.list( @list_params )
       expect( finder ).to eq([@b])
+
+      @list_params.filter_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
+
+      @list_params.filter_data = {
+        'created_on_or_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
     end
 
     it 'filters with chain' do
@@ -792,6 +839,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = constraint.list( @list_params )
       expect( finder ).to eq([])
+
+      @list_params.filter_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
+
+      @list_params.filter_data = {
+        'created_on_or_before' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@c])
     end
   end
 
@@ -866,6 +927,7 @@ describe Hoodoo::ActiveRecord::Finder do
       @scoped_1.uuid = 'uuid 1'
       @scoped_1.code = 'code 1'
       @scoped_1.field_one = 'scoped 1'
+      @scoped_1.created_at = @tn - 1.year
       @scoped_1.save!
 
       @scoped_2 = RSpecModelFinderTest.new
