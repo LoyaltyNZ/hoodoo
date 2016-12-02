@@ -73,21 +73,17 @@ describe Hoodoo::ActiveRecord::Finder do
       self.table_name = :r_spec_model_finder_tests
       sh              = Hoodoo::ActiveRecord::Finder::SearchHelper
 
-      search_with(
+      search_and_filter_map = {
         'mapped_code'     => sh.cs_match( 'code' ),
         :mapped_field_one => sh.ci_match_generic( 'field_one' ),
         :wild_field_one   => sh.ciaw_match_generic( 'field_one '),
         :field_two        => sh.cs_match_csv(),
-        'field_three'     => sh.cs_match_array()
-      )
+        'field_three'     => sh.cs_match_array(),
+        'created_after'   => sh.cs_gte( 'updated_at' )
+      }
 
-      filter_with(
-        'mapped_code'     => sh.cs_match( 'code' ),
-        :mapped_field_one => sh.ci_match_postgres( 'field_one' ),
-        :wild_field_one   => sh.ciaw_match_postgres( 'field_one '),
-        :field_two        => sh.cs_match_csv(),
-        'field_three'     => sh.cs_match_array()
-      )
+      search_with( search_and_filter_map )
+      filter_with( search_and_filter_map )
     end
   end
 
@@ -101,6 +97,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @a.field_two = 'two a'
     @a.field_three = 'three a'
     @a.created_at = @tn - 1.year
+    @a.updated_at = @tn - 1.month
     @a.save!
     @id = @a.id
 
@@ -112,6 +109,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @b.field_two = 'two b'
     @b.field_three = 'three b'
     @b.created_at = @tn - 1.month
+    @b.updated_at = @tn - 1.week
     @b.save!
     @uuid = @b.uuid
 
@@ -122,6 +120,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.field_two = 'two c'
     @c.field_three = 'three c'
     @c.created_at = @tn
+    @c.updated_at = @tn + 1.day
     @c.save!
     @code = @c.code
 
@@ -740,6 +739,22 @@ describe Hoodoo::ActiveRecord::Finder do
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @c_wh, @b_wh ] )
     end
+
+    it 'finds with framework override' do
+      @list_params.search_data = {
+        'created_after' => @tn - 1.week
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh, @b_wh ] )
+
+      @list_params.search_data = {
+        'created_after' => @tn + 1.day
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @c_wh ] )
+    end
   end
 
   # ==========================================================================
@@ -898,7 +913,6 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq( [ @c_wh, @b_wh, @a_wh ] )
     end
 
-
     it 'filters by comma-separated list' do
       @list_params.filter_data = {
         'field_two' => 'two a,something else,two c,more'
@@ -915,6 +929,22 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @a_wh ] )
+    end
+
+    it 'filters with framework override' do
+      @list_params.filter_data = {
+        'created_after' => @tn - 1.week
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @a_wh ] )
+
+      @list_params.filter_data = {
+        'created_after' => @tn + 1.day
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @b_wh, @a_wh ] )
     end
   end
 
