@@ -206,6 +206,10 @@ module Hoodoo; module Services
     # String type into a more useful comparable entity such as an Integer or
     # DateTime.
     #
+    # *IMPORTANT* - if this list is changed, any database support modules -
+    # e.g. in Hoodoo::ActiveRecord::Support - will need any internal mapping
+    # of "framework query keys to module-appropriate query code" updating.
+    #
     FRAMEWORK_QUERY_DATA = {
       'created_after'        => FRAMEWORK_QUERY_VALUE_DATE_PROC,
       'created_on_or_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
