@@ -1,37 +1,34 @@
 require 'securerandom'
 require 'spec_helper.rb'
 
-#
 # These tests define the following Services.
 #
 # Clients can call into any of them to invoke the different calling semantics
 # between them.
 #
-#
-# ┌──────────────────────────────────────────────┐ ┌──────────────────────────┐
-# │                                              │ │                          │
-# │               RSpecNumberService             │ │ RSpecRemoteNumberService │
-# │                                              │ │                          │
-# │                                              │ │                          │
-# │ ┌──────────────┐           ┌────────────────┐│ │  ┌───────────────────┐   │
-# │ │              │  inter    │                ││ │  │                   │   │
-# │ │ RSpecNumber  │◀resource ─│RSpecEvenNumber ││ │  │  RSpecOddNumber   │   │
-# │ │              │  local    │                ││ │  │                   │   │
-# │ └──────────────┘           └────────────────┘│ │  └───────────────────┘   │
-# │         ▲                                    │ │            │             │
-# │         │                            inter   │ │            │             │
-# │         └───────────────────────────resource ┼─┼────────────┘             │
-# │                                      remote  │ │                          │
-# └──────────────────────────────────────────────┘ └──────────────────────────┘
+# +----------------------------------------------+ +--------------------------+
+# |                                              | |                          |
+# |               RSpecNumberService             | | RSpecRemoteNumberService |
+# |                                              | |                          |
+# |                                              | |                          |
+# | +--------------+          +----------------+ | |  +-------------------+   |
+# | |              |  inter   |                | | |  |                   |   |
+# | | RSpecNumber  |<resource-|RSpecEvenNumber | | |  |  RSpecOddNumber   |   |
+# | |              |  local   |                | | |  |                   |   |
+# | +--------------+          +----------------+ | |  +-------------------+   |
+# |         ^                                    | |            |             |
+# |         |                          inter     | |            |             |
+# |         +------------------------ resource --+-+------------+             |
+# |                                    remote    | |                          |
+# +----------------------------------------------+ +--------------------------+
 #
 # To start the services in your specs do:
 #
 #     spec_helper_start_svc_app_in_thread_for( RSpecNumberService )
-#     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService)
-#
+#     spec_helper_start_svc_app_in_thread_for( RSpecRemoteNumberService )
 
-################################################################################
-#
+###############################################################################
+
 # Create a 'RSpecNumber' Resource with the following properties:
 #
 # - manages 'Number' resources ie: { 'number': 3 }, for numbers between 0 & 999
@@ -51,11 +48,11 @@ class RSpecNumberImplementation < Hoodoo::Services::Implementation
   ERROR_RANGE  = 500..999
 
   def list( context )
-    request  = context.request
-
+    request   = context.request
     resources = []
-    implode = false
-    0.upto( request.list.limit - 1 ) do |i|
+    implode   = false
+
+    0.upto( request.list.limit - 1 ) do | i |
       num = request.list.offset + i
       implode = implode || ERROR_RANGE.include?( num )
       if NUMBER_RANGE.include?( num )
@@ -66,19 +63,18 @@ class RSpecNumberImplementation < Hoodoo::Services::Implementation
     end
 
     context.response.set_resources( resources, resources.count )
+
     if implode && request.list.filter_data[ 'force_error' ]
       context.response.add_error( 'platform.malformed' )
     end
   end
-
 end
 
-#
 # Interface for our implementation
 #
 class RSpecNumberInterface < Hoodoo::Services::Interface
   interface :RSpecNumber do
-    endpoint       :numbers, RSpecNumberImplementation
+    endpoint :numbers, RSpecNumberImplementation
     to_list do
       filter :force_error
     end
@@ -86,9 +82,8 @@ class RSpecNumberInterface < Hoodoo::Services::Interface
   end
 end
 
+###############################################################################
 
-################################################################################
-#
 # Create a 'RSpecEvenNumber' Resource with the following properties:
 #
 # - Calls RSpecNumber via the 'inter_resource_local' calling mechanism
@@ -129,7 +124,6 @@ class RSpecEvenNumberImplementation < Hoodoo::Services::Implementation
 
 end
 
-#
 # Interface for our implementation
 #
 class RSpecEvenNumberInterface < Hoodoo::Services::Interface
@@ -142,8 +136,8 @@ class RSpecEvenNumberInterface < Hoodoo::Services::Interface
   end
 end
 
-################################################################################
-#
+###############################################################################
+
 # Define our service, that implements both resources
 #
 class RSpecNumberService < Hoodoo::Services::Service
@@ -151,9 +145,8 @@ class RSpecNumberService < Hoodoo::Services::Service
                RSpecEvenNumberInterface
 end
 
+###############################################################################
 
-################################################################################
-#
 # Create a 'RSpecOddNumber' Resource with the following properties:
 #
 # - Calls RSpecNumber via the 'inter_resource_remote' calling mechanism
@@ -194,7 +187,6 @@ class RSpecOddNumberImplementation < Hoodoo::Services::Implementation
 
 end
 
-#
 # Interface for our implementation
 #
 class RSpecOddNumberInterface < Hoodoo::Services::Interface
@@ -207,19 +199,17 @@ class RSpecOddNumberInterface < Hoodoo::Services::Interface
   end
 end
 
-################################################################################
-#
+###############################################################################
+
 # Define our service, that implements both resources
 #
 class RSpecRemoteNumberService < Hoodoo::Services::Service
   comprised_of RSpecOddNumberInterface
 end
 
-
-
-##############################################################################
+###############################################################################
 # Tests
-##############################################################################
+###############################################################################
 
 describe Hoodoo::Client do
 
@@ -271,6 +261,15 @@ describe Hoodoo::Client do
         expect( numbers ).to eq( resource[ :data ] )
       end
 
+    end
+
+    it 'detects internal inconsistencies' do
+      items = resources.first[ :endpoint ].list()
+      items.platform_errors.add_error( 'platform.timeout' )
+
+      expect {
+        items.enumerate_all { | item | }
+      }.to raise_error( RuntimeError, 'Hoodoo::Client::PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication' )
     end
 
     context 'different "limit" sizes' do
