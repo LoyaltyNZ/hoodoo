@@ -259,7 +259,7 @@ module Hoodoo; module Services
       end
 
       # Similar to #search, but for default Hoodoo framework exclusions. The
-      # Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA array lists the
+      # Hoodoo::Services::Middleware +FRAMEWORK_QUERY_DATA+ array lists the
       # known framework keys for a given Hoodoo version. An exception is
       # raised if an attempt is made to exclude unknown keys.
       #

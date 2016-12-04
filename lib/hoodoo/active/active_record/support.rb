@@ -37,10 +37,10 @@ module Hoodoo
 
       # Returns a (newly generated) Hash of search keys mapping to helper Procs
       # which are in the same format as would be passed to
-      # Hoodoo::ActiveRecord::Finder#search_with or
-      # Hoodoo::ActiveRecord::Finder#filter_with, describing the default
-      # framework search parameters. The middleware defines keys, but it is up
-      # to each ORM adapter module to specify how those keys actually get used
+      # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+      # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with, describing the
+      # default framework search parameters. The middleware defines keys, but
+      # each ORM adapter module must specify how those keys actually get used
       # to search inside supported database engines.
       #
       def self.framework_search_and_filter_data
