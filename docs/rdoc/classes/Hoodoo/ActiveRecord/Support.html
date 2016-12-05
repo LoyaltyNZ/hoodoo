@@ -65,6 +65,9 @@ them in future and update your calling code.</p>
         <dd>
           <ul>
               <li>
+                <a href="#method-c-framework_search_and_filter_data">framework_search_and_filter_data</a>,
+              </li>
+              <li>
                 <a href="#method-c-full_scope_for">full_scope_for</a>
               </li>
           </ul>
@@ -90,6 +93,71 @@ them in future and update your calling code.</p>
 
     <!-- Methods -->
       <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-framework_search_and_filter_data">
+              <b>framework_search_and_filter_data</b>()
+            <a href="../../../classes/Hoodoo/ActiveRecord/Support.html#method-c-framework_search_and_filter_data" name="method-c-framework_search_and_filter_data" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Returns a (newly generated) Hash of search keys mapping to helper Procs
+which are in the same format as would be passed to <a
+href="Finder/ClassMethods.html#method-i-search_with">Hoodoo::ActiveRecord::Finder::ClassMethods#search_with</a>
+or <a
+href="Finder/ClassMethods.html#method-i-filter_with">Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with</a>,
+describing the default framework search parameters. The middleware defines
+keys, but each ORM adapter module must specify how those keys actually get
+used to search inside supported database engines.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-framework_search_and_filter_data_source')" id="l_method-c-framework_search_and_filter_data_source">show</a>
+              </p>
+              <div id="method-c-framework_search_and_filter_data_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>
+
+  <span class="ruby-comment"># The middleware includes framework-level mappings between URI query</span>
+  <span class="ruby-comment"># string search keys and data validators and processors which convert</span>
+  <span class="ruby-comment"># types where necessary. For example, &#39;created_at&#39; must be given a</span>
+  <span class="ruby-comment"># valid ISO 8601 subset string and a parsed DateTime will end up in</span>
+  <span class="ruby-comment"># the parsed search hash.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Services opt out of framework-level searching at an interface level</span>
+  <span class="ruby-comment"># which means the Finder code herein, under normal flow, will never</span>
+  <span class="ruby-comment"># be asked to process something the interface omits. There is thus no</span>
+  <span class="ruby-comment"># need to try and break encapsulation and come up with a way to read</span>
+  <span class="ruby-comment"># the service interface&#39;s omissions. Instead, map everything.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># This could actually be useful if someone manually drives the #list</span>
+  <span class="ruby-comment"># mechanism with hand-constructed search or filter data that quite</span>
+  <span class="ruby-comment"># intentionally includes framework level parameters even if their own</span>
+  <span class="ruby-comment"># service interface for some reason opts out of allowing them to be</span>
+  <span class="ruby-comment"># exposed to API callers.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-comment"># Note that the #search_with / #filter_with DSL declaration in an</span>
+  <span class="ruby-comment"># appropriately extended model can be used to override the default</span>
+  <span class="ruby-comment"># values wired in below, because the defaults are established by</span>
+  <span class="ruby-comment"># design _before_ the model declarations are processed.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">mapping</span> = {
+    <span class="ruby-string">&#39;created_after&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_gt</span>( <span class="ruby-value">:created_at</span> ),
+    <span class="ruby-string">&#39;created_before&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-value">:created_at</span> )
+  }
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> ( <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">FRAMEWORK_QUERY_DATA</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">length</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::ActiveRecord::Support#framework_search_and_filter_data: Mismatch between internal mapping and Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">mapping</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
         <div class="method">
           <div class="title method-title" id="method-c-full_scope_for">
               <b>full_scope_for</b>( klass, context )
@@ -144,7 +212,7 @@ scope for use with subsequent query refinements.</p>
                 <a href="javascript:toggleSource('method-c-full_scope_for_source')" id="l_method-c-full_scope_for_source">show</a>
               </p>
               <div id="method-c-full_scope_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 85</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 130</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
 
@@ -197,7 +265,7 @@ every value.</p>
                 <a href="javascript:toggleSource('method-c-process_to_map_source')" id="l_method-c-process_to_map_source">show</a>
               </p>
               <div id="method-c-process_to_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 46</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 91</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
