@@ -1317,4 +1317,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2015-12-10 | Release 1 | ADH    | Created by splitting out content from an internal API document. |
 | 2016-01-14 | Release 2 | ADH    | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
 | 2016-07-12 | Release 3 | ADH    | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
-| 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before` and mention potential for using this instead of very large offset values. |
+| 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before`. Mention potential for using this instead of very large offset values. |
