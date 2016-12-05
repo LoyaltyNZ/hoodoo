@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 4, 2016-10-06_
+_Release 4, 2016-12-06_
 
 [](TOCS)
 * [Overview](#ao)
