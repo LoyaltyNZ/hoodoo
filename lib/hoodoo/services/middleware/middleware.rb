@@ -177,7 +177,7 @@ module Hoodoo; module Services
 
     # A validation Proc for FRAMEWORK_QUERY_DATA - see that for details. This
     # one ensures that the value is a valid ISO 8601 subset date/time string
-    # and evalutes to the parsed version of that string if so.
+    # and evaluates to the parsed version of that string if so.
     #
     FRAMEWORK_QUERY_VALUE_DATE_PROC = -> ( value ) {
       Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ?
@@ -193,10 +193,12 @@ module Hoodoo; module Services
     # Keys, in order, are:
     #
     # * Query key to detect records with a +created_at+ date that is after the
-    #   given value, in supporting resource
+    #   given value, in supporting resource; if used as a filter instead of a
+    #   search string, would find records on-or-before the date.
     #
-    # * Query key to detect records with a +created_at+ date that is on or
-    #   before the given value, in supporting resource
+    # * Query key to detect records with a +created_at+ date that is before
+    #   the given value, in supporting resource; if used as a filter instead
+    #   of a search string, would find records on-or-after the date.
     #
     # Values are either a validation Proc or +nil+ for no validation. The
     # Proc takes the search query value as its sole input paraeter and must
@@ -211,8 +213,8 @@ module Hoodoo; module Services
     # of "framework query keys to module-appropriate query code" updating.
     #
     FRAMEWORK_QUERY_DATA = {
-      'created_after'        => FRAMEWORK_QUERY_VALUE_DATE_PROC,
-      'created_on_or_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'created_after'  => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'created_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
     }
 
     # Utility - returns the execution environment as a Rails-like environment

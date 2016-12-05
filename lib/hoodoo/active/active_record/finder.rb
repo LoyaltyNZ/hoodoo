@@ -20,8 +20,8 @@ module Hoodoo
     #
     # It is _STRONGLY_ _RECOMMENDED_ that you use the likes of:
     #
-    # * Hoodoo::ActiveRecord::Finder::ClassMethods::acquire_in
-    # * Hoodoo::ActiveRecord::Finder::ClassMethods::list_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#list_in
     #
     # ...to retrieve model data related to resource instances and participate
     # "for free" in whatever plug-in ActiveRecord modules are mixed into the
