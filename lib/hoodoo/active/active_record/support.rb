@@ -69,8 +69,8 @@ module Hoodoo
         # design _before_ the model declarations are processed.
         #
         mapping = {
-          'created_after'        => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :created_at ),
-          'created_on_or_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lte( :created_at )
+          'created_after'  => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :created_at ),
+          'created_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :created_at )
         }
 
         if mapping.keys.length != ( mapping.keys | Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys ).length

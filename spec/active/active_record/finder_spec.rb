@@ -623,7 +623,14 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq([@c])
 
       @list_params.search_data = {
-        'created_on_or_before' => @tn - 1.month
+        'created_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@a])
+
+      @list_params.search_data = {
+        'created_before' => @tn - 1.month + 1.day
       }
 
       finder = RSpecModelFinderTest.list( @list_params )
@@ -677,7 +684,14 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq([])
 
       @list_params.search_data = {
-        'created_on_or_before' => @tn - 1.month
+        'created_before' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@a])
+
+      @list_params.search_data = {
+        'created_before' => @tn - 1.month + 1.day
       }
 
       finder = constraint.list( @list_params )
@@ -805,7 +819,14 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq([@b, @a])
 
       @list_params.filter_data = {
-        'created_on_or_before' => @tn - 1.month
+        'created_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c, @b])
+
+      @list_params.filter_data = {
+        'created_before' => @tn - 1.month + 1.day
       }
 
       finder = RSpecModelFinderTest.list( @list_params )
@@ -863,7 +884,14 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq([])
 
       @list_params.filter_data = {
-        'created_on_or_before' => @tn - 1.month
+        'created_before' => @tn - 1.month
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@c])
+
+      @list_params.filter_data = {
+        'created_before' => @tn - 1.month + 1.day
       }
 
       finder = constraint.list( @list_params )
