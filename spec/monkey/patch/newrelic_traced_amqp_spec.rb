@@ -19,7 +19,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     @@newrelic_agent_disable_count = 0
 
     module NewRelic
-      class Agent
+      module Agent
         class CrossAppTracing
         end
       end
@@ -127,7 +127,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper 
 
   before :all do
     module NewRelic
-      class Agent
+      module Agent
         class CrossAppTracing
           NR_APPDATA_HEADER = 'X_Foo_AppData'
         end
