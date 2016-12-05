@@ -52,7 +52,7 @@ module Hoodoo
           if results.size > 0
 
             if results.platform_errors.has_errors?
-              raise "Hoodoo::Client:: PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication"
+              raise 'Hoodoo::Client::PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication'
             end
 
             # Yield a resource at a time to the caller

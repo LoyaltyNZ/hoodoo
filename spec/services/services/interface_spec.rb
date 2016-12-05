@@ -18,6 +18,8 @@ class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
       sort   :sort_one => [ :left, :right ], default( :sort_two ) => [ :up, :down ]
       search :search_one, :search_two, :search_three
       filter :filter_one, :filter_two, :filter_three
+      do_not_search :created_after, :created_before
+      do_not_filter :created_after
     end
 
     to_create do
@@ -74,6 +76,8 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceDefault.to_list.default_sort_direction).to eq('desc')
       expect(RSpecTestInterfaceInterfaceDefault.to_list.search).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_list.filter).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.do_not_search).to be_empty
+      expect(RSpecTestInterfaceInterfaceDefault.to_list.do_not_filter).to be_empty
       expect(RSpecTestInterfaceInterfaceDefault.to_create).to be_nil
       expect(RSpecTestInterfaceInterfaceDefault.to_update).to be_nil
     end
@@ -94,6 +98,8 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.to_list.default_sort_direction).to eq('up')
       expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(['search_one', 'search_two', 'search_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(['filter_one', 'filter_two', 'filter_three'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_search).to eq(['created_after', 'created_before'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_filter).to eq(['created_after'])
       expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)
@@ -256,6 +262,26 @@ describe Hoodoo::Services::Interface do
             default 42
           end
         }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
+      end
+    end
+
+    context 'in #do_not_search' do
+      it 'should complain about unknown keys' do
+        expect {
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
+            do_not_search 'foo', 'bar'
+          end
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#do_not_search was given one or more unknown keys: foo, bar")
+      end
+    end
+
+    context 'in #do_not_filter' do
+      it 'should complain about unknown keys' do
+        expect {
+          Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
+            do_not_filter 'baz', 'boo'
+          end
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#do_not_filter was given one or more unknown keys: baz, boo")
       end
     end
   end

@@ -58,9 +58,19 @@ module Hoodoo; module Services
       #
       attr_reader :search
 
+      # Array of prohibited framework search keys as Strings; empty for none
+      # defined.
+      #
+      attr_reader :do_not_search
+
       # Array of supported filter keys as Strings; empty for none defined.
       #
       attr_reader :filter
+
+      # Array of prohibited framewor filter keys as Strings; empty for none
+      # defined.
+      #
+      attr_reader :do_not_filter
 
       # Create an instance with default settings.
       #
@@ -74,7 +84,9 @@ module Hoodoo; module Services
         @sort             = { 'created_at' => Set.new( [ 'desc', 'asc' ] ) }
         @default_sort_key = 'created_at'
         @search           = []
+        @do_not_search    = []
         @filter           = []
+        @do_not_filter    = []
       end
 
       private
@@ -103,11 +115,23 @@ module Hoodoo; module Services
         #
         attr_writer :search
 
+        # Private writer - see #do_not_search - but there's a special contract
+        # with Hoodoo::Services::Interface::ToListDSL which permits it to call
+        # here bypassing +private+ via +send()+.
+        #
+        attr_writer :do_not_search
+
         # Private writer - see #filter - but there's a special contract with
         # Hoodoo::Services::Interface::ToListDSL which permits it to call here
         # bypassing +private+ via +send()+.
         #
         attr_writer :filter
+
+        # Private writer - see #do_not_filter - but there's a special contract
+        # with Hoodoo::Services::Interface::ToListDSL which permits it to call
+        # here bypassing +private+ via +send()+.
+        #
+        attr_writer :do_not_filter
 
     end # 'class ToList'
 
@@ -223,25 +247,59 @@ module Hoodoo; module Services
       # value escaping and validation, if necessary, is up to the service
       # implementation.
       #
-      # +search+:: Array of permitted search keys, as symbols or strings.
-      #            The order of array entries is arbitrary.
+      # +keys+:: Array of permitted search keys, as symbols or strings.
+      #          The order of array entries is arbitrary.
       #
       # Example - allow searches specifying +first_name+ and +last_name+ keys:
       #
       #     search :first_name, :last_name
       #
-      def search( *search )
-        @tl.send( :search=, search.map { | item | item.to_s } )
+      def search( *keys )
+        @tl.send( :search=, keys.map { | item | item.to_s } )
+      end
+
+      # Similar to #search, but for default Hoodoo framework exclusions. The
+      # Hoodoo::Services::Middleware +FRAMEWORK_QUERY_DATA+ array lists the
+      # known framework keys for a given Hoodoo version. An exception is
+      # raised if an attempt is made to exclude unknown keys.
+      #
+      # +keys+:: Array of prohibited framework search keys, as symbols or
+      #          strings. The order of array entries is arbitrary.
+      #
+      def do_not_search( *keys )
+        @tl.send( :do_not_search=, keys.map { | item | item.to_s } )
+
+        unknown = @tl.do_not_search() - Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys
+
+        unless unknown.empty?
+          raise "Hoodoo::Services::Interface::ToListDSL\#do_not_search was given one or more unknown keys: #{ unknown.join( ', ' ) }"
+        end
       end
 
       # As #search, but for filtering.
       #
-      # +filter+:: Array of permitted filter keys, as symbols or strings.
-      #            The order of array entries is arbitrary.
+      # +keys+:: Array of permitted filter keys, as symbols or strings.
+      #          The order of array entries is arbitrary.
       #
-      def filter( *filter )
-        @tl.send( :filter=, filter.map { | item | item.to_s } )
+      def filter( *keys )
+        @tl.send( :filter=, keys.map { | item | item.to_s } )
       end
+
+      # As #do_not_search, but for default Hoodoo framework exclusions.
+      #
+      # +keys+:: Array of prohibited framework filter keys, as symbols or
+      #          strings. The order of array entries is arbitrary.
+      #
+      def do_not_filter( *keys )
+        @tl.send( :do_not_filter=, keys.map { | item | item.to_s } )
+
+        unknown = @tl.do_not_filter() - Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys
+
+        unless unknown.empty?
+          raise "Hoodoo::Services::Interface::ToListDSL\#do_not_filter was given one or more unknown keys: #{ unknown.join( ', ' ) }"
+        end
+      end
+
     end # 'class ToListDSL'
 
     ###########################################################################

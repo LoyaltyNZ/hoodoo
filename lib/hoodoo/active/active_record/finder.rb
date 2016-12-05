@@ -20,8 +20,8 @@ module Hoodoo
     #
     # It is _STRONGLY_ _RECOMMENDED_ that you use the likes of:
     #
-    # * Hoodoo::ActiveRecord::Finder::ClassMethods::acquire_in
-    # * Hoodoo::ActiveRecord::Finder::ClassMethods::list_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#list_in
     #
     # ...to retrieve model data related to resource instances and participate
     # "for free" in whatever plug-in ActiveRecord modules are mixed into the
@@ -428,20 +428,14 @@ module Hoodoo
           finder = all.offset( list_parameters.offset ).limit( list_parameters.limit )
           finder = finder.order( list_parameters.sort_data )
 
-          # DRY up the 'each' loops below. Use a Proc not a method because any
-          # methods we define will end up being defined on the including Model,
-          # increasing the chance of a name collision.
-          #
-          dry_proc = Proc.new do | data, attr, proc |
-            value = data[ attr ]
-            proc.call( attr, value ) unless value.nil?
-          end
-
           search_map = self.nz_co_loyalty_hoodoo_search_with
 
           unless search_map.nil?
-            search_map.each do | attr, proc |
-              args   = dry_proc.call( list_parameters.search_data, attr, proc )
+            search_map.each do | attr, finder_args_proc |
+              value = list_parameters.search_data[ attr ]
+              next if value.nil?
+
+              args   = finder_args_proc.call( attr, value )
               finder = finder.where( *args ) unless args.nil?
             end
           end
@@ -449,8 +443,11 @@ module Hoodoo
           filter_map = self.nz_co_loyalty_hoodoo_filter_with
 
           unless filter_map.nil?
-            filter_map.each do | attr, proc |
-              args   = dry_proc.call( list_parameters.filter_data, attr, proc )
+            filter_map.each do | attr, finder_args_proc |
+              value = list_parameters.filter_data[ attr ]
+              next if value.nil?
+
+              args   = finder_args_proc.call( attr, value )
               finder = finder.where.not( *args ) unless args.nil?
             end
           end
@@ -714,7 +711,8 @@ module Hoodoo
         #         which assist with filling in non-nil values for this Hash.
         #
         def search_with( hash )
-          self.nz_co_loyalty_hoodoo_search_with = Hoodoo::ActiveRecord::Support.process_to_map( hash )
+          self.nz_co_loyalty_hoodoo_search_with ||= Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
+          self.nz_co_loyalty_hoodoo_search_with.merge!( Hoodoo::ActiveRecord::Support.process_to_map( hash ) )
         end
 
         # As #search_with, but used in +where.not+ queries.
@@ -735,7 +733,8 @@ module Hoodoo
         # +map+:: As #search_with.
         #
         def filter_with( hash )
-          self.nz_co_loyalty_hoodoo_filter_with = Hoodoo::ActiveRecord::Support.process_to_map( hash )
+          self.nz_co_loyalty_hoodoo_filter_with ||= Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
+          self.nz_co_loyalty_hoodoo_filter_with.merge!( Hoodoo::ActiveRecord::Support.process_to_map( hash ) )
         end
 
         # Deprecated interface replaced by #acquire. Instead of:

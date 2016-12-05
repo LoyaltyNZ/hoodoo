@@ -14,8 +14,9 @@ module Hoodoo
     module Finder
 
       # Help build up Hash maps to pass into Hoodoo::ActiveRecord::Finder
-      # methods Hoodoo::ActiveRecord::Finder#search_with and
-      # Hoodoo::ActiveRecord::Finder#filter_with.
+      # methods Hoodoo::ActiveRecord::Finder::ClassMethods#search_with and
+      # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with. Used also
+      # by the default framework search scopes.
       #
       # The usage pattern is as follows, using "sh" as a local variable
       # just for brevity - it isn't required:
@@ -31,7 +32,7 @@ module Hoodoo
       #     end
       #
       # The helper methods just provide values to pass into the Hash used
-      # with the search/fitler Hoodoo::ActiveRecord::Finder methods, so
+      # with the search/filter Hoodoo::ActiveRecord::Finder methods, so
       # they're optional and compatible with calls that write it out "by
       # hand".
       #
@@ -48,15 +49,16 @@ module Hoodoo
         # will be case sensitive only if your database is configured for
         # case sensitive matching by default.
         #
-        # Results in a <tt>foo = bar</tt> query.
+        # Results in a <tt>foo = bar AND foo IS NOT NULL</tt> query.
         #
         # +model_field_name+:: If the model attribute name differs from the
         #                      search key you want to use in the URI, give
         #                      the model attribute name here, else omit.
         #
         # Returns a value that can be asssigned to a URI query string key in
-        # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
         #
         def self.cs_match( model_field_name = nil )
           Proc.new { | attr, value |
@@ -70,15 +72,17 @@ module Hoodoo
         # which are split into an array then processed by AREL back to
         # something SQL-safe.
         #
-        # Results in a <tt>foo IN bar,baz,boo</tt> query.
+        # Results in a <tt>foo IN (bar,baz,boo) AND foo IS NOT NULL</tt>
+        # query.
         #
         # +model_field_name+:: If the model attribute name differs from the
         #                      search key you want to use in the URI, give
         #                      the model attribute name here, else omit.
         #
         # Returns a value that can be asssigned to a URI query string key in
-        # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
         #
         def self.cs_match_csv( model_field_name = nil )
           Proc.new { | attr, value |
@@ -92,17 +96,20 @@ module Hoodoo
         # Case-sensitive match of a series of values given as an Array.
         # Normally, query string information comes in as a String so the
         # use cases for this are quite unusual; you probably want to use
-        # #cs_match_csv most of the time.
+        # Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match_csv most of
+        # the time.
         #
-        # Results in a <tt>foo IN bar,baz,boo</tt> query.
+        # Results in a <tt>foo IN (bar,baz,boo) AND foo IS NOT NULL</tt>
+        # query.
         #
         # +model_field_name+:: If the model attribute name differs from the
         #                      search key you want to use in the URI, give
         #                      the model attribute name here, else omit.
         #
         # Returns a value that can be asssigned to a URI query string key in
-        # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
         #
         def self.cs_match_array( model_field_name = nil )
           Proc.new { | attr, value |
@@ -113,8 +120,11 @@ module Hoodoo
           }
         end
 
-        # As #cs_match, but adds wildcards at the front and end of the string
-        # for a case-sensitive-all-wildcard match.
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::cs_match, but
+        # adds wildcards at the front and end of the string for a
+        # case-sensitive-all-wildcard match.
+        #
+        # Results in a <tt>foo LIKE bar AND foo IS NOT NULL</tt> query.
         #
         def self.csaw_match( model_field_name = nil )
           Proc.new { | attr, value |
@@ -127,19 +137,22 @@ module Hoodoo
 
         # Case-insensitive match which should be fairly database independent
         # but will run relatively slowly as a result. If you are using
-        # PostgreSQL, consider using the faster #ci_match_postgres method
+        # PostgreSQL, consider using the faster
+        # Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres method
         # instead.
         #
-        # Results in a <tt>lower(foo) = bar</tt> query with +bar+ coerced to
-        # a String and converted to lower case by Ruby first.
+        # Results in a <tt>lower(foo) = bar AND foo IS NOT NULL</tt> query
+        # with +bar+ coerced to a String and converted to lower case by Ruby
+        # first.
         #
         # +model_field_name+:: If the model attribute name differs from the
         #                      search key you want to use in the URI, give
         #                      the model attribute name here, else omit.
         #
         # Returns a value that can be asssigned to a URI query string key in
-        # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
         #
         def self.ci_match_generic( model_field_name = nil )
           Proc.new { | attr, value |
@@ -150,8 +163,11 @@ module Hoodoo
           }
         end
 
-        # As #ci_match_generic, but adds wildcards at the front and end of
-        # the string for a case-insensitive-all-wildcard match.
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic,
+        # but adds wildcards at the front and end of the string for a
+        # case-insensitive-all-wildcard match.
+        #
+        # Results in a <tt>foo LIKE %bar% AND foo IS NOT NULL</tt> query.
         #
         def self.ciaw_match_generic( model_field_name = nil )
           Proc.new { | attr, value |
@@ -164,17 +180,20 @@ module Hoodoo
 
         # Case-insensitive match which requires PostgreSQL but should run
         # quickly. If you need a database agnostic solution, consider using
-        # the slower #ci_match_generic method instead.
+        # the slower
+        # Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_generic method
+        # instead.
         #
-        # Results in a <tt>foo ILIKE bar</tt> query.
+        # Results in a <tt>foo ILIKE bar AND foo IS NOT NULL</tt> query.
         #
         # +model_field_name+:: If the model attribute name differs from the
         #                      search key you want to use in the URI, give
         #                      the model attribute name here, else omit.
         #
         # Returns a value that can be asssigned to a URI query string key in
-        # the Hash given to Hoodoo::ActiveRecord::Finder#search_with or
-        # Hoodoo::ActiveRecord::Finder#filter_with.
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
         #
         def self.ci_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
@@ -184,8 +203,11 @@ module Hoodoo
           }
         end
 
-        # As #ci_match_postgres, but adds wildcards at the front and end of
-        # the string for a case-insensitive-all-wildcard match.
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::ci_match_postgres,
+        # but adds wildcards at the front and end of the string for a
+        # case-insensitive-all-wildcard match.
+        #
+        # Results in a <tt>foo ILIKE %bar% AND foo IS NOT NULL</tt> query.
         #
         def self.ciaw_match_postgres( model_field_name = nil )
           Proc.new { | attr, value |
@@ -194,8 +216,75 @@ module Hoodoo
             [ "#{ column } ILIKE ? AND #{ column } IS NOT NULL", "%#{ value }%" ]
           }
         end
-      end
 
+        # Case-sensitive less-than (default-style comparison). *WARNING:* This
+        # will be case sensitive only if your database is configured for
+        # case sensitive matching by default.
+        #
+        # If comparing non-string column types be sure to pass in a value of an
+        # appropriate matching type (e.g. compare dates with DateTimes), else
+        # returned results will be incorrect but errors may not arise depending
+        # on database engine in use.
+        #
+        # Results in a <tt>foo < bar AND foo IS NOT NULL</tt> query.
+        #
+        # +model_field_name+:: If the model attribute name differs from the
+        #                      search key you want to use in the URI, give
+        #                      the model attribute name here, else omit.
+        #
+        # Returns a value that can be asssigned to a URI query string key in
+        # the Hash given to
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+        # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with.
+        #
+        def self.cs_lt( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+
+            [ "#{ column } < ? AND #{ column } IS NOT NULL", value ]
+          }
+        end
+
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt, but
+        # compares with less-than-or-equal-to.
+        #
+        # Results in a <tt>foo <= bar AND foo IS NOT NULL</tt> query.
+        #
+        def self.cs_lte( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+
+            [ "#{ column } <= ? AND #{ column } IS NOT NULL", value ]
+          }
+        end
+
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt, but
+        # compares with greater-than.
+        #
+        # Results in a <tt>foo > bar AND foo IS NOT NULL</tt> query.
+        #
+        def self.cs_gt( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+
+            [ "#{ column } > ? AND #{ column } IS NOT NULL", value ]
+          }
+        end
+
+        # As Hoodoo::ActiveRecord::Finder::SearchHelper::cs_lt, but
+        # compares with greater-than-or-equal-to.
+        #
+        # Results in a <tt>foo >= bar AND foo IS NOT NULL</tt> query.
+        #
+        def self.cs_gte( model_field_name = nil )
+          Proc.new { | attr, value |
+            column = model_field_name || attr
+
+            [ "#{ column } >= ? AND #{ column } IS NOT NULL", value ]
+          }
+        end
+
+      end
     end
   end
 end

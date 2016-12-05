@@ -35,6 +35,51 @@ module Hoodoo
     #
     class Support
 
+      # Returns a (newly generated) Hash of search keys mapping to helper Procs
+      # which are in the same format as would be passed to
+      # Hoodoo::ActiveRecord::Finder::ClassMethods#search_with or
+      # Hoodoo::ActiveRecord::Finder::ClassMethods#filter_with, describing the
+      # default framework search parameters. The middleware defines keys, but
+      # each ORM adapter module must specify how those keys actually get used
+      # to search inside supported database engines.
+      #
+      def self.framework_search_and_filter_data
+
+        # The middleware includes framework-level mappings between URI query
+        # string search keys and data validators and processors which convert
+        # types where necessary. For example, 'created_at' must be given a
+        # valid ISO 8601 subset string and a parsed DateTime will end up in
+        # the parsed search hash.
+        #
+        # Services opt out of framework-level searching at an interface level
+        # which means the Finder code herein, under normal flow, will never
+        # be asked to process something the interface omits. There is thus no
+        # need to try and break encapsulation and come up with a way to read
+        # the service interface's omissions. Instead, map everything.
+        #
+        # This could actually be useful if someone manually drives the #list
+        # mechanism with hand-constructed search or filter data that quite
+        # intentionally includes framework level parameters even if their own
+        # service interface for some reason opts out of allowing them to be
+        # exposed to API callers.
+        #
+        # Note that the #search_with / #filter_with DSL declaration in an
+        # appropriately extended model can be used to override the default
+        # values wired in below, because the defaults are established by
+        # design _before_ the model declarations are processed.
+        #
+        mapping = {
+          'created_after'  => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :created_at ),
+          'created_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :created_at )
+        }
+
+        if mapping.keys.length != ( mapping.keys | Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys ).length
+          raise 'Hoodoo::ActiveRecord::Support#framework_search_and_filter_data: Mismatch between internal mapping and Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA'
+        end
+
+        return mapping
+      end
+
       # Takes a Hash of possibly-non-String keys and with +nil+ values or
       # Proc instances appropriate for Hoodoo::ActiveRecord::Finder#search_with
       # / #filter_with. Returns a similar Hash with all-String keys and a Proc

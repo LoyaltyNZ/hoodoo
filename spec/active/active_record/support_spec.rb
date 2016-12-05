@@ -1,6 +1,28 @@
 require 'spec_helper.rb'
 
 describe Hoodoo::ActiveRecord::Support do
+  context '#framework_search_and_filter_data' do
+    it 'returns the expected number of keys' do
+      hash = described_class.framework_search_and_filter_data()
+      expect( hash.keys.count ).to eq( Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys.count )
+    end
+
+    it 'complains if there is a mismatch' do
+      middleware = Hoodoo::Services::Middleware
+      old_value  = middleware.const_get( 'FRAMEWORK_QUERY_DATA' )
+
+      middleware.send( :remove_const, 'FRAMEWORK_QUERY_DATA' )
+      middleware.const_set( 'FRAMEWORK_QUERY_DATA', old_value.merge( { Hoodoo::UUID.generate() => 1 } ) )
+
+      expect {
+        described_class.framework_search_and_filter_data()
+      }.to raise_error( RuntimeError, 'Hoodoo::ActiveRecord::Support#framework_search_and_filter_data: Mismatch between internal mapping and Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA' )
+
+      middleware.send( :remove_const, 'FRAMEWORK_QUERY_DATA' )
+      middleware.const_set( 'FRAMEWORK_QUERY_DATA', old_value )
+    end
+  end
+
   context '#self.process_to_map' do
     it 'processes as expected' do
       proc1 = Proc.new { puts "hello" }
