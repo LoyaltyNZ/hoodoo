@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 3, 2016-07-12_
+_Release 4, 2016-10-06_
 
 [](TOCS)
 * [Overview](#ao)
@@ -16,6 +16,7 @@ _Release 3, 2016-07-12_
       * [Specific resource errors](#error.common.codes.specific)
     * [Common fields and `null` fields](#cf)
     * [Listing, pagination, searches and filters](#lppsf)
+      * [Framework-level search and filter](#flsaf)
     * [Embedding](#apicbre)
       * [Examples](#apicbree)
     * [Internationalisation](#apicbri)
@@ -244,6 +245,8 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
 * Remember to properly [escape reserved characters, plus spaces](http://wikipedia.org/wiki/Percent-encoding) in the query string.
 
+* Databases used to support resource implementations may be very slow when presented with very large offset values. If paging through giant data sets, try to find some other way to limit the number of rows that the database must process, such as a [`created_after` search scope](#flsaf) allowing a much smaller offset to be used.
+
 * All resources support the default sort key and direction at a minimum (unless otherwise stated), but may provide documented additional capabilities.
 
 * Multiple sort orders can be specified using comma-separated names, such extra supported sort key names being documented by individual resources where available. When using multiple sort keys, a sort direction MUST be given for each of the sort keys, in order; for example: `...&sort=last_name,first_name&direction=asc,desc` - that is, the sort key and direction lists must match in length.
@@ -335,6 +338,34 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
   * The actual dataset size is slightly or much greater than estimated: The last page in the estimated range may be full, so an option to fetch even more pages needs to be made visible to the user.
 
   This is a decision that can only be made at run-time as paged lists are fetched.
+
+##### <a name="flsaf"></a>Framework-level search and filter
+
+Since version 1.12.0 (2016-12-06), Hoodoo provides framework-level search and filter query keys of `created_after` and `created_before` available automatically on any resource built on this, or a later version of Hoodoo. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering, but documentation for the resource should say if this is the case. The keys search for resources created exclusively after or before a given date/time expressed as an ISO 8601 subset string, being aware of potential accuracy issues for this string (especially if sourced from a resource representation's `created_at` field) versus database internal representations behind the scenes.
+
+The filter of exclusive "created after" is equivalent to an inclusive search of "created on or before". Similarly, a filter of "created before" is equivalent to a search of "created on or after".
+
+Care should be taken to double-escape search values, especially given the potential presence of a `+` character for a timezone specifier. If only single-escaped, this would end up being interpreted by URI parsers as a space leading to an "invalid parameters" error. For example, suppose we have this time:
+
+```
+2016-08-06T08:30:21+12:00
+```
+
+Escaped once, this becomes `2016-12-06T09%3A34%3A57%2B13%3A00`. When escaped again for use as a search value, the query fragment to search for anything created after the given date/time would look like this:
+
+```
+...?search=created_after%3D2016-12-06T09%253A34%253A57%252B13%253A00
+```
+
+This is easily generated in Ruby using the CGI module:
+
+```ruby
+require 'time'
+require 'cgi'
+
+str    = Time.now.round.iso8601
+encstr = CGI.escape( CGI.escape( str ) )
+```
 
 #### <a name="apicbre"></a>Embedding
 
@@ -1281,8 +1312,9 @@ It is likely to be helpful if you augment this with your own selection of search
 
 ## <a name="change_history"></a>Change history
 
-| Date       | Version            | Author             | Summary |
-|------------|--------------------|--------------------|---------|
-| 2015-12-10 | Release 1          | ADH                | Created by splitting out content from an internal API document. |
-| 2016-01-14 | Release 2          | ADH                | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
-| 2016-07-12 | Release 3          | ADH                | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
+| Date       | Version   | Author | Summary |
+|------------|-----------|--------|---------|
+| 2015-12-10 | Release 1 | ADH    | Created by splitting out content from an internal API document. |
+| 2016-01-14 | Release 2 | ADH    | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
+| 2016-07-12 | Release 3 | ADH    | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
+| 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before` and mention potential for using this instead of very large offset values. |
