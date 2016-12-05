@@ -567,7 +567,7 @@ and want to fill in its <code>dataset_size</code> parameter.</p>
                 <a href="javascript:toggleSource('method-i-dataset_size_source')" id="l_method-i-dataset_size_source">show</a>
               </p>
               <div id="method-i-dataset_size_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 503</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 500</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dataset_size</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">count</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -685,7 +685,7 @@ default behaviour.</p>
                 <a href="javascript:toggleSource('method-i-estimate_counts_with_source')" id="l_method-i-estimate_counts_with_source">show</a>
               </p>
               <div id="method-i-estimate_counts_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 633</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 630</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimate_counts_with</span>( <span class="ruby-identifier">proc</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span> = <span class="ruby-identifier">proc</span>
 <span class="ruby-keyword">end</span></pre>
@@ -733,7 +733,7 @@ value for the estimated count will be <code>nil</code> too.</p>
                 <a href="javascript:toggleSource('method-i-estimated_count_source')" id="l_method-i-estimated_count_source">show</a>
               </p>
               <div id="method-i-estimated_count_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 539</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 536</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimated_count</span>
   <span class="ruby-identifier">counter</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_estimate_counts_with</span>
 
@@ -772,7 +772,7 @@ too slow to compute.</p>
                 <a href="javascript:toggleSource('method-i-estimated_dataset_size_source')" id="l_method-i-estimated_dataset_size_source">show</a>
               </p>
               <div id="method-i-estimated_dataset_size_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 512</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 509</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">estimated_dataset_size</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">all</span>.<span class="ruby-identifier">limit</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">offset</span>( <span class="ruby-keyword">nil</span> ).<span class="ruby-identifier">estimated_count</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -819,9 +819,10 @@ href="https://en.wikipedia.org/wiki/Null_(SQL">en.wikipedia.org/wiki/Null_(SQL</
                 <a href="javascript:toggleSource('method-i-filter_with_source')" id="l_method-i-filter_with_source">show</a>
               </p>
               <div id="method-i-filter_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 737</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 735</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">filter_with</span>( <span class="ruby-identifier">hash</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>()
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -953,20 +954,14 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">all</span>.<span class="ruby-identifier">offset</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">offset</span> ).<span class="ruby-identifier">limit</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">limit</span> )
   <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">order</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">sort_data</span> )
 
-  <span class="ruby-comment"># DRY up the &#39;each&#39; loops below. Use a Proc not a method because any</span>
-  <span class="ruby-comment"># methods we define will end up being defined on the including Model,</span>
-  <span class="ruby-comment"># increasing the chance of a name collision.</span>
-  <span class="ruby-comment">#</span>
-  <span class="ruby-identifier">dry_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
-    <span class="ruby-identifier">value</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-identifier">attr</span> ]
-    <span class="ruby-identifier">proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-keyword">end</span>
-
   <span class="ruby-identifier">search_map</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">search_map</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">search_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
-      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">search_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
+    <span class="ruby-identifier">search_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">finder_args_proc</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">value</span> = <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">search_data</span>[ <span class="ruby-identifier">attr</span> ]
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">finder_args_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> )
       <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -974,8 +969,11 @@ href="../../Services/Request.html#attribute-i-list">Hoodoo::Services::Request#li
   <span class="ruby-identifier">filter_map</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> <span class="ruby-operator">|</span>
-      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">dry_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">filter_data</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">proc</span> )
+    <span class="ruby-identifier">filter_map</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">finder_args_proc</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">value</span> = <span class="ruby-identifier">list_parameters</span>.<span class="ruby-identifier">filter_data</span>[ <span class="ruby-identifier">attr</span> ]
+      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+
+      <span class="ruby-identifier">args</span>   = <span class="ruby-identifier">finder_args_proc</span>.<span class="ruby-identifier">call</span>( <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">value</span> )
       <span class="ruby-identifier">finder</span> = <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
@@ -1009,7 +1007,7 @@ alias).</p>
                 <a href="javascript:toggleSource('method-i-list_filter_map_source')" id="l_method-i-list_filter_map_source">show</a>
               </p>
               <div id="method-i-list_filter_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 794</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 793</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_filter_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_filter_map is deprecated - rename call to &quot;#filter_with&quot;&#39;</span> )
   <span class="ruby-identifier">filter_with</span>( <span class="ruby-identifier">map</span> )
@@ -1040,7 +1038,7 @@ href="ClassMethods.html#method-i-list">list</a> (this is an alias).</p>
                 <a href="javascript:toggleSource('method-i-list_finder_source')" id="l_method-i-list_finder_source">show</a>
               </p>
               <div id="method-i-list_finder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 776</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 775</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_finder</span>( <span class="ruby-identifier">list_parameters</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_finder is deprecated - rename call to &quot;#list&quot;&#39;</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">list_parameters</span> )
@@ -1104,7 +1102,7 @@ methods like <code>where</code> or fetching from the database with
                 <a href="javascript:toggleSource('method-i-list_in_source')" id="l_method-i-list_in_source">show</a>
               </p>
               <div id="method-i-list_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 490</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 487</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_in</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">scoped_in</span>( <span class="ruby-identifier">context</span> ).<span class="ruby-identifier">list</span>( <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1135,7 +1133,7 @@ alias).</p>
                 <a href="javascript:toggleSource('method-i-list_search_map_source')" id="l_method-i-list_search_map_source">show</a>
               </p>
               <div id="method-i-list_search_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 785</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 784</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list_search_map</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#list_search_map is deprecated - rename call to &quot;#search_with&quot;&#39;</span> )
   <span class="ruby-identifier">search_with</span>( <span class="ruby-identifier">map</span> )
@@ -1182,7 +1180,7 @@ href="ClassMethods.html#method-i-acquire">acquire</a>.</p>
                 <a href="javascript:toggleSource('method-i-polymorphic_find_source')" id="l_method-i-polymorphic_find_source">show</a>
               </p>
               <div id="method-i-polymorphic_find_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 758</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 757</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_find</span>( <span class="ruby-identifier">finder</span>, <span class="ruby-identifier">ident</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_find is deprecated - use &quot;foo.acquire( ident )&quot; instead of &quot;Model.polymorphic_find( foo, ident )&quot;&#39;</span> )
   <span class="ruby-identifier">finder</span>.<span class="ruby-identifier">acquire</span>( <span class="ruby-identifier">ident</span> ) <span class="ruby-comment"># Ignore &#39;finder&#39;</span>
@@ -1215,7 +1213,7 @@ href="ClassMethods.html#method-i-acquire_with">acquire_with</a>.</p>
                 <a href="javascript:toggleSource('method-i-polymorphic_id_fields_source')" id="l_method-i-polymorphic_id_fields_source">show</a>
               </p>
               <div id="method-i-polymorphic_id_fields_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 767</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 766</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">polymorphic_id_fields</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
   <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-string">&#39;Hoodoo:ActiveRecord::Finder#polymorphic_id_fields is deprecated - rename call to &quot;#acquire_with&quot;&#39;</span> )
   <span class="ruby-identifier">acquire_with</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span> )
@@ -1375,9 +1373,10 @@ methods which assist with filling in non-nil values for this Hash.</p>
                 <a href="javascript:toggleSource('method-i-search_with_source')" id="l_method-i-search_with_source">show</a>
               </p>
               <div id="method-i-search_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 716</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 713</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">search_with</span>( <span class="ruby-identifier">hash</span> )
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>()
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> ) )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

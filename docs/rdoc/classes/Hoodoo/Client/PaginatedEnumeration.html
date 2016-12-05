@@ -129,7 +129,7 @@ value yielded with each iteration, as per the example above.</p>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
 
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">has_errors?</span>
-        <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Client:: PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication&quot;</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client::PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication&#39;</span>
       <span class="ruby-keyword">end</span>
 
       <span class="ruby-comment"># Yield a resource at a time to the caller</span>

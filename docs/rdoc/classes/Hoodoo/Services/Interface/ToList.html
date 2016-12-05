@@ -88,6 +88,22 @@ the DSL methods, if called, update the values stored herein.</p>
             <td class='attr-name'>default_sort_key</td>
             <td class='attr-desc'><p>Default sort key.</p></td>
           </tr>
+          <tr valign='top' id='attribute-i-do_not_filter'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>do_not_filter</td>
+            <td class='attr-desc'><p>Array of prohibited framework filter keys as Strings; empty for none
+defined.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-do_not_search'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>do_not_search</td>
+            <td class='attr-desc'><p>Array of prohibited framework search keys as Strings; empty for none
+defined.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-filter'>
             <td class='attr-rw'>
               [RW]
@@ -141,7 +157,7 @@ sort field.</p></td>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>
 
   <span class="ruby-comment"># Remember, these are defaults for the &quot;to_list&quot; object of an</span>
@@ -152,7 +168,9 @@ sort field.</p></td>
   <span class="ruby-ivar">@sort</span>             = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( [ <span class="ruby-string">&#39;desc&#39;</span>, <span class="ruby-string">&#39;asc&#39;</span> ] ) }
   <span class="ruby-ivar">@default_sort_key</span> = <span class="ruby-string">&#39;created_at&#39;</span>
   <span class="ruby-ivar">@search</span>           = []
+  <span class="ruby-ivar">@do_not_search</span>    = []
   <span class="ruby-ivar">@filter</span>           = []
+  <span class="ruby-ivar">@do_not_filter</span>    = []
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

@@ -313,7 +313,7 @@ href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
                 <a href="javascript:toggleSource('method-c-to_list_source')" id="l_method-c-to_list_source">show</a>
               </p>
               <div id="method-c-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 821</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 879</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
@@ -380,7 +380,7 @@ call.</p>
                 <a href="javascript:toggleSource('method-c-interface_source')" id="l_method-c-interface_source">show</a>
               </p>
               <div id="method-c-interface_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 721</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 779</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
@@ -444,7 +444,7 @@ are given.</p>
                 <a href="javascript:toggleSource('method-i-actions_source')" id="l_method-i-actions_source">show</a>
               </p>
               <div id="method-i-actions_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 315</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 373</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
   <span class="ruby-identifier">supported_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">supported_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
@@ -576,7 +576,7 @@ method calls on this instance to describe the required permissions.</p>
                 <a href="javascript:toggleSource('method-i-additional_permissions_for_source')" id="l_method-i-additional_permissions_for_source">show</a>
               </p>
               <div id="method-i-additional_permissions_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 668</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 726</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">action</span> = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>
 
@@ -637,7 +637,7 @@ return:</p>
                 <a href="javascript:toggleSource('method-i-embeds_source')" id="l_method-i-embeds_source">show</a>
               </p>
               <div id="method-i-embeds_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 438</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 496</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
@@ -689,7 +689,7 @@ a request matching the path fragment is received.</p>
                 <a href="javascript:toggleSource('method-i-endpoint_source')" id="l_method-i-endpoint_source">show</a>
               </p>
               <div id="method-i-endpoint_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 275</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 333</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C</span>
@@ -747,7 +747,7 @@ end
                 <a href="javascript:toggleSource('method-i-errors_for_source')" id="l_method-i-errors_for_source">show</a>
               </p>
               <div id="method-i-errors_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 565</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 623</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
@@ -796,7 +796,7 @@ are given.</p>
                 <a href="javascript:toggleSource('method-i-public_actions_source')" id="l_method-i-public_actions_source">show</a>
               </p>
               <div id="method-i-public_actions_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 344</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 402</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
   <span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">public_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
@@ -885,7 +885,7 @@ href="../../Hoodoo.html">Hoodoo</a>.</p>
                 <a href="javascript:toggleSource('method-i-secure_log_for_source')" id="l_method-i-secure_log_for_source">show</a>
               </p>
               <div id="method-i-secure_log_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 404</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 462</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_log_for</span>( <span class="ruby-identifier">secure_log_actions</span> = {} )
   <span class="ruby-identifier">secure_log_actions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">symbolize</span>( <span class="ruby-identifier">secure_log_actions</span> )
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">secure_log_actions</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
@@ -963,7 +963,7 @@ the fields used for resource creation.</p>
                 <a href="javascript:toggleSource('method-i-to_create_source')" id="l_method-i-to_create_source">show</a>
               </p>
               <div id="method-i-to_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 499</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 557</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -1001,7 +1001,7 @@ filter   nil
                 <a href="javascript:toggleSource('method-i-to_list_source')" id="l_method-i-to_list_source">show</a>
               </p>
               <div id="method-i-to_list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 452</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 510</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
@@ -1045,7 +1045,7 @@ the fields used for resource modification.</p>
                 <a href="javascript:toggleSource('method-i-to_update_source')" id="l_method-i-to_update_source">show</a>
               </p>
               <div id="method-i-to_update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 518</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 576</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
@@ -1090,7 +1090,7 @@ those required for modifying resources too.</p>
                 <a href="javascript:toggleSource('method-i-update_same_as_create_source')" id="l_method-i-update_same_as_create_source">show</a>
               </p>
               <div id="method-i-update_same_as_create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 542</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 600</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update</span>, <span class="ruby-operator">&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span>().<span class="ruby-identifier">get_schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
@@ -1125,7 +1125,7 @@ different since the resulting route to reach them will be different too.</p>
                 <a href="javascript:toggleSource('method-i-version_source')" id="l_method-i-version_source">show</a>
               </p>
               <div id="method-i-version_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 297</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 355</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">version</span>( <span class="ruby-identifier">major_version</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:version=</span>, <span class="ruby-identifier">major_version</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> )
 <span class="ruby-keyword">end</span></pre>
