@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.11.0)
+    hoodoo (1.12.0)
       dalli (~> 2.7)
       kgio (~> 2.9)
 
@@ -56,15 +56,15 @@ GEM
     diff-lcs (1.2.5)
     docile (1.1.5)
     erubis (2.7.0)
-    eventmachine (1.2.0.1)
+    eventmachine (1.2.1)
     httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
     json (1.8.3)
     kgio (2.10.0)
-    le (2.7.2)
-    minitest (5.9.0)
+    le (2.7.4)
+    minitest (5.10.1)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     pg (0.19.0)
@@ -76,13 +76,12 @@ GEM
       httparty (~> 0.13.7)
       json
       rack
-    rdoc (4.2.2)
-      json (~> 1.4)
+    rdoc (4.3.0)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
       rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.3)
+    rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -130,4 +129,4 @@ DEPENDENCIES
   timecop (~> 0.8)
 
 BUNDLED WITH
-   1.12.5
+   1.13.2
