@@ -1,8 +1,10 @@
-## 1.12.1, 1.12.2 (2016-12-07)
+## 1.12.1, 1.12.2, 1.12.3 (2016-12-07)
 
 * Test coverage on 1.12.0 overlooked the case where a model defines no search or filter data at all - no calls are made to `search_with` or `filter_with`. In that case, the framework search keys wouldn't be applied. Test coverage added and bug fixed.
 
 * Ensure that with the above fix in place, both subclasses of `Hoodoo::ActiveRecord::Base` and classes explicitly including the Finder module work with both framework-only and custom declarations of search and filter directives.
+
+* Further ensure that subsequent subclassing of such a class works, without having its data set in the parent class and overwritten when the child class instantiates.
 
 ## 1.12.0 (2016-12-06)
 
