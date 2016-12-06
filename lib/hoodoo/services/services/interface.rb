@@ -67,7 +67,7 @@ module Hoodoo; module Services
       #
       attr_reader :filter
 
-      # Array of prohibited framewor filter keys as Strings; empty for none
+      # Array of prohibited framework filter keys as Strings; empty for none
       # defined.
       #
       attr_reader :do_not_filter
