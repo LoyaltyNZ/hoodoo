@@ -65,9 +65,6 @@ module Hoodoo
         unless model == Hoodoo::ActiveRecord::Base
           model.send( :include, Hoodoo::ActiveRecord::Secure )
           instantiate( model )
-
-          model.nz_co_loyalty_hoodoo_search_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
-          model.nz_co_loyalty_hoodoo_filter_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
         end
 
         super( model )
@@ -85,6 +82,9 @@ module Hoodoo
       #
       def self.instantiate( model )
         model.extend( ClassMethods )
+
+        model.nz_co_loyalty_hoodoo_search_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
+        model.nz_co_loyalty_hoodoo_filter_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
       end
 
       # Collection of class methods that get defined on an including class via
