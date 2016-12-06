@@ -1,4 +1,4 @@
-Wed, 07 Dec 2016 08:13:39 +1300
+Wed, 07 Dec 2016 09:15:26 +1300
 README.md	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/active.rb	Wed, 12 Oct 2016 14:04:49 +1300
@@ -7,7 +7,7 @@ lib/hoodoo/active/active_record/base.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/active/active_record/creator.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/active/active_record/dated.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Wed, 12 Oct 2016 14:04:49 +1300
-lib/hoodoo/active/active_record/finder.rb	Wed, 07 Dec 2016 08:09:03 +1300
+lib/hoodoo/active/active_record/finder.rb	Wed, 07 Dec 2016 09:11:05 +1300
 lib/hoodoo/active/active_record/manually_dated.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/active/active_record/search_helper.rb	Tue, 06 Dec 2016 08:43:25 +1300
 lib/hoodoo/active/active_record/secure.rb	Wed, 12 Oct 2016 14:04:49 +1300
@@ -104,7 +104,7 @@ lib/hoodoo/services/middleware/middleware.rb	Tue, 06 Dec 2016 08:43:25 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/services/services/context.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/services/services/implementation.rb	Wed, 12 Oct 2016 14:04:49 +1300
-lib/hoodoo/services/services/interface.rb	Wed, 07 Dec 2016 08:13:34 +1300
+lib/hoodoo/services/services/interface.rb	Wed, 07 Dec 2016 08:51:43 +1300
 lib/hoodoo/services/services/permissions.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/services/services/request.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/services/services/response.rb	Wed, 12 Oct 2016 14:04:49 +1300
@@ -114,4 +114,4 @@ lib/hoodoo/utilities.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/utilities/utilities.rb	Wed, 12 Oct 2016 14:04:49 +1300
 lib/hoodoo/utilities/uuid.rb	Wed, 12 Oct 2016 14:04:49 +1300
-lib/hoodoo/version.rb	Wed, 07 Dec 2016 08:10:15 +1300
+lib/hoodoo/version.rb	Wed, 07 Dec 2016 09:15:05 +1300

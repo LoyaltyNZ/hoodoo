@@ -86,9 +86,26 @@ describe Hoodoo::ActiveRecord::Finder do
       filter_with( search_and_filter_map )
     end
 
-    class RSpecModelFinderTestWithoutSearchOrFilter < ActiveRecord::Base
+    class RSpecModelFinderWithoutSearchOrFilterTest < ActiveRecord::Base
       include Hoodoo::ActiveRecord::Finder
 
+      self.primary_key = :id
+      self.table_name = :r_spec_model_finder_tests
+    end
+
+    class RSpecModelFinderSubclassTest < Hoodoo::ActiveRecord::Base
+      self.primary_key = :id
+      self.table_name = :r_spec_model_finder_tests
+
+      search_and_filter_map = {
+        'mapped_code' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( 'code' )
+      }
+
+      search_with( search_and_filter_map )
+      filter_with( search_and_filter_map )
+    end
+
+    class RSpecModelFinderSubclassWithoutSearchOrFilterTest < Hoodoo::ActiveRecord::Base
       self.primary_key = :id
       self.table_name = :r_spec_model_finder_tests
     end
@@ -131,13 +148,21 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.save!
     @code = @c.code
 
-    @a_wh = RSpecModelFinderTestWithHelpers.find( @a.id )
-    @b_wh = RSpecModelFinderTestWithHelpers.find( @b.id )
-    @c_wh = RSpecModelFinderTestWithHelpers.find( @c.id )
+    @a_wh        = RSpecModelFinderTestWithHelpers.find( @a.id )
+    @b_wh        = RSpecModelFinderTestWithHelpers.find( @b.id )
+    @c_wh        = RSpecModelFinderTestWithHelpers.find( @c.id )
 
-    @a_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @a.id )
-    @b_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @b.id )
-    @c_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @c.id )
+    @a_wosf      = RSpecModelFinderWithoutSearchOrFilterTest.find( @a.id )
+    @b_wosf      = RSpecModelFinderWithoutSearchOrFilterTest.find( @b.id )
+    @c_wosf      = RSpecModelFinderWithoutSearchOrFilterTest.find( @c.id )
+
+    @a_sc        = RSpecModelFinderSubclassTest.find( @a.id )
+    @b_sc        = RSpecModelFinderSubclassTest.find( @b.id )
+    @c_sc        = RSpecModelFinderSubclassTest.find( @c.id )
+
+    @a_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @a.id )
+    @b_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @b.id )
+    @c_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @c.id )
 
     @list_params = Hoodoo::Services::Request::ListParameters.new
   end
@@ -790,7 +815,7 @@ describe Hoodoo::ActiveRecord::Finder do
         'created_after' => @tn - 1.month
       }
 
-      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @c_wosf ] )
     end
 
@@ -799,8 +824,43 @@ describe Hoodoo::ActiveRecord::Finder do
         'created_before' => @tn - 1.month
       }
 
-      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @a_wosf ] )
+    end
+  end
+
+  # ==========================================================================
+
+  context 'as a Hoodoo::ActiveRecord::Base subclass' do # (instead of explicitly including the Finder module)
+    context 'custom search' do
+      it 'on mapped_code' do
+        @list_params.search_data = {
+          'mapped_code' => @code
+        }
+
+        finder = RSpecModelFinderSubclassTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc ] )
+      end
+    end
+
+    context 'pure framework search' do
+      it 'on created_after' do
+        @list_params.search_data = {
+          'created_after' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf ] )
+      end
+
+      it 'on created_before' do
+        @list_params.search_data = {
+          'created_before' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @a_sc_wosf ] )
+      end
     end
   end
 
@@ -1017,7 +1077,7 @@ describe Hoodoo::ActiveRecord::Finder do
         'created_after' => @tn - 1.month
       }
 
-      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @b_wosf, @a_wosf ] )
     end
 
@@ -1026,8 +1086,43 @@ describe Hoodoo::ActiveRecord::Finder do
         'created_before' => @tn - 1.month
       }
 
-      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @c_wosf, @b_wosf ] )
+    end
+  end
+
+  # ==========================================================================
+
+  context 'as a Hoodoo::ActiveRecord::Base subclass' do # (instead of explicitly including the Finder module)
+    context 'custom filter' do
+      it 'on mapped_code' do
+        @list_params.filter_data = {
+          'mapped_code' => @code
+        }
+
+        finder = RSpecModelFinderSubclassTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc, @a_sc ] )
+      end
+    end
+
+    context 'pure framework filter' do
+      it 'on created_after' do
+        @list_params.filter_data = {
+          'created_after' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf, @a_sc_wosf ] )
+      end
+
+      it 'on created_before' do
+        @list_params.filter_data = {
+          'created_before' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf, @b_sc_wosf ] )
+      end
     end
   end
 
