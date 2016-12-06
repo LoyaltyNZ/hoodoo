@@ -105,10 +105,16 @@ describe Hoodoo::ActiveRecord::Finder do
       filter_with( search_and_filter_map )
     end
 
+    class RSpecModelFinderSubclassATest < RSpecModelFinderSubclassTest; end
+    class RSpecModelFinderSubclassBTest < RSpecModelFinderSubclassTest; end
+
     class RSpecModelFinderSubclassWithoutSearchOrFilterTest < Hoodoo::ActiveRecord::Base
       self.primary_key = :id
       self.table_name = :r_spec_model_finder_tests
     end
+
+    class RSpecModelFinderSubclassWithoutSearchOrFilterATest < RSpecModelFinderSubclassWithoutSearchOrFilterTest; end
+    class RSpecModelFinderSubclassWithoutSearchOrFilterBTest < RSpecModelFinderSubclassWithoutSearchOrFilterTest; end
   end
 
   before :each do
@@ -160,9 +166,25 @@ describe Hoodoo::ActiveRecord::Finder do
     @b_sc        = RSpecModelFinderSubclassTest.find( @b.id )
     @c_sc        = RSpecModelFinderSubclassTest.find( @c.id )
 
+    @a_sc_a      = RSpecModelFinderSubclassATest.find( @a.id )
+    @b_sc_a      = RSpecModelFinderSubclassATest.find( @b.id )
+    @c_sc_a      = RSpecModelFinderSubclassATest.find( @c.id )
+
+    @a_sc_b      = RSpecModelFinderSubclassBTest.find( @a.id )
+    @b_sc_b      = RSpecModelFinderSubclassBTest.find( @b.id )
+    @c_sc_b      = RSpecModelFinderSubclassBTest.find( @c.id )
+
     @a_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @a.id )
     @b_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @b.id )
     @c_sc_wosf   = RSpecModelFinderSubclassWithoutSearchOrFilterTest.find( @c.id )
+
+    @a_sc_wosf_a = RSpecModelFinderSubclassWithoutSearchOrFilterATest.find( @a.id )
+    @b_sc_wosf_a = RSpecModelFinderSubclassWithoutSearchOrFilterATest.find( @b.id )
+    @c_sc_wosf_a = RSpecModelFinderSubclassWithoutSearchOrFilterATest.find( @c.id )
+
+    @a_sc_wosf_b = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.find( @a.id )
+    @b_sc_wosf_b = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.find( @b.id )
+    @c_sc_wosf_b = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.find( @c.id )
 
     @list_params = Hoodoo::Services::Request::ListParameters.new
   end
@@ -831,7 +853,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'as a Hoodoo::ActiveRecord::Base subclass' do # (instead of explicitly including the Finder module)
+  context 'as a Hoodoo::ActiveRecord::Base subclass and sub-subclass' do # (instead of explicitly including the Finder module)
     context 'custom search' do
       it 'on mapped_code' do
         @list_params.search_data = {
@@ -840,6 +862,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassTest.list( @list_params )
         expect( finder ).to eq( [ @c_sc ] )
+
+        finder = RSpecModelFinderSubclassATest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_a ] )
+
+        finder = RSpecModelFinderSubclassBTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_b ] )
       end
     end
 
@@ -851,6 +879,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
         expect( finder ).to eq( [ @c_sc_wosf ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf_a ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf_b ] )
       end
 
       it 'on created_before' do
@@ -860,6 +894,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
         expect( finder ).to eq( [ @a_sc_wosf ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+        expect( finder ).to eq( [ @a_sc_wosf_a ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+        expect( finder ).to eq( [ @a_sc_wosf_b ] )
       end
     end
   end
@@ -1093,7 +1133,7 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
-  context 'as a Hoodoo::ActiveRecord::Base subclass' do # (instead of explicitly including the Finder module)
+  context 'as a Hoodoo::ActiveRecord::Base subclass and sub-subclass' do # (instead of explicitly including the Finder module)
     context 'custom filter' do
       it 'on mapped_code' do
         @list_params.filter_data = {
@@ -1102,6 +1142,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassTest.list( @list_params )
         expect( finder ).to eq( [ @b_sc, @a_sc ] )
+
+        finder = RSpecModelFinderSubclassATest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_a, @a_sc_a ] )
+
+        finder = RSpecModelFinderSubclassBTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_b, @a_sc_b ] )
       end
     end
 
@@ -1113,6 +1159,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
         expect( finder ).to eq( [ @b_sc_wosf, @a_sc_wosf ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf_a, @a_sc_wosf_a ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf_b, @a_sc_wosf_b ] )
       end
 
       it 'on created_before' do
@@ -1122,6 +1174,12 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
         expect( finder ).to eq( [ @c_sc_wosf, @b_sc_wosf ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf_a, @b_sc_wosf_a ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+        expect( finder ).to eq( [ @c_sc_wosf_b, @b_sc_wosf_b ] )
       end
     end
   end
