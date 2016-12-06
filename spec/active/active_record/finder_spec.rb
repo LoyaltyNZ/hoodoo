@@ -85,6 +85,13 @@ describe Hoodoo::ActiveRecord::Finder do
       search_with( search_and_filter_map )
       filter_with( search_and_filter_map )
     end
+
+    class RSpecModelFinderTestWithoutSearchOrFilter < ActiveRecord::Base
+      include Hoodoo::ActiveRecord::Finder
+
+      self.primary_key = :id
+      self.table_name = :r_spec_model_finder_tests
+    end
   end
 
   before :each do
@@ -127,6 +134,10 @@ describe Hoodoo::ActiveRecord::Finder do
     @a_wh = RSpecModelFinderTestWithHelpers.find( @a.id )
     @b_wh = RSpecModelFinderTestWithHelpers.find( @b.id )
     @c_wh = RSpecModelFinderTestWithHelpers.find( @c.id )
+
+    @a_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @a.id )
+    @b_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @b.id )
+    @c_wosf = RSpecModelFinderTestWithoutSearchOrFilter.find( @c.id )
 
     @list_params = Hoodoo::Services::Request::ListParameters.new
   end
@@ -773,6 +784,28 @@ describe Hoodoo::ActiveRecord::Finder do
 
   # ==========================================================================
 
+  context 'pure framework search' do
+    it 'on created_after' do
+      @list_params.search_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      expect( finder ).to eq( [ @c_wosf ] )
+    end
+
+    it 'on created_before' do
+      @list_params.search_data = {
+        'created_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      expect( finder ).to eq( [ @a_wosf ] )
+    end
+  end
+
+  # ==========================================================================
+
   context 'filter' do
     it 'filters without chain' do
       @list_params.filter_data = {
@@ -973,6 +1006,28 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @b_wh, @a_wh ] )
+    end
+  end
+
+  # ==========================================================================
+
+  context 'pure framework filter' do
+    it 'on created_after' do
+      @list_params.filter_data = {
+        'created_after' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      expect( finder ).to eq( [ @b_wosf, @a_wosf ] )
+    end
+
+    it 'on created_before' do
+      @list_params.filter_data = {
+        'created_before' => @tn - 1.month
+      }
+
+      finder = RSpecModelFinderTestWithoutSearchOrFilter.list( @list_params )
+      expect( finder ).to eq( [ @c_wosf, @b_wosf ] )
     end
   end
 

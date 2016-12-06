@@ -65,6 +65,9 @@ module Hoodoo
         unless model == Hoodoo::ActiveRecord::Base
           model.send( :include, Hoodoo::ActiveRecord::Secure )
           instantiate( model )
+
+          model.nz_co_loyalty_hoodoo_search_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
+          model.nz_co_loyalty_hoodoo_filter_with = Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
         end
 
         super( model )
@@ -711,7 +714,6 @@ module Hoodoo
         #         which assist with filling in non-nil values for this Hash.
         #
         def search_with( hash )
-          self.nz_co_loyalty_hoodoo_search_with ||= Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
           self.nz_co_loyalty_hoodoo_search_with.merge!( Hoodoo::ActiveRecord::Support.process_to_map( hash ) )
         end
 
@@ -733,7 +735,6 @@ module Hoodoo
         # +map+:: As #search_with.
         #
         def filter_with( hash )
-          self.nz_co_loyalty_hoodoo_filter_with ||= Hoodoo::ActiveRecord::Support.framework_search_and_filter_data()
           self.nz_co_loyalty_hoodoo_filter_with.merge!( Hoodoo::ActiveRecord::Support.process_to_map( hash ) )
         end
 
