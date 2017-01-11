@@ -57,7 +57,7 @@ module Hoodoo; module Services
           opts = { :backtrace => Kernel.caller() }
           opts[ :rack_env ] = env unless env.nil?
 
-          Airbrake.notify_or_ignore( e, opts )
+          Airbrake.notify( e, opts )
         end
 
         # Report an exception for errors that occur within a fully handled Rack
@@ -77,7 +77,7 @@ module Hoodoo; module Services
             :session          => user_data_for( context ) || 'unknown'
           }
 
-          Airbrake.notify_or_ignore( e, opts )
+          Airbrake.notify( e, opts )
         end
       end
 
