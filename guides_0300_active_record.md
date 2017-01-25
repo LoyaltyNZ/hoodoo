@@ -333,6 +333,8 @@ The use of [`new_in`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecor
 
 The use of [`perist_in`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/Writer.html#method-i-persist_in) is very important. This is a very safe way to save data that avoids a few traps for the unwary in high concurrency situations. Please see the [RDoc description of the equivalent class method]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/Writer/ClassMethods.html#method-i-persist_in) for details.
 
+#### Update
+
 ```ruby
   def update( context )
     person = Person.acquire_in( context )
@@ -357,7 +359,7 @@ The `update` implementation starts rather like `show` and ends rather like `crea
 
 Note the use of `.reload` in the rendering line at the end, to make sure we get any updates resulting from the save; since our example Person migration uses `t.timestamps`, an `updated_at` change would have happened, though this might not be rendered as part of the associated resource's representation and thus may not be important to you. Whether or not you _need_ to call `reload` like this will depend upon your specific models and resources, but if you don't mind the overhead it is recommended habitually to prevent potential bugs with future resource representation updates that might unwittingly introduce a dependency on the reload having happened.
 
-The last public action method is `delete`:
+#### Delete
 
 ```ruby
   def delete( context )
@@ -381,7 +383,9 @@ The API specification also mentions the `X-Deja-Vu` HTTP header which, if used, 
 
 When it comes to deletion methods, the use of Active Record's `delete` method here means [callbacks are not run](http://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-delete); generally callbacks are something of an anti-pattern and discouraged. If you _do_ use them though don't forget to use something like the Active Record [`destroy` method](http://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-destroy) instead of `delete`, though this might mean you have extra return values or exceptions to deal with.
 
-Finally, here is the aforementioned private method `render_in`:
+#### Idiomatic rendering
+
+Here is the aforementioned private method `render_in`:
 
 ```ruby
 private
