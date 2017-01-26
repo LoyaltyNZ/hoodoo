@@ -1,5 +1,5 @@
 ########################################################################
-# File::    service_middleware.rb
+# File::    middleware.rb
 # (C)::     Loyalty New Zealand 2014
 #
 # Purpose:: Rack middleware, declared in a +config.ru+ file in the usual
