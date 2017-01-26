@@ -1,3 +1,7 @@
+## 1.12.4 (2017-01-27)
+
+* Comment-only changes to update some RDoc data, especially around the [Hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Hash.html) type in the [Presenter DSL](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html). For a full list, see [PR 192](https://github.com/LoyaltyNZ/hoodoo/pull/192/files).
+
 ## 1.12.1, 1.12.2, 1.12.3 (2016-12-07)
 
 * Test coverage on 1.12.0 overlooked the case where a model defines no search or filter data at all - no calls are made to `search_with` or `filter_with`. In that case, the framework search keys wouldn't be applied. Test coverage added and bug fixed.
