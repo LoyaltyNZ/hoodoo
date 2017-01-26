@@ -1,4 +1,4 @@
-Fri, 27 Jan 2017 10:45:21 +1300
+Fri, 27 Jan 2017 10:54:16 +1300
 README.md	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -63,7 +63,7 @@ lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Wed, 07 Dec 2016 09:24:
 lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/base.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/presenters/base_dsl.rb	Fri, 27 Jan 2017 10:45:04 +1300
+lib/hoodoo/presenters/base_dsl.rb	Fri, 27 Jan 2017 10:54:01 +1300
 lib/hoodoo/presenters/common_resource_fields.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/embedding.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/array.rb	Wed, 07 Dec 2016 09:24:11 +1300

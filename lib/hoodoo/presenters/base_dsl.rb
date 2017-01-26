@@ -142,7 +142,7 @@ module Hoodoo
       # The syntax cannot express simple value types. It always describes a
       # nested object. So, the following describes a Hash called +payload+
       # which has arbitrary keys each leading to a nested _object_ with
-      # key/value pair where the key is called +some_value+ and the value
+      # key/value pairs where the key is called +some_value+ and the value
       # is an arbitrary length String:
       #
       #     class NotSoSimpleHash < Hoodoo::Presenters::Base
