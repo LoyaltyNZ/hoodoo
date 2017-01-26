@@ -505,12 +505,11 @@ more information and examples.</p>
 
 <h2 id="method-i-hash-label-Limitations">Limitations</h2>
 
-<p>The syntax cannot simple Types as values. It always describes a nested
+<p>The syntax cannot express simple value types. It always describes a nested
 object. So, the following describes a <a href="Hash.html">Hash</a> called
 <code>payload</code> which has arbitrary keys each leading to a nested
 <em>object</em> with key/value pair where the key is called
-<code>some_value</code> and the value is an arbitrary length <a
-href="String.html">String</a>.</p>
+<code>some_value</code> and the value is an arbitrary length String:</p>
 
 <pre><code>class NotSoSimpleHash &lt; Hoodoo::Presenters::Base
   schema do
@@ -537,8 +536,7 @@ NotSoSimpleHash.validate( data )
 # =&gt; []
 </code></pre>
 
-<p>This is invalid because one of the values is not a <a
-href="String.html">String</a>.</p>
+<p>This is invalid because one of the values is not a String:</p>
 
 <pre><code>data = {
   &quot;payload&quot; =&gt; {

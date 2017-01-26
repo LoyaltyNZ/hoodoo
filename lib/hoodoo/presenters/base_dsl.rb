@@ -139,11 +139,11 @@ module Hoodoo
       #
       # == Limitations
       #
-      # The syntax cannot simple Types as values. It always describes a
+      # The syntax cannot express simple value types. It always describes a
       # nested object. So, the following describes a Hash called +payload+
       # which has arbitrary keys each leading to a nested _object_ with
       # key/value pair where the key is called +some_value+ and the value
-      # is an arbitrary length String.
+      # is an arbitrary length String:
       #
       #     class NotSoSimpleHash < Hoodoo::Presenters::Base
       #       schema do
@@ -168,7 +168,7 @@ module Hoodoo
       #     NotSoSimpleHash.validate( data )
       #     # => []
       #
-      # This is invalid because one of the values is not a String.
+      # This is invalid because one of the values is not a String:
       #
       #     data = {
       #       "payload" => {

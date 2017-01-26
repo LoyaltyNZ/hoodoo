@@ -1,4 +1,4 @@
-Fri, 27 Jan 2017 10:42:36 +1300
+Fri, 27 Jan 2017 10:45:21 +1300
 README.md	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -63,7 +63,7 @@ lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Wed, 07 Dec 2016 09:24:
 lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/base.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/presenters/base_dsl.rb	Fri, 27 Jan 2017 10:34:23 +1300
+lib/hoodoo/presenters/base_dsl.rb	Fri, 27 Jan 2017 10:45:04 +1300
 lib/hoodoo/presenters/common_resource_fields.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/embedding.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/array.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -74,7 +74,7 @@ lib/hoodoo/presenters/types/decimal.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/enum.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/field.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/float.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/presenters/types/hash.rb	Fri, 27 Jan 2017 10:13:02 +1300
+lib/hoodoo/presenters/types/hash.rb	Fri, 27 Jan 2017 10:44:34 +1300
 lib/hoodoo/presenters/types/integer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/object.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/string.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -97,10 +97,10 @@ lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Wed, 07 Dec 201
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Fri, 27 Jan 2017 10:11:59 +1300
+lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Fri, 27 Jan 2017 10:44:34 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/middleware/interaction.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/middleware/middleware.rb	Fri, 27 Jan 2017 10:41:46 +1300
+lib/hoodoo/services/middleware/middleware.rb	Fri, 27 Jan 2017 10:44:34 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/context.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/implementation.rb	Wed, 07 Dec 2016 09:24:11 +1300
