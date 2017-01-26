@@ -261,7 +261,7 @@ end
                 <a href="javascript:toggleSource('method-i-boolean_source')" id="l_method-i-boolean_source">show</a>
               </p>
               <div id="method-i-boolean_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 177</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 249</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">boolean</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -293,7 +293,7 @@ end
                 <a href="javascript:toggleSource('method-i-date_source')" id="l_method-i-date_source">show</a>
               </p>
               <div id="method-i-date_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 186</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 258</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">date</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -325,7 +325,7 @@ end
                 <a href="javascript:toggleSource('method-i-datetime_source')" id="l_method-i-datetime_source">show</a>
               </p>
               <div id="method-i-datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 195</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 267</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">datetime</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -358,7 +358,7 @@ end
                 <a href="javascript:toggleSource('method-i-decimal_source')" id="l_method-i-decimal_source">show</a>
               </p>
               <div id="method-i-decimal_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 168</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 240</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">decimal</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -392,7 +392,7 @@ matched values, with the supplied name and options.</p>
                 <a href="javascript:toggleSource('method-i-enum_source')" id="l_method-i-enum_source">show</a>
               </p>
               <div id="method-i-enum_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 216</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 288</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enum</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -424,7 +424,7 @@ matched values, with the supplied name and options.</p>
                 <a href="javascript:toggleSource('method-i-float_source')" id="l_method-i-float_source">show</a>
               </p>
               <div id="method-i-float_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 159</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 231</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">float</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -452,12 +452,15 @@ object may contain, in abstract terms.</p>
 <p>Optional block declaring the fields making up the nested hash</p>
 </dd></dl>
 
-<p>Example 1 - a <a href="Hash.html">Hash</a> where keys must be &lt;= 16
-characters long and values</p>
+<h2 id="method-i-hash-label-Example+1">Example 1</h2>
 
-<pre><code>        must match the Hoodoo::Data::Types::Currency type.
+<p>A <a href="Hash.html">Hash</a> where keys must be &lt;= 16 characters long
+and values must match a <code>Hoodoo::Data::Types::Currency</code> type
+(with the default <a href="../Data/Types.html">Hoodoo::Data::Types</a>
+namespace use arising from the Symbol passed to the <a
+href="BaseDSL.html#method-i-type">type</a> method).</p>
 
-class CurrencyHash &lt; Hoodoo::Presenters::Base
+<pre><code>class CurrencyHash &lt; Hoodoo::Presenters::Base
   schema do
     hash :currencies do
       keys :length =&gt; 16 do
@@ -465,21 +468,27 @@ class CurrencyHash &lt; Hoodoo::Presenters::Base
       end
     end
   end
-end</code></pre>
+end
+</code></pre>
 
 <p>See <a href="Hash.html#method-i-keys">Hoodoo::Presenters::Hash#keys</a> for
 more information and examples.</p>
 
-<p>Example 2 - a <a href="Hash.html">Hash</a> where keys must be &#39;one&#39;
-or &#39;two&#39;, each with a</p>
+<h2 id="method-i-hash-label-Example+2">Example 2</h2>
 
-<pre><code>        value matching the given schema.
+<p>A <a href="Hash.html">Hash</a> where keys must be &#39;one&#39; or
+&#39;two&#39;, each with a value matching the given schema. Here, the
+example assumes that a subclass of <a
+href="Base.html">Hoodoo::Presenters::Base</a> has been defined under the
+name of <code>SomeNamespace::Types::Currency</code>, since this is passed
+as a class reference to the <a href="BaseDSL.html#method-i-type">type</a>
+method.</p>
 
-class AltCurrencyHash &lt; Hoodoo::Presenters::Base
+<pre><code>class AltCurrencyHash &lt; Hoodoo::Presenters::Base
   schema do
     hash :currencies do
       key :one do
-        type :Currency
+        type SomeNamespace::Types::Currency
       end
 
       key :two do
@@ -488,10 +497,80 @@ class AltCurrencyHash &lt; Hoodoo::Presenters::Base
       end
     end
   end
-end</code></pre>
+end
+</code></pre>
 
 <p>See <a href="Hash.html#method-i-key">Hoodoo::Presenters::Hash#key</a> for
 more information and examples.</p>
+
+<h2 id="method-i-hash-label-Limitations">Limitations</h2>
+
+<p>The syntax cannot simple Types as values. It always describes a nested
+object. So, the following describes a <a href="Hash.html">Hash</a> called
+<code>payload</code> which has arbitrary keys each leading to a nested
+<em>object</em> with key/value pair where the key is called
+<code>some_value</code> and the value is an arbitrary length <a
+href="String.html">String</a>.</p>
+
+<pre><code>class NotSoSimpleHash &lt; Hoodoo::Presenters::Base
+  schema do
+    hash :payload do
+      keys do
+        text :some_value
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>This is a valid piece of Ruby input data for the above which will render
+without changes and validate successfully:</p>
+
+<pre><code>data = {
+  &quot;payload&quot; =&gt; {
+    &quot;any_key_name&quot;     =&gt; { &quot;some_value&quot; =&gt; &quot;Any string&quot; },
+    &quot;another_key_name&quot; =&gt; { &quot;some_value&quot; =&gt; &quot;Another string&quot; },
+  }
+}
+
+NotSoSimpleHash.validate( data )
+# =&gt; []
+</code></pre>
+
+<p>This is invalid because one of the values is not a <a
+href="String.html">String</a>.</p>
+
+<pre><code>data = {
+  &quot;payload&quot; =&gt; {
+    &quot;any_key_name&quot;     =&gt; { &quot;some_value&quot; =&gt; &quot;Any string&quot; },
+    &quot;another_key_name&quot; =&gt; { &quot;some_value&quot; =&gt; 22 },
+  }
+}
+
+NotSoSimpleHash.validate( data )
+# =&gt; [{&quot;code&quot;=&gt;&quot;generic.invalid_string&quot;,
+#      &quot;message&quot;=&gt;&quot;Field `payload.another_key_name.some_value` is an invalid string&quot;,
+#      &quot;reference&quot;=&gt;&quot;payload.another_key_name.some_value&quot;}]
+</code></pre>
+
+<p>This is invalid because the DSL cannot express a simple <a
+href="String.html">String</a> value for the keys:</p>
+
+<pre><code>data = {
+  &quot;payload&quot; =&gt; {
+    &quot;any_key_name&quot;     =&gt; &quot;Any string&quot;,
+    &quot;another_key_name&quot; =&gt; &quot;Another string&quot;,
+  }
+}
+
+NotSoSimpleHash.validate( data )
+# =&gt; [{&quot;code&quot;=&gt;&quot;generic.invalid_object&quot;,
+#      &quot;message&quot;=&gt;&quot;Field `payload.any_key_name` is an invalid object&quot;,
+#      &quot;reference&quot;=&gt;&quot;payload.any_key_name&quot;},
+#     {&quot;code&quot;=&gt;&quot;generic.invalid_object&quot;,
+#      &quot;message&quot;=&gt;&quot;Field `payload.another_key_name` is an invalid object&quot;,
+#      &quot;reference&quot;=&gt;&quot;payload.another_key_name&quot;}]
+</code></pre>
             </div>
 
 
@@ -502,7 +581,7 @@ more information and examples.</p>
                 <a href="javascript:toggleSource('method-i-hash_source')" id="l_method-i-hash_source">show</a>
               </p>
               <div id="method-i-hash_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 131</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 203</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">hash</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">is_internationalised?</span>()
@@ -535,7 +614,7 @@ more information and examples.</p>
                 <a href="javascript:toggleSource('method-i-integer_source')" id="l_method-i-integer_source">show</a>
               </p>
               <div id="method-i-integer_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 141</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 213</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">integer</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -592,7 +671,7 @@ end
                 <a href="javascript:toggleSource('method-i-internationalised_source')" id="l_method-i-internationalised_source">show</a>
               </p>
               <div id="method-i-internationalised_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 485</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 557</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">true</span>
@@ -620,7 +699,7 @@ end
                 <a href="javascript:toggleSource('method-i-is_internationalised-3F_source')" id="l_method-i-is_internationalised-3F_source">show</a>
               </p>
               <div id="method-i-is_internationalised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 493</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 565</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">is_internationalised?</span>
   <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@internationalised</span>
 <span class="ruby-keyword">end</span></pre>
@@ -699,7 +778,7 @@ at the point of declaration - essentially, it&#39;s macro expansion.</p>
 Resource in question, e.g. <code>Product</code>. The deprecated form of
 this interface takes the name of the type to nest as a symbol, e.g.
 <code>:Product</code>, in which case the Resource must be declared within
-nested modules “Hoodoo::Data::Types”.</p>
+nested modules <a href="../Data/Types.html">Hoodoo::Data::Types</a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options hash. No options currently defined.</p>
@@ -745,7 +824,7 @@ resource Outlet, :required =&gt; true # Pointless option!
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
               </p>
               <div id="method-i-resource_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 438</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 510</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
@@ -789,7 +868,7 @@ resource Outlet, :required =&gt; true # Pointless option!
                 <a href="javascript:toggleSource('method-i-string_source')" id="l_method-i-string_source">show</a>
               </p>
               <div id="method-i-string_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 150</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 222</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">string</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -837,7 +916,7 @@ end
                 <a href="javascript:toggleSource('method-i-tags_source')" id="l_method-i-tags_source">show</a>
               </p>
               <div id="method-i-tags_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 239</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 311</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span> )
@@ -871,7 +950,7 @@ options.</p>
                 <a href="javascript:toggleSource('method-i-text_source')" id="l_method-i-text_source">show</a>
               </p>
               <div id="method-i-text_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 205</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 277</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">text</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -896,7 +975,7 @@ expansion.</p>
 in question, e.g. <code>BasketItem</code>. The deprecated form of this
 interface takes the name of the type to nest as a symbol, e.g.
 <code>:BasketItem</code>, in which case the Type must be declared within
-nested modules “Hoodoo::Data::Types”.</p>
+nested modules <a href="../Data/Types.html">Hoodoo::Data::Types</a>.</p>
 </dd><dt><code>options</code>
 <dd>
 <p>Optional options hash. No options currently defined.</p>
@@ -1005,7 +1084,7 @@ behaviour. At such a time, a degree of cut-and-paste and removing the
                 <a href="javascript:toggleSource('method-i-type_source')" id="l_method-i-type_source">show</a>
               </p>
               <div id="method-i-type_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 379</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 451</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">type</span>( <span class="ruby-identifier">type_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
@@ -1077,7 +1156,7 @@ end
                 <a href="javascript:toggleSource('method-i-uuid_source')" id="l_method-i-uuid_source">show</a>
               </p>
               <div id="method-i-uuid_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 272</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 344</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>, <span class="ruby-identifier">options</span>)
