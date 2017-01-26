@@ -93,8 +93,12 @@ module Hoodoo
       # &block::    Optional block declaring the fields making up the nested
       #             hash
       #
-      # Example 1 - a Hash where keys must be <= 16 characters long and values
-      #             must match the Hoodoo::Data::Types::Currency type.
+      # == Example 1
+      #
+      # A Hash where keys must be <= 16 characters long and values must match
+      # a <tt>Hoodoo::Data::Types::Currency</tt> type (with the default
+      # Hoodoo::Data::Types namespace use arising from the Symbol passed
+      # to the #type method).
       #
       #     class CurrencyHash < Hoodoo::Presenters::Base
       #       schema do
@@ -108,14 +112,19 @@ module Hoodoo
       #
       # See Hoodoo::Presenters::Hash#keys for more information and examples.
       #
-      # Example 2 - a Hash where keys must be 'one' or 'two', each with a
-      #             value matching the given schema.
+      # == Example 2
+      #
+      # A Hash where keys must be 'one' or 'two', each with a value matching
+      # the given schema. Here, the example assumes that a subclass of
+      # Hoodoo::Presenters::Base has been defined under the name of
+      # <tt>SomeNamespace::Types::Currency</tt>, since this is passed as a
+      # class reference to the #type method.
       #
       #     class AltCurrencyHash < Hoodoo::Presenters::Base
       #       schema do
       #         hash :currencies do
       #           key :one do
-      #             type :Currency
+      #             type SomeNamespace::Types::Currency
       #           end
       #
       #           key :two do
@@ -127,6 +136,69 @@ module Hoodoo
       #     end
       #
       # See Hoodoo::Presenters::Hash#key for more information and examples.
+      #
+      # == Limitations
+      #
+      # The syntax cannot express simple value types. It always describes a
+      # nested object. So, the following describes a Hash called +payload+
+      # which has arbitrary keys each leading to a nested _object_ with
+      # key/value pairs where the key is called +some_value+ and the value
+      # is an arbitrary length String:
+      #
+      #     class NotSoSimpleHash < Hoodoo::Presenters::Base
+      #       schema do
+      #         hash :payload do
+      #           keys do
+      #             text :some_value
+      #           end
+      #         end
+      #       end
+      #     end
+      #
+      # This is a valid piece of Ruby input data for the above which will
+      # render without changes and validate successfully:
+      #
+      #     data = {
+      #       "payload" => {
+      #         "any_key_name"     => { "some_value" => "Any string" },
+      #         "another_key_name" => { "some_value" => "Another string" },
+      #       }
+      #     }
+      #
+      #     NotSoSimpleHash.validate( data )
+      #     # => []
+      #
+      # This is invalid because one of the values is not a String:
+      #
+      #     data = {
+      #       "payload" => {
+      #         "any_key_name"     => { "some_value" => "Any string" },
+      #         "another_key_name" => { "some_value" => 22 },
+      #       }
+      #     }
+      #
+      #     NotSoSimpleHash.validate( data )
+      #     # => [{"code"=>"generic.invalid_string",
+      #     #      "message"=>"Field `payload.another_key_name.some_value` is an invalid string",
+      #     #      "reference"=>"payload.another_key_name.some_value"}]
+      #
+      # This is invalid because the DSL cannot express a simple String value
+      # for the keys:
+      #
+      #     data = {
+      #       "payload" => {
+      #         "any_key_name"     => "Any string",
+      #         "another_key_name" => "Another string",
+      #       }
+      #     }
+      #
+      #     NotSoSimpleHash.validate( data )
+      #     # => [{"code"=>"generic.invalid_object",
+      #     #      "message"=>"Field `payload.any_key_name` is an invalid object",
+      #     #      "reference"=>"payload.any_key_name"},
+      #     #     {"code"=>"generic.invalid_object",
+      #     #      "message"=>"Field `payload.another_key_name` is an invalid object",
+      #     #      "reference"=>"payload.another_key_name"}]
       #
       def hash( name, options = {}, &block )
         hash = property( name, Hoodoo::Presenters::Hash, options, &block )
@@ -283,7 +355,7 @@ module Hoodoo
       #               question, e.g. +BasketItem+. The deprecated form of this
       #               interface takes the name of the type to nest as a symbol,
       #               e.g. +:BasketItem+, in which case the Type must be
-      #               declared within nested modules "Hoodoo::Data::Types".
+      #               declared within nested modules Hoodoo::Data::Types.
       #
       # +options+::   Optional options hash. No options currently defined.
       #
@@ -403,7 +475,7 @@ module Hoodoo
       #                   form of this interface takes the name of the type to
       #                   nest as a symbol, e.g. +:Product+, in which case the
       #                   Resource must be declared within nested modules
-      #                   "Hoodoo::Data::Types".
+      #                   Hoodoo::Data::Types.
       #
       # +options+::       Optional options hash. No options currently defined.
       #

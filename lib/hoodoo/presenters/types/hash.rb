@@ -84,8 +84,8 @@ module Hoodoo
       # a block is given, use Hoodoo::Presenters::BaseDSL to describe how any
       # of the values in the Hash must look.
       #
-      # +options+:: A +Hash+ of options - currently only +:length => [n]+ is
-      #             supported, which describes the maximum permitted length of
+      # +options+:: A +Hash+ of options; currently only <tt>:length => [n]</tt>
+      #             is supported, describing the maximum permitted length of
       #             the key. If this option is omitted, keys can be any length.
       #
       # Example:
