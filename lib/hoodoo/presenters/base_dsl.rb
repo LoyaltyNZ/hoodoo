@@ -96,7 +96,9 @@ module Hoodoo
       # == Example 1
       #
       # A Hash where keys must be <= 16 characters long and values must match
-      # the Hoodoo::Data::Types::Currency type.
+      # a <tt>Hoodoo::Data::Types::Currency</tt> type (with the default
+      # Hoodoo::Data::Types namespace use arising from the Symbol passed
+      # to the #type method).
       #
       #     class CurrencyHash < Hoodoo::Presenters::Base
       #       schema do
@@ -113,13 +115,16 @@ module Hoodoo
       # == Example 2
       #
       # A Hash where keys must be 'one' or 'two', each with a value matching
-      # the given schema.
+      # the given schema. Here, the example assumes that a subclass of
+      # Hoodoo::Presenters::Base has been defined under the name of
+      # <tt>SomeNamespace::Types::Currency</tt>, since this is passed as a
+      # class reference to the #type method.
       #
       #     class AltCurrencyHash < Hoodoo::Presenters::Base
       #       schema do
       #         hash :currencies do
       #           key :one do
-      #             type :Currency
+      #             type SomeNamespace::Types::Currency
       #           end
       #
       #           key :two do
@@ -350,7 +355,7 @@ module Hoodoo
       #               question, e.g. +BasketItem+. The deprecated form of this
       #               interface takes the name of the type to nest as a symbol,
       #               e.g. +:BasketItem+, in which case the Type must be
-      #               declared within nested modules "Hoodoo::Data::Types".
+      #               declared within nested modules Hoodoo::Data::Types.
       #
       # +options+::   Optional options hash. No options currently defined.
       #
@@ -470,7 +475,7 @@ module Hoodoo
       #                   form of this interface takes the name of the type to
       #                   nest as a symbol, e.g. +:Product+, in which case the
       #                   Resource must be declared within nested modules
-      #                   "Hoodoo::Data::Types".
+      #                   Hoodoo::Data::Types.
       #
       # +options+::       Optional options hash. No options currently defined.
       #
