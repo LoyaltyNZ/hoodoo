@@ -1176,7 +1176,7 @@ describe Hoodoo::Presenters::Hash do
     'uuid'       => { :definition => { :length => 9, :type => :uuid                                                  }, :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
     'field'      => { :definition => { :length => 9                                                                  }, :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] },
     '1234567890' => { :definition => { :length => 9                                                                  }, :valid => [                         ], :invalid => [ 'Any value; key is too long'     ] },
-  }
+ }
 
   KEYS_DATA.each do | field, values |
     context "keys with elementary type '#{ values[ :definition ][ :type ] || 'field' }'" do
@@ -1187,9 +1187,19 @@ describe Hoodoo::Presenters::Hash do
         #
         #   https://gist.github.com/Integralist/a29212a8eb10bc8154b7#file-07-flattening-the-scope-aka-nested-lexical-scopes-rb
         #
+        # Per-key defaults don't apply to generic Hashes because a key is
+        # either given to validate or render with in the caller-provided
+        # input parameters, in which case it already must have a value -
+        # even if explicitly "nil" - or the key is absent, in which case
+        # we have nothing to associate a daefault value with.
+        #
+        # Per-hash full defaults are supported but we can't really do those
+        # here as valid defaults will change for every line in KEYS_DATA
+        # with the changing types required by the keys.
+        #
         @test_class = Class.new( Hoodoo::Presenters::Base ) do
           schema do
-            hash :keys_types, :default => { 'array' => [ 1, 2, 3 ], 'float' => 0.5 } do
+            hash :keys_types do
               keys( values[ :definition ] )
             end
           end
@@ -1197,14 +1207,6 @@ describe Hoodoo::Presenters::Hash do
       end
 
       context '#render' do
-        it 'renders correctly with whole-hash defaults' do
-          expected_data = { 'keys_types' => { 'array' => [ 1, 2, 3 ],
-                                              'float' => 0.5 } }
-
-          expect( @test_class.render( {}  ) ).to eq( expected_data )
-          expect( @test_class.render( nil ) ).to eq( expected_data )
-        end
-
         values[ :valid ].each_with_index do | value, index |
           it "renders correctly for '#{ field }' (#{ index + 1 })" do
             data = { 'keys_types' => { field => value } }
