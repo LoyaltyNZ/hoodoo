@@ -570,6 +570,99 @@ describe Hoodoo::Presenters::Hash do
 
   ############################################################################
 
+  class TestHashSpecificKeyTypes < Hoodoo::Presenters::Base
+    schema do
+      hash :specific_key_types, :default => { 'array' => [ 1, 2, 3 ], 'float' => 0.5 } do
+        key :array,     :type => :array
+        key :boolean,   :type => :boolean
+        key :date,      :type => :date
+        key :date_time, :type => :date_time
+        key :decimal,   :type => :decimal,   :precision => 2
+        key :enum,      :type => :enum,      :from      => [ :one, :two, :three ]
+        key :float,     :type => :float
+        key :integer,   :type => :integer,   :default   => 1
+        key :string,    :type => :string,    :length    => 4
+        key :tags,      :type => :tags,      :default   => 'default,tags'
+        key :text,      :type => :text
+        key :uuid,      :type => :uuid
+        key :field
+      end
+    end
+  end
+
+  ############################################################################
+
+  context 'specific keys with elementary types and defaults' do
+    KEY_DATA = {
+      'array'     => { :valid => [ [ 2, 3, 4 ]             ], :invalid => [ 4, { :one => 1 }                 ] },
+      'boolean'   => { :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
+      'date'      => { :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
+      'date_time' => { :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
+      'decimal'   => { :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+      'enum'      => { :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
+      'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+      'integer'   => { :valid => [ 4                       ], :invalid => [ '4'                              ] },
+      'string'    => { :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
+      'tags'      => { :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
+      'text'      => { :valid => [ 'hello world'           ], :invalid => [ 4, true                          ] },
+      'uuid'      => { :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
+      'field'     => { :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] }
+    }
+
+    context '#render' do
+      it 'renders correctly with whole-hash defaults' do
+        expected_data = { 'specific_key_types' => { 'array'   => [ 1, 2, 3 ],
+                                                    'float'   => 0.5,
+                                                    'integer' => 1,
+                                                    'tags'    => 'default,tags' } }
+
+        expect( TestHashSpecificKeyTypes.render( {}  ) ).to eq( expected_data )
+        expect( TestHashSpecificKeyTypes.render( nil ) ).to eq( expected_data )
+      end
+    end
+
+    KEY_DATA.each do | field, values |
+      context '#render' do
+        values[ :valid ].each_with_index do | value, index |
+          it "renders correctly for '#{ field }' (#{ index + 1 })" do
+
+            # Start with the defaults we expect given KEY_DATA definitions
+            # above then merge in the under-test field value. Only the inner
+            # field defaults are carried because we are passing a non-empty
+            # Hash in the top level for rendering, which overrides therefore
+            # the top-level Hash default.
+            #
+            expected_data = { 'specific_key_types' => { 'integer' => 1,
+                                                        'tags'    => 'default,tags' } }
+
+            data = { 'specific_key_types' => { field => value } }
+            expected_data = Hoodoo::Utilities.deep_merge_into( expected_data, data )
+
+            expect( TestHashSpecificKeyTypes.render( data ) ).to eq( expected_data )
+          end
+        end
+      end
+
+      context '#validate' do
+        values[ :valid ].each_with_index do | value, index |
+          it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'specific_key_types' => { field => value } }
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to eql( 0 )
+          end
+        end
+
+        values[ :invalid ].each_with_index do | value, index |
+          it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'specific_key_types' => { field => value } }
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to be > 0
+          end
+        end
+      end
+    end
+  end
+
+  ############################################################################
+
   class TestHashGenericKeyPresenterNoValues < Hoodoo::Presenters::Base
     schema do
       hash :generic do
@@ -1062,6 +1155,78 @@ describe Hoodoo::Presenters::Hash do
             'another' => { 'foo' => 'present', 'bar' => 'also present'           }
           }
         })
+      end
+    end
+  end
+
+  ############################################################################
+
+  KEYS_DATA = {
+    'array'      => { :definition => { :length => 9, :type => :array                                                 }, :valid => [ [ 2, 3, 4 ]             ], :invalid => [ 4, { :one => 1 }                 ] },
+    'boolean'    => { :definition => { :length => 9, :type => :boolean                                               }, :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
+    'date'       => { :definition => { :length => 9, :type => :date                                                  }, :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
+    'date_time'  => { :definition => { :length => 9, :type => :date_time                                             }, :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
+    'decimal'    => { :definition => { :length => 9, :type => :decimal,   :field_precision => 2                      }, :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+    'enum'       => { :definition => { :length => 9, :type => :enum,      :field_from      => [ :one, :two, :three ] }, :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
+    'float'      => { :definition => { :length => 9, :type => :float                                                 }, :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+    'integer'    => { :definition => { :length => 9, :type => :integer                                               }, :valid => [ 4                       ], :invalid => [ '4'                              ] },
+    'string'     => { :definition => { :length => 9, :type => :string,    :field_length    => 4                      }, :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
+    'tags'       => { :definition => { :length => 9, :type => :tags                                                  }, :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
+    'text'       => { :definition => { :length => 9, :type => :text                                                  }, :valid => [ 'hello world'           ], :invalid => [ 4, true                          ] },
+    'uuid'       => { :definition => { :length => 9, :type => :uuid                                                  }, :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
+    'field'      => { :definition => { :length => 9                                                                  }, :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] },
+    '1234567890' => { :definition => { :length => 9                                                                  }, :valid => [                         ], :invalid => [ 'Any value; key is too long'     ] },
+  }
+
+  KEYS_DATA.each do | field, values |
+    context "keys with elementary type '#{ values[ :definition ][ :type ] || 'field' }'" do
+      before :all do
+
+        # Flatten local scope to access 'values' inside the class definition;
+        # see e.g.:
+        #
+        #   https://gist.github.com/Integralist/a29212a8eb10bc8154b7#file-07-flattening-the-scope-aka-nested-lexical-scopes-rb
+        #
+        @test_class = Class.new( Hoodoo::Presenters::Base ) do
+          schema do
+            hash :keys_types, :default => { 'array' => [ 1, 2, 3 ], 'float' => 0.5 } do
+              keys( values[ :definition ] )
+            end
+          end
+        end
+      end
+
+      context '#render' do
+        it 'renders correctly with whole-hash defaults' do
+          expected_data = { 'keys_types' => { 'array' => [ 1, 2, 3 ],
+                                              'float' => 0.5 } }
+
+          expect( @test_class.render( {}  ) ).to eq( expected_data )
+          expect( @test_class.render( nil ) ).to eq( expected_data )
+        end
+
+        values[ :valid ].each_with_index do | value, index |
+          it "renders correctly for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.render( data ) ).to eq( data )
+          end
+        end
+      end
+
+      context '#validate' do
+        values[ :valid ].each_with_index do | value, index |
+          it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.validate( data ).errors.size ).to eql( 0 )
+          end
+        end
+
+        values[ :invalid ].each_with_index do | value, index |
+          it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.validate( data ).errors.size ).to be > 0
+          end
+        end
       end
     end
   end

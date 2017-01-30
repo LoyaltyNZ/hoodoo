@@ -586,6 +586,94 @@ module Hoodoo
         return inst
       end
 
+      # Given a <tt>:type</tt> option key, take the value (which must be a
+      # Symbol) and convert it to a class variable for known cases, else
+      # raise an exception. Used as a back-end for methods such as
+      # Hoodoo::Presenters::Hash#key which support value type validation.
+      #
+      # +type+:: Required class type expressed as a Symbol (see below).
+      #
+      # Supported values for the +type+ parameter are:
+      #
+      # [nil]
+      #    Hoodoo::Presenters::Field generic class
+      # [:array]
+      #   Hoodoo::Presenters::Array
+      # [:boolean]
+      #   Hoodoo::Presenters::Boolean
+      # [:date]
+      #   Hoodoo::Presenters::Date
+      # [:date_time]
+      #   Hoodoo::Presenters::DateTime
+      # [:decimal]
+      #   Hoodoo::Presenters::Decimal
+      # [:enum]
+      #   Hoodoo::Presenters::Enum
+      # [:float]
+      #   Hoodoo::Presenters::Float
+      # [:integer]
+      #   Hoodoo::Presenters::Integer
+      # [:string]
+      #   Hoodoo::Presenters::String
+      # [:tags]
+      #   Hoodoo::Presenters::Tags
+      # [:text]
+      #   Hoodoo::Presenters::Text
+      # [:uuid]
+      #   Hoodoo::Presenters::UUID
+      #
+      def type_option_to_class( type )
+        case type
+          when nil
+            Hoodoo::Presenters::Field
+          when :array
+            Hoodoo::Presenters::Array
+          when :boolean
+            Hoodoo::Presenters::Boolean
+          when :date
+            Hoodoo::Presenters::Date
+          when :date_time
+            Hoodoo::Presenters::DateTime
+          when :decimal
+            Hoodoo::Presenters::Decimal
+          when :enum
+            Hoodoo::Presenters::Enum
+          when :float
+            Hoodoo::Presenters::Float
+          when :integer
+            Hoodoo::Presenters::Integer
+          when :string
+            Hoodoo::Presenters::String
+          when :tags
+            Hoodoo::Presenters::Tags
+          when :text
+            Hoodoo::Presenters::Text
+          when :uuid
+            Hoodoo::Presenters::UUID
+          else
+            raise "Unsupported 'type' option value of '#{ type }' in Hoodoo::Presenters::BaseDSL"
+        end
+      end
+
+      # Given a Hash with keys as Symbols or Strings prefixed by the string
+      # "field_", return a Hash with those items kept but keys renamed without
+      # that "field_" prefix and with all other items removed. The keys in the
+      # returned Hash are all coerced to Symbols regardless of input class.
+      #
+      # +options+:: Hash from which to extract field-specific data.
+      #
+      def extract_field_prefix_options_from( options )
+        options.inject( {} ) do | hash, key_value_pair_array |
+          key = key_value_pair_array[ 0 ].to_s
+
+          if key.start_with?( 'field_' )
+            hash[ key.sub( /^field_/, '' ).to_sym ] = key_value_pair_array[ 1 ]
+          end
+
+          hash
+        end
+      end
+
     end
   end
 end
