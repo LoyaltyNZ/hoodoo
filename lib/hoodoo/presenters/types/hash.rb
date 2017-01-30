@@ -68,10 +68,10 @@ module Hoodoo
         # specific key with some internal defaults to be rendered; doing this
         # amalgamation up to key level is the easiest way to handle that.
         #
-        if options.has_key?( :default )
+        if options.has_key?( :default ) || options.has_key?( :field_default )
           @has_default = true
           @default   ||= {}
-          opt_def      = options[ :default ]
+          opt_def      = options[ :default ] || options[ :field_default ]
 
           if opt_def.is_a?( Hash )
             @default.merge!( Hoodoo::Utilities.stringify( opt_def ) )
@@ -82,7 +82,10 @@ module Hoodoo
 
         prop = property( name,
                          value_klass,
-                         options,
+                         Hoodoo::Utilities.deep_merge_into(
+                           options,
+                           extract_field_prefix_options_from( options )
+                         ),
                          &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?

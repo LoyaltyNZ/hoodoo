@@ -577,12 +577,12 @@ describe Hoodoo::Presenters::Hash do
         key :boolean,   :type => :boolean
         key :date,      :type => :date
         key :date_time, :type => :date_time
-        key :decimal,   :type => :decimal,   :precision => 2
-        key :enum,      :type => :enum,      :from      => [ :one, :two, :three ]
+        key :decimal,   :type => :decimal,   :field_precision => 2
+        key :enum,      :type => :enum,      :field_from      => [ :one, :two, :three ]
         key :float,     :type => :float
-        key :integer,   :type => :integer,   :default   => 1
-        key :string,    :type => :string,    :length    => 4
-        key :tags,      :type => :tags,      :default   => 'default,tags'
+        key :integer,   :type => :integer,   :field_default   => 1              # ":field_default" (sic.)
+        key :string,    :type => :string,    :field_length    => 4
+        key :tags,      :type => :tags,      :default         => 'default,tags' # ":default" (sic.)
         key :text,      :type => :text
         key :uuid,      :type => :uuid
         key :field
@@ -647,14 +647,14 @@ describe Hoodoo::Presenters::Hash do
         values[ :valid ].each_with_index do | value, index |
           it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
             data = { 'specific_key_types' => { field => value } }
-            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to eql( 0 )
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to( eql( 0 ) )
           end
         end
 
         values[ :invalid ].each_with_index do | value, index |
           it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
             data = { 'specific_key_types' => { field => value } }
-            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to be > 0
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to( eql( 1 ) )
           end
         end
       end
@@ -1219,14 +1219,14 @@ describe Hoodoo::Presenters::Hash do
         values[ :valid ].each_with_index do | value, index |
           it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
             data = { 'keys_types' => { field => value } }
-            expect( @test_class.validate( data ).errors.size ).to eql( 0 )
+            expect( @test_class.validate( data ).errors.size ).to( eql( 0 ) )
           end
         end
 
         values[ :invalid ].each_with_index do | value, index |
           it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
             data = { 'keys_types' => { field => value } }
-            expect( @test_class.validate( data ).errors.size ).to be > 0
+            expect( @test_class.validate( data ).errors.size ).to( eql( 1 ) )
           end
         end
       end
