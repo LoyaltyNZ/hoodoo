@@ -29,6 +29,8 @@ describe Hoodoo::Presenters::Array do
     end
   end
 
+  ############################################################################
+
   describe '#validate' do
     it 'should return [] when valid array' do
       expect(@inst.validate([]).errors).to eq([])
@@ -124,6 +126,8 @@ describe Hoodoo::Presenters::Array do
       expect(errors.errors).to eq([])
     end
   end
+
+  ############################################################################
 
   describe '#render' do
     it 'renders correctly with whole-array default (1)' do
@@ -243,6 +247,68 @@ describe Hoodoo::Presenters::Array do
           { :hello => :world }
         ]
       })
+    end
+  end
+  class TestPresenterTypedArray < Hoodoo::Presenters::Base
+    schema do
+      array :array,     :type => :array
+      array :boolean,   :type => :boolean
+      array :date,      :type => :date
+      array :date_time, :type => :date_time
+      array :decimal,   :type => :decimal,   :field_precision => 2
+      array :enum,      :type => :enum,      :field_from      => [ :one, :two, :three ]
+      array :float,     :type => :float
+      array :integer,   :type => :integer
+      array :string,    :type => :string,    :field_length    => 4
+      array :tags,      :type => :tags
+      array :text,      :type => :text
+      array :uuid,      :type => :uuid
+      array :field
+    end
+  end
+
+  ############################################################################
+
+  ARRAY_DATA = {
+    'array'     => { :valid => [ [ 2, 3, 4 ]             ], :invalid => [ 4, { :one => 1 }                 ] },
+    'boolean'   => { :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
+    'date'      => { :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
+    'date_time' => { :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
+    'decimal'   => { :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+    'enum'      => { :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
+    'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+    'integer'   => { :valid => [ 4                       ], :invalid => [ '4'                              ] },
+    'string'    => { :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
+    'tags'      => { :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
+    'text'      => { :valid => [ 'hello world'           ], :invalid => [ 4, true                          ] },
+    'uuid'      => { :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
+    'field'     => { :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] }
+  }
+
+  ARRAY_DATA.each do | field, values |
+    context '#render' do
+      values[ :valid ].each_with_index do | value, index |
+        it "renders correctly for '#{ field }' (#{ index + 1 })" do
+          data = { field => [ value, value, value ] }
+          expect( TestPresenterTypedArray.render( data ) ).to eq( data )
+        end
+      end
+    end
+
+    context '#validate' do
+      values[ :valid ].each_with_index do | value, index |
+        it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
+          data = { field => [ value, value, value ] }
+          expect( TestPresenterTypedArray.validate( data ).errors.size ).to eql( 0 )
+        end
+      end
+
+      values[ :invalid ].each_with_index do | value, index |
+        it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
+          data = { field => [ value, value, value ] }
+          expect( TestPresenterTypedArray.validate( data ).errors.size ).to eql( 3 )
+        end
+      end
     end
   end
 
