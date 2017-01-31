@@ -1,4 +1,4 @@
-Wed, 01 Feb 2017 07:47:08 +1300
+Wed, 01 Feb 2017 09:16:38 +1300
 README.md	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -74,7 +74,7 @@ lib/hoodoo/presenters/types/decimal.rb	Tue, 31 Jan 2017 13:14:50 +1300
 lib/hoodoo/presenters/types/enum.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/field.rb	Tue, 31 Jan 2017 12:59:33 +1300
 lib/hoodoo/presenters/types/float.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/presenters/types/hash.rb	Tue, 31 Jan 2017 09:07:32 +1300
+lib/hoodoo/presenters/types/hash.rb	Wed, 01 Feb 2017 08:10:18 +1300
 lib/hoodoo/presenters/types/integer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/object.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/string.rb	Wed, 07 Dec 2016 09:24:11 +1300
