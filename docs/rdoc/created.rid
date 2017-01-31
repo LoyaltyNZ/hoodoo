@@ -1,4 +1,4 @@
-Wed, 01 Feb 2017 07:41:36 +1300
+Wed, 01 Feb 2017 07:47:08 +1300
 README.md	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -114,4 +114,4 @@ lib/hoodoo/utilities.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/utilities/utilities.rb	Fri, 27 Jan 2017 14:41:13 +1300
 lib/hoodoo/utilities/uuid.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/version.rb	Fri, 27 Jan 2017 12:24:08 +1300
+lib/hoodoo/version.rb	Wed, 01 Feb 2017 07:45:04 +1300
