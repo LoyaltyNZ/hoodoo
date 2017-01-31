@@ -69,15 +69,9 @@ module Hoodoo
         # amalgamation up to key level is the easiest way to handle that.
         #
         if options.has_key?( :default ) || options.has_key?( :field_default )
-          @has_default = true
-          @default   ||= {}
-          opt_def      = options[ :default ] || options[ :field_default ]
-
-          if opt_def.is_a?( Hash )
-            @default.merge!( Hoodoo::Utilities.stringify( opt_def ) )
-          else
-            @default[ name ] = opt_def
-          end
+          @has_default     = true
+          @default       ||= {}
+          @default[ name ] = options[ :default ] || options[ :field_default ]
         end
 
         prop = property( name,

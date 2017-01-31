@@ -1235,6 +1235,175 @@ describe Hoodoo::Presenters::Hash do
 
   ############################################################################
 
+  class TestHashKeyDefaultAggregation < Hoodoo::Presenters::Base
+    schema do
+      hash :test, :default => { :three => 3 } do
+
+        key :one,   :default => { :foo => 'bar' }
+        key :two,   :default => { 'bar' => :baz }
+        key :three, :type    => :integer
+
+      end
+    end
+  end
+
+  it 'aggregates default shallow Hash and key values' do
+    expected = {
+      'test' => {
+        'one'   => { 'foo' => 'bar' },
+        'two'   => { 'bar' => :baz  },
+        'three' => 3
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( {} ) ).to eql( expected )
+  end
+
+  it 'overrides default shallow Hash values' do
+    data = {
+      'test' => {}
+    }
+
+    expected =  {
+      'test' => {
+        'one'   => { 'foo' => 'bar' }, # From the key default
+        'two'   => { 'bar' => :baz  }  # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides shallow default key values' do
+    data = {
+      'test' => {
+        'two' => { 'foo' => 'baz' }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one'   => { 'foo' => 'bar' }, # From the key default
+        'two'   => { 'foo' => 'baz' }  # From 'data' above
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  # TODO: This class does not work as originally hoped.
+  # TODO: Illustrates workaround in https://github.com/LoyaltyNZ/hoodoo/issues/194
+  # TODO: Move default off ":two" and into ":inner_two" if above is addressed.
+  #
+  class TestHashKeyDeepDefaultAggregation < Hoodoo::Presenters::Base
+    schema do
+      hash :test do # A default here would implicitly override anything on :two below
+
+        key :one,   :default => { :foo => 'bar' }
+        key :three, :type    => :integer
+
+        key :two, :default => { 'inner_two' => { 'inner_three' => 'three' } } do
+          hash :inner_two do
+            key :inner_one,   :default => { :bar => 'baz' }
+            key :inner_three, :type    => :text
+          end
+        end
+      end
+    end
+  end
+
+  it 'aggregates default deep Hash and key values' do
+    expected = {
+      'test' => {
+        'one'   => { 'foo' => 'bar' },
+        'two'   => {
+          'inner_two' => {
+            'inner_one'   => { 'bar' => 'baz' },
+            'inner_three' => 'three'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( {} ) ).to eql( expected )
+  end
+
+  it 'overrides shallow deep Hash values, preserving deep values' do
+    data = {
+      'test' => {}
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'baz' },  # From the key default
+            'inner_three' => 'three' # From the deep Hash default
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides default deep Hash values' do
+    data = {
+      'test' => {
+        'two' => {
+        }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'baz' } # From the key default
+            # No 'inner_three'; we overrode the deep Hash default in 'data'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides deep deep key values' do
+    data = {
+      'test' => {
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'hello' }
+          }
+        }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'hello' } # From 'data' above
+            # No 'inner_three'; we overrode the deep Hash default in 'data'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  ############################################################################
+
   context 'RDoc examples' do
     class TestHypotheticaHashCurrency < Hoodoo::Presenters::Base
       schema do
