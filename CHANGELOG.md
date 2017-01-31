@@ -1,3 +1,7 @@
+## 1.13.0 (2017-02-01)
+
+* In the presenters DSL, [Array](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Array.html) and [Hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Hash.html) now support rendering and validation of simple Array entry or Hash value types such as Strings or Integers, through the use of a new `:type` option. See the [BaseDSL](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html) module's [#array](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html#method-i-array) and [#hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html#method-i-hash) RDoc documentation for details.
+
 ## 1.12.4 (2017-01-27)
 
 * Comment-only changes to update some RDoc data, especially around the [Hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Hash.html) type in the [Presenter DSL](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html). For a full list, see [PR 192](https://github.com/LoyaltyNZ/hoodoo/pull/192/files).
