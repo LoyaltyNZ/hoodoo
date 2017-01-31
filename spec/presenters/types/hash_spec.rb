@@ -1233,4 +1233,258 @@ describe Hoodoo::Presenters::Hash do
     end
   end
 
+  ############################################################################
+
+  context 'RDoc examples' do
+    class TestHypotheticaHashCurrency < Hoodoo::Presenters::Base
+      schema do
+        string :currency_code, :length => 16
+        integer :precision
+      end
+    end
+
+    context 'CurrencyHash' do
+      class TestCurrencyHash < Hoodoo::Presenters::Base
+        schema do
+          hash :currencies do
+            keys :length => 16 do
+              type TestHypotheticaHashCurrency
+            end
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'currencies' => {
+            'one' => {
+              'currency_code' => 'X_HOODOO_LO',
+              'precision' => 1
+            },
+            '0123456789ABCDEF' => {
+              'currency_code' => 'X_HOODOO_HI',
+              'precision' => 4
+            }
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces field and key restrictions' do
+          data = {
+            'currencies' => {
+              'one' => {
+                'currency_code' => 'too long a currency code',
+                'precision' => 1
+              },
+              '0123456789ABCDEF' => {
+                'currency_code' => 'X_HOODOO_HI',
+                'precision' => 'not an integer'
+              },
+              'too long a key name overall' => {
+                'currency_code' => 'X_HOODOO_LO',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 3 ) )
+
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies.one.currency_code' ) )
+
+          expect( errors[ 1 ][ 'code'      ] ).to( eql( 'generic.invalid_integer' ) )
+          expect( errors[ 1 ][ 'reference' ] ).to( eql( 'currencies.0123456789ABCDEF.precision' ) )
+
+          expect( errors[ 2 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 2 ][ 'reference' ] ).to( eql( 'currencies.too long a key name overall' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestCurrencyHash.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestCurrencyHash.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
+      end
+    end
+
+    context 'AltCurrencyHash' do
+      class TestAltCurrencyHash < Hoodoo::Presenters::Base
+        schema do
+          hash :currencies do
+            key :one do
+              type TestHypotheticaHashCurrency
+            end
+
+            key :two do
+              text :title
+              text :description
+            end
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'currencies' => {
+            'one' => {
+              'currency_code' => 'X_HOODOO_LO',
+              'precision' => 1
+            },
+            'two' => {
+              'title' => 'Optional title text',
+              'description' => 'Optional description text'
+            }
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces field restrictions' do
+          data = {
+            'currencies' => {
+              'one' => {
+                'currency_code' => 'too long a currency code',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestAltCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies.one.currency_code' ) )
+        end
+
+        it 'enforces key name restrictions' do
+          data = {
+            'currencies' => {
+              'unrecognised' => {
+                'currency_code' => 'X_HOODOO_LO',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestAltCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_hash' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestAltCurrencyHash.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestAltCurrencyHash.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
+      end
+    end
+
+    context 'Person' do
+      class TestPerson < Hoodoo::Presenters::Base
+        schema do
+          hash :name do
+            key :first, :type => :text
+            key :last,  :type => :text
+          end
+
+          hash :address do
+            keys :type => :text
+          end
+
+          hash :identifiers, :required => true do
+            keys :length => 8, :type => :string, :field_length => 32
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'name' => {
+            'first' => 'Test',
+            'last' => 'Testy'
+          },
+          'address' => {
+            'road' => '1 Test Street',
+            'city' => 'Testville',
+            'post_code' => 'T01 C41'
+          },
+          'identifiers' => {
+            'primary' => '9759c77d188f4bfe85959738dc6f8505',
+            'postgres' => '1442'
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces a required hash' do
+          data = Hoodoo::Utilities.deep_dup( valid_data() )
+          data.delete( 'identifiers' )
+
+          errors = TestPerson.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.required_field_missing' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'identifiers' ) )
+        end
+
+        it 'enforces field and key restrictions' do
+          data = {
+            'name' => {
+              'first' => 'Test',
+              'surname' => 'Testy' # Invalid key name
+            },
+            'address' => {
+              'road' => '1 Test Street',
+              'city' => 'Testville',
+              'zip' => 90421 # Integer, not Text
+            },
+            'identifiers' => {
+              'primary' => '9759c77d188f4bfe85959738dc6f8505_441', # Value too long
+              'postgresql' => '1442' # Key name too long
+            }
+          }
+
+          errors = TestPerson.validate( data ).errors
+
+          expect( errors.size ).to( eql( 4 ) )
+
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_hash' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'name' ) )
+
+          expect( errors[ 1 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 1 ][ 'reference' ] ).to( eql( 'address.zip' ) )
+
+          expect( errors[ 2 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 2 ][ 'reference' ] ).to( eql( 'identifiers.primary' ) )
+
+          expect( errors[ 3 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 3 ][ 'reference' ] ).to( eql( 'identifiers.postgresql' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestPerson.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestPerson.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
+      end
+    end
+  end
+
 end

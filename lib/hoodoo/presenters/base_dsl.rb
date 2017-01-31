@@ -22,7 +22,7 @@ module Hoodoo
       # Define a JSON object with the supplied name and options.
       #
       # +name+::    The JSON key.
-      # +options+:: Optional +Hash+ of options, e.g. :required => true
+      # +options+:: Optional +Hash+ of options, e.g. <tt>:required => true</tt>
       # &block::    Block declaring the fields making up the nested object
       #
       # Example - mandatory JSON field "currencies" would lead to an object
@@ -51,19 +51,69 @@ module Hoodoo
       # Define a JSON array with the supplied name and options. If there is
       # a block provided, then more DSL calls inside the block define how each
       # array entry must look; otherwise array entries are not validated /
-      # are undefined.
+      # are undefined unless the +:type+ option is specified (see below).
       #
-      # When an array field uses +:required => true+, this only says that at
+      # When an array uses <tt>:required => true</tt>, this only says that at
       # least an empty array must be present, nothing more. If the array uses
       # a block with fields that themselves are required, then this is only
       # checked for if the array contains one or more entries (and is checked
       # for each of those entries).
       #
       # +name+::    The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       # &block::    Optional block declaring the fields of each array item
       #
-      # Example - mandatory JSON field "currencies" would lead to an array
+      # Array entries are normally either unvalidated, or describe complex
+      # types via a block. For simple fields, pass a :type option to declare
+      # that array entries must be of supported types as follows:
+      #
+      # [:array]
+      #   Hoodoo::Presenters::Array (see #array)
+      # [:boolean]
+      #   Hoodoo::Presenters::Boolean (see #boolean)
+      # [:date]
+      #   Hoodoo::Presenters::Date (see #date)
+      # [:date_time]
+      #   Hoodoo::Presenters::DateTime (see #date_time)
+      # [:decimal]
+      #   Hoodoo::Presenters::Decimal (see #decimal)
+      # [:enum]
+      #   Hoodoo::Presenters::Enum (see #enum)
+      # [:float]
+      #   Hoodoo::Presenters::Float (see #float)
+      # [:integer]
+      #   Hoodoo::Presenters::Integer (see #integer)
+      # [:string]
+      #   Hoodoo::Presenters::String (see #string)
+      # [:tags]
+      #   Hoodoo::Presenters::Tags (see #tags)
+      # [:text]
+      #   Hoodoo::Presenters::Text (see #text)
+      # [:uuid]
+      #   Hoodoo::Presenters::UUID (see #uuid)
+      #
+      # Some of these types require additional parameters, such as
+      # +:precision+ for Hoodoo::Presenters::Decimal or +from+ for
+      # Hoodoo::Presenters::Enum. For _any_ options that are to apply to the
+      # the new Array simple type fields, prefix the option with the string
+      # +field_+ - for example, <tt>:field_precision => 2</tt>.
+      #
+      # It does not make sense to attempt to apply field defaults to simple
+      # type array entries via +:field_default+; don't do this.
+      #
+      # In the case of <tt>:type => :array</tt>, the declaring Array is
+      # saying that its entries are themselves individually Arrays. This means
+      # that validation will ensure and rendering will assume that each of the
+      # parent Array entries are themselves Arrays, but will not validte the
+      # child Array contents any further. It is not possible to declare an
+      # Array with a child Array that has further children, or has child-level
+      # validation; instead you would need to use the block syntax, so that
+      # the child Array was associated to some named key in the arising
+      # Object/Hash making up each of the parent entries.
+      #
+      # == Block syntax example
+      #
+      # Mandatory JSON field "currencies" would lead to an array
       # where each array entry contains the fields defined by
       # Hoodoo::Data::Types::Currency along with an up-to-32 character string
       # with field name "notes", that field also being required. Whether or not
@@ -79,6 +129,41 @@ module Hoodoo
       #       end
       #     end
       #
+      # == Simple type syntax without field options
+      #
+      # An optional Array which consists of simple UUIDs as its entries:
+      #
+      #     class UUIDCollection < Hoodoo::Presenters::Base
+      #       schema do
+      #         array :uuids, :type => :uuid
+      #       end
+      #     end
+      #
+      #     # I.e.:
+      #     #
+      #     # {
+      #     #   "uuids" => [ "...uuid...", "...uuid...", ... ]
+      #     # }
+      #
+      # Validation of data intended to be rendered through such a schema
+      # declaration would make sure that each array entry was UUID-like.
+      #
+      # == Simple type syntax with field options
+      #
+      # An optional Array which consists of Decimals with precision 2:
+      #
+      #     class DecimalCollection < Hoodoo::Presenters::Base
+      #       schema do
+      #         array :numbers, :type => :decimal, :field_precision => 2
+      #       end
+      #     end
+      #
+      #     # I.e.:
+      #     #
+      #     # {
+      #     #   "numbers" => [ BigDecimal.new( '2.2511' ) ]
+      #     # }
+      #
       def array( name, options = {}, &block )
         ary = property( name, Hoodoo::Presenters::Array, options, &block )
         internationalised() if ary.is_internationalised?()
@@ -89,11 +174,13 @@ module Hoodoo
       # that the object may contain, in abstract terms.
       #
       # +name+::    The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       # &block::    Optional block declaring the fields making up the nested
       #             hash
       #
-      # == Example 1
+      # == Block-based complex type examples
+      #
+      # === Example 1
       #
       # A Hash where keys must be <= 16 characters long and values must match
       # a <tt>Hoodoo::Data::Types::Currency</tt> type (with the default
@@ -112,7 +199,7 @@ module Hoodoo
       #
       # See Hoodoo::Presenters::Hash#keys for more information and examples.
       #
-      # == Example 2
+      # === Example 2
       #
       # A Hash where keys must be 'one' or 'two', each with a value matching
       # the given schema. Here, the example assumes that a subclass of
@@ -137,68 +224,104 @@ module Hoodoo
       #
       # See Hoodoo::Presenters::Hash#key for more information and examples.
       #
-      # == Limitations
+      # == Simple types
       #
-      # The syntax cannot express simple value types. It always describes a
-      # nested object. So, the following describes a Hash called +payload+
-      # which has arbitrary keys each leading to a nested _object_ with
-      # key/value pairs where the key is called +some_value+ and the value
-      # is an arbitrary length String:
+      # As with Hoodoo::Presenters::Array, simple types can be declared for
+      # Hash key values by passing a +:type+ option to
+      # Hoodoo::Presenters::Hash#key or Hoodoo::Presenters::Hash#keys. See
+      # the Hoodoo::Presenters::Array documentation for a list of types.
       #
-      #     class NotSoSimpleHash < Hoodoo::Presenters::Base
+      # For individual specific keys in Hoodoo::Presenters::Hash#key, it
+      # _does_ make sense sometimes to specify field defaults using either a
+      # +:default+ or +:field_default+ key (they are synonyms). For arbitrary
+      # keys via Hoodoo::Presenters::Hash#keys the situation is the same as
+      # with array entries and it does _not_ make sense to specify field
+      # defaults.
+      #
+      # === Simple type example
+      #
+      #     class Person < Hoodoo::Presenters::Base
       #       schema do
-      #         hash :payload do
-      #           keys do
-      #             text :some_value
-      #           end
+      #         hash :name do
+      #           key :first, :type => :text
+      #           key :last,  :type => :text
+      #         end
+      #
+      #         hash :address do
+      #           keys :type => :text
+      #         end
+      #
+      #         hash :identifiers, :required => true do
+      #           keys :length => 8, :type => :string, :field_length => 32
       #         end
       #       end
       #     end
       #
-      # This is a valid piece of Ruby input data for the above which will
-      # render without changes and validate successfully:
+      # The optional Hash called +name+ has two optional keys which must be
+      # called +first+ or +last+ and have values that conform to
+      # Hoodoo::Presenters::Text.
+      #
+      # The optional Hash called +address+ has arbitrarily named unbounded
+      # length keys which where present must conform to
+      # Hoodoo::Presenters::Text.
+      #
+      # The required Hash called +identifiers+ hash arbitrarily named keys
+      # with a maximum length of 8 characters which must have values that
+      # conform to Hoodoo::Presenters::String and are each no more than
+      # 32 characters long.
+      #
+      # Therefore the following payload is valid:
       #
       #     data = {
-      #       "payload" => {
-      #         "any_key_name"     => { "some_value" => "Any string" },
-      #         "another_key_name" => { "some_value" => "Another string" },
+      #       "name" => {
+      #         "first" => "Test",
+      #         "last" => "Testy"
+      #       },
+      #       "address" => {
+      #         "road" => "1 Test Street",
+      #         "city" => "Testville",
+      #         "post_code" => "T01 C41"
+      #       },
+      #       "identifiers" => {
+      #         "primary" => "9759c77d188f4bfe85959738dc6f8505",
+      #         "postgres" => "1442"
       #       }
       #     }
       #
-      #     NotSoSimpleHash.validate( data )
+      #     Person.validate( data )
       #     # => []
       #
-      # This is invalid because one of the values is not a String:
+      # The following example contains numerous mistakes:
       #
       #     data = {
-      #       "payload" => {
-      #         "any_key_name"     => { "some_value" => "Any string" },
-      #         "another_key_name" => { "some_value" => 22 },
+      #       "name" => {
+      #         "first" => "Test",
+      #         "surname" => "Testy" # Invalid key name
+      #       },
+      #       "address" => {
+      #         "road" => "1 Test Street",
+      #         "city" => "Testville",
+      #         "zip" => 90421 # Integer, not Text
+      #       },
+      #       "identifiers" => {
+      #         "primary" => "9759c77d188f4bfe85959738dc6f8505_441", # Value too long
+      #         "postgresql" => "1442" # Key name too long
       #       }
       #     }
       #
-      #     NotSoSimpleHash.validate( data )
-      #     # => [{"code"=>"generic.invalid_string",
-      #     #      "message"=>"Field `payload.another_key_name.some_value` is an invalid string",
-      #     #      "reference"=>"payload.another_key_name.some_value"}]
-      #
-      # This is invalid because the DSL cannot express a simple String value
-      # for the keys:
-      #
-      #     data = {
-      #       "payload" => {
-      #         "any_key_name"     => "Any string",
-      #         "another_key_name" => "Another string",
-      #       }
-      #     }
-      #
-      #     NotSoSimpleHash.validate( data )
-      #     # => [{"code"=>"generic.invalid_object",
-      #     #      "message"=>"Field `payload.any_key_name` is an invalid object",
-      #     #      "reference"=>"payload.any_key_name"},
-      #     #     {"code"=>"generic.invalid_object",
-      #     #      "message"=>"Field `payload.another_key_name` is an invalid object",
-      #     #      "reference"=>"payload.another_key_name"}]
+      #     Person.validate( data )
+      #     # => [{"code"=>"generic.invalid_hash",
+      #     #      "message"=>"Field `name` is an invalid hash due to unrecognised keys `surname`",
+      #     #      "reference"=>"name"},
+      #     #     {"code"=>"generic.invalid_string",
+      #     #      "message"=>"Field `address.zip` is an invalid string",
+      #     #      "reference"=>"address.zip"},
+      #     #     {"code"=>"generic.invalid_string",
+      #     #      "message"=>"Field `identifiers.primary` is longer than maximum length `32`",
+      #     #      "reference"=>"identifiers.primary"},
+      #     #     {"code"=>"generic.invalid_string",
+      #     #      "message"=>"Field `identifiers.postgresql` is longer than maximum length `8`",
+      #     #      "reference"=>"identifiers.postgresql"}]
       #
       def hash( name, options = {}, &block )
         hash = property( name, Hoodoo::Presenters::Hash, options, &block )
@@ -207,8 +330,8 @@ module Hoodoo
 
       # Define a JSON integer with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::   The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def integer( name, options = {} )
         property( name, Hoodoo::Presenters::Integer, options )
@@ -216,8 +339,9 @@ module Hoodoo
 
       # Define a JSON string with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true, :length => 10
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt> and
+      #             mandatory <tt>:length => [max-length-in-chars]</tt>
       #
       def string( name, options = {} )
         property( name, Hoodoo::Presenters::String, options )
@@ -225,8 +349,8 @@ module Hoodoo
 
       # Define a JSON float with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def float( name, options = {} )
         property( name, Hoodoo::Presenters::Float, options )
@@ -234,8 +358,9 @@ module Hoodoo
 
       # Define a JSON decimal with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true, :precision => 10
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt> and
+      #             mandatory <tt>:precision => [decimal-precision-number]</tt>
       #
       def decimal( name, options = {} )
         property( name, Hoodoo::Presenters::Decimal, options )
@@ -243,8 +368,8 @@ module Hoodoo
 
       # Define a JSON boolean with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def boolean( name, options = {} )
         property( name, Hoodoo::Presenters::Boolean, options )
@@ -252,8 +377,8 @@ module Hoodoo
 
       # Define a JSON date with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def date( name, options = {} )
         property( name, Hoodoo::Presenters::Date, options )
@@ -261,8 +386,8 @@ module Hoodoo
 
       # Define a JSON datetime with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def datetime( name, options = {} )
         property( name, Hoodoo::Presenters::DateTime, options )
@@ -271,8 +396,8 @@ module Hoodoo
       # Define a JSON string of unlimited length with the supplied name
       # and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def text( name, options = {} )
         property( name, Hoodoo::Presenters::Text, options )
@@ -281,9 +406,10 @@ module Hoodoo
       # Define a JSON string which can only have a restricted set of exactly
       # matched values, with the supplied name and options.
       #
-      # +name+:: The JSON key
-      # +options+:: A +Hash+ of options, e.g. :required => true and mandatory
-      #             :from => [array-of-allowed-strings-or-symbols]
+      # +name+::    The JSON key
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt> and
+      #             mandatory
+      #             <tt>:from => [array-of-allowed-strings-or-symbols]</tt>
       #
       def enum( name, options = {} )
         property( name, Hoodoo::Presenters::Enum, options )
@@ -293,7 +419,7 @@ module Hoodoo
       # length that contains comma-separated tag strings.
       #
       # +field_name+:: Name of the field that will hold the tags.
-      # +options+:: Optional options hash. See Hoodoo::Presenters::BaseDSL.
+      # +options+::    Optional options hash. See Hoodoo::Presenters::BaseDSL.
       #
       # Example - a Product resource which supports product tagging:
       #
@@ -573,7 +699,7 @@ module Hoodoo
       #
       # +name+::    The JSON key
       # +type+::    A +Class+ for validation
-      # +options+:: A +Hash+ of options, e.g. :required => true
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true</tt>
       #
       def property( name, type, options = {}, &block )
         name = name.to_s

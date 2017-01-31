@@ -27,6 +27,14 @@ module Hoodoo
         super( name, options )
 
         if options.has_key?( :type )
+
+          # Defining a property via "#property" adds it to the @properties
+          # array, but handling of simple Types in array validation and
+          # rendering is too different from complex types to use the same
+          # code flow; we need the property to be independently used, so
+          # extract it into its own instance variable and delete the item
+          # from @properties.
+          #
           value_klass     = type_option_to_class( options[ :type ] )
           random_name     = Hoodoo::UUID.generate()
           @value_property = property( random_name,
@@ -34,6 +42,18 @@ module Hoodoo
                                       extract_field_prefix_options_from( options ) )
 
           @properties.delete( random_name )
+
+          # This is approaching a blunt hack. Without it, validation errors
+          # will result in e.g. "fields[1].cd2f0a15ec8e4bd6ab1964b25b044e69"
+          # in error messages. By using nil, the validation code's JSON path
+          # array to string code doesn't include the item, giving the
+          # desired result. In addition, the base class Field#render code
+          # has an important check for non-nil but empty and bails out, but
+          # allows the nil name case to render simple types as expected. A
+          # delicate / fragile balance of nil-vs-empty arises.
+          #
+          @value_property.name = nil
+
         end
       end
 

@@ -71,7 +71,7 @@ module Hoodoo
       # Returns the full path array that was used (a clone of +@path+).
       #
       def render( data, target )
-        return if @name.empty?
+        return if @name.nil? == false && @name.empty?
 
         root  = target
         path  = @path.clone
