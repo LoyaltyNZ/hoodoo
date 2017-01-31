@@ -46,6 +46,14 @@
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
         <dt>R</dt>
         <dd>
           <ul>
@@ -103,6 +111,76 @@ instances.</p></td>
 
 
     <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( name, options = {} )
+            <a href="../../../classes/Hoodoo/Presenters/Array.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Initialize an <a href="Array.html">Array</a> instance with the appropriate
+name and options.</p>
+<dl class="rdoc-list note-list"><dt>name
+<dd>
+<p>The JSON key.</p>
+</dd><dt>options
+<dd>
+<p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true, :type
+=&gt; :enum, :field_from =&gt; [ 1, 2, 3, 4 ]</code>. If a
+<code>:type</code> field is present, the <a href="Array.html">Array</a>
+contains atomic types of the given kind. Otherwise, either pass a block
+with inner schema DSL calls describing complex array entry schema, or
+nothing for no array content validation. If a block <em>and</em>
+<code>:type</code> option are passed, the block is used and option ignored.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+  <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:type</span> )
+
+    <span class="ruby-comment"># Defining a property via &quot;#property&quot; adds it to the @properties</span>
+    <span class="ruby-comment"># array, but handling of simple Types in array validation and</span>
+    <span class="ruby-comment"># rendering is too different from complex types to use the same</span>
+    <span class="ruby-comment"># code flow; we need the property to be independently used, so</span>
+    <span class="ruby-comment"># extract it into its own instance variable and delete the item</span>
+    <span class="ruby-comment"># from @properties.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-identifier">value_klass</span>     = <span class="ruby-identifier">type_option_to_class</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:type</span> ] )
+    <span class="ruby-identifier">random_name</span>     = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+    <span class="ruby-ivar">@value_property</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">random_name</span>,
+                                <span class="ruby-identifier">value_klass</span>,
+                                <span class="ruby-identifier">extract_field_prefix_options_from</span>( <span class="ruby-identifier">options</span> ) )
+
+    <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">random_name</span> )
+
+    <span class="ruby-comment"># This is approaching a blunt hack. Without it, validation errors</span>
+    <span class="ruby-comment"># will result in e.g. &quot;fields[1].cd2f0a15ec8e4bd6ab1964b25b044e69&quot;</span>
+    <span class="ruby-comment"># in error messages. By using nil, the validation code&#39;s JSON path</span>
+    <span class="ruby-comment"># array to string code doesn&#39;t include the item, giving the</span>
+    <span class="ruby-comment"># desired result. In addition, the base class Field#render code</span>
+    <span class="ruby-comment"># has an important check for non-nil but empty and bails out, but</span>
+    <span class="ruby-comment"># allows the nil name case to render simple types as expected. A</span>
+    <span class="ruby-comment"># delicate / fragile balance of nil-vs-empty arises.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-ivar">@value_property</span>.<span class="ruby-identifier">name</span> = <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
       <div class="sectiontitle">Instance Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-i-render">
@@ -133,7 +211,7 @@ yielding the rendered array.</p>
                 <a href="javascript:toggleSource('method-i-render_source')" id="l_method-i-render_source">show</a>
               </p>
               <div id="method-i-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 51</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># Data provided is explicitly nil or not an array? Don&#39;t need to render</span>
@@ -152,11 +230,7 @@ yielding the rendered array.</p>
 
   <span class="ruby-comment"># ...then look at rendering the input entries of &#39;data&#39; into &#39;array&#39;.</span>
 
-  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
-    <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">data</span> )
-
-  <span class="ruby-keyword">else</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
     <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
 
       <span class="ruby-comment"># We have properties defined so array values (in &quot;item&quot;) must be</span>
@@ -184,6 +258,21 @@ yielding the rendered array.</p>
       <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
       <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-identifier">rendered</span> )
     <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@value_property</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span>
+      <span class="ruby-identifier">subtarget</span> = {}
+      <span class="ruby-ivar">@value_property</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">item</span>, <span class="ruby-identifier">subtarget</span> )
+      <span class="ruby-identifier">rendered</span> = <span class="ruby-identifier">subtarget</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">read_at_path</span>( <span class="ruby-identifier">subtarget</span>, <span class="ruby-identifier">path</span> ).<span class="ruby-identifier">values</span>.<span class="ruby-identifier">first</span>
+
+      <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
+      <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-identifier">rendered</span> )
+    <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># Must modify existing instance of &#39;array&#39;, so use &#39;push()&#39;</span>
+    <span class="ruby-identifier">array</span>.<span class="ruby-identifier">push</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">data</span> )
+
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -208,14 +297,18 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
               </p>
               <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 16</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Array</span> )
-    <span class="ruby-comment"># No array entry schema? No array entry validation, then.</span>
-    <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
+
+    <span class="ruby-comment"># A block which defined properties for this instance takes</span>
+    <span class="ruby-comment"># precedence; then check for a &quot;:type&quot; option via &quot;@@value_property&quot;</span>
+    <span class="ruby-comment"># stored in the constructor; then give up and do no validation.</span>
+    <span class="ruby-comment">#</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
       <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>, <span class="ruby-identifier">index</span> <span class="ruby-operator">|</span>
         <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">name</span>, <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
           <span class="ruby-identifier">rdata</span> = ( <span class="ruby-identifier">item</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">name</span> ) ) <span class="ruby-operator">?</span> <span class="ruby-identifier">item</span>[ <span class="ruby-identifier">name</span> ] <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>
@@ -223,7 +316,13 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
           <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">rdata</span>, <span class="ruby-identifier">indexed_path</span> ) )
         <span class="ruby-keyword">end</span>
       <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@value_property</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+      <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>, <span class="ruby-identifier">index</span> <span class="ruby-operator">|</span>
+        <span class="ruby-identifier">indexed_path</span> = <span class="ruby-node">&quot;#{ full_path( path ) }[#{ index }]&quot;</span>
+        <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-ivar">@value_property</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">item</span>, <span class="ruby-identifier">indexed_path</span> ) )
+      <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
+
   <span class="ruby-keyword">else</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_array&#39;</span>,
@@ -260,7 +359,7 @@ sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
                 <a href="javascript:toggleSource('method-i-walk_source')" id="l_method-i-walk_source">show</a>
               </p>
               <div id="method-i-walk_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 109</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/array.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 
