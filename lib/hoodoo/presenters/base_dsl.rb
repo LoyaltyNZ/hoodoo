@@ -74,7 +74,7 @@ module Hoodoo
       # [:date]
       #   Hoodoo::Presenters::Date (see #date)
       # [:date_time]
-      #   Hoodoo::Presenters::DateTime (see #date_time)
+      #   Hoodoo::Presenters::DateTime (see #datetime)
       # [:decimal]
       #   Hoodoo::Presenters::Decimal (see #decimal)
       # [:enum]
@@ -93,7 +93,7 @@ module Hoodoo
       #   Hoodoo::Presenters::UUID (see #uuid)
       #
       # Some of these types require additional parameters, such as
-      # +:precision+ for Hoodoo::Presenters::Decimal or +from+ for
+      # +:precision+ for Hoodoo::Presenters::Decimal or +:from+ for
       # Hoodoo::Presenters::Enum. For _any_ options that are to apply to the
       # the new Array simple type fields, prefix the option with the string
       # +field_+ - for example, <tt>:field_precision => 2</tt>.
@@ -139,7 +139,7 @@ module Hoodoo
       #       end
       #     end
       #
-      #     # I.e.:
+      #     # E.g.:
       #     #
       #     # {
       #     #   "uuids" => [ "...uuid...", "...uuid...", ... ]
@@ -158,7 +158,7 @@ module Hoodoo
       #       end
       #     end
       #
-      #     # I.e.:
+      #     # E.g.:
       #     #
       #     # {
       #     #   "numbers" => [ BigDecimal.new( '2.2511' ) ]
@@ -226,10 +226,10 @@ module Hoodoo
       #
       # == Simple types
       #
-      # As with Hoodoo::Presenters::Array, simple types can be declared for
-      # Hash key values by passing a +:type+ option to
-      # Hoodoo::Presenters::Hash#key or Hoodoo::Presenters::Hash#keys. See
-      # the Hoodoo::Presenters::Array documentation for a list of types.
+      # As with #array, simple types can be declared for Hash key values by
+      # passing a +:type+ option to Hoodoo::Presenters::Hash#key or
+      # Hoodoo::Presenters::Hash#keys. See the #array documentation for a list
+      # of permitted types.
       #
       # For individual specific keys in Hoodoo::Presenters::Hash#key, it
       # _does_ make sense sometimes to specify field defaults using either a
