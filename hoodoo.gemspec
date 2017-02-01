@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do | s |
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2017-02-01'
+  s.date        = '2017-02-02'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = [ 'Loyalty New Zealand' ]
@@ -20,7 +20,7 @@ Gem::Specification.new do | s |
   s.required_ruby_version = '>= 2.1'
 
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
-  s.add_runtime_dependency     'redis-rb',         '~> 3.2' # Redis client
+  s.add_runtime_dependency     'redis',            '~> 3.2' # Redis client
 
   s.add_development_dependency 'rake',             '~> 10.4'
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'

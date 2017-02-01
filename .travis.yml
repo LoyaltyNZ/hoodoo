@@ -1,15 +1,15 @@
 # If you use Rack 2 you'll need Ruby 2.2, but Hoodoo works with any Rack
-# protocol version 1.3 compatible gem, including Rack 1.6; so Ruby 2.1.9
+# protocol version 1.3 compatible gem, including Rack 1.6; so Ruby 2.1
 # is also supported.
 #
 language: ruby
 matrix:
   include:
-    - rvm: 2.3.1
-      gemfile: Gemfile 
-    - rvm: 2.2.5
+    - rvm: 2.3.3
       gemfile: Gemfile
-    - rvm: 2.1.9
+    - rvm: 2.2.6
+      gemfile: Gemfile
+    - rvm: 2.1.10
       gemfile: rack_1.gemfile
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
