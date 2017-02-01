@@ -16,10 +16,11 @@ module Hoodoo
     #
     class Base
 
-      # Base class template for an initializer. DO NOT CALL "super()"!
+      # Base class template for a constructor. *DO* *NOT* call +super()+ in
+      # subclass constructors!
       #
       # +storage_host_uri+:: The engine-dependent connection URI. See
-      #                      Hoodoo::TransientStore#initialize for details.
+      #                      Hoodoo::TransientStore::new for details.
       #
       def initialize( storage_host_uri: )
         raise "Subclasses must implement a constructor compatible with Hoodoo::TransientStore::Base\#initialize"
@@ -50,6 +51,10 @@ module Hoodoo
 
       # Base class template for the plug-in's back-end implementation of
       # Hoodoo::TransientStore#delete - see that for details.
+      #
+      # The implementation is free to raise an exception if an error is
+      # encountered while trying to get the data - this will be caught and
+      # ignored by Hoodoo::TransientStore#delete.
       #
       def delete( key: )
         raise "Subclasses must implement Hoodoo::TransientStore::Base\#delete"

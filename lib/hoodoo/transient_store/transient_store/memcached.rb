@@ -12,17 +12,21 @@ require 'dalli'
 module Hoodoo
   class TransientStore
 
-    # Hoodoo::TransientStore plugin supporting Memcached. The Dalli gem is
-    # used for Memcached communication.
-    #
-    # * https://github.com/petergoldstein/dalli
+    # Hoodoo::TransientStore plugin for {Memcached}[https://memcached.org]. The
+    # {Dalli gem}[https://github.com/petergoldstein/dalli] is used for server
+    # communication.
     #
     class Memcached < Hoodoo::TransientStore::Base
 
-      # See Hoodoo::TransientStore::Base#initialize for details.
+      # See Hoodoo::TransientStore::Base::new for details.
       #
-      # The Dalli gem is used to talk to Memcached and accepts connection UIRs
-      # of simple, terse forms such as <tt>'localhost:11211'</tt>.
+      # The {Dalli gem}[https://github.com/petergoldstein/dalli] is used to
+      # talk to {Memcached}[https://memcached.org] and accepts connection UIRs
+      # of simple, terse forms such as <tt>'localhost:11211'</tt>. Connections
+      # are configured with JSON serialisation, compression off and a forced
+      # namespace of +nz_co_loyalty_hoodoo_transient_store_+ to avoid collision
+      # of data stored with this object and other data that may be in the
+      # Memcached instance identifier by +storage_host_uri+.
       #
       def initialize( storage_host_uri: )
         @storage_host_uri = storage_host_uri
@@ -32,16 +36,19 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#set for details.
       #
       def set( key:, payload:, maximum_lifespan: nil )
+        @client.set( key, payload, maximum_lifespan )
       end
 
       # See Hoodoo::TransientStore::Base#get for details.
       #
       def get( key: )
+        @client.get( key )
       end
 
       # See Hoodoo::TransientStore::Base#delete for details.
       #
       def delete( key: )
+        @client.delete( key )
       end
 
     private
@@ -62,7 +69,7 @@ module Hoodoo
             {
               :compress   => false,
               :serializer => JSON,
-              :namespace  => :nz_co_loyalty_hoodoo_session_
+              :namespace  => :nz_co_loyalty_hoodoo_transient_store_
             }
           )
 

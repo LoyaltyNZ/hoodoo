@@ -12,14 +12,17 @@ require 'redis'
 module Hoodoo
   class TransientStore
 
-    # Hoodoo::TransientStore plugin supporting Redis.
+    # Hoodoo::TransientStore plugin supporting {Redis}[https://redis.io]. The
+    # {redis-rb gem}[https://github.com/redis/redis-rb] is used for server
+    # communication.
     #
     class Redis < Hoodoo::TransientStore::Base
 
-      # See Hoodoo::TransientStore::Base#initialize for details.
+      # See Hoodoo::TransientStore::Base::new for details.
       #
-      # The Redis-RB gem is used to talk to Redis and accepts connection UIRs
-      # with a +redis+ protocol, such as <tt>'redis://localhost:6379'</tt>.
+      # The {redis-rb gem}[https://github.com/redis/redis-rb] is used to talk
+      # to {Redis}[https://redis.io] and requires connection UIRs with a
+      # +redis+ protocol, such as <tt>redis://localhost:6379</tt>.
       #
       def initialize( storage_host_uri: )
       end

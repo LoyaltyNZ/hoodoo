@@ -11,12 +11,12 @@
 
 module Hoodoo
 
-  # A simple abstraction over transient storage engines such as Memcached or
-  # Redis, making it easier for client code to switch engines with very few
-  # changes. If the storage engine chosen when creating instances of this
-  # object is defined in application-wide configuration data, all you would
-  # need to do is change that configuration for all transient data use to
-  # switch over to the new engine.
+  # A simple abstraction over transient storage engines such as
+  # {Memcached}[https://memcached.org] or {Redis}[https://redis.io], making it
+  # it easier for client code to switch engines with very few changes. If the
+  # storage engine chosen when creating instances of this object is defined in
+  # application-wide configuration data, all you would need to do is change the
+  # configuration for all new TransientStore instances to use the new engine.
   #
   class TransientStore
 
@@ -24,14 +24,27 @@ module Hoodoo
     # Class methods
     ###########################################################################
 
-    # Register a new storage class. It _MUST_ inherit from and thus follow the
-    # template laid out in Hoodoo::TransientStore::Base.
+    # Register a new storage engine plugin class. It _MUST_ inherit from and
+    # thus follow the template laid out in Hoodoo::TransientStore::Base.
     #
     # _Named_ parameters are:
     #
-    # +as+:
+    # +as+::    The name, as a Symbol, for the ::new +storage_engine+
+    #           input parameter, to select this plugin.
+    #
+    # +using+:: The class reference of the Hoodoo::TransientStore::Base
+    #           subclass to be associated with the name given in +as+.
+    #
+    # Example:
+    #
+    #     Hoodoo::TransientStore.register(
+    #       as:    :memcached,
+    #       using: Hoodoo::TransientStore::Memcached
+    #     )
     #
     def self.register( as:, using: )
+      as = as.to_sym
+
       if @@supported_storage_engines.has_key?( as )
         raise "Hoodoo::TransientStore: A storage engine called '#{ as }' is already registered"
       end
@@ -39,25 +52,37 @@ module Hoodoo
       @@supported_storage_engines[ as ] = using
     end
 
+    # Remove a storage engine plugin class from the supported collection. Any
+    # existing Hoodoo::TransientStore instances using the removed class will
+    # not be affected, but new instances cannot be made.
+    #
+    # _Named_ parameters are:
+    #
+    # +as+:: The value given to #register in the corresponding +as+ parameter.
+    #
     def self.deregister( as: )
       @@supported_storage_engines.delete( as )
     end
 
+    # Return an array of the names of all supported storage engine names known
+    # to the Hoodoo::TransientStore class. Any one of those names can be used
+    # with the ::new +storage_engine+ parameter.
+    #
     def self.supported_storage_engines
-      @@supported_storage_engines.keys
+      @@supported_storage_engines.keys()
     end
 
     ###########################################################################
     # Instance methods
     ###########################################################################
 
-    # Read this instance's storage engine; see #supported_storage_engines and
-    # #initialize.
+    # Read this instance's storage engine; see ::supported_storage_engines and
+    # ::new.
     #
     attr_reader :storage_engine
 
     # Read this instance's default item maximum lifespan, in sections. See
-    # also #initialize.
+    # also ::new.
     #
     attr_reader :default_maximum_lifespan
 
@@ -73,11 +98,12 @@ module Hoodoo
     # Engine plug-ins are recommended to attempt to gain and test a connection
     # to the storage engine when this object is constructed, so if building a
     # TransientStore instance, ensure your chosen storage engine is running
-    # first.
+    # first. Exceptions may be raised by storage engines, so you will probably
+    # want to catch those with more civilised error handling code.
     #
     # _Named_ parameters are:
     #
-    # +storage_engine+::           An entry from #supported_storage_engines.
+    # +storage_engine+::           An entry from ::supported_storage_engines.
     #
     # +storage_host_uri+::         The engine-dependent connection URI. Consult
     #                              documentation for your chosen engine to find
@@ -97,12 +123,12 @@ module Hoodoo
       default_maximum_lifespan: 604800
     )
 
-      unless @@supported_storage_engines.include?( storage_engine)
+      unless self.class.supported_storage_engines().include?( storage_engine)
 
         # Be kind and use 'inspect' to indicate that we expect Symbols here
         # in the exception, because of the arising leading ':' in the output.
         #
-        engines = @@supported_storage_engines.map { | symbol | "'#{ symbol.inspect }'" }
+        engines = self.class.supported_storage_engines().map { | symbol | "'#{ symbol.inspect }'" }
         allowed = engines.join( ', ' )
 
         raise "Hoodoo::TransientStore: Unrecognised storage engine '#{ storage_engine.inspect }' requested; allowed values: #{ allowed }"
@@ -110,7 +136,7 @@ module Hoodoo
 
       @default_maximum_lifespan = default_maximum_lifespan
       @storage_engine           = storage_engine
-      @storage_engine_instance  = @@supported_storage_engines[ storage_engine ].new(
+      @storage_engine_instance  = self.class.supported_storage_engines()[ storage_engine ].new(
         storage_host_uri: storage_host_uri
       )
 
@@ -150,27 +176,27 @@ module Hoodoo
     #
     # _Named_ parameters are:
     #
-    # +key+:              Storage key to use in the engine, which is then used
-    #                     in subsequent calls to #get and possibly eventually
-    #                     to #delete. Only non-empty Strings or Symbols are
-    #                     permitted, else an exception will be raised.
+    # +key+::              Storage key to use in the engine, which is then used
+    #                      in subsequent calls to #get and possibly eventually
+    #                      to #delete. Only non-empty Strings or Symbols are
+    #                      permitted, else an exception will be raised.
     #
-    # +payload+:          Payload data to store under the given +key+. A flat
-    #                     Hash is recommended rather than simple types such as
-    #                     String (unless marshalling a complex type into such)
-    #                     in order to make potential additions to stored data
-    #                     easier to implement. Note that +nil+ is prohibited.
+    # +payload+::          Payload data to store under the given +key+. A flat
+    #                      Hash is recommended rather than simple types such as
+    #                      String (unless marshalling a complex type into such)
+    #                      in order to make potential additions to stored data
+    #                      easier to implement. Note that +nil+ is prohibited.
     #
-    # +maximum_lifespan+: Optional maximum lifespan in seconds. Storage engines
-    #                     may chooset to evict payloads sooner than this, so it
-    #                     is a maximum time, not a guarantee. Omit to use this
-    #                     TransientStore instance's default value - see
-    #                     #initialize. If you know you no longer need a piece
-    #                     of data at a particular point in the execution flow
-    #                     of your code, explicitly delete it via #delete rather
-    #                     than leaving it to expire. This maximises the storage
-    #                     engine's pool free space and in turn minimises the
-    #                     chance of it evicting stored items early.
+    # +maximum_lifespan+:: Optional maximum lifespan, seconds. Storage engines
+    #                      may chooset to evict payloads sooner than this; it
+    #                      is a maximum time, not a guarantee. Omit to use this
+    #                      TransientStore instance's default value - see ::new.
+    #                      If you know you no longer need a piece of data at a
+    #                      particular point in the execution flow of your code,
+    #                      explicitly delete it via #delete rather than leaving
+    #                      it to expire. This maximises the storage engine's
+    #                      pool free space and so minimises the chance of early
+    #                      item eviction.
     #
     def set( key:, payload:, maximum_lifespan: nil )
       key = self.normalise_key( key, 'set' )
@@ -198,7 +224,7 @@ module Hoodoo
     #
     # _Named_ parameters are:
     #
-    # +key+: Key previously given to #set.
+    # +key+:: Key previously given to #set.
     #
     # Returns +nil+ if the item is not found - either the key is wrong, the
     # stored data has expired or the stored data has been evicted early from
@@ -221,7 +247,7 @@ module Hoodoo
     #
     # _Named_ parameters are:
     #
-    # +key+: Key previously given to #set.
+    # +key+:: Key previously given to #set.
     #
     # If the item has already been expired, evicted or the key is simply not
     # recognised, the method returns silently.
@@ -234,9 +260,7 @@ module Hoodoo
 
       begin
         @storage_engine_instance.delete( key )
-      rescue
-        nil
-      end
+      rescue; end
     end
 
   private
@@ -245,10 +269,10 @@ module Hoodoo
     # String and ensure it isn't empty. Returns the non-empty String version.
     # Raises exceptions for bad input classes or empty keys.
     #
-    # +key+:                 Key to normalise.
+    # +key+::                 Key to normalise.
     #
-    # +calling_method_name+: Name of calling method to declare in exception
-    #                        messages, to aid callers in debugging.
+    # +calling_method_name+:: Name of calling method to declare in exception
+    #                         messages, to aid callers in debugging.
     #
     def normalise_key( key, calling_method_name )
       unless key.is_a?( String ) || key.is_a?( Symbol )

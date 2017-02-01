@@ -11,8 +11,9 @@
 module Hoodoo
   class TransientStore
 
-    # Hoodoo::TransientStore plugin supporting storage into both Memcached and
-    # Redis simultaneously.
+    # Hoodoo::TransientStore plugin supporting storage into both
+    # {Memcached}[https://memcached.org] and {Redis}[https://redis.io]
+    # simultaneously.
     #
     # The implementation uses Hoodoo::TransientStore::Memcached and
     # Hoodoo::TransientStore::Redis to talk to the two storage engines.
@@ -34,7 +35,7 @@ module Hoodoo
     #
     class MemcachedRedisMirror < Hoodoo::TransientStore::Base
 
-      # See Hoodoo::TransientStore::Base#initialize for details.
+      # See Hoodoo::TransientStore::Base::new for details.
       #
       # The +storage_host_uri+ parameter is necessarily unusual here. It must
       # be _a Hash_ with Symbol keys +:memcached+ and +:redis+, those values
@@ -46,6 +47,10 @@ module Hoodoo
       #       :memcached => 'localhost:11211',
       #       :redis     => 'redis://localhost:6379'
       #     }
+      #
+      # See Hoodoo::TransientStore::Memcached::new and
+      # Hoodoo::TransientStore::Redis::new for details of connection URI
+      # requirements for those engines.
       #
       def initialize( storage_host_uri: )
         unless storage_host_uri.is_a?( Hash ) &&
