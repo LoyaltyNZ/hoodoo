@@ -19,8 +19,8 @@ Gem::Specification.new do | s |
 
   s.required_ruby_version = '>= 2.1'
 
-  s.add_runtime_dependency     'kgio',             '~> 2.9' # Speeds up Dalli
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
+  s.add_runtime_dependency     'redis-rb',         '~> 3.2' # Redis client
 
   s.add_development_dependency 'rake',             '~> 10.4'
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'
