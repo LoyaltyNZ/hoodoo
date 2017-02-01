@@ -20,6 +20,9 @@ module Hoodoo
 
       # See Hoodoo::TransientStore::Base::new for details.
       #
+      # Do not instantiate this class directly. Use
+      # Hoodoo::TransientStore::new.
+      #
       # The {Dalli gem}[https://github.com/petergoldstein/dalli] is used to
       # talk to {Memcached}[https://memcached.org] and accepts connection UIRs
       # of simple, terse forms such as <tt>'localhost:11211'</tt>. Connections
@@ -29,8 +32,8 @@ module Hoodoo
       # Memcached instance identified by +storage_host_uri+.
       #
       def initialize( storage_host_uri: )
-        @storage_host_uri = storage_host_uri
-        @client           = self.connect_to_memcached( storage_host_uri )
+        super # Pass all arguments through -> *not* 'super()'
+        @client = connect_to_memcached( storage_host_uri )
       end
 
       # See Hoodoo::TransientStore::Base#set for details.

@@ -21,9 +21,14 @@ module Hoodoo
 
       # See Hoodoo::TransientStore::Base::new for details.
       #
+      # Do not instantiate this class directly. Use
+      # Hoodoo::TransientStore::new.
+      #
       # The {redis-rb gem}[https://github.com/redis/redis-rb] is used to talk
       # to {Redis}[https://redis.io] and requires connection UIRs with a
       # +redis+ protocol, such as <tt>redis://localhost:6379</tt>.
+      #
+      # TCP keep-alive is enabled for the server connection.
       #
       # All given keys are internally prefixed with a namespace of
       # +nz_co_loyalty_hoodoo_transient_store_+ to avoid collision of data
@@ -31,8 +36,8 @@ module Hoodoo
       # instance identified by +storage_host_uri+.
       #
       def initialize( storage_host_uri: )
-        @storage_host_uri = storage_host_uri
-        @client           = self.connect_to_redis( storage_host_uri )
+        super # Pass all arguments through -> *not* 'super()'
+        @client = connect_to_redis( storage_host_uri )
       end
 
       # See Hoodoo::TransientStore::Base#set for details.
@@ -41,7 +46,7 @@ module Hoodoo
       # by #get; so callers don't need to do marshalling to Strings themselves.
       #
       def set( key:, payload:, maximum_lifespan: )
-        nk = self.namespaced_key( key )
+        nk = namespaced_key( key )
 
         @client[ nk ] = JSON.fast_generate( payload )
         @client.expire( nk, maximum_lifespan )
@@ -50,13 +55,13 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#get for details.
       #
       def get( key: )
-        JSON.parse( @client[ self.namespaced_key( key ) ] )
+        JSON.parse( @client[ namespaced_key( key ) ] )
       end
 
       # See Hoodoo::TransientStore::Base#delete for details.
       #
       def delete( key: )
-        @client.del( self.namespaced_key( key ) )
+        @client.del( namespaced_key( key ) )
       end
 
     private
@@ -76,27 +81,27 @@ module Hoodoo
       #
       def connect_to_redis( host )
         exception = nil
-        stats     = nil
+        info      = nil
         client    = nil
 
         begin
           client = ::Redis.new(
-            :url => host
-              :namespace  => :nz_co_loyalty_hoodoo_transient_store_
+            :url           => host,
+            :tcp_keepalive => 1
           )
 
-          stats = client.stats()
+          info = client.info( 'CPU' )
 
         rescue => e
           exception = e
 
         end
 
-        if stats.nil?
+        if info.nil?
           if exception.nil?
-            raise "Hoodoo::TransientStore::Memcached: Did not get back meaningful data from Memcached at '#{ host }'"
+            raise "Hoodoo::TransientStore::Memcached: Did not get back meaningful data from Redis at '#{ host }'"
           else
-            raise "Hoodoo::TransientStore::Memcached: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
+            raise "Hoodoo::TransientStore::Memcached: Cannot connect to Redis at '#{ host }': #{ exception.to_s }"
           end
         else
           return client

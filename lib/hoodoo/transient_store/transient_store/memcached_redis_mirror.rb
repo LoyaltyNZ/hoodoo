@@ -37,6 +37,9 @@ module Hoodoo
 
       # See Hoodoo::TransientStore::Base::new for details.
       #
+      # Do not instantiate this class directly. Use
+      # Hoodoo::TransientStore::new.
+      #
       # The +storage_host_uri+ parameter is necessarily unusual here. It must
       # be _a Hash_ with Symbol keys +:memcached+ and +:redis+, those values
       # giving the actual storage engine host URI for the respective engines.
@@ -53,6 +56,8 @@ module Hoodoo
       # requirements for those engines.
       #
       def initialize( storage_host_uri: )
+        super # Pass all arguments through -> *not* 'super()'
+
         unless storage_host_uri.is_a?( Hash ) &&
                storage_host_uri.has_key?( :memcached ) &&
                storage_host_uri.has_key?( :redis )

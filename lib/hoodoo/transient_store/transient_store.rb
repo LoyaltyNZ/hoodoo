@@ -45,6 +45,8 @@ module Hoodoo
     def self.register( as:, using: )
       as = as.to_sym
 
+      @@supported_storage_engines = {} unless defined?( @@supported_storage_engines )
+
       if @@supported_storage_engines.has_key?( as )
         raise "Hoodoo::TransientStore: A storage engine called '#{ as }' is already registered"
       end
