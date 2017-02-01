@@ -1,7 +1,7 @@
 ## 1.14.0 (2017-02-02)
 
 * Introduces the new [Hoodoo::TransientStore](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) family, providing a simple abstraction over selectable plug-in storage engine classes. Memcached, Redis and a Memcached/Redis mirror plug-in are available "out of the box".
-* Update Ruby versions for Travis to 2.1.10, 2.2.6 and 2.3.3. Base requirement for RBEnv is updated to 2.2.6 (was 2.2.5) via `.ruby-version`.
+* Update Ruby versions for Travis to 2.1.10, 2.2.6 and 2.3.3. Base requirement via RBEnv for local development is updated to 2.3.3 (was 2.2.5) via `.ruby-version`. Added Travis entry for Ruby 2.4.0.
 
 ## 1.13.0 (2017-02-01)
 
