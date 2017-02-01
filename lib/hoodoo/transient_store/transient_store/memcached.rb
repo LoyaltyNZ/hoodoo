@@ -26,7 +26,7 @@ module Hoodoo
       # are configured with JSON serialisation, compression off and a forced
       # namespace of +nz_co_loyalty_hoodoo_transient_store_+ to avoid collision
       # of data stored with this object and other data that may be in the
-      # Memcached instance identifier by +storage_host_uri+.
+      # Memcached instance identified by +storage_host_uri+.
       #
       def initialize( storage_host_uri: )
         @storage_host_uri = storage_host_uri
@@ -35,7 +35,7 @@ module Hoodoo
 
       # See Hoodoo::TransientStore::Base#set for details.
       #
-      def set( key:, payload:, maximum_lifespan: nil )
+      def set( key:, payload:, maximum_lifespan: )
         @client.set( key, payload, maximum_lifespan )
       end
 
@@ -61,7 +61,7 @@ module Hoodoo
       def connect_to_memcached( host )
         exception = nil
         stats     = nil
-        mclient   = nil
+        client    = nil
 
         begin
           client = ::Dalli::Client.new(
@@ -90,11 +90,13 @@ module Hoodoo
           return client
         end
       end
+
     end
 
     Hoodoo::TransientStore.register(
       as:    :memcached,
       using: Hoodoo::TransientStore::Memcached
     )
+
   end
 end

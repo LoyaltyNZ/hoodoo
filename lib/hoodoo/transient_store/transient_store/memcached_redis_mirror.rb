@@ -65,7 +65,7 @@ module Hoodoo
 
       # See Hoodoo::TransientStore::Base#set for details.
       #
-      def set( key:, payload:, maximum_lifespan: nil )
+      def set( key:, payload:, maximum_lifespan: )
         memcached_result = @memcached_store.set( key: key, payload: payload, maximum_lifespan: maximum_lifespan )
         redis_result     =     @redis_store.set( key: key, payload: payload, maximum_lifespan: maximum_lifespan )
 
@@ -106,5 +106,6 @@ module Hoodoo
       as:    :memcached_redis_mirror,
       using: Hoodoo::TransientStore::MemcachedRedisMirror
     )
+
   end
 end

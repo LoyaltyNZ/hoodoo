@@ -34,7 +34,7 @@ module Hoodoo
       # returned by Hoodoo::TransientStore#set. Otherwise return +true+ on
       # success or +false+ for failures of unknown origin.
       #
-      def set( key:, payload:, maximum_lifespan: nil )
+      def set( key:, payload:, maximum_lifespan: )
         raise "Subclasses must implement Hoodoo::TransientStore::Base\#set"
       end
 
@@ -59,6 +59,7 @@ module Hoodoo
       def delete( key: )
         raise "Subclasses must implement Hoodoo::TransientStore::Base\#delete"
       end
+
     end
   end
 end

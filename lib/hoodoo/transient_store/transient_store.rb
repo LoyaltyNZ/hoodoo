@@ -287,5 +287,6 @@ module Hoodoo
 
       return key
     end
+
   end
 end
