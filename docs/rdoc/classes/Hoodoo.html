@@ -125,6 +125,13 @@
             <li><a href="../files/lib/hoodoo/services/services/response_rb.html">lib/hoodoo/services/services/response.rb</a></li>
             <li><a href="../files/lib/hoodoo/services/services/service_rb.html">lib/hoodoo/services/services/service.rb</a></li>
             <li><a href="../files/lib/hoodoo/services/services/session_rb.html">lib/hoodoo/services/services/session.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/mocks/dalli_client_rb.html">lib/hoodoo/transient_store/mocks/dalli_client.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/mocks/redis_rb.html">lib/hoodoo/transient_store/mocks/redis.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/transient_store_rb.html">lib/hoodoo/transient_store/transient_store.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/transient_store/base_rb.html">lib/hoodoo/transient_store/transient_store/base.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/transient_store/memcached_rb.html">lib/hoodoo/transient_store/transient_store/memcached.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/transient_store/memcached_redis_mirror_rb.html">lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb</a></li>
+            <li><a href="../files/lib/hoodoo/transient_store/transient_store/redis_rb.html">lib/hoodoo/transient_store/transient_store/redis.rb</a></li>
             <li><a href="../files/lib/hoodoo/utilities/string_inquirer_rb.html">lib/hoodoo/utilities/string_inquirer.rb</a></li>
             <li><a href="../files/lib/hoodoo/utilities/utilities_rb.html">lib/hoodoo/utilities/utilities.rb</a></li>
             <li><a href="../files/lib/hoodoo/utilities/uuid_rb.html">lib/hoodoo/utilities/uuid.rb</a></li>
@@ -1149,6 +1156,77 @@ who to “talk to”.</p>
 <pre><code>23-Sep-2014 (ADH): Created.</code></pre>
 <dl class="rdoc-list note-list"><dt>File
 <dd>
+<p>dalli_client.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2017</p>
+</dd><dt>Purpose
+<dd>
+<p>A mock/fake Dalli::Client minimal implementation as an alternative test
+back-end for Memcached-independent tests.</p>
+</dd></dl>
+<hr>
+
+<pre><code>02-Feb-2017 (ADH): Created.</code></pre>
+<dl class="rdoc-list note-list"><dt>File
+<dd>
+<p>redis.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2017</p>
+</dd><dt>Purpose
+<dd>
+<p>A mock/fake Redis client minimal implementation as an alternative test
+back-end for Redis-independent tests.</p>
+</dd></dl>
+<hr>
+
+<pre><code>02-Feb-2017 (ADH): Created.</code></pre>
+<dl class="rdoc-list note-list"><dt>File
+<dd>
+<p>transient_store.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2017</p>
+</dd><dt>Purpose
+<dd>
+<p>Provide a simple abstraction over transient storage engines such as
+Memcached or Redis, making it easier for client code to switch engines with
+very few changes.</p>
+</dd></dl>
+<hr>
+
+<pre><code>01-Feb-2017 (ADH): Created.</code></pre>
+<dl class="rdoc-list note-list"><dt>File
+<dd>
+<p>base.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2017</p>
+</dd><dt>Purpose
+<dd>
+<p>Base class for Base class for <a
+href="Hoodoo/TransientStore.html">Hoodoo::TransientStore</a> plugins.</p>
+</dd></dl>
+<hr>
+
+<pre><code>01-Feb-2017 (ADH): Created.</code></pre>
+<dl class="rdoc-list note-list"><dt>File
+<dd>
+<p>memcached_redis_mirror.rb</p>
+</dd><dt>(C)
+<dd>
+<p>Loyalty New Zealand 2017</p>
+</dd><dt>Purpose
+<dd>
+<p><a href="Hoodoo/TransientStore.html">Hoodoo::TransientStore</a> plugin
+supporting storage into both Memcached and Redis simultaneously.</p>
+</dd></dl>
+<hr>
+
+<pre><code>01-Feb-2017 (ADH): Created.</code></pre>
+<dl class="rdoc-list note-list"><dt>File
+<dd>
 <p>string_inquirer.rb</p>
 </dd><dt>Purpose
 <dd>
@@ -1237,6 +1315,10 @@ thing.</p>
         </li>
         <li>
           <span class="type">CLASS</span>
+          <a href="Hoodoo/TransientStore.html">Hoodoo::TransientStore</a>
+        </li>
+        <li>
+          <span class="type">CLASS</span>
           <a href="Hoodoo/UUID.html">Hoodoo::UUID</a>
         </li>
     </ul>
@@ -1255,7 +1337,7 @@ thing.</p>
           <tr valign='top' id='VERSION'>
             <td class="attr-name">VERSION</td>
             <td>=</td>
-            <td class="attr-value"><pre>&#39;1.13.0&#39;</pre></td>
+            <td class="attr-value"><pre>&#39;1.14.0&#39;</pre></td>
           </tr>
             <tr valign='top'>
               <td>&nbsp;</td>

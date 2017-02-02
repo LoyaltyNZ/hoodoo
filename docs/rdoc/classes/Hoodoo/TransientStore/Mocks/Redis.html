@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::TransientStore::Mocks::Redis</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::TransientStore::Mocks::Redis
+                <span class="parent">&lt;
+                    Object
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../files/lib/hoodoo/transient_store/mocks/redis_rb.html">lib/hoodoo/transient_store/mocks/redis.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Mock known uses of <a href="Redis.html">Redis</a> with test
+implementations. Use explicitly, or as an RSpec implicit mock via something
+like this:</p>
+
+<pre><code>allow( Redis ).to(
+  receive( :new ).
+  and_return( Hoodoo::TransientStore::Mocks::Redis.new )
+)
+</code></pre>
+
+<p>…whenever you need to stub out real <a
+href="../Memcached.html">Memcached</a>. You will probably want to add:</p>
+
+<pre><code>before :all do # (or &quot;:each&quot;)
+  Hoodoo::TransientStore::Mocks::Redis.reset()
+end
+</code></pre>
+
+<p>…to “clean out Memcached” before or between tests. You can check the
+contents of mock <a href="../Memcached.html">Memcached</a> by examining <a
+href="Redis.html#method-c-store">::store</a>&#39;s hash of data.</p>
+
+<p>The test coverage for <a
+href="../../TransientStore.html">Hoodoo::TransientStore</a> selects this
+backend in passing. Generally speaking you should favour <a
+href="../../TransientStore.html">Hoodoo::TransientStore</a> over
+hard-coding to a storage engine available by the <a
+href="../../../Hoodoo.html">Hoodoo</a> abstraction and, as a result, may
+never need this mock class at all.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>#</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-5B-5D">[]</a>,
+              </li>
+              <li>
+                <a href="#method-i-5B-5D-3D">[]=</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-del">del</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>E</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-expire">expire</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>G</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-get">get</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>I</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-info">info</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>R</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-reset">reset</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>S</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-set">set</a>,
+              </li>
+              <li>
+                <a href="#method-c-store">store</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-reset">
+              <b>reset</b>()
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-c-reset" name="method-c-reset" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Wipe out all saved data.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-reset_source')" id="l_method-c-reset_source">show</a>
+              </p>
+              <div id="method-c-reset_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 59</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">reset</span>
+  <span class="ruby-identifier">@@store</span> = {}
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-store">
+              <b>store</b>()
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-c-store" name="method-c-store" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>For test analysis, return the hash of &#39;memcached&#39; mock data.</p>
+
+<p>Entries are referenced by the key you used to originally store them; values
+are hashes with “:expires_at” giving an expiry time or “nil” and “:value”
+giving your stored value.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-store_source')" id="l_method-c-store_source">show</a>
+              </p>
+              <div id="method-c-store_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">store</span>
+  <span class="ruby-identifier">@@store</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-5B-5D">
+              <b>[]</b>( key )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-5B-5D" name="method-i-5B-5D" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Alias for <a href="Redis.html#method-i-get">get</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-5B-5D_source')" id="l_method-i-5B-5D_source">show</a>
+              </p>
+              <div id="method-i-5B-5D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 80</span>
+<span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-keyword ruby-title">key</span> )
+  <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-5B-5D-3D">
+              <b>[]=</b>( key, value )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-5B-5D-3D" name="method-i-5B-5D-3D" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Alias for <a href="Redis.html#method-i-set">set</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-5B-5D-3D_source')" id="l_method-i-5B-5D-3D_source">show</a>
+              </p>
+              <div id="method-i-5B-5D-3D_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 101</span>
+<span class="ruby-keyword">def</span> <span class="ruby-operator">[]=</span>( <span class="ruby-keyword ruby-title">key</span>, <span class="ruby-identifier">value</span> )
+  <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-del">
+              <b>del</b>( key )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-del" name="method-i-del" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Remove data for the given key.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-del_source')" id="l_method-i-del_source">show</a>
+              </p>
+              <div id="method-i-del_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 122</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">del</span>( <span class="ruby-identifier">key</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
+    <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
+    <span class="ruby-number">1</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-number">0</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-expire">
+              <b>expire</b>( key, ttl )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-expire" name="method-i-expire" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set expiry time for a given key, which must exist.</p>
+<dl class="rdoc-list note-list"><dt>ttl
+<dd>
+<p>time-to-live (&#39;live&#39; as in living, not as in &#39;live TV&#39;). A
+value in seconds, after which the data is considered expired.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-expire_source')" id="l_method-i-expire_source">show</a>
+              </p>
+              <div id="method-i-expire_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 111</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expire</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">ttl</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
+    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::TransientStore::Mocks::Redis\#expire: Cannot find key &#39;#{ key }&#39;&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ][ <span class="ruby-value">:expires_at</span> ] = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ttl</span>
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-get">
+              <b>get</b>( key )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-get" name="method-i-get" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Get the data stored under the given key. Returns <code>nil</code> if not
+found / expired.</p>
+<dl class="rdoc-list note-list"><dt>key
+<dd>
+<p>Key to look up (see <a href="Redis.html#method-i-set">set</a>).</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
+              </p>
+              <div id="method-i-get_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 68</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span> )
+  <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-identifier">expires_at</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:expires_at</span> ]
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">expires_at</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">expires_at</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:value</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-info">
+              <b>info</b>( command )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-info" name="method-i-info" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Mock &#39;info&#39; health check.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-info_source')" id="l_method-i-info_source">show</a>
+              </p>
+              <div id="method-i-info_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 133</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">info</span>( <span class="ruby-identifier">command</span> )
+  { <span class="ruby-value">:alive</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">command</span> }
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-set">
+              <b>set</b>( key, value, ttl = nil )
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/Redis.html#method-i-set" name="method-i-set" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Set data for a given key.</p>
+<dl class="rdoc-list note-list"><dt>key
+<dd>
+<p>Key under which to store data.</p>
+</dd><dt>value
+<dd>
+<p><a href="../../Data.html">Data</a> to store.</p>
+</dd><dt><code>ttl</code>
+<dd>
+<p>(Optional) time-to-live (&#39;live&#39; as in living, not as in &#39;live
+TV&#39;) - a value in seconds, after which the data is considered expired.
+If omitted, the data does not expire.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
+              </p>
+              <div id="method-i-set_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 94</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
+  <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ] = { <span class="ruby-value">:value</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> }
+  <span class="ruby-string">&#39;OK&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>
