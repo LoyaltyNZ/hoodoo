@@ -89,6 +89,8 @@ describe Hoodoo::TransientStore::Memcached do
         instance = Hoodoo::TransientStore::Memcached.new(
           storage_host_uri: @storage_engine_uri
         )
+
+        expect( instance ).to be_a( Hoodoo::TransientStore::Memcached )
       end
 
       it 'complains about strange Memcached behaviour' do
@@ -137,11 +139,13 @@ describe Hoodoo::TransientStore::Memcached do
         it 'sets' do
           expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
 
-          @instance.set(
+          result = @instance.set(
             key:              @key,
             payload:          @payload,
             maximum_lifespan: @ttl
           )
+
+          expect( result ).to eq( true )
         end
 
         it 'allows exceptions to propagate' do
@@ -204,7 +208,10 @@ describe Hoodoo::TransientStore::Memcached do
         it 'deletes known keys' do
           expect( @instance.get( key: @key ) ).to eql( @payload )
           expect_dalli_client( backend ).to receive( :delete ).with( @key ).and_call_original()
-          @instance.delete( key: @key )
+
+          result = @instance.delete( key: @key )
+
+          expect( result ).to eq( true )
           expect( @instance.get( key: @key ) ).to eql( nil )
         end
 

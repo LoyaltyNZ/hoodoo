@@ -40,7 +40,8 @@ module Hoodoo
       end
 
       # Base class template for the plug-in's back-end implementation of
-      # Hoodoo::TransientStore#get - see that for details.
+      # Hoodoo::TransientStore#get - see that for details. Returns +nil+ if
+      # no data is found for the given key, or if data is explicitly +nil+.
       #
       # The implementation is free to raise an exception if an error is
       # encountered while trying to get the data - this will be caught and
@@ -55,7 +56,8 @@ module Hoodoo
       #
       # The implementation is free to raise an exception if an error is
       # encountered while trying to get the data - this will be caught and
-      # ignored by Hoodoo::TransientStore#delete.
+      # ignored by Hoodoo::TransientStore#delete. Otherwise return +true+ on
+      # success or +false+ for failures of unknown origin.
       #
       def delete( key: )
         raise 'Subclasses must implement Hoodoo::TransientStore::Base#delete'

@@ -61,11 +61,11 @@ module Hoodoo
         unless storage_host_uri.is_a?( Hash ) &&
                storage_host_uri.has_key?( :memcached ) &&
                storage_host_uri.has_key?( :redis )
-          raise "Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor"
+          raise 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor'
         end
 
-        @memcached_store = Hoodoo::TransientStore::Memcached.new( storage_host_uri[ :memcached ] )
-        @redis_store     =     Hoodoo::TransientStore::Redis.new( storage_host_uri[ :redis     ] )
+        @memcached_store = Hoodoo::TransientStore::Memcached.new( storage_host_uri: storage_host_uri[ :memcached ] )
+        @redis_store     =     Hoodoo::TransientStore::Redis.new( storage_host_uri: storage_host_uri[ :redis     ] )
       end
 
       # See Hoodoo::TransientStore::Base#set for details.
@@ -88,7 +88,7 @@ module Hoodoo
         redis_result     =     @redis_store.get( key: key )
 
         if memcached_result.nil? || redis_result.nil?
-          self.delete( key: key )
+          delete( key: key )
           return nil
         else
           return memcached_result
@@ -98,8 +98,27 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#delete for details.
       #
       def delete( key: )
-        @memcached_store.delete( key: key ) rescue nil # Ignore exceptions to ensure Redis delete is attempted
-            @redis_store.delete( key: key )
+        exception = nil
+
+        begin
+          @memcached_store.delete( key: key )
+        rescue => e
+          exception = e
+        end
+
+        # But allow Redis delete to still be attempted...
+
+        begin
+          @redis_store.delete( key: key )
+        rescue => e
+          exception ||= e
+        end
+
+        if exception.nil?
+          return true
+        else
+          raise exception
+        end
       end
 
     end

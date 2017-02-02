@@ -40,6 +40,7 @@ module Hoodoo
       #
       def set( key:, payload:, maximum_lifespan: )
         @client.set( key, payload, maximum_lifespan )
+        true
       end
 
       # See Hoodoo::TransientStore::Base#get for details.
@@ -52,6 +53,7 @@ module Hoodoo
       #
       def delete( key: )
         @client.delete( key )
+        true
       end
 
     private

@@ -50,13 +50,14 @@ module Hoodoo
 
         @client[ nk ] = JSON.fast_generate( payload )
         @client.expire( nk, maximum_lifespan )
+
+        true
       end
 
       # See Hoodoo::TransientStore::Base#get for details.
       #
       def get( key: )
         result = @client[ namespaced_key( key ) ]
-
         return result.nil? ? nil : ( JSON.parse( result ) rescue nil )
       end
 
@@ -64,6 +65,7 @@ module Hoodoo
       #
       def delete( key: )
         @client.del( namespaced_key( key ) )
+        true
       end
 
     private

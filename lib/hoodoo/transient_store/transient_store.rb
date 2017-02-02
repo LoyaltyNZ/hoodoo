@@ -47,8 +47,12 @@ module Hoodoo
 
       @@supported_storage_engines = {} unless defined?( @@supported_storage_engines )
 
+      unless using < Hoodoo::TransientStore::Base
+        raise "Hoodoo::TransientStore.register requires a Hoodoo::TransientStore::Base subclass - got '#{ using.to_s }'"
+      end
+
       if @@supported_storage_engines.has_key?( as )
-        raise "Hoodoo::TransientStore: A storage engine called '#{ as }' is already registered"
+        raise "Hoodoo::TransientStore.register: A storage engine called '#{ as }' is already registered"
       end
 
       @@supported_storage_engines[ as ] = using

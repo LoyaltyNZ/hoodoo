@@ -25,6 +25,26 @@ describe Hoodoo::TransientStore::Redis do
     pending "*** WARNING *** Redis not present on 'redis://localhost:6379', cannot test real engine"
   end
 
+  # For anything not directly covered by the main tests later.
+  #
+  context 'mock back-end coverage' do
+    it 'reports the store' do
+      Hoodoo::TransientStore::Mocks::Redis.reset()
+      mock_redis_instance = Hoodoo::TransientStore::Mocks::Redis.new
+      mock_redis_instance.set( 'foo', 'bar' )
+      expect( Hoodoo::TransientStore::Mocks::Redis.store ).to eq( { 'foo' => { :value => 'bar' } } )
+    end
+
+    it 'raises an error for attempts to expire bad keys' do
+      mock_redis_instance = Hoodoo::TransientStore::Mocks::Redis.new
+      key                 = Hoodoo::UUID.generate()
+
+      expect {
+        mock_redis_instance.expire( key, 60 )
+      }.to raise_error( RuntimeError, "Hoodoo::TransientStore::Mocks::Redis\#expire: Cannot find key '#{ key }'" )
+    end
+  end
+
   shared_examples 'a Redis abstraction' do | backend |
 
     # Either expect something on the known mock Redis instance, or an unknown
@@ -73,6 +93,8 @@ describe Hoodoo::TransientStore::Redis do
         instance = Hoodoo::TransientStore::Redis.new(
           storage_host_uri: @storage_engine_uri
         )
+
+        expect( instance ).to be_a( Hoodoo::TransientStore::Redis )
       end
 
       it 'complains about strange Redis behaviour' do
@@ -132,11 +154,13 @@ describe Hoodoo::TransientStore::Redis do
           expect_redis( backend ).to receive( :[]=    ).with( @nskey, @jpayload ).and_call_original()
           expect_redis( backend ).to receive( :expire ).with( @nskey, @ttl      ).and_call_original()
 
-          @instance.set(
+          result = @instance.set(
             key:              @key,
             payload:          @payload,
             maximum_lifespan: @ttl
           )
+
+          expect( result ).to eq( true )
         end
 
         it 'allows exceptions to propagate' do
@@ -201,7 +225,10 @@ describe Hoodoo::TransientStore::Redis do
         it 'deletes known keys' do
           expect( @instance.get( key: @key ) ).to eql( @payload )
           expect_redis( backend ).to receive( :del ).with( @nskey ).and_call_original()
-          @instance.delete( key: @key )
+
+          result = @instance.delete( key: @key )
+
+          expect( result ).to eq( true )
           expect( @instance.get( key: @key ) ).to eql( nil )
         end
 
