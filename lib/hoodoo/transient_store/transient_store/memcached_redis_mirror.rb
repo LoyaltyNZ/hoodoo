@@ -98,11 +98,8 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#delete for details.
       #
       def delete( key: )
-        begin
-          @memcached_store.delete( key: key )
-        rescue; end # Ignore exceptions to ensure Redis delete is attempted
-
-        @redis_store.delete( key: key )
+        @memcached_store.delete( key: key ) rescue nil # Ignore exceptions to ensure Redis delete is attempted
+            @redis_store.delete( key: key )
       end
 
     end

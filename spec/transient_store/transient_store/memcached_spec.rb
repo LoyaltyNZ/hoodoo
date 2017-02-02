@@ -1,12 +1,14 @@
 require 'spec_helper'
+
 require 'dalli'
+require 'hoodoo/transient_store/mocks/dalli_client'
 
 # ============================================================================
 
 old_level          = Dalli.logger.level
 Dalli.logger.level = Logger::ERROR
 client             = ::Dalli::Client.new( 'localhost:11211' )
-result             = begin; client.stats; rescue; nil; end
+result             = client.stats() rescue nil
 Dalli.logger.level = old_level
 $memcached_missing = result.is_a?( Hash ) == false || result[ 'localhost:11211' ].nil?
 
@@ -35,17 +37,17 @@ describe Hoodoo::TransientStore::Memcached do
 
   shared_examples 'a Memcached abstraction' do | backend |
 
-    @backend = backend
-
-    # Either expect something on the known mock Dalli instance, or an unknown
+    # Either expect something on the known mock backend instance or an unknown
     # (any) real Dalli::Client instance. Can then call "to" - i.e. use:
     #
-    #     expect_dalli.to...
+    #     expect_dalli_client( backend ).to...
     #
-    def expect_dalli
-      return case @backend
+    # +backend+:: Pass either Symbol ":mock" or ":real".
+    #
+    def expect_dalli_client( backend )
+      return case backend
         when :mock
-          expect( @mock_dalli_instance )
+          expect( @mock_dalli_client_instance )
         else
           expect_any_instance_of( ::Dalli::Client )
       end
@@ -56,9 +58,9 @@ describe Hoodoo::TransientStore::Memcached do
     before :each do
       @storage_engine_uri = 'localhost:11211'
 
-      if @backend == :mock
-        Hoodoo::Services::Session::MockDalliClient.reset()
-        @mock_dalli_instance = Hoodoo::Services::Session::MockDalliClient.new
+      if backend == :mock
+        Hoodoo::TransientStore::Mocks::DalliClient.reset()
+        @mock_dalli_client_instance = Hoodoo::TransientStore::Mocks::DalliClient.new
 
         expect( ::Dalli::Client ).to(
           receive( :new ).
@@ -66,7 +68,7 @@ describe Hoodoo::TransientStore::Memcached do
             @storage_engine_uri,
             hash_including( { :namespace => :nz_co_loyalty_hoodoo_transient_store_ } )
           ).
-          and_return( @mock_dalli_instance )
+          and_return( @mock_dalli_client_instance )
         )
       else
         expect( ::Dalli::Client ).to(
@@ -82,7 +84,7 @@ describe Hoodoo::TransientStore::Memcached do
 
     # ========================================================================
 
-    context "#initialize (#{ @backend })" do
+    context "#initialize (#{ backend })" do
       it 'initialises' do
         instance = Hoodoo::TransientStore::Memcached.new(
           storage_host_uri: @storage_engine_uri
@@ -90,7 +92,7 @@ describe Hoodoo::TransientStore::Memcached do
       end
 
       it 'complains about strange Memcached behaviour' do
-        expect_dalli.to receive( :stats ).and_return( nil )
+        expect_dalli_client( backend ).to receive( :stats ).and_return( nil )
 
         expect {
           instance = Hoodoo::TransientStore::Memcached.new(
@@ -103,7 +105,7 @@ describe Hoodoo::TransientStore::Memcached do
       end
 
       it 'handles exceptions' do
-        expect_dalli.to receive( :stats ) do
+        expect_dalli_client( backend ).to receive( :stats ) do
           raise "Hello world"
         end
 
@@ -120,19 +122,20 @@ describe Hoodoo::TransientStore::Memcached do
 
     # ========================================================================
 
-    context "when initialised (#{ @backend })" do
+    context "when initialised (#{ backend })" do
       before :each do
-        @key      = Hoodoo::UUID.generate()
-        @payload  = { 'bar' => 'baz' }
-        @ttl      = 120
         @instance = Hoodoo::TransientStore::Memcached.new(
           storage_host_uri: @storage_engine_uri
         )
+
+        @key      = Hoodoo::UUID.generate()
+        @payload  = { 'bar' => 'baz' }
+        @ttl      = 120
       end
 
       context '#set' do
         it 'sets' do
-          expect_dalli.to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
+          expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
 
           @instance.set(
             key:              @key,
@@ -142,7 +145,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
 
         it 'allows exceptions to propagate' do
-          expect_dalli.to receive( :set ).with( @key, @payload, @ttl ) do
+          expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ) do
             raise "Hello world"
           end
 
@@ -158,7 +161,7 @@ describe Hoodoo::TransientStore::Memcached do
 
       context '#get' do
         before :each do
-          expect_dalli.to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
+          expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
 
           @instance.set(
             key:              @key,
@@ -168,7 +171,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
 
         it 'gets known keys' do
-          expect_dalli.to receive( :get ).with( @key ).and_call_original()
+          expect_dalli_client( backend ).to receive( :get ).with( @key ).and_call_original()
           expect( @instance.get( key: @key ) ).to eql( @payload )
         end
 
@@ -177,7 +180,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
 
         it 'allows exceptions to propagate' do
-          expect_dalli.to receive( :get ).with( @key ) do
+          expect_dalli_client( backend ).to receive( :get ).with( @key ) do
             raise "Hello world"
           end
 
@@ -189,7 +192,7 @@ describe Hoodoo::TransientStore::Memcached do
 
       context '#delete' do
         before :each do
-          expect_dalli.to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
+          expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ).and_call_original()
 
           @instance.set(
             key:              @key,
@@ -200,7 +203,7 @@ describe Hoodoo::TransientStore::Memcached do
 
         it 'deletes known keys' do
           expect( @instance.get( key: @key ) ).to eql( @payload )
-          expect_dalli.to receive( :delete ).with( @key ).and_call_original()
+          expect_dalli_client( backend ).to receive( :delete ).with( @key ).and_call_original()
           @instance.delete( key: @key )
           expect( @instance.get( key: @key ) ).to eql( nil )
         end
@@ -212,7 +215,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
 
         it 'allows exceptions to propagate' do
-          expect_dalli.to receive( :delete ).with( @key ) do
+          expect_dalli_client( backend ).to receive( :delete ).with( @key ) do
             raise "Hello world"
           end
 
@@ -222,7 +225,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
       end
 
-    end # 'context "when initialised (#{ @backend })" do'
+    end # 'context "when initialised (#{ backend })" do'
   end   # 'shared_examples ...'
 
   backends.each do | backend |

@@ -55,7 +55,9 @@ module Hoodoo
       # See Hoodoo::TransientStore::Base#get for details.
       #
       def get( key: )
-        JSON.parse( @client[ namespaced_key( key ) ] )
+        result = @client[ namespaced_key( key ) ]
+
+        return result.nil? ? nil : ( JSON.parse( result ) rescue nil )
       end
 
       # See Hoodoo::TransientStore::Base#delete for details.
@@ -99,9 +101,9 @@ module Hoodoo
 
         if info.nil?
           if exception.nil?
-            raise "Hoodoo::TransientStore::Memcached: Did not get back meaningful data from Redis at '#{ host }'"
+            raise "Hoodoo::TransientStore::Redis: Did not get back meaningful data from Redis at '#{ host }'"
           else
-            raise "Hoodoo::TransientStore::Memcached: Cannot connect to Redis at '#{ host }': #{ exception.to_s }"
+            raise "Hoodoo::TransientStore::Redis: Cannot connect to Redis at '#{ host }': #{ exception.to_s }"
           end
         else
           return client

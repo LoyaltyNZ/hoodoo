@@ -259,10 +259,7 @@ module Hoodoo
     #
     def delete( key: )
       key = self.normalise_key( key, 'delete' )
-
-      begin
-        @storage_engine_instance.delete( key )
-      rescue; end
+      @storage_engine_instance.delete( key ) rescue nil
     end
 
   private
