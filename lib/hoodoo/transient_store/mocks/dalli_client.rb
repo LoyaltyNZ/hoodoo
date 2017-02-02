@@ -131,7 +131,12 @@ module Hoodoo
         # Mock 'stats' health check.
         #
         def stats
+
+          # Should really be a Hash, but kept as 'true' in case any existing
+          # client depends on this; it isn't too important either way.
+          #
           true
+
         end
       end
     end

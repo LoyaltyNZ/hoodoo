@@ -35,6 +35,24 @@ module Hoodoo
     #
     class MemcachedRedisMirror < Hoodoo::TransientStore::Base
 
+      # Command an instance to allow #get to return values which are only found
+      # in one or the other storage engine, or in both.
+      #
+      # Permitted values are:
+      #
+      # +:memcached+:: Only Memcached needs to have a value for a key
+      # +:redis+::     Only Redis needs to have a value for a key
+      # +both+::       Both engines must have the key
+      #
+      # This is useful in migration scenarios where moving from Memcached to
+      # Redis or vice versa. If wishing to be able to still read old data only
+      # in Memcached, set +:memcached+; else +:redis+. For true mirroring,
+      # insist on both with +:both+.
+      #
+      # The default is +:both+.
+      #
+      attr_accessor :get_keys_from
+
       # See Hoodoo::TransientStore::Base::new for details.
       #
       # Do not instantiate this class directly. Use
@@ -64,6 +82,7 @@ module Hoodoo
           raise 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor'
         end
 
+        @get_keys_from   = :both
         @memcached_store = Hoodoo::TransientStore::Memcached.new( storage_host_uri: storage_host_uri[ :memcached ] )
         @redis_store     =     Hoodoo::TransientStore::Redis.new( storage_host_uri: storage_host_uri[ :redis     ] )
       end
@@ -84,14 +103,27 @@ module Hoodoo
       # available in and +nil+ will be returned.
       #
       def get( key: )
-        memcached_result = @memcached_store.get( key: key )
-        redis_result     =     @redis_store.get( key: key )
+        case @get_keys_from
+          when :both
+            memcached_result = @memcached_store.get( key: key )
+            redis_result     =     @redis_store.get( key: key )
 
-        if memcached_result.nil? || redis_result.nil?
-          delete( key: key )
-          return nil
-        else
-          return memcached_result
+            if @get_keys_from == :both && ( memcached_result.nil? || redis_result.nil? )
+              delete( key: key )
+              return nil
+            else
+              return memcached_result
+            end
+
+          when :memcached
+            return @memcached_store.get( key: key )
+
+          when :redis
+            return @redis_store.get( key: key )
+
+          else
+            raise "Hoodoo::TransientStore::Base\#get: Invalid prior value given in \#get_keys_from= of '#{ @get_keys_from.inspect }' - only ':both', ':memcached' or ':redis' are allowed"
+
         end
       end
 

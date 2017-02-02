@@ -25,26 +25,6 @@ describe Hoodoo::TransientStore::Redis do
     pending "*** WARNING *** Redis not present on 'redis://localhost:6379', cannot test real engine"
   end
 
-  # For anything not directly covered by the main tests later.
-  #
-  context 'mock back-end coverage' do
-    it 'reports the store' do
-      Hoodoo::TransientStore::Mocks::Redis.reset()
-      mock_redis_instance = Hoodoo::TransientStore::Mocks::Redis.new
-      mock_redis_instance.set( 'foo', 'bar' )
-      expect( Hoodoo::TransientStore::Mocks::Redis.store ).to eq( { 'foo' => { :value => 'bar' } } )
-    end
-
-    it 'raises an error for attempts to expire bad keys' do
-      mock_redis_instance = Hoodoo::TransientStore::Mocks::Redis.new
-      key                 = Hoodoo::UUID.generate()
-
-      expect {
-        mock_redis_instance.expire( key, 60 )
-      }.to raise_error( RuntimeError, "Hoodoo::TransientStore::Mocks::Redis\#expire: Cannot find key '#{ key }'" )
-    end
-  end
-
   shared_examples 'a Redis abstraction' do | backend |
 
     # Either expect something on the known mock Redis instance, or an unknown

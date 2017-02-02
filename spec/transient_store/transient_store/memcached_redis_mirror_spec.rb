@@ -182,6 +182,102 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
           @instance.get( key: @key )
         }.to raise_error( RuntimeError, "Hello world" )
       end
+
+      context 'with migration selector of' do
+        context ':both' do
+          it 'is the default' do
+            expect( @instance.get_keys_from ).to eql( :both )
+          end
+
+          # This is covered elsewhere too but belt-and-braces checks don't hurt
+          # and the test list looks cleaner when this one section covers all
+          # allowed values of the selector.
+
+          it 'returns data if the key is in both engines' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :get ).with( key: @key ).and_call_original()
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :get ).with( key: @key ).and_call_original()
+
+            expect( @instance.get( key: @key ) ).to eql( @payload )
+          end
+
+          it 'returns "nil" if the key is only in Memcached' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :get ).with( key: @key ).and_call_original()
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :get ).with( key: @key ).and_return( nil )
+
+            expect( @instance.get( key: @key ) ).to be_nil
+          end
+
+          it 'returns "nil" if the key is only in Redis' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :get ).with( key: @key ).and_return( nil )
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :get ).with( key: @key ).and_call_original()
+
+            expect( @instance.get( key: @key ) ).to be_nil
+          end
+        end
+
+        context ':memcached' do
+          before( :each ) { @instance.get_keys_from = :memcached }
+           after( :each ) { @instance.get_keys_from = :both  }
+
+          it 'returns data if the key is in both engines' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to     receive( :get ).with( key: @key ).and_call_original()
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to_not receive( :get )
+
+            expect( @instance.get( key: @key ) ).to eql( @payload )
+          end
+
+          it 'returns data if the key is only in Memcached' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to     receive( :get ).with( key: @key ).and_call_original()
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to_not receive( :get )
+
+            expect( @instance.get( key: @key ) ).to eql( @payload )
+          end
+
+          it 'returns "nil" if the key is only in Redis' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to     receive( :get ).with( key: @key ).and_return( nil )
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to_not receive( :get )
+
+            expect( @instance.get( key: @key ) ).to be_nil
+          end
+        end
+
+        context ':redis' do
+          before( :each ) { @instance.get_keys_from = :redis }
+           after( :each ) { @instance.get_keys_from = :both  }
+
+          it 'returns data if the key is in both engines' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to_not receive( :get )
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to     receive( :get ).with( key: @key ).and_call_original()
+
+            expect( @instance.get( key: @key ) ).to eql( @payload )
+          end
+
+          it 'returns "nil" if the key is only in Memcached' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to_not receive( :get )
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to     receive( :get ).with( key: @key ).and_return( nil )
+
+            expect( @instance.get( key: @key ) ).to be_nil
+          end
+
+          it 'returns data if the key is only in Redis' do
+            expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to_not receive( :get )
+            expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to     receive( :get ).with( key: @key ).and_call_original()
+
+            expect( @instance.get( key: @key ) ).to eql( @payload )
+          end
+        end
+
+        context 'an unrecognised value' do
+          before( :each ) { @instance.get_keys_from = :foo  }
+           after( :each ) { @instance.get_keys_from = :both }
+
+          it 'causes complaint' do
+            expect {
+              @instance.get( key: @key )
+            }.to raise_error( RuntimeError, "Hoodoo::TransientStore::Base\#get: Invalid prior value given in \#get_keys_from= of ':foo' - only ':both', ':memcached' or ':redis' are allowed" )
+          end
+        end
+      end
     end
 
     context '#delete' do

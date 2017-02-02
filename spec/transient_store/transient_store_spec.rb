@@ -9,20 +9,20 @@ describe Hoodoo::TransientStore do
 
   class TestTransientStore < Hoodoo::TransientStore::Base
     def initialize( storage_host_uri: )
-      @store = {}
+      @pool = {}
     end
 
     def set( key:, payload:, maximum_lifespan: )
-      @store[ key ] = payload
+      @pool[ key ] = payload
       true
     end
 
     def get( key: )
-      @store[ key ]
+      @pool[ key ]
     end
 
     def delete( key: )
-      @store.delete( key )
+      @pool.delete( key )
       true
     end
   end
@@ -129,9 +129,34 @@ describe Hoodoo::TransientStore do
 
     # ========================================================================
 
+    context 'attribute accessor' do
+      before :each do
+        @ttl   = 120
+        @store = Hoodoo::TransientStore.new(
+          storage_engine:           @engine_name,
+          storage_host_uri:         'localhost',
+          default_maximum_lifespan: @ttl
+        )
+      end
+
+      it '#storage_engine' do
+        expect( @store.storage_engine ).to eql( @engine_name )
+      end
+
+      it '#storage_engine_instance' do
+        expect( @store.storage_engine_instance ).to be_a( TestTransientStore )
+      end
+
+      it '#default_maximum_lifespan' do
+        expect( @store.default_maximum_lifespan ).to eql( @ttl )
+      end
+    end
+
+    # ========================================================================
+
     context '#set' do
       before :each do
-        @instance = Hoodoo::TransientStore.new(
+        @store = Hoodoo::TransientStore.new(
           storage_engine:   @engine_name,
           storage_host_uri: 'localhost'
         )
@@ -151,7 +176,7 @@ describe Hoodoo::TransientStore do
           and_call_original()
         )
 
-        result = @instance.set( key: key, payload: payload )
+        result = @store.set( key: key, payload: payload )
         expect( result ).to eq( true )
       end
 
@@ -170,7 +195,7 @@ describe Hoodoo::TransientStore do
           and_call_original()
         )
 
-        result = @instance.set( key: key, payload: payload, maximum_lifespan: lifespan )
+        result = @store.set( key: key, payload: payload, maximum_lifespan: lifespan )
         expect( result ).to eq( true )
       end
 
@@ -179,7 +204,7 @@ describe Hoodoo::TransientStore do
           raise 'Hello world'
         end
 
-        result = @instance.set( key: '1', payload: '2' )
+        result = @store.set( key: '1', payload: '2' )
 
         expect( result ).to be_a( RuntimeError )
         expect( result.message ).to eql( 'Hello world' )
@@ -187,7 +212,7 @@ describe Hoodoo::TransientStore do
 
       it 'prohibits "nil" payloads' do
         expect {
-          result = @instance.set( key: '1', payload: nil )
+          result = @store.set( key: '1', payload: nil )
         }.to raise_error( RuntimeError, "Hoodoo::TransientStore\#set: Payloads of 'nil' are prohibited" )
       end
 
@@ -196,7 +221,7 @@ describe Hoodoo::TransientStore do
           'not a boolean'
         end
 
-        result = @instance.set( key: '1', payload: '2' )
+        result = @store.set( key: '1', payload: '2' )
 
         expect( result ).to be_a( RuntimeError )
         expect( result.message ).to eql( "Hoodoo::TransientStore\#set: Engine '#{ @engine_name }' returned an invalid response" )
@@ -214,18 +239,18 @@ describe Hoodoo::TransientStore do
             )
           )
 
-          @instance.set( key: key, payload: {} )
+          @store.set( key: key, payload: {} )
         end
 
         it 'complains about unsupported key types' do
           expect {
-            @instance.set( key: Hash.new, payload: {} )
+            @store.set( key: Hash.new, payload: {} )
           }.to raise_error( RuntimeError, "Hoodoo::TransientStore\#set: Keys must be of String or Symbol class; you provided 'Hash'" )
         end
 
         it 'complains about empty keys' do
           expect {
-            @instance.set( key: '', payload: {} )
+            @store.set( key: '', payload: {} )
           }.to raise_error( RuntimeError, 'Hoodoo::TransientStore#set: Empty String or Symbol keys are prohibited' )
         end
       end
@@ -235,7 +260,7 @@ describe Hoodoo::TransientStore do
 
     context '#get' do
       before :each do
-        @instance = Hoodoo::TransientStore.new(
+        @store = Hoodoo::TransientStore.new(
           storage_engine:   @engine_name,
           storage_host_uri: 'localhost'
         )
@@ -243,7 +268,7 @@ describe Hoodoo::TransientStore do
         @key     = Hoodoo::UUID.generate()
         @payload = { 'foo' => 'bar' }
 
-        @instance.set( key: @key, payload: @payload )
+        @store.set( key: @key, payload: @payload )
       end
 
       it 'gets known keys' do
@@ -251,7 +276,7 @@ describe Hoodoo::TransientStore do
           receive( :get ).with( key: @key ).and_call_original()
         )
 
-        expect( @instance.get( key: @key ) ).to eql( @payload )
+        expect( @store.get( key: @key ) ).to eql( @payload )
       end
 
       it 'returns "nil" for unknown keys' do
@@ -261,7 +286,7 @@ describe Hoodoo::TransientStore do
           receive( :get ).with( key: random_key ).and_call_original()
         )
 
-        expect( @instance.get( key: random_key ) ).to be_nil
+        expect( @store.get( key: random_key ) ).to be_nil
       end
 
       it 'consumes exceptions' do
@@ -269,7 +294,7 @@ describe Hoodoo::TransientStore do
           raise 'Hello world'
         end
 
-        expect( @instance.get( key: @key ) ).to be_nil
+        expect( @store.get( key: @key ) ).to be_nil
       end
 
       context 'key normalisation' do
@@ -282,18 +307,18 @@ describe Hoodoo::TransientStore do
             )
           )
 
-          @instance.get( key: key )
+          @store.get( key: key )
         end
 
         it 'complains about unsupported key types' do
           expect {
-            @instance.get( key: Hash.new )
+            @store.get( key: Hash.new )
           }.to raise_error( RuntimeError, "Hoodoo::TransientStore\#get: Keys must be of String or Symbol class; you provided 'Hash'" )
         end
 
         it 'complains about empty keys' do
           expect {
-            @instance.get( key: '' )
+            @store.get( key: '' )
           }.to raise_error( RuntimeError, 'Hoodoo::TransientStore#get: Empty String or Symbol keys are prohibited' )
         end
       end
@@ -303,7 +328,7 @@ describe Hoodoo::TransientStore do
 
     context '#delete' do
       before :each do
-        @instance = Hoodoo::TransientStore.new(
+        @store = Hoodoo::TransientStore.new(
           storage_engine:   @engine_name,
           storage_host_uri: 'localhost'
         )
@@ -311,18 +336,18 @@ describe Hoodoo::TransientStore do
         @key     = Hoodoo::UUID.generate()
         @payload = { 'foo' => 'bar' }
 
-        @instance.set( key: @key, payload: @payload )
+        @store.set( key: @key, payload: @payload )
       end
 
       it 'deletes known keys' do
-        expect( @instance.get( key: @key ) ).to eql( @payload )
+        expect( @store.get( key: @key ) ).to eql( @payload )
 
         expect_any_instance_of( TestTransientStore ).to(
           receive( :delete ).with( key: @key ).and_call_original()
         )
 
-        expect( @instance.delete( key: @key ) ).to eql( true )
-        expect( @instance.get( key: @key ) ).to be_nil
+        expect( @store.delete( key: @key ) ).to eql( true )
+        expect( @store.get( key: @key ) ).to be_nil
       end
 
       it 'ignores unknown keys' do
@@ -332,7 +357,7 @@ describe Hoodoo::TransientStore do
           receive( :delete ).with( key: random_key ).and_call_original()
         )
 
-        expect( @instance.delete( key: random_key ) ).to eql( true )
+        expect( @store.delete( key: random_key ) ).to eql( true )
       end
 
       it 'consumes and returns exceptions' do
@@ -340,7 +365,7 @@ describe Hoodoo::TransientStore do
           raise 'Hello world'
         end
 
-        result = @instance.delete( key: @key )
+        result = @store.delete( key: @key )
 
         expect( result ).to be_a( RuntimeError )
         expect( result.message ).to eql( 'Hello world' )
@@ -351,7 +376,7 @@ describe Hoodoo::TransientStore do
           'not a boolean'
         end
 
-        result = @instance.delete( key: @key )
+        result = @store.delete( key: @key )
 
         expect( result ).to be_a( RuntimeError )
         expect( result.message ).to eql( "Hoodoo::TransientStore\#delete: Engine '#{ @engine_name }' returned an invalid response" )
@@ -367,18 +392,18 @@ describe Hoodoo::TransientStore do
             )
           )
 
-          @instance.delete( key: key )
+          @store.delete( key: key )
         end
 
         it 'complains about unsupported key types' do
           expect {
-            @instance.delete( key: Hash.new )
+            @store.delete( key: Hash.new )
           }.to raise_error( RuntimeError, "Hoodoo::TransientStore\#delete: Keys must be of String or Symbol class; you provided 'Hash'" )
         end
 
         it 'complains about empty keys' do
           expect {
-            @instance.delete( key: '' )
+            @store.delete( key: '' )
           }.to raise_error( RuntimeError, 'Hoodoo::TransientStore#delete: Empty String or Symbol keys are prohibited' )
         end
       end

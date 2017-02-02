@@ -87,6 +87,13 @@ module Hoodoo
     #
     attr_reader :storage_engine
 
+    # Read the storage engine insteance for the #storage_engine - this allows
+    # engine-specific configuration to be set where available, though this is
+    # strongly discouraged as it couples client code to the engine in use,
+    # defeating the main rationale behind the TransientStore abstraction.
+    #
+    attr_reader :storage_engine_instance
+
     # Read this instance's default item maximum lifespan, in sections. See
     # also ::new.
     #
