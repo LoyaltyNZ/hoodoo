@@ -212,9 +212,7 @@ describe Hoodoo::ActiveRecord::Support do
           expect( manual_scope ).to include( "\"r_spec_full_scope_for_test_subclasses\".\"foo\" = '#{ @test_scoping_value }'" )
         end
 
-        pending 'translated' do
-          raise "Scope verification for '\#translated'"
-        end
+        pending 'translated' # Scope verification for '#translated'
 
         # In this last one, we actually check full_scope_for; activations are in
         # the subclass so we drive the non-context versions directly to verify
@@ -250,9 +248,7 @@ describe Hoodoo::ActiveRecord::Support do
         expect( manual_scope ).to include( "\"rspec_full_scope_for_test_base_with_directives_custom\".\"bar\" = '#{ @test_scoping_value }'" )
       end
 
-      pending 'translated' do
-        raise "Scope verification for '\#translated'"
-      end
+      pending 'translated' # Scope verification for '#translated'
 
       it 'yields the same SQL' do
         auto_scope   = described_class.full_scope_for( RSpecFullScopeForTestBaseSubclassWithoutOverrides, @context ).to_sql()
@@ -281,9 +277,7 @@ describe Hoodoo::ActiveRecord::Support do
           expect( manual_scope ).to include( "\"r_spec_full_scope_for_manually_dateds\".\"baz\" = '#{ @test_scoping_value }'" )
         end
 
-        pending 'translated' do
-          raise "Scope verification for '\#translated'"
-        end
+        pending 'translated' # Scope verification for '#translated'
 
         it 'everything' do
           auto_scope   = described_class.full_scope_for( RSpecFullScopeForManuallyDated, @context ).to_sql()
