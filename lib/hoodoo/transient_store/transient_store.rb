@@ -129,7 +129,7 @@ module Hoodoo
       default_maximum_lifespan: 604800
     )
 
-      unless self.class.supported_storage_engines().include?( storage_engine)
+      unless self.class.supported_storage_engines().include?( storage_engine )
 
         # Be kind and use 'inspect' to indicate that we expect Symbols here
         # in the exception, because of the arising leading ':' in the output.
@@ -142,7 +142,7 @@ module Hoodoo
 
       @default_maximum_lifespan = default_maximum_lifespan
       @storage_engine           = storage_engine
-      @storage_engine_instance  = self.class.supported_storage_engines()[ storage_engine ].new(
+      @storage_engine_instance  = @@supported_storage_engines[ storage_engine ].new(
         storage_host_uri: storage_host_uri
       )
 
