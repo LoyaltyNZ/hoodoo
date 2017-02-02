@@ -1,9 +1,9 @@
 ########################################################################
-# File::    dalli_client.rb
+# File::    redis.rb
 # (C)::     Loyalty New Zealand 2017
 #
-# Purpose:: A mock/fake Redis::Client minimal implementation as an
-#           alternative test back-end for Memcached-independent tests.
+# Purpose:: A mock/fake Redis client minimal implementation as an
+#           alternative test back-end for Redis-independent tests.
 # ----------------------------------------------------------------------
 #           02-Feb-2017 (ADH): Created.
 ########################################################################
@@ -17,11 +17,10 @@ module Hoodoo
     #
     class Mocks
 
-      # Mock known uses of Redis::Client with test implementations.
-      # Use explicitly, or as an RSpec implicit mock via something like
-      # this:
+      # Mock known uses of Redis with test implementations. Use explicitly,
+      # or as an RSpec implicit mock via something like this:
       #
-      #     allow( Redis::Client ).to(
+      #     allow( Redis ).to(
       #       receive( :new ).
       #       and_return( Hoodoo::TransientStore::Mocks::Redis.new )
       #     )

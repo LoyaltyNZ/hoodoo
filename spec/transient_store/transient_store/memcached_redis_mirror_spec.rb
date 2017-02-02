@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+require 'hoodoo/transient_store/mocks/dalli_client'
+require 'hoodoo/transient_store/mocks/redis'
+
 # These tests make sure that the mirror class calls down to the Memcached and
 # Redis abstractions, but assumes those abstractions are thoroughly tested by
 # their own unit tests. So it makes sure it gets expected call and result
@@ -18,6 +21,22 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       :memcached => @memcached_uri,
       :redis     => @redis_uri
     }
+
+    # Use pure mock back-ends behind the Memcached and Redis abstraction
+    # layers; real back-end tests are done for them in their unit tests.
+
+    Hoodoo::TransientStore::Mocks::DalliClient.reset()
+    Hoodoo::TransientStore::Mocks::Redis.reset()
+
+    allow( Dalli::Client ).to(
+      receive( :new ).
+      and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    )
+
+    allow( Redis ).to(
+      receive( :new ).
+      and_return( Hoodoo::TransientStore::Mocks::Redis.new )
+    )
 
     @instance = Hoodoo::TransientStore::MemcachedRedisMirror.new(
       storage_host_uri: @storage_engine_uri
@@ -190,9 +209,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'ignores unknown keys' do
-        expect {
-          @instance.delete( key: Hoodoo::UUID.generate() )
-        }.to_not raise_error
+        expect( @instance.delete( key: Hoodoo::UUID.generate() ) ).to eql( true )
       end
 
       it 'allows Memcached exceptions to propagate but still calls Redis' do

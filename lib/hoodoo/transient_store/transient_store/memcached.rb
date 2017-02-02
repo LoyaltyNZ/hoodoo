@@ -1,5 +1,5 @@
 ########################################################################
-# File::    redis.rb
+# File::    memcached.rb
 # (C)::     Loyalty New Zealand 2017
 #
 # Purpose:: Hoodoo::TransientStore plugin supporting Memcached.

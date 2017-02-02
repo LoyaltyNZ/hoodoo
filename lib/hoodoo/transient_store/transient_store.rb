@@ -205,7 +205,7 @@ module Hoodoo
     #                      item eviction.
     #
     def set( key:, payload:, maximum_lifespan: nil )
-      key = self.normalise_key( key, 'set' )
+      key = normalise_key( key, 'set' )
 
       if payload.nil?
         raise "Hoodoo::TransientStore\#set: Payloads of 'nil' are prohibited"
@@ -219,8 +219,14 @@ module Hoodoo
           payload:          payload,
           maximum_lifespan: maximum_lifespan
         )
+
+        if result != true && result != false
+          raise "Hoodoo::TransientStore\#set: Engine '#{ @storage_engine }' returned an invalid response"
+        end
+
       rescue => e
         result = e
+
       end
 
       return result
@@ -240,13 +246,8 @@ module Hoodoo
     # will be raised.
     #
     def get( key: )
-      key = self.normalise_key( key, 'get' )
-
-      begin
-        @storage_engine_instance.get( key )
-      rescue
-        nil
-      end
+      key = normalise_key( key, 'get' )
+      @storage_engine_instance.get( key: key ) rescue nil
     end
 
     # Delete data previously stored with #set.
@@ -255,15 +256,33 @@ module Hoodoo
     #
     # +key+:: Key previously given to #set.
     #
-    # If the item has already been expired, evicted or the key is simply not
-    # recognised, the method returns silently.
+    # Returns:
+    #
+    # * +true+ if deletion was successful, if the item has already expired or
+    #   if the key is simply not recognised so there is no more work to do.
+    # * +false+ if deletion failed but the reason is unknown.
+    # * An +Exception+ instance if deletion failed and the storage engine
+    #   raised an exception describing the problem.
     #
     # Only non-empty String or Symbol keys are permitted, else an exception
     # will be raised.
     #
     def delete( key: )
-      key = self.normalise_key( key, 'delete' )
-      @storage_engine_instance.delete( key ) rescue nil
+      key = normalise_key( key, 'delete' )
+
+      begin
+        result = @storage_engine_instance.delete( key: key )
+
+        if result != true && result != false
+          raise "Hoodoo::TransientStore\#delete: Engine '#{ @storage_engine }' returned an invalid response"
+        end
+
+      rescue => e
+        result = e
+
+      end
+
+      return result
     end
 
   private

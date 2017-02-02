@@ -216,9 +216,7 @@ describe Hoodoo::TransientStore::Memcached do
         end
 
         it 'ignores unknown keys' do
-          expect {
-            @instance.delete( key: Hoodoo::UUID.generate() )
-          }.to_not raise_error
+          expect( @instance.delete( key: Hoodoo::UUID.generate() ) ).to eql( true )
         end
 
         it 'allows exceptions to propagate' do

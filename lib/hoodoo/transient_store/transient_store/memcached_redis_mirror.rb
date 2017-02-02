@@ -1,5 +1,5 @@
 ########################################################################
-# File::    redis.rb
+# File::    memcached_redis_mirror.rb
 # (C)::     Loyalty New Zealand 2017
 #
 # Purpose:: Hoodoo::TransientStore plugin supporting storage into both
