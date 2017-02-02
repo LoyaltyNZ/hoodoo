@@ -26,8 +26,8 @@ addons:
   postgresql: "9.4"
 
 services:
-  memcached
-  redis-server
+  - memcached
+  - redis-server
 
 script:
   - TZ=Pacific/Auckland DATABASE_USER=postgres bundle exec rspec spec --backtrace
