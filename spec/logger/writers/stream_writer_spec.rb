@@ -9,15 +9,8 @@ describe Hoodoo::Logger::StreamWriter do
   end
 
   after :all do
-    begin
-      @stream.close
-    rescue
-    end
-
-    begin
-      File.unlink( @temp_path )
-    rescue
-    end
+    @stream.close             rescue nil
+    File.unlink( @temp_path ) rescue nil
   end
 
   it 'writes to streams' do

@@ -70,10 +70,7 @@ describe Hoodoo::Services::Middleware do
     force_logging_to( 'test' )
     Hoodoo::Services::Middleware.class_variable_set( '@@environment', @old_env )
     Hoodoo::Services::Middleware.class_variable_set( '@@logger', @old_logger )
-    begin
-      Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' )
-    rescue
-    end
+    Hoodoo::Services::Middleware.remove_class_variable( '@@alchemy' ) rescue nil
   end
 
   context 'custom loggers' do
