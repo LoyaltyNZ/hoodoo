@@ -20,8 +20,8 @@ Gem::Specification.new do | s |
   s.required_ruby_version = '>= 2.1'
 
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
-  s.add_runtime_dependency     'redis',            '~> 3.2' # Redis client
 
+  s.add_development_dependency 'redis',            '~> 3.2' # Redis client
   s.add_development_dependency 'rake',             '~> 10.4'
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'
   s.add_development_dependency 'rdoc',             '~> 4.2' # See also 'sdoc' in Gemfile
