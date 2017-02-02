@@ -7,8 +7,11 @@
 #           01-Feb-2017 (ADH): Created.
 ########################################################################
 
-require 'json'
-require 'redis'
+begin
+  require 'json'
+  require 'redis'
+rescue LoadError
+end
 
 module Hoodoo
   class TransientStore
@@ -123,7 +126,7 @@ module Hoodoo
     Hoodoo::TransientStore.register(
       as:    :redis,
       using: Hoodoo::TransientStore::Redis
-    )
+    ) if defined?( ::Redis )
 
   end
 end

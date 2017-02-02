@@ -7,7 +7,10 @@
 #           01-Feb-2017 (ADH): Created.
 ########################################################################
 
-require 'dalli'
+begin
+  require 'dalli'
+rescue LoadError
+end
 
 module Hoodoo
   class TransientStore
@@ -107,7 +110,7 @@ module Hoodoo
     Hoodoo::TransientStore.register(
       as:    :memcached,
       using: Hoodoo::TransientStore::Memcached
-    )
+    ) if defined?( ::Dalli )
 
   end
 end

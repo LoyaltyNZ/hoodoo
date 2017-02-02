@@ -165,7 +165,7 @@ module Hoodoo
     Hoodoo::TransientStore.register(
       as:    :memcached_redis_mirror,
       using: Hoodoo::TransientStore::MemcachedRedisMirror
-    )
+    ) if ( defined?( ::Redis ) && defined?( ::Dalli ) )
 
   end
 end
