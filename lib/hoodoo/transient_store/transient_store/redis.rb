@@ -68,6 +68,12 @@ module Hoodoo
         true
       end
 
+      # See Hoodoo::TransientStore::Base#close for details.
+      #
+      def close
+        @client.quit()
+      end
+
     private
 
       # Given a simple key to Redis data (expressed as a String), return a

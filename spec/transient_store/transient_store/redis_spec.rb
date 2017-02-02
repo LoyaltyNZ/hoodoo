@@ -227,6 +227,13 @@ describe Hoodoo::TransientStore::Redis do
         end
       end
 
+      context 'close' do
+        it 'closes' do
+          expect_redis( backend ).to receive( :quit )
+          @instance.close()
+        end
+      end
+
     end # 'context "when initialised (#{ backend })" do'
   end   # 'shared_examples ...'
 

@@ -84,6 +84,14 @@ never need this mock class at all.</p>
               </li>
           </ul>
         </dd>
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-close">close</a>
+              </li>
+          </ul>
+        </dd>
         <dt>D</dt>
         <dd>
           <ul>
@@ -249,6 +257,29 @@ giving your stored value.</p>
           </div>
       <div class="sectiontitle">Instance Public methods</div>
         <div class="method">
+          <div class="title method-title" id="method-i-close">
+              <b>close</b>()
+            <a href="../../../../classes/Hoodoo/TransientStore/Mocks/DalliClient.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Stub for &#39;closing&#39; a connection.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 133</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>; <span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
           <div class="title method-title" id="method-i-delete">
               <b>delete</b>( key )
             <a href="../../../../classes/Hoodoo/TransientStore/Mocks/DalliClient.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
@@ -375,9 +406,14 @@ If omitted, the data does not expire.</p>
                 <a href="javascript:toggleSource('method-i-stats_source')" id="l_method-i-stats_source">show</a>
               </p>
               <div id="method-i-stats_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 133</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/dalli_client.rb, line 137</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">stats</span>
+
+  <span class="ruby-comment"># Should really be a Hash, but kept as &#39;true&#39; in case any existing</span>
+  <span class="ruby-comment"># client depends on this; it isn&#39;t too important either way.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">true</span>
+
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

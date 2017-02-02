@@ -153,6 +153,13 @@ module Hoodoo
         end
       end
 
+      # See Hoodoo::TransientStore::Base#close for details.
+      #
+      def close
+        @memcached_store.close() rescue nil # Rescue so that Redis "close()" is still attempted.
+            @redis_store.close()
+      end
+
     end
 
     Hoodoo::TransientStore.register(

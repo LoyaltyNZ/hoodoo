@@ -56,6 +56,12 @@ module Hoodoo
         true
       end
 
+      # See Hoodoo::TransientStore::Base#close for details.
+      #
+      def close
+        @client.close()
+      end
+
     private
 
       # Connect to Memcached if possible and return the connected Dalli client

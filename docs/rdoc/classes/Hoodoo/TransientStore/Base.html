@@ -50,6 +50,14 @@ worked examples.</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-close">close</a>
+              </li>
+          </ul>
+        </dd>
         <dt>D</dt>
         <dd>
           <ul>
@@ -129,6 +137,37 @@ for details.</p>
             </div>
           </div>
       <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-close">
+              <b>close</b>()
+            <a href="../../../classes/Hoodoo/TransientStore/Base.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p><a href="Base.html">Base</a> class template for the plug-in&#39;s back-end
+implementation of <a
+href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>
+- see that for details.</p>
+
+<p>Any exception raised will be ignored by <a
+href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
+  <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#close&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
         <div class="method">
           <div class="title method-title" id="method-i-delete">
               <b>delete</b>( key: )

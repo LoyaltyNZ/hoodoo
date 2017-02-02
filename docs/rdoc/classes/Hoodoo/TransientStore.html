@@ -83,6 +83,14 @@ use the new engine.</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-close">close</a>
+              </li>
+          </ul>
+        </dd>
         <dt>D</dt>
         <dd>
           <ul>
@@ -157,6 +165,18 @@ also <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
             <td class='attr-desc'><p>Read this instance&#39;s storage engine; see <a
 href="TransientStore.html#method-c-supported_storage_engines">::supported_storage_engines</a>
 and <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-storage_engine_instance'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>storage_engine_instance</td>
+            <td class='attr-desc'><p>Read the storage engine insteance for the <a
+href="TransientStore.html#attribute-i-storage_engine">storage_engine</a> -
+this allows engine-specific configuration to be set where available, though
+this is strongly discouraged as it couples client code to the engine in
+use, defeating the main rationale behind the <a
+href="TransientStore.html">TransientStore</a> abstraction.</p></td>
           </tr>
       </table>
 
@@ -248,7 +268,7 @@ item; default is 604800 seconds or 7 days.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 126</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 133</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(
   <span class="ruby-identifier">storage_engine</span>,,
   <span class="ruby-identifier">storage_host_uri</span>,,
@@ -367,6 +387,34 @@ href="TransientStore.html#method-c-new">::new</a>
           </div>
       <div class="sectiontitle">Instance Public methods</div>
         <div class="method">
+          <div class="title method-title" id="method-i-close">
+              <b>close</b>()
+            <a href="../../classes/Hoodoo/TransientStore.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>If you aren&#39;t going to use this instance again, it is good manners to
+immediately close its connection(s) to any storage engines by calling here.</p>
+
+<p>No useful return value is generated and exceptions are ignored.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 301</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
+  <span class="ruby-ivar">@storage_engine_instance</span>.<span class="ruby-identifier">close</span>() <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
           <div class="title method-title" id="method-i-delete">
               <b>delete</b>( key: )
             <a href="../../classes/Hoodoo/TransientStore.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
@@ -406,7 +454,7 @@ be raised.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 270</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 277</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;delete&#39;</span> )
 
@@ -459,7 +507,7 @@ be raised.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 248</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 255</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;get&#39;</span> )
   <span class="ruby-ivar">@storage_engine_instance</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span>
@@ -546,7 +594,7 @@ so minimises the chance of early item eviction.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 207</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 214</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;set&#39;</span> )
 

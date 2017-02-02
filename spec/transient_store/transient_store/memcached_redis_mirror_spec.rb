@@ -331,6 +331,29 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
     end
 
+    context '#close' do
+      it 'closes normally' do
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ).and_call_original()
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ).and_call_original()
+
+        @instance.close()
+      end
+
+      it 'still closes Redis if Memcached raises an exception' do
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ) { raise "Hello world" }
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ).and_call_original()
+
+        @instance.close() rescue nil
+      end
+
+      it 'still closes Memcached if Redis raises an exception' do
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ).and_call_original()
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ) { raise "Hello world" }
+
+        @instance.close() rescue nil
+      end
+    end
+
   end # 'context "when initialised (#{ backend })" do'
 
 end # 'describe...'

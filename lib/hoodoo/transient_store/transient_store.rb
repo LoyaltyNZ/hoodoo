@@ -292,6 +292,16 @@ module Hoodoo
       return result
     end
 
+    # If you aren't going to use this instance again, it is good manners to
+    # immediately close its connection(s) to any storage engines by calling
+    # here.
+    #
+    # No useful return value is generated and exceptions are ignored.
+    #
+    def close
+      @storage_engine_instance.close() rescue nil
+    end
+
   private
 
     # Given a storage key, make sure it's a String or Symbol, coerce to a

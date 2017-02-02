@@ -69,6 +69,14 @@ new engine.</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-close">close</a>
+              </li>
+          </ul>
+        </dd>
         <dt>D</dt>
         <dd>
           <ul>
@@ -110,6 +118,40 @@ new engine.</p>
 
 
 
+      <!-- Section attributes -->
+      <div class="sectiontitle">Attributes</div>
+      <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-get_keys_from'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>get_keys_from</td>
+            <td class='attr-desc'><p>Command an instance to allow <a
+href="MemcachedRedisMirror.html#method-i-get">get</a> to return values
+which are only found in one or the other storage engine, or in both.</p>
+
+<p>Permitted values are:</p>
+<dl class="rdoc-list note-list"><dt><code>:memcached</code>
+<dd>
+<p>Only <a href="Memcached.html">Memcached</a> needs to have a value for a key</p>
+</dd><dt><code>:redis</code>
+<dd>
+<p>Only <a href="Redis.html">Redis</a> needs to have a value for a key</p>
+</dd><dt><code>both</code>
+<dd>
+<p>Both engines must have the key</p>
+</dd></dl>
+
+<p>This is useful in migration scenarios where moving from <a
+href="Memcached.html">Memcached</a> to <a href="Redis.html">Redis</a> or
+vice versa. If wishing to be able to still read old data only in <a
+href="Memcached.html">Memcached</a>, set <code>:memcached</code>; else
+<code>:redis</code>. For true mirroring, insist on both with
+<code>:both</code>.</p>
+
+<p>The default is <code>:both</code>.</p></td>
+          </tr>
+      </table>
 
 
     <!-- Methods -->
@@ -154,7 +196,7 @@ for details of connection URI requirements for those engines.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 58</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> )
   <span class="ruby-keyword">super</span> <span class="ruby-comment"># Pass all arguments through -&gt; *not* &#39;super()&#39;</span>
 
@@ -164,6 +206,7 @@ for details of connection URI requirements for those engines.</p>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor&#39;</span>
   <span class="ruby-keyword">end</span>
 
+  <span class="ruby-ivar">@get_keys_from</span>   = <span class="ruby-value">:both</span>
   <span class="ruby-ivar">@memcached_store</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">TransientStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Memcached</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">storage_host_uri</span>[ <span class="ruby-value">:memcached</span> ] )
   <span class="ruby-ivar">@redis_store</span>     =     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">TransientStore</span><span class="ruby-operator">::</span><span class="ruby-constant">Redis</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">storage_host_uri</span>[ <span class="ruby-value">:redis</span>     ] )
 <span class="ruby-keyword">end</span></pre>
@@ -171,6 +214,34 @@ for details of connection URI requirements for those engines.</p>
             </div>
           </div>
       <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-close">
+              <b>close</b>()
+            <a href="../../../classes/Hoodoo/TransientStore/MemcachedRedisMirror.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a
+href="Base.html#method-i-close">Hoodoo::TransientStore::Base#close</a> for
+details.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 158</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
+  <span class="ruby-ivar">@memcached_store</span>.<span class="ruby-identifier">close</span>() <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> <span class="ruby-comment"># Rescue so that Redis &quot;close()&quot; is still attempted.</span>
+      <span class="ruby-ivar">@redis_store</span>.<span class="ruby-identifier">close</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
         <div class="method">
           <div class="title method-title" id="method-i-delete">
               <b>delete</b>( key: )
@@ -191,7 +262,7 @@ for details.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 100</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">exception</span> = <span class="ruby-keyword">nil</span>
 
@@ -242,16 +313,29 @@ space available in and <code>nil</code> will be returned.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 86</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 105</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
-  <span class="ruby-identifier">memcached_result</span> = <span class="ruby-ivar">@memcached_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
-  <span class="ruby-identifier">redis_result</span>     =     <span class="ruby-ivar">@redis_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
+  <span class="ruby-keyword">case</span> <span class="ruby-ivar">@get_keys_from</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:both</span>
+      <span class="ruby-identifier">memcached_result</span> = <span class="ruby-ivar">@memcached_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
+      <span class="ruby-identifier">redis_result</span>     =     <span class="ruby-ivar">@redis_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">memcached_result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">redis_result</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-identifier">memcached_result</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-ivar">@get_keys_from</span> <span class="ruby-operator">==</span> <span class="ruby-value">:both</span> <span class="ruby-operator">&amp;&amp;</span> ( <span class="ruby-identifier">memcached_result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">redis_result</span>.<span class="ruby-identifier">nil?</span> )
+        <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
+        <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-keyword">return</span> <span class="ruby-identifier">memcached_result</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:memcached</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-ivar">@memcached_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
+
+    <span class="ruby-keyword">when</span> <span class="ruby-value">:redis</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-ivar">@redis_store</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> )
+
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::TransientStore::Base\#get: Invalid prior value given in \#get_keys_from= of &#39;#{ @get_keys_from.inspect }&#39; - only &#39;:both&#39;, &#39;:memcached&#39; or &#39;:redis&#39; are allowed&quot;</span>
+
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
@@ -276,7 +360,7 @@ for details.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 73</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">memcached_result</span> = <span class="ruby-ivar">@memcached_store</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-identifier">payload</span>, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-identifier">maximum_lifespan</span> )
   <span class="ruby-identifier">redis_result</span>     =     <span class="ruby-ivar">@redis_store</span>.<span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span>, <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-identifier">payload</span>, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-identifier">maximum_lifespan</span> )

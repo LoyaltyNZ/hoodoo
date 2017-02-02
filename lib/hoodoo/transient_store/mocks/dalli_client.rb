@@ -128,6 +128,10 @@ module Hoodoo
           end
         end
 
+        # Stub for 'closing' a connection.
+        #
+        def close; end
+
         # Mock 'stats' health check.
         #
         def stats

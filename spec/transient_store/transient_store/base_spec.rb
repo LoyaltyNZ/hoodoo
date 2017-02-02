@@ -31,5 +31,11 @@ describe Hoodoo::TransientStore::Base do
         @base.delete( key: 'foo' )
       }.to raise_error( RuntimeError, 'Subclasses must implement Hoodoo::TransientStore::Base#delete' )
     end
+
+    it 'is generated for #close' do
+      expect {
+        @base.close()
+      }.to raise_error( RuntimeError, 'Subclasses must implement Hoodoo::TransientStore::Base#close' )
+    end
   end
 end

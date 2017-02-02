@@ -230,6 +230,13 @@ describe Hoodoo::TransientStore::Memcached do
         end
       end
 
+      context 'close' do
+        it 'closes' do
+          expect_dalli_client( backend ).to receive( :close )
+          @instance.close()
+        end
+      end
+
     end # 'context "when initialised (#{ backend })" do'
   end   # 'shared_examples ...'
 

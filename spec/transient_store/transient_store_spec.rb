@@ -409,5 +409,29 @@ describe Hoodoo::TransientStore do
       end
     end
 
+    # ========================================================================
+
+    context '#close' do
+      before :each do
+        @store = Hoodoo::TransientStore.new(
+          storage_engine:   @engine_name,
+          storage_host_uri: 'localhost'
+        )
+      end
+
+      it 'closes' do
+        expect_any_instance_of( TestTransientStore ).to receive( :close )
+        @store.close()
+      end
+
+      it 'consumes and ignores exceptions' do
+        expect_any_instance_of( TestTransientStore ).to receive( :close ) do
+          raise 'Hello world'
+        end
+
+        @store.close()
+      end
+    end
+
   end
 end

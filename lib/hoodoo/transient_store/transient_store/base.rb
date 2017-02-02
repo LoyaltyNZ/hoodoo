@@ -63,6 +63,15 @@ module Hoodoo
         raise 'Subclasses must implement Hoodoo::TransientStore::Base#delete'
       end
 
+      # Base class template for the plug-in's back-end implementation of
+      # Hoodoo::TransientStore#close - see that for details.
+      #
+      # Any exception raised will be ignored by Hoodoo::TransientStore#close.
+      #
+      def close
+        raise 'Subclasses must implement Hoodoo::TransientStore::Base#close'
+      end
+
     end
   end
 end
