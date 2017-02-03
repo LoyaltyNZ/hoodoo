@@ -10,11 +10,6 @@
 
 module Hoodoo
   class TransientStore
-
-    # Mock back-end code used by tests to allow them to run without a
-    # dependency on the real engine (though the real engine is always
-    # recommended and Hoodoo core tests always cover both).
-    #
     class Mocks
 
       # Mock known uses of Redis with test implementations. Use explicitly,

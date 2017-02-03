@@ -137,7 +137,7 @@ href="Redis.html">Redis</a> instance identified by
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 38</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 41</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> )
   <span class="ruby-keyword">super</span> <span class="ruby-comment"># Pass all arguments through -&gt; *not* &#39;super()&#39;</span>
   <span class="ruby-ivar">@client</span> = <span class="ruby-identifier">connect_to_redis</span>( <span class="ruby-identifier">storage_host_uri</span> )
@@ -166,7 +166,7 @@ details.</p>
                 <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
               </p>
               <div id="method-i-close_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 73</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">quit</span>()
 <span class="ruby-keyword">end</span></pre>
@@ -193,7 +193,7 @@ for details.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 66</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">del</span>( <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) )
   <span class="ruby-keyword">true</span>
@@ -220,7 +220,7 @@ for details.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 59</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 62</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@client</span>[ <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) ]
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> ( <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">result</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
@@ -251,7 +251,7 @@ marshalling to Strings themselves.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 48</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">nk</span> = <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> )
 
