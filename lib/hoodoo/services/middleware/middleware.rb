@@ -949,7 +949,7 @@ module Hoodoo; module Services
         # Ignore errors, there's nothing much we can do about them and in
         # the worst case we just have to wait for this to expire naturally.
 
-        session.delete_from_memcached()
+        session.delete_from_store()
       end
 
       # Extract the returned data, handling error conditions.
@@ -1629,7 +1629,7 @@ module Hoodoo; module Services
           :session_id     => session_id
         )
 
-        result = session.load_from_memcached!( session_id )
+        result = session.load_from_store!( session_id )
         session = nil if result != :ok
       elsif ( self.class.environment.test? || self.class.environment.development? )
         interaction.using_test_session()

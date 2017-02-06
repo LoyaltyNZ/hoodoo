@@ -114,7 +114,7 @@ describe Hoodoo::Services::Session do
       :caller_version => 2
     )
 
-    expect( s1.save_to_memcached ).to eq( :ok )
+    expect( s1.save_to_store ).to eq( :ok )
 
     store = Hoodoo::TransientStore::Mocks::DalliClient.store()
     expect( store[ '1234' ] ).to_not be_nil
@@ -131,7 +131,7 @@ describe Hoodoo::Services::Session do
     sleep( 0.2 )
 
     s2 = described_class.new
-    expect( s2.load_from_memcached!( s1.session_id ) ).to eq( :ok )
+    expect( s2.load_from_store!( s1.session_id ) ).to eq( :ok )
 
     expect( s2.created_at ).to eq( Time.parse( s1.created_at.iso8601 ) )
     expect( s2.expires_at ).to eq( Time.parse( s1.expires_at.iso8601 ) )
@@ -142,7 +142,7 @@ describe Hoodoo::Services::Session do
   end
 
   it 'refuses to save if a newer caller version is present' do
-    expect( described_class ).to receive( :connect_to_memcached ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
 
     # Save a session with a high caller version
 
@@ -153,7 +153,7 @@ describe Hoodoo::Services::Session do
       :caller_version => 4
     )
 
-    expect( s1.save_to_memcached ).to eq( :ok )
+    expect( s1.save_to_store ).to eq( :ok )
 
     # Save another with, initially, a lower caller version. The idea here
     # is that session creation is underway when a caller gets updated.
@@ -165,11 +165,11 @@ describe Hoodoo::Services::Session do
       :caller_version => 3
     )
 
-    expect( s2.save_to_memcached ).to eq( :outdated )
+    expect( s2.save_to_store ).to eq( :outdated )
   end
 
   it 'invalidates a session if the client ID advances during its lifetime' do
-    expect( described_class ).to receive( :connect_to_memcached ).exactly( 4 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).exactly( 4 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a low caller version.
@@ -181,7 +181,7 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    expect( s1.save_to_memcached ).to eq( :ok )
+    expect( s1.save_to_store ).to eq( :ok )
 
     # Save another with a higher caller version.
 
@@ -192,16 +192,16 @@ describe Hoodoo::Services::Session do
       :caller_version => 2
     )
 
-    expect( s2.save_to_memcached ).to eq( :ok )
+    expect( s2.save_to_store ).to eq( :ok )
 
     # Should not be able to load the first one anymore.
 
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :outdated )
-    expect( loader.load_from_memcached!( '2345' ) ).to eq( :ok       )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :outdated )
+    expect( loader.load_from_store!( '2345' ) ).to eq( :ok       )
   end
 
   it 'refuses to load if the caller version is outdated' do
-    expect( described_class ).to receive( :connect_to_memcached ).exactly( 5 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).exactly( 5 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a low caller version
@@ -213,11 +213,11 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    expect( s1.save_to_memcached ).to eq( :ok )
+    expect( s1.save_to_store ).to eq( :ok )
 
     # Should be able to load it back.
 
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :ok )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :ok )
 
     # Save another with a higher caller version.
 
@@ -228,19 +228,19 @@ describe Hoodoo::Services::Session do
       :caller_version => 2
     )
 
-    expect( s2.save_to_memcached ).to eq( :ok )
+    expect( s2.save_to_store ).to eq( :ok )
 
     # Try to load the first one again; should fail.
 
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :outdated )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :outdated )
 
     # The newer one should load OK.
 
-    expect( loader.load_from_memcached!( '2345' ) ).to eq( :ok )
+    expect( loader.load_from_store!( '2345' ) ).to eq( :ok )
   end
 
   it 'refuses to load if expired' do
-    expect( described_class ).to receive( :connect_to_memcached ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a high caller version
@@ -258,8 +258,8 @@ describe Hoodoo::Services::Session do
       h
     end
 
-    expect( s.save_to_memcached ).to eq( :ok )
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :outdated )
+    expect( s.save_to_store ).to eq( :ok )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :outdated )
   end
 
   it 'can explicitly update a caller' do
@@ -270,10 +270,10 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    expect( described_class ).to receive( :connect_to_memcached ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
 
-    expect( s.update_caller_version_in_memcached( '9944', 23                                                 ) ).to eq( :ok )
-    expect( s.update_caller_version_in_memcached( 'abcd', 2,  Hoodoo::TransientStore::Mocks::DalliClient.new ) ).to eq( :ok )
+    expect( s.update_caller_version_in_store( '9944', 23                                                 ) ).to eq( :ok )
+    expect( s.update_caller_version_in_store( 'abcd', 2,  Hoodoo::TransientStore::Mocks::DalliClient.new ) ).to eq( :ok )
 
     store = Hoodoo::TransientStore::Mocks::DalliClient.store()
     expect( store[ '9944' ] ).to eq( { :expires_at => nil, :value => { 'version' => 23 } } )
@@ -281,15 +281,15 @@ describe Hoodoo::Services::Session do
   end
 
   it 'handles invalid session IDs when loading' do
-    expect( described_class ).to receive( :connect_to_memcached ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    expect( described_class ).to receive( :connect_to_store ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :not_found )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :not_found )
   end
 
   it 'complains if there is no caller ID' do
     s = described_class.new
     expect {
-      s.save_to_memcached()
+      s.save_to_store()
     }.to raise_error RuntimeError
   end
 
@@ -302,12 +302,12 @@ describe Hoodoo::Services::Session do
 
     expect( Hoodoo::Services::Middleware.logger ).to(
       receive( :warn ).once.with(
-        'Hoodoo::Services::Session\\#load_from_memcached!: Session loading failed - connection fault or session corrupt',
+        'Hoodoo::Services::Session\\#load_from_store!: Session loading failed - connection fault or session corrupt',
         'Mock Memcached connection failure'
       ).and_call_original
     )
 
-    expect( loader.load_from_memcached!( '1234' ) ).to eq( :fail )
+    expect( loader.load_from_store!( '1234' ) ).to eq( :fail )
   end
 
   it 'logs Memcached exceptions when updating caller version during session saving' do
@@ -325,12 +325,12 @@ describe Hoodoo::Services::Session do
 
     expect( Hoodoo::Services::Middleware.logger ).to(
       receive( :warn ).once.with(
-        'Hoodoo::Services::Session\\#update_caller_version_in_memcached: Client version update - connection fault or corrupt record',
+        'Hoodoo::Services::Session\\#update_caller_version_in_store: Client version update - connection fault or corrupt record',
         'Mock Memcached connection failure'
       ).and_call_original
     )
 
-    expect( s.save_to_memcached() ).to eq( :fail )
+    expect( s.save_to_store() ).to eq( :fail )
   end
 
   it 'logs Memcached exceptions when saving session' do
@@ -346,12 +346,12 @@ describe Hoodoo::Services::Session do
 
     expect( Hoodoo::Services::Middleware.logger ).to(
       receive( :warn ).once.with(
-        'Hoodoo::Services::Session\\#save_to_memcached: Session saving failed - connection fault or session corrupt',
+        'Hoodoo::Services::Session\\#save_to_store: Session saving failed - connection fault or session corrupt',
         'Mock Memcached connection failure'
       ).and_call_original
     )
 
-    expect( s.save_to_memcached() ).to eq( :fail )
+    expect( s.save_to_store() ).to eq( :fail )
   end
 
   it 'can be deleted' do
@@ -362,9 +362,9 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    s.save_to_memcached
+    s.save_to_store
 
-    expect{ s.delete_from_memcached }.to change{ s.load_from_memcached!( s.session_id ) }.from( :ok ).to( :not_found )
+    expect{ s.delete_from_store }.to change{ s.load_from_store!( s.session_id ) }.from( :ok ).to( :not_found )
   end
 
   it 'handles attempts to delete not-found things' do
@@ -375,7 +375,7 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    expect( s.delete_from_memcached ).to eq( :not_found )
+    expect( s.delete_from_store ).to eq( :not_found )
   end
 
   it 'logs and reports deletion exceptions' do
@@ -387,14 +387,14 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    s.save_to_memcached
+    s.save_to_store
 
-    allow( described_class ).to receive( :connect_to_memcached ) {
+    allow( described_class ).to receive( :connect_to_store ) {
       raise 'Intentional exception'
     }
 
     expect( Hoodoo::Services::Middleware.logger ).to receive( :warn )
-    expect( s.delete_from_memcached ).to eq( :fail )
+    expect( s.delete_from_store ).to eq( :fail )
   end
 
   # We really can't do this without insisting on testers having a
@@ -413,23 +413,23 @@ describe Hoodoo::Services::Session do
 
     it 'complains about a missing host' do
       expect {
-        described_class.connect_to_memcached( nil )
+        described_class.connect_to_store( nil )
       }.to raise_error RuntimeError
 
       expect {
-        described_class.connect_to_memcached( '' )
+        described_class.connect_to_store( '' )
       }.to raise_error RuntimeError
     end
 
     it 'tries to connect' do
       expect_any_instance_of( Dalli::Client ).to receive( :stats ).and_return( {} )
-      expect( described_class.connect_to_memcached( '256.2.3.4:0' ) ).to be_a( Dalli::Client )
+      expect( described_class.connect_to_store( '256.2.3.4:0' ) ).to be_a( Dalli::Client )
     end
 
     it 'handles connection failures' do
       expect_any_instance_of( Dalli::Client ).to receive( :stats ).and_return( nil )
       expect {
-        described_class.connect_to_memcached( '256.2.3.4:0' )
+        described_class.connect_to_store( '256.2.3.4:0' )
       }.to raise_error RuntimeError
     end
 
@@ -439,7 +439,7 @@ describe Hoodoo::Services::Session do
       end
 
       expect {
-        described_class.connect_to_memcached( '256.2.3.4:0' )
+        described_class.connect_to_store( '256.2.3.4:0' )
       }.to raise_error RuntimeError
     end
 
@@ -447,13 +447,13 @@ describe Hoodoo::Services::Session do
       expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
 
       1.upto( 3 ) do
-        described_class.connect_to_memcached( 'one' )
+        described_class.connect_to_store( 'one' )
       end
 
       expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
 
       1.upto( 3 ) do
-        described_class.connect_to_memcached( 'two' )
+        described_class.connect_to_store( 'two' )
       end
     end
   end

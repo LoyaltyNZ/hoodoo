@@ -94,7 +94,7 @@ module Hoodoo
     #
     attr_reader :storage_engine_instance
 
-    # Read this instance's default item maximum lifespan, in sections. See
+    # Read this instance's default item maximum lifespan, in seconds. See
     # also ::new.
     #
     attr_reader :default_maximum_lifespan
