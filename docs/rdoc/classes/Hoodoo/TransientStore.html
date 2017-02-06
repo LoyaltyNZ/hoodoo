@@ -154,8 +154,16 @@ use the new engine.</p>
               [R]
             </td>
             <td class='attr-name'>default_maximum_lifespan</td>
-            <td class='attr-desc'><p>Read this instance&#39;s default item maximum lifespan, in sections. See
+            <td class='attr-desc'><p>Read this instance&#39;s default item maximum lifespan, in seconds. See
 also <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
+          </tr>
+          <tr valign='top' id='attribute-i-default_namespace'>
+            <td class='attr-rw'>
+              [R]
+            </td>
+            <td class='attr-name'>default_namespace</td>
+            <td class='attr-desc'><p>Read this instance&#39;s default storage namespace, as a String. See also
+<a href="TransientStore.html#method-c-new">::new</a>.</p></td>
           </tr>
           <tr valign='top' id='attribute-i-storage_engine'>
             <td class='attr-rw'>
@@ -219,7 +227,7 @@ made.</p>
           </div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( storage_engine:, storage_host_uri:, default_maximum_lifespan: 604800 )
+              <b>new</b>( storage_engine:, storage_host_uri:, default_maximum_lifespan: 604800, default_namespace: &#39;nz_co_loyalty_hoodoo_transient_store_&#39; )
             <a href="../../classes/Hoodoo/TransientStore.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -257,6 +265,11 @@ href="TransientStore/MemcachedRedisMirror.html">Hoodoo::TransientStore::Memcache
 <dd>
 <p>The default time-to-live for data items, in, seconds; can be overridden per
 item; default is 604800 seconds or 7 days.</p>
+</dd><dt><code>default_namespace</code>
+<dd>
+<p>Storage engine keys are namespaced with
+<code>nz_co_loyalty_hoodoo_transient_store_</code> by default, though this
+can be overridden here. Pass a String or Symbol.</p>
 </dd></dl>
             </div>
 
@@ -268,11 +281,12 @@ item; default is 604800 seconds or 7 days.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 133</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(
   <span class="ruby-identifier">storage_engine</span>,,
   <span class="ruby-identifier">storage_host_uri</span>,,
-  <span class="ruby-identifier">default_maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-number">604800</span>
+  <span class="ruby-identifier">default_maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-number">604800</span>,
+  <span class="ruby-identifier">default_namespace</span><span class="ruby-operator">:</span>        <span class="ruby-string">&#39;nz_co_loyalty_hoodoo_transient_store_&#39;</span>
 )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">supported_storage_engines</span>().<span class="ruby-identifier">include?</span>( <span class="ruby-identifier">storage_engine</span> )
@@ -287,9 +301,11 @@ item; default is 604800 seconds or 7 days.</p>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-ivar">@default_maximum_lifespan</span> = <span class="ruby-identifier">default_maximum_lifespan</span>
+  <span class="ruby-ivar">@default_namespace</span>        = ( <span class="ruby-identifier">default_namespace</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span> ).<span class="ruby-identifier">to_s</span>()
   <span class="ruby-ivar">@storage_engine</span>           = <span class="ruby-identifier">storage_engine</span>
   <span class="ruby-ivar">@storage_engine_instance</span>  = <span class="ruby-identifier">@@supported_storage_engines</span>[ <span class="ruby-identifier">storage_engine</span> ].<span class="ruby-identifier">new</span>(
-    <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">storage_host_uri</span>
+    <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">storage_host_uri</span>,
+    <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span>        <span class="ruby-ivar">@default_namespace</span>
   )
 
 <span class="ruby-keyword">end</span></pre>
@@ -407,7 +423,7 @@ immediately close its connection(s) to any storage engines by calling here.</p>
                 <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
               </p>
               <div id="method-i-close_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 301</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 314</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
   <span class="ruby-ivar">@storage_engine_instance</span>.<span class="ruby-identifier">close</span>() <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
@@ -454,7 +470,7 @@ be raised.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 277</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 290</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;delete&#39;</span> )
 
@@ -507,7 +523,7 @@ be raised.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 255</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 268</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;get&#39;</span> )
   <span class="ruby-ivar">@storage_engine_instance</span>.<span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> <span class="ruby-identifier">key</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span>
@@ -594,7 +610,7 @@ so minimises the chance of early item eviction.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 214</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 227</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;set&#39;</span> )
 

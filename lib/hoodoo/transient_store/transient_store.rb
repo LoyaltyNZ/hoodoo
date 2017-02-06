@@ -99,6 +99,11 @@ module Hoodoo
     #
     attr_reader :default_maximum_lifespan
 
+    # Read this instance's default storage namespace, as a String. See also
+    # ::new.
+    #
+    attr_reader :default_namespace
+
     # Instantiate a new Transient storage object through which temporary data
     # can be stored or retrieved.
     #
@@ -130,10 +135,16 @@ module Hoodoo
     #                              seconds; can be overridden per item; default
     #                              is 604800 seconds or 7 days.
     #
+    # +default_namespace+::        Storage engine keys are namespaced with
+    #                              +nz_co_loyalty_hoodoo_transient_store_+ by
+    #                              default, though this can be overridden here.
+    #                              Pass a String or Symbol.
+    #
     def initialize(
       storage_engine:,
       storage_host_uri:,
-      default_maximum_lifespan: 604800
+      default_maximum_lifespan: 604800,
+      default_namespace:        'nz_co_loyalty_hoodoo_transient_store_'
     )
 
       unless self.class.supported_storage_engines().include?( storage_engine )
@@ -148,9 +159,11 @@ module Hoodoo
       end
 
       @default_maximum_lifespan = default_maximum_lifespan
+      @default_namespace        = ( default_namespace || '' ).to_s()
       @storage_engine           = storage_engine
       @storage_engine_instance  = @@supported_storage_engines[ storage_engine ].new(
-        storage_host_uri: storage_host_uri
+        storage_host_uri: storage_host_uri,
+        namespace:        @default_namespace
       )
 
     end

@@ -5,10 +5,11 @@ require 'spec_helper'
 #
 describe Hoodoo::TransientStore do
 
-  RDOC_STATED_DEFAULT_LIFESPAN = 604800
+  RDOC_STATED_DEFAULT_LIFESPAN  = 604800
+  RDOC_STATED_DEFAULT_NAMESPACE = 'nz_co_loyalty_hoodoo_transient_store_'
 
   class TestTransientStore < Hoodoo::TransientStore::Base
-    def initialize( storage_host_uri: )
+    def initialize( storage_host_uri:, namespace: )
       @pool = {}
     end
 
@@ -76,20 +77,23 @@ describe Hoodoo::TransientStore do
 
     context '#initialize' do
       it 'initialises' do
-        max_life = 120
-        uri      = 'localhost'
+        max_life  = 120
+        namespace = Hoodoo::UUID.generate()
+        uri       = 'localhost'
 
-        expect( TestTransientStore ).to receive( :new ).with( storage_host_uri: uri )
+        expect( TestTransientStore ).to receive( :new ).with( storage_host_uri: uri, namespace: namespace )
 
         result = Hoodoo::TransientStore.new(
           storage_engine:           @engine_name,
           storage_host_uri:         uri,
-          default_maximum_lifespan: max_life
+          default_maximum_lifespan: max_life,
+          default_namespace:        namespace
         )
 
         expect( result ).to be_a( Hoodoo::TransientStore )
         expect( result.storage_engine ).to eql( @engine_name )
         expect( result.default_maximum_lifespan ).to eql( max_life )
+        expect( result.default_namespace ).to eql( namespace )
       end
 
       it 'initialises with defaults' do
@@ -98,7 +102,8 @@ describe Hoodoo::TransientStore do
           storage_host_uri: 'localhost'
         )
 
-        expect( result.default_maximum_lifespan ).to eql( RDOC_STATED_DEFAULT_LIFESPAN )
+        expect( result.default_maximum_lifespan ).to eql( RDOC_STATED_DEFAULT_LIFESPAN  )
+        expect( result.default_namespace        ).to eql( RDOC_STATED_DEFAULT_NAMESPACE )
       end
 
       context 'unknown storage engines' do
@@ -131,11 +136,13 @@ describe Hoodoo::TransientStore do
 
     context 'attribute accessor' do
       before :each do
-        @ttl   = 120
-        @store = Hoodoo::TransientStore.new(
+        @ttl       = 120
+        @namespace = Hoodoo::UUID.generate()
+        @store     = Hoodoo::TransientStore.new(
           storage_engine:           @engine_name,
           storage_host_uri:         'localhost',
-          default_maximum_lifespan: @ttl
+          default_maximum_lifespan: @ttl,
+          default_namespace:        @namespace
         )
       end
 
@@ -149,6 +156,10 @@ describe Hoodoo::TransientStore do
 
       it '#default_maximum_lifespan' do
         expect( @store.default_maximum_lifespan ).to eql( @ttl )
+      end
+
+      it '#default_namespace' do
+        expect( @store.default_namespace ).to eql( @namespace )
       end
     end
 

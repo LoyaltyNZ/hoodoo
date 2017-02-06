@@ -17,6 +17,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
   before :each do
     @memcached_uri      = 'localhost:11211'
     @redis_uri          = 'redis://localhost:6379'
+    @namespace          = Hoodoo::UUID.generate()
     @storage_engine_uri = {
       :memcached => @memcached_uri,
       :redis     => @redis_uri
@@ -39,7 +40,8 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
     )
 
     @instance = Hoodoo::TransientStore::MemcachedRedisMirror.new(
-      storage_host_uri: @storage_engine_uri
+      storage_host_uri: @storage_engine_uri,
+      namespace:        @namespace
     )
   end
 
@@ -53,13 +55,15 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
     it 'complains about bad parameters' do
       expect {
         Hoodoo::TransientStore::MemcachedRedisMirror.new(
-          storage_host_uri: 'some string'
+          storage_host_uri: 'some string',
+          namespace:        @namespace
         )
       }.to raise_error( RuntimeError, 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor' )
 
       expect {
         Hoodoo::TransientStore::MemcachedRedisMirror.new(
-          storage_host_uri: { :hash => 'without required keys' }
+          storage_host_uri: { :hash => 'without required keys' },
+          namespace:        @namespace
         )
       }.to raise_error( RuntimeError, 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor' )
     end
@@ -69,7 +73,8 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       expect( Hoodoo::TransientStore::Redis     ).to receive( :new )
 
       Hoodoo::TransientStore::MemcachedRedisMirror.new(
-        storage_host_uri: @storage_engine_uri
+        storage_host_uri: @storage_engine_uri,
+        namespace:        @namespace
       )
     end
   end
@@ -98,9 +103,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'allows Memcached exceptions to propagate' do
-        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ) do
-          raise "Hello world"
-        end
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).and_raise( 'Hello world' )
 
         expect {
           @instance.set(
@@ -112,9 +115,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'allows Redis exceptions to propagate' do
-        expect_any_instance_of( Hoodoo::TransientStore::Redis ).to receive( :set ) do
-          raise "Hello world"
-        end
+        expect_any_instance_of( Hoodoo::TransientStore::Redis ).to receive( :set ).and_raise( 'Hello world' )
 
         expect {
           @instance.set(
@@ -164,9 +165,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'allows Memcached exceptions to propagate' do
-        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :get ) do
-          raise "Hello world"
-        end
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :get ).and_raise( 'Hello world' )
 
         expect {
           @instance.get( key: @key )
@@ -174,9 +173,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'allows Redis exceptions to propagate' do
-        expect_any_instance_of( Hoodoo::TransientStore::Redis ).to receive( :get ) do
-          raise "Hello world"
-        end
+        expect_any_instance_of( Hoodoo::TransientStore::Redis ).to receive( :get ).and_raise( 'Hello world' )
 
         expect {
           @instance.get( key: @key )
@@ -309,10 +306,8 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'allows Memcached exceptions to propagate but still calls Redis' do
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :delete ).and_raise( 'Hello world' )
         expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :delete ).with( key: @key ).and_call_original()
-        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :delete ) do
-          raise "Hello world"
-        end
 
         expect {
           @instance.delete( key: @key )
@@ -321,9 +316,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
 
       it 'allows Redis exceptions to propagate but still calls Memcached' do
         expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :delete ).with( key: @key ).and_call_original()
-        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :delete ) do
-          raise "Hello world"
-        end
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :delete ).and_raise( 'Hello world' )
 
         expect {
           @instance.delete( key: @key )
@@ -340,7 +333,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
       end
 
       it 'still closes Redis if Memcached raises an exception' do
-        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ) { raise "Hello world" }
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ).and_raise( "Hello world" )
         expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ).and_call_original()
 
         @instance.close() rescue nil
@@ -348,7 +341,7 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
 
       it 'still closes Memcached if Redis raises an exception' do
         expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :close ).and_call_original()
-        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ) { raise "Hello world" }
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :close ).and_raise( "Hello world" )
 
         @instance.close() rescue nil
       end

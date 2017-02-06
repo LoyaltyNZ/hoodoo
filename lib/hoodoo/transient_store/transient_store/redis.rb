@@ -33,12 +33,7 @@ module Hoodoo
       #
       # TCP keep-alive is enabled for the server connection.
       #
-      # All given keys are internally prefixed with a namespace of
-      # +nz_co_loyalty_hoodoo_transient_store_+ to avoid collision of data
-      # stored with this object and other data that may be in the Redis
-      # instance identified by +storage_host_uri+.
-      #
-      def initialize( storage_host_uri: )
+      def initialize( storage_host_uri:, namespace: )
         super # Pass all arguments through -> *not* 'super()'
         @client = connect_to_redis( storage_host_uri )
       end
@@ -80,11 +75,10 @@ module Hoodoo
     private
 
       # Given a simple key to Redis data (expressed as a String), return a
-      # namespaced version by adding a 'nz_co_loyalty_hoodoo_transient_store_'
-      # prefix.
+      # namespaced version by adding the configured namespace as a prefix.
       #
       def namespaced_key( key )
-        'nz_co_loyalty_hoodoo_transient_store_' + key
+        @namespace + key
       end
 
       # Connect to Redis if possible and return the connected Redis client

@@ -47,6 +47,7 @@ describe Hoodoo::TransientStore::Redis do
 
     before :each do
       @storage_engine_uri = 'redis://localhost:6379'
+      @namespace          = Hoodoo::UUID.generate()
 
       if backend == :mock
         Hoodoo::TransientStore::Mocks::Redis.reset()
@@ -71,7 +72,8 @@ describe Hoodoo::TransientStore::Redis do
     context "#initialize (#{ backend })" do
       it 'initialises' do
         instance = Hoodoo::TransientStore::Redis.new(
-          storage_host_uri: @storage_engine_uri
+          storage_host_uri: @storage_engine_uri,
+          namespace:        @namespace
         )
 
         expect( instance ).to be_a( Hoodoo::TransientStore::Redis )
@@ -82,7 +84,8 @@ describe Hoodoo::TransientStore::Redis do
 
         expect {
           instance = Hoodoo::TransientStore::Redis.new(
-            storage_host_uri: @storage_engine_uri
+            storage_host_uri: @storage_engine_uri,
+            namespace:        @namespace
           )
         }.to raise_error(
           RuntimeError,
@@ -91,13 +94,12 @@ describe Hoodoo::TransientStore::Redis do
       end
 
       it 'handles exceptions' do
-        expect_redis( backend ).to receive( :info ) do
-          raise "Hello world"
-        end
+        expect_redis( backend ).to receive( :info ).and_raise( 'Hello world' )
 
         expect {
           instance = Hoodoo::TransientStore::Redis.new(
-            storage_host_uri: @storage_engine_uri
+            storage_host_uri: @storage_engine_uri,
+            namespace:        @namespace
           )
         }.to raise_error(
           RuntimeError,
@@ -107,10 +109,11 @@ describe Hoodoo::TransientStore::Redis do
 
       it 'generates expected namespaced keys' do
         instance = Hoodoo::TransientStore::Redis.new(
-          storage_host_uri: @storage_engine_uri
+          storage_host_uri: @storage_engine_uri,
+          namespace:        @namespace
         )
 
-        expect( instance.send( :namespaced_key, 'foo' ) ).to eql( 'nz_co_loyalty_hoodoo_transient_store_foo' )
+        expect( instance.send( :namespaced_key, 'foo' ) ).to eql( "#{ @namespace }foo" )
       end
     end
 
@@ -119,7 +122,8 @@ describe Hoodoo::TransientStore::Redis do
     context "when initialised (#{ backend })" do
       before :each do
         @instance = Hoodoo::TransientStore::Redis.new(
-          storage_host_uri: @storage_engine_uri
+          storage_host_uri: @storage_engine_uri,
+          namespace:        @namespace
         )
 
         @key      = Hoodoo::UUID.generate()
@@ -144,9 +148,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'allows exceptions to propagate' do
-          expect_redis( backend ).to receive( :[]=    ).with( @nskey, @jpayload ) do
-            raise "Hello world"
-          end
+          expect_redis( backend ).to receive( :[]= ).with( @nskey, @jpayload ).and_raise( 'Hello world' )
 
           expect {
             @instance.set(
@@ -180,9 +182,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'allows exceptions to propagate' do
-          expect_redis( backend ).to receive( :[] ).with( @nskey ) do
-            raise "Hello world"
-          end
+          expect_redis( backend ).to receive( :[] ).with( @nskey ).and_raise( 'Hello world' )
 
           expect {
             @instance.get( key: @key )
@@ -217,9 +217,7 @@ describe Hoodoo::TransientStore::Redis do
         end
 
         it 'allows exceptions to propagate' do
-          expect_redis( backend ).to receive( :del ).with( @nskey ) do
-            raise "Hello world"
-          end
+          expect_redis( backend ).to receive( :del ).with( @nskey ).and_raise( 'Hello world' )
 
           expect {
             @instance.delete( key: @key )

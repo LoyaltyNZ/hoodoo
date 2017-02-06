@@ -3,15 +3,26 @@ require 'spec_helper'
 describe Hoodoo::TransientStore::Base do
   context 'creation' do
     it 'initialises' do
-      base = Hoodoo::TransientStore::Base.new( storage_host_uri: 'localhost' )
+      base = Hoodoo::TransientStore::Base.new(
+        storage_host_uri: 'localhost',
+        namespace:        'foo'
+      )
+
       expect( base ).to_not be_nil
+
+      # Subclasses may rightly rely on these, so they should be tested.
+      #
       expect( base.instance_variable_get( '@storage_host_uri' ) ).to eq( 'localhost' )
+      expect( base.instance_variable_get( '@namespace'        ) ).to eq( 'foo'       )
     end
   end
 
   context 'subclass author warning' do
     before :each do
-      @base = Hoodoo::TransientStore::Base.new( storage_host_uri: 'localhost' )
+      @base = Hoodoo::TransientStore::Base.new(
+        storage_host_uri: 'localhost',
+        namespace:        'foo'
+      )
     end
 
     it 'is generated for #get' do

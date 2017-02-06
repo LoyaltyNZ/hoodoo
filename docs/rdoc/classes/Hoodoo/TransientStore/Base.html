@@ -105,7 +105,7 @@ worked examples.</p>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( storage_host_uri: )
+              <b>new</b>( storage_host_uri:, namespace: )
             <a href="../../../classes/Hoodoo/TransientStore/Base.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -116,6 +116,11 @@ raise exceptions if things go wrong.</p>
 <dl class="rdoc-list note-list"><dt><code>storage_host_uri</code>
 <dd>
 <p>The engine-dependent connection URI. See <a
+href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>
+for details.</p>
+</dd><dt><code>namespace</code>
+<dd>
+<p>The storage key namespace to use, as a String. See <a
 href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>
 for details.</p>
 </dd></dl>
@@ -129,9 +134,10 @@ for details.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 26</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">storage_host_uri</span><span class="ruby-operator">:</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 29</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">storage_host_uri</span>,, <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span> )
   <span class="ruby-ivar">@storage_host_uri</span> = <span class="ruby-identifier">storage_host_uri</span>
+  <span class="ruby-ivar">@namespace</span>        = <span class="ruby-identifier">namespace</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -161,7 +167,7 @@ href="../TransientStore.html#method-i-close">Hoodoo::TransientStore#close</a>.</
                 <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
               </p>
               <div id="method-i-close_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 71</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#close&#39;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -195,7 +201,7 @@ failures of unknown origin.</p>
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
               </p>
               <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 62</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 66</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#delete&#39;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -229,7 +235,7 @@ href="../TransientStore.html#method-i-get">Hoodoo::TransientStore#get</a>.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 50</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#get&#39;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -263,7 +269,7 @@ failures of unknown origin.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 38</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/base.rb, line 42</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Subclasses must implement Hoodoo::TransientStore::Base#set&#39;</span>
 <span class="ruby-keyword">end</span></pre>
