@@ -175,7 +175,7 @@ never need this mock class at all.</p>
                 <a href="javascript:toggleSource('method-c-reset_source')" id="l_method-c-reset_source">show</a>
               </p>
               <div id="method-c-reset_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 59</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 54</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">reset</span>
   <span class="ruby-identifier">@@store</span> = {}
 <span class="ruby-keyword">end</span></pre>
@@ -204,7 +204,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-c-store_source')" id="l_method-c-store_source">show</a>
               </p>
               <div id="method-c-store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 53</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">store</span>
   <span class="ruby-identifier">@@store</span>
 <span class="ruby-keyword">end</span></pre>
@@ -230,7 +230,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-i-5B-5D_source')" id="l_method-i-5B-5D_source">show</a>
               </p>
               <div id="method-i-5B-5D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 80</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-keyword ruby-title">key</span> )
   <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -255,7 +255,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-i-5B-5D-3D_source')" id="l_method-i-5B-5D-3D_source">show</a>
               </p>
               <div id="method-i-5B-5D-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 101</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 96</span>
 <span class="ruby-keyword">def</span> <span class="ruby-operator">[]=</span>( <span class="ruby-keyword ruby-title">key</span>, <span class="ruby-identifier">value</span> )
   <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -280,7 +280,7 @@ giving your stored value.</p>
                 <a href="javascript:toggleSource('method-i-del_source')" id="l_method-i-del_source">show</a>
               </p>
               <div id="method-i-del_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 122</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 117</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">del</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span> )
@@ -315,7 +315,7 @@ value in seconds, after which the data is considered expired.</p>
                 <a href="javascript:toggleSource('method-i-expire_source')" id="l_method-i-expire_source">show</a>
               </p>
               <div id="method-i-expire_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 111</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 106</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expire</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">ttl</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">@@store</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-identifier">key</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::TransientStore::Mocks::Redis\#expire: Cannot find key &#39;#{ key }&#39;&quot;</span>
@@ -350,7 +350,7 @@ found / expired.</p>
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
               </p>
               <div id="method-i-get_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 63</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ]
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
@@ -381,7 +381,7 @@ found / expired.</p>
                 <a href="javascript:toggleSource('method-i-info_source')" id="l_method-i-info_source">show</a>
               </p>
               <div id="method-i-info_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 137</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 132</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">info</span>( <span class="ruby-identifier">command</span> )
   { <span class="ruby-value">:alive</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">command</span> }
 <span class="ruby-keyword">end</span></pre>
@@ -406,7 +406,7 @@ found / expired.</p>
                 <a href="javascript:toggleSource('method-i-quit_source')" id="l_method-i-quit_source">show</a>
               </p>
               <div id="method-i-quit_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 133</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 128</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">quit</span>; <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -441,7 +441,7 @@ If omitted, the data does not expire.</p>
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
               </p>
               <div id="method-i-set_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 94</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/mocks/redis.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span>, <span class="ruby-identifier">ttl</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">@@store</span>[ <span class="ruby-identifier">key</span> ] = { <span class="ruby-value">:value</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span> }
   <span class="ruby-string">&#39;OK&#39;</span>

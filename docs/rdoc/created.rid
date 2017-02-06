@@ -1,4 +1,4 @@
-Tue, 07 Feb 2017 10:26:05 +1300
+Tue, 07 Feb 2017 10:27:46 +1300
 README.md	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo.rb	Wed, 01 Feb 2017 11:58:50 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -112,7 +112,7 @@ lib/hoodoo/services/services/service.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/session.rb	Tue, 07 Feb 2017 10:01:31 +1300
 lib/hoodoo/transient_store.rb	Wed, 01 Feb 2017 11:35:50 +1300
 lib/hoodoo/transient_store/mocks/dalli_client.rb	Fri, 03 Feb 2017 11:16:55 +1300
-lib/hoodoo/transient_store/mocks/redis.rb	Fri, 03 Feb 2017 11:17:02 +1300
+lib/hoodoo/transient_store/mocks/redis.rb	Tue, 07 Feb 2017 10:27:40 +1300
 lib/hoodoo/transient_store/transient_store.rb	Tue, 07 Feb 2017 10:25:39 +1300
 lib/hoodoo/transient_store/transient_store/base.rb	Tue, 07 Feb 2017 10:07:55 +1300
 lib/hoodoo/transient_store/transient_store/memcached.rb	Tue, 07 Feb 2017 10:04:23 +1300
