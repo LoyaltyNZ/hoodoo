@@ -23,8 +23,12 @@ module Hoodoo
       # +storage_host_uri+:: The engine-dependent connection URI. See
       #                      Hoodoo::TransientStore::new for details.
       #
-      def initialize( storage_host_uri: )
+      # +namespace+::        The storage key namespace to use, as a String.
+      #                      See Hoodoo::TransientStore::new for details.
+      #
+      def initialize( storage_host_uri:, namespace: )
         @storage_host_uri = storage_host_uri
+        @namespace        = namespace
       end
 
       # Base class template for the plug-in's back-end implementation of

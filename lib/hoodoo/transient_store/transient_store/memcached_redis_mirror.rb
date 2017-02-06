@@ -73,7 +73,9 @@ module Hoodoo
       # Hoodoo::TransientStore::Redis::new for details of connection URI
       # requirements for those engines.
       #
-      def initialize( storage_host_uri: )
+      # The value of the +namespace+ parameter applies equally to both engines.
+      #
+      def initialize( storage_host_uri:, namespace: )
         super # Pass all arguments through -> *not* 'super()'
 
         unless storage_host_uri.is_a?( Hash ) &&
@@ -83,8 +85,8 @@ module Hoodoo
         end
 
         @get_keys_from   = :both
-        @memcached_store = Hoodoo::TransientStore::Memcached.new( storage_host_uri: storage_host_uri[ :memcached ] )
-        @redis_store     =     Hoodoo::TransientStore::Redis.new( storage_host_uri: storage_host_uri[ :redis     ] )
+        @memcached_store = Hoodoo::TransientStore::Memcached.new( storage_host_uri: storage_host_uri[ :memcached ], namespace: namespace )
+        @redis_store     =     Hoodoo::TransientStore::Redis.new( storage_host_uri: storage_host_uri[ :redis     ], namespace: namespace )
       end
 
       # See Hoodoo::TransientStore::Base#set for details.

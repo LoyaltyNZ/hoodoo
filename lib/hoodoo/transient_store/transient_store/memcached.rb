@@ -34,9 +34,9 @@ module Hoodoo
       # of data stored with this object and other data that may be in the
       # Memcached instance identified by +storage_host_uri+.
       #
-      def initialize( storage_host_uri: )
+      def initialize( storage_host_uri:, namespace: )
         super # Pass all arguments through -> *not* 'super()'
-        @client = connect_to_memcached( storage_host_uri )
+        @client = connect_to_memcached( storage_host_uri, namespace )
       end
 
       # See Hoodoo::TransientStore::Base#set for details.
@@ -72,7 +72,7 @@ module Hoodoo
       #
       # +host+:: Connection URI, e.g. <tt>localhost:11211</tt>.
       #
-      def connect_to_memcached( host )
+      def connect_to_memcached( host, namespace )
         exception = nil
         stats     = nil
         client    = nil
@@ -83,7 +83,7 @@ module Hoodoo
             {
               :compress   => false,
               :serializer => JSON,
-              :namespace  => :nz_co_loyalty_hoodoo_transient_store_
+              :namespace  => namespace
             }
           )
 
