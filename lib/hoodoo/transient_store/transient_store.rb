@@ -87,7 +87,7 @@ module Hoodoo
     #
     attr_reader :storage_engine
 
-    # Read the storage engine insteance for the #storage_engine - this allows
+    # Read the storage engine instance for the #storage_engine - this allows
     # engine-specific configuration to be set where available, though this is
     # strongly discouraged as it couples client code to the engine in use,
     # defeating the main rationale behind the TransientStore abstraction.
@@ -256,7 +256,11 @@ module Hoodoo
     #
     # _Named_ parameters are:
     #
-    # +key+:: Key previously given to #set.
+    # +key+::         Key previously given to #set.
+    #
+    # +allow_throw+:: If +true+, exceptions raised by the underlying storage
+    #                 engine are thrown, else ignored and +nil+ is returned.
+    #                 Optional; default is +false+.
     #
     # Returns +nil+ if the item is not found - either the key is wrong, the
     # stored data has expired or the stored data has been evicted early from
@@ -265,9 +269,14 @@ module Hoodoo
     # Only non-empty String or Symbol keys are permitted, else an exception
     # will be raised.
     #
-    def get( key: )
+    def get( key:, allow_throw: false )
       key = normalise_key( key, 'get' )
-      @storage_engine_instance.get( key: key ) rescue nil
+
+      begin
+        @storage_engine_instance.get( key: key )
+      rescue
+        raise if allow_throw
+      end
     end
 
     # Delete data previously stored with #set.

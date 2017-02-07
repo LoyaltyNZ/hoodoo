@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'hoodoo/transient_store/mocks/dalli_client'
 
 describe Hoodoo::Services::Session do
 
   before :each do
-    Hoodoo::TransientStore::Mocks::DalliClient.reset()
+    spec_helper_use_mock_memcached()
   end
 
   it 'includes a legacy alias to the TransientStore mock back-end' do
@@ -11,6 +12,20 @@ describe Hoodoo::Services::Session do
     expect {
       Hoodoo::TransientStore::Mocks::DalliClient.reset()
     }.to_not raise_error
+  end
+
+  it 'defines aliases for legacy methods' do
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 2
+    )
+
+    expect( s ).to respond_to( :save_to_memcached )
+    expect( s ).to respond_to( :load_from_memcached! )
+    expect( s ).to respond_to( :update_caller_version_in_memcached )
+    expect( s ).to respond_to( :delete_from_memcached )
   end
 
   it 'initialises with default options' do
@@ -118,7 +133,9 @@ describe Hoodoo::Services::Session do
 
     store = Hoodoo::TransientStore::Mocks::DalliClient.store()
     expect( store[ '1234' ] ).to_not be_nil
-    expect( store[ '0987' ] ).to eq( { :expires_at => nil, :value => { 'version' => 2 } } )
+    expect( store[ '0987' ] ).to include( { :value => { 'version' => 2 } } )
+    expect( store[ '0987' ] ).to have_key( :expires_at )
+    expect( store[ '0987' ][ :expires_at ] ).to be_a( Time )
 
     # Check that session gains an expiry time when saved.
     #
@@ -142,7 +159,6 @@ describe Hoodoo::Services::Session do
   end
 
   it 'refuses to save if a newer caller version is present' do
-    expect( described_class ).to receive( :connect_to_store ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
 
     # Save a session with a high caller version
 
@@ -169,7 +185,6 @@ describe Hoodoo::Services::Session do
   end
 
   it 'invalidates a session if the client ID advances during its lifetime' do
-    expect( described_class ).to receive( :connect_to_store ).exactly( 4 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a low caller version.
@@ -201,7 +216,6 @@ describe Hoodoo::Services::Session do
   end
 
   it 'refuses to load if the caller version is outdated' do
-    expect( described_class ).to receive( :connect_to_store ).exactly( 5 ).times.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a low caller version
@@ -240,7 +254,6 @@ describe Hoodoo::Services::Session do
   end
 
   it 'refuses to load if expired' do
-    expect( described_class ).to receive( :connect_to_store ).twice.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
 
     # Save a session with a high caller version
@@ -262,26 +275,51 @@ describe Hoodoo::Services::Session do
     expect( loader.load_from_store!( '1234' ) ).to eq( :outdated )
   end
 
-  it 'can explicitly update a caller' do
-    s = described_class.new(
-      :session_id => '1234',
-      :memcached_host => 'abcd',
-      :caller_id => '0987',
-      :caller_version => 1
-    )
+  context 'can explicitly update a caller' do
+    before :each do
+      @session = described_class.new(
+        :session_id => '1234',
+        :memcached_host => 'abcd',
+        :caller_id => '0987',
+        :caller_version => 1
+      )
+    end
 
-    expect( described_class ).to receive( :connect_to_store ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+    after :each do
+      store = Hoodoo::TransientStore::Mocks::DalliClient.store()
+      expect( store[ '0987' ] ).to include( { :value => { 'version' => 23 } } )
+      expect( store[ 'efgh' ] ).to include( { :value => { 'version' => 3  } } )
+    end
 
-    expect( s.update_caller_version_in_store( '9944', 23                                                 ) ).to eq( :ok )
-    expect( s.update_caller_version_in_store( 'abcd', 2,  Hoodoo::TransientStore::Mocks::DalliClient.new ) ).to eq( :ok )
+    it 'with modern interface and no caller-supplied client' do
+      expect( @session.update_caller_version_in_store( '0987', 23 ) ).to eq( :ok )
+      expect( @session.update_caller_version_in_store( 'efgh', 3  ) ).to eq( :ok )
+    end
 
-    store = Hoodoo::TransientStore::Mocks::DalliClient.store()
-    expect( store[ '9944' ] ).to eq( { :expires_at => nil, :value => { 'version' => 23 } } )
-    expect( store[ 'abcd' ] ).to eq( { :expires_at => nil, :value => { 'version' => 2  } } )
+    it 'with modern interface and caller-supplied Hoodoo::TransientStore instance' do
+      local_store = Hoodoo::TransientStore.new(
+        storage_engine:   :memcached,
+        storage_host_uri: 'abcd'
+      )
+
+      expect( @session.update_caller_version_in_store( '0987', 23, local_store ) ).to eq( :ok )
+      expect( @session.update_caller_version_in_store( 'efgh', 3,  local_store ) ).to eq( :ok )
+    end
+
+    it 'with deprecated interface and no caller-supplied client' do
+      expect( @session.update_caller_version_in_memcached( '0987', 23 ) ).to eq( :ok )
+      expect( @session.update_caller_version_in_memcached( 'efgh', 3  ) ).to eq( :ok )
+    end
+
+    it 'with deprecated interface and caller-supplied Dalli::Client instance' do
+      local_store = Hoodoo::TransientStore::Mocks::DalliClient.new
+
+      expect( @session.update_caller_version_in_memcached( '0987', 23, local_store ) ).to eq( :ok )
+      expect( @session.update_caller_version_in_memcached( 'efgh', 3,  local_store ) ).to eq( :ok )
+    end
   end
 
   it 'handles invalid session IDs when loading' do
-    expect( described_class ).to receive( :connect_to_store ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
     loader = described_class.new
     expect( loader.load_from_store!( '1234' ) ).to eq( :not_found )
   end
@@ -375,11 +413,46 @@ describe Hoodoo::Services::Session do
       :caller_version => 1
     )
 
-    expect( s.delete_from_store ).to eq( :not_found )
+    expect( s.delete_from_store ).to eq( :ok )
   end
 
-  it 'logs and reports deletion exceptions' do
-    fdc = Hoodoo::TransientStore::Mocks::DalliClient.new
+  it 'handles unknown Hoodoo::TransientStore engine failures' do
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    s.save_to_store
+    allow_any_instance_of( Hoodoo::TransientStore ).to(
+      receive( :delete ).
+      and_return( false )
+    )
+
+    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn )
+    expect( s.delete_from_store ).to eq( :fail )
+  end
+
+  it 'handles unknown Hoodoo::TransientStore engine returned exceptions' do
+    s = described_class.new(
+      :session_id => '1234',
+      :memcached_host => 'abcd',
+      :caller_id => '0987',
+      :caller_version => 1
+    )
+
+    s.save_to_store
+    allow_any_instance_of( Hoodoo::TransientStore ).to(
+      receive( :delete ).
+      and_return( RuntimeError.new( 'Intentional exception' ) )
+    )
+
+    expect( Hoodoo::Services::Middleware.logger ).to receive( :warn )
+    expect( s.delete_from_store ).to eq( :fail )
+  end
+
+  it 'logs and reports internal deletion exceptions' do
     s = described_class.new(
       :session_id => '1234',
       :memcached_host => 'abcd',
@@ -389,71 +462,65 @@ describe Hoodoo::Services::Session do
 
     s.save_to_store
 
-    allow( described_class ).to receive( :connect_to_store ) {
-      raise 'Intentional exception'
-    }
+    allow_any_instance_of( described_class ).to(
+      receive( :get_store ).
+      and_raise( 'Intentional exception' )
+    )
 
     expect( Hoodoo::Services::Middleware.logger ).to receive( :warn )
     expect( s.delete_from_store ).to eq( :fail )
   end
 
-  # We really can't do this without insisting on testers having a
-  # Memcached instance; instead, assume Dalli works (!) and mock it.
-  #
-  context 'real Memcached connection code test coverage' do
+  context 'legacy Memcached connection code test coverage' do
     before :example do
+
       # Clear the connection cache for each test
-      Hoodoo::Services::Session.class_variable_set( '@@dalli_clients', nil ) # Hack for test!
-      Hoodoo::TransientStore::Mocks::DalliClient.bypass( true )
-    end
+      #
+      Hoodoo::Services::Session.class_variable_set( '@@stores', nil ) # Hack for test!
 
-    after :example do
-      Hoodoo::TransientStore::Mocks::DalliClient.bypass( false )
-    end
-
-    it 'complains about a missing host' do
-      expect {
-        described_class.connect_to_store( nil )
-      }.to raise_error RuntimeError
-
-      expect {
-        described_class.connect_to_store( '' )
-      }.to raise_error RuntimeError
+      @instance = described_class.new(
+        :session_id => '1234',
+        :memcached_host => 'abcd',
+        :caller_id => '0987',
+        :caller_version => 1
+      )
     end
 
     it 'tries to connect' do
-      expect_any_instance_of( Dalli::Client ).to receive( :stats ).and_return( {} )
-      expect( described_class.connect_to_store( '256.2.3.4:0' ) ).to be_a( Dalli::Client )
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::DalliClient ).to receive( :stats ).and_return( {} )
+      expect( @instance.send( :get_store ) ).to be_a( Hoodoo::TransientStore )
     end
 
     it 'handles connection failures' do
-      expect_any_instance_of( Dalli::Client ).to receive( :stats ).and_return( nil )
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::DalliClient ).to receive( :stats ).and_return( nil )
       expect {
-        described_class.connect_to_store( '256.2.3.4:0' )
+        @instance.send( :get_store )
       }.to raise_error RuntimeError
     end
 
     it 'handles connection exceptions' do
-      expect_any_instance_of( Dalli::Client ).to receive( :initialize ) do
-        raise 'Mock Memcached connection failure'
+      expect_any_instance_of( Hoodoo::TransientStore ).to receive( :initialize ) do
+        raise 'Mock TransientStore constructor failure'
       end
 
       expect {
-        described_class.connect_to_store( '256.2.3.4:0' )
+        @instance.send( :get_store )
       }.to raise_error RuntimeError
     end
 
     it 'only initialises once for one given host' do
-      expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+      expect( Hoodoo::TransientStore::Memcached ).to receive( :new ).once.and_call_original()
 
+      @instance.memcached_host = 'one'
       1.upto( 3 ) do
-        described_class.connect_to_store( 'one' )
+        @instance.send( :get_store )
       end
 
-      expect( Dalli::Client ).to receive( :new ).once.and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+      expect( Hoodoo::TransientStore::Memcached ).to receive( :new ).once.and_call_original()
 
+      @instance.memcached_host = 'two'
       1.upto( 3 ) do
-        described_class.connect_to_store( 'two' )
+        @instance.send( :get_store )
       end
     end
   end

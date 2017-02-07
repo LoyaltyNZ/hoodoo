@@ -138,6 +138,21 @@ describe Hoodoo::TransientStore::Memcached do
         @ttl      = 120
       end
 
+      context '#client' do
+        it 'returns the Dalli::Client in use' do
+          expect( [
+            @mock_dalli_client_instance.class,
+            ::Dalli::Client
+          ] ).to include( @instance.client.class )
+        end
+
+        it 'sets the Dalli::Client in use' do
+          new_client = Hoodoo::TransientStore::Mocks::DalliClient.new
+          @instance.client = new_client
+          expect( @instance.client ).to eq( new_client )
+        end
+      end
+
       context '#set' do
         it 'sets' do
           expect_dalli_client( backend ).to receive( :set ).with( @key, @payload, @ttl ).and_call_original()

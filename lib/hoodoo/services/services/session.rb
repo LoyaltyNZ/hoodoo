@@ -10,6 +10,7 @@
 
 require 'ostruct'
 require 'hoodoo/transient_store'
+require 'hoodoo/transient_store/mocks/dalli_client'
 
 module Hoodoo
   module Services
@@ -174,12 +175,37 @@ module Hoodoo
         end
 
         begin
-          store = self.class.connect_to_store()
+          store = get_store()
 
           # Try to update the Caller version in the store using this
           # Session's data. If this fails, the Caller version is out of
           # date or we couldn't talk to the store. Either way, bail out.
-
+          #
+          # TL;DR: The 'update' call here is critical.
+          #
+          # This process refreshes the caller version information in the
+          # transient store back-end with each new Session. If eventually the
+          # Caller version is expired or evicted, Sessions would be immediately
+          # invalidated and a recreation would result in the Caller version
+          # being rewritten.
+          #
+          # What if the Caller goes out of date? An external service must gate
+          # access to Caller resource changes and update the Caller version
+          # itself if the Caller alters in a way that should invalidate
+          # Sessions. This refreshes the lifetime on that item which normally
+          # expires at a much greater TTL than sessions anyway and, if anyone
+          # tries to use a Stale session after, the Caller version mismatch
+          # will invalidate it so they'll need a new one.
+          #
+          # If a Caller version is created but somehow evicted before any of
+          # the older existing Sessions (perhaps because Caller version data is
+          # small but Session data is large) then attempts to read the Session
+          # will fail; *loading* a Session requires the Caller version. The
+          # Caller would have to create a new Session and this would by virtue
+          # of the handling resource endpoint's service code acquire the new
+          # Caller version data immediately then cause it to be re-asserted /
+          # re-written by the code below.
+          #
           result = update_caller_version_in_store( self.caller_id,
                                                    self.caller_version,
                                                    store )
@@ -192,10 +218,18 @@ module Hoodoo
           # *after* the time we record.
 
           @expires_at = ( ::Time.now + TTL ).utc()
+          result      = store.set( key:              self.session_id,
+                                   payload:          self.to_h(),
+                                   maximum_lifespan: TTL )
 
-          return :ok if store.set( self.session_id,
-                                     self.to_h(),
-                                     TTL )
+          case result
+            when true
+              return :ok
+            when false
+              raise 'Unknown storage engine failure'
+            else
+              raise result
+          end
 
         rescue => exception
 
@@ -214,7 +248,7 @@ module Hoodoo
       # Deprecated alias for #save_to_store, dating back to when the Session
       # engine was hard-coded to Memcached.
       #
-      alias_method( :save_to_memcached!, :save_to_store )
+      alias_method( :save_to_memcached, :save_to_store )
 
       # Load session data into this instance, overwriting instance values
       # if the session is found. Raises an exception if there is a problem
@@ -237,8 +271,8 @@ module Hoodoo
       #
       def load_from_store!( sid )
         begin
-          store      = self.class.connect_to_store()
-          session_hash = store.get( sid )
+          store        = get_store()
+          session_hash = store.get( key: sid, allow_throw: true )
 
           if session_hash.nil?
             return :not_found
@@ -307,8 +341,7 @@ module Hoodoo
       #
       def update_caller_version_in_store( cid, cv, store = nil )
         begin
-          store ||= self.class.connect_to_store()
-
+          store        ||= get_store()
           cached_version = load_caller_version_from_store( store, cid )
 
           if cached_version != nil && cached_version > cv
@@ -331,10 +364,44 @@ module Hoodoo
         return :fail
       end
 
-      # Deprecated alias for #update_caller_version_in_store, dating back to
-      # when the Session engine was hard-coded to Memcached.
+      # Deprecated interface (use #update_caller_version_in_store instead),
+      # dating back to when the Session engine was hard-coded to Memcached.
       #
-      alias_method( :update_caller_version_in_memcached, :update_caller_version_in_store )
+      # Parameters as for #update_caller_version_in_store, except +store+ is
+      # must be a fully configured Dalli::Client instance. Use of this
+      # interface is inefficient and discouraged; it will result in logged
+      # warnings.
+      #
+      def update_caller_version_in_memcached( cid, cv, store = nil )
+        unless store.nil?
+          Hoodoo::Services::Middleware.logger.warn(
+            'Hoodoo::Services::Session#update_caller_version_in_memcached is deprecated - use #update_caller_version_in_store'
+          )
+
+          # Inefficient - create a TransientStore configured for the normal
+          # Memcached connection data, but get hold of its storage engine and
+          # change that engine's client to the provided Dalli::Client instance.
+
+          temp_store = Hoodoo::TransientStore.new(
+            storage_engine:    :memcached,
+            storage_host_uri:  self.memcached_host(),
+            default_namespace: 'nz_co_loyalty_hoodoo_session_'
+          )
+
+          memcached_engine        = temp_store.storage_engine_instance()
+          memcached_engine.client = store
+
+          begin
+            update_caller_version_in_store( cid, cv, temp_store )
+          ensure
+            temp_store.close()
+          end
+
+        else
+          update_caller_version_in_store( cid, cv )
+
+        end
+      end
 
       # Delete this session from the transient store. The Session object is not
       # modified.
@@ -343,20 +410,22 @@ module Hoodoo
       #
       # * +:ok+: The Session was deleted from the transient store successfully.
       #
-      # * +:not_found+: This session was not found in the transient store.
-      #
       # * +:fail+: The session data could not be deleted (unexpected storage
       #            engine failure).
       #
       def delete_from_store
         begin
 
-          store = self.class.connect_to_store()
+          store  = get_store()
+          result = store.delete( key: self.session_id )
 
-          if store.delete( self.session_id )
-            return :ok
-          else
-            return :not_found
+          case result
+            when true
+              return :ok
+            when false
+              raise 'Unknown storage engine failure'
+            else
+              raise result
           end
 
         rescue => exception
@@ -563,22 +632,25 @@ module Hoodoo
       # Connect to the storage engine. Returns a Hoodoo:TransientStore
       # instance. Raises an exception if no connection can be established.
       #
-      def self.connect_to_store
+      def get_store
+        host = self.memcached_host()
+
         begin
           @@stores         ||= {}
           @@stores[ host ] ||= Hoodoo::TransientStore.new(
-            default_maximum_lifespan: TTL,
-            storage_host_uri:         self.memcached_host(),
-            storage_engine:           :memcached,
-            storage_engine_options:   {
-              :namespace => :nz_co_loyalty_hoodoo_session_
-            }
+            storage_engine:    :memcached,
+            storage_host_uri:  host,
+            default_namespace: 'nz_co_loyalty_hoodoo_session_'
           )
 
+          raise 'Unknown storage engine failure' if @@stores[ host ].nil?
+
         rescue => exception
-          raise "Hoodoo::Services::Session.connect_to_store: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
+          raise "Hoodoo::Services::Session\#get_store: Cannot connect to Memcached at '#{ host }': #{ exception.to_s }"
 
         end
+
+        @@stores[ host ]
       end
 
       # Try to read a cached Caller version from the transient store. Returns
@@ -595,7 +667,7 @@ module Hoodoo
       # +cid+::   Caller UUID of interest.
       #
       def load_caller_version_from_store( store, cid )
-        version_hash = store.get( cid )
+        version_hash = store.get( key: cid, allow_throw: true )
         return version_hash.nil? ? nil : version_hash[ 'version' ]
       end
 
@@ -612,10 +684,16 @@ module Hoodoo
       # +cv+::    Version to save for that Caller UUID.
       #
       def save_caller_version_to_store( store, cid, cv )
-        return !! store.set(
-          cid,
-          { 'version' => cv }
+        result = store.set(
+          key:     cid,
+          payload: { 'version' => cv }
         )
+
+        if result.is_a?( Exception )
+          raise result
+        else
+          return result
+        end
       end
 
       # Before Hoodoo::TransientStore was created, the Session system was

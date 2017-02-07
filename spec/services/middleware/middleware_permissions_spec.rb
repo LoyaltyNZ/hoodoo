@@ -304,6 +304,9 @@ end
 describe Hoodoo::Services::Middleware do
 
   before :each do
+
+    spec_helper_use_mock_memcached()
+
     @session_id     = Hoodoo::UUID.generate
     @caller_id      = Hoodoo::UUID.generate
     @caller_version = 1
@@ -347,10 +350,6 @@ describe Hoodoo::Services::Middleware do
 
     result = @session.save_to_store
     raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
-  end
-
-  after :each do
-    Hoodoo::TransientStore::Mocks::DalliClient.reset()
   end
 
   ############################################################################
