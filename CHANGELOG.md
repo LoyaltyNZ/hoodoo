@@ -1,3 +1,18 @@
+## 1.15.0 (2017-02-08)
+
+* Moves the [`Hoodoo::Services::Session` engine](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) to using [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html). This should be a largely transparent change except for method deprecations described below.
+
+  - The future intent is to allow a configurable choice of transient storage backends for the session engine, though for now, it's still locked to Memcached but just routed through the transient storage abstraction layer.
+
+### Deprecated methods
+
+These will be indefinitely maintained but client code ought to migrate to the new methods when possible.
+
+* [Session#save_to_memcached](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-save_to_memcached) - use [Session#save_to_store](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-save_to_store) instead (rename only)
+* [Session#load_from_memcached!](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-load_from_memcached-21) - use [Session#load_from_store!](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-load_from_store-21) instead (rename only)
+* [Session#delete_from_memcached](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-delete_from_memcached) - use [Session#delete_from_store](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-delete_from_store) instead (rename only)
+* [Session#update_caller_version_in_memcached](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-update_caller_version_in_memcached) - use [Session#update_caller_version_in_store](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#method-i-update_caller_version_in_store) instead, noting that the third parameter in the recommended method is a [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) instance, not a `Dalli::Client` instance as in the deprecated equivalent.
+
 ## 1.14.0 (2017-02-02)
 
 * Introduces the new [Hoodoo::TransientStore](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) family, providing a simple abstraction over selectable plug-in storage engine classes. Memcached, Redis and a Memcached/Redis mirror plug-in are available "out of the box".

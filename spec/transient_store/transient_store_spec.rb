@@ -300,12 +300,22 @@ describe Hoodoo::TransientStore do
         expect( @store.get( key: random_key ) ).to be_nil
       end
 
-      it 'consumes exceptions' do
+      it 'consumes exceptions by default' do
         expect_any_instance_of( TestTransientStore ).to receive( :get ) do
           raise 'Hello world'
         end
 
         expect( @store.get( key: @key ) ).to be_nil
+      end
+
+      it 'throws exceptions if asked' do
+        expect_any_instance_of( TestTransientStore ).to receive( :get ) do
+          raise 'Hello world'
+        end
+
+        expect {
+          @store.get( key: @key, allow_throw: true )
+        }.to raise_error( RuntimeError, 'Hello world' )
       end
 
       context 'key normalisation' do

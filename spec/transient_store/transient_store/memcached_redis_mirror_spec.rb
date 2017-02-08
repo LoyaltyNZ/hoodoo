@@ -25,19 +25,9 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
 
     # Use pure mock back-ends behind the Memcached and Redis abstraction
     # layers; real back-end tests are done for them in their unit tests.
-
-    Hoodoo::TransientStore::Mocks::DalliClient.reset()
-    Hoodoo::TransientStore::Mocks::Redis.reset()
-
-    allow( Dalli::Client ).to(
-      receive( :new ).
-      and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
-    )
-
-    allow( Redis ).to(
-      receive( :new ).
-      and_return( Hoodoo::TransientStore::Mocks::Redis.new )
-    )
+    #
+    spec_helper_use_mock_memcached()
+    spec_helper_use_mock_redis()
 
     @instance = Hoodoo::TransientStore::MemcachedRedisMirror.new(
       storage_host_uri: @storage_engine_uri,

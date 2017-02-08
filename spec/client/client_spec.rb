@@ -214,6 +214,10 @@ end
 
 describe Hoodoo::Client do
 
+  before :each do
+    spec_helper_use_mock_memcached()
+  end
+
   before :all do
     @old_test_session = Hoodoo::Services::Middleware.test_session()
     @port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService )

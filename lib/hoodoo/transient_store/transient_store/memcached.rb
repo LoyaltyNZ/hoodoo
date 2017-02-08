@@ -21,6 +21,14 @@ module Hoodoo
     #
     class Memcached < Hoodoo::TransientStore::Base
 
+      # Overrideable access to this object's Dalli::Client instance. It is
+      # inadvisable to couple calling code directly into this interface as it
+      # is a Hoodoo::TransientStore::Memcached specialisation, but if deemed
+      # absolutely necessary the Dalli client can be override with a
+      # customised version.
+      #
+      attr_accessor :client
+
       # See Hoodoo::TransientStore::Base::new for details.
       #
       # Do not instantiate this class directly. Use
