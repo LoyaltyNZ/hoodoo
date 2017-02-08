@@ -57,23 +57,30 @@ module Hoodoo
           raise "Can't use \#keys and then \#key in the same hash definition - use one or the other"
         end
 
+        @specific   = true
+        value_klass = block_given?               ?
+                      Hoodoo::Presenters::Object :
+                      type_option_to_class( options.delete( :type ) )
+
         # If we're defining specific keys and some of those keys have fields
-        # with defaults, we need to merge those up to provide a whole-key
+        # with defaults, we need to merge those up to provide a whole-Hash
         # equivalent default. If someone renders an empty hash they expect a
         # specific key with some internal defaults to be rendered; doing this
         # amalgamation up to key level is the easiest way to handle that.
-
-        if options.has_key?( :default )
-          @has_default = true
-
-          @default    ||= {}
-          @default.merge!( Hoodoo::Utilities.stringify( options[ :default ] ) )
+        #
+        if options.has_key?( :default ) || options.has_key?( :field_default )
+          @has_default     = true
+          @default       ||= {}
+          @default[ name ] = options[ :default ] || options[ :field_default ]
         end
 
-        @specific = true
-
-        klass = block_given? ? Hoodoo::Presenters::Object : Hoodoo::Presenters::Field
-        prop  = property( name, klass, options, &block )
+        prop = property( name,
+                         value_klass,
+                         Hoodoo::Utilities.deep_merge_into(
+                           options,
+                           extract_field_prefix_options_from( options )
+                         ),
+                         &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
           internationalised()
@@ -148,12 +155,20 @@ module Hoodoo
         end
 
         @specific = false
+        key_klass = options.has_key?( :length ) ?
+                    Hoodoo::Presenters::String  :
+                    Hoodoo::Presenters::Text
 
-        klass = options.has_key?( :length ) ? Hoodoo::Presenters::String : Hoodoo::Presenters::Text
-        property('keys', klass, options)
+        property( 'keys', key_klass, options )
 
-        klass = block_given? ? Hoodoo::Presenters::Object : Hoodoo::Presenters::Field
-        prop  = property( 'values', klass, {}, &block )
+        value_klass = block_given?               ?
+                      Hoodoo::Presenters::Object :
+                      type_option_to_class( options[ :type ] )
+
+        prop = property( 'values',
+                         value_klass,
+                         extract_field_prefix_options_from( options ),
+                         &block )
 
         if prop && prop.respond_to?( :is_internationalised? ) && prop.is_internationalised?
           internationalised()
@@ -237,7 +252,7 @@ module Hoodoo
                     keys_property.rename( key )
                   values_property.rename( key )
 
-                  errors.merge!(   keys_property.validate( key, local_path ) )
+                  errors.merge!(   keys_property.validate(   key, local_path ) )
                   errors.merge!( values_property.validate( value, local_path ) )
                 end
 

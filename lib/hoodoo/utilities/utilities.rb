@@ -300,6 +300,7 @@ module Hoodoo
     # 8601 subset date and time, else +false+.
     #
     def self.valid_iso8601_subset_datetime?( str )
+      return false unless str.is_a?( String ) || str.is_a?( Symbol )
 
       # Relies on Ruby evaluation behaviour and operator precedence - "'foo'
       # && true" => true, but "true && 'foo'" => 'foo'. Don't use "and" here!
@@ -324,6 +325,7 @@ module Hoodoo
     # subset date, else +false+.
     #
     def self.valid_iso8601_subset_date?( str )
+      return false unless str.is_a?( String ) || str.is_a?( Symbol )
 
       # Same reliance as 'valid_iso8601_subset_datetime'?.
 
