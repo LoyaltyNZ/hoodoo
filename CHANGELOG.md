@@ -1,3 +1,8 @@
+## 1.14.0 (2017-02-02)
+
+* Introduces the new [Hoodoo::TransientStore](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) family, providing a simple abstraction over selectable plug-in storage engine classes. Memcached, Redis and a Memcached/Redis mirror plug-in are available "out of the box".
+* Update Ruby versions for Travis to 2.1.10, 2.2.6 and 2.3.3. Base requirement via RBEnv for local development is updated to 2.3.3 (was 2.2.5) via `.ruby-version`. Added Travis entry for Ruby 2.4.0.
+
 ## 1.13.0 (2017-02-01)
 
 * In the presenters DSL, [Array](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Array.html) and [Hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Hash.html) now support rendering and validation of simple Array entry or Hash value types such as Strings or Integers, through the use of a new `:type` option. See the [BaseDSL](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html) module's [#array](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html#method-i-array) and [#hash](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/BaseDSL.html#method-i-hash) RDoc documentation for details.

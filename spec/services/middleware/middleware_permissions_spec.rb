@@ -343,14 +343,14 @@ describe Hoodoo::Services::Middleware do
       Hoodoo::Services::Permissions::ALLOW
     )
 
-    Hoodoo::Services::Session::MockDalliClient.reset()
+    Hoodoo::TransientStore::Mocks::DalliClient.reset()
 
     result = @session.save_to_memcached
     raise "Can't save to mock Memcached (result = #{result})" unless result == :ok
   end
 
   after :each do
-    Hoodoo::Services::Session::MockDalliClient.reset()
+    Hoodoo::TransientStore::Mocks::DalliClient.reset()
   end
 
   ############################################################################

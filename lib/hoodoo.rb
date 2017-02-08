@@ -13,6 +13,7 @@ module Hoodoo
 end
 
 require 'hoodoo/utilities'
+require 'hoodoo/transient_store'
 require 'hoodoo/communicators'
 require 'hoodoo/logger'
 require 'hoodoo/presenters'

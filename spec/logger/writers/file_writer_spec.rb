@@ -9,10 +9,7 @@ describe Hoodoo::Logger::FileWriter do
   end
 
   after :all do
-    begin
-      File.unlink( @temp_path )
-    rescue
-    end
+    File.unlink( @temp_path ) rescue nil
   end
 
   it 'writes to files' do

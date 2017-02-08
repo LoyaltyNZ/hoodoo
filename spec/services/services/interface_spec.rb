@@ -259,9 +259,9 @@ describe Hoodoo::Services::Interface do
       it 'should complain about incorrect types' do
         expect {
           Hoodoo::Services::Interface::ToListDSL.new( Hoodoo::Services::Interface::ToList.new ) do
-            default 42
+            default( { :some => :hash } )
           end
-        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got 'Fixnum'")
+        }.to raise_error(RuntimeError, "Hoodoo::Services::Interface::ToListDSL\#default requires a String or Symbol - got 'Hash'")
       end
     end
 

@@ -41,14 +41,6 @@
 
 
 
-    <!-- Namespace -->
-    <div class="sectiontitle">Namespace</div>
-    <ul>
-        <li>
-          <span class="type">CLASS</span>
-          <a href="Session/MockDalliClient.html">Hoodoo::Services::Session::MockDalliClient</a>
-        </li>
-    </ul>
 
 
     <!-- Method ref -->
@@ -159,6 +151,22 @@
 being saved. Only applicable from the save time onwards in stores that
 support <a href="Session.html#TTL">TTL</a> such as Memcached - see <a
 href="Session.html#method-i-save_to_memcached">save_to_memcached</a>.</p></td>
+            </tr>
+          <tr valign='top' id='MockDalliClient'>
+            <td class="attr-name">MockDalliClient</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::TransientStore::Mocks::DalliClient</pre></td>
+          </tr>
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Before <a href="../TransientStore.html">Hoodoo::TransientStore</a> was
+created, the <a href="Session.html">Session</a> system was directly tied
+into Memcached and had a mock backend used for tests without a Redis
+dependency. This now lives in <a
+href="../TransientStore/Mocks/DalliClient.html">Hoodoo::TransientStore::Mocks::DalliClient</a>,
+but for any code out in the wild which might use the old <a
+href="Session.html">Session</a> namespace version, we add what amounts to a
+class alias here.</p></td>
             </tr>
       </table>
 
@@ -333,7 +341,7 @@ methods.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 144</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
@@ -404,7 +412,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 <a href="javascript:toggleSource('method-i-augment_with_permissions_for_source')" id="l_method-i-augment_with_permissions_for_source">show</a>
               </p>
               <div id="method-i-augment_with_permissions_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 501</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 502</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -479,7 +487,7 @@ problem).</p>
                 <a href="javascript:toggleSource('method-i-delete_from_memcached_source')" id="l_method-i-delete_from_memcached_source">show</a>
               </p>
               <div id="method-i-delete_from_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 337</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 338</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete_from_memcached</span>
   <span class="ruby-keyword">begin</span>
 
@@ -529,7 +537,7 @@ if it has either not expired, or has no expiry date set yet.</p>
                 <a href="javascript:toggleSource('method-i-expired-3F_source')" id="l_method-i-expired-3F_source">show</a>
               </p>
               <div id="method-i-expired-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 368</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 369</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
@@ -564,7 +572,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
                 <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
               </p>
               <div id="method-i-from_h-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 424</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 425</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
@@ -630,7 +638,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
                 <a href="javascript:toggleSource('method-i-identity-3D_source')" id="l_method-i-identity-3D_source">show</a>
               </p>
               <div id="method-i-identity-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">identity=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@identity</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -679,7 +687,7 @@ problem).</p>
                 <a href="javascript:toggleSource('method-i-load_from_memcached-21_source')" id="l_method-i-load_from_memcached-21_source">show</a>
               </p>
               <div id="method-i-load_from_memcached-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 236</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 237</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_memcached!</span>( <span class="ruby-identifier">sid</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">mclient</span>      = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
@@ -758,7 +766,7 @@ problem).</p>
                 <a href="javascript:toggleSource('method-i-save_to_memcached_source')" id="l_method-i-save_to_memcached_source">show</a>
               </p>
               <div id="method-i-save_to_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 174</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 175</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_memcached</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_memcached: Cannot save this session as it has no assigned Caller UUID&#39;</span>
@@ -823,7 +831,7 @@ href="Session.html#attribute-i-scoping">scoping</a>.</p>
                 <a href="javascript:toggleSource('method-i-scoping-3D_source')" id="l_method-i-scoping-3D_source">show</a>
               </p>
               <div id="method-i-scoping-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 91</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">scoping=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@scoping</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -850,7 +858,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
                 <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 379</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 380</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {}
 
@@ -941,7 +949,7 @@ data must therefore already be out of date.</p>
                 <a href="javascript:toggleSource('method-i-update_caller_version_in_memcached_source')" id="l_method-i-update_caller_version_in_memcached_source">show</a>
               </p>
               <div id="method-i-update_caller_version_in_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 300</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 301</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">mclient</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">mclient</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">connect_to_memcached</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>() )
