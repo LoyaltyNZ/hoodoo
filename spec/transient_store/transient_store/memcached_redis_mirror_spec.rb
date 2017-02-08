@@ -312,6 +312,34 @@ describe Hoodoo::TransientStore::MemcachedRedisMirror do
           @instance.delete( key: @key )
         }.to raise_error( RuntimeError, "Hello world" )
       end
+
+      it 'deletes from Memcached even if the Redis data is missing' do
+        expect( @instance.get( key: @key ) ).to eql( @payload )
+
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :delete ).with( key: @key ).and_call_original()
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :delete ).with( key: @key ).and_call_original()
+
+        Hoodoo::TransientStore::Mocks::Redis.reset()
+
+        result = @instance.delete( key: @key )
+
+        expect( result ).to eq( true )
+        expect( @instance.get( key: @key ) ).to eql( nil )
+      end
+
+      it 'deletes from Redis even if the Memcached data is missing' do
+        expect( @instance.get( key: @key ) ).to eql( @payload )
+
+        expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :delete ).with( key: @key ).and_call_original()
+        expect_any_instance_of( Hoodoo::TransientStore::Redis     ).to receive( :delete ).with( key: @key ).and_call_original()
+
+        Hoodoo::TransientStore::Mocks::DalliClient.reset()
+
+        result = @instance.delete( key: @key )
+
+        expect( result ).to eq( true )
+        expect( @instance.get( key: @key ) ).to eql( nil )
+      end
     end
 
     context '#close' do

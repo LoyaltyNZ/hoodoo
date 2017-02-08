@@ -46,8 +46,10 @@ module Hoodoo
       #
       # This is useful in migration scenarios where moving from Memcached to
       # Redis or vice versa. If wishing to be able to still read old data only
-      # in Memcached, set +:memcached+; else +:redis+. For true mirroring,
-      # insist on both with +:both+.
+      # in Memcached, set +:memcached+; else +:redis+. That way, data only in
+      # the old engine but not yet in the new is still considered valid and
+      # read back. For true mirroring which requires both stores to have the
+      # value, use +:both+.
       #
       # The default is +:both+.
       #
@@ -103,6 +105,12 @@ module Hoodoo
       # The requested item must be found in both Memcached and Redis. If it is
       # found in only one, the other one is deleted to keep maximum pool space
       # available in and +nil+ will be returned.
+      #
+      # If #get_keys_from is configured for +:both+ and the data for some
+      # reason has ended up differing in the two stores - most likely because
+      # something modified just one of them (perhaps there is outdated code
+      # kicking around which is writing to just one) - then the Memcached copy
+      # will "win" and the Redis value will be ignored.
       #
       def get( key: )
         case @get_keys_from
