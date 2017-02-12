@@ -19,7 +19,7 @@ describe Hoodoo::ActiveRecord::Finder::SearchHelper do
     spec_helper_silence_stdout() do
       ActiveRecord::Migration.create_table( :r_spec_model_search_helper_tests ) do | t |
         t.text :field
-        t.timestamps
+        t.timestamps :null => true
       end
     end
 
