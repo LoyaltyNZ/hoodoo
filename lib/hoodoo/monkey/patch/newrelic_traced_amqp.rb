@@ -42,13 +42,30 @@ module Hoodoo
             #                  when using AMQP but NewRelic requires it.
             #
             def monkey_send_request( http_message, full_uri )
-              amqp_response    = nil
               newrelic_request = ::Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper.new(
                 http_message,
                 full_uri
               )
 
-              ::NewRelic::Agent::CrossAppTracing.tl_trace_http_request( newrelic_request ) do
+              # NewRelic 3.17.x or earlier - a simple call to
+              # CrossAppTracing.tl_trace_http_request:
+              #
+              # https://github.com/newrelic/rpm/blob/c570d9496def48b7d69fa16e3cd043992d98fc6d/lib/new_relic/agent/instrumentation/net.rb#L23
+              #
+              # NewRelic 3.18.x or later - that call deleted so instead we
+              # must replicate this more verbose code:
+              #
+              # https://github.com/newrelic/rpm/blob/8496898963367ac8203c31e4bd2cad6eb59f585d/lib/new_relic/agent/instrumentation/net.rb#L23
+              #
+              segment = ::NewRelic::Agent::Transaction.start_external_request_segment(
+                newrelic_request.type,
+                newrelic_request.uri,
+                newrelic_request.method
+              )
+
+              begin
+                amqp_response = nil
+                segment.add_request_headers( newrelic_request )
 
                 # Disable further tracing in request to avoid double counting
                 # if connection wasn't started (which calls request again).
@@ -66,6 +83,12 @@ module Hoodoo
                   )
 
                 end
+
+                segment.read_response_headers( amqp_response )
+
+              ensure
+                segment.finish()
+
               end
 
               return amqp_response
