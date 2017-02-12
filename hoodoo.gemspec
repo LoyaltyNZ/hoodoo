@@ -21,20 +21,24 @@ Gem::Specification.new do | s |
 
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
 
-  s.add_development_dependency 'redis',            '~> 3.2' # Redis client
-  s.add_development_dependency 'rake',             '~> 10.4'
+  s.add_development_dependency 'redis',            '~> 3.3' # Redis client
+  s.add_development_dependency 'rake',             '~> 12.0'
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'
-  s.add_development_dependency 'rdoc',             '~> 4.2' # See also 'sdoc' in Gemfile
+
+  # TODO: v5 (SDoc dependency issue)
+  s.add_development_dependency 'rdoc',             '~> 4.3' # See also 'sdoc' in Gemfile
   s.add_development_dependency 'rack-test',        '~> 0.6'
-  s.add_development_dependency 'rspec',            '~> 3.3'
-  s.add_development_dependency 'rspec-mocks',      '~> 3.3'
-  s.add_development_dependency 'activerecord',     '~> 4.2'
-  s.add_development_dependency 'activesupport',    '~> 4.2'
+  s.add_development_dependency 'rspec',            '~> 3.5'
+  s.add_development_dependency 'rspec-mocks',      '~> 3.5'
+  s.add_development_dependency 'activerecord',     '~> 5.0'
+  s.add_development_dependency 'activesupport',    '~> 5.0'
+
+  # TODO: v1.5 (test breakage)
   s.add_development_dependency 'database_cleaner', '~> 1.4.0' # 1.5.x breaks tests
-  s.add_development_dependency 'pg',               '~> 0.18'
-  s.add_development_dependency 'byebug',           '~> 3.5'
+  s.add_development_dependency 'pg',               '~> 0.19'
+  s.add_development_dependency 'byebug',           '~> 9'
   s.add_development_dependency 'timecop',          '~> 0.8'
   s.add_development_dependency 'raygun4ruby',      '~> 1.1' # raygun.io
   s.add_development_dependency 'airbrake',         '~> 4.3' # airbrake.io
-  s.add_development_dependency 'le',               '~> 2.6' # logentries.com
+  s.add_development_dependency 'le',               '~> 2.7' # logentries.com
 end
