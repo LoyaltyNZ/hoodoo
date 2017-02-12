@@ -11,8 +11,6 @@ matrix:
       gemfile: Gemfile
     - rvm: 2.2.6
       gemfile: Gemfile
-    - rvm: 2.1.10
-      gemfile: rack_1.gemfile
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
