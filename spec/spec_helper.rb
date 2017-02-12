@@ -197,7 +197,16 @@ end
 # &block:: Block of code to call while +STDOUT+ is disabled.
 #
 def spec_helper_silence_stdout( &block )
-  Kernel.silence_stream( STDOUT, &block )
+  begin
+    $old_stdout = $stdout.clone
+    $stdout.reopen( File::NULL, 'w' )
+
+    yield
+
+  ensure
+    $stdout.reopen( $old_stdout )
+
+  end
 end
 
 # Start up a service application under WEBrick via Rack on localhost, using
