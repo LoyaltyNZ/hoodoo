@@ -38,7 +38,7 @@ module Hoodoo
       #       # ...
       #     end
       #
-      # +model+:: The ActiveRecord::Base descendant class that is including
+      # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.included( model )
@@ -62,7 +62,7 @@ module Hoodoo
       #
       #     change_column :model_table_name, :id, :string, :limit => 32
       #
-      # +model+:: The ActiveRecord::Base descendant class that is including
+      # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.instantiate( model )

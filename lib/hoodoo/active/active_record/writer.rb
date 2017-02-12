@@ -41,7 +41,7 @@ module Hoodoo
       #       # ...
       #     end
       #
-      # +model+:: The ActiveRecord::Base descendant class that is including
+      # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.included( model )
