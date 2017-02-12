@@ -277,7 +277,7 @@ the path of keys from internal data +@path+.</p>
               <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/field.rb, line 73</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@name</span>.<span class="ruby-identifier">empty?</span>
 
   <span class="ruby-identifier">root</span>  = <span class="ruby-identifier">target</span>
   <span class="ruby-identifier">path</span>  = <span class="ruby-ivar">@path</span>.<span class="ruby-identifier">clone</span>

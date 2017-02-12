@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::TransientStore::Redis</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span>
+            Hoodoo::TransientStore::Redis
+                <span class="parent">&lt;
+                    <a href="Base.html">Hoodoo::TransientStore::Base</a>
+                </span>
+        </h1>
+        <ul class="files">
+            <li><a href="../../../files/lib/hoodoo/transient_store/transient_store/redis_rb.html">lib/hoodoo/transient_store/transient_store/redis.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p><a href="../TransientStore.html">Hoodoo::TransientStore</a> plugin
+supporting <a href="https://redis.io">Redis</a>. The <a
+href="https://github.com/redis/redis-rb">redis-rb gem</a> is used for
+server communication.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>C</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-close">close</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>D</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-delete">delete</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>G</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-get">get</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>N</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+          </ul>
+        </dd>
+        <dt>S</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-set">set</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Class Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+              <b>new</b>( storage_host_uri:, namespace: )
+            <a href="../../../classes/Hoodoo/TransientStore/Redis.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a href="Base.html#method-c-new">Hoodoo::TransientStore::Base.new</a>
+for details.</p>
+
+<p>Do not instantiate this class directly. Use <a
+href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>.</p>
+
+<p>The <a href="https://github.com/redis/redis-rb">redis-rb gem</a> is used to
+talk to <a href="https://redis.io">Redis</a> and requires connection UIRs
+with a <code>redis</code> protocol, such as
+<code>redis://localhost:6379</code>.</p>
+
+<p>TCP keep-alive is enabled for the server connection.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">storage_host_uri</span>,, <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span> )
+  <span class="ruby-keyword">super</span> <span class="ruby-comment"># Pass all arguments through -&gt; *not* &#39;super()&#39;</span>
+  <span class="ruby-ivar">@client</span> = <span class="ruby-identifier">connect_to_redis</span>( <span class="ruby-identifier">storage_host_uri</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-close">
+              <b>close</b>()
+            <a href="../../../classes/Hoodoo/TransientStore/Redis.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a
+href="Base.html#method-i-close">Hoodoo::TransientStore::Base#close</a> for
+details.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 71</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
+  <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">quit</span>()
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-delete">
+              <b>delete</b>( key: )
+            <a href="../../../classes/Hoodoo/TransientStore/Redis.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a
+href="Base.html#method-i-delete">Hoodoo::TransientStore::Base#delete</a>
+for details.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
+              </p>
+              <div id="method-i-delete_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 64</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
+  <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">del</span>( <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) )
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-get">
+              <b>get</b>( key: )
+            <a href="../../../classes/Hoodoo/TransientStore/Redis.html#method-i-get" name="method-i-get" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a href="Base.html#method-i-get">Hoodoo::TransientStore::Base#get</a>
+for details.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
+              </p>
+              <div id="method-i-get_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
+  <span class="ruby-identifier">result</span> = <span class="ruby-ivar">@client</span>[ <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> ) ]
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">:</span> ( <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">result</span> ) <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-set">
+              <b>set</b>( key:, payload:, maximum_lifespan: )
+            <a href="../../../classes/Hoodoo/TransientStore/Redis.html#method-i-set" name="method-i-set" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>See <a href="Base.html#method-i-set">Hoodoo::TransientStore::Base#set</a>
+for details.</p>
+
+<p>The payload is encoded into JSON for storage and automatically decoded by
+<a href="Redis.html#method-i-get">get</a>; so callers don&#39;t need to do
+marshalling to Strings themselves.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
+              </p>
+              <div id="method-i-set_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/redis.rb, line 46</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> )
+  <span class="ruby-identifier">nk</span> = <span class="ruby-identifier">namespaced_key</span>( <span class="ruby-identifier">key</span> )
+
+  <span class="ruby-ivar">@client</span>[ <span class="ruby-identifier">nk</span> ] = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">fast_generate</span>( <span class="ruby-identifier">payload</span> )
+  <span class="ruby-ivar">@client</span>.<span class="ruby-identifier">expire</span>( <span class="ruby-identifier">nk</span>, <span class="ruby-identifier">maximum_lifespan</span> )
+
+  <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

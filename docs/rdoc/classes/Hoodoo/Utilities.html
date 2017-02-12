@@ -512,7 +512,7 @@ nanosecond precision.</p>
                 <a href="javascript:toggleSource('method-c-nanosecond_iso8601_source')" id="l_method-c-nanosecond_iso8601_source">show</a>
               </p>
               <div id="method-c-nanosecond_iso8601_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 351</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 353</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">nanosecond_iso8601</span>( <span class="ruby-identifier">time_or_date_time</span> )
   <span class="ruby-identifier">time_or_date_time</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-number">9</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -546,7 +546,7 @@ DateTime instance; in these cases, an equivalent DateTime is returned. If
                 <a href="javascript:toggleSource('method-c-rationalise_datetime_source')" id="l_method-c-rationalise_datetime_source">show</a>
               </p>
               <div id="method-c-rationalise_datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 364</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 366</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
@@ -738,8 +738,9 @@ subset date, else <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-valid_iso8601_subset_date-3F_source')" id="l_method-c-valid_iso8601_subset_date-3F_source">show</a>
               </p>
               <div id="method-c-valid_iso8601_subset_date-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 326</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 327</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">valid_iso8601_subset_date?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Symbol</span> )
 
   <span class="ruby-comment"># Same reliance as &#39;valid_iso8601_subset_datetime&#39;?.</span>
 
@@ -784,6 +785,7 @@ subset date and time, else <code>false</code>.</p>
               <div id="method-c-valid_iso8601_subset_datetime-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 302</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">valid_iso8601_subset_datetime?</span>( <span class="ruby-identifier">str</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Symbol</span> )
 
   <span class="ruby-comment"># Relies on Ruby evaluation behaviour and operator precedence - &quot;&#39;foo&#39;</span>
   <span class="ruby-comment"># &amp;&amp; true&quot; =&gt; true, but &quot;true &amp;&amp; &#39;foo&#39;&quot; =&gt; &#39;foo&#39;. Don&#39;t use &quot;and&quot; here!</span>

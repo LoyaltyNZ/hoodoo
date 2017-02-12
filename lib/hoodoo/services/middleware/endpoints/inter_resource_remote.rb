@@ -178,7 +178,7 @@ module Hoodoo
 
               session = @wrapping_session
               @wrapping_session = nil
-              session.delete_from_memcached()
+              session.delete_from_store()
             end
 
             annotate_errors_from_other_resource_in( result )

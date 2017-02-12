@@ -453,6 +453,7 @@ describe Hoodoo::Utilities do
       expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( 34534.234              ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( 38247                  ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( true                   ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( DateTime.now           ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( {}                     ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_datetime?( []                     ) ).to eq( false )
     end
@@ -478,6 +479,7 @@ describe Hoodoo::Utilities do
       expect( Hoodoo::Utilities.valid_iso8601_subset_date?( 34534.234              ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_date?( 38247                  ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_date?( true                   ) ).to eq( false )
+      expect( Hoodoo::Utilities.valid_iso8601_subset_date?( Date.today             ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_date?( {}                     ) ).to eq( false )
       expect( Hoodoo::Utilities.valid_iso8601_subset_date?( []                     ) ).to eq( false )
     end

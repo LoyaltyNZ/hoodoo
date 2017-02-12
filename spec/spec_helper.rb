@@ -307,21 +307,42 @@ def spec_helper_http( path:,
   return http.request( request )
 end
 
+# Stub out Memcached with a TransientStore mock client instead. Call via
+# a "before :each" block.
+#
+def spec_helper_use_mock_memcached
+  Hoodoo::TransientStore::Mocks::DalliClient.reset()
+
+  allow( Dalli::Client ).to(
+    receive( :new ).
+    and_return( Hoodoo::TransientStore::Mocks::DalliClient.new )
+  )
+end
+
+# Stub out Redis with a TransientStore mock client instead. Call via
+# a "before :each" block.
+#
+def spec_helper_use_mock_redis
+  Hoodoo::TransientStore::Mocks::Redis.reset()
+
+  allow( Redis ).to(
+    receive( :new ).
+    and_return( Hoodoo::TransientStore::Mocks::Redis.new )
+  )
+end
+
 # Add support to count the database queries run within a
 # given block. Returns the number of queries run.
 #
-def count_database_calls_in( &block )
+def spec_helper_count_database_calls_in( &block )
   count = 0
+  cb    = ->( name, start_time, finish_time, id, query ) {
 
-  cb = ->(name, start_time, finish_time, id, query) {
-    # only bump the count if the database call is not to
-    #  CACHE or SCHEMA
-    unless [ 'CACHE', 'SCHEMA' ].include?( query[:name] )
-      count += 1
-    end
+    # Only bump the count if the database call is not to CACHE or SCHEMA
+    #
+    count += 1 unless [ 'CACHE', 'SCHEMA' ].include?( query[ :name ] )
   }
 
-  ActiveSupport::Notifications.subscribed( cb, "sql.active_record", &block )
-
-  count
+  ActiveSupport::Notifications.subscribed( cb, 'sql.active_record', &block )
+  return count
 end

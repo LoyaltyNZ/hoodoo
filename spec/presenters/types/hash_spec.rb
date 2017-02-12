@@ -570,6 +570,99 @@ describe Hoodoo::Presenters::Hash do
 
   ############################################################################
 
+  class TestHashSpecificKeyTypes < Hoodoo::Presenters::Base
+    schema do
+      hash :specific_key_types, :default => { 'array' => [ 1, 2, 3 ], 'float' => 0.5 } do
+        key :array,     :type => :array
+        key :boolean,   :type => :boolean
+        key :date,      :type => :date
+        key :date_time, :type => :date_time
+        key :decimal,   :type => :decimal,   :field_precision => 2
+        key :enum,      :type => :enum,      :field_from      => [ :one, :two, :three ]
+        key :float,     :type => :float
+        key :integer,   :type => :integer,   :field_default   => 1              # ":field_default" (sic.)
+        key :string,    :type => :string,    :field_length    => 4
+        key :tags,      :type => :tags,      :default         => 'default,tags' # ":default" (sic.)
+        key :text,      :type => :text
+        key :uuid,      :type => :uuid
+        key :field
+      end
+    end
+  end
+
+  ############################################################################
+
+  context 'specific keys with elementary types and defaults' do
+    KEY_DATA = {
+      'array'     => { :valid => [ [ 2, 3, 4 ]             ], :invalid => [ 4, { :one => 1 }                 ] },
+      'boolean'   => { :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
+      'date'      => { :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
+      'date_time' => { :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
+      'decimal'   => { :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+      'enum'      => { :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
+      'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+      'integer'   => { :valid => [ 4                       ], :invalid => [ '4'                              ] },
+      'string'    => { :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
+      'tags'      => { :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
+      'text'      => { :valid => [ 'hello world'           ], :invalid => [ 4, true                          ] },
+      'uuid'      => { :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
+      'field'     => { :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] }
+    }
+
+    context '#render' do
+      it 'renders correctly with whole-hash defaults' do
+        expected_data = { 'specific_key_types' => { 'array'   => [ 1, 2, 3 ],
+                                                    'float'   => 0.5,
+                                                    'integer' => 1,
+                                                    'tags'    => 'default,tags' } }
+
+        expect( TestHashSpecificKeyTypes.render( {}  ) ).to eq( expected_data )
+        expect( TestHashSpecificKeyTypes.render( nil ) ).to eq( expected_data )
+      end
+    end
+
+    KEY_DATA.each do | field, values |
+      context '#render' do
+        values[ :valid ].each_with_index do | value, index |
+          it "renders correctly for '#{ field }' (#{ index + 1 })" do
+
+            # Start with the defaults we expect given KEY_DATA definitions
+            # above then merge in the under-test field value. Only the inner
+            # field defaults are carried because we are passing a non-empty
+            # Hash in the top level for rendering, which overrides therefore
+            # the top-level Hash default.
+            #
+            expected_data = { 'specific_key_types' => { 'integer' => 1,
+                                                        'tags'    => 'default,tags' } }
+
+            data = { 'specific_key_types' => { field => value } }
+            expected_data = Hoodoo::Utilities.deep_merge_into( expected_data, data )
+
+            expect( TestHashSpecificKeyTypes.render( data ) ).to eq( expected_data )
+          end
+        end
+      end
+
+      context '#validate' do
+        values[ :valid ].each_with_index do | value, index |
+          it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'specific_key_types' => { field => value } }
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to( eql( 0 ) )
+          end
+        end
+
+        values[ :invalid ].each_with_index do | value, index |
+          it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'specific_key_types' => { field => value } }
+            expect( TestHashSpecificKeyTypes.validate( data ).errors.size ).to( eql( 1 ) )
+          end
+        end
+      end
+    end
+  end
+
+  ############################################################################
+
   class TestHashGenericKeyPresenterNoValues < Hoodoo::Presenters::Base
     schema do
       hash :generic do
@@ -1062,6 +1155,503 @@ describe Hoodoo::Presenters::Hash do
             'another' => { 'foo' => 'present', 'bar' => 'also present'           }
           }
         })
+      end
+    end
+  end
+
+  ############################################################################
+
+  KEYS_DATA = {
+    'array'      => { :definition => { :length => 9, :type => :array                                                 }, :valid => [ [ 2, 3, 4 ]             ], :invalid => [ 4, { :one => 1 }                 ] },
+    'boolean'    => { :definition => { :length => 9, :type => :boolean                                               }, :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
+    'date'       => { :definition => { :length => 9, :type => :date                                                  }, :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
+    'date_time'  => { :definition => { :length => 9, :type => :date_time                                             }, :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
+    'decimal'    => { :definition => { :length => 9, :type => :decimal,   :field_precision => 2                      }, :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+    'enum'       => { :definition => { :length => 9, :type => :enum,      :field_from      => [ :one, :two, :three ] }, :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
+    'float'      => { :definition => { :length => 9, :type => :float                                                 }, :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
+    'integer'    => { :definition => { :length => 9, :type => :integer                                               }, :valid => [ 4                       ], :invalid => [ '4'                              ] },
+    'string'     => { :definition => { :length => 9, :type => :string,    :field_length    => 4                      }, :valid => [ 'four'                  ], :invalid => [ 'toolong', 4, true               ] },
+    'tags'       => { :definition => { :length => 9, :type => :tags                                                  }, :valid => [ 'tag_a,tag_b,tag_c'     ], :invalid => [ 4, true                          ] },
+    'text'       => { :definition => { :length => 9, :type => :text                                                  }, :valid => [ 'hello world'           ], :invalid => [ 4, true                          ] },
+    'uuid'       => { :definition => { :length => 9, :type => :uuid                                                  }, :valid => [ Hoodoo::UUID.generate() ], :invalid => [ '123456', 4, true                ] },
+    'field'      => { :definition => { :length => 9                                                                  }, :valid => [ 4, '4', { :one => 1 }   ], :invalid => [                                  ] },
+    '1234567890' => { :definition => { :length => 9                                                                  }, :valid => [                         ], :invalid => [ 'Any value; key is too long'     ] },
+ }
+
+  KEYS_DATA.each do | field, values |
+    context "keys with elementary type '#{ values[ :definition ][ :type ] || 'field' }'" do
+      before :all do
+
+        # Flatten local scope to access 'values' inside the class definition;
+        # see e.g.:
+        #
+        #   https://gist.github.com/Integralist/a29212a8eb10bc8154b7#file-07-flattening-the-scope-aka-nested-lexical-scopes-rb
+        #
+        # Per-key defaults don't apply to generic Hashes because a key is
+        # either given to validate or render with in the caller-provided
+        # input parameters, in which case it already must have a value -
+        # even if explicitly "nil" - or the key is absent, in which case
+        # we have nothing to associate a daefault value with.
+        #
+        # Per-hash full defaults are supported but we can't really do those
+        # here as valid defaults will change for every line in KEYS_DATA
+        # with the changing types required by the keys.
+        #
+        @test_class = Class.new( Hoodoo::Presenters::Base ) do
+          schema do
+            hash :keys_types do
+              keys( values[ :definition ] )
+            end
+          end
+        end
+      end
+
+      context '#render' do
+        values[ :valid ].each_with_index do | value, index |
+          it "renders correctly for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.render( data ) ).to eq( data )
+          end
+        end
+      end
+
+      context '#validate' do
+        values[ :valid ].each_with_index do | value, index |
+          it "accepts a valid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.validate( data ).errors.size ).to( eql( 0 ) )
+          end
+        end
+
+        values[ :invalid ].each_with_index do | value, index |
+          it "rejects an invalid value for '#{ field }' (#{ index + 1 })" do
+            data = { 'keys_types' => { field => value } }
+            expect( @test_class.validate( data ).errors.size ).to( eql( 1 ) )
+          end
+        end
+      end
+    end
+  end
+
+  ############################################################################
+
+  class TestHashKeyDefaultAggregation < Hoodoo::Presenters::Base
+    schema do
+      hash :test, :default => { :three => 3 } do
+
+        key :one,   :default => { :foo => 'bar' }
+        key :two,   :default => { 'bar' => :baz }
+        key :three, :type    => :integer
+
+      end
+    end
+  end
+
+  it 'aggregates default shallow Hash and key values' do
+    expected = {
+      'test' => {
+        'one'   => { 'foo' => 'bar' },
+        'two'   => { 'bar' => :baz  },
+        'three' => 3
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( {} ) ).to eql( expected )
+  end
+
+  it 'overrides default shallow Hash values' do
+    data = {
+      'test' => {}
+    }
+
+    expected =  {
+      'test' => {
+        'one'   => { 'foo' => 'bar' }, # From the key default
+        'two'   => { 'bar' => :baz  }  # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides shallow default key values' do
+    data = {
+      'test' => {
+        'two' => { 'foo' => 'baz' }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one'   => { 'foo' => 'bar' }, # From the key default
+        'two'   => { 'foo' => 'baz' }  # From 'data' above
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+      }
+    }
+
+    expect( TestHashKeyDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  # TODO: This class does not work as originally hoped.
+  # TODO: Illustrates workaround in https://github.com/LoyaltyNZ/hoodoo/issues/194
+  # TODO: Move default off ":two" and into ":inner_two" if above is addressed.
+  #
+  class TestHashKeyDeepDefaultAggregation < Hoodoo::Presenters::Base
+    schema do
+      hash :test do # A default here would implicitly override anything on :two below
+
+        key :one,   :default => { :foo => 'bar' }
+        key :three, :type    => :integer
+
+        key :two, :default => { 'inner_two' => { 'inner_three' => 'three' } } do
+          hash :inner_two do
+            key :inner_one,   :default => { :bar => 'baz' }
+            key :inner_three, :type    => :text
+          end
+        end
+      end
+    end
+  end
+
+  it 'aggregates default deep Hash and key values' do
+    expected = {
+      'test' => {
+        'one'   => { 'foo' => 'bar' },
+        'two'   => {
+          'inner_two' => {
+            'inner_one'   => { 'bar' => 'baz' },
+            'inner_three' => 'three'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( {} ) ).to eql( expected )
+  end
+
+  it 'overrides shallow deep Hash values, preserving deep values' do
+    data = {
+      'test' => {}
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'baz' },  # From the key default
+            'inner_three' => 'three' # From the deep Hash default
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides default deep Hash values' do
+    data = {
+      'test' => {
+        'two' => {
+        }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'baz' } # From the key default
+            # No 'inner_three'; we overrode the deep Hash default in 'data'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  it 'overrides deep deep key values' do
+    data = {
+      'test' => {
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'hello' }
+          }
+        }
+      }
+    }
+
+    expected =  {
+      'test' => {
+        'one' => { 'foo' => 'bar' }, # From the key default
+        # No 'three'; we fully overrode the top-level Hash default in 'data'
+        'two' => {
+          'inner_two' => {
+            'inner_one' => { 'bar' => 'hello' } # From 'data' above
+            # No 'inner_three'; we overrode the deep Hash default in 'data'
+          }
+        }
+      }
+    }
+
+    expect( TestHashKeyDeepDefaultAggregation.render( data ) ).to eql( expected )
+  end
+
+  ############################################################################
+
+  context 'RDoc examples' do
+    class TestHypotheticaHashCurrency < Hoodoo::Presenters::Base
+      schema do
+        string :currency_code, :length => 16
+        integer :precision
+      end
+    end
+
+    context 'CurrencyHash' do
+      class TestCurrencyHash < Hoodoo::Presenters::Base
+        schema do
+          hash :currencies do
+            keys :length => 16 do
+              type TestHypotheticaHashCurrency
+            end
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'currencies' => {
+            'one' => {
+              'currency_code' => 'X_HOODOO_LO',
+              'precision' => 1
+            },
+            '0123456789ABCDEF' => {
+              'currency_code' => 'X_HOODOO_HI',
+              'precision' => 4
+            }
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces field and key restrictions' do
+          data = {
+            'currencies' => {
+              'one' => {
+                'currency_code' => 'too long a currency code',
+                'precision' => 1
+              },
+              '0123456789ABCDEF' => {
+                'currency_code' => 'X_HOODOO_HI',
+                'precision' => 'not an integer'
+              },
+              'too long a key name overall' => {
+                'currency_code' => 'X_HOODOO_LO',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 3 ) )
+
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies.one.currency_code' ) )
+
+          expect( errors[ 1 ][ 'code'      ] ).to( eql( 'generic.invalid_integer' ) )
+          expect( errors[ 1 ][ 'reference' ] ).to( eql( 'currencies.0123456789ABCDEF.precision' ) )
+
+          expect( errors[ 2 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 2 ][ 'reference' ] ).to( eql( 'currencies.too long a key name overall' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestCurrencyHash.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestCurrencyHash.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
+      end
+    end
+
+    context 'AltCurrencyHash' do
+      class TestAltCurrencyHash < Hoodoo::Presenters::Base
+        schema do
+          hash :currencies do
+            key :one do
+              type TestHypotheticaHashCurrency
+            end
+
+            key :two do
+              text :title
+              text :description
+            end
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'currencies' => {
+            'one' => {
+              'currency_code' => 'X_HOODOO_LO',
+              'precision' => 1
+            },
+            'two' => {
+              'title' => 'Optional title text',
+              'description' => 'Optional description text'
+            }
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces field restrictions' do
+          data = {
+            'currencies' => {
+              'one' => {
+                'currency_code' => 'too long a currency code',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestAltCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies.one.currency_code' ) )
+        end
+
+        it 'enforces key name restrictions' do
+          data = {
+            'currencies' => {
+              'unrecognised' => {
+                'currency_code' => 'X_HOODOO_LO',
+                'precision' => 1
+              }
+            }
+          }
+
+          errors = TestAltCurrencyHash.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_hash' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'currencies' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestAltCurrencyHash.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestAltCurrencyHash.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
+      end
+    end
+
+    context 'Person' do
+      class TestPerson < Hoodoo::Presenters::Base
+        schema do
+          hash :name do
+            key :first, :type => :text
+            key :last,  :type => :text
+          end
+
+          hash :address do
+            keys :type => :text
+          end
+
+          hash :identifiers, :required => true do
+            keys :length => 8, :type => :string, :field_length => 32
+          end
+        end
+      end
+
+      let( :valid_data ) do
+        {
+          'name' => {
+            'first' => 'Test',
+            'last' => 'Testy'
+          },
+          'address' => {
+            'road' => '1 Test Street',
+            'city' => 'Testville',
+            'post_code' => 'T01 C41'
+          },
+          'identifiers' => {
+            'primary' => '9759c77d188f4bfe85959738dc6f8505',
+            'postgres' => '1442'
+          }
+        }
+      end
+
+      context '#validate' do
+        it 'enforces a required hash' do
+          data = Hoodoo::Utilities.deep_dup( valid_data() )
+          data.delete( 'identifiers' )
+
+          errors = TestPerson.validate( data ).errors
+
+          expect( errors.size ).to( eql( 1 ) )
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.required_field_missing' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'identifiers' ) )
+        end
+
+        it 'enforces field and key restrictions' do
+          data = {
+            'name' => {
+              'first' => 'Test',
+              'surname' => 'Testy' # Invalid key name
+            },
+            'address' => {
+              'road' => '1 Test Street',
+              'city' => 'Testville',
+              'zip' => 90421 # Integer, not Text
+            },
+            'identifiers' => {
+              'primary' => '9759c77d188f4bfe85959738dc6f8505_441', # Value too long
+              'postgresql' => '1442' # Key name too long
+            }
+          }
+
+          errors = TestPerson.validate( data ).errors
+
+          expect( errors.size ).to( eql( 4 ) )
+
+          expect( errors[ 0 ][ 'code'      ] ).to( eql( 'generic.invalid_hash' ) )
+          expect( errors[ 0 ][ 'reference' ] ).to( eql( 'name' ) )
+
+          expect( errors[ 1 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 1 ][ 'reference' ] ).to( eql( 'address.zip' ) )
+
+          expect( errors[ 2 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 2 ][ 'reference' ] ).to( eql( 'identifiers.primary' ) )
+
+          expect( errors[ 3 ][ 'code'      ] ).to( eql( 'generic.invalid_string' ) )
+          expect( errors[ 3 ][ 'reference' ] ).to( eql( 'identifiers.postgresql' ) )
+        end
+
+        it 'is happy with valid data' do
+          expect( TestPerson.validate( valid_data() ).errors.size ).to( eql( 0 ) )
+        end
+      end
+
+      context '#render' do
+        it 'renders valid data' do
+          expect( TestPerson.render( valid_data() ) ).to( eql( valid_data() ) )
+        end
       end
     end
   end

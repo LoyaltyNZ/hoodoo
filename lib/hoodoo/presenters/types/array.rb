@@ -11,6 +11,52 @@ module Hoodoo
       #
       attr_accessor :properties
 
+      # Initialize an Array instance with the appropriate name and options.
+      #
+      # +name+::    The JSON key.
+      # +options+:: A +Hash+ of options, e.g. <tt>:required => true,
+      #             :type => :enum, :field_from => [ 1, 2, 3, 4 ]</tt>. If
+      #             a +:type+ field is present, the Array contains atomic
+      #             types of the given kind. Otherwise, either pass a
+      #             block with inner schema DSL calls describing complex
+      #             array entry schema, or nothing for no array content
+      #             validation. If a block _and_ +:type+ option are
+      #             passed, the block is used and option ignored.
+      #
+      def initialize( name, options = {} )
+        super( name, options )
+
+        if options.has_key?( :type )
+
+          # Defining a property via "#property" adds it to the @properties
+          # array, but handling of simple Types in array validation and
+          # rendering is too different from complex types to use the same
+          # code flow; we need the property to be independently used, so
+          # extract it into its own instance variable and delete the item
+          # from @properties.
+          #
+          value_klass     = type_option_to_class( options[ :type ] )
+          random_name     = Hoodoo::UUID.generate()
+          @value_property = property( random_name,
+                                      value_klass,
+                                      extract_field_prefix_options_from( options ) )
+
+          @properties.delete( random_name )
+
+          # This is approaching a blunt hack. Without it, validation errors
+          # will result in e.g. "fields[1].cd2f0a15ec8e4bd6ab1964b25b044e69"
+          # in error messages. By using nil, the validation code's JSON path
+          # array to string code doesn't include the item, giving the
+          # desired result. In addition, the base class Field#render code
+          # has an important check for non-nil but empty and bails out, but
+          # allows the nil name case to render simple types as expected. A
+          # delicate / fragile balance of nil-vs-empty arises.
+          #
+          @value_property.name = nil
+
+        end
+      end
+
       # Check if data is a valid Array and return a Hoodoo::Errors instance.
       #
       def validate( data, path = '' )
@@ -18,8 +64,12 @@ module Hoodoo
         return errors if errors.has_errors? || ( ! @required && data.nil? )
 
         if data.is_a?( ::Array )
-          # No array entry schema? No array entry validation, then.
-          unless @properties.nil?
+
+          # A block which defined properties for this instance takes
+          # precedence; then check for a ":type" option via "@@value_property"
+          # stored in the constructor; then give up and do no validation.
+          #
+          if @properties.nil? == false && @properties.empty? == false
             data.each_with_index do | item, index |
               @properties.each do | name, property |
                 rdata = ( item.is_a?( ::Hash ) && item.has_key?( name ) ) ? item[ name ] : nil
@@ -27,7 +77,13 @@ module Hoodoo
                 errors.merge!( property.validate( rdata, indexed_path ) )
               end
             end
+          elsif @value_property.nil? == false
+            data.each_with_index do | item, index |
+              indexed_path = "#{ full_path( path ) }[#{ index }]"
+              errors.merge!( @value_property.validate( item, indexed_path ) )
+            end
           end
+
         else
           errors.add_error(
             'generic.invalid_array',
@@ -66,11 +122,7 @@ module Hoodoo
 
         # ...then look at rendering the input entries of 'data' into 'array'.
 
-        if @properties.nil?
-          # Must modify existing instance of 'array', so use 'push()'
-          array.push( *data )
-
-        else
+        if @properties.nil? == false && @properties.empty? == false
           data.each do | item |
 
             # We have properties defined so array values (in "item") must be
@@ -98,6 +150,21 @@ module Hoodoo
             # Must modify existing instance of 'array', so use 'push()'
             array.push( rendered )
           end
+
+        elsif @value_property.nil? == false
+          data.each do | item |
+            subtarget = {}
+            @value_property.render( item, subtarget )
+            rendered = subtarget.empty? ? nil : read_at_path( subtarget, path ).values.first
+
+            # Must modify existing instance of 'array', so use 'push()'
+            array.push( rendered )
+          end
+
+        else
+          # Must modify existing instance of 'array', so use 'push()'
+          array.push( *data )
+
         end
       end
 

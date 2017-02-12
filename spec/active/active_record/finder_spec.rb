@@ -309,7 +309,7 @@ describe Hoodoo::ActiveRecord::Finder do
     context 'only makes one database call when' do
 
       it 'finding on the first attribute' do
-        count = count_database_calls_in do
+        count = spec_helper_count_database_calls_in do
           found = RSpecModelFinderTest.acquire( @id )
           expect( found ).to eq(@a)
         end
@@ -318,7 +318,7 @@ describe Hoodoo::ActiveRecord::Finder do
       end
 
       it 'finding on the second attribute' do
-        count = count_database_calls_in do
+        count = spec_helper_count_database_calls_in do
           found = RSpecModelFinderTest.acquire( @uuid )
           expect( found ).to eq(@b)
         end
@@ -327,7 +327,7 @@ describe Hoodoo::ActiveRecord::Finder do
       end
 
       it 'finding on the third attribute' do
-        count = count_database_calls_in do
+        count = spec_helper_count_database_calls_in do
           found = RSpecModelFinderTest.acquire( @code )
           expect( found ).to eq(@c)
         end
@@ -336,7 +336,7 @@ describe Hoodoo::ActiveRecord::Finder do
       end
 
       it 'checking all three attributes but finding nothing' do
-        count = count_database_calls_in do
+        count = spec_helper_count_database_calls_in do
           found = RSpecModelFinderTest.acquire( Hoodoo::UUID.generate )
           expect( found ).to be_nil
         end
