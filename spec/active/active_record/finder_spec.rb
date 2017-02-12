@@ -12,7 +12,7 @@ describe Hoodoo::ActiveRecord::Finder do
         t.text :field_two
         t.text :field_three
 
-        t.timestamps
+        t.timestamps :null => true
       end
     end
 

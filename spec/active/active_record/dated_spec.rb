@@ -9,7 +9,7 @@ describe Hoodoo::ActiveRecord::Dated do
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => false ) do | t |
         t.text :id,  :null => false
         t.text :data
-        t.timestamps
+        t.timestamps :null => true
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests_history_entries, :id => false ) do | t |
@@ -18,7 +18,7 @@ describe Hoodoo::ActiveRecord::Dated do
         t.text     :data
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
-        t.timestamps
+        t.timestamps :null => true
       end
 
       class RSpecModelEffectiveDateTest < ActiveRecord::Base
@@ -29,7 +29,7 @@ describe Hoodoo::ActiveRecord::Dated do
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => false ) do | t |
         t.text :id,  :null => false
         t.text :data
-        t.timestamps
+        t.timestamps :null => true
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_history_entries, :id => false ) do | t |
@@ -38,7 +38,7 @@ describe Hoodoo::ActiveRecord::Dated do
         t.text     :data
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
-        t.timestamps
+        t.timestamps :null => true
       end
 
       class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
