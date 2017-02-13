@@ -453,7 +453,28 @@ describe Hoodoo::Services::Session do
       expect( s.save_to_store() ).to eq( :fail )
     end
 
-    it 'handles unknown Hoodoo::TransientStore engine failures' do
+    it 'handles unknown Hoodoo::TransientStore engine failures when saving' do
+      s = described_class.new(
+        :session_id => '1234',
+        :memcached_host => 'abcd',
+        :caller_id => '0987',
+        :caller_version => 1
+      )
+
+      expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).once.and_call_original
+      expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).once.and_return( false )
+
+      expect( Hoodoo::Services::Middleware.logger ).to(
+        receive( :warn ).once.with(
+          'Hoodoo::Services::Session\\#save_to_store: Session saving failed - connection fault or session corrupt',
+          'Unknown storage engine failure'
+        ).and_call_original
+      )
+
+      expect( s.save_to_store() ).to eq( :fail )
+    end
+
+    it 'handles unknown Hoodoo::TransientStore engine failures when deleting' do
       s = described_class.new(
         :session_id => '1234',
         :memcached_host => 'abcd',
