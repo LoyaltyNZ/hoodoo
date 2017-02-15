@@ -20,7 +20,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
 
     module NewRelic
       module Agent
-        class CrossAppTracing
+        class Transaction
         end
       end
     end
@@ -37,6 +37,11 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     expect( Hoodoo::Client::Endpoint::AMQP.ancestors ).to include( Hoodoo::Monkey::Patch::NewRelicTracedAMQP::InstanceExtensions )
 
     original_do_amqp = Hoodoo::Client::Endpoint::AMQP.instance_method( :do_amqp )
+    segment          = double()
+
+    allow( segment ).to receive( :add_request_headers   )
+    allow( segment ).to receive( :read_response_headers )
+    allow( segment ).to receive( :finish                )
 
     # Count the number of times the AMQP endpoint's non-patched private
     # "do_amqp" method is called. This calls through to the monkey patch
@@ -51,14 +56,17 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
       result
     end
 
-    allow( NewRelic::Agent::CrossAppTracing ).to receive( :tl_trace_http_request ) do | newrelic_request, &block |
+    allow( ::NewRelic::Agent::Transaction ).to receive( :start_external_request_segment ) do | type, uri, method |
       @@newrelic_crossapp_count += 1
 
-      expect( newrelic_request ).to be_a( Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper )
-      block.call()
+      expect( type ).to eq( 'Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper' )
+      expect( uri  ).to be_a( URI )
+      expect( [ 'GET', 'POST', 'PATCH', 'DELETE' ] ).to include( method )
+
+      segment
     end
 
-    allow( NewRelic::Agent ).to receive( :disable_all_tracing ) do | &block |
+    allow( ::NewRelic::Agent ).to receive( :disable_all_tracing ) do | &block |
       @@newrelic_agent_disable_count += 1
 
       result = block.call()
