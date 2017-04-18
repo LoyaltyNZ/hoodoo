@@ -1,3 +1,8 @@
+## 1.15.1 (2017-04-18)
+
+* Fixed a bug in [Hoodoo::Client](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client.html) which would cause it, during auto-session acquisition, to retry _any_ call that returned an error once in the misguided belief it needed a new session.
+* Two minor comment-only fixes added to RDoc documentation around embedding.
+
 ## 1.15.0 (2017-02-08)
 
 * Moves the [`Hoodoo::Services::Session` engine](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) to using [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html). This should be a largely transparent change except for method deprecations described below.
