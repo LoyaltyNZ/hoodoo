@@ -985,6 +985,43 @@ describe Hoodoo::Client do
         expect( result.platform_errors.has_errors? ).to eq( false )
       end
 
+      it 'does not retry for errors other than "platform.invalid_session"' do
+
+        # When we list first, Client has no session so will acquire one. The
+        # wrapping endpoint is asked to list, it pushes that through the
+        # session mechanism, gets the session and then calls the wrapped
+        # endpoint.
+
+        expect( @endpoint ).to receive( :acquire_session_for ).once.with( :list ).and_call_original
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once.and_call_original
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        # When we list the second time, the wrapping endpoint has a session
+        # but we fake a simple "generic.malformed" response from the wrapped
+        # endpoint (probably impossible from a 'list' call in reality, but
+        # just some easy error that we can check for afterwards and is not as
+        # likely to be generated incidentally from other pieces of code as
+        # e.g. "generic.invalid_parameters").
+
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once do
+          array = Hoodoo::Client::AugmentedArray.new
+          array.platform_errors.add_error( 'generic.malformed' )
+          array
+        end
+
+        # This is just a normal error; we do not expect another session
+        # acquisition attempt or a retried call to #list.
+
+        expect( @endpoint ).to_not receive( :acquire_session_for )
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to_not receive( :list )
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
+      end
+
       it 'handles errors from the session resource' do
         expect_any_instance_of( RSpecClientTestSessionImplementation ).to receive( :create ).and_raise( "boo!" )
 
