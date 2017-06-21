@@ -122,6 +122,7 @@ module Hoodoo
           #
           # * Hoodoo::Monkey
           # * Hoodoo::Monkey::Patch::NewRelicTracedAMQP
+          # * Hoodoo::Monkey::Patch::DataDogTracedAMQP
           #
           # +http_message+:: Hash describing the message to send.
           # +full_uri+::     Equivalent full URI of the request (information
