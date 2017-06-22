@@ -18,8 +18,8 @@ end
 
 # Optional extra header hash is for middleware that intentionally adds headers
 shared_examples 'an AMQP-based middleware/client endpoint' do |optional_extra_header_hash|
-  let(:optional_extra_header_hash) {optional_extra_header_hash ||= {}}
   before :each do
+    @optional_extra_header_hash = optional_extra_header_hash || {}
     @old_queue = ENV[ 'AMQ_URI' ]
     ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
     @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
@@ -105,7 +105,7 @@ shared_examples 'an AMQP-based middleware/client endpoint' do |optional_extra_he
             'Accept-Language' => 'fr',
             'X-Interaction-ID' => @interaction.interaction_id,
             'X-Session-ID' => @interaction.context.session.session_id
-          }.merge!( optional_extra_header_hash ),
+          }.merge!( @optional_extra_header_hash ),
         } )
       end.and_return( mock_response )
     end
