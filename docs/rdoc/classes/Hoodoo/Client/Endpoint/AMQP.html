@@ -256,6 +256,9 @@ patching only. For more, see:</p>
 </li><li>
 <p><a
 href="../../Monkey/Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a></p>
+</li><li>
+<p><a
+href="../../Monkey/Patch/DataDogTracedAMQP.html">Hoodoo::Monkey::Patch::DataDogTracedAMQP</a></p>
 </li></ul>
 <dl class="rdoc-list note-list"><dt><code>http_message</code>
 <dd>
@@ -278,7 +281,7 @@ does not consult this parameter).</p>
                 <a href="javascript:toggleSource('method-i-monkey_send_request_source')" id="l_method-i-monkey_send_request_source">show</a>
               </p>
               <div id="method-i-monkey_send_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 134</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/amqp.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">alchemy</span>().<span class="ruby-identifier">send_request_to_resource</span>( <span class="ruby-identifier">http_message</span> )
 <span class="ruby-keyword">end</span></pre>
