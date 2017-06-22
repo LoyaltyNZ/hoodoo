@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do | s |
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2017-04-18'
+  s.date        = '2017-06-23'
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = [ 'Loyalty New Zealand' ]
@@ -30,7 +30,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'rspec-mocks',      '~> 3.3'
   s.add_development_dependency 'activerecord',     '~> 4.2'
   s.add_development_dependency 'activesupport',    '~> 4.2'
-  s.add_development_dependency 'database_cleaner', '~> 1.4.0' # 1.5.x breaks tests
+  s.add_development_dependency 'database_cleaner', '~> 1.6'
   s.add_development_dependency 'pg',               '~> 0.18'
   s.add_development_dependency 'byebug',           '~> 3.5'
   s.add_development_dependency 'timecop',          '~> 0.8'
