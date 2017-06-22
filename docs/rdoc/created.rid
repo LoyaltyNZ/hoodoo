@@ -1,4 +1,4 @@
-Thu, 22 Jun 2017 12:02:35 +1200
+Thu, 22 Jun 2017 15:42:44 +1200
 README.md	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo.rb	Mon, 19 Jun 2017 12:25:12 +1200
 lib/hoodoo/active.rb	Thu, 19 May 2016 11:56:41 +1200
@@ -21,7 +21,7 @@ lib/hoodoo/client/augmented_base.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/client/augmented_hash.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/client/client.rb	Mon, 19 Jun 2017 12:25:12 +1200
 lib/hoodoo/client/endpoint/endpoint.rb	Mon, 19 Jun 2017 12:25:12 +1200
-lib/hoodoo/client/endpoint/endpoints/amqp.rb	Wed, 21 Jun 2017 17:12:55 +1200
+lib/hoodoo/client/endpoint/endpoints/amqp.rb	Thu, 22 Jun 2017 15:40:25 +1200
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Mon, 19 Jun 2017 12:25:12 +1200
 lib/hoodoo/client/endpoint/endpoints/http.rb	Mon, 19 Jun 2017 12:25:12 +1200
 lib/hoodoo/client/endpoint/endpoints/http_based.rb	Thu, 19 May 2016 11:56:41 +1200
@@ -57,9 +57,9 @@ lib/hoodoo/logger/writers/file_writer.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/logger/writers/log_entries_dot_com_writer.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/logger/writers/stream_writer.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/middleware.rb	Thu, 19 May 2016 11:56:41 +1200
-lib/hoodoo/monkey.rb	Wed, 21 Jun 2017 17:12:55 +1200
+lib/hoodoo/monkey.rb	Thu, 22 Jun 2017 14:42:47 +1200
 lib/hoodoo/monkey/monkey.rb	Thu, 19 May 2016 11:56:41 +1200
-lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Wed, 21 Jun 2017 17:12:55 +1200
+lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Thu, 22 Jun 2017 15:40:25 +1200
 lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Thu, 19 May 2016 11:56:41 +1200
 lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Mon, 19 Jun 2017 14:19:55 +1200
 lib/hoodoo/presenters.rb	Thu, 19 May 2016 11:56:41 +1200

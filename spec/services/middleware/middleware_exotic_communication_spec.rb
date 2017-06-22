@@ -8,7 +8,7 @@ describe Hoodoo::Services::Middleware do
 
   context 'on queue' do
     before :all do
-      Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::DataDogTracedAMQP )
+      Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::DatadogTracedAMQP )
       Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
     end
 

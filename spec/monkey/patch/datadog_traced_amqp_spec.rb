@@ -5,7 +5,7 @@ require 'spec_helper.rb'
 # can't do that in an 'after' hook as exceptions therein cause warnings
 # to be printed, but don't cause test failures.
 #
-describe Hoodoo::Monkey::Patch::DataDogTracedAMQP, :order => :defined do
+describe Hoodoo::Monkey::Patch::DatadogTracedAMQP, :order => :defined do
 
   # Not every test in the 'an AMQP-based middleware/client endpoint' shared
   # example group will provoke a request. We cannot expect to have the
@@ -24,16 +24,16 @@ describe Hoodoo::Monkey::Patch::DataDogTracedAMQP, :order => :defined do
       end
     end
 
-    Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::DataDogTracedAMQP )
+    Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::DatadogTracedAMQP )
   end
 
   after :all do
-    Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::DataDogTracedAMQP )
+    Hoodoo::Monkey.disable( extension_module: Hoodoo::Monkey::Patch::DatadogTracedAMQP )
     Object.send( :remove_const, :Datadog )
   end
 
   before :each do
-    expect( Hoodoo::Client::Endpoint::AMQP.ancestors ).to include( Hoodoo::Monkey::Patch::DataDogTracedAMQP::InstanceExtensions )
+    expect( Hoodoo::Client::Endpoint::AMQP.ancestors ).to include( Hoodoo::Monkey::Patch::DatadogTracedAMQP::InstanceExtensions )
 
     original_do_amqp = Hoodoo::Client::Endpoint::AMQP.instance_method( :do_amqp )
 
