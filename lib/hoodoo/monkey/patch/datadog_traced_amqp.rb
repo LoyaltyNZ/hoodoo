@@ -1,6 +1,6 @@
 ########################################################################
 # File::    datadog_traced_amqp.rb
-# (C)::     Loyalty New Zealand 2015
+# (C)::     Loyalty New Zealand 2017
 #
 # Purpose:: Extend the AMQP endpoint to support DataDog cross-app
 #           transaction tracing. Only defined and registered if the
@@ -8,7 +8,7 @@
 #
 #           See Hoodoo::Monkey::Patch::DataDogTracedAMQP for more.
 # ----------------------------------------------------------------------
-#           08-Apr-2016 (RJS): Created.
+#           22-June-2017 (JRW): Created.
 ########################################################################
 
 module Hoodoo
@@ -50,7 +50,7 @@ module Hoodoo
                 span.resource = http_message[ 'verb' ]
                 span.set_tag( 'target.path', http_message[ 'path'] )
 
-                # Add DataDog trace ids to the http message
+                # Add DataDog trace IDs to the HTTP message
                 http_message[ 'headers' ][ 'X_DDTRACE_PARENT_TRACE_ID' ] = span.trace_id.to_s
                 http_message[ 'headers' ][ 'X_DDTRACE_PARENT_SPAN_ID' ] = span.span_id.to_s
 
@@ -65,8 +65,8 @@ module Hoodoo
         # Register this class with the Hoodoo monkey patch engine.
         #
         if defined?( Hoodoo::Client ) &&
-            defined?( Hoodoo::Client::Endpoint ) &&
-            defined?( Hoodoo::Client::Endpoint::AMQP )
+           defined?( Hoodoo::Client::Endpoint ) &&
+           defined?( Hoodoo::Client::Endpoint::AMQP )
 
           Hoodoo::Monkey.register(
               target_unit:      Hoodoo::Client::Endpoint::AMQP,
@@ -74,7 +74,7 @@ module Hoodoo
           )
 
           if defined?( Hoodoo::Services ) &&
-              defined?( Hoodoo::Services::Middleware )
+             defined?( Hoodoo::Services::Middleware )
 
             Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::DataDogTracedAMQP )
           end

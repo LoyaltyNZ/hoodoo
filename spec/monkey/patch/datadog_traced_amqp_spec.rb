@@ -37,7 +37,6 @@ describe Hoodoo::Monkey::Patch::DataDogTracedAMQP, :order => :defined do
 
     original_do_amqp = Hoodoo::Client::Endpoint::AMQP.instance_method( :do_amqp )
 
-
     allow_any_instance_of( Hoodoo::Client::Endpoint::AMQP ).to receive( :do_amqp ) do | instance, description_of_request |
       result = original_do_amqp.bind( instance ).call( description_of_request )
       @@endpoint_do_amqp_count += 1
@@ -45,20 +44,19 @@ describe Hoodoo::Monkey::Patch::DataDogTracedAMQP, :order => :defined do
     end
 
     allow_any_instance_of( Datadog ).to receive( :trace ) do | &block |
-      # Mock out span
+      # Datadog Trace method responds with a yielded span this is here to mock tha
       span = double('span', trace_id: 'trace_id', span_id: 'span_id').as_null_object
       @@datadog_trace_count += 1
       block.call(span)
     end
   end
 
-
   it_behaves_like 'an AMQP-based middleware/client endpoint',
                   {'X_DDTRACE_PARENT_TRACE_ID'=>'trace_id', 'X_DDTRACE_PARENT_SPAN_ID' => 'span_id'}
 
   context 'afterwards' do
     it 'has non-zero NewRelic method call counts' do
-      expect( @@endpoint_do_amqp_count       ).to be > 5
+      expect( @@endpoint_do_amqp_count ).to be > 5
       expect( @@datadog_trace_count ).to eq( @@endpoint_do_amqp_count )
     end
   end

@@ -1,6 +1,6 @@
 ########################################################################
 # File::    ddtrace.rb
-# (C)::     Loyalty New Zealand 2016
+# (C)::     Loyalty New Zealand 2017
 #
 # Purpose:: Override DataDog 'require "ddtrace"'. The test suite
 #           cannot allow "real" DataDog to be loaded as this would hook
@@ -8,7 +8,7 @@
 #           especially for tests covering variant behaviour for when
 #           DataDog is present or absent.
 # ----------------------------------------------------------------------
-#           13-Apr-2016 (ADH): Created.
+#           22-June-2017 (JRW): Created.
 ########################################################################
 
 # Yes, this is empty, just comments. The whole point is to allow code to
