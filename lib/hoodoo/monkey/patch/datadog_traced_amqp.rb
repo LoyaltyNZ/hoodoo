@@ -42,7 +42,7 @@ module Hoodoo
             #                  when using AMQP but NewRelic requires it.
             #
             def monkey_send_request( http_message, full_uri )
-              amqp_response    = nil
+              amqp_response = nil
 
               Datadog.tracer.trace( 'alchemy.request' ) do |span|
                 span.service = 'alchemy'
