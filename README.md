@@ -70,6 +70,9 @@ Some additional higher level hand written documentation may also be present as M
 * [Graham Jenson](https://github.com/grahamjenson)
 * [Jordan Carter](https://github.com/jordandcarter)
 * [Andrew Pett](https://github.com/aspett)
+* [Max Copley](https://github.com/copley)
+* [David Oram](https://github.com/davidoram)
+* [Jesse Whitham](https://github.com/whithajess)
 
 ## Licence
 

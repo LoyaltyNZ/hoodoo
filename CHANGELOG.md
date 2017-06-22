@@ -1,3 +1,8 @@
+## 1.16.0 (2017-06-23)
+
+* Add support for [Datadog](https://www.datadoghq.com) as an alternative to [NewRelic](https://newrelic.com) via the [DDTrace](https://github.com/DataDog/dd-trace-rb) gem.
+* Maintenance `bundle update` including moving to latest Database Cleaner for tests, since its most recent incarnation works with the suite again (one test is updated to account for new support for cleaning across multiple database connections).
+
 ## 1.15.1 (2017-04-18)
 
 * Fixed a bug in [Hoodoo::Client](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client.html) which would cause it, during auto-session acquisition, to retry _any_ call that returned an error once in the misguided belief it needed a new session.

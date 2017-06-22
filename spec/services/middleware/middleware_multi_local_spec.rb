@@ -437,8 +437,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
   it 'manages ActiveRecord when implementation is called in its presence' do
     pool = ActiveRecord::Base.connection_pool
 
-    expect( ActiveRecord::Base ).to receive( :connection_pool ).twice.and_call_original
-    expect( pool               ).to receive( :with_connection ).twice.and_call_original
+    expect( ActiveRecord::Base ).to receive( :connection_pool ).exactly( 3 ).times.and_call_original
+    expect( pool               ).to receive( :with_connection ).exactly( 2 ).times.and_call_original
 
     list_things()
   end
