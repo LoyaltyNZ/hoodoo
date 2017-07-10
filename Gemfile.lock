@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.16.0)
+    hoodoo (1.16.1)
       dalli (~> 2.7)
 
 GEM
