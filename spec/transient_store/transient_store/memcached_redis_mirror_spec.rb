@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-require 'hoodoo/transient_store/mocks/dalli_client'
-require 'hoodoo/transient_store/mocks/redis'
-
 # These tests make sure that the mirror class calls down to the Memcached and
 # Redis abstractions, but assumes those abstractions are thoroughly tested by
 # their own unit tests. So it makes sure it gets expected call and result
