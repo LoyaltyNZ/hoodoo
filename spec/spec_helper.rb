@@ -197,7 +197,7 @@ end
 # &block:: Block of code to call while +STDOUT+ is disabled.
 #
 def spec_helper_silence_stdout( &block )
-  spec_helper_silence_stream( $stdout, block )
+  spec_helper_silence_stream( $stdout, &block )
 end
 
 # Back-end to #spec_helper_silence_stdout; can silence arbitrary streams.
