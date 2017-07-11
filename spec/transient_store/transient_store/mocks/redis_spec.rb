@@ -25,4 +25,41 @@ describe Hoodoo::TransientStore::Mocks::Redis do
     end
   end
 
+  context 'mimic approcimated old behaviour of its Memcached counterpart by' do
+    it 'using the mock client in test mode if there is an empty host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Redis.new(
+        storage_host_uri: '',
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using the mock client in test mode if there is a "nil" host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Redis.new(
+        storage_host_uri: nil,
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using a real client in test mode if there is a defined host' do
+      expect_any_instance_of( ::Redis ).to receive( :initialize ).once.and_call_original()
+
+      # Silence 'Errno::ECONNREFUSED' warnings if Memcached is not actually
+      # running at the given URI. That's fine; it's the initializer test
+      # above which is important.
+      #
+      spec_helper_silence_stream( $stdout ) do
+        spec_helper_silence_stream( $stderr ) do
+          Hoodoo::TransientStore::Redis.new(
+            storage_host_uri: 'redis://localhost:6379',
+            namespace:        'test_namespace_'
+          )
+        end
+      end
+    end
+  end
+
 end

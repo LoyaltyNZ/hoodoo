@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 describe Hoodoo::Services::Session do
 

@@ -10,7 +10,6 @@
 
 require 'ostruct'
 require 'hoodoo/transient_store'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 module Hoodoo
   module Services

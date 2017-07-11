@@ -11,20 +11,20 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (1.16.0)
+    hoodoo (1.16.1)
       dalli (~> 2.7)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.8)
-      activesupport (= 4.2.8)
+    activemodel (4.2.9)
+      activesupport (= 4.2.9)
       builder (~> 3.1)
-    activerecord (4.2.8)
-      activemodel (= 4.2.8)
-      activesupport (= 4.2.8)
+    activerecord (4.2.9)
+      activemodel (= 4.2.9)
+      activesupport (= 4.2.9)
       arel (~> 6.0)
-    activesupport (4.2.8)
+    activesupport (4.2.9)
       i18n (~> 0.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
@@ -57,7 +57,7 @@ GEM
     eventmachine (1.2.3)
     httparty (0.15.5)
       multi_xml (>= 0.5.2)
-    i18n (0.8.4)
+    i18n (0.8.6)
     json (1.8.6)
     le (2.7.5)
     minitest (5.10.2)
@@ -65,8 +65,8 @@ GEM
     multi_xml (0.6.0)
     pg (0.21.0)
     rack (2.0.3)
-    rack-test (0.6.3)
-      rack (>= 1.0)
+    rack-test (0.7.0)
+      rack (>= 1.0, < 3)
     rake (10.5.0)
     raygun4ruby (1.5.0)
       httparty (> 0.13.7)
@@ -96,7 +96,7 @@ GEM
       simplecov (>= 0.4.1)
     slop (3.6.0)
     thread_safe (0.3.6)
-    timecop (0.9.0)
+    timecop (0.9.1)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
     uuidtools (2.1.5)
@@ -127,4 +127,4 @@ DEPENDENCIES
   timecop (~> 0.8)
 
 BUNDLED WITH
-   1.14.5
+   1.15.1

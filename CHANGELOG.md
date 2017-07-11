@@ -1,3 +1,8 @@
+## 1.16.1 (2017-07-11)
+
+* Maintenance pass including `bundle update` and new Ruby micro versions for development.
+* Resolve [issue 212](https://github.com/LoyaltyNZ/hoodoo/issues/212) for Memcached backend in [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) and implement same behavioural change for the Redis backend. If relevant environment variables for connecting to a real engine are not defined, tests will default back to the mock system again, as they did before version 1.15.0.
+
 ## 1.16.0 (2017-06-23)
 
 * Add support for [Datadog](https://www.datadoghq.com) as an alternative to [NewRelic](https://newrelic.com) via the [DDTrace](https://github.com/DataDog/dd-trace-rb) gem.
