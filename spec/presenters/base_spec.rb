@@ -681,7 +681,7 @@ describe '#schema' do
       )).to eq({
         'id' => uuid,
         'kind' => 'World',
-        'created_at' => time.utc.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( time ),
         'language' => 'en-gb',
         'errors_id' => data['errors_id'],
         'test_tags' => 'foo,bar,baz',
@@ -797,7 +797,7 @@ describe '#schema' do
       expect(TestPresenter5.render_in(@con, data, options)).to eq({
         'id'         => u,
         'kind'       => 'TestPresenter5',
-        'created_at' => t.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( t ),
         'language'   => 'de',
         'three'      => 'default_three'
       })
@@ -811,7 +811,7 @@ describe '#schema' do
       expect(TestPresenter5.render_in(@con, data, options)).to eq({
         'id'         => u,
         'kind'       => 'TestPresenter5',
-        'created_at' => t.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( t ),
         'language'   => 'fr',
         'three'      => 'default_three'
       })
@@ -830,7 +830,7 @@ describe '#schema' do
       expect(TestPresenter5.render_in(@con, data, options)).to eq({
         'id'         => u,
         'kind'       => 'TestPresenter5',
-        'created_at' => t.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( t ),
         'language'   => 'de',
         'three'      => 'default_three',
         '_embed'     => {
@@ -853,7 +853,7 @@ describe '#schema' do
       expect(TestPresenter5.render_in(@con, data, options)).to eq({
         'id'         => u,
         'kind'       => 'TestPresenter5',
-        'created_at' => t.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( t ),
         'language'   => 'de',
         'three'      => 'default_three',
         '_reference' => {

@@ -485,6 +485,38 @@ describe Hoodoo::Utilities do
     end
   end
 
+  describe '#standard_iso8601' do
+    before :each do
+      @old_tz = ENV[ 'TZ' ]
+      ENV[ 'TZ' ] = 'EST'
+    end
+
+    after :each do
+      @old_tz.blank? ? ENV.delete( 'TZ' ) : ENV[ 'TZ' ] = @old_tz
+    end
+
+    it 'accepts a non-UTC Time and renders a UTC date-time' do
+      now = Time.new( 2017, 7, 28, 8, 41, 15 ) + 0.123456789
+      iso = now.utc.iso8601( 6 )
+
+      expect( Hoodoo::Utilities.standard_datetime( now ) ).to eq( iso )
+    end
+
+    it 'accepts a non-UTC Date and renders a UTC date-time' do
+      now = Date.new( 2017, 7, 28 )
+      iso = now.to_time.utc.iso8601( 6 )
+
+      expect( Hoodoo::Utilities.standard_datetime( now ) ).to eq( iso )
+    end
+
+    it 'accepts a non-UTC DateTime and renders a UTC date-time' do
+      now = DateTime.new( 2017, 7, 28, 8, 41, 15 ) + 0.123456789
+      iso = now.to_time.utc.iso8601( 6 )
+
+      expect( Hoodoo::Utilities.standard_datetime( now ) ).to eq( iso )
+    end
+  end
+
   describe '#nanosecond_iso8601' do
     it 'should convert DateTime to a nanosecond precision String' do
       now  = DateTime.now()

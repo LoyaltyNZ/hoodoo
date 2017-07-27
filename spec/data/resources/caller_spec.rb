@@ -95,7 +95,7 @@ describe Hoodoo::Data::Resources::Caller do
     expect(json).to eq(
       {
         'id'         => id,
-        'created_at' => created_at.utc.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'       => 'Caller',
         "name"       => "Test Caller",
         "identity"   => {
@@ -144,7 +144,7 @@ describe Hoodoo::Data::Resources::Caller do
     expect(json).to eq(
       {
         'id'          => id,
-        'created_at'  => created_at.utc.iso8601,
+        'created_at'  => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'        => 'Caller',
         "identity"    => {},
         "permissions" => { "resources" => {} },

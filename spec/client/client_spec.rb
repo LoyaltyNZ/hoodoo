@@ -28,10 +28,10 @@ class RSpecClientTestSessionImplementation < Hoodoo::Services::Implementation
     #
     context.response.set_resource(
       'id'         => session_id,
-      'created_at' => Time.now.utc.iso8601,
+      'created_at' => Hoodoo::Utilities.standard_datetime( Time.now ),
       'kind'       => 'RSpecClientTestSession',
       'caller_id'  => context.request.body[ 'caller_id' ],
-      'expires_at' => ( Time.now.utc + 24*60*60 ).iso8601
+      'expires_at' => Hoodoo::Utilities.standard_datetime( Time.now + 24 * 60 * 60 )
     )
   end
 end
@@ -153,7 +153,7 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
                                 context.request.body.try( :[], 'id' ) ||
                                 Hoodoo::UUID.generate(),
 
-        'created_at'         => Time.now.utc.iso8601,
+        'created_at'         => Hoodoo::Utilities.standard_datetime( Time.now ),
         'kind'               => 'RSpecClientTestTarget',
         'language'           => context.request.locale,
 

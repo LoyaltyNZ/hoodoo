@@ -87,7 +87,7 @@ describe Hoodoo::Presenters::Array do
         'an_array' => [
           {},
           { 'an_integer' => 2 },
-          { 'a_datetime' => Time.now.iso8601 }
+          { 'a_datetime' => DateTime.now.iso8601 }
         ]
       }
 
