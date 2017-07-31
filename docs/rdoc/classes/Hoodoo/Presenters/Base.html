@@ -305,7 +305,7 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
       <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
       <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">kind</span>,
-      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_s</span> ).<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>
+      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_datetime</span> )
     } )
 
     <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span> ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
