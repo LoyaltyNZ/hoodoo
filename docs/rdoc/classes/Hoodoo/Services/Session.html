@@ -989,7 +989,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
 
   )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
-    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">iso8601</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-node">%w(

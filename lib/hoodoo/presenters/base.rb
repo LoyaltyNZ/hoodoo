@@ -114,7 +114,7 @@ module Hoodoo
           target.merge!( {
             'id'         => uuid,
             'kind'       => kind,
-            'created_at' => Time.parse( created_at.to_s ).utc.iso8601
+            'created_at' => Hoodoo::Utilities.standard_datetime( created_at.to_datetime )
           } )
 
           target[ 'language' ] = language if self.is_internationalised?()
