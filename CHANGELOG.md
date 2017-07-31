@@ -1,3 +1,7 @@
+## 1.17.0 (2017-08-91)
+
+* Higher precision `created_at` (and for sessions, `expires_at`) default time rendering. For some use cases, to-one-second accuracy was insufficient. New method [`Hoodoo::Utilities::standard_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-standard_datetime) is used for this.
+
 ## 1.16.1 (2017-07-11)
 
 * Maintenance pass including `bundle update` and new Ruby micro versions for development.
