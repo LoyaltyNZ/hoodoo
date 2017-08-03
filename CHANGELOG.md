@@ -17,7 +17,7 @@
   - If using Airbrake and manually raising exceptions rather than using the [Hoodoo exception abstraction](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report), you must change from `#notify_or_ignore` to plain `#notify`.
   - If inheriting from `Hoodoo::ActiveRecord::Base` for Hoodoo extensions in ActiveRecord models you do not need to change your class declarations; else [note this Guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#active-record-models-now-inherit-from-applicationrecord-by-default).
 
-* As a maintenance sweep, other gem minimum versions are updated to most-recent in passing but there are no known API changes therein that should impact services.
+* As a maintenance sweep, other gem minimum versions are updated to most-recent in passing but there are no known API changes therein that should impact services. Travis builds now run under PostgreSQL 9.6 instead of 9.4
 
 # Hoodoo v1.x
 
