@@ -382,7 +382,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {
@@ -403,7 +403,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {
@@ -423,7 +423,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {

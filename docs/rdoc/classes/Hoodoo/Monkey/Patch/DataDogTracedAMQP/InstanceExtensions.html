@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Hoodoo::Monkey::Patch::DatadogTracedAMQP::InstanceExtensions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
+<script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <div class="banner">
+        <h1>
+            <span class="type">Module</span>
+            Hoodoo::Monkey::Patch::DatadogTracedAMQP::InstanceExtensions
+        </h1>
+        <ul class="files">
+            <li><a href="../../../../../files/lib/hoodoo/monkey/patch/datadog_traced_amqp_rb.html">lib/hoodoo/monkey/patch/datadog_traced_amqp.rb</a></li>
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    <div class="description">
+      
+<p>Instance methods to patch over <a
+href="../../../Client/Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+        <dt>M</dt>
+        <dd>
+          <ul>
+              <li>
+                <a href="#method-i-monkey_send_request">monkey_send_request</a>
+              </li>
+          </ul>
+        </dd>
+    </dl>
+
+
+
+
+
+
+
+
+
+
+    <!-- Methods -->
+      <div class="sectiontitle">Instance Public methods</div>
+        <div class="method">
+          <div class="title method-title" id="method-i-monkey_send_request">
+              <b>monkey_send_request</b>( http_message, full_uri )
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/DatadogTracedAMQP/InstanceExtensions.html#method-i-monkey_send_request" name="method-i-monkey_send_request" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Wrap the request with Datadog&#39;s distributed tracing. This adds headers
+to the request and extracts header data from the response. It calls the
+original implementation via <code>super</code>.</p>
+<dl class="rdoc-list note-list"><dt><code>http_message</code>
+<dd>
+<p>Hash describing the message to send.</p>
+</dd><dt><code>full_uri</code>
+<dd>
+<p>URI being sent to. This is somewhat meaningless when using AMQP but
+NewRelic requires it.</p>
+</dd></dl>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-monkey_send_request_source')" id="l_method-i-monkey_send_request_source">show</a>
+              </p>
+              <div id="method-i-monkey_send_request_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/datadog_traced_amqp.rb, line 44</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_send_request</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
+  <span class="ruby-identifier">amqp_response</span> = <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-constant">Datadog</span>.<span class="ruby-identifier">tracer</span>.<span class="ruby-identifier">trace</span>( <span class="ruby-string">&#39;alchemy.request&#39;</span> ) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">span</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">span</span>.<span class="ruby-identifier">service</span> = <span class="ruby-string">&#39;alchemy&#39;</span>
+    <span class="ruby-identifier">span</span>.<span class="ruby-identifier">span_type</span> = <span class="ruby-string">&#39;alchemy&#39;</span>
+    <span class="ruby-identifier">span</span>.<span class="ruby-identifier">resource</span> = <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;verb&#39;</span> ]
+    <span class="ruby-identifier">span</span>.<span class="ruby-identifier">set_tag</span>( <span class="ruby-string">&#39;target.path&#39;</span>, <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;path&#39;</span>] )
+
+    <span class="ruby-comment"># Add Datadog trace IDs to the HTTP message</span>
+    <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DDTRACE_PARENT_TRACE_ID&#39;</span> ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">trace_id</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DDTRACE_PARENT_SPAN_ID&#39;</span> ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">span_id</span>.<span class="ruby-identifier">to_s</span>
+
+    <span class="ruby-identifier">amqp_response</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">amqp_response</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+</div>
+
+    </div>
+  </body>
+</html>

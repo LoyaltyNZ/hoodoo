@@ -5,11 +5,11 @@
 language: ruby
 matrix:
   include:
-    - rvm: 2.4.0
+    - rvm: 2.4.1
       gemfile: Gemfile
-    - rvm: 2.3.3
+    - rvm: 2.3.4
       gemfile: Gemfile
-    - rvm: 2.2.6
+    - rvm: 2.2.7
       gemfile: Gemfile
     - rvm: 2.1.10
       gemfile: rack_1.gemfile

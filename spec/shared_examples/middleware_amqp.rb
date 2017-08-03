@@ -16,8 +16,10 @@ class RSpecTestServiceExoticStub < Hoodoo::Services::Service
   comprised_of RSpecTestServiceExoticStubInterface
 end
 
-shared_examples 'an AMQP-based middleware/client endpoint' do
+# Optional extra header hash is for middleware that intentionally adds headers
+shared_examples 'an AMQP-based middleware/client endpoint' do |optional_extra_header_hash|
   before :each do
+    @optional_extra_header_hash = optional_extra_header_hash || {}
     @old_queue = ENV[ 'AMQ_URI' ]
     ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
     @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
@@ -103,7 +105,7 @@ shared_examples 'an AMQP-based middleware/client endpoint' do
             'Accept-Language' => 'fr',
             'X-Interaction-ID' => @interaction.interaction_id,
             'X-Session-ID' => @interaction.context.session.session_id
-          },
+          }.merge!( @optional_extra_header_hash ),
         } )
       end.and_return( mock_response )
     end

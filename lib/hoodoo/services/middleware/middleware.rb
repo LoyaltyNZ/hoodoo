@@ -160,7 +160,7 @@ module Hoodoo; module Services
     #
     DEFAULT_TEST_SESSION.from_h!( {
       'session_id'           => '01234567890123456789012345678901',
-      'expires_at'           => ( Time.now + 172800 ).utc.iso8601,
+      'expires_at'           => Hoodoo::Utilities.standard_datetime( Time.now + 172800 ),
       'caller_version'       => 1,
       'caller_id'            =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
       'caller_identity_name' =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',

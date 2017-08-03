@@ -21,6 +21,25 @@
 
 # Hoodoo v1.x
 
+## 1.17.0 (2017-08-91)
+
+* Higher precision `created_at` (and for sessions, `expires_at`) default time rendering. For some use cases, to-one-second accuracy was insufficient. New method [`Hoodoo::Utilities::standard_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-standard_datetime) is used for this.
+
+## 1.16.1 (2017-07-11)
+
+* Maintenance pass including `bundle update` and new Ruby micro versions for development.
+* Resolve [issue 212](https://github.com/LoyaltyNZ/hoodoo/issues/212) for Memcached backend in [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) and implement same behavioural change for the Redis backend. If relevant environment variables for connecting to a real engine are not defined, tests will default back to the mock system again, as they did before version 1.15.0.
+
+## 1.16.0 (2017-06-23)
+
+* Add support for [Datadog](https://www.datadoghq.com) as an alternative to [NewRelic](https://newrelic.com) via the [DDTrace](https://github.com/DataDog/dd-trace-rb) gem.
+* Maintenance `bundle update` including moving to latest Database Cleaner for tests, since its most recent incarnation works with the suite again (one test is updated to account for new support for cleaning across multiple database connections).
+
+## 1.15.1 (2017-04-18)
+
+* Fixed a bug in [Hoodoo::Client](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client.html) which would cause it, during auto-session acquisition, to retry _any_ call that returned an error once in the misguided belief it needed a new session.
+* Two minor comment-only fixes added to RDoc documentation around embedding.
+
 ## 1.15.0 (2017-02-08)
 
 * Moves the [`Hoodoo::Services::Session` engine](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) to using [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html). This should be a largely transparent change except for method deprecations described below.

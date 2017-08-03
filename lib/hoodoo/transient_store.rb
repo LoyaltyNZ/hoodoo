@@ -17,3 +17,8 @@ require 'hoodoo/transient_store/transient_store/base'
 require 'hoodoo/transient_store/transient_store/memcached'
 require 'hoodoo/transient_store/transient_store/redis'
 require 'hoodoo/transient_store/transient_store/memcached_redis_mirror'
+
+# Mock plugin back-ends for test or other stubbing purposes.
+
+require 'hoodoo/transient_store/mocks/dalli_client'
+require 'hoodoo/transient_store/mocks/redis'

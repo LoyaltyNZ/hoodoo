@@ -10,7 +10,6 @@
 
 require 'ostruct'
 require 'hoodoo/transient_store'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 module Hoodoo
   module Services
@@ -485,7 +484,7 @@ module Hoodoo
 
         ).each do | property |
           value = self.send( property )
-          hash[ property ] = value.iso8601() unless value.nil?
+          hash[ property ] = Hoodoo::Utilities.standard_datetime( value ) unless value.nil?
         end
 
         %w(

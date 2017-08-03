@@ -1,7 +1,5 @@
 require 'spec_helper'
-
 require 'dalli'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 # ============================================================================
 

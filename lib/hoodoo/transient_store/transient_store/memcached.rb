@@ -78,12 +78,19 @@ module Hoodoo
       # Connect to Memcached if possible and return the connected Dalli client
       # instance, else raise an exception.
       #
-      # +host+:: Connection URI, e.g. <tt>localhost:11211</tt>.
+      # +host+::      Connection URI, e.g. <tt>localhost:11211</tt>.
+      # +namespace+:: Key namespace (prefix), as a String or Symbol; e.g.
+      #               <tt>"nz_co_loyalty_hoodoo_transient_store_"</tt>.
       #
       def connect_to_memcached( host, namespace )
         exception = nil
         stats     = nil
         client    = nil
+
+        if Hoodoo::Services::Middleware.environment.test? &&
+           ( host.nil? || host.empty? )
+           return Hoodoo::TransientStore::Mocks::DalliClient.new
+        end
 
         begin
           client = ::Dalli::Client.new(

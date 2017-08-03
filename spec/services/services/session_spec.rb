@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 describe Hoodoo::Services::Session do
 
@@ -64,7 +63,7 @@ describe Hoodoo::Services::Session do
         'caller_id'      => '0987',
         'caller_version' => 2,
 
-        'created_at'     => s.created_at.iso8601,
+        'created_at'     => Hoodoo::Utilities.standard_datetime( s.created_at ),
 
         'identity'       => { 'foo' => 'foo', 'bar' => 'bar' },
         'scoping'        => { 'baz' => [ 'foo', 'bar', 'baz' ] },
@@ -82,8 +81,8 @@ describe Hoodoo::Services::Session do
         'caller_id'      => '0987',
         'caller_version' => 2,
 
-        'created_at'     => c.iso8601,
-        'expires_at'     => e.iso8601,
+        'created_at'     => Hoodoo::Utilities.standard_datetime( c ),
+        'expires_at'     => Hoodoo::Utilities.standard_datetime( e ),
 
         'identity'       => { 'foo' => 'foo', 'bar' => 'bar' },
         'scoping'        => { 'baz' => [ 'foo', 'bar', 'baz' ] },
@@ -95,8 +94,8 @@ describe Hoodoo::Services::Session do
       expect( s.session_id ).to eq( '1234' )
       expect( s.caller_id ).to eq( '0987' )
       expect( s.caller_version ).to eq( 2 )
-      expect( s.created_at ).to eq( Time.parse( c.iso8601 ) )
-      expect( s.expires_at ).to eq( Time.parse( e.iso8601 ) )
+      expect( s.created_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( c ) ) )
+      expect( s.expires_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( e ) ) )
       expect( s.identity.foo ).to eq( 'foo' )
       expect( s.identity.bar ).to eq( 'bar' )
       expect( s.scoping.baz ).to eq( [ 'foo', 'bar', 'baz' ] )
@@ -132,8 +131,8 @@ describe Hoodoo::Services::Session do
       s2 = described_class.new
       expect( s2.load_from_store!( s1.session_id ) ).to eq( :ok )
 
-      expect( s2.created_at ).to eq( Time.parse( s1.created_at.iso8601 ) )
-      expect( s2.expires_at ).to eq( Time.parse( s1.expires_at.iso8601 ) )
+      expect( s2.created_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.created_at ) ) )
+      expect( s2.expires_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.expires_at ) ) )
       expect( s2.session_id ).to eq( s1.session_id )
       expect( s2.memcached_host ).to be_nil
       expect( s2.caller_id ).to eq( s1.caller_id )
@@ -322,7 +321,7 @@ describe Hoodoo::Services::Session do
 
       expect( s ).to receive( :to_h ).and_wrap_original do | obj, args |
         h = obj.call( *args )
-        h[ 'expires_at' ] = ( Time.now - 1 ).utc.iso8601
+        h[ 'expires_at' ] = Hoodoo::Utilities.standard_datetime( Time.now - 1 )
         h
       end
 
