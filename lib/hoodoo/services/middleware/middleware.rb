@@ -477,7 +477,6 @@ module Hoodoo; module Services
       # implementation   Hoodoo::Services::Implementation subclass *instance* to
       #                  use on match
       #
-      #
       @@services = service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
