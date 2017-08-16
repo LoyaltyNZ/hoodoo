@@ -654,48 +654,70 @@ describe '#schema' do
       })
     end
 
-    it 'should render correctly as a resource with a UUID' do
-      data = Hoodoo::Utilities.stringify({
-        :errors_id => Hoodoo::UUID.generate,
-        :test_tags => 'foo,bar,baz',
-        :test_object => {
-          :nested_object => {
-            :name => 'Some name',
-            :obj_suffix => '!'
-          },
-          :test_array => [
-            { :name => 'Some name 0', :ary_suffix => '00' },
-            { :name => 'Some name 1' }
-          ]
-        }
-      })
+    context 'should render correctly as a resource' do
+      before :each do
+        @uuid  = Hoodoo::UUID.generate
+        @time  = Time.now
+        @input = Hoodoo::Utilities.stringify({
+          :errors_id => Hoodoo::UUID.generate,
+          :test_tags => 'foo,bar,baz',
+          :test_object => {
+            :nested_object => {
+              :name => 'Some name',
+              :obj_suffix => '!'
+            },
+            :test_array => [
+              { :name => 'Some name 0', :ary_suffix => '00' },
+              { :name => 'Some name 1' }
+            ]
+          }
+        })
 
-      uuid = Hoodoo::UUID.generate
-      time = Time.now
-
-      expect(Hoodoo::Data::Resources::World.render(
-        data,
-        uuid,
-        time,
-        'en-gb'
-      )).to eq({
-        'id' => uuid,
-        'kind' => 'World',
-        'created_at' => Hoodoo::Utilities.standard_datetime( time ),
-        'language' => 'en-gb',
-        'errors_id' => data['errors_id'],
-        'test_tags' => 'foo,bar,baz',
-        'test_object' => {
-          'nested_object' => {
-            'name' => 'Some name',
-            'obj_suffix' => '!'
-          },
-          'test_array' => [
-            { 'name' => 'Some name 0', 'ary_suffix' => '00' },
-            { 'name' => 'Some name 1' }
-          ]
+        @output = {
+          'id' => @uuid,
+          'kind' => 'World',
+          'created_at' => Hoodoo::Utilities.standard_datetime( @time ),
+          'language' => 'en-gb',
+          'errors_id' => @input['errors_id'],
+          'test_tags' => 'foo,bar,baz',
+          'test_object' => {
+            'nested_object' => {
+              'name' => 'Some name',
+              'obj_suffix' => '!'
+            },
+            'test_array' => [
+              { 'name' => 'Some name 0', 'ary_suffix' => '00' },
+              { 'name' => 'Some name 1' }
+            ]
+          }
         }
-      })
+      end
+
+      it 'with a UUID' do
+        expect(
+          Hoodoo::Data::Resources::World.render(
+            @input,
+            @uuid,
+            @time,
+            'en-gb'
+          )
+        ).to( eq( @output ) )
+      end
+
+      it 'with a UUID and fingerprint' do
+        fingerprint = Hoodoo::UUID.generate()
+        @output[ 'created_by' ] = fingerprint
+
+        expect(
+          Hoodoo::Data::Resources::World.render(
+            @input,
+            @uuid,
+            @time,
+            'en-gb',
+            fingerprint
+          )
+        ).to( eq( @output ) )
+      end
     end
 
     it 'should complain about resources with no creation date' do
@@ -798,6 +820,22 @@ describe '#schema' do
         'id'         => u,
         'kind'       => 'TestPresenter5',
         'created_at' => Hoodoo::Utilities.standard_datetime( t ),
+        'language'   => 'de',
+        'three'      => 'default_three'
+      })
+    end
+
+    it 'renders with fingerprint' do
+      data = {}
+      t = Time.now.utc
+      u = Hoodoo::UUID.generate
+      f = Hoodoo::UUID.generate
+      options = { :uuid => u, :created_at => t, :created_by => f }
+      expect(TestPresenter5.render_in(@con, data, options)).to eq({
+        'id'         => u,
+        'kind'       => 'TestPresenter5',
+        'created_at' => Hoodoo::Utilities.standard_datetime( t ),
+        'created_by' => f,
         'language'   => 'de',
         'three'      => 'default_three'
       })
