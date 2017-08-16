@@ -62,17 +62,25 @@ Some additional higher level hand written documentation may also be present as M
 
 * [Andrew Hodgkinson](https://github.com/pond)
 * [Tom Cully](https://github.com/tomdionysus)
-* [Rory Stephenson](https://github.com/thelollies)
-* [David Mitchell](https://github.com/davidamitchell)
-* [Joseph Leniston](https://github.com/josephleniston)
-* [Jeremy Olliver](https://github.com/jeremyolliver)
-* [Charles Peach](https://github.com/charlespeach)
-* [Graham Jenson](https://github.com/grahamjenson)
-* [Jordan Carter](https://github.com/jordandcarter)
+
+* [Andrew Amesbury](https://github.com/aames)
 * [Andrew Pett](https://github.com/aspett)
-* [Max Copley](https://github.com/copley)
+* [Charles Peach](https://github.com/charlespeach)
+* [Dave Harris](https://github.com/daveharris)
+* [David Mitchell](https://github.com/davidamitchell)
 * [David Oram](https://github.com/davidoram)
+* [Graham Jenson](https://github.com/grahamjenson)
+* [Jeremy Olliver](https://github.com/jeremyolliver)
 * [Jesse Whitham](https://github.com/whithajess)
+* [Jordan Carter](https://github.com/jordandcarter)
+* [Joseph Leniston](https://github.com/josephleniston)
+* [Mai Nguyen](https://github.com/mjnguyenloyalty)
+* [Max Copley](https://github.com/copley)
+* [Max Dietrich](https://github.com/mbdietrich)
+* [Natasha Dowse](https://github.com/natashadowse)
+* [Patrick Copeland](https://github.com/pjscopeland)
+* [Rory Stephenson](https://github.com/thelollies)
+* [Wayne Hoover](https://github.com/waynehoover)
 
 ## Licence
 
