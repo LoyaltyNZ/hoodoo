@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 4, 2016-12-06_
+_Release 5, 2017-08-17_
 
 [](TOCS)
 * [Overview](#ao)
@@ -221,6 +221,7 @@ Some resource representations also contain one or many of the following addition
 |----------------|---------|
 | `language`     | For resources with content subject to internationalisation only; see the [internationalisation](#apicbri) section for details |
 | `secured_with` | For resources that intentionally reveal security scoping information; see the [access security](#access_security) section for details |
+| `created_by`   | For resources that support fingerprints; see the [Fingerprints](#fingerprints) section for details |
 
 All of these values are _emergent_ - they are generated via Hoodoo as part of creating a resource instance. **Clients do _not_ specify these values as input!**
 
@@ -690,6 +691,14 @@ This means that such data could be _retrieved_ if reading back things like log e
 
 If you are building a user interface around the API, it is ***vital*** therefore that you sanitise such data before display. Failing to do so could lead to all sorts of vulnerabilities in your application. This is a matter of standard practice and good coding in API client applications and not something over which the platform API has any control.
 
+#### <a name="fingerprints"></a>Fingerprints
+
+As described [earlier](#access_security), in many real-world implementations the [Caller](#caller_resource) ID and Secret used to create a [Session](#session.resource) instance contains an `identity` section that allows a resource representation to reveal the identity of an instance's creator through its optional `secured_with` field and/or additional bespoke identity-related fields. It is however possible for the identity of an inbound call to be partially _or entirely_ overridden if the Caller is permitted to use the [`X-Assume-Identity-Of`](#http_x_assume_identity_of) secure HTTP header with an [identity map](#caller.resource.interface.identity_maps) that allows all identity fields to be modified. In such cases, the Session identity is insufficient to uniquely identify the _Caller instance_ that made an API call; you only know the identity it chose to assume.
+
+This is often the intended outcome, but for some resources it may be insufficient. Whatever the identity associated with an inbound API call might appear to be, the resource implementation may wish to know the actual originating Caller instance. Since a Caller's ID and Secret are part of the security layer, this information is not revealed; instead, Callers have an optional additional `fingerprint` field which, where present, contains a UUID unique to that Caller instance which is available in the session payload and can be persisted by the resource implementation's persistence layer. When the resource is rendered, it can use Hoodoo to quote the fingerprint as a `created_by` value and Hoodoo will render this as a standard resource representation field.
+
+The presence of and value associated with the `created_by` field depends upon the implementation of individual resources, but resources SHOULD only ever use the Caller's fingerprint value, if supported at all.
+
 
 
 ### <a name="cors"></a>CORS support
@@ -1121,9 +1130,12 @@ The generic representation is as follows:
   "kind":                  "Caller",
   "id":                    "{uuid}",
   "created_at":            "{datetime}",
+  "created_by":            "{uuid}",   // (Optional) fingerprint of the Caller istance used to create
+                                       // this represented Caller instance, if known
 
   "authentication_secret": "{string}", // Only retrievable when creating; see POST description
-  "name":                  "{string}", // Optional, for a human to understand what a Caller is for
+  "name":                  "{string}", // (Optional) For a human to understand what a Caller is for
+  "fingerprint":           "{uuid}",   // (Optional) Caller's unique fingerprint UUID, if available
 
   "identity": {
     // Domain-defined by derived customised resource variants
@@ -1148,6 +1160,8 @@ The generic representation is as follows:
 **Important:** When a Caller instance is modified or deleted, the platform provider's implementation should ensure that any [Sessions](#session.resource) that refer to the Caller are automatically invalidated.
 
 The Caller's `authentication_secret` is a value that _only the intended user of this Caller instance must ever know_. The value is only returned when a Caller resource instance is _created_ and can _never be retrieved again_ by any mechanism. If you lose a Caller's secret, the Caller instance becomes useless. If a Caller's UUID and secret are known, then a [Session](#session.resource) can be created to make API calls under that Caller's identity. If a malicious third party learned these values, they could "impersonate you" with potential for _substantial_ financial repercussions. Consequently, a Caller's secret *MUST NEVER, EVER* be made public or transmitted over insecure communications channels such as e-mail, plain FTP or plain HTTP. Use things like SFTP, HTTPS, or PGP encryption and minimise the number of places that the secret is known.
+
+The `fingerprint` where available is a UUID that uniquely identifies the Caller instance using a value that is not part of any security layer. Resource implementations may choose to persist this when resource instances are created and use Hoodoo rendering to return the fingerprint value in the `created_by` field of resource representations. See the [Fingerprints section](#fingerprints) for more information.
 
 The resource contains an `identity` section that in the generic description of a Caller contains no information, because the significance of quantities in terms of identity is up to individual APIs to define. From an [earlier example](#access_security) with User and Photo resources, a `user_id` field would go here. The implementation for that photo management example platform of the Caller resource endpoint would document, require and understand this quantity.
 
@@ -1318,3 +1332,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2016-01-14 | Release 2 | ADH    | Clarified use cases for `platform.forbidden`. Added description of `X-Assume-Identity-Of` and related `authorised_identities` identity map data in a Caller resource. |
 | 2016-07-12 | Release 3 | ADH    | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
 | 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before`. Mention potential for using this instead of very large offset values. |
+| 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
