@@ -21,7 +21,11 @@
 
 # Hoodoo v1.x
 
-## 1.17.0 (2017-08-91)
+## 1.18.0 (2017-08-17)
+
+* Can set the [`http_open_timeout`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Discovery/ByConvention.html) for `Hoodoo::Client` connections. The [default timeout](https://ruby-doc.org/stdlib-2.4.1/libdoc/net/http/rdoc/Net/HTTP.html) for opening a connection is 60 seconds, which may be too long for some callers.
+
+## 1.17.0 (2017-08-01)
 
 * Higher precision `created_at` (and for sessions, `expires_at`) default time rendering. For some use cases, to-one-second accuracy was insufficient. New method [`Hoodoo::Utilities::standard_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-standard_datetime) is used for this.
 
