@@ -456,6 +456,7 @@ Suppose now we wanted to get both Voucher list information *and* information on 
   ```javascript
   {
     "id": "6010AF3FE3F94F56A6B98A3D27C1CAEF",
+    "created_at": "2012-02-01T00:00:00Z",
     "informal_name": "Tom",
     "_embed": {
       "vouchers": [
@@ -464,6 +465,7 @@ Suppose now we wanted to get both Voucher list information *and* information on 
       ],
       "account": { "id": "5B930F1604324018A73D71502CE9C53B", ... }
     }
+  }
   ```
 
   ...in a manner similar to the previous example, the embedded `account` key has a value that's the direct representation of the embedded single resource, with no need to wrap it in an outer UUID-keyed object.
