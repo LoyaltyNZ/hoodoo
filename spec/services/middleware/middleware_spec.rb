@@ -267,6 +267,37 @@ describe Hoodoo::Services::Middleware do
       end
     end
 
+    it 'rejects attempts to send body data for HTTP methods that should not have any' do
+
+      # I can't find a way to persuade Rack to send body data instead of query
+      # parameters for GET (it's trying to Do The Right Thing) so instead I'm
+      # forced to write expectations that assume the implementation in the
+      # middleware.
+      #
+      allow_any_instance_of( Rack::Request ).to receive( :body ).and_return( StringIO.new( "hello world" ) )
+      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(422)
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
+      expect(result['errors'][0]['message']).to eq('Unexpected body data for this action')
+    end
+
+    it 'rejects oversized payloads' do
+      stub_const('Hoodoo::Services::Middleware::MAXIMUM_PAYLOAD_SIZE', 10)
+
+      post '/v2/rspec_test_service_stub',
+           JSON.fast_generate( { 'key' => 'this is definitely larger than 10 characters as JSON' } ),
+           { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(422)
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
+      expect(result['errors'][0]['message']).to eq('Body data exceeds configured maximum size for platform')
+    end
+
     it 'should generate interaction IDs and other standard headers even for error states' do
       get '/v2/rspec_test_service_stub'
 

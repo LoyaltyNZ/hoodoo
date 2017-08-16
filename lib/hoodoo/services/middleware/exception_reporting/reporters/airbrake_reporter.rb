@@ -27,7 +27,8 @@ module Hoodoo; module Services
       #     require 'airbrake'
       #
       #     Airbrake.configure do | config |
-      #       config.api_key = 'YOUR_AIRBRAKE_API_KEY'
+      #       config.project_key = 'YOUR_AIRBRAKE_PROJECT_KEY'
+      #       config.project_id  = 'YOUR_AIRBRAKE_PROJECT_ID'
       #     end
       #
       #     Hoodoo::Services::Middleware::ExceptionReporting.add(
@@ -57,7 +58,11 @@ module Hoodoo; module Services
           opts = { :backtrace => Kernel.caller() }
           opts[ :rack_env ] = env unless env.nil?
 
-          Airbrake.notify_or_ignore( e, opts )
+          # Since an ExceptionReporter is already a "slow communicatory",
+          # Hoodoo is using threads for behaviour; we don't need the async
+          # Airbrake mechanism to waste resources doing the same.
+          #
+          Airbrake.notify_sync( e, opts )
         end
 
         # Report an exception for errors that occur within a fully handled Rack
@@ -77,7 +82,7 @@ module Hoodoo; module Services
             :session          => user_data_for( context ) || 'unknown'
           }
 
-          Airbrake.notify_or_ignore( e, opts )
+          Airbrake.notify_sync( e, opts )
         end
       end
 

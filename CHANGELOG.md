@@ -4,16 +4,16 @@
 
 * Hoodoo and therefore Hoodoo services now require Ruby 2.2.x or later with Rack v2. Rack v1 and older AMQP support has been removed as it was causing dependency problems with other updated gems that were becoming impractical to resolve, which in turn meant Ruby 2.1.x support was equally impractical.
 
-* Updated to use ActiveSupport 5, ActiveRecord 5, Airbrake 5 and NewRelic 4. These all include API and/or configuration changes that may impact parts of service code outside core Hoodoo changes. See their respective guides and change logs for details:
+* Updated to use ActiveSupport 5, ActiveRecord 5, Airbrake 6 and NewRelic 4. These all include API and/or configuration changes that may impact parts of service code outside core Hoodoo changes. See their respective guides and change logs for details:
 
   - [ActiveSupport 5](http://edgeguides.rubyonrails.org/5_0_release_notes.html#active-support)
   - [ActiveRecord 5](http://edgeguides.rubyonrails.org/5_0_release_notes.html#active-record)
-  - [Airbrake 5](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md)
-  - [NewRelic 4](#TBD)
+  - [Airbrake 5/6](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md)
+  - [NewRelic 4](https://github.com/newrelic/rpm)
 
   Headline known changes are:
 
-  - If using Airbrake, update your configuration from `api_key` to [`project_key` and new mandatory option `project_id`](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md#configuration).
+  - If using Airbrake, update your configuration from `api_key` to [`project_key` and new mandatory option `project_id`](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md#configuration) - the Airbrake migration guide describes numerous other renamed configuration options, so check it carefully.
   - If using Airbrake and manually raising exceptions rather than using the [Hoodoo exception abstraction](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report), you must change from `#notify_or_ignore` to plain `#notify`.
   - If inheriting from `Hoodoo::ActiveRecord::Base` for Hoodoo extensions in ActiveRecord models you do not need to change your class declarations; else [note this Guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#active-record-models-now-inherit-from-applicationrecord-by-default).
 
