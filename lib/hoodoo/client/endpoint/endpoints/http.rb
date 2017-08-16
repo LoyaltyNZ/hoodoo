@@ -177,7 +177,6 @@ module Hoodoo
             description_of_response.http_headers = {}
 
             begin
-
               http_response = http.request( request )
 
               description_of_response.http_status_code = http_response.code.to_i
@@ -188,7 +187,7 @@ module Hoodoo
               description_of_response.http_status_code = 404
               description_of_response.raw_body_data    = ''
 
-            rescue Net::ReadTimeout, Net::OpenTimeout => e
+            rescue Net::OpenTimeout, Net::ReadTimeout => e
               description_of_response.http_status_code = 408
               description_of_response.raw_body_data    = ''
 

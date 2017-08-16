@@ -72,33 +72,33 @@ module Hoodoo
 
             # Optional Float indicating the Net::HTTP read timeout value.
             #
-            # The maximum number of seconds (default 60 seconds) that the
-            # client will allow the server to read the data in a
-            # single HTTP exchange.  This timeout starts from the point when
-            # a connection has been established.
-            # If the client is still reading data after the timeout, then the
-            # system will abort the request and return a +platform.timeout+
-            # error.
+            # This is a value in seconds (default 60) for which the client
+            # will wait while attempting to read data from a server in any
+            # individual TCP read operation. The timeout becomes active
+            # immediately after a server connection is established.
             #
-            # See also +http_open_timeout+
+            # If a read attempt is still running after the timeout, the
+            # request is aborted and a +platform.timeout+ error returned.
+            #
+            # See also #http_open_timeout.
             #
             # This operates at the HTTP transport level and is independent
-            # of any timeouts set within the API providing server.
+            # of any higher level timeouts that might be set up.
             #
             attr_accessor :http_timeout
 
             # Optional Float indicating the Net::HTTP open timeout value.
             #
-            # The maximum number of seconds (default 60 seconds) that the
-            # system will allow for a connection to be established with the server.
-            # If the client cannot establish a connection after the timeout, then
-            # the the system will abort the request, and return a +platform.timeout+
-            # error.
+            # This is a value in seconds (default 60) for which the client
+            # will wait while attempting to connect to a server.
             #
-            # See also +http_timeout+
+            # If the connection attempt is still running after the timeout,
+            # the request is aborted and a +platform.timeout+ error returned.
+            #
+            # See also #http_timeout.
             #
             # This operates at the HTTP transport level and is independent
-            # of any timeouts set within the API providing server.
+            # of any higher level timeouts that might be set up.
             #
             attr_accessor :http_open_timeout
 
