@@ -486,10 +486,11 @@ describe Hoodoo::Client do
 
     context 'and with a custom HTTP open timeout' do
       before :each do
+        timeout    = 0.001
         base_uri   = "http://localhost:#{ @port }"
         discoverer = Hoodoo::Services::Discovery::ByConvention.new(
           base_uri:          base_uri,
-          http_open_timeout: 0.0000001
+          http_open_timeout: timeout
         )
 
         set_vars_for(
@@ -498,6 +499,10 @@ describe Hoodoo::Client do
           session_id:   @old_test_session.session_id,
           discoverer:   discoverer
         )
+
+        allow_any_instance_of( TCPSocket ).to receive( :open ) do
+          sleep( timeout * 10 )
+        end
       end
 
       it 'times out elegantly' do
