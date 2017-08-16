@@ -461,10 +461,11 @@ describe Hoodoo::Client do
 
     context 'and with a custom HTTP read timeout' do
       before :each do
+        timeout    = 0.001
         base_uri   = "http://localhost:#{ @port }"
         discoverer = Hoodoo::Services::Discovery::ByConvention.new(
           base_uri:     base_uri,
-          http_timeout: 0.0000001
+          http_timeout: timeout
         )
 
         set_vars_for(
@@ -473,6 +474,43 @@ describe Hoodoo::Client do
           session_id:   @old_test_session.session_id,
           discoverer:   discoverer
         )
+
+        expect_any_instance_of( Net::HTTP ).to receive( :read_timeout= ).with( timeout ).and_call_original
+        allow_any_instance_of( Net::BufferedIO ).to receive( :read ) do | instance, *args |
+          expect( instance.read_timeout ).to eq( timeout )
+          raise Net::ReadTimeout
+        end
+      end
+
+      it 'times out elegantly' do
+        mock_ident = Hoodoo::UUID.generate()
+        result     = @endpoint.show( mock_ident )
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
+      end
+    end
+
+    context 'and with a custom HTTP open timeout' do
+      before :each do
+        timeout    = 0.001
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:          base_uri,
+          http_open_timeout: timeout
+        )
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+
+        expect_any_instance_of( Net::HTTP ).to receive( :open_timeout= ).with( timeout ).and_call_original
+        expect( Timeout ).to receive( :timeout ).with( timeout, Net::OpenTimeout ).once do
+          raise Net::OpenTimeout
+        end
       end
 
       it 'times out elegantly' do

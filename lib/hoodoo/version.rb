@@ -9,9 +9,14 @@
 
 module Hoodoo
 
-  # The Hoodoo gem version. If this changes, ensure that the date in
-  # "hoodoo.gemspec" is correct and run "bundle install" (or "update").
+  # The Hoodoo gem version. If this changes, be sure to re-run
+  # <tt>bundle install</tt> or <tt>bundle update</tt>.
   #
-  VERSION = '1.17.0'
+  VERSION = '1.18.0'
+
+  # The Hoodoo gem date. If this changes, be sure to re-run
+  # <tt>bundle install</tt> or <tt>bundle update</tt>.
+  #
+  DATE = '2017-08-17'
 
 end
