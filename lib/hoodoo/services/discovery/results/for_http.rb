@@ -51,12 +51,32 @@ module Hoodoo
         attr_accessor :ca_file
 
         # Optional Float indicating the Net::HTTP read timeout value.
+        #
+        # The maximum number of seconds (default 60 seconds) that the
+        # client will allow the server to read the data in a
+        # single HTTP exchange.  This timeout starts from the point when
+        # a connection has been established.
+        # If the client is still reading data after the timeout, then the
+        # system will abort the request and return a +platform.timeout+
+        # error.
+        #
+        #   See also +http_open_timeout+
+        #
         # This operates at the HTTP transport level and is independent
         # of any timeouts set within the API providing server.
         #
         attr_accessor :http_timeout
 
         # Optional Float indicating the Net::HTTP open timeout value.
+        #
+        # The maximum number of seconds (default 60 seconds) that the
+        # system will allow for a connection to be established with the server.
+        # If the client cannot establish a connection after the timeout, then
+        # the the system will abort the request, and return a +platform.timeout+
+        # error.
+        #
+        # See also +http_timeout+
+        #
         # This operates at the HTTP transport level and is independent
         # of any timeouts set within the API providing server.
         #

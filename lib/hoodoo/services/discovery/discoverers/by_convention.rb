@@ -61,15 +61,33 @@ module Hoodoo
             #                       cases and uses Ruby OpenSSL defaults which are
             #                       generally Operating System provided.
             #
-            # +http_timeout+::      Optional Float indicating the Net::HTTP <b>read</b>
-            #                       timeout value. This operates at the HTTP
-            #                       transport level and is independent of any
-            #                       timeouts set within the API providing server.
+            # +http_timeout+::      Optional Float indicating the Net::HTTP read timeout value.
             #
-            # +http_open_timeout+:: Optional Float indicating the Net::HTTP <b>open</b>
-            #                       timeout value. This operates at the HTTP
-            #                       transport level and is independent of any
-            #                       timeouts set within the API providing server.
+            #                       The maximum number of seconds (default 60 seconds) that the
+            #                       client will allow the server to read the data in a
+            #                       single HTTP exchange.  This timeout starts from the point when
+            #                       a connection has been established.
+            #                       If the client is still reading data after the timeout, then the
+            #                       system will abort the request and return a +platform.timeout+
+            #                       error.
+            #
+            #                       See also +http_open_timeout+
+            #
+            #                       This operates at the HTTP transport level and is independent
+            #                       of any timeouts set within the API providing server.
+            #
+            # +http_open_timeout+:: Optional Float indicating the Net::HTTP open timeout value.
+            #
+            #                       The maximum number of seconds (default 60 seconds) that the
+            #                       system will allow for a connection to be established with the server.
+            #                       If the client cannot establish a connection after the timeout, then
+            #                       the the system will abort the request, and return a +platform.timeout+
+            #                       error.
+            #
+            #                       See also +http_timeout+
+            #
+            #                       This operates at the HTTP transport level and is independent
+            #                       of any timeouts set within the API providing server.
             #
             # +routing+::           An optional parameter which gives custom routing
             #                       for exception cases where the by-convention map
