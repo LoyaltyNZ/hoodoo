@@ -39,6 +39,13 @@ module Hoodoo
       #
       attr_accessor :caller_identity_name
 
+      # An optional property of a session is the Caller's fingerprint, a
+      # UUID assigned to some Callers which can be persisted by resource
+      # instances when created and rendered in the +created_by+ field
+      # via e.g. Hoodoo::Presenters::Base.#render_in.
+      #
+      attr_accessor :caller_fingerprint
+
       # Callers can change; if so, related sessions must be invalidated.
       # This must be achieved by keeping a version count on the Caller. A
       # session is associated with a particular Caller version and if the
@@ -126,25 +133,29 @@ module Hoodoo
       #
       # Options are:
       #
-      # +session_id+::     UUID of this session. If unset, a new UUID is
-      #                    generated for you. You can read the UUID with
-      #                    the #session_id accessor method.
+      # +session_id+::        UUID of this session. If unset, a new UUID is
+      #                       generated for you. You can read the UUID with
+      #                       the #session_id accessor method.
       #
-      # +caller_id+::      UUID of the Caller instance associated with this
-      #                    session. This can be set either now or later, but
-      #                    the session cannot be saved without it.
+      # +caller_id+::         UUID of the Caller instance associated with this
+      #                       session. This can be set either now or later, but
+      #                       the session cannot be saved without it.
       #
-      # +caller_version+:: Version of the Caller instance; defaults to zero.
+      # +caller_version+::    Version of the Caller instance; defaults to zero.
+      #
+      # +caller_fingerprint:: Optional Caller fingerprint UUID. Default to
+      #                       +nil+.
       #
       # +memcached_host+:: Host for Memcached connections.
       #
       def initialize( options = {} )
         @created_at = Time.now.utc
 
-        self.session_id     = options[ :session_id     ] || Hoodoo::UUID.generate()
-        self.memcached_host = options[ :memcached_host ]
-        self.caller_id      = options[ :caller_id      ]
-        self.caller_version = options[ :caller_version ] || 0
+        self.session_id         = options[ :session_id         ] || Hoodoo::UUID.generate()
+        self.memcached_host     = options[ :memcached_host     ]
+        self.caller_id          = options[ :caller_id          ]
+        self.caller_version     = options[ :caller_version     ] || 0
+        self.caller_fingerprint = options[ :caller_fingerprint ]
       end
 
       # Save this session to the transient store, in a manner that will allow
@@ -471,6 +482,7 @@ module Hoodoo
           caller_id
           caller_version
           caller_identity_name
+          caller_fingerprint
 
         ).each do | property |
           value = self.send( property )
@@ -516,6 +528,7 @@ module Hoodoo
           caller_id
           caller_version
           caller_identity_name
+          caller_fingerprint
 
         ).each do | property |
           value = hash[ property ]

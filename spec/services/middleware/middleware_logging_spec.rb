@@ -392,6 +392,7 @@ describe Hoodoo::Services::Middleware do
             expect( data[ :session ][ 'caller_id'            ] ).to be_present
             expect( data[ :session ][ 'caller_version'       ] ).to be_present
             expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+            expect( data[ :session ][ 'caller_fingerprint'   ] ).to be_present
             expect( data[ :session ][ 'identity'             ] ).to be_present
 
             expect( data[ :session ][ 'permissions' ] ).to_not be_present
@@ -423,6 +424,7 @@ describe Hoodoo::Services::Middleware do
             expect( data[ :session ][ 'caller_id'            ] ).to be_present
             expect( data[ :session ][ 'caller_version'       ] ).to be_present
             expect( data[ :session ][ 'caller_identity_name' ] ).to be_present
+            expect( data[ :session ][ 'caller_fingerprint'   ] ).to be_present
             expect( data[ :session ][ 'identity'             ] ).to be_present
             expect( data[ :session ][ 'permissions'          ] ).to be_present
             expect( data[ :session ][ 'scoping'              ] ).to be_present

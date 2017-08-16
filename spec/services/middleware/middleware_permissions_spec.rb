@@ -306,14 +306,16 @@ describe Hoodoo::Services::Middleware do
   before :each do
     spec_helper_use_mock_memcached()
 
-    @session_id     = Hoodoo::UUID.generate
-    @caller_id      = Hoodoo::UUID.generate
-    @caller_version = 1
-    @session        = Hoodoo::Services::Session.new( {
-      :session_id     => @session_id,
-      :memcached_host => '0.0.0.0:0',
-      :caller_id      => @caller_id,
-      :caller_version => @caller_version
+    @session_id         = Hoodoo::UUID.generate
+    @caller_id          = Hoodoo::UUID.generate
+    @caller_version     = 1
+    @caller_fingerprint = Hoodoo::UUID.generate
+    @session            = Hoodoo::Services::Session.new( {
+      :session_id         => @session_id,
+      :memcached_host     => '0.0.0.0:0',
+      :caller_id          => @caller_id,
+      :caller_version     => @caller_version,
+      :caller_fingerprint => @caller_fingerprint
     } )
 
     # Grant top-level access to all of the Clock endpoints
