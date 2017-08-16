@@ -127,7 +127,7 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
                 <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 118</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 142</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -174,9 +174,31 @@ href="../../Client.html">Hoodoo::Client</a>.</p>
 Ruby OpenSSL defaults which are generally Operating System provided.</p>
 </dd><dt><code>http_timeout</code>
 <dd>
-<p>Optional Float indicating the Net::HTTP read timeout value. This operates
-at the HTTP transport level and is independent of any timeouts set within
-the API providing server.</p>
+<p>Optional Float indicating the Net::HTTP read timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the client will
+allow the server to read the data in a single HTTP exchange.  This timeout
+starts from the point when a connection has been established. If the client
+is still reading data after the timeout, then the system will abort the
+request and return a <code>platform.timeout</code> error.</p>
+
+<p>See also <code>http_open_timeout</code></p>
+
+<p>This operates at the HTTP transport level and is independent of any
+timeouts set within the API providing server.</p>
+</dd><dt><code>http_open_timeout</code>
+<dd>
+<p>Optional Float indicating the Net::HTTP open timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the system will
+allow for a connection to be established with the server. If the client
+cannot establish a connection after the timeout, then the the system will
+abort the request, and return a <code>platform.timeout</code> error.</p>
+
+<p>See also <code>http_timeout</code></p>
+
+<p>This operates at the HTTP transport level and is independent of any
+timeouts set within the API providing server.</p>
 </dd><dt><code>routing</code>
 <dd>
 <p>An optional parameter which gives custom routing for exception cases where
@@ -221,13 +243,14 @@ itself but implemented in a compatible fashion.</p>
                 <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
               </p>
               <div id="method-i-configure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 101</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 124</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
-  <span class="ruby-ivar">@base_uri</span>     = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
-  <span class="ruby-ivar">@proxy_uri</span>    = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
-  <span class="ruby-ivar">@ca_file</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:ca_file</span> ]
-  <span class="ruby-ivar">@http_timeout</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_timeout</span> ]
-  <span class="ruby-ivar">@routing</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span> ] <span class="ruby-operator">||</span> {}
+  <span class="ruby-ivar">@base_uri</span>          = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
+  <span class="ruby-ivar">@proxy_uri</span>         = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
+  <span class="ruby-ivar">@ca_file</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:ca_file</span> ]
+  <span class="ruby-ivar">@http_timeout</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_timeout</span> ]
+  <span class="ruby-ivar">@http_open_timeout</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_open_timeout</span> ]
+  <span class="ruby-ivar">@routing</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span> ] <span class="ruby-operator">||</span> {}
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -274,7 +297,7 @@ the optional <code>routing</code> parameter in the constructor.</p>
                 <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 144</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
 
@@ -288,12 +311,13 @@ the optional <code>routing</code> parameter in the constructor.</p>
   <span class="ruby-identifier">endpoint_uri</span>.<span class="ruby-identifier">path</span> = <span class="ruby-identifier">path</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForHTTP</span>.<span class="ruby-identifier">new</span>(
-    <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>     <span class="ruby-identifier">resource</span>,
-    <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">version</span>,
-    <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span> <span class="ruby-identifier">endpoint_uri</span>,
-    <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>    <span class="ruby-ivar">@proxy_uri</span>,
-    <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>      <span class="ruby-ivar">@ca_file</span>,
-    <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@http_timeout</span>
+    <span class="ruby-identifier">resource</span><span class="ruby-operator">:</span>          <span class="ruby-identifier">resource</span>,
+    <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>           <span class="ruby-identifier">version</span>,
+    <span class="ruby-identifier">endpoint_uri</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">endpoint_uri</span>,
+    <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>         <span class="ruby-ivar">@proxy_uri</span>,
+    <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>           <span class="ruby-ivar">@ca_file</span>,
+    <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span>      <span class="ruby-ivar">@http_timeout</span>,
+    <span class="ruby-identifier">http_open_timeout</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@http_open_timeout</span>
   )
 <span class="ruby-keyword">end</span></pre>
               </div>

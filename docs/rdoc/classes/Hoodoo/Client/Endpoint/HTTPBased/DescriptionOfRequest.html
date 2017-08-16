@@ -107,14 +107,41 @@ href="../HTTP.html">HTTP</a> URI for HTTP-like, but non-HTTP systems like
 any query string or resource identifier portion (it is the “list” action
 URI without query data, in essence)</p></td>
           </tr>
+          <tr valign='top' id='attribute-i-http_open_timeout'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>http_open_timeout</td>
+            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP open timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the system will
+allow for a connection to be established with the server. If the client
+cannot establish a connection after the timeout, then the the system will
+abort the request, and return a <code>platform.timeout</code> error.</p>
+
+<p>See also <code>http_timeout</code></p>
+
+<p>This operates at the <a href="../HTTP.html">HTTP</a> transport level and is
+independent of any timeouts set within the API providing server.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-http_timeout'>
             <td class='attr-rw'>
               [RW]
             </td>
             <td class='attr-name'>http_timeout</td>
-            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value. This operates
-at the <a href="../HTTP.html">HTTP</a> transport level and is independent
-of any timeouts set within the API providing server.</p></td>
+            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the client will
+allow the server to read the data in a single <a
+href="../HTTP.html">HTTP</a> exchange.  This timeout starts from the point
+when a connection has been established. If the client is still reading data
+after the timeout, then the system will abort the request and return a
+<code>platform.timeout</code> error.</p>
+
+<p>See also <code>http_open_timeout</code></p>
+
+<p>This operates at the <a href="../HTTP.html">HTTP</a> transport level and is
+independent of any timeouts set within the API providing server.</p></td>
           </tr>
           <tr valign='top' id='attribute-i-ident'>
             <td class='attr-rw'>

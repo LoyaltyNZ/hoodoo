@@ -90,14 +90,40 @@ Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
             <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation
 can be contacted.</p></td>
           </tr>
+          <tr valign='top' id='attribute-i-http_open_timeout'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>http_open_timeout</td>
+            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP open timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the system will
+allow for a connection to be established with the server. If the client
+cannot establish a connection after the timeout, then the the system will
+abort the request, and return a <code>platform.timeout</code> error.</p>
+
+<p>See also <code>http_timeout</code></p>
+
+<p>This operates at the HTTP transport level and is independent of any
+timeouts set within the API providing server.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-http_timeout'>
             <td class='attr-rw'>
               [RW]
             </td>
             <td class='attr-name'>http_timeout</td>
-            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value. This operates
-at the HTTP transport level and is independent of any timeouts set within
-the API providing server.</p></td>
+            <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value.</p>
+
+<p>The maximum number of seconds (default 60 seconds) that the client will
+allow the server to read the data in a single HTTP exchange.  This timeout
+starts from the point when a connection has been established. If the client
+is still reading data after the timeout, then the system will abort the
+request and return a <code>platform.timeout</code> error.</p>
+
+<pre><code>See also +http_open_timeout+</code></pre>
+
+<p>This operates at the HTTP transport level and is independent of any
+timeouts set within the API providing server.</p></td>
           </tr>
           <tr valign='top' id='attribute-i-proxy_uri'>
             <td class='attr-rw'>
@@ -129,7 +155,7 @@ be <code>nil</code> for no proxy override.</p></td>
       <div class="sectiontitle">Class Public methods</div>
         <div class="method">
           <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil, http_timeout: nil )
+              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil, http_timeout: nil, http_open_timeout: nil )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForHTTP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
@@ -154,6 +180,11 @@ be <code>nil</code> for no proxy override.</p></td>
 <dd>
 <p>See <a href="ForHTTP.html#attribute-i-http_timeout">http_timeout</a>.
 Optional.</p>
+</dd><dt><code>http_open_timeout</code>
+<dd>
+<p>See <a
+href="ForHTTP.html#attribute-i-http_open_timeout">http_open_timeout</a>.
+Optional.</p>
 </dd></dl>
             </div>
 
@@ -165,20 +196,22 @@ Optional.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 68</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
                 <span class="ruby-identifier">endpoint_uri</span>,,
-                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>    <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>      <span class="ruby-keyword">nil</span>,
-                <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+                <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">ca_file</span><span class="ruby-operator">:</span>           <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">http_timeout</span><span class="ruby-operator">:</span>      <span class="ruby-keyword">nil</span>,
+                <span class="ruby-identifier">http_open_timeout</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_uri</span> = <span class="ruby-identifier">endpoint_uri</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">proxy_uri</span>    = <span class="ruby-identifier">proxy_uri</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ca_file</span>      = <span class="ruby-identifier">ca_file</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_timeout</span> = <span class="ruby-identifier">http_timeout</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">resource</span>          = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">version</span>           = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_uri</span>      = <span class="ruby-identifier">endpoint_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">proxy_uri</span>         = <span class="ruby-identifier">proxy_uri</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ca_file</span>           = <span class="ruby-identifier">ca_file</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_timeout</span>      = <span class="ruby-identifier">http_timeout</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_open_timeout</span> = <span class="ruby-identifier">http_open_timeout</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
