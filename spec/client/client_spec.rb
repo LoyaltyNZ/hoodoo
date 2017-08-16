@@ -500,7 +500,7 @@ describe Hoodoo::Client do
           discoverer:   discoverer
         )
 
-        allow_any_instance_of( Net::HTTP ).to receive( :connect ) do
+        expect( Timeout ).to receive( :timeout ).with( timeout, Net::OpenTimeout ).once do
           raise Net::OpenTimeout
         end
       end
