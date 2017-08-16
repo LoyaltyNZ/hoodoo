@@ -500,8 +500,8 @@ describe Hoodoo::Client do
           discoverer:   discoverer
         )
 
-        allow_any_instance_of( TCPSocket ).to receive( :open ) do
-          sleep( timeout * 10 )
+        allow_any_instance_of( Net::HTTP ).to receive( :connect ) do
+          raise Net::OpenTimeout
         end
       end
 
