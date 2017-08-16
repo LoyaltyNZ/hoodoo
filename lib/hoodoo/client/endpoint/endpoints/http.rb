@@ -33,12 +33,13 @@ module Hoodoo
               raise "Hoodoo::Client::Endpoint::HTTP must be configured with a Hoodoo::Services::Discovery::ForHTTP instance - got '#{ @discovery_result.class.name }'"
             end
 
-            @description                  = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
-            @description.discovery_result = @discovery_result
-            @description.endpoint_uri     = @discovery_result.endpoint_uri
-            @description.proxy_uri        = @discovery_result.proxy_uri
-            @description.ca_file          = @discovery_result.ca_file
-            @description.http_timeout     = @discovery_result.http_timeout
+            @description                   = Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest.new
+            @description.discovery_result  = @discovery_result
+            @description.endpoint_uri      = @discovery_result.endpoint_uri
+            @description.proxy_uri         = @discovery_result.proxy_uri
+            @description.ca_file           = @discovery_result.ca_file
+            @description.http_timeout      = @discovery_result.http_timeout
+            @description.http_open_timeout = @discovery_result.http_open_timeout
           end
 
         public
@@ -115,10 +116,11 @@ module Hoodoo
 
             data = get_data_for_request( description_of_request )
 
-            action       = description_of_request.action
-            proxy        = description_of_request.proxy_uri
-            ca_file      = description_of_request.ca_file
-            http_timeout = description_of_request.http_timeout
+            action            = description_of_request.action
+            proxy             = description_of_request.proxy_uri
+            ca_file           = description_of_request.ca_file
+            http_timeout      = description_of_request.http_timeout
+            http_open_timeout = description_of_request.http_open_timeout
 
             proxy_host = :ENV
             proxy_port = proxy_user = proxy_pass = nil
@@ -157,6 +159,7 @@ module Hoodoo
             end
 
             http.read_timeout = http_timeout unless http_timeout.nil?
+            http.open_timeout = http_open_timeout unless http_open_timeout.nil?
 
             request_class = {
               :create => Net::HTTP::Post,
@@ -174,6 +177,7 @@ module Hoodoo
             description_of_response.http_headers = {}
 
             begin
+
               http_response = http.request( request )
 
               description_of_response.http_status_code = http_response.code.to_i
@@ -184,7 +188,7 @@ module Hoodoo
               description_of_response.http_status_code = 404
               description_of_response.raw_body_data    = ''
 
-            rescue Net::ReadTimeout => e
+            rescue Net::ReadTimeout, Net::OpenTimeout => e
               description_of_response.http_status_code = 408
               description_of_response.raw_body_data    = ''
 

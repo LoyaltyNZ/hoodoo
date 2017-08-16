@@ -484,6 +484,31 @@ describe Hoodoo::Client do
       end
     end
 
+    context 'and with a custom HTTP open timeout' do
+      before :each do
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:          base_uri,
+          http_open_timeout: 0.0000001
+        )
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+      end
+
+      it 'times out elegantly' do
+        mock_ident = Hoodoo::UUID.generate()
+        result     = @endpoint.show( mock_ident )
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
+      end
+    end
+
     context 'and with custom routing' do
       it 'obeys the routes' do
         base_uri   = "http://localhost:#{ @port }"
