@@ -328,30 +328,60 @@ describe '#schema' do
       expect(Hoodoo::Data::Resources::World.validate(data, false).errors).to eq([])
     end
 
-    it 'should return no errors with valid data for resource' do
-      data = {
-        :errors_id => Hoodoo::UUID.generate,
-        :test_tags => 'foo,bar,baz',
-        :test_object => {
-          :nested_object => {
-            :name => 'Some name',
-            :obj_suffix => '!'
-          },
-          :test_array => [
-            { :name => 'Some name 0', :ary_suffix => '00' },
-            { :name => 'Some name 1' }
-          ]
-        }
-      }
+    context 'should return' do
+      before :each do
+        @input = Hoodoo::Utilities.stringify( {
+          :errors_id => Hoodoo::UUID.generate,
+          :test_tags => 'foo,bar,baz',
+          :test_object => {
+            :nested_object => {
+              :name => 'Some name',
+              :obj_suffix => '!'
+            },
+            :test_array => [
+              { :name => 'Some name 0', :ary_suffix => '00' },
+              { :name => 'Some name 1' }
+            ]
+          }
+        } )
+      end
 
-      data = Hoodoo::Utilities.stringify(data)
-      rendered = Hoodoo::Data::Resources::World.render(
-        data,
-        Hoodoo::UUID.generate,
-        Time.now
-      )
+      it 'no errors with valid data for resource' do
+        rendered = Hoodoo::Data::Resources::World.render(
+          @input,
+          Hoodoo::UUID.generate,
+          Time.now
+        )
 
-      expect(Hoodoo::Data::Resources::World.validate(rendered, true).errors).to eq([])
+        expect(Hoodoo::Data::Resources::World.validate(rendered, true).errors).to eq([])
+      end
+
+      it 'no errors with valid data for resource with fingerprint' do
+        rendered = Hoodoo::Data::Resources::World.render(
+          @input,
+          Hoodoo::UUID.generate,
+          Time.now,
+          'en-gb',
+          Hoodoo::UUID.generate
+        )
+
+        expect(Hoodoo::Data::Resources::World.validate(rendered, true).errors).to eq([])
+      end
+
+      it 'a complaint about missing language if internationalised' do
+        rendered = Hoodoo::Data::Resources::World.render(
+          @input,
+          Hoodoo::UUID.generate,
+          Time.now,
+          nil
+        )
+
+        expect(Hoodoo::Data::Resources::World.validate(rendered, true).errors).to eq([{
+          'code'      => 'generic.required_field_missing',
+          'message'   => 'Field `language` is required',
+          'reference' => 'language'
+        }])
+      end
     end
 
     it 'should return correct errors invalid data' do
