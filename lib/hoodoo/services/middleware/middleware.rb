@@ -164,6 +164,7 @@ module Hoodoo; module Services
       'caller_version'       => 1,
       'caller_id'            =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
       'caller_identity_name' =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
+      'caller_fingerprint'   =>                  '7bc0b402a77543a49d0b1b671253fb25',
       'identity'             => { 'caller_id' => 'c5ea12fb7f414a46850e73ee1bf6d95e' },
       'permissions'          => Hoodoo::Services::Permissions.new( {
         'default' => { 'else' => Hoodoo::Services::Permissions::ALLOW }
@@ -1210,6 +1211,7 @@ module Hoodoo; module Services
             'caller_id'            => session.caller_id,
             'caller_version'       => session.caller_version,
             'caller_identity_name' => session.caller_identity_name,
+            'caller_fingerprint'   => session.caller_fingerprint,
             'identity'             => Hoodoo::Utilities.stringify( ( session.identity || {} ).to_h() )
           }
         end

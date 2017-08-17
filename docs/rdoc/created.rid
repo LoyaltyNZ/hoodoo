@@ -1,8 +1,8 @@
-Thu, 17 Aug 2017 08:33:18 +1200
-README.md	Thu, 17 Aug 2017 07:48:52 +1200
+Thu, 17 Aug 2017 12:47:11 +1200
+README.md	Thu, 17 Aug 2017 08:59:44 +1200
 lib/hoodoo.rb	Mon, 13 Feb 2017 08:12:27 +1300
 lib/hoodoo/active.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/active/active_model/uuid_validator.rb	Thu, 17 Aug 2017 06:56:27 +1200
+lib/hoodoo/active/active_model/uuid_validator.rb	Thu, 17 Aug 2017 09:02:32 +1200
 lib/hoodoo/active/active_record/base.rb	Mon, 13 Feb 2017 11:26:30 +1300
 lib/hoodoo/active/active_record/creator.rb	Mon, 13 Feb 2017 11:30:06 +1300
 lib/hoodoo/active/active_record/dated.rb	Mon, 13 Feb 2017 11:26:30 +1300
@@ -23,8 +23,8 @@ lib/hoodoo/client/client.rb	Fri, 04 Aug 2017 07:58:50 +1200
 lib/hoodoo/client/endpoint/endpoint.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Fri, 04 Aug 2017 07:58:50 +1200
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Fri, 04 Aug 2017 07:58:50 +1200
-lib/hoodoo/client/endpoint/endpoints/http.rb	Thu, 17 Aug 2017 07:48:53 +1200
-lib/hoodoo/client/endpoint/endpoints/http_based.rb	Thu, 17 Aug 2017 07:48:53 +1200
+lib/hoodoo/client/endpoint/endpoints/http.rb	Thu, 17 Aug 2017 08:59:44 +1200
+lib/hoodoo/client/endpoint/endpoints/http_based.rb	Thu, 17 Aug 2017 08:59:44 +1200
 lib/hoodoo/client/endpoint/endpoints/not_found.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/client/headers.rb	Wed, 14 Dec 2016 09:06:07 +1300
 lib/hoodoo/client/paginated_enumeration.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -33,7 +33,7 @@ lib/hoodoo/communicators/fast.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/communicators/pool.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/communicators/slow.rb	Mon, 13 Feb 2017 11:26:30 +1300
 lib/hoodoo/data.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/data/resources/caller.rb	Wed, 07 Dec 2016 09:24:11 +1300
+lib/hoodoo/data/resources/caller.rb	Thu, 17 Aug 2017 11:25:28 +1200
 lib/hoodoo/data/resources/errors.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/data/resources/log.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/data/resources/session.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -46,7 +46,7 @@ lib/hoodoo/discovery.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/errors.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/errors/error_descriptions.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/errors/errors.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/generator.rb	Thu, 17 Aug 2017 06:56:27 +1200
+lib/hoodoo/generator.rb	Thu, 17 Aug 2017 09:02:32 +1200
 lib/hoodoo/logger.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/logger/fast_writer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/logger/flattener_mixin.rb	Fri, 04 Aug 2017 07:58:50 +1200
@@ -59,11 +59,11 @@ lib/hoodoo/logger/writers/stream_writer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/middleware.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/monkey.rb	Fri, 04 Aug 2017 07:58:50 +1200
 lib/hoodoo/monkey/monkey.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Thu, 17 Aug 2017 06:56:27 +1200
-lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Thu, 17 Aug 2017 06:56:27 +1200
-lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Thu, 17 Aug 2017 06:56:27 +1200
+lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Thu, 17 Aug 2017 09:02:32 +1200
+lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Thu, 17 Aug 2017 09:02:32 +1200
+lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Thu, 17 Aug 2017 09:02:32 +1200
 lib/hoodoo/presenters.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/presenters/base.rb	Fri, 04 Aug 2017 07:58:50 +1200
+lib/hoodoo/presenters/base.rb	Thu, 17 Aug 2017 11:16:34 +1200
 lib/hoodoo/presenters/base_dsl.rb	Mon, 13 Feb 2017 08:12:27 +1300
 lib/hoodoo/presenters/common_resource_fields.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/embedding.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -83,14 +83,14 @@ lib/hoodoo/presenters/types/tags.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/text.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/presenters/types/uuid.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/discovery/discoverers/by_convention.rb	Thu, 17 Aug 2017 07:48:53 +1200
+lib/hoodoo/services/discovery/discoverers/by_convention.rb	Thu, 17 Aug 2017 08:59:44 +1200
 lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/discovery/discoverers/by_drb/drb_server_start.rb	Fri, 28 Jul 2017 09:46:17 +1200
 lib/hoodoo/services/discovery/discoverers/by_flux.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/discovery/discovery.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/discovery/results/for_amqp.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/discovery/results/for_http.rb	Thu, 17 Aug 2017 07:48:53 +1200
+lib/hoodoo/services/discovery/results/for_http.rb	Thu, 17 Aug 2017 08:59:44 +1200
 lib/hoodoo/services/discovery/results/for_local.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/discovery/results/for_remote.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/middleware/amqp_log_writer.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -98,10 +98,10 @@ lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Wed, 07 Dec 201
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Mon, 13 Feb 2017 08:12:27 +1300
 lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 17 Aug 2017 06:56:27 +1200
+lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 17 Aug 2017 09:02:32 +1200
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/middleware/interaction.rb	Thu, 17 Aug 2017 06:56:27 +1200
-lib/hoodoo/services/middleware/middleware.rb	Thu, 17 Aug 2017 06:56:27 +1200
+lib/hoodoo/services/middleware/interaction.rb	Thu, 17 Aug 2017 09:02:32 +1200
+lib/hoodoo/services/middleware/middleware.rb	Thu, 17 Aug 2017 11:28:46 +1200
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/context.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/implementation.rb	Wed, 07 Dec 2016 09:24:11 +1300
@@ -110,7 +110,7 @@ lib/hoodoo/services/services/permissions.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/request.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/response.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/services/services/service.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/services/services/session.rb	Fri, 04 Aug 2017 07:58:50 +1200
+lib/hoodoo/services/services/session.rb	Thu, 17 Aug 2017 11:29:51 +1200
 lib/hoodoo/transient_store.rb	Fri, 04 Aug 2017 07:58:50 +1200
 lib/hoodoo/transient_store/mocks/dalli_client.rb	Mon, 13 Feb 2017 08:12:27 +1300
 lib/hoodoo/transient_store/mocks/redis.rb	Tue, 11 Jul 2017 10:12:06 +1200
@@ -123,4 +123,4 @@ lib/hoodoo/utilities.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Wed, 07 Dec 2016 09:24:11 +1300
 lib/hoodoo/utilities/utilities.rb	Fri, 04 Aug 2017 07:58:50 +1200
 lib/hoodoo/utilities/uuid.rb	Wed, 07 Dec 2016 09:24:11 +1300
-lib/hoodoo/version.rb	Thu, 17 Aug 2017 08:32:35 +1200
+lib/hoodoo/version.rb	Thu, 17 Aug 2017 12:46:29 +1200

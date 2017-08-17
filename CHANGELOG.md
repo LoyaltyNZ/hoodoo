@@ -1,3 +1,7 @@
+## 1.19.0 (2017-08-17)
+
+* Now supports ["fingerprints"](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification#fingerprints) - an optional UUID associated with a Caller, conveyed in a session payload in the transient store via [`caller_fingerprint`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#attribute-i-caller_fingerprint) so a resource implementation would read `context.session.caller_fingerprint`) and which should be rendered, if the resource implementation supports persisting and reporting fingerprints, via the `created_by` extensions to [Hoodoo::Presenters::Base#render](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Base.html#method-c-render) and [Hoodoo::Presenters::Base#render_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Base.html#method-c-render_in).
+
 ## 1.18.0 (2017-08-17)
 
 * Can set the [`http_open_timeout`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Discovery/ByConvention.html) for `Hoodoo::Client` connections. The [default timeout](https://ruby-doc.org/stdlib-2.4.1/libdoc/net/http/rdoc/Net/HTTP.html) for opening a connection is 60 seconds, which may be too long for some callers.

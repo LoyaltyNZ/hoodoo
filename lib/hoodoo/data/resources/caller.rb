@@ -20,6 +20,7 @@ module Hoodoo
 
           text :authentication_secret
           text :name
+          uuid :fingerprint, :required => false
 
           hash :identity, :required => true do
           end
