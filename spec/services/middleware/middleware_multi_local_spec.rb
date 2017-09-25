@@ -6,7 +6,8 @@ require 'spec_helper'
 
 # Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
 #
-VALID_ASSUMED_IDENTITY_HASH ||= { 'caller_id' => 'custom_caller_id' }
+MMLS_CUSTOM_CALLER_ID            = 'custom_caller_id'
+MMLS_VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => MMLS_CUSTOM_CALLER_ID }
 
 # This gets inter-resource called from ...BImplementation. It expects search
 # data containing an 'offset' key and string/integer value. If > 0, an error
@@ -40,7 +41,10 @@ class RSpecTestInterResourceCallsAImplementation < Hoodoo::Services::Implementat
         :reference => { :another => 'no other ident', :field_name => 'no ident' }
       )
     elsif context.request.ident == 'hello_return_identity' || context.request.ident == 'hello_set_good_inter_resource_identity'
-      context.response.set_resource( { 'identity' => context.session.identity.to_h } )
+      context.response.body = {
+        'identity'    => context.session.identity.to_h,
+        'fingerprint' => context.session.caller_fingerprint
+      }
     else
       context.response.set_resource( { 'inner' => 'shown' } )
     end
@@ -167,10 +171,10 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
       if ( context.request.ident == 'set_bad_inter_resource_identity' )
         resource.assume_identity_of = {
-          VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
+          MMLS_VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
         }
       elsif ( context.request.ident == 'set_good_inter_resource_identity' )
-        resource.assume_identity_of = VALID_ASSUMED_IDENTITY_HASH
+        resource.assume_identity_of = MMLS_VALID_ASSUMED_IDENTITY_HASH
       end
 
       result = resource.show(
@@ -318,13 +322,18 @@ end
 describe Hoodoo::Services::Middleware::InterResourceLocal do
 
   before :each do
-    @test_uuid = Hoodoo::UUID.generate()
     @old_test_session = Hoodoo::Services::Middleware.test_session()
+
     @test_session = @old_test_session.dup
+    @test_session.caller_fingerprint = @caller_fingerprint = Hoodoo::UUID.generate()
+
     permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
     permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
     @test_session.permissions = permissions
+
+    @test_session.scoping = @test_session.scoping.dup
     @test_session.scoping.authorised_http_headers = [] # (no secured headers allowed to start with)
+
     Hoodoo::Services::Middleware.set_test_session( @test_session )
   end
 
@@ -395,6 +404,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
       expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
       expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+      expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:list).once.and_call_original
@@ -412,6 +422,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
         expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
         expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -548,6 +559,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
       expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
       expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+      expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:show).once.and_call_original
@@ -565,6 +577,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
         expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
         expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -631,6 +644,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(context.request.dated_from).to eq(dated_from)       # Is used
       expect(context.request.deja_vu).to eq(deja_vu)             # Is used
       expect(context.request.resource_uuid).to eq(resource_uuid) # Is used
+      expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:create).once.and_call_original
@@ -645,6 +659,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_from).to eq(dated_from) # Is passed through inter-resource calls
         expect(context.request.deja_vu).to eq(nil)           # Is not passed through inter-resource calls
         expect(context.request.resource_uuid).to eq(nil)     # Is not passed through inter-resource calls
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -877,6 +892,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
       expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
       expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+      expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:update).once.and_call_original
@@ -891,6 +907,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
         expect(context.request.deja_vu).to eq(nil)       # Not used => expect 'nil'
         expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -955,6 +972,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
       expect(context.request.deja_vu).to eq(deja_vu)   # Is used
       expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+      expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
     end
     # -> A
       expect_any_instance_of(RSpecTestInterResourceCallsAImplementation).to receive(:delete).once.and_call_original
@@ -969,6 +987,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.dated_from).to eq(nil)    # Not used => expect 'nil'
         expect(context.request.deja_vu).to eq(nil)       # Is not passed through inter-resource calls
         expect(context.request.resource_uuid).to eq(nil) # Not used => expect 'nil'
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once do | ignored_rspec_mock_instance, result |
@@ -1064,6 +1083,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         expect(context.request.uri_path_extension).to eq('')
         expect(context.request.list.offset).to eq(0)
         expect(context.request.list.limit).to eq(50)
+        expect(context.session.caller_fingerprint).to eq(@caller_fingerprint)
       end
     # <- B
     expect_any_instance_of(RSpecTestInterResourceCallsBImplementation).to receive(:expectable_result_hook).once.and_call_original
@@ -1090,8 +1110,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
         test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
         test_session.scoping.authorised_identities   = {
-          VALID_ASSUMED_IDENTITY_HASH.keys.first =>
-          [ VALID_ASSUMED_IDENTITY_HASH.values.first ]
+          MMLS_VALID_ASSUMED_IDENTITY_HASH.keys.first =>
+          [ MMLS_VALID_ASSUMED_IDENTITY_HASH.values.first ]
         }
 
         Hoodoo::Services::Middleware.set_test_session( test_session )
@@ -1108,12 +1128,16 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
             nil,
             {
               'CONTENT_TYPE' => 'application/json; charset=utf-8',
-              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMLS_VALID_ASSUMED_IDENTITY_HASH )
             }
           )
 
           result = JSON.parse( last_response.body )
-          expect( result[ 'result' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+
+          expect( result[ 'result' ] ).to eq( {
+            'identity'    => MMLS_VALID_ASSUMED_IDENTITY_HASH,
+            'fingerprint' => @caller_fingerprint
+          } )
         end
 
         it 'cannot set an illegal identity in the inter-resource call' do
@@ -1122,7 +1146,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
             nil,
             {
               'CONTENT_TYPE' => 'application/json; charset=utf-8',
-              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMLS_VALID_ASSUMED_IDENTITY_HASH )
             }
           )
 
@@ -1133,7 +1157,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       end
 
       context 'in inter-resource call only' do
-        identity_hash = { 'caller_id' => 'custom_caller_id' }
+        identity_hash = { 'caller_id' => MMLS_CUSTOM_CALLER_ID }
 
         it 'can still set identity for the downstream resource' do
           get(
@@ -1143,7 +1167,11 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
           )
 
           result = JSON.parse( last_response.body )
-          expect( result[ 'result' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+
+          expect( result[ 'result' ] ).to eq( {
+            'identity'    => MMLS_VALID_ASSUMED_IDENTITY_HASH,
+            'fingerprint' => @caller_fingerprint
+          } )
         end
 
         it 'cannot set an illegal identity for the downstream resource' do
@@ -1169,7 +1197,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         test_session.scoping  = test_session.scoping.dup
 
         test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
-        test_session.scoping.authorised_identities   = { 'caller_id' => [ 'custom_caller_id' ] }
+        test_session.scoping.authorised_identities   = { 'caller_id' => [ MMLS_CUSTOM_CALLER_ID ] }
 
         Hoodoo::Services::Middleware.set_test_session( test_session )
       end

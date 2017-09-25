@@ -620,10 +620,10 @@ module Hoodoo; module Services
     #
     # +version+::     Required implemented version for the endpoint. Integer.
     #
-    # +interaction+:: The Hoodoo::Services::Interaction instance describing
-    #                 the inbound call, the processing of which is leading to
-    #                 a request for an inter-resource call by an endpoint
-    #                 implementation.
+    # +interaction+:: The Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the inbound call, the processing of which is
+    #                 leading to a request for an inter-resource call by an
+    #                 endpoint implementation.
     #
     def inter_resource_endpoint_for( resource, version, interaction )
       resource = resource.to_sym
@@ -720,11 +720,12 @@ module Hoodoo; module Services
     #
     # Named parameters are as follows:
     #
-    # +source_interaction+:: A Hoodoo::Services::Interaction instance for the
-    #                        inbound call which is being processed right now
-    #                        by some resource endpoint implementation and this
-    #                        implementation is now making an inter-resource
-    #                        call as part of its processing;
+    # +source_interaction+:: A Hoodoo::Services::Middleware::Interaction
+    #                        instance for the inbound call which is being
+    #                        processed right now by some resource endpoint
+    #                        implementation and this implementation is now
+    #                        making an inter-resource call as part of its
+    #                        processing;
     #
     # +discovery_result+::   A Hoodoo::Services::Discovery::ForLocal instance
     #                        describing the target of the inter-resource call;
@@ -991,13 +992,13 @@ module Hoodoo; module Services
 
     # Make an "inbound" call log based on the given interaction.
     #
-    # +interaction+:: Hoodoo::Services::Interaction describing the inbound
-    #                 request. The +interaction_id+, +rack_request+ and
-    #                 +session+ data is used (the latter being optional).
-    #                 If +target_interface+ and +requested_action+ are
-    #                 available, body data _might_ be logged according to
-    #                 secure log settings in the interface; if these
-    #                 values are unset, body data is _not_ logged.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction describing the
+    #                 inbound request. The +interaction_id+, +rack_request+ and
+    #                 +session+ data is used (the latter being optional). If
+    #                 +target_interface+ and +requested_action+ are available,
+    #                 body data _might_ be logged according to secure log
+    #                 settings in the interface; if these values are unset,
+    #                 body data is _not_ logged.
     #
     def monkey_log_inbound_request( interaction )
 
@@ -1181,12 +1182,12 @@ module Hoodoo; module Services
     # Build common log information for the 'data' part of a payload based
     # on the given interaction. Returned as a Hash with Symbol keys.
     #
-    # +interaction+:: Hoodoo::Services::Interaction describing a request.
-    #                 A +context+ and +interaction_id+ are expected. The
-    #                 +target_interface+ and +requested_action+ are optional
-    #                 and if present result in a <tt>:target</tt> entry in
-    #                 the returned Hash. The +context.session+ value if
-    #                 present will be included in a <tt>:session</tt> entry;
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction describing a
+    #                 request. A +context+ and +interaction_id+ are expected.
+    #                 The +target_interface+ and +requested_action+ are
+    #                 optional and if present result in a <tt>:target</tt>
+    #                 entry in the returned Hash. The +context.session+ value
+    #                 if present will be included in a <tt>:session</tt> entry;
     #                 if verbose logging is enabled this will be quoted in
     #                 full, else only identity-related parts are recorded.
     #

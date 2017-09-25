@@ -76,13 +76,14 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
 implementation is called via <code>super</code>.</p>
 <dl class="rdoc-list note-list"><dt>interaction
 <dd>
-<p>Hoodoo::Services::Interaction describing the inbound request. The
-<code>interaction_id</code>, <code>rack_request</code> and
-<code>session</code> data is used (the latter being optional). If
-<code>target_interface</code> and <code>requested_action</code> are
-available, body data <em>might</em> be logged according to secure log
-settings in the interface; if these values are unset, body data is
-<em>not</em> logged.</p>
+<p><a
+href="../../../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance describing the inbound request. The <code>interaction_id</code>,
+<code>rack_request</code> and <code>session</code> data is used (the latter
+being optional). If <code>target_interface</code> and
+<code>requested_action</code> are available, body data <em>might</em> be
+logged according to secure log settings in the interface; if these values
+are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
             </div>
 
