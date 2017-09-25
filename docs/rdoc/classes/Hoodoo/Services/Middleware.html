@@ -1060,9 +1060,10 @@ symbol.</p>
 <p>Required implemented version for the endpoint. Integer.</p>
 </dd><dt><code>interaction</code>
 <dd>
-<p>The Hoodoo::Services::Interaction instance describing the inbound call, the
-processing of which is leading to a request for an inter-resource call by
-an endpoint implementation.</p>
+<p>The <a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance describing the inbound call, the processing of which is leading to
+a request for an inter-resource call by an endpoint implementation.</p>
 </dd></dl>
             </div>
 
@@ -1180,10 +1181,11 @@ the call in the same way as any other.</p>
 <p>Named parameters are as follows:</p>
 <dl class="rdoc-list note-list"><dt><code>source_interaction</code>
 <dd>
-<p>A Hoodoo::Services::Interaction instance for the inbound call which is
-being processed right now by some resource endpoint implementation and this
-implementation is now making an inter-resource call as part of its
-processing;</p>
+<p>A <a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance for the inbound call which is being processed right now by some
+resource endpoint implementation and this implementation is now making an
+inter-resource call as part of its processing;</p>
 </dd><dt><code>discovery_result</code>
 <dd>
 <p>A <a
@@ -1230,7 +1232,7 @@ ignore inter-resource call errors.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
               </p>
               <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 756</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 757</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,
@@ -1479,13 +1481,14 @@ ignore inter-resource call errors.</p>
               <p>Make an “inbound” call log based on the given interaction.</p>
 <dl class="rdoc-list note-list"><dt>interaction
 <dd>
-<p>Hoodoo::Services::Interaction describing the inbound request. The
-<code>interaction_id</code>, <code>rack_request</code> and
-<code>session</code> data is used (the latter being optional). If
-<code>target_interface</code> and <code>requested_action</code> are
-available, body data <em>might</em> be logged according to secure log
-settings in the interface; if these values are unset, body data is
-<em>not</em> logged.</p>
+<p><a
+href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+describing the inbound request. The <code>interaction_id</code>,
+<code>rack_request</code> and <code>session</code> data is used (the latter
+being optional). If <code>target_interface</code> and
+<code>requested_action</code> are available, body data <em>might</em> be
+logged according to secure log settings in the interface; if these values
+are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
             </div>
 
@@ -1497,7 +1500,7 @@ settings in the interface; if these values are unset, body data is
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
               </p>
               <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1002</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1003</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">build_common_log_data_for</span>( <span class="ruby-identifier">interaction</span> )
