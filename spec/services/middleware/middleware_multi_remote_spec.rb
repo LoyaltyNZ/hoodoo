@@ -10,7 +10,8 @@ require 'json'
 
 # Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
 #
-VALID_ASSUMED_IDENTITY_HASH ||= { 'caller_id' => 'custom_caller_id' }
+CUSTOM_CALLER_ID            = 'custom_caller_id'
+VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => CUSTOM_CALLER_ID }
 
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
@@ -49,7 +50,10 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
       elsif context.request.uri_path_components[ 0 ] == 'return_invalid_data'
         context.response.body = 'Hello, world'
       elsif context.request.ident == 'return_identity' || context.request.ident == 'set_good_inter_resource_identity'
-        context.response.body = { 'identity' => context.session.identity.to_h }
+        context.response.body = {
+          'identity'    => context.session.identity.to_h,
+          'fingerprint' => context.session.caller_fingerprint
+        }
       else
         context.response.body = { 'show' => TestEchoImplementation.to_h( context ) }
       end
@@ -119,7 +123,8 @@ class TestEchoImplementation < Hoodoo::Services::Implementation
         'list_search_data'    => context.request.list.search_data,
         'list_filter_data'    => context.request.list.filter_data,
         'embeds'              => context.request.embeds,
-        'references'          => context.request.references
+        'references'          => context.request.references,
+        'session_hash'        => context.session.to_h
       }
     end
 end
@@ -352,7 +357,7 @@ describe 'DRb start timeout' do
 
       spec_helper_http(
         port: spec_helper_start_svc_app_in_thread_for( TestEchoService ),
-        path: '/v2/test_some_echoes'
+        path: '/v2/test_some_echoes' # Test 'old' route
       )
     end
   end
@@ -361,14 +366,18 @@ end
 describe Hoodoo::Services::Middleware do
 
   before :each do
-    @test_uuid = Hoodoo::UUID.generate()
     @old_test_session = Hoodoo::Services::Middleware.test_session()
+
     @test_session = @old_test_session.dup
+    @test_session.caller_fingerprint = @caller_fingerprint = Hoodoo::UUID.generate()
+
     permissions = Hoodoo::Services::Permissions.new # (this is "default-else-deny")
     permissions.set_default_fallback( Hoodoo::Services::Permissions::ALLOW )
     @test_session.permissions = permissions
+
     @test_session.scoping = @test_session.scoping.dup
     @test_session.scoping.authorised_http_headers = [] # (no secured headers allowed to start with)
+
     Hoodoo::Services::Middleware.set_test_session( @test_session )
   end
 
@@ -432,7 +441,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => [ 'embed_one', 'embed_two' ]
+          'references'          => [ 'embed_one', 'embed_two' ],
+          'session_hash'        => @test_session.to_h
         }
       )
       expect( parsed[ '_dataset_size' ] ).to eq( 49 )
@@ -463,7 +473,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port: @port,
-        path: '/v1/test_echo_quiet'
+        path: '/1/TestEchoQuiet'
       )
 
       expect( response.code ).to eq( '200' )
@@ -493,7 +503,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port:    @port,
-        path:    '/v2/test_some_echoes',
+        path:    '/v2/test_some_echoes', # Test 'old' route
         headers: { 'X-Deja-Vu' => 'yes' }
       )
 
@@ -508,7 +518,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port:    @port,
-        path:    '/v2/test_some_echoes/one/two.tar.gz?_reference=embed_one,embed_two',
+        path:    '/2/TestEcho/one/two.tar.gz?_reference=embed_one,embed_two', # Test 'new' route
         headers: headers
       )
 
@@ -534,7 +544,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => [ 'embed_one', 'embed_two' ]
+          'references'          => [ 'embed_one', 'embed_two' ],
+          'session_hash'        => @test_session.to_h
         }
       )
     end
@@ -555,7 +566,7 @@ describe Hoodoo::Services::Middleware do
 
       response = spec_helper_http(
         port: @port,
-        path: '/v1/test_echo_quiet/some_uuid'
+        path: '/1/TestEchoQuiet/some_uuid'
       )
 
       expect( response.code ).to eq( '200' )
@@ -580,7 +591,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
     end
@@ -595,7 +607,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Post,
         port:    @port,
-        path:    '/v2/test_some_echoes.json?_embed=embed_one,embed_two',
+        path:    '/2/TestEcho.json?_embed=embed_one,embed_two',
         body:    { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
         headers: headers
       )
@@ -631,7 +643,8 @@ describe Hoodoo::Services::Middleware do
             'list_search_data'    => {},
             'list_filter_data'    => {},
             'embeds'              => [ 'embed_one', 'embed_two' ],
-            'references'          => []
+            'references'          => [],
+            'session_hash'        => @test_session.to_h
           }
         )
 
@@ -663,7 +676,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Post,
         port:    @port,
-        path:    '/v2/test_some_echoes.json',
+        path:    '/2/TestEcho.json',
         body:    { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
         headers: { 'X-Resource-UUID' => Hoodoo::UUID.generate() }
       )
@@ -682,7 +695,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Post,
         port:    @port,
-        path:    '/v2/test_some_echoes',
+        path:    '/2/TestEcho',
         body:    { 'foo' => 'bar' }.to_json,
         headers: { 'X-Deja-Vu' => 'yes' }
       )
@@ -698,7 +711,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Post,
         port:    @port,
-        path:    '/v2/test_some_echoes',
+        path:    '/2/TestEcho',
         body:    { 'foo' => 'bar', 'additional_error' => 'generic.invalid_decimal' }.to_json,
         headers: { 'X-Deja-Vu' => 'yes' }
       )
@@ -722,7 +735,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Patch,
         port:    @port,
-        path:    '/v2/test_some_echoes/a/b.json?_embed=embed_one',
+        path:    '/2/TestEcho/a/b.json?_embed=embed_one',
         body:    { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
         headers: headers
       )
@@ -749,7 +762,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [ 'embed_one' ],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
     end
@@ -774,7 +788,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Delete,
         port:    @port,
-        path:    '/v2/test_some_echoes/aa/bb.xml.gz?_embed=embed_two',
+        path:    '/2/TestEcho/aa/bb.xml.gz?_embed=embed_two',
         headers: headers
       )
 
@@ -800,7 +814,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [ 'embed_two' ],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
     end
@@ -821,7 +836,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Delete,
         port:    @port,
-        path:    '/v2/test_some_echoes/simulate_404'      )
+        path:    '/2/TestEcho/simulate_404' )
 
       expect( response.code ).to eq( '404' )
       expect_response_headers_on( response )
@@ -835,7 +850,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass:   Net::HTTP::Delete,
         port:    @port,
-        path:    '/v2/test_some_echoes/simulate_404',
+        path:    '/2/TestEcho/simulate_404',
         headers: { 'X-Deja-Vu' => 'yes' }
       )
 
@@ -853,7 +868,7 @@ describe Hoodoo::Services::Middleware do
       response = spec_helper_http(
         klass: Net::HTTP::Post,
         port:  @port,
-        path:  '/v1/test_echo_quiet',
+        path:  '/1/TestEchoQuiet',
         body:  { 'foo' => 'bar', 'baz' => 'boo' }.to_json
       )
 
@@ -864,7 +879,7 @@ describe Hoodoo::Services::Middleware do
     it 'should be detect 404 OK' do
       response = spec_helper_http(
         port: @port,
-        path: '/v1/not_present'
+        path: '/1/NotPresent'
       )
 
       expect( response.code ).to eq( '404' )
@@ -921,7 +936,7 @@ describe Hoodoo::Services::Middleware do
 
     def list_things( locale: nil, dated_at: nil )
       get(
-        '/v1/test_call.tar.gz?limit=25&offset=75',
+        '/1/TestCall.tar.gz?limit=25&offset=75',
         nil,
         headers_for( locale: locale, dated_at: dated_at )
       )
@@ -955,7 +970,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
 
@@ -991,7 +1007,7 @@ describe Hoodoo::Services::Middleware do
       end
 
       get(
-        '/v1/test_call.tar.gz?limit=25&offset=75',
+        '/1/TestCall.tar.gz?limit=25&offset=75',
         nil,
         headers_for( locale: 'de' )
       )
@@ -1017,7 +1033,7 @@ describe Hoodoo::Services::Middleware do
       end
 
       get(
-        '/v1/test_call.tar.gz?offset=42', # 42 -> magic -> inner service adds error
+        '/1/TestCall.tar.gz?offset=42', # 42 -> magic -> inner service adds error
         nil,
         headers_for( locale: 'de' )
       )
@@ -1028,7 +1044,7 @@ describe Hoodoo::Services::Middleware do
 
     def show_things( locale: nil, dated_at: nil )
       get(
-        '/v1/test_call/one/two.tar.gz',
+        '/1/TestCall/one/two.tar.gz',
         nil,
         headers_for( locale: locale, dated_at: dated_at )
       )
@@ -1053,7 +1069,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
 
@@ -1079,7 +1096,7 @@ describe Hoodoo::Services::Middleware do
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
-      get( '/v1/test_call/return_error', nil, headers_for() )
+      get( '/1/TestCall/return_error', nil, headers_for() )
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('generic.invalid_string')
@@ -1091,7 +1108,7 @@ describe Hoodoo::Services::Middleware do
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
-      get( '/v1/test_call/return_invalid_data', nil, headers_for() )
+      get( '/1/TestCall/return_invalid_data', nil, headers_for() )
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.fault')
@@ -1123,7 +1140,7 @@ describe Hoodoo::Services::Middleware do
         context 'when in use at top level' do
           it 'sees correct identity in the downstream resource' do
             get(
-              '/v1/test_call/return_identity',
+              '/1/TestCall/return_identity',
               nil,
               {
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
@@ -1132,12 +1149,16 @@ describe Hoodoo::Services::Middleware do
             )
 
             result = JSON.parse( last_response.body )
-            expect( result[ 'show' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+
+            expect( result[ 'show' ] ).to eq( {
+              'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+              'fingerprint' => @caller_fingerprint
+            } )
           end
 
           it 'cannot set an illegal identity in the inter-resource call' do
             get(
-              '/v1/test_call/set_bad_inter_resource_identity',
+              '/1/TestCall/set_bad_inter_resource_identity',
               nil,
               {
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
@@ -1152,22 +1173,24 @@ describe Hoodoo::Services::Middleware do
         end
 
         context 'in inter-resource call only' do
-          identity_hash = { 'caller_id' => 'custom_caller_id' }
-
           it 'can still set identity for the downstream resource' do
             get(
-              '/v1/test_call/set_good_inter_resource_identity',
+              '/1/TestCall/set_good_inter_resource_identity',
               nil,
               { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
             )
 
             result = JSON.parse( last_response.body )
-            expect( result[ 'show' ][ 'identity' ] ).to eq( VALID_ASSUMED_IDENTITY_HASH )
+
+            expect( result[ 'show' ] ).to eq( {
+              'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+              'fingerprint' => @caller_fingerprint
+            } )
           end
 
           it 'cannot set an illegal identity for the downstream resource' do
             get(
-              '/v1/test_call/set_bad_inter_resource_identity',
+              '/1/TestCall/set_bad_inter_resource_identity',
               nil,
               { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
             )
@@ -1188,7 +1211,7 @@ describe Hoodoo::Services::Middleware do
           test_session.scoping  = test_session.scoping.dup
 
           test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
-          test_session.scoping.authorised_identities   = { 'caller_id' => [ 'custom_caller_id' ] }
+          test_session.scoping.authorised_identities   = { 'caller_id' => [ CUSTOM_CALLER_ID ] }
 
           Hoodoo::Services::Middleware.set_test_session( test_session )
         end
@@ -1202,7 +1225,7 @@ describe Hoodoo::Services::Middleware do
         #
         it 'cannot override a valid identity in inter-resource calls' do
           get(
-            '/v1/test_call/set_good_inter_resource_identity',
+            '/1/TestCall/set_good_inter_resource_identity',
             nil,
             { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
           )
@@ -1216,7 +1239,7 @@ describe Hoodoo::Services::Middleware do
 
     def create_things( locale: nil, dated_from: nil, deja_vu: nil, resource_uuid: nil )
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
         { 'foo' => 'bar', 'baz' => 'boo' }.to_json,
         headers_for( locale: locale, dated_from: dated_from, deja_vu: deja_vu, resource_uuid: resource_uuid )
       )
@@ -1241,7 +1264,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
 
@@ -1265,7 +1289,7 @@ describe Hoodoo::Services::Middleware do
       @test_session.scoping.authorised_http_headers = [ 'HTTP_X_RESOURCE_UUID' ]
 
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          { :foo => 'specify_uuid' }.to_json,
          headers_for()
       )
@@ -1280,7 +1304,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'cannot specify a UUID via an inter-resource call if it does not have top-level permission' do
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          { :foo => 'specify_uuid' }.to_json,
          headers_for()
       )
@@ -1302,7 +1326,7 @@ describe Hoodoo::Services::Middleware do
     #
     it 'gets a 204 with deja-vu and duplication' do
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          { 'foo' => 'bar', 'deja_vu_in_other_resource' => 'yes' }.to_json,
          headers_for() # *not* requesting Deja-Vu at the top level
       )
@@ -1322,7 +1346,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'gets non-204 with deja-vu and duplication plus other errors' do
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          {
            'foo'                       => 'bar',
            'deja_vu_in_other_resource' => 'yes',
@@ -1353,7 +1377,7 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse ).to receive( :raw_body_data    ).and_return( 'not JSON' )
 
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          { 'foo' => 'bar' }.to_json,
          headers_for()
       )
@@ -1376,7 +1400,7 @@ describe Hoodoo::Services::Middleware do
       end
 
       post(
-        '/v1/test_call.tar.gz',
+        '/1/TestCall.tar.gz',
          { :foo => 'bar', :return_error => 'yes' }.to_json,
          headers_for()
       )
@@ -1387,7 +1411,7 @@ describe Hoodoo::Services::Middleware do
 
     def update_things( locale: nil )
       patch(
-        '/v1/test_call/aa/bb.tar.gz',
+        '/1/TestCall/aa/bb.tar.gz',
         { 'foo' => 'boo', 'baz' => 'bar' }.to_json,
         headers_for( locale: locale )
       )
@@ -1412,7 +1436,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
 
@@ -1439,7 +1464,7 @@ describe Hoodoo::Services::Middleware do
         expect( result.platform_errors.has_errors? ).to eq( true )
       end
 
-      patch( '/v1/test_call/return_error', '{}', headers_for() )
+      patch( '/1/TestCall/return_error', '{}', headers_for() )
 
       result = JSON.parse(last_response.body)
       expect(result['errors'][0]['code']).to eq('platform.malformed')
@@ -1447,7 +1472,7 @@ describe Hoodoo::Services::Middleware do
 
     def delete_things( locale: nil, deja_vu: nil )
       delete(
-        '/v1/test_call/aone/btwo.tar.gz',
+        '/1/TestCall/aone/btwo.tar.gz',
         nil,
         headers_for( locale:locale, deja_vu: deja_vu )
       )
@@ -1472,7 +1497,8 @@ describe Hoodoo::Services::Middleware do
           'list_search_data'    => {},
           'list_filter_data'    => {},
           'embeds'              => [],
-          'references'          => []
+          'references'          => [],
+          'session_hash'        => @test_session.to_h
         }
       )
 
@@ -1494,7 +1520,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'should receive errors from remote service as if from the local call' do
       get(
-        '/v1/test_call/return_error',
+        '/1/TestCall/return_error',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
@@ -1520,7 +1546,7 @@ describe Hoodoo::Services::Middleware do
       end
 
       get(
-        '/v1/test_call/generate_404',
+        '/1/TestCall/generate_404',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
@@ -1531,7 +1557,7 @@ describe Hoodoo::Services::Middleware do
 
     it 'can reuse an endpoint' do
       get(
-        '/v1/test_call/ensure_repeated_use_works',
+        '/1/TestCall/ensure_repeated_use_works',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
@@ -1559,7 +1585,7 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( Errno::ECONNREFUSED )
 
       get(
-        '/v1/test_call/show_something',
+        '/1/TestCall/show_something',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
@@ -1574,7 +1600,7 @@ describe Hoodoo::Services::Middleware do
       expect_any_instance_of( Net::HTTP ).to receive( :request ).once.and_raise( 'some connection error' )
 
       get(
-        '/v1/test_call/show_something',
+        '/1/TestCall/show_something',
         nil,
         { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
       )
