@@ -124,6 +124,7 @@ module Hoodoo
 
             unless session.nil? || self.interaction().using_test_session?
               session = session.augment_with_permissions_for( self.interaction() )
+              puts "AUGMENTED"
             end
 
             if session == false
