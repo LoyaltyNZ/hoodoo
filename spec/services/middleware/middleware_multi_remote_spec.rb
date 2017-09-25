@@ -10,8 +10,8 @@ require 'json'
 
 # Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
 #
-CUSTOM_CALLER_ID            = 'custom_caller_id'
-VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => CUSTOM_CALLER_ID }
+MMRS_CUSTOM_CALLER_ID            = 'custom_caller_id'
+MMRS_VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => MMRS_CUSTOM_CALLER_ID }
 
 # First, a test service comprised of a couple of 'echo' variants which we use
 # to make sure they're both correctly stored in the DRb registry.
@@ -223,10 +223,10 @@ class TestCallImplementation < Hoodoo::Services::Implementation
 
       if ( context.request.ident == 'set_bad_inter_resource_identity' )
         resource.assume_identity_of = {
-          VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
+          MMRS_VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
         }
       elsif ( context.request.ident == 'set_good_inter_resource_identity' )
-        resource.assume_identity_of = VALID_ASSUMED_IDENTITY_HASH
+        resource.assume_identity_of = MMRS_VALID_ASSUMED_IDENTITY_HASH
       end
 
       result = resource.show(
@@ -1126,8 +1126,8 @@ describe Hoodoo::Services::Middleware do
 
           test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
           test_session.scoping.authorised_identities   = {
-            VALID_ASSUMED_IDENTITY_HASH.keys.first =>
-            [ VALID_ASSUMED_IDENTITY_HASH.values.first ]
+            MMRS_VALID_ASSUMED_IDENTITY_HASH.keys.first =>
+            [ MMRS_VALID_ASSUMED_IDENTITY_HASH.values.first ]
           }
 
           Hoodoo::Services::Middleware.set_test_session( test_session )
@@ -1144,14 +1144,14 @@ describe Hoodoo::Services::Middleware do
               nil,
               {
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMRS_VALID_ASSUMED_IDENTITY_HASH )
               }
             )
 
             result = JSON.parse( last_response.body )
 
             expect( result[ 'show' ] ).to eq( {
-              'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+              'identity'    => MMRS_VALID_ASSUMED_IDENTITY_HASH,
               'fingerprint' => @caller_fingerprint
             } )
           end
@@ -1162,7 +1162,7 @@ describe Hoodoo::Services::Middleware do
               nil,
               {
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
-                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+                'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMRS_VALID_ASSUMED_IDENTITY_HASH )
               }
             )
 
@@ -1183,7 +1183,7 @@ describe Hoodoo::Services::Middleware do
             result = JSON.parse( last_response.body )
 
             expect( result[ 'show' ] ).to eq( {
-              'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+              'identity'    => MMRS_VALID_ASSUMED_IDENTITY_HASH,
               'fingerprint' => @caller_fingerprint
             } )
           end
@@ -1211,7 +1211,7 @@ describe Hoodoo::Services::Middleware do
           test_session.scoping  = test_session.scoping.dup
 
           test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
-          test_session.scoping.authorised_identities   = { 'caller_id' => [ CUSTOM_CALLER_ID ] }
+          test_session.scoping.authorised_identities   = { 'caller_id' => [ MMRS_CUSTOM_CALLER_ID ] }
 
           Hoodoo::Services::Middleware.set_test_session( test_session )
         end

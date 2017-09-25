@@ -6,8 +6,8 @@ require 'spec_helper'
 
 # Used for X-Assume-Identity-Of testing to avoid magic value copy-and-paste.
 #
-CUSTOM_CALLER_ID            = 'custom_caller_id'
-VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => CUSTOM_CALLER_ID }
+MMLS_CUSTOM_CALLER_ID            = 'custom_caller_id'
+MMLS_VALID_ASSUMED_IDENTITY_HASH = { 'caller_id' => MMLS_CUSTOM_CALLER_ID }
 
 # This gets inter-resource called from ...BImplementation. It expects search
 # data containing an 'offset' key and string/integer value. If > 0, an error
@@ -171,10 +171,10 @@ class RSpecTestInterResourceCallsBImplementation < Hoodoo::Services::Implementat
 
       if ( context.request.ident == 'set_bad_inter_resource_identity' )
         resource.assume_identity_of = {
-          VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
+          MMLS_VALID_ASSUMED_IDENTITY_HASH.keys.first => Hoodoo::UUID.generate
         }
       elsif ( context.request.ident == 'set_good_inter_resource_identity' )
-        resource.assume_identity_of = VALID_ASSUMED_IDENTITY_HASH
+        resource.assume_identity_of = MMLS_VALID_ASSUMED_IDENTITY_HASH
       end
 
       result = resource.show(
@@ -1110,8 +1110,8 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
 
         test_session.scoping.authorised_http_headers = [ 'X-Assume-Identity-Of' ]
         test_session.scoping.authorised_identities   = {
-          VALID_ASSUMED_IDENTITY_HASH.keys.first =>
-          [ VALID_ASSUMED_IDENTITY_HASH.values.first ]
+          MMLS_VALID_ASSUMED_IDENTITY_HASH.keys.first =>
+          [ MMLS_VALID_ASSUMED_IDENTITY_HASH.values.first ]
         }
 
         Hoodoo::Services::Middleware.set_test_session( test_session )
@@ -1128,14 +1128,14 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
             nil,
             {
               'CONTENT_TYPE' => 'application/json; charset=utf-8',
-              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMLS_VALID_ASSUMED_IDENTITY_HASH )
             }
           )
 
           result = JSON.parse( last_response.body )
 
           expect( result[ 'result' ] ).to eq( {
-            'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+            'identity'    => MMLS_VALID_ASSUMED_IDENTITY_HASH,
             'fingerprint' => @caller_fingerprint
           } )
         end
@@ -1146,7 +1146,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
             nil,
             {
               'CONTENT_TYPE' => 'application/json; charset=utf-8',
-              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( VALID_ASSUMED_IDENTITY_HASH )
+              'HTTP_X_ASSUME_IDENTITY_OF' => URI.encode_www_form( MMLS_VALID_ASSUMED_IDENTITY_HASH )
             }
           )
 
@@ -1157,7 +1157,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
       end
 
       context 'in inter-resource call only' do
-        identity_hash = { 'caller_id' => CUSTOM_CALLER_ID }
+        identity_hash = { 'caller_id' => MMLS_CUSTOM_CALLER_ID }
 
         it 'can still set identity for the downstream resource' do
           get(
@@ -1169,7 +1169,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
           result = JSON.parse( last_response.body )
 
           expect( result[ 'result' ] ).to eq( {
-            'identity'    => VALID_ASSUMED_IDENTITY_HASH,
+            'identity'    => MMLS_VALID_ASSUMED_IDENTITY_HASH,
             'fingerprint' => @caller_fingerprint
           } )
         end
@@ -1197,7 +1197,7 @@ describe Hoodoo::Services::Middleware::InterResourceLocal do
         test_session.scoping  = test_session.scoping.dup
 
         test_session.scoping.authorised_http_headers = [] # NO ALLOWED HEADERS
-        test_session.scoping.authorised_identities   = { 'caller_id' => [ CUSTOM_CALLER_ID ] }
+        test_session.scoping.authorised_identities   = { 'caller_id' => [ MMLS_CUSTOM_CALLER_ID ] }
 
         Hoodoo::Services::Middleware.set_test_session( test_session )
       end
