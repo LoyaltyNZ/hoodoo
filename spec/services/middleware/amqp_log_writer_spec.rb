@@ -3,14 +3,16 @@ require 'timecop'
 
 describe Hoodoo::Services::Middleware::AMQPLogWriter do
   before :each do
-    @session_id     = Hoodoo::UUID.generate
-    @caller_id      = Hoodoo::UUID.generate
-    @caller_version = 2
-    @session        = Hoodoo::Services::Session.new( {
-      :session_id     => @session_id,
-      :memcached_host => '0.0.0.0:0',
-      :caller_id      => @caller_id,
-      :caller_version => @caller_version
+    @session_id         = Hoodoo::UUID.generate
+    @caller_id          = Hoodoo::UUID.generate
+    @caller_version     = 2
+    @caller_fingerprint = Hoodoo::UUID.generate
+    @session            = Hoodoo::Services::Session.new( {
+      :session_id         => @session_id,
+      :memcached_host     => '0.0.0.0:0',
+      :caller_id          => @caller_id,
+      :caller_version     => @caller_version,
+      :caller_fingerprint => @caller_fingerprint
     } )
 
     @permissions_hash = {
