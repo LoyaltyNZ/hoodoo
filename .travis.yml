@@ -3,9 +3,9 @@
 language: ruby
 matrix:
   include:
-    - rvm: 2.4.1
-    - rvm: 2.3.4
-    - rvm: 2.2.7
+    - rvm: 2.4.2
+    - rvm: 2.3.5
+    - rvm: 2.2.8
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
