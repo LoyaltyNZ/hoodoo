@@ -925,20 +925,21 @@ When considering full such permissions, the system:
 
 ### <a name="authentication.api.resources"></a>Resources
 
-#### <a name="caller.resource"></a>Caller `::resource::caller`
+#### <a name=""></a>Caller `::resource::caller`
 
 A `Caller` is a representation of some actor which interacts with a Hoodoo-implemented API.
 
 ##### <a name="caller.resource.interface"></a>Interface
 
-| HTTP method | Endpoint        | Result |
-|-------------|-----------------|--------|
-| `POST`      | /callers/       | Create new Caller instance |
-| `GET`       | /callers/       | Obtain list of Caller representations |
-| `GET`       | /callers/{uuid} | Obtain representation of identified Caller instance |
-| `PATCH`     | /callers/{uuid} | Update representation of identified Caller instance |
-| `DELETE`    | /callers/{uuid} | Effectively delete identified Caller instance |
+| HTTP method | Endpoint                       | Result |
+|-------------|--------------------------------|--------|
+| `POST`      | /callers/                      | Create new Caller instance |
+| `GET`       | /callers/                      | Obtain list of Caller representations |
+| `GET`       | /callers/{uuid-or-fingerprint} | Obtain representation of identified Caller instance |
+| `PATCH`     | /callers/{uuid-or-fingerprint} | Update representation of identified Caller instance |
+| `DELETE`    | /callers/{uuid-or-fingerprint} | Effectively delete identified Caller instance |
 
+* Note that either primary UUID or fingerprint UUID may be used to identify an instance.
 * The `GET` 'list' call accepts [common query string parameters](#lppsf).
 * No additional sort fields are defined.
 * No special search or filter fields are defined in the generic case.
