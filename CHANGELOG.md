@@ -19,6 +19,8 @@
 
 * As a maintenance sweep, other gem minimum versions are updated to most-recent in passing but there are no known API changes therein that should impact services. Travis builds now run under PostgreSQL 9.6 instead of 9.4
 
+* The Caller resource now specifies that instances can be shown by primary UUID or fingerprint UUID; both are equally unique. If you are updating a Caller resource implementation, ensure that it records its fingerprint and is compliant with the Hoodoo 2 specification. If you have an ActiveRecord model supporting the resource, adding the line `acquire_with :foo` to that model where `:foo` is the name of the column used to store the fingerprint UUID (without modification) will suffice and use a migration to add an index for that column if there isn't one present already. The fingerprint is expected to be of the same form as any other Hoodoo 32-character UUID (see [`Hoodoo::UUID.generate`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/UUID.html#method-c-generate)).
+
 * New concept of framework-level search/filter query string of `created_by`, to go with fingerprint support introduced back in version 1.19.0. This requires _opt-out_ of services that don't support it, so is slightly backwards-incompatible with existing service code. If an interface already defines such a search key it'll override that provided by Hoodoo. Otherwise-unmodified older services which update to Hoodoo 2 and forget to opt-out will either return an error if the feature is used in an API call, or ignore it and return a list without that particular search/filter field applied.
 
 # Hoodoo v1.x
