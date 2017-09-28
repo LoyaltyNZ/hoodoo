@@ -186,6 +186,15 @@ module Hoodoo; module Services
       nil
     }
 
+    # A validation Proc for FRAMEWORK_QUERY_DATA - see that for details. This
+    # one ensures that the value is a valid UUID and evaluates to that UUID
+    # string if so.
+    #
+    FRAMEWORK_QUERY_VALUE_UUID_PROC = -> ( value ) {
+      value = Hoodoo::UUID.valid?( value ) && value
+      value || nil # => 'value' if 'value' is truthy, 'nil' if 'value' falsy
+    }
+
     # Out-of-box search and filter query keys. Interfaces can override the
     # support for these inside the Hoodoo::Services::Interface.to_list block
     # using Hoodoo::Services::Interface::ToListDSL.do_not_search and
@@ -216,6 +225,7 @@ module Hoodoo; module Services
     FRAMEWORK_QUERY_DATA = {
       'created_after'  => FRAMEWORK_QUERY_VALUE_DATE_PROC,
       'created_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'created_by'     => FRAMEWORK_QUERY_VALUE_UUID_PROC
     }
 
     # Utility - returns the execution environment as a Rails-like environment
