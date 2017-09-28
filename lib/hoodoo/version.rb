@@ -17,6 +17,6 @@ module Hoodoo
   # The Hoodoo gem date. If this changes, be sure to re-run
   # <tt>bundle install</tt> or <tt>bundle update</tt>.
   #
-  DATE = '2017-09-26'
+  DATE = '2017-09-29'
 
 end

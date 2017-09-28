@@ -375,7 +375,7 @@ encstr = CGI.escape( CGI.escape( str ) )
 
 ###### <a name="crby"></a>`created_before`
 
-Since version 2.0.0 (2017-09-27), Hoodoo provides framework-level search and filter query keys of `created_by` to search for resources created by a [Caller](#caller.resource) with a particular fingerprint. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering because it doesn't support storing the resource creator's fingerprint data with its persisted resource information, but documentation for the resource should say if this is the case.
+Since version 2.0.0 (2017-09-29), Hoodoo provides framework-level search and filter query keys of `created_by` to search for resources created by a [Caller](#caller.resource) with a particular fingerprint. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering because it doesn't support storing the resource creator's fingerprint data with its persisted resource information, but documentation for the resource should say if this is the case.
 
 #### <a name="apicbre"></a>Embedding
 
@@ -1344,4 +1344,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2016-07-12 | Release 3 | ADH    | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
 | 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before`. Mention potential for using this instead of very large offset values. |
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
-| 2017-09-27 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |
+| 2017-09-29 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |

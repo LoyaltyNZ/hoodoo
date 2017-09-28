@@ -51,7 +51,8 @@ as follows:</p>
 <pre><code>require &#39;airbrake&#39;
 
 Airbrake.configure do | config |
-  config.api_key = &#39;YOUR_AIRBRAKE_API_KEY&#39;
+  config.project_key = &#39;YOUR_AIRBRAKE_PROJECT_KEY&#39;
+  config.project_id  = &#39;YOUR_AIRBRAKE_PROJECT_ID&#39;
 end
 
 Hoodoo::Services::Middleware::ExceptionReporting.add(
@@ -139,7 +140,7 @@ describing an in-flight request/response cycle.</p>
                 <a href="javascript:toggleSource('method-i-contextual_report_source')" id="l_method-i-contextual_report_source">show</a>
               </p>
               <div id="method-i-contextual_report_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 72</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 77</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">opts</span> = {
     <span class="ruby-value">:rack_env</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>,
@@ -148,7 +149,7 @@ describing an in-flight request/response cycle.</p>
     <span class="ruby-value">:session</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> ) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unknown&#39;</span>
   }
 
-  <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_or_ignore</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
+  <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_sync</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -182,12 +183,16 @@ href="../../../../Rack.html">Rack</a> environment is provided.</p>
                 <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
               </p>
               <div id="method-i-report_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 56</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 57</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
   <span class="ruby-identifier">opts</span> = { <span class="ruby-value">:backtrace</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>() }
   <span class="ruby-identifier">opts</span>[ <span class="ruby-value">:rack_env</span> ] = <span class="ruby-identifier">env</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">nil?</span>
 
-  <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_or_ignore</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
+  <span class="ruby-comment"># Since an ExceptionReporter is already a &quot;slow communicatory&quot;,</span>
+  <span class="ruby-comment"># Hoodoo is using threads for behaviour; we don&#39;t need the async</span>
+  <span class="ruby-comment"># Airbrake mechanism to waste resources doing the same.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_sync</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
