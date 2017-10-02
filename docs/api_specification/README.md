@@ -146,7 +146,7 @@ To reduce the number of required API calls, the platform endeavours to keep clie
 
 * When a resource is updated, the success response body provides a representation of the updated resource.
 
-* When a resource is deleted, the success response body provides a representation of the deleted resource, in the state it was in just prior to deletion. This facilities stack-like call behaviour; clients MUST remain aware that the resource no longer exists and its UUID is (forever) invalid.
+* When a resource is deleted, the success response body provides a representation of the deleted resource, in the state it was in just prior to deletion. This facilitates stack-like call behaviour; clients MUST remain aware that the resource no longer exists and its UUID is (forever) invalid.
 
 Some calls may deviate from this route for reasons of relevance or performance. If so, the exception must be clearly documented. Use of the [`X-Deja-Vu`](#http_x_deja_vu) HTTP header may result in HTTP 204 response codes without any response body. In any other case, assume the above behaviour.
 
