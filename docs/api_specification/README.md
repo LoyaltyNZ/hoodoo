@@ -1040,7 +1040,7 @@ In this example, our model for the account/member/device example is a hierarchy.
 }
 ```
 
-This is a complex example with three levels of nesting. At the top level only `account_id` is given; if the HTTP header is in use at all, it must specify a least an `account_id` key and value. Note how the entry for `account_id` now has a sub-object instead of an array, with now _keys_ listing the allowed account IDs. For each of those allowed IDs, values are in essence a nested identity map framgent. We can look up the next thing which is allowed - `member_id`. In the case of the first and last accounts, there's even another level - the devices - but `account6` only has one member, `member12` and that member has no devices, so the structure just ends at a single-element array giving the permitted ID.
+This is a complex example with three levels of nesting. At the top level only `account_id` is given; if the HTTP header is in use at all, it must specify at least an `account_id` key and value. Note how the entry for `account_id` now has a sub-object instead of an array, with now _keys_ listing the allowed account IDs. For each of those allowed IDs, values are in essence a nested identity map fragment. We can look up the next thing which is allowed - `member_id`. In the case of the first and last accounts, there's even another level - the devices - but `account6` only has one member, `member12` and that member has no devices, so the structure just ends at a single-element array giving the permitted ID.
 
 With the updated map, the following header specification would be valid:
 
