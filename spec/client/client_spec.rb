@@ -28,10 +28,10 @@ class RSpecClientTestSessionImplementation < Hoodoo::Services::Implementation
     #
     context.response.set_resource(
       'id'         => session_id,
-      'created_at' => Time.now.utc.iso8601,
+      'created_at' => Hoodoo::Utilities.standard_datetime( Time.now ),
       'kind'       => 'RSpecClientTestSession',
       'caller_id'  => context.request.body[ 'caller_id' ],
-      'expires_at' => ( Time.now.utc + 24*60*60 ).iso8601
+      'expires_at' => Hoodoo::Utilities.standard_datetime( Time.now + 24 * 60 * 60 )
     )
   end
 end
@@ -153,7 +153,7 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
                                 context.request.body.try( :[], 'id' ) ||
                                 Hoodoo::UUID.generate(),
 
-        'created_at'         => Time.now.utc.iso8601,
+        'created_at'         => Hoodoo::Utilities.standard_datetime( Time.now ),
         'kind'               => 'RSpecClientTestTarget',
         'language'           => context.request.locale,
 
@@ -461,10 +461,11 @@ describe Hoodoo::Client do
 
     context 'and with a custom HTTP read timeout' do
       before :each do
+        timeout    = 0.001
         base_uri   = "http://localhost:#{ @port }"
         discoverer = Hoodoo::Services::Discovery::ByConvention.new(
           base_uri:     base_uri,
-          http_timeout: 0.0000001
+          http_timeout: timeout
         )
 
         set_vars_for(
@@ -473,6 +474,43 @@ describe Hoodoo::Client do
           session_id:   @old_test_session.session_id,
           discoverer:   discoverer
         )
+
+        expect_any_instance_of( Net::HTTP ).to receive( :read_timeout= ).with( timeout ).and_call_original
+        allow_any_instance_of( Net::BufferedIO ).to receive( :read ) do | instance, *args |
+          expect( instance.read_timeout ).to eq( timeout )
+          raise Net::ReadTimeout
+        end
+      end
+
+      it 'times out elegantly' do
+        mock_ident = Hoodoo::UUID.generate()
+        result     = @endpoint.show( mock_ident )
+
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.timeout' )
+      end
+    end
+
+    context 'and with a custom HTTP open timeout' do
+      before :each do
+        timeout    = 0.001
+        base_uri   = "http://localhost:#{ @port }"
+        discoverer = Hoodoo::Services::Discovery::ByConvention.new(
+          base_uri:          base_uri,
+          http_open_timeout: timeout
+        )
+
+        set_vars_for(
+          base_uri:     base_uri,
+          auto_session: false,
+          session_id:   @old_test_session.session_id,
+          discoverer:   discoverer
+        )
+
+        expect_any_instance_of( Net::HTTP ).to receive( :open_timeout= ).with( timeout ).and_call_original
+        expect( Timeout ).to receive( :timeout ).with( timeout, Net::OpenTimeout ).once do
+          raise Net::OpenTimeout
+        end
       end
 
       it 'times out elegantly' do
@@ -983,6 +1021,43 @@ describe Hoodoo::Client do
 
         result = @endpoint.list()
         expect( result.platform_errors.has_errors? ).to eq( false )
+      end
+
+      it 'does not retry for errors other than "platform.invalid_session"' do
+
+        # When we list first, Client has no session so will acquire one. The
+        # wrapping endpoint is asked to list, it pushes that through the
+        # session mechanism, gets the session and then calls the wrapped
+        # endpoint.
+
+        expect( @endpoint ).to receive( :acquire_session_for ).once.with( :list ).and_call_original
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once.and_call_original
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( false )
+
+        # When we list the second time, the wrapping endpoint has a session
+        # but we fake a simple "generic.malformed" response from the wrapped
+        # endpoint (probably impossible from a 'list' call in reality, but
+        # just some easy error that we can check for afterwards and is not as
+        # likely to be generated incidentally from other pieces of code as
+        # e.g. "generic.invalid_parameters").
+
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to receive( :list ).once do
+          array = Hoodoo::Client::AugmentedArray.new
+          array.platform_errors.add_error( 'generic.malformed' )
+          array
+        end
+
+        # This is just a normal error; we do not expect another session
+        # acquisition attempt or a retried call to #list.
+
+        expect( @endpoint ).to_not receive( :acquire_session_for )
+        expect( @endpoint.instance_variable_get( '@wrapped_endpoint' ) ).to_not receive( :list )
+
+        result = @endpoint.list()
+        expect( result.platform_errors.has_errors? ).to eq( true )
+        expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.malformed' )
       end
 
       it 'handles errors from the session resource' do

@@ -41,4 +41,41 @@ describe Hoodoo::TransientStore::Mocks::DalliClient do
     end
   end
 
+  context 'approximate old behaviour by' do
+    it 'using the mock client in test mode if there is an empty host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::DalliClient ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Memcached.new(
+        storage_host_uri: '',
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using the mock client in test mode if there is a "nil" host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::DalliClient ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Memcached.new(
+        storage_host_uri: nil,
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using a real client in test mode if there is a defined host' do
+      expect_any_instance_of( ::Dalli::Client ).to receive( :initialize ).once.and_call_original()
+
+      # Silence 'Errno::ECONNREFUSED' warnings if Memcached is not actually
+      # running at the given URI. That's fine; it's the initializer test
+      # above which is important.
+      #
+      spec_helper_silence_stream( $stdout ) do
+        spec_helper_silence_stream( $stderr ) do
+          Hoodoo::TransientStore::Memcached.new(
+            storage_host_uri: 'localhost:11211',
+            namespace:        'test_namespace_'
+          )
+        end
+      end
+    end
+  end
+
 end

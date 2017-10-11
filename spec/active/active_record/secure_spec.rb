@@ -11,7 +11,7 @@ describe Hoodoo::ActiveRecord::Secure do
         t.text :distributor
         t.text :field
 
-        t.timestamps
+        t.timestamps :null => true
       end
 
       ActiveRecord::Migration.create_table( :r_spec_model_secure_test_as, &migration )
@@ -332,7 +332,7 @@ describe Hoodoo::ActiveRecord::Secure do
         migration = Proc.new do | t |
           t.text :creating_caller_uuid
           t.text :programme_code
-          t.timestamps
+          t.timestamps :null => true
         end
 
         ActiveRecord::Migration.create_table( :r_spec_model_secure_render_as, &migration )
@@ -382,7 +382,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {
@@ -403,7 +403,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {
@@ -423,7 +423,7 @@ describe Hoodoo::ActiveRecord::Secure do
       expect(TestPresenterSecure.render_in(@context, data, options)).to eq({
         'id'           => u,
         'kind'         => 'TestPresenterSecure',
-        'created_at'   => t.iso8601,
+        'created_at'   => Hoodoo::Utilities.standard_datetime( t ),
         'language'     => 'en-nz',
         'three'        => 'default_three',
         'secured_with' => {

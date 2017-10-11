@@ -183,6 +183,17 @@ class alias here.</p></td>
       <!-- Section attributes -->
       <div class="sectiontitle">Attributes</div>
       <table border='0' cellpadding='5'>
+          <tr valign='top' id='attribute-i-caller_fingerprint'>
+            <td class='attr-rw'>
+              [RW]
+            </td>
+            <td class='attr-name'>caller_fingerprint</td>
+            <td class='attr-desc'><p>An optional property of a session is the Caller&#39;s fingerprint, a <a
+href="../UUID.html">UUID</a> assigned to some Callers which can be
+persisted by resource instances when created and rendered in the
+<code>created_by</code> field via e.g. <a
+href="../Presenters/Base.html">Hoodoo::Presenters::Base</a>.#render_in.</p></td>
+          </tr>
           <tr valign='top' id='attribute-i-caller_id'>
             <td class='attr-rw'>
               [RW]
@@ -334,6 +345,10 @@ saved without it.</p>
 </dd><dt><code>caller_version</code>
 <dd>
 <p>Version of the Caller instance; defaults to zero.</p>
+</dd><dt>+caller_fingerprint
+<dd>
+<p>Optional Caller fingerprint <a href="../UUID.html">UUID</a>. Default to
+<code>nil</code>.</p>
 </dd><dt><code>memcached_host</code>
 <dd>
 <p>Host for Memcached connections.</p>
@@ -348,14 +363,15 @@ saved without it.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 142</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 151</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>     ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span> ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>      = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>      ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_version</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">0</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>         ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span>     ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>          ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_version</span>     ] <span class="ruby-operator">||</span> <span class="ruby-number">0</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_fingerprint</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_fingerprint</span> ]
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -419,7 +435,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 <a href="javascript:toggleSource('method-i-augment_with_permissions_for_source')" id="l_method-i-augment_with_permissions_for_source">show</a>
               </p>
               <div id="method-i-augment_with_permissions_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 588</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 600</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -516,7 +532,7 @@ storage</p>
                 <a href="javascript:toggleSource('method-i-delete_from_store_source')" id="l_method-i-delete_from_store_source">show</a>
               </p>
               <div id="method-i-delete_from_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 416</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 426</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete_from_store</span>
   <span class="ruby-keyword">begin</span>
 
@@ -570,7 +586,7 @@ if it has either not expired, or has no expiry date set yet.</p>
                 <a href="javascript:toggleSource('method-i-expired-3F_source')" id="l_method-i-expired-3F_source">show</a>
               </p>
               <div id="method-i-expired-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 456</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 466</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
@@ -605,7 +621,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
                 <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
               </p>
               <div id="method-i-from_h-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 511</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 522</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
@@ -615,6 +631,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
     caller_id
     caller_version
     caller_identity_name
+    caller_fingerprint
 
   )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ]
@@ -671,7 +688,7 @@ href="Session.html#attribute-i-identity">identity</a>.</p>
                 <a href="javascript:toggleSource('method-i-identity-3D_source')" id="l_method-i-identity-3D_source">show</a>
               </p>
               <div id="method-i-identity-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 73</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">identity=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@identity</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -741,7 +758,7 @@ storage</p>
                 <a href="javascript:toggleSource('method-i-load_from_store-21_source')" id="l_method-i-load_from_store-21_source">show</a>
               </p>
               <div id="method-i-load_from_store-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 272</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 282</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">load_from_store!</span>( <span class="ruby-identifier">sid</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        = <span class="ruby-identifier">get_store</span>()
@@ -841,7 +858,7 @@ session is already outdated.</p>
                 <a href="javascript:toggleSource('method-i-save_to_store_source')" id="l_method-i-save_to_store_source">show</a>
               </p>
               <div id="method-i-save_to_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 172</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 182</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">save_to_store</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_store: Cannot save this session as it has no assigned Caller UUID&#39;</span>
@@ -939,7 +956,7 @@ href="Session.html#attribute-i-scoping">scoping</a>.</p>
                 <a href="javascript:toggleSource('method-i-scoping-3D_source')" id="l_method-i-scoping-3D_source">show</a>
               </p>
               <div id="method-i-scoping-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 91</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 97</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">scoping=</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@scoping</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -966,7 +983,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
                 <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
               </p>
               <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 466</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 476</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
   <span class="ruby-identifier">hash</span> = {}
 
@@ -976,6 +993,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
     caller_id
     caller_version
     caller_identity_name
+    caller_fingerprint
 
   )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
@@ -989,7 +1007,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
 
   )</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">property</span> <span class="ruby-operator">|</span>
     <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property</span> )
-    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-identifier">value</span>.<span class="ruby-identifier">iso8601</span>() <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">hash</span>[ <span class="ruby-identifier">property</span> ] = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-node">%w(
@@ -1035,7 +1053,7 @@ result in logged warnings.</p>
                 <a href="javascript:toggleSource('method-i-update_caller_version_in_memcached_source')" id="l_method-i-update_caller_version_in_memcached_source">show</a>
               </p>
               <div id="method-i-update_caller_version_in_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 375</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 385</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">store</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
@@ -1122,7 +1140,7 @@ engine</p>
                 <a href="javascript:toggleSource('method-i-update_caller_version_in_store_source')" id="l_method-i-update_caller_version_in_store_source">show</a>
               </p>
               <div id="method-i-update_caller_version_in_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 342</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 352</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_caller_version_in_store</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        <span class="ruby-operator">||=</span> <span class="ruby-identifier">get_store</span>()

@@ -12,7 +12,8 @@ describe Hoodoo::ActiveRecord::Finder do
         t.text :field_two
         t.text :field_three
 
-        t.timestamps
+        t.timestamps :null => true
+        t.text :created_by
       end
     end
 
@@ -79,7 +80,8 @@ describe Hoodoo::ActiveRecord::Finder do
         :wild_field_one   => sh.ciaw_match_generic( 'field_one '),
         :field_two        => sh.cs_match_csv(),
         'field_three'     => sh.cs_match_array(),
-        'created_after'   => sh.cs_gte( 'updated_at' )
+        'created_after'   => sh.cs_gte( 'updated_at' ), # Deliberate framework override
+        'created_by'      => sh.ci_match_generic( 'code' )      # Deliberate framework override
       }
 
       search_with( search_and_filter_map )
@@ -118,7 +120,9 @@ describe Hoodoo::ActiveRecord::Finder do
   end
 
   before :each do
-    @tn = Time.now.round()
+    @tn  = Time.now.round()
+    @cb1 = Hoodoo::UUID.generate()
+    @cb2 = Hoodoo::UUID.generate()
 
     @a = RSpecModelFinderTest.new
     @a.id = "one"
@@ -128,6 +132,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @a.field_three = 'three a'
     @a.created_at = @tn - 1.year
     @a.updated_at = @tn - 1.month
+    @a.created_by = @cb1
     @a.save!
     @id = @a.id
 
@@ -140,6 +145,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @b.field_three = 'three b'
     @b.created_at = @tn - 1.month
     @b.updated_at = @tn - 1.week
+    @b.created_by = @cb1
     @b.save!
     @uuid = @b.uuid
 
@@ -151,6 +157,7 @@ describe Hoodoo::ActiveRecord::Finder do
     @c.field_three = 'three c'
     @c.created_at = @tn
     @c.updated_at = @tn + 1.day
+    @c.created_by = @cb2
     @c.save!
     @code = @c.code
 
@@ -693,6 +700,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTest.list( @list_params )
       expect( finder ).to eq([@b, @a])
+
+      @list_params.search_data = {
+        'created_by' => @cb1
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
+
+      @list_params.search_data = {
+        'created_by' => @cb2
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
     end
 
     it 'searches with chain' do
@@ -754,6 +775,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = constraint.list( @list_params )
       expect( finder ).to eq([@b, @a])
+
+      @list_params.search_data = {
+        'created_by' => @cb1
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@b, @a])
+
+      @list_params.search_data = {
+        'created_by' => @cb2
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
     end
   end
 
@@ -812,7 +847,7 @@ describe Hoodoo::ActiveRecord::Finder do
       expect( finder ).to eq( [ @c_wh, @b_wh ] )
     end
 
-    it 'finds with framework override' do
+    it 'finds with framework override (to same column)' do
       @list_params.search_data = {
         'created_after' => @tn - 1.week
       }
@@ -826,6 +861,15 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTestWithHelpers.list( @list_params )
       expect( finder ).to eq( [ @c_wh ] )
+    end
+
+    it 'finds by framework override (to different column)' do
+      @list_params.search_data = {
+        'created_by' => 'b' # Maps to 'code' field, case insensitive
+      }
+
+      finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+      expect( finder ).to eq( [ @b_wh ] )
     end
   end
 
@@ -848,6 +892,15 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @a_wosf ] )
+    end
+
+    it 'on created_by' do
+      @list_params.search_data = {
+        'created_by' => @cb1
+      }
+
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+      expect( finder ).to eq( [ @b_wosf, @a_wosf ] )
     end
   end
 
@@ -964,6 +1017,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = RSpecModelFinderTest.list( @list_params )
       expect( finder ).to eq([@c])
+
+      @list_params.filter_data = {
+        'created_by' => @cb1
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@c])
+
+      @list_params.filter_data = {
+        'created_by' => @cb2
+      }
+
+      finder = RSpecModelFinderTest.list( @list_params )
+      expect( finder ).to eq([@b, @a])
     end
 
     it 'filters with chain' do
@@ -1029,6 +1096,20 @@ describe Hoodoo::ActiveRecord::Finder do
 
       finder = constraint.list( @list_params )
       expect( finder ).to eq([@c])
+
+      @list_params.filter_data = {
+        'created_by' => @cb1
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([@c])
+
+      @list_params.filter_data = {
+        'created_by' => @cb2
+      }
+
+      finder = constraint.list( @list_params )
+      expect( finder ).to eq([])
     end
   end
 
@@ -1129,6 +1210,15 @@ describe Hoodoo::ActiveRecord::Finder do
       finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
       expect( finder ).to eq( [ @c_wosf, @b_wosf ] )
     end
+
+    it 'on created_by' do
+      @list_params.filter_data = {
+        'created_by' => @cb1
+      }
+
+      finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+      expect( finder ).to eq( [ @c_wosf ] )
+    end
   end
 
   # ==========================================================================
@@ -1180,6 +1270,21 @@ describe Hoodoo::ActiveRecord::Finder do
 
         finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
         expect( finder ).to eq( [ @c_sc_wosf_b, @b_sc_wosf_b ] )
+      end
+
+      it 'on created_by' do
+        @list_params.filter_data = {
+          'created_by' => @cb2
+        }
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf, @a_sc_wosf ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf_a, @a_sc_wosf_a ] )
+
+        finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+        expect( finder ).to eq( [ @b_sc_wosf_b, @a_sc_wosf_b ] )
       end
     end
   end

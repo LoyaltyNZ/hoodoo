@@ -135,7 +135,7 @@ of the schema.</p>
                 <a href="javascript:toggleSource('method-c-get_schema_source')" id="l_method-c-get_schema_source">show</a>
               </p>
               <div id="method-c-get_schema_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 269</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 287</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
@@ -160,7 +160,7 @@ of the schema.</p>
                 <a href="javascript:toggleSource('method-c-get_schema_definition_source')" id="l_method-c-get_schema_definition_source">show</a>
               </p>
               <div id="method-c-get_schema_definition_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 276</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 294</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema_definition</span>
   <span class="ruby-ivar">@schema_definition</span>
 <span class="ruby-keyword">end</span></pre>
@@ -186,7 +186,7 @@ so, else <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-is_internationalised-3F_source')" id="l_method-c-is_internationalised-3F_source">show</a>
               </p>
               <div id="method-c-is_internationalised-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 263</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 281</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
 <span class="ruby-keyword">end</span></pre>
@@ -195,7 +195,7 @@ so, else <code>false</code>.</p>
           </div>
         <div class="method">
           <div class="title method-title" id="method-c-render">
-              <b>render</b>( data, uuid = nil, created_at = nil, language = &#39;en-nz&#39; )
+              <b>render</b>( data, uuid = nil, created_at = nil, language = &#39;en-nz&#39;, created_by = nil )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-render" name="method-c-render" class="permalink">Link</a>
           </div>
 
@@ -265,6 +265,11 @@ string!</p>
 <dd>
 <p>Optional language. If the type/resource being rendered is internationalised
 but this is omitted, then a value of “en-nz” is used as a default.</p>
+</dd><dt><code>created_by</code>
+<dd>
+<p>Optional fingerprint of the Caller whose credentials were used to create
+the Session under which the resource instance was created. Absent if
+omitted.</p>
 </dd></dl>
             </div>
 
@@ -276,8 +281,13 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
                 <a href="javascript:toggleSource('method-c-render_source')" id="l_method-c-render_source">show</a>
               </p>
               <div id="method-c-render_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 89</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">language</span> = <span class="ruby-string">&#39;en-nz&#39;</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 93</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>,
+                 <span class="ruby-identifier">uuid</span>       = <span class="ruby-keyword">nil</span>,
+                 <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>,
+                 <span class="ruby-identifier">language</span>   = <span class="ruby-string">&#39;en-nz&#39;</span>,
+                 <span class="ruby-identifier">created_by</span> = <span class="ruby-keyword">nil</span> )
+
   <span class="ruby-identifier">target</span> = {}
   <span class="ruby-identifier">data</span>   = <span class="ruby-identifier">data</span> <span class="ruby-operator">||</span> {}
 
@@ -305,10 +315,11 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
       <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
       <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">kind</span>,
-      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_s</span> ).<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>
+      <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">to_datetime</span> )
     } )
 
-    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span> ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;created_by&#39;</span> ] = <span class="ruby-identifier">created_by</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">target</span>[ <span class="ruby-string">&#39;language&#39;</span>   ] = <span class="ruby-identifier">language</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>()
 
   <span class="ruby-keyword">end</span>
 
@@ -368,6 +379,10 @@ href="Base.html#method-c-render">::render</a>, except mandatory.</p>
 <dd>
 <p>Same as the <code>created_at</code> parameter to <a
 href="Base.html#method-c-render">::render</a>, except mandatory.</p>
+</dd><dt><code>created_by</code>
+<dd>
+<p>Optional fingerprint of the Caller whose credentials were used to create
+the Session under which the resource instance was created.</p>
 </dd><dt><code>language</code>
 <dd>
 <p>Optional value for resource&#39;s <code>language</code> field; taken from
@@ -404,16 +419,17 @@ field and object value in the rendered resource data.</p>
                 <a href="javascript:toggleSource('method-c-render_in_source')" id="l_method-c-render_in_source">show</a>
               </p>
               <div id="method-c-render_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 180</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 194</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
   <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
+  <span class="ruby-identifier">created_by</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_by</span>   ]
   <span class="ruby-identifier">language</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:language</span>     ] <span class="ruby-operator">||</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">locale</span>
   <span class="ruby-identifier">secured_with</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:secured_with</span> ]
   <span class="ruby-identifier">embeds</span>       = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:embeds</span>       ]
   <span class="ruby-identifier">references</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:references</span>   ]
 
-  <span class="ruby-identifier">target</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">created_at</span>, <span class="ruby-identifier">language</span> )
+  <span class="ruby-identifier">target</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">created_at</span>, <span class="ruby-identifier">language</span>, <span class="ruby-identifier">created_by</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
     <span class="ruby-identifier">result_hash</span>     = {}
@@ -504,7 +520,7 @@ Optional; default is <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-validate_source')" id="l_method-c-validate_source">show</a>
               </p>
               <div id="method-c-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 226</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 241</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
 
@@ -514,6 +530,9 @@ Optional; default is <code>false</code>.</p>
       <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_at</span> ],
       <span class="ruby-string">&#39;kind&#39;</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">data</span>[ <span class="ruby-value">:kind</span>       ]
     }
+
+    <span class="ruby-identifier">created_by</span> = <span class="ruby-identifier">data</span>[ <span class="ruby-value">:created_by</span> ]
+    <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;created_by&#39;</span> ] = <span class="ruby-identifier">created_by</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">created_by</span>.<span class="ruby-identifier">nil?</span>
 
     <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>
       <span class="ruby-identifier">common_fields</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ] = <span class="ruby-identifier">data</span>[ <span class="ruby-string">&#39;internationalised&#39;</span> ]
@@ -553,7 +572,7 @@ recursing into nested objects, arrays and so-on as each is encountered.</p>
                 <a href="javascript:toggleSource('method-c-walk_source')" id="l_method-c-walk_source">show</a>
               </p>
               <div id="method-c-walk_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 256</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 274</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 <span class="ruby-keyword">end</span></pre>

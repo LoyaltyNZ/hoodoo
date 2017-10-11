@@ -8,7 +8,7 @@ describe Hoodoo::ActiveRecord::Creator do
         t.text :code
         t.text :field_one
 
-        t.timestamps
+        t.timestamps :null => true
       end
     end
 

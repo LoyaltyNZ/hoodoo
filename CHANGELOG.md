@@ -1,3 +1,57 @@
+# Hoodoo v2.x
+
+## 2.0.0 (2017-...)
+
+* Hoodoo and therefore Hoodoo services now require Ruby 2.2.x or later with Rack v2. Rack v1 and older AMQP support has been removed as it was causing dependency problems with other updated gems that were becoming impractical to resolve, which in turn meant Ruby 2.1.x support was equally impractical.
+
+* Updated to use ActiveSupport 5, ActiveRecord 5, Airbrake 6 and NewRelic 4. These all include API and/or configuration changes that may impact parts of service code outside core Hoodoo changes. See their respective guides and change logs for details:
+
+  - [ActiveSupport 5](http://edgeguides.rubyonrails.org/5_0_release_notes.html#active-support)
+  - [ActiveRecord 5](http://edgeguides.rubyonrails.org/5_0_release_notes.html#active-record)
+  - [Airbrake 5/6](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md)
+  - [NewRelic 4](https://github.com/newrelic/rpm)
+
+  Headline known changes are:
+
+  - If using Airbrake, update your configuration from `api_key` to [`project_key` and new mandatory option `project_id`](https://github.com/airbrake/airbrake/blob/master/docs/Migration_guide_from_v4_to_v5.md#configuration) - the Airbrake migration guide describes numerous other renamed configuration options, so check it carefully.
+  - If using Airbrake and manually raising exceptions rather than using the [Hoodoo exception abstraction](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Middleware/ExceptionReporting.html#method-c-report), you must change from `#notify_or_ignore` to plain `#notify`.
+  - If inheriting from `Hoodoo::ActiveRecord::Base` for Hoodoo extensions in ActiveRecord models you do not need to change your class declarations; else [note this Guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#active-record-models-now-inherit-from-applicationrecord-by-default).
+
+* As a maintenance sweep, other gem minimum versions are updated to most-recent in passing but there are no known API changes therein that should impact services. Travis builds now run under PostgreSQL 9.6 instead of 9.4
+
+* The Caller resource now specifies that instances can be shown by primary UUID or fingerprint UUID; both are equally unique. If you are updating a Caller resource implementation, ensure that it records its fingerprint and is compliant with the Hoodoo 2 specification. If you have an ActiveRecord model supporting the resource, adding the line `acquire_with :foo` to that model where `:foo` is the name of the column used to store the fingerprint UUID (without modification) will suffice and use a migration to add an index for that column if there isn't one present already. The fingerprint is expected to be of the same form as any other Hoodoo 32-character UUID (see [`Hoodoo::UUID.generate`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/UUID.html#method-c-generate)). This is intended for API lookup only; **ensure you have test coverage to prove that Sessions can still only be created with a Caller ID, not a fingerprint!**
+
+* New concept of framework-level search/filter query string of `created_by`, to go with fingerprint support introduced back in version 1.19.0. This requires _opt-out_ of services that don't support it, so is slightly backwards-incompatible with existing service code. If an interface already defines such a search key it'll override that provided by Hoodoo. Otherwise-unmodified older services which update to Hoodoo 2 and forget to opt-out will either return an error if the feature is used in an API call, or ignore it and return a list without that particular search/filter field applied.
+
+# Hoodoo v1.x
+
+## 1.19.0 (2017-08-17)
+
+* Now supports ["fingerprints"](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification#fingerprints) - an optional UUID associated with a Caller, conveyed in a session payload in the transient store via [`caller_fingerprint`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html#attribute-i-caller_fingerprint) so a resource implementation would read `context.session.caller_fingerprint`) and which should be rendered, if the resource implementation supports persisting and reporting fingerprints, via the `created_by` extensions to [Hoodoo::Presenters::Base#render](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Base.html#method-c-render) and [Hoodoo::Presenters::Base#render_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Presenters/Base.html#method-c-render_in).
+
+## 1.18.0 (2017-08-17)
+
+* Can set the [`http_open_timeout`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Discovery/ByConvention.html) for `Hoodoo::Client` connections. The [default timeout](https://ruby-doc.org/stdlib-2.4.1/libdoc/net/http/rdoc/Net/HTTP.html) for opening a connection is 60 seconds, which may be too long for some callers.
+
+## 1.17.0 (2017-08-01)
+
+* Higher precision `created_at` (and for sessions, `expires_at`) default time rendering. For some use cases, to-one-second accuracy was insufficient. New method [`Hoodoo::Utilities::standard_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-standard_datetime) is used for this.
+
+## 1.16.1 (2017-07-11)
+
+* Maintenance pass including `bundle update` and new Ruby micro versions for development.
+* Resolve [issue 212](https://github.com/LoyaltyNZ/hoodoo/issues/212) for Memcached backend in [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html) and implement same behavioural change for the Redis backend. If relevant environment variables for connecting to a real engine are not defined, tests will default back to the mock system again, as they did before version 1.15.0.
+
+## 1.16.0 (2017-06-23)
+
+* Add support for [Datadog](https://www.datadoghq.com) as an alternative to [NewRelic](https://newrelic.com) via the [DDTrace](https://github.com/DataDog/dd-trace-rb) gem.
+* Maintenance `bundle update` including moving to latest Database Cleaner for tests, since its most recent incarnation works with the suite again (one test is updated to account for new support for cleaning across multiple database connections).
+
+## 1.15.1 (2017-04-18)
+
+* Fixed a bug in [Hoodoo::Client](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Client.html) which would cause it, during auto-session acquisition, to retry _any_ call that returned an error once in the misguided belief it needed a new session.
+* Two minor comment-only fixes added to RDoc documentation around embedding.
+
 ## 1.15.0 (2017-02-08)
 
 * Moves the [`Hoodoo::Services::Session` engine](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Session.html) to using [`Hoodoo::TransientStore`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/TransientStore.html). This should be a largely transparent change except for method deprecations described below.

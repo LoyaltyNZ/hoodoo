@@ -67,8 +67,8 @@ module Hoodoo
       #       :limit     => 25,
       #       :sort      => :created_at,
       #       :direction => :asc,
-      #       :embeds    => 'account',
-      #       :search    => { :surname => 'Smith' }
+      #       :search    => { :surname => 'Smith' },
+      #       :_embed    => 'account'
       #     )
       #
       # This will return a Hoodoo::Client::AugmentedArray. This is an Array

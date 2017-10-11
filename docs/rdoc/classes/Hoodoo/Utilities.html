@@ -96,6 +96,9 @@
                 <a href="#method-c-spare_port">spare_port</a>,
               </li>
               <li>
+                <a href="#method-c-standard_datetime">standard_datetime</a>,
+              </li>
+              <li>
                 <a href="#method-c-stringify">stringify</a>,
               </li>
               <li>
@@ -512,7 +515,7 @@ nanosecond precision.</p>
                 <a href="javascript:toggleSource('method-c-nanosecond_iso8601_source')" id="l_method-c-nanosecond_iso8601_source">show</a>
               </p>
               <div id="method-c-nanosecond_iso8601_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 353</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 363</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">nanosecond_iso8601</span>( <span class="ruby-identifier">time_or_date_time</span> )
   <span class="ruby-identifier">time_or_date_time</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-number">9</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -546,7 +549,7 @@ DateTime instance; in these cases, an equivalent DateTime is returned. If
                 <a href="javascript:toggleSource('method-c-rationalise_datetime_source')" id="l_method-c-rationalise_datetime_source">show</a>
               </p>
               <div id="method-c-rationalise_datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 366</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 376</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
@@ -599,6 +602,34 @@ for test environments only.</p>
   <span class="ruby-identifier">socket</span>.<span class="ruby-identifier">close</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">port</span>
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-c-standard_datetime">
+              <b>standard_datetime</b>( date_or_time_or_date_time )
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-standard_datetime" name="method-c-standard_datetime" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>Returns an ISO 8601 String equivalent of the given Time, Date or DateTime
+instance as a full date-time with UTC timezone, with “standard high
+precision” (for rendeirng consistency), subject to Ruby port / OS support
+abilities. At the time of writing, 6 decimal places are included.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-standard_datetime_source')" id="l_method-c-standard_datetime_source">show</a>
+              </p>
+              <div id="method-c-standard_datetime_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 349</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">date_or_time_or_date_time</span> )
+  <span class="ruby-identifier">date_or_time_or_date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-number">6</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

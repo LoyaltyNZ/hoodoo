@@ -4,7 +4,7 @@ require 'hoodoo/version'
 Gem::Specification.new do | s |
   s.name        = 'hoodoo'
   s.version     = Hoodoo::VERSION
-  s.date        = '2017-02-08'
+  s.date        = Hoodoo::DATE
   s.summary     = 'Opinionated APIs'
   s.description = 'Simplify the implementation of consistent services within an API-based software platform.'
   s.authors     = [ 'Loyalty New Zealand' ]
@@ -17,7 +17,7 @@ Gem::Specification.new do | s |
   s.test_files  = Dir.glob( 'spec/**/*.rb' )
   s.homepage    = 'https://loyaltynz.github.io/hoodoo/'
 
-  s.required_ruby_version = '>= 2.1'
+  s.required_ruby_version = '>= 2.2.7'
 
   s.add_runtime_dependency     'dalli',            '~> 2.7' # Memcached client
 
@@ -30,11 +30,11 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'rspec-mocks',      '~> 3.3'
   s.add_development_dependency 'activerecord',     '~> 4.2'
   s.add_development_dependency 'activesupport',    '~> 4.2'
-  s.add_development_dependency 'database_cleaner', '~> 1.4.0' # 1.5.x breaks tests
+  s.add_development_dependency 'database_cleaner', '~> 1.6'
   s.add_development_dependency 'pg',               '~> 0.18'
   s.add_development_dependency 'byebug',           '~> 3.5'
   s.add_development_dependency 'timecop',          '~> 0.8'
   s.add_development_dependency 'raygun4ruby',      '~> 1.1' # raygun.io
-  s.add_development_dependency 'airbrake',         '~> 5.6' # airbrake.io
+  s.add_development_dependency 'airbrake',         '~> 6.2' # airbrake.io
   s.add_development_dependency 'le',               '~> 2.6' # logentries.com
 end

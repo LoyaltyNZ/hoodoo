@@ -6,10 +6,11 @@ describe Hoodoo::Data::Resources::Caller do
 
     expect(schema.is_internationalised?()).to eq(true)
 
-    expect(schema.properties.count).to eq(5)
+    expect(schema.properties.count).to eq(6)
 
     expect(schema.properties['authentication_secret']).to be_a(Hoodoo::Presenters::Text)
     expect(schema.properties['name']).to be_a(Hoodoo::Presenters::Text)
+    expect(schema.properties['fingerprint']).to be_a(Hoodoo::Presenters::UUID)
     expect(schema.properties['identity']).to be_a(Hoodoo::Presenters::Hash)
     expect(schema.properties['permissions']).to be_a(Hoodoo::Presenters::Object)
     expect(schema.properties['permissions'].properties['resources']).to be_a(Hoodoo::Presenters::Hash)
@@ -95,7 +96,7 @@ describe Hoodoo::Data::Resources::Caller do
     expect(json).to eq(
       {
         'id'         => id,
-        'created_at' => created_at.utc.iso8601,
+        'created_at' => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'       => 'Caller',
         "name"       => "Test Caller",
         "identity"   => {
@@ -144,7 +145,7 @@ describe Hoodoo::Data::Resources::Caller do
     expect(json).to eq(
       {
         'id'          => id,
-        'created_at'  => created_at.utc.iso8601,
+        'created_at'  => Hoodoo::Utilities.standard_datetime( created_at ),
         'kind'        => 'Caller',
         "identity"    => {},
         "permissions" => { "resources" => {} },

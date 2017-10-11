@@ -487,7 +487,7 @@ module Hoodoo; module Services
     # Example: An interface permits lists that request embedding or
     # referencing of "vouchers", "balances" and "member":
     #
-    #     embed :vouchers, :balances, :member
+    #     embeds :vouchers, :balances, :member
     #
     # As a result, #embeds would return:
     #

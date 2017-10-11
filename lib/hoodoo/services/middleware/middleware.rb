@@ -12,6 +12,7 @@
 ########################################################################
 
 require 'set'
+require 'cgi'
 require 'uri'
 require 'json'
 require 'benchmark'
@@ -160,10 +161,11 @@ module Hoodoo; module Services
     #
     DEFAULT_TEST_SESSION.from_h!( {
       'session_id'           => '01234567890123456789012345678901',
-      'expires_at'           => ( Time.now + 172800 ).utc.iso8601,
+      'expires_at'           => Hoodoo::Utilities.standard_datetime( Time.now + 172800 ),
       'caller_version'       => 1,
       'caller_id'            =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
       'caller_identity_name' =>                  'c5ea12fb7f414a46850e73ee1bf6d95e',
+      'caller_fingerprint'   =>                  '7bc0b402a77543a49d0b1b671253fb25',
       'identity'             => { 'caller_id' => 'c5ea12fb7f414a46850e73ee1bf6d95e' },
       'permissions'          => Hoodoo::Services::Permissions.new( {
         'default' => { 'else' => Hoodoo::Services::Permissions::ALLOW }
@@ -183,6 +185,15 @@ module Hoodoo; module Services
       Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ?
       Hoodoo::Utilities.rationalise_datetime( value )           :
       nil
+    }
+
+    # A validation Proc for FRAMEWORK_QUERY_DATA - see that for details. This
+    # one ensures that the value is a valid UUID and evaluates to that UUID
+    # string if so.
+    #
+    FRAMEWORK_QUERY_VALUE_UUID_PROC = -> ( value ) {
+      value = Hoodoo::UUID.valid?( value ) && value
+      value || nil # => 'value' if 'value' is truthy, 'nil' if 'value' falsy
     }
 
     # Out-of-box search and filter query keys. Interfaces can override the
@@ -215,6 +226,7 @@ module Hoodoo; module Services
     FRAMEWORK_QUERY_DATA = {
       'created_after'  => FRAMEWORK_QUERY_VALUE_DATE_PROC,
       'created_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'created_by'     => FRAMEWORK_QUERY_VALUE_UUID_PROC
     }
 
     # Utility - returns the execution environment as a Rails-like environment
@@ -477,7 +489,6 @@ module Hoodoo; module Services
       # implementation   Hoodoo::Services::Implementation subclass *instance* to
       #                  use on match
       #
-      #
       @@services = service_container.component_interfaces.map do | interface |
 
         if interface.nil? || interface.endpoint.nil? || interface.implementation.nil?
@@ -619,10 +630,10 @@ module Hoodoo; module Services
     #
     # +version+::     Required implemented version for the endpoint. Integer.
     #
-    # +interaction+:: The Hoodoo::Services::Interaction instance describing
-    #                 the inbound call, the processing of which is leading to
-    #                 a request for an inter-resource call by an endpoint
-    #                 implementation.
+    # +interaction+:: The Hoodoo::Services::Middleware::Interaction instance
+    #                 describing the inbound call, the processing of which is
+    #                 leading to a request for an inter-resource call by an
+    #                 endpoint implementation.
     #
     def inter_resource_endpoint_for( resource, version, interaction )
       resource = resource.to_sym
@@ -719,11 +730,12 @@ module Hoodoo; module Services
     #
     # Named parameters are as follows:
     #
-    # +source_interaction+:: A Hoodoo::Services::Interaction instance for the
-    #                        inbound call which is being processed right now
-    #                        by some resource endpoint implementation and this
-    #                        implementation is now making an inter-resource
-    #                        call as part of its processing;
+    # +source_interaction+:: A Hoodoo::Services::Middleware::Interaction
+    #                        instance for the inbound call which is being
+    #                        processed right now by some resource endpoint
+    #                        implementation and this implementation is now
+    #                        making an inter-resource call as part of its
+    #                        processing;
     #
     # +discovery_result+::   A Hoodoo::Services::Discovery::ForLocal instance
     #                        describing the target of the inter-resource call;
@@ -990,13 +1002,13 @@ module Hoodoo; module Services
 
     # Make an "inbound" call log based on the given interaction.
     #
-    # +interaction+:: Hoodoo::Services::Interaction describing the inbound
-    #                 request. The +interaction_id+, +rack_request+ and
-    #                 +session+ data is used (the latter being optional).
-    #                 If +target_interface+ and +requested_action+ are
-    #                 available, body data _might_ be logged according to
-    #                 secure log settings in the interface; if these
-    #                 values are unset, body data is _not_ logged.
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction describing the
+    #                 inbound request. The +interaction_id+, +rack_request+ and
+    #                 +session+ data is used (the latter being optional). If
+    #                 +target_interface+ and +requested_action+ are available,
+    #                 body data _might_ be logged according to secure log
+    #                 settings in the interface; if these values are unset,
+    #                 body data is _not_ logged.
     #
     def monkey_log_inbound_request( interaction )
 
@@ -1180,12 +1192,12 @@ module Hoodoo; module Services
     # Build common log information for the 'data' part of a payload based
     # on the given interaction. Returned as a Hash with Symbol keys.
     #
-    # +interaction+:: Hoodoo::Services::Interaction describing a request.
-    #                 A +context+ and +interaction_id+ are expected. The
-    #                 +target_interface+ and +requested_action+ are optional
-    #                 and if present result in a <tt>:target</tt> entry in
-    #                 the returned Hash. The +context.session+ value if
-    #                 present will be included in a <tt>:session</tt> entry;
+    # +interaction+:: Hoodoo::Services::Middleware::Interaction describing a
+    #                 request. A +context+ and +interaction_id+ are expected.
+    #                 The +target_interface+ and +requested_action+ are
+    #                 optional and if present result in a <tt>:target</tt>
+    #                 entry in the returned Hash. The +context.session+ value
+    #                 if present will be included in a <tt>:session</tt> entry;
     #                 if verbose logging is enabled this will be quoted in
     #                 full, else only identity-related parts are recorded.
     #
@@ -1210,6 +1222,7 @@ module Hoodoo; module Services
             'caller_id'            => session.caller_id,
             'caller_version'       => session.caller_version,
             'caller_identity_name' => session.caller_identity_name,
+            'caller_fingerprint'   => session.caller_fingerprint,
             'identity'             => Hoodoo::Utilities.stringify( ( session.identity || {} ).to_h() )
           }
         end
@@ -1575,8 +1588,8 @@ module Hoodoo; module Services
           end
         end
 
-        host = @@recorded_host if host.nil? && defined?( @@recorded_host )
-        port = @@recorded_port if port.nil? && defined?( @@recorded_port )
+        host ||= @@recorded_host if defined?( @@recorded_host )
+        port ||= @@recorded_port if defined?( @@recorded_port )
 
         # Under test, ensure a simulation of an available host and port is
         # always available for discovery-related tests.
@@ -1586,23 +1599,23 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Announce the resource endpoints unless we are still missing a host
-        # or port. Implication is 'racksh'.
+        # Announce the resource endpoints. We might not be able to annouce
+        # the remote availability of this endpoint if the host/port are not
+        # determined; but that might just be because we are running under
+        # "racksh" and we wouldn't want to announce remotely anyway.
 
-        unless host.nil? || port.nil?
-          services.each do | service |
-            interface = service.interface_class
+        services.each do | service |
+          interface = service.interface_class
 
-            @discoverer.announce(
-              interface.resource,
-              interface.version,
-              {
-                :host => host,
-                :port => port,
-                :path => service.base_path
-              }
-            )
-          end
+          @discoverer.announce(
+            interface.resource,
+            interface.version,
+            {
+              :host => host,
+              :port => port,
+              :path => service.base_path
+            }
+          )
         end
       end
     end
@@ -1750,7 +1763,7 @@ module Hoodoo; module Services
       # We try the custom routing path first, then the de facto path, then
       # give up if neither match.
 
-      uri_path = CGI.unescape( interaction.rack_request.path() )
+      uri_path = ::CGI.unescape( interaction.rack_request.path() )
 
       selected_path_data = nil
       selected_services  = @@services.select do | service_data |
