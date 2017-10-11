@@ -46,7 +46,8 @@ module Hoodoo
 
       name = args.first
 
-      return show_usage if name == '-h' || name == '--help'
+      return show_usage   if name == '-h' || name == '--help' || name.nil? || name.empty?
+      return show_version if name == '-v' || name == '--version'
 
       return usage_and_warning( "SERVICE_NAME must match #{ NAME_REGEX.inspect }" ) if naughty_name?( name )
       return usage_and_warning( "'#{ name }' already exists" ) if File.exist?( "./#{ name }" )
@@ -139,10 +140,32 @@ module Hoodoo
     end
 
     def show_usage
-      puts "Usage: hoodoo SERVICE_NAME [--from <git-repository> | --path <full-pathname>]"
-      puts "  e.g. hoodoo service_cron"
-      puts "       hoodoo service_person  --from git@github.com:YOURNAME/service_shell_fork.git"
-      puts "       hoodoo service_product --path /path/to/local/service/shell/container"
+      puts
+      puts "Creates a service shell at the PWD, customised with the given service name."
+      puts
+      puts "  hoodoo <service-name> [--from <git-repository> | --path <full-pathname>]"
+      puts
+      puts "For example:"
+      puts
+      puts "  hoodoo service_cron"
+      puts "  hoodoo service_person  --from git@github.com:YOURNAME/service_shell_fork.git"
+      puts "  hoodoo service_product --path /path/to/local/service/shell/container"
+      puts
+      puts "See also:"
+      puts
+      puts "  hoodoo --help    shows this help"
+      puts "  hoodoo --version shows the require-able gem version"
+      puts
+
+      Kernel::exit( KERNEL_EXIT_FAILURE )
+    end
+
+    def show_version
+      require 'hoodoo/version'
+
+      puts
+      puts "Accessible Hoodoo gem is #{ Hoodoo::VERSION } (#{ Hoodoo::DATE })"
+      puts
 
       Kernel::exit( KERNEL_EXIT_FAILURE )
     end
