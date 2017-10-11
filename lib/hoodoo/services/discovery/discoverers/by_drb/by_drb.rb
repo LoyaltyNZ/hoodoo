@@ -90,7 +90,7 @@ module Hoodoo
             # subsequent runs do not - yet it stays the same, so it works out
             # OK there.
             #
-            unless discover_remote( resource, version ) || endpoint_uri_string.nil?
+            unless endpoint_uri_string.nil? || discover_remote( resource, version )
               drb_service().add( resource, version, endpoint_uri_string )
             end
 
