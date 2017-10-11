@@ -25,7 +25,7 @@ describe Hoodoo::TransientStore::Mocks::Redis do
     end
   end
 
-  context 'mimic approximated old behaviour of its Memcached counterpart by' do
+  context 'approximate old behaviour by' do
     it 'using the mock client in test mode if there is an empty host' do
       expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
 
