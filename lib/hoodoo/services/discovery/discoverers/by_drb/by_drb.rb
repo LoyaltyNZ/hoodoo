@@ -63,7 +63,7 @@ module Hoodoo
           # +version+::  Passed to #discover_remote.
           # +options+::  Options hash as described below.
           #
-          # Options keys are currently all required:
+          # Options keys are:
           #
           # +host+:: Host name as a string for location of service endpoint,
           #          over HTTP (usually, local development is assumed).
@@ -72,20 +72,25 @@ module Hoodoo
           #
           # +path+:: Path on the above host and port of service endpoint.
           #
+          # If any are missing or +nil+, remote announcement is aborted and
+          # the return value is correspondingly +nil+.
+          #
           def announce_remote( resource, version, options = {} )
 
             host = options[ :host ]
             port = options[ :port ]
             path = options[ :path ]
 
-            endpoint_uri_string = "http://#{ host }:#{ port }#{ path }"
+            endpoint_uri_string = unless host.nil? || port.nil? || path.nil?
+              "http://#{ host }:#{ port }#{ path }"
+            end
 
-            # Announce our local services if we managed to find the host and port,
-            # but no point otherwise; the values could be anything. In a 'guard'
-            # based environment, first-run determines host and port but subsequent
-            # runs do not - yet it stays the same, so it works out OK there.
+            # Announce our local services only if we have an endpoint URI. In a
+            # 'guard' based environment, first-run determines host and port but
+            # subsequent runs do not - yet it stays the same, so it works out
+            # OK there.
             #
-            unless host.nil? || port.nil? || discover_remote( resource, version )
+            unless endpoint_uri_string.nil? || discover_remote( resource, version )
               drb_service().add( resource, version, endpoint_uri_string )
             end
 
@@ -157,7 +162,7 @@ module Hoodoo
             rescue DRb::DRbConnError
               if start_on_localhost_if_not_already_running
                 script_path = File.join( File.dirname( __FILE__ ), 'drb_server_start.rb' )
-                command     = "bundle exec ruby '#{ script_path }'"
+                command     = "#{ defined?( Bundler ) ? 'bundle exec ' : '' }ruby '#{ script_path }'"
                 command    << " --port #{ @drb_port }" unless @drb_port.nil? || @drb_port.empty?
 
                 Process.detach( spawn( command ) )

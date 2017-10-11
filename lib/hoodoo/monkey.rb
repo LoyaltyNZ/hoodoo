@@ -12,3 +12,4 @@
 require 'hoodoo/monkey/monkey'
 require 'hoodoo/monkey/patch/newrelic_middleware_analytics'
 require 'hoodoo/monkey/patch/newrelic_traced_amqp'
+require 'hoodoo/monkey/patch/datadog_traced_amqp'

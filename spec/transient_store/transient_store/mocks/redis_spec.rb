@@ -25,4 +25,43 @@ describe Hoodoo::TransientStore::Mocks::Redis do
     end
   end
 
+  context 'approximate old behaviour by' do
+    it 'using the mock client in test mode if there is an empty host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Redis.new(
+        storage_host_uri: '',
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using the mock client in test mode if there is a "nil" host' do
+      expect_any_instance_of( Hoodoo::TransientStore::Mocks::Redis ).to receive( :initialize ).once.and_call_original()
+
+      Hoodoo::TransientStore::Redis.new(
+        storage_host_uri: nil,
+        namespace:        'test_namespace_'
+      )
+    end
+
+    it 'using a real client in test mode if there is a defined host' do
+      expect_any_instance_of( ::Redis ).to receive( :initialize ).once.and_call_original()
+
+      # If Redis is missing, Hoodoo raises an exception. Allow that in case no
+      # real Redis server is present, but don't allow other exceptions.
+      #
+      begin
+        spec_helper_silence_stream( $stdout ) do
+          Hoodoo::TransientStore::Redis.new(
+            storage_host_uri: 'redis://localhost:6379',
+            namespace:        'test_namespace_'
+          )
+        end
+      rescue => e
+        expect( e         ).to be_a( RuntimeError )
+        expect( e.message ).to include( "Hoodoo::TransientStore::Redis: Cannot connect to Redis at 'redis://localhost:6379': " )
+      end
+    end
+  end
+
 end

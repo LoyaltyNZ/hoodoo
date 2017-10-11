@@ -76,13 +76,14 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
 implementation is called via <code>super</code>.</p>
 <dl class="rdoc-list note-list"><dt>interaction
 <dd>
-<p>Hoodoo::Services::Interaction describing the inbound request. The
-<code>interaction_id</code>, <code>rack_request</code> and
-<code>session</code> data is used (the latter being optional). If
-<code>target_interface</code> and <code>requested_action</code> are
-available, body data <em>might</em> be logged according to secure log
-settings in the interface; if these values are unset, body data is
-<em>not</em> logged.</p>
+<p><a
+href="../../../Services/Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+instance describing the inbound request. The <code>interaction_id</code>,
+<code>rack_request</code> and <code>session</code> data is used (the latter
+being optional). If <code>target_interface</code> and
+<code>requested_action</code> are available, body data <em>might</em> be
+logged according to secure log settings in the interface; if these values
+are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
             </div>
 
@@ -94,10 +95,11 @@ settings in the interface; if these values are unset, body data is
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
               </p>
               <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Add custom attributes to the NewRelic transaction.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-operator">::</span><span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">add_custom_attributes</span>(
     {
       <span class="ruby-value">:target_action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>,
@@ -106,6 +108,7 @@ settings in the interface; if these values are unset, body data is
   )
 
   <span class="ruby-comment"># Call the original logging method.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">interaction</span> )
 
 <span class="ruby-keyword">end</span></pre>

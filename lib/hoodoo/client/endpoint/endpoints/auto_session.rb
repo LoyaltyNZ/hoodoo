@@ -134,12 +134,11 @@ module Hoodoo
             end
 
             result      = @wrapped_endpoint.send( action, *args )
-            bad_session = result.platform_errors.has_errors? &&
-                          result.platform_errors.errors.find do | error_hash |
+            bad_session = result.platform_errors.errors.find do | error_hash |
                             error_hash[ 'code' ] == 'platform.invalid_session'
                           end
 
-            if bad_session == false
+            if bad_session.nil?
               return result
             else
               session_creation_result = acquire_session_for( action )

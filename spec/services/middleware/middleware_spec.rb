@@ -267,6 +267,37 @@ describe Hoodoo::Services::Middleware do
       end
     end
 
+    it 'rejects attempts to send body data for HTTP methods that should not have any' do
+
+      # I can't find a way to persuade Rack to send body data instead of query
+      # parameters for GET (it's trying to Do The Right Thing) so instead I'm
+      # forced to write expectations that assume the implementation in the
+      # middleware.
+      #
+      allow_any_instance_of( Rack::Request ).to receive( :body ).and_return( StringIO.new( "hello world" ) )
+      get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(422)
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
+      expect(result['errors'][0]['message']).to eq('Unexpected body data for this action')
+    end
+
+    it 'rejects oversized payloads' do
+      stub_const('Hoodoo::Services::Middleware::MAXIMUM_PAYLOAD_SIZE', 10)
+
+      post '/v2/rspec_test_service_stub',
+           JSON.fast_generate( { 'key' => 'this is definitely larger than 10 characters as JSON' } ),
+           { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+
+      expect(last_response.status).to eq(422)
+
+      result = JSON.parse(last_response.body)
+      expect(result['errors'][0]['code']).to eq('platform.malformed')
+      expect(result['errors'][0]['message']).to eq('Body data exceeds configured maximum size for platform')
+    end
+
     it 'should generate interaction IDs and other standard headers even for error states' do
       get '/v2/rspec_test_service_stub'
 
@@ -853,7 +884,7 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('search: thing\\, thang')
       end
 
-      it 'should respond to permitted framework search query parameter' do
+      it 'should respond to permitted framework search query parameter "created_after"' do
         dt     = DateTime.parse( Time.now.round.iso8601 )
         str    = dt.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
@@ -866,7 +897,7 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should reject malformed value in permitted framework search query parameter' do
+      it 'should reject malformed value in permitted framework search query parameter "created_after"' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get "/v2/rspec_test_service_stub?search=created_after%3Dthing", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
@@ -874,6 +905,27 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('search: created_after')
+      end
+
+      it 'should respond to permitted framework search query parameter "created_by"' do
+        encstr = Hoodoo::UUID.generate()
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.search_data).to eq({'created_by' => encstr})
+        end
+
+        get "/v2/rspec_test_service_stub?search=created_by%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should reject malformed value in permitted framework search query parameter "created_by"' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?search=created_by%3Dnotauuid", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: created_by')
       end
 
       it 'should reject prohibited framework search query parameter' do
@@ -946,7 +998,7 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('filter: thung\\, theng')
       end
 
-      it 'should respond to permitted framework filter query parameter' do
+      it 'should respond to permitted framework filter query parameter "created_before"' do
         dt     = DateTime.parse( Time.now.round.iso8601 )
         str    = dt.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
@@ -959,7 +1011,7 @@ describe Hoodoo::Services::Middleware do
         expect(last_response.status).to eq(200)
       end
 
-      it 'should reject malformed value in permitted framework filter query parameter' do
+      it 'should reject malformed value in permitted framework filter query parameter "created_before' do
         expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
         get "/v2/rspec_test_service_stub?filter=created_before%3Dthing", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
         expect(last_response.status).to eq(422)
@@ -967,6 +1019,27 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('filter: created_before')
+      end
+
+      it 'should respond to permitted framework filter query parameter "created_by"' do
+        encstr = Hoodoo::UUID.generate()
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.filter_data).to eq({'created_by' => encstr})
+        end
+
+        get "/v2/rspec_test_service_stub?filter=created_by%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should reject malformed value in permitted framework filter query parameter "created_by' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?filter=created_by%3Dnotauuid", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('filter: created_by')
       end
 
       it 'should reject prohibited framework filter query parameter' do

@@ -86,7 +86,16 @@ module Hoodoo
       #                is internationalised but this is omitted, then a value
       #                of "en-nz" is used as a default.
       #
-      def self.render( data, uuid = nil, created_at = nil, language = 'en-nz' )
+      # +created_by+:: Optional fingerprint of the Caller whose credentials
+      #                were used to create the Session under which the
+      #                resource instance was created. Absent if omitted.
+      #
+      def self.render( data,
+                       uuid       = nil,
+                       created_at = nil,
+                       language   = 'en-nz',
+                       created_by = nil )
+
         target = {}
         data   = data || {}
 
@@ -114,10 +123,11 @@ module Hoodoo
           target.merge!( {
             'id'         => uuid,
             'kind'       => kind,
-            'created_at' => Time.parse( created_at.to_s ).utc.iso8601
+            'created_at' => Hoodoo::Utilities.standard_datetime( created_at.to_datetime )
           } )
 
-          target[ 'language' ] = language if self.is_internationalised?()
+          target[ 'created_by' ] = created_by unless created_by.nil?
+          target[ 'language'   ] = language if self.is_internationalised?()
 
         end
 
@@ -157,6 +167,10 @@ module Hoodoo
       # +created_at+::   Same as the +created_at+ parameter to ::render, except
       #                  mandatory.
       #
+      # +created_by+::   Optional fingerprint of the Caller whose credentials
+      #                  were used to create the Session under which the
+      #                  resource instance was created.
+      #
       # +language+::     Optional value for resource's +language+ field; taken
       #                  from the +context+ parameter if omitted.
       #
@@ -180,12 +194,13 @@ module Hoodoo
       def self.render_in( context, data, options = {} )
         uuid         = options[ :uuid         ]
         created_at   = options[ :created_at   ]
+        created_by   = options[ :created_by   ]
         language     = options[ :language     ] || context.request.locale
         secured_with = options[ :secured_with ]
         embeds       = options[ :embeds       ]
         references   = options[ :references   ]
 
-        target = self.render( data, uuid, created_at, language )
+        target = self.render( data, uuid, created_at, language, created_by )
 
         if secured_with.is_a?( ::ActiveRecord::Base )
           result_hash     = {}
@@ -232,6 +247,9 @@ module Hoodoo
             'created_at' => data[ :created_at ],
             'kind'       => data[ :kind       ]
           }
+
+          created_by = data[ :created_by ]
+          common_fields[ 'created_by' ] = created_by unless created_by.nil?
 
           if self.is_internationalised?
             common_fields[ 'internationalised' ] = data[ 'internationalised' ]

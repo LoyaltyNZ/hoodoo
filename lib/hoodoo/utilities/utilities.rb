@@ -340,6 +340,16 @@ module Hoodoo
       return value.is_a?( ::Date ) && value
     end
 
+    # Returns an ISO 8601 String equivalent of the given Time, Date or
+    # DateTime instance as a full date-time with UTC timezone, with
+    # "standard high precision" (for rendeirng consistency), subject to
+    # Ruby port / OS support abilities. At the time of writing, 6 decimal
+    # places are included.
+    #
+    def self.standard_datetime( date_or_time_or_date_time )
+      date_or_time_or_date_time.to_time.utc.iso8601( 6 )
+    end
+
     # Returns an ISO 8601 String equivalent of the given Time or DateTime
     # instance, with nanosecond precision (subject to Ruby port / OS support).
     # This is nothing more than a standardised central interface on calling

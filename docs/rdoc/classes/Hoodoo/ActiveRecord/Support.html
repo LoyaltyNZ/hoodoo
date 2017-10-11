@@ -146,7 +146,8 @@ used to search inside supported database engines.</p>
   <span class="ruby-comment">#</span>
   <span class="ruby-identifier">mapping</span> = {
     <span class="ruby-string">&#39;created_after&#39;</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_gt</span>( <span class="ruby-value">:created_at</span> ),
-    <span class="ruby-string">&#39;created_before&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-value">:created_at</span> )
+    <span class="ruby-string">&#39;created_before&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_lt</span>( <span class="ruby-value">:created_at</span> ),
+    <span class="ruby-string">&#39;created_by&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Finder</span><span class="ruby-operator">::</span><span class="ruby-constant">SearchHelper</span>.<span class="ruby-identifier">cs_match</span>( <span class="ruby-value">:created_by</span> )
   }
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> ( <span class="ruby-identifier">mapping</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">|</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">FRAMEWORK_QUERY_DATA</span>.<span class="ruby-identifier">keys</span> ).<span class="ruby-identifier">length</span>
@@ -212,7 +213,7 @@ scope for use with subsequent query refinements.</p>
                 <a href="javascript:toggleSource('method-c-full_scope_for_source')" id="l_method-c-full_scope_for_source">show</a>
               </p>
               <div id="method-c-full_scope_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 130</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 131</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">full_scope_for</span>( <span class="ruby-identifier">klass</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
 
@@ -265,7 +266,7 @@ every value.</p>
                 <a href="javascript:toggleSource('method-c-process_to_map_source')" id="l_method-c-process_to_map_source">show</a>
               </p>
               <div id="method-c-process_to_map_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 91</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/support.rb, line 92</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">process_to_map</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">map</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 

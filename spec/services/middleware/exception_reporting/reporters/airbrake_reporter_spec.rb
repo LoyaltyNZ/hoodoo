@@ -19,7 +19,7 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
     it 'calls Airbrake correctly without an "env"' do
       ex = RuntimeError.new( 'A' )
 
-      expect( Airbrake ).to receive( :notify_or_ignore ).once do | e, opts |
+      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
         expect( e ).to be_a( Exception )
         expect( opts ).to be_a( Hash )
         expect( opts ).to have_key( :backtrace )
@@ -33,7 +33,7 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
       ex       = RuntimeError.new( 'A' )
       mock_env = { 'rack' => 'request' }
 
-      expect( Airbrake ).to receive( :notify_or_ignore ).once do | e, opts |
+      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
         expect( e ).to be_a( Exception )
 
         expect( opts ).to be_a( Hash )
@@ -59,7 +59,7 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
 
       expect( described_class.instance ).to receive( :user_data_for ).once.and_return( mock_user_data )
 
-      expect( Airbrake ).to receive( :notify_or_ignore ).once do | e, opts |
+      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
         expect( e ).to be_a( Exception )
 
         expect( opts ).to be_a( Hash )
@@ -84,7 +84,7 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
 
       expect( described_class.instance ).to receive( :user_data_for ).once.and_return( nil )
 
-      expect( Airbrake ).to receive( :notify_or_ignore ).once do | e, opts |
+      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
         expect( e ).to be_a( Exception )
 
         expect( opts ).to be_a( Hash )

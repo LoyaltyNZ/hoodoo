@@ -91,6 +91,11 @@ module Hoodoo
         info      = nil
         client    = nil
 
+        if Hoodoo::Services::Middleware.environment.test? &&
+           ( host.nil? || host.empty? )
+           return Hoodoo::TransientStore::Mocks::Redis.new
+        end
+
         begin
           client = ::Redis.new(
             :url           => host,

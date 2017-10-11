@@ -13,7 +13,11 @@
 ########################################################################
 
 begin
+
   # Raises LoadError if NewRelic is absent
+  #
+  require 'newrelic_rpm'
+  require 'new_relic/agent/logger'
   require 'new_relic/agent/method_tracer'
 
   # Add a method tracer on the dispatch method so that the time spent
@@ -29,6 +33,7 @@ begin
       end
     end
   end
+
 rescue LoadError; end
 
 module Hoodoo
@@ -55,18 +60,19 @@ module Hoodoo
             # Add custom attributes to the NewRelic transaction. The original
             # implementation is called via +super+.
             #
-            # +interaction+:: Hoodoo::Services::Interaction describing the
-            #                 inbound request. The +interaction_id+,
-            #                 +rack_request+ and +session+ data is used (the
-            #                 latter being optional). If +target_interface+ and
-            #                 +requested_action+ are available, body data
-            #                 _might_ be logged according to secure log settings
-            #                 in the interface; if these values are unset, body
-            #                 data is _not_ logged.
+            # +interaction+:: Hoodoo::Services::Middleware::Interaction
+            #                 instance describing the inbound request. The
+            #                 +interaction_id+, +rack_request+ and +session+
+            #                 data is used (the latter being optional). If
+            #                 +target_interface+ and +requested_action+ are
+            #                 available, body data _might_ be logged according
+            #                 to secure log settings in the interface; if these
+            #                 values are unset, body data is _not_ logged.
             #
             def monkey_log_inbound_request( interaction )
 
               # Add custom attributes to the NewRelic transaction.
+              #
               ::NewRelic::Agent.add_custom_attributes(
                 {
                   :target_action => interaction.requested_action,
@@ -75,6 +81,7 @@ module Hoodoo
               )
 
               # Call the original logging method.
+              #
               super( interaction )
 
             end
@@ -85,16 +92,17 @@ module Hoodoo
         if defined?( Hoodoo::Services ) &&
            defined?( Hoodoo::Services::Middleware )
 
-          ::Hoodoo::Monkey.register(
+          Hoodoo::Monkey.register(
             target_unit:      Hoodoo::Services::Middleware,
             extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics
           )
 
-          ::Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics )
+          Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics )
         end
 
       rescue LoadError
         # No NewRelic => do nothing
+
       end
 
     end # module Patch

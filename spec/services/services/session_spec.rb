@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'hoodoo/transient_store/mocks/dalli_client'
 
 describe Hoodoo::Services::Session do
 
@@ -17,6 +16,7 @@ describe Hoodoo::Services::Session do
       expect( s.memcached_host ).to be_nil
       expect( s.caller_id ).to be_nil
       expect( s.caller_version ).to eq( 0 )
+      expect( s.caller_fingerprint ).to be_nil
     end
 
     it 'initialises with given options' do
@@ -24,13 +24,15 @@ describe Hoodoo::Services::Session do
         :session_id => '1234',
         :memcached_host => 'abcd',
         :caller_id => '0987',
-        :caller_version => 2
+        :caller_version => 2,
+        :caller_fingerprint => 'asdf'
       )
       expect( s.created_at ).to be_a( Time )
       expect( s.session_id ).to eq( '1234' )
       expect( s.memcached_host ).to eq( 'abcd' )
       expect( s.caller_id ).to eq( '0987' )
       expect( s.caller_version ).to eq( 2 )
+      expect( s.caller_fingerprint ).to eq( 'asdf' )
     end
 
     it 'reports not expired when it has no expiry' do
@@ -49,7 +51,8 @@ describe Hoodoo::Services::Session do
         :session_id => '1234',
         :memcached_host => 'abcd',
         :caller_id => '0987',
-        :caller_version => 2
+        :caller_version => 2,
+        :caller_fingerprint => 'asdf'
       )
       p = Hoodoo::Services::Permissions.new
 
@@ -60,15 +63,16 @@ describe Hoodoo::Services::Session do
       h = s.to_h
 
       expect( h ).to eq( {
-        'session_id'     => '1234',
-        'caller_id'      => '0987',
-        'caller_version' => 2,
+        'session_id'         => '1234',
+        'caller_id'          => '0987',
+        'caller_version'     => 2,
+        'caller_fingerprint' => 'asdf',
 
-        'created_at'     => s.created_at.iso8601,
+        'created_at'         => Hoodoo::Utilities.standard_datetime( s.created_at ),
 
-        'identity'       => { 'foo' => 'foo', 'bar' => 'bar' },
-        'scoping'        => { 'baz' => [ 'foo', 'bar', 'baz' ] },
-        'permissions'    => p.to_h()
+        'identity'           => { 'foo' => 'foo', 'bar' => 'bar' },
+        'scoping'            => { 'baz' => [ 'foo', 'bar', 'baz' ] },
+        'permissions'        => p.to_h()
       } )
     end
 
@@ -78,16 +82,17 @@ describe Hoodoo::Services::Session do
       c = Time.now.utc
       e = Time.now.utc + 10
       h = {
-        'session_id'     => '1234',
-        'caller_id'      => '0987',
-        'caller_version' => 2,
+        'session_id'         => '1234',
+        'caller_id'          => '0987',
+        'caller_version'     => 2,
+        'caller_fingerprint' => 'asdf',
 
-        'created_at'     => c.iso8601,
-        'expires_at'     => e.iso8601,
+        'created_at'         => Hoodoo::Utilities.standard_datetime( c ),
+        'expires_at'         => Hoodoo::Utilities.standard_datetime( e ),
 
-        'identity'       => { 'foo' => 'foo', 'bar' => 'bar' },
-        'scoping'        => { 'baz' => [ 'foo', 'bar', 'baz' ] },
-        'permissions'    => p.to_h()
+        'identity'           => { 'foo' => 'foo', 'bar' => 'bar' },
+        'scoping'            => { 'baz' => [ 'foo', 'bar', 'baz' ] },
+        'permissions'        => p.to_h()
       }
 
       s.from_h!( h )
@@ -95,8 +100,9 @@ describe Hoodoo::Services::Session do
       expect( s.session_id ).to eq( '1234' )
       expect( s.caller_id ).to eq( '0987' )
       expect( s.caller_version ).to eq( 2 )
-      expect( s.created_at ).to eq( Time.parse( c.iso8601 ) )
-      expect( s.expires_at ).to eq( Time.parse( e.iso8601 ) )
+      expect( s.caller_fingerprint ).to eq( 'asdf' )
+      expect( s.created_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( c ) ) )
+      expect( s.expires_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( e ) ) )
       expect( s.identity.foo ).to eq( 'foo' )
       expect( s.identity.bar ).to eq( 'bar' )
       expect( s.scoping.baz ).to eq( [ 'foo', 'bar', 'baz' ] )
@@ -108,7 +114,8 @@ describe Hoodoo::Services::Session do
         :session_id => '1234',
         :memcached_host => 'abcd',
         :caller_id => '0987',
-        :caller_version => 2
+        :caller_version => 2,
+        :caller_fingerprint => 'asdf'
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -132,12 +139,13 @@ describe Hoodoo::Services::Session do
       s2 = described_class.new
       expect( s2.load_from_store!( s1.session_id ) ).to eq( :ok )
 
-      expect( s2.created_at ).to eq( Time.parse( s1.created_at.iso8601 ) )
-      expect( s2.expires_at ).to eq( Time.parse( s1.expires_at.iso8601 ) )
+      expect( s2.created_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.created_at ) ) )
+      expect( s2.expires_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.expires_at ) ) )
       expect( s2.session_id ).to eq( s1.session_id )
       expect( s2.memcached_host ).to be_nil
       expect( s2.caller_id ).to eq( s1.caller_id )
       expect( s2.caller_version ).to eq( s1.caller_version )
+      expect( s2.caller_fingerprint ).to eq( s1.caller_fingerprint )
     end
 
     it 'can be deleted' do
@@ -322,7 +330,7 @@ describe Hoodoo::Services::Session do
 
       expect( s ).to receive( :to_h ).and_wrap_original do | obj, args |
         h = obj.call( *args )
-        h[ 'expires_at' ] = ( Time.now - 1 ).utc.iso8601
+        h[ 'expires_at' ] = Hoodoo::Utilities.standard_datetime( Time.now - 1 )
         h
       end
 
@@ -453,7 +461,28 @@ describe Hoodoo::Services::Session do
       expect( s.save_to_store() ).to eq( :fail )
     end
 
-    it 'handles unknown Hoodoo::TransientStore engine failures' do
+    it 'handles unknown Hoodoo::TransientStore engine failures when saving' do
+      s = described_class.new(
+        :session_id => '1234',
+        :memcached_host => 'abcd',
+        :caller_id => '0987',
+        :caller_version => 1
+      )
+
+      expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).once.and_call_original
+      expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).once.and_return( false )
+
+      expect( Hoodoo::Services::Middleware.logger ).to(
+        receive( :warn ).once.with(
+          'Hoodoo::Services::Session\\#save_to_store: Session saving failed - connection fault or session corrupt',
+          'Unknown storage engine failure'
+        ).and_call_original
+      )
+
+      expect( s.save_to_store() ).to eq( :fail )
+    end
+
+    it 'handles unknown Hoodoo::TransientStore engine failures when deleting' do
       s = described_class.new(
         :session_id => '1234',
         :memcached_host => 'abcd',
