@@ -149,7 +149,7 @@ To reduce the number of required API calls, the platform endeavours to keep clie
 
 * When a resource is updated, the success response body provides a representation of the updated resource.
 
-* When a resource is deleted, the success response body provides a representation of the deleted resource, in the state it was in just prior to deletion. This facilities stack-like call behaviour; clients MUST remain aware that the resource no longer exists and its UUID is (forever) invalid.
+* When a resource is deleted, the success response body provides a representation of the deleted resource, in the state it was in just prior to deletion. This facilitates stack-like call behaviour; clients MUST remain aware that the resource no longer exists and its UUID is (forever) invalid.
 
 Some calls may deviate from this route for reasons of relevance or performance. If so, the exception must be clearly documented. Use of the [`X-Deja-Vu`](#http_x_deja_vu) HTTP header may result in HTTP 204 response codes without any response body. In any other case, assume the above behaviour.
 
@@ -1004,7 +1004,7 @@ In the simple case, we could just list these out in a flat identity map. The sco
 Note now each key's value _must_ be an array - even if it only has one entry - of the allowed identities that can be assumed for each of those named entries. The keys in the identity map match the keys permitted in the key-value pairs given with the HTTP header; the arrays of values in the identity map give the permitted individual values for the key-value pairs given with the HTTP header. Thus:
 
 ```
-X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=9
+X-Assume-Identity-Of: account_id=account1&member_id=member3&device_id=device9
 ```
 
 Partial identity overrides are permitted:
@@ -1050,7 +1050,7 @@ In this example, our model for the account/member/device example is a hierarchy.
 }
 ```
 
-This is a complex example with three levels of nesting. At the top level only `account_id` is given; if the HTTP header is in use at all, it must specify a least an `account_id` key and value. Note how the entry for `account_id` now has a sub-object instead of an array, with now _keys_ listing the allowed account IDs. For each of those allowed IDs, values are in essence a nested identity map framgent. We can look up the next thing which is allowed - `member_id`. In the case of the first and last accounts, there's even another level - the devices - but `account6` only has one member, `member12` and that member has no devices, so the structure just ends at a single-element array giving the permitted ID.
+This is a complex example with three levels of nesting. At the top level only `account_id` is given; if the HTTP header is in use at all, it must specify at least an `account_id` key and value. Note how the entry for `account_id` now has a sub-object instead of an array, with now _keys_ listing the allowed account IDs. For each of those allowed IDs, values are in essence a nested identity map fragment. We can look up the next thing which is allowed - `member_id`. In the case of the first and last accounts, there's even another level - the devices - but `account6` only has one member, `member12` and that member has no devices, so the structure just ends at a single-element array giving the permitted ID.
 
 With the updated map, the following header specification would be valid:
 
