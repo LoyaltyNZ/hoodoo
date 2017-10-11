@@ -12,6 +12,7 @@
 ########################################################################
 
 require 'set'
+require 'cgi'
 require 'uri'
 require 'json'
 require 'benchmark'
@@ -1587,8 +1588,8 @@ module Hoodoo; module Services
           end
         end
 
-        host = @@recorded_host if host.nil? && defined?( @@recorded_host )
-        port = @@recorded_port if port.nil? && defined?( @@recorded_port )
+        host ||= @@recorded_host if defined?( @@recorded_host )
+        port ||= @@recorded_port if defined?( @@recorded_port )
 
         # Under test, ensure a simulation of an available host and port is
         # always available for discovery-related tests.
@@ -1598,23 +1599,23 @@ module Hoodoo; module Services
           port ||= '9292'
         end
 
-        # Announce the resource endpoints unless we are still missing a host
-        # or port. Implication is 'racksh'.
+        # Announce the resource endpoints. We might not be able to annouce
+        # the remote availability of this endpoint if the host/port are not
+        # determined; but that might just be because we are running under
+        # "racksh" and we wouldn't want to announce remotely anyway.
 
-        unless host.nil? || port.nil?
-          services.each do | service |
-            interface = service.interface_class
+        services.each do | service |
+          interface = service.interface_class
 
-            @discoverer.announce(
-              interface.resource,
-              interface.version,
-              {
-                :host => host,
-                :port => port,
-                :path => service.base_path
-              }
-            )
-          end
+          @discoverer.announce(
+            interface.resource,
+            interface.version,
+            {
+              :host => host,
+              :port => port,
+              :path => service.base_path
+            }
+          )
         end
       end
     end
@@ -1762,7 +1763,7 @@ module Hoodoo; module Services
       # We try the custom routing path first, then the de facto path, then
       # give up if neither match.
 
-      uri_path = CGI.unescape( interaction.rack_request.path() )
+      uri_path = ::CGI.unescape( interaction.rack_request.path() )
 
       selected_path_data = nil
       selected_services  = @@services.select do | service_data |

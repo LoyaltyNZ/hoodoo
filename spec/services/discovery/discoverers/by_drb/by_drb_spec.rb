@@ -39,7 +39,7 @@ describe Hoodoo::Services::Discovery::ByDRb do
       port = Hoodoo::Utilities.spare_port().to_s
 
       discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
-      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
+      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292', :path => '/1/Resource' )
 
       shut_down_drb_service_on( port )
     }.to_not raise_error
@@ -53,7 +53,7 @@ describe Hoodoo::Services::Discovery::ByDRb do
       port = Hoodoo::Utilities.spare_port().to_s
 
       discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
-      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292' )
+      discoverer.announce( :Foo, 1, :host => '127.0.0.1', :port => '9292', :path => '/1/Resource' )
 
       discoverer = Hoodoo::Services::Discovery::ByDRb.new(
         :drb_uri => Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port )
@@ -63,6 +63,52 @@ describe Hoodoo::Services::Discovery::ByDRb do
 
       shut_down_drb_service_on( port )
     }.to_not raise_error
+  end
+
+  it 'allows nil host/port/path but cannot announce remotely, only locally' do
+    port  = Hoodoo::Utilities.spare_port().to_s
+    array = [
+      {                                                               },
+
+      { :host => '127.0.0.1'                                          },
+      {                       :port => '9292'                         },
+      {                                        :path => '/1/Resource' },
+
+      { :host => '127.0.0.1', :port => '9292'                         },
+      {                       :port => '9292', :path => '/1/Resource' },
+      { :host => '127.0.0.1',                  :path => '/1/Resource' },
+    ]
+
+    array.each do | options |
+
+      # Announce and enquire with various incomplete options in one
+      # discoverer; as if this were the declaring service.
+      #
+      discoverer = Hoodoo::Services::Discovery::ByDRb.new( :drb_port => port )
+      discoverer.announce( :Foo, 1, options )
+      expect( discoverer.is_local?( :Foo, 1 ) ).to eq( true )
+
+      # This is important as it has a side effect of starting the DRb
+      # server which may not even be running yet since there have been
+      # no remote announcements. That'd cause the tests below here to
+      # fail since the discoverer is configured there to assume a
+      # running DRb process.
+      #
+      expect( discoverer.send( :discover_remote, :Foo, 1 ) ).to be_nil
+
+      # Now enquire in a new discoverer, which can only get its data
+      # from the DRb service, as if this were a second service.
+      #
+      discoverer = Hoodoo::Services::Discovery::ByDRb.new(
+        :drb_uri => Hoodoo::Services::Discovery::ByDRb::DRbServer.uri( port )
+      )
+
+      expect( discoverer.is_local?( :Foo, 1 ) ).to eq( false )
+      expect( discoverer.discover( :Foo, 1 ) ).to be_nil
+
+    end
+
+    shut_down_drb_service_on( port )
   end
 
   it 'complains if it cannot contact an existing DRb server' do
