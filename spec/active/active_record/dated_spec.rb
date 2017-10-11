@@ -299,7 +299,7 @@ describe Hoodoo::ActiveRecord::Dated do
   context "SQL and column selections" do
     before :each do
       @now      = Time.now.utc
-      @safe_now = RSpecModelEffectiveDateTestOverride.sanitize( @now )
+      @safe_now = RSpecModelEffectiveDateTestOverride.connection.quoted_date( @now )
 
       request   = Hoodoo::Services::Request.new
       @context  = Hoodoo::Services::Context.new( nil, request, nil, nil )
@@ -309,8 +309,8 @@ describe Hoodoo::ActiveRecord::Dated do
 
     def run_other_expectations( sql )
       expect( sql ).to include( "from r_spec_model_effective_date_history_entries" )
-      expect( sql ).to include( "\"effective_start\" <= #{ @safe_now }" )
-      expect( sql ).to include( "\"effective_end\" > #{ @safe_now }" )
+      expect( sql ).to include( "\"effective_start\" <= '#{ @safe_now }'" )
+      expect( sql ).to include( "\"effective_end\" > '#{ @safe_now }'" )
       expect( sql ).to include( "\"effective_end\" is null" )
     end
 

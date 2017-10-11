@@ -98,7 +98,7 @@ describe Hoodoo::Services::Middleware do
           end
         end
 
-        Hoodoo::Services::Middleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+        Hoodoo::Services::Middleware.new( ::NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
       }.to raise_error(RuntimeError, "Hoodoo::Services::Middleware instance created with NewRelic-wrapped Service entity, but NewRelic API is not as expected by Hoodoo; incompatible NewRelic version.")
 
       Object.send( :remove_const, :NewRelic )
@@ -118,7 +118,7 @@ describe Hoodoo::Services::Middleware do
           end
         end
 
-        Hoodoo::Services::Middleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+        Hoodoo::Services::Middleware.new( ::NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
       }.to raise_error(RuntimeError, "Hoodoo::Services::Middleware instance created with non-Service entity of class 'Hash' - is this the last middleware in the chain via 'use()' and is Rack 'run()'-ing the correct thing?")
 
       Object.send( :remove_const, :NewRelic )
@@ -148,7 +148,7 @@ describe Hoodoo::Services::Middleware do
           end
         end
 
-        Hoodoo::Services::Middleware.new( NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
+        Hoodoo::Services::Middleware.new( ::NewRelic::Agent::Instrumentation::MiddlewareProxy.new )
       }.to raise_error(RuntimeError, "Hoodoo::Services::Middleware encountered invalid interface class RSpecTestServiceStubBadInterface via service class RSpecTestServiceStubBad")
 
       Object.send( :remove_const, :NewRelic )

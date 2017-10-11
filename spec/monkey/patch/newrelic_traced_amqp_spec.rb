@@ -50,20 +50,20 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
 
     # We should always start a new Segment...
     #
-    allow( NewRelic::Agent::Transaction ).to receive( :start_external_request_segment ) do | type, uri, method |
+    allow( ::NewRelic::Agent::Transaction ).to receive( :start_external_request_segment ) do | type, uri, method |
       @@newrelic_crossapp_count += 1
 
       expect( type   ).to   eq( 'AlchemyFlux' )
       expect( uri    ).to be_a( URI           )
       expect( method ).to be_a( String        )
 
-      NewRelic::Agent::Transaction::Segment.new
+      ::NewRelic::Agent::Transaction::Segment.new
     end
 
     # ...and no matter what happens must always then call "finish" on
     # that segment.
     #
-    allow_any_instance_of( NewRelic::Agent::Transaction::Segment ).to receive( :finish ) do
+    allow_any_instance_of( ::NewRelic::Agent::Transaction::Segment ).to receive( :finish ) do
       @@newrelic_agent_disable_count += 1
     end
   end
@@ -166,7 +166,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapp
 
   before :each do
     @http_response = {
-      'headers'      => { NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER => '4321' },
+      'headers'      => { ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER => '4321' },
       'CONTENT_TYPE' => 'application/json; charset=utf-8',
       'HTTP_X_FOO'   => '46'
     }
@@ -179,7 +179,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapp
   end
 
   it 'accesses the NewRelic NR_APPDATA_HEADER correctly' do
-    expect( @wrapper[ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] ).to eq( @http_response[ 'headers' ][ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] )
+    expect( @wrapper[ ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] ).to eq( @http_response[ 'headers' ][ ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] )
   end
 
   it 'accesses other headers correctly' do
