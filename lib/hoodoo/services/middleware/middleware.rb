@@ -427,7 +427,7 @@ module Hoodoo; module Services
     # Record internally the HTTP host and port during local development via
     # e.g +rackup+ or testing with rspec. This is usually not called directly
     # except via the Rack startup monkey patch code in
-    # +instrumented_rack.rb+.
+    # +rack_monkey_patch.rb+.
     #
     # Options hash +:Host+ and +:Port+ entries are recorded.
     #
