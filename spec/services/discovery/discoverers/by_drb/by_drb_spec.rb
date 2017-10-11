@@ -88,6 +88,14 @@ describe Hoodoo::Services::Discovery::ByDRb do
       discoverer.announce( :Foo, 1, options )
       expect( discoverer.is_local?( :Foo, 1 ) ).to eq( true )
 
+      # This is important as it has a side effect of starting the DRb
+      # server which may not even be running yet since there have been
+      # no remote announcements. That'd cause the tests below here to
+      # fail since the discoverer is configured there to assume a
+      # running DRb process.
+      #
+      expect( discoverer.send( :discover_remote, :Foo, 1 ) ).to be_nil
+
       # Now enquire in a new discoverer, which can only get its data
       # from the DRb service, as if this were a second service.
       #
@@ -99,6 +107,8 @@ describe Hoodoo::Services::Discovery::ByDRb do
       expect( discoverer.discover( :Foo, 1 ) ).to be_nil
 
     end
+
+    shut_down_drb_service_on( port )
   end
 
   it 'complains if it cannot contact an existing DRb server' do
