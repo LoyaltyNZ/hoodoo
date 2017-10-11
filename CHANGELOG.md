@@ -23,6 +23,8 @@
 
 * New concept of framework-level search/filter query string of `created_by`, to go with fingerprint support introduced back in version 1.19.0. This requires _opt-out_ of services that don't support it, so is slightly backwards-incompatible with existing service code. If an interface already defines such a search key it'll override that provided by Hoodoo. Otherwise-unmodified older services which update to Hoodoo 2 and forget to opt-out will either return an error if the feature is used in an API call, or ignore it and return a list without that particular search/filter field applied.
 
+* Resource announcement via the [`Hoodoo::Services::Discovery`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Discovery.html) hierarchy is done even if a service's HTTP host or port are unknown because they couldn't be determined from Rack. This means _local_ resource registration will now proceed, technically resolving a long standing V1 series bug. Discoverers that require both `:host` and `:port` options present will need updating to return `nil` from the remote announce/discovery methods if one or both of the options are missing, or present in the Hash but with `nil` values.
+
 # Hoodoo v1.x
 
 ## 1.19.0 (2017-08-17)
