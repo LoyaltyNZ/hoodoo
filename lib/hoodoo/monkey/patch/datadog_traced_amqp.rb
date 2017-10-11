@@ -49,8 +49,13 @@ module Hoodoo
                 span.resource  = http_message[ 'verb' ]
                 span.set_tag( 'target.path', http_message[ 'path'] )
 
-                # Add Datadog trace IDs to the HTTP message.
-                #
+                # Add Datadog trace IDs to the HTTP message. For compatibility
+                # with Hoodoo V1 services using a fork of DDTrace, we send both
+                # old headers ("X-DDTrace...") and new ("X-DataDog-...")
+
+                http_message[ 'headers' ][ 'X_DATADOG_TRACE_ID'        ] = span.trace_id.to_s
+                http_message[ 'headers' ][ 'X_DATADOG_PARENT_ID'       ] = span.span_id.to_s
+
                 http_message[ 'headers' ][ 'X_DDTRACE_PARENT_TRACE_ID' ] = span.trace_id.to_s
                 http_message[ 'headers' ][ 'X_DDTRACE_PARENT_SPAN_ID'  ] = span.span_id.to_s
 

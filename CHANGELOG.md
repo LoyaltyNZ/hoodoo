@@ -25,6 +25,8 @@
 
 * Resource announcement via the [`Hoodoo::Services::Discovery`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Discovery.html) hierarchy is done even if a service's HTTP host or port are unknown because they couldn't be determined from Rack. This means _local_ resource registration will now proceed, technically resolving a long standing V1 series bug. Discoverers that require both `:host` and `:port` options present will need updating to return `nil` from the remote announce/discovery methods if one or both of the options are missing, or present in the Hash but with `nil` values.
 
+* Compatibility with DDTrace from `master` has been added alongside continuing to support the `feature/rack_dynamic_tracing` branch origin on the `whithajess` fork for compatibility with Hoodoo V1 services.
+
 # Hoodoo v1.x
 
 ## 1.19.0 (2017-08-17)
