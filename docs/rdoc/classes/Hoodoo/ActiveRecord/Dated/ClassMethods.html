@@ -195,7 +195,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
   <span class="ruby-comment"># Rationalise and convert the date time to UTC.</span>
 
   <span class="ruby-identifier">date_time</span>      = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">date_time</span> ).<span class="ruby-identifier">utc</span>
-  <span class="ruby-identifier">safe_date_time</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sanitize</span>( <span class="ruby-identifier">date_time</span> ) <span class="ruby-comment"># ActiveRecord provides #sanitize</span>
+  <span class="ruby-identifier">safe_date_time</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">connection</span>.<span class="ruby-identifier">quoted_date</span>( <span class="ruby-identifier">date_time</span> )
 
   <span class="ruby-comment"># Create strings that specify the required attributes escaped and</span>
   <span class="ruby-comment"># joined by commas for use in a SQL query, for both main and history</span>
@@ -221,7 +221,7 @@ href="../../ActiveRecord.html">ActiveRecord</a> <code>select</code> method.</p>
         SELECT #{ safe_history_name_string },&quot;effective_start&quot;,&quot;effective_end&quot;
         FROM #{ dating_table_name }
       ) AS u
-      WHERE &quot;effective_start&quot; &lt;= #{ safe_date_time } AND (&quot;effective_end&quot; &gt; #{ safe_date_time } OR &quot;effective_end&quot; IS NULL)
+      WHERE &quot;effective_start&quot; &lt;= &#39;#{ safe_date_time }&#39; AND (&quot;effective_end&quot; &gt; &#39;#{ safe_date_time }&#39; OR &quot;effective_end&quot; IS NULL)
     ) AS #{ self.table_name }
   }</span>
 

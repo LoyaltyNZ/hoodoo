@@ -103,8 +103,13 @@ for analytics data.</p>
     <span class="ruby-identifier">span</span>.<span class="ruby-identifier">resource</span>  = <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;verb&#39;</span> ]
     <span class="ruby-identifier">span</span>.<span class="ruby-identifier">set_tag</span>( <span class="ruby-string">&#39;target.path&#39;</span>, <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;path&#39;</span>] )
 
-    <span class="ruby-comment"># Add Datadog trace IDs to the HTTP message.</span>
-    <span class="ruby-comment">#</span>
+    <span class="ruby-comment"># Add Datadog trace IDs to the HTTP message. For compatibility</span>
+    <span class="ruby-comment"># with Hoodoo V1 services using a fork of DDTrace, we send both</span>
+    <span class="ruby-comment"># old headers (&quot;X-DDTrace...&quot;) and new (&quot;X-DataDog-...&quot;)</span>
+
+    <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DATADOG_TRACE_ID&#39;</span>        ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">trace_id</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DATADOG_PARENT_ID&#39;</span>       ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">span_id</span>.<span class="ruby-identifier">to_s</span>
+
     <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DDTRACE_PARENT_TRACE_ID&#39;</span> ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">trace_id</span>.<span class="ruby-identifier">to_s</span>
     <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X_DDTRACE_PARENT_SPAN_ID&#39;</span>  ] = <span class="ruby-identifier">span</span>.<span class="ruby-identifier">span_id</span>.<span class="ruby-identifier">to_s</span>
 
