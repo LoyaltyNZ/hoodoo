@@ -17,7 +17,6 @@ begin
   # Raises LoadError if NewRelic is absent
   #
   require 'newrelic_rpm'
-  require 'new_relic/agent/logger'
   require 'new_relic/agent/method_tracer'
 
   # Add a method tracer on the dispatch method so that the time spent

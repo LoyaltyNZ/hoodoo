@@ -20,7 +20,6 @@ module Hoodoo
         # Raises LoadError if NewRelic is absent
         #
         require 'newrelic_rpm'
-        require 'new_relic/agent/logger'
         require 'new_relic/agent/transaction'
 
         # Wrap Hoodoo::Client::Endpoint::AMQP using NewRelic transaction
