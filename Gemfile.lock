@@ -30,7 +30,7 @@ GEM
       tzinfo (~> 1.1)
     airbrake (6.3.0)
       airbrake-ruby (~> 2.4)
-    airbrake-ruby (2.4.0)
+    airbrake-ruby (2.4.2)
     alchemy-flux (1.1.0)
       amqp (~> 1.5)
       eventmachine (~> 1.0)
