@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 5, 2017-08-17_
+_Release 6, 2017-10-13_
 
 [](TOCS)
 * [Overview](#ao)
@@ -17,6 +17,8 @@ _Release 5, 2017-08-17_
     * [Common fields and `null` fields](#cf)
     * [Listing, pagination, searches and filters](#lppsf)
       * [Framework-level search and filter](#flsaf)
+        * [`created_after` and `created_before`](#craftcrbef)
+        * [`created_by`](#crby)
     * [Embedding](#apicbre)
       * [Examples](#apicbree)
     * [Internationalisation](#apicbri)
@@ -34,6 +36,7 @@ _Release 5, 2017-08-17_
     * [Access security](#access_security)
       * [Scoping and resource representation](#scoping_and_resource_representation)
     * [Data presentation security](#data_presentation_security)
+    * [Fingerprints](#fingerprints)
   * [CORS support](#cors)
 * [Authentication API](#authentication.api)
   * [Data Types](#authentication.api.types)
@@ -342,6 +345,8 @@ In the case of HTTP `GET` requests, individual resource representations are fetc
 
 ##### <a name="flsaf"></a>Framework-level search and filter
 
+###### <a name="craftcrbef"></a>`created_after` and `created_before`
+
 Since version 1.12.0 (2016-12-06), Hoodoo provides framework-level search and filter query keys of `created_after` and `created_before` available automatically on any resource built on this, or a later version of Hoodoo. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering, but documentation for the resource should say if this is the case. The keys search for resources created exclusively after or before a given date/time expressed as an ISO 8601 subset string, being aware of potential accuracy issues for this string (especially if sourced from a resource representation's `created_at` field) versus database internal representations behind the scenes.
 
 The filter of exclusive "created after" is equivalent to an inclusive search of "created on or before". Similarly, a filter of "created before" is equivalent to a search of "created on or after".
@@ -367,6 +372,10 @@ require 'cgi'
 str    = Time.now.round.iso8601
 encstr = CGI.escape( CGI.escape( str ) )
 ```
+
+###### <a name="crby"></a>`created_by`
+
+Since version 2.0.0 (2017-09-29), Hoodoo provides framework-level search and filter query keys of `created_by` to search for resources created by a [Caller](#caller.resource) with a particular fingerprint. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering because it doesn't support storing the resource creator's fingerprint data with its persisted resource information, but documentation for the resource should say if this is the case.
 
 #### <a name="apicbre"></a>Embedding
 
@@ -916,20 +925,21 @@ When considering full such permissions, the system:
 
 ### <a name="authentication.api.resources"></a>Resources
 
-#### <a name="caller.resource"></a>Caller `::resource::caller`
+#### <a name=""></a>Caller `::resource::caller`
 
 A `Caller` is a representation of some actor which interacts with a Hoodoo-implemented API.
 
 ##### <a name="caller.resource.interface"></a>Interface
 
-| HTTP method | Endpoint        | Result |
-|-------------|-----------------|--------|
-| `POST`      | /callers/       | Create new Caller instance |
-| `GET`       | /callers/       | Obtain list of Caller representations |
-| `GET`       | /callers/{uuid} | Obtain representation of identified Caller instance |
-| `PATCH`     | /callers/{uuid} | Update representation of identified Caller instance |
-| `DELETE`    | /callers/{uuid} | Effectively delete identified Caller instance |
+| HTTP method | Endpoint                       | Result |
+|-------------|--------------------------------|--------|
+| `POST`      | /callers/                      | Create new Caller instance |
+| `GET`       | /callers/                      | Obtain list of Caller representations |
+| `GET`       | /callers/{uuid-or-fingerprint} | Obtain representation of identified Caller instance |
+| `PATCH`     | /callers/{uuid-or-fingerprint} | Update representation of identified Caller instance |
+| `DELETE`    | /callers/{uuid-or-fingerprint} | Effectively delete identified Caller instance |
 
+* Note that either primary UUID or fingerprint UUID may be used to identify an instance.
 * The `GET` 'list' call accepts [common query string parameters](#lppsf).
 * No additional sort fields are defined.
 * No special search or filter fields are defined in the generic case.
@@ -1335,3 +1345,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2016-07-12 | Release 3 | ADH    | Rearrange documentation with resource interfaces coming before representations, as this is a more logical flow for most readers. Remove information about list parameters for the Session resource - there was never any list ability for that resource - and fix the introduction text, which had a dangling out-of-context sentence. |
 | 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before`. Mention potential for using this instead of very large offset values. |
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
+| 2017-10-13 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |

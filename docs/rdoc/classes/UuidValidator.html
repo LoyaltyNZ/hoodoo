@@ -83,7 +83,6 @@ nil, a separate validation must be added.</p>
 <p>Example:</p>
 
 <pre><code>class SomeModel &lt; ActiveRecord::Base
-
   validates :somefield, uuid: true
 end
 </code></pre>
@@ -97,7 +96,7 @@ end
                 <a href="javascript:toggleSource('method-i-validate_each_source')" id="l_method-i-validate_each_source">show</a>
               </p>
               <div id="method-i-validate_each_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_model/uuid_validator.rb, line 33</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_model/uuid_validator.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate_each</span>( <span class="ruby-identifier">record</span>, <span class="ruby-identifier">attribute</span>, <span class="ruby-identifier">value</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">valid?</span>( <span class="ruby-identifier">value</span> )

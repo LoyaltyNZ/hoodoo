@@ -19,7 +19,7 @@ class RSpecTestInterfaceInterfaceA < Hoodoo::Services::Interface
       search :search_one, :search_two, :search_three
       filter :filter_one, :filter_two, :filter_three
       do_not_search :created_after, :created_before
-      do_not_filter :created_after
+      do_not_filter :created_after, :created_by
     end
 
     to_create do
@@ -99,7 +99,7 @@ describe Hoodoo::Services::Interface do
       expect(RSpecTestInterfaceInterfaceA.to_list.search).to eq(['search_one', 'search_two', 'search_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.filter).to eq(['filter_one', 'filter_two', 'filter_three'])
       expect(RSpecTestInterfaceInterfaceA.to_list.do_not_search).to eq(['created_after', 'created_before'])
-      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_filter).to eq(['created_after'])
+      expect(RSpecTestInterfaceInterfaceA.to_list.do_not_filter).to eq(['created_after', 'created_by'])
       expect(RSpecTestInterfaceInterfaceA.to_create).to_not be_nil
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['foo']).to be_a(Hoodoo::Presenters::Text)
       expect(RSpecTestInterfaceInterfaceA.to_create.get_schema().properties['bar']).to be_a(Hoodoo::Presenters::Enum)

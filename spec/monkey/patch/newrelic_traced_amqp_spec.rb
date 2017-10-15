@@ -18,14 +18,11 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
     @@newrelic_crossapp_count      = 0
     @@newrelic_agent_disable_count = 0
 
-    module NewRelic
-      module Agent
-        class CrossAppTracing
-        end
-      end
-    end
-
     Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::NewRelicTracedAMQP )
+
+    load 'new_relic/agent/logger.rb'
+    load 'new_relic/agent/method_tracer.rb'
+    load 'new_relic/agent/transaction.rb'
   end
 
   after :all do
@@ -51,19 +48,23 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
       result
     end
 
-    allow( NewRelic::Agent::CrossAppTracing ).to receive( :tl_trace_http_request ) do | newrelic_request, &block |
+    # We should always start a new Segment...
+    #
+    allow( ::NewRelic::Agent::Transaction ).to receive( :start_external_request_segment ) do | type, uri, method |
       @@newrelic_crossapp_count += 1
 
-      expect( newrelic_request ).to be_a( Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper )
-      block.call()
+      expect( type   ).to   eq( 'AlchemyFlux' )
+      expect( uri    ).to be_a( URI           )
+      expect( method ).to be_a( String        )
+
+      ::NewRelic::Agent::Transaction::Segment.new
     end
 
-    allow( NewRelic::Agent ).to receive( :disable_all_tracing ) do | &block |
+    # ...and no matter what happens must always then call "finish" on
+    # that segment.
+    #
+    allow_any_instance_of( ::NewRelic::Agent::Transaction::Segment ).to receive( :finish ) do
       @@newrelic_agent_disable_count += 1
-
-      result = block.call()
-      expect( result ).to be_a( Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper )
-      result
     end
   end
 
@@ -78,7 +79,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP, :order => :defined do
   end
 end
 
-describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper do
+describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPRequestWrapper do
   before :each do
     @full_uri     = 'https://test.com:8080/1/Person/1234?_embed=Birthday'
     @http_message = {
@@ -98,7 +99,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper d
   end
 
   it 'reports the correct "type" value' do
-    expect( @wrapper.type ).to eq( 'Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper' )
+    expect( @wrapper.type ).to eq( 'AlchemyFlux' )
   end
 
   it 'reports the correct "host" value' do
@@ -110,7 +111,35 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper d
   end
 
   it 'reports the correct "uri" value' do
-    expect( @wrapper.uri ).to eq( @full_uri )
+    expect( @wrapper.uri ).to eq( URI.parse( @full_uri ) )
+  end
+
+  # The next three tests are for "#host_from_header" with behaviour simply
+  # copied from other NewRelic examples. NewRelic source code has very few
+  # comments explaining anything it does, so whether or not the combination
+  # of upper and lower case "host"/"Host" checks is actually important
+  # remains a mystery.
+  #
+  it 'reports the host from a "Host/host" header, lower case first' do
+    @http_message[ 'headers' ][ 'host' ] = 'foo'
+    @http_message[ 'headers' ][ 'Host' ] = 'Bar'
+
+    alt_wrapper = described_class.new( @http_message, @full_uri )
+    expect( alt_wrapper.host_from_header ).to eq( 'foo' )
+  end
+
+  it 'reports the host from a "Host/host" header, upper case last' do
+    @http_message[ 'headers' ][ 'Host' ] = 'Bar'
+
+    alt_wrapper = described_class.new( @http_message, @full_uri )
+    expect( alt_wrapper.host_from_header ).to eq( 'Bar' )
+  end
+
+  it 'survives missing headers when trying to report the host from a "Host/host" header' do
+    @http_message.delete( 'headers' )
+
+    alt_wrapper = described_class.new( @http_message, @full_uri )
+    expect( alt_wrapper.host_from_header ).to eq( nil )
   end
 
   it 'can read headers' do
@@ -123,7 +152,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper d
   end
 end
 
-describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper do
+describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapper do
 
   before :all do
     module NewRelic
@@ -137,7 +166,7 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper 
 
   before :each do
     @http_response = {
-      'headers'      => { NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER => '4321' },
+      'headers'      => { ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER => '4321' },
       'CONTENT_TYPE' => 'application/json; charset=utf-8',
       'HTTP_X_FOO'   => '46'
     }
@@ -150,11 +179,15 @@ describe Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper 
   end
 
   it 'accesses the NewRelic NR_APPDATA_HEADER correctly' do
-    expect( @wrapper[ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] ).to eq( @http_response[ 'headers' ][ NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] )
+    expect( @wrapper[ ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] ).to eq( @http_response[ 'headers' ][ ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER ] )
   end
 
   it 'accesses other headers correctly' do
     expect( @wrapper[ 'CONTENT_TYPE' ] ).to eq( @http_response[ 'CONTENT_TYPE' ] )
     expect( @wrapper[ 'HTTP_X_FOO'   ] ).to eq( @http_response[ 'HTTP_X_FOO'   ] )
+  end
+
+  it 'can report headers as a Hash' do
+    expect( @wrapper.to_hash ).to eq( @http_response[ 'headers' ] )
   end
 end

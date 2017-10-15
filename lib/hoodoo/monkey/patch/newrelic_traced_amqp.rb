@@ -16,7 +16,11 @@ module Hoodoo
     module Patch
 
       begin
-        require 'newrelic_rpm' # Raises LoadError if NewRelic is absent
+
+        # Raises LoadError if NewRelic is absent
+        #
+        require 'newrelic_rpm'
+        require 'new_relic/agent/transaction'
 
         # Wrap Hoodoo::Client::Endpoint::AMQP using NewRelic transaction
         # tracing so that over-queue inter-resource calls get connected
@@ -36,36 +40,47 @@ module Hoodoo
             # This adds headers to the request and extracts header data from
             # the response. It calls the original implementation via +super+.
             #
-            # +http_message+:: Hash describing the message to send.
+            # +http_message+:: Hash describing the message to send. See e.g.
+            #                  Hoodoo::Client::Endpoint::AMQP#do_amqp. Note
+            #                  that the header names inside this Hash are the
+            #                  mixed case, HTTP specification style ones like
+            #                  <tt>X-Interaction-ID</tt> and _not_ the Rack
+            #                  names like <tt>HTTP_X_INTERACTION_ID</tt>.
             #
             # +full_uri+::     URI being sent to. This is somewhat meaningless
             #                  when using AMQP but NewRelic requires it.
             #
             def monkey_send_request( http_message, full_uri )
-              amqp_response    = nil
-              newrelic_request = ::Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper.new(
+              amqp_response   = nil
+              wrapped_request = AlchemyFluxHTTPRequestWrapper.new(
                 http_message,
                 full_uri
               )
 
-              ::NewRelic::Agent::CrossAppTracing.tl_trace_http_request( newrelic_request ) do
+              segment = ::NewRelic::Agent::Transaction.start_external_request_segment(
+                wrapped_request.type,
+                wrapped_request.uri,
+                wrapped_request.method
+              )
 
-                # Disable further tracing in request to avoid double counting
-                # if connection wasn't started (which calls request again).
+              begin
+                segment.add_request_headers( wrapped_request )
+
+                amqp_response = super( http_message, full_uri )
+
+                # The outer block extracts required information from the
+                # object returned by this block. Need to wrap it match the
+                # expected interface.
                 #
-                ::NewRelic::Agent.disable_all_tracing do
+                wrapped_response = AlchemyFluxHTTPResponseWrapper.new(
+                  amqp_response
+                )
 
-                  amqp_response = super( http_message, full_uri )
+                segment.read_response_headers( wrapped_response )
 
-                  # The outer block extracts required information from the
-                  # object returned by this block. Need to wrap it match the
-                  # expected interface.
-                  #
-                  ::Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicResponseWrapper.new(
-                    amqp_response
-                  )
+              ensure
+                segment.finish()
 
-                end
               end
 
               return amqp_response
@@ -75,12 +90,18 @@ module Hoodoo
           # Wrapper class for an AMQP request which conforms to the API that
           # NewRelic expects.
           #
-          class AMQPNewRelicRequestWrapper
+          class AlchemyFluxHTTPRequestWrapper
 
             # Wrap the Alchemy Flux +http_message+ aimed at the specified
             # +full_uri+.
             #
-            # +http_message+:: Hash describing the request for Alchemy Flux.
+            # +http_message+:: Hash describing the message to send. See e.g.
+            #                  Hoodoo::Client::Endpoint::AMQP#do_amqp. Note
+            #                  that the header names inside this Hash are the
+            #                  mixed case, HTTP specification style ones like
+            #                  <tt>X-Interaction-ID</tt> and _not_ the Rack
+            #                  names like <tt>HTTP_X_INTERACTION_ID</tt>.
+            #
             # +full_uri+::     Full target URI, as a String.
             #
             def initialize( http_message, full_uri )
@@ -91,13 +112,28 @@ module Hoodoo
             # String describing what kind of request this is.
             #
             def type
-              self.class.to_s()
+              'AlchemyFlux'
+            end
+
+            # String descrbing this request's intended host, according to the
+            # +Host+ header. May return +nil+ if none is found.
+            #
+            # See also: #host.
+            #
+            def host_from_header
+              begin
+                @http_message[ 'headers' ][ 'host' ] || @http_message[ 'headers' ][ 'Host' ]
+              rescue
+                nil
+              end
             end
 
             # String describing this request's intended host.
             #
+            # See also: #host_from_header.
+            #
             def host
-              @http_message[ 'host' ]
+              self.host_from_header() || @http_message[ 'host' ]
             end
 
             # String describing this request's HTTP verb (GET, POST and
@@ -127,10 +163,10 @@ module Hoodoo
               @http_message[ 'headers' ][ key ] = value
             end
 
-            # String describing the full request URI.
+            # URI object describing the full request URI.
             #
             def uri
-              @full_uri
+              URI.parse( @full_uri.to_s )
             end
 
           end
@@ -138,29 +174,30 @@ module Hoodoo
           # Wrapper class for an AMQP request which conforms to the API that
           # NewRelic expects.
           #
-          class AMQPNewRelicResponseWrapper
+          class AlchemyFluxHTTPResponseWrapper
 
             # The +response_hash+ to be wrapped.
             #
             # +response_hash+:: Hash describing the response returned from
-            #                   Alchemy Flux.
+            #                   Alchemy Flux. See that gem for details.
             #
             def initialize( response_hash )
               @response_hash = response_hash
             end
 
-            # If the NewRelic cross-app tracing header is the +key+, return the
-            # value of the header that matches that key. Otherwise look up the
-            # key like normal.
+            # Look up a key in the headers Hash first, but if absent try the
+            # top-level response Hash instead.
             #
             # +key+:: Hash key to look up.
             #
             def []( key )
-              if key == ::NewRelic::Agent::CrossAppTracing::NR_APPDATA_HEADER
-                @response_hash[ 'headers' ][ key ]
-              else
-                @response_hash[ key ]
-              end
+              @response_hash[ 'headers' ][ key ] || @response_hash[ key ]
+            end
+
+            # Return the HTTP headers for this response as a Hash.
+            #
+            def to_hash
+              @response_hash[ 'headers' ].dup()
             end
           end
         end
@@ -185,6 +222,7 @@ module Hoodoo
 
       rescue LoadError
         # No NewRelic => do nothing
+
       end
 
     end # module Patch

@@ -18,7 +18,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         t.text :data
         t.text :unique
 
-        t.timestamps
+        t.timestamps :null => true
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
       end

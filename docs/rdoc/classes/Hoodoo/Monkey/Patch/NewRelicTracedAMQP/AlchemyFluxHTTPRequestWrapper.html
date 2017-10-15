@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper</title>
+    <title>Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPRequestWrapper</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="../../../../../css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
@@ -19,7 +19,7 @@
     <div class="banner">
         <h1>
             <span class="type">Class</span>
-            Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AMQPNewRelicRequestWrapper
+            Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPRequestWrapper
                 <span class="parent">&lt;
                     Object
                 </span>
@@ -62,7 +62,10 @@ expects.</p>
         <dd>
           <ul>
               <li>
-                <a href="#method-i-host">host</a>
+                <a href="#method-i-host">host</a>,
+              </li>
+              <li>
+                <a href="#method-i-host_from_header">host_from_header</a>
               </li>
           </ul>
         </dd>
@@ -114,7 +117,7 @@ expects.</p>
         <div class="method">
           <div class="title method-title" id="method-c-new">
               <b>new</b>( http_message, full_uri )
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-c-new" name="method-c-new" class="permalink">Link</a>
           </div>
 
             <div class="description">
@@ -122,7 +125,12 @@ expects.</p>
 <code>full_uri</code>.</p>
 <dl class="rdoc-list note-list"><dt>http_message
 <dd>
-<p>Hash describing the request for Alchemy Flux.</p>
+<p>Hash describing the message to send. See e.g.
+Hoodoo::Client::Endpoint::AMQP#do_amqp. Note that the header names inside
+this Hash are the mixed case, HTTP specification style ones like
+<code>X-Interaction-ID</code> and <em>not</em> the <a
+href="../../../../Rack.html">Rack</a> names like
+<code>HTTP_X_INTERACTION_ID</code>.</p>
 </dd><dt><code>full_uri</code>
 <dd>
 <p>Full target URI, as a String.</p>
@@ -137,7 +145,7 @@ expects.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
               </p>
               <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 86</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 107</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">http_message</span>, <span class="ruby-identifier">full_uri</span> )
   <span class="ruby-ivar">@http_message</span> = <span class="ruby-identifier">http_message</span>
   <span class="ruby-ivar">@full_uri</span>     = <span class="ruby-identifier">full_uri</span>
@@ -149,7 +157,7 @@ expects.</p>
         <div class="method">
           <div class="title method-title" id="method-i-5B-5D">
               <b>[]</b>( key )
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-5B-5D" name="method-i-5B-5D" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-5B-5D" name="method-i-5B-5D" class="permalink">Link</a>
           </div>
 
             <div class="description">
@@ -169,7 +177,7 @@ of how a request behaves.</p>
                 <a href="javascript:toggleSource('method-i-5B-5D_source')" id="l_method-i-5B-5D_source">show</a>
               </p>
               <div id="method-i-5B-5D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 116</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 152</span>
 <span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-keyword ruby-title">key</span> )
   <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-identifier">key</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -179,7 +187,7 @@ of how a request behaves.</p>
         <div class="method">
           <div class="title method-title" id="method-i-5B-5D-3D">
               <b>[]=</b>( key, value )
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-5B-5D-3D" name="method-i-5B-5D-3D" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-5B-5D-3D" name="method-i-5B-5D-3D" class="permalink">Link</a>
           </div>
 
             <div class="description">
@@ -202,7 +210,7 @@ expectations of how a request behaves.</p>
                 <a href="javascript:toggleSource('method-i-5B-5D-3D_source')" id="l_method-i-5B-5D-3D_source">show</a>
               </p>
               <div id="method-i-5B-5D-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 126</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 162</span>
 <span class="ruby-keyword">def</span> <span class="ruby-operator">[]=</span>( <span class="ruby-keyword ruby-title">key</span>, <span class="ruby-identifier">value</span> )
   <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-identifier">key</span> ] = <span class="ruby-identifier">value</span>
 <span class="ruby-keyword">end</span></pre>
@@ -212,11 +220,14 @@ expectations of how a request behaves.</p>
         <div class="method">
           <div class="title method-title" id="method-i-host">
               <b>host</b>()
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-host" name="method-i-host" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-host" name="method-i-host" class="permalink">Link</a>
           </div>
 
             <div class="description">
               <p>String describing this request&#39;s intended host.</p>
+
+<p>See also: <a
+href="AlchemyFluxHTTPRequestWrapper.html#method-i-host_from_header">host_from_header</a>.</p>
             </div>
 
 
@@ -227,9 +238,42 @@ expectations of how a request behaves.</p>
                 <a href="javascript:toggleSource('method-i-host_source')" id="l_method-i-host_source">show</a>
               </p>
               <div id="method-i-host_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 99</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 135</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">host</span>
-  <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;host&#39;</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">host_from_header</span>() <span class="ruby-operator">||</span> <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;host&#39;</span> ]
+<span class="ruby-keyword">end</span></pre>
+              </div>
+            </div>
+          </div>
+        <div class="method">
+          <div class="title method-title" id="method-i-host_from_header">
+              <b>host_from_header</b>()
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-host_from_header" name="method-i-host_from_header" class="permalink">Link</a>
+          </div>
+
+            <div class="description">
+              <p>String descrbing this request&#39;s intended host, according to the
+<code>Host</code> header. May return <code>nil</code> if none is found.</p>
+
+<p>See also: <a
+href="AlchemyFluxHTTPRequestWrapper.html#method-i-host">host</a>.</p>
+            </div>
+
+
+
+            <div class="sourcecode">
+              <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-host_from_header_source')" id="l_method-i-host_from_header_source">show</a>
+              </p>
+              <div id="method-i-host_from_header_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 123</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">host_from_header</span>
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;host&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;Host&#39;</span> ]
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -237,7 +281,7 @@ expectations of how a request behaves.</p>
         <div class="method">
           <div class="title method-title" id="method-i-method">
               <b>method</b>()
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-method" name="method-i-method" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-method" name="method-i-method" class="permalink">Link</a>
           </div>
 
             <div class="description">
@@ -253,7 +297,7 @@ String case is undefined, so perform case-insensitive comparisions.</p>
                 <a href="javascript:toggleSource('method-i-method_source')" id="l_method-i-method_source">show</a>
               </p>
               <div id="method-i-method_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 107</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 143</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">method</span>
   <span class="ruby-ivar">@http_message</span>[ <span class="ruby-string">&#39;verb&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -263,7 +307,7 @@ String case is undefined, so perform case-insensitive comparisions.</p>
         <div class="method">
           <div class="title method-title" id="method-i-type">
               <b>type</b>()
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-type" name="method-i-type" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-type" name="method-i-type" class="permalink">Link</a>
           </div>
 
             <div class="description">
@@ -278,9 +322,9 @@ String case is undefined, so perform case-insensitive comparisions.</p>
                 <a href="javascript:toggleSource('method-i-type_source')" id="l_method-i-type_source">show</a>
               </p>
               <div id="method-i-type_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 93</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 114</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">type</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_s</span>()
+  <span class="ruby-string">&#39;AlchemyFlux&#39;</span>
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>
@@ -288,11 +332,11 @@ String case is undefined, so perform case-insensitive comparisions.</p>
         <div class="method">
           <div class="title method-title" id="method-i-uri">
               <b>uri</b>()
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AMQPNewRelicRequestWrapper.html#method-i-uri" name="method-i-uri" class="permalink">Link</a>
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPRequestWrapper.html#method-i-uri" name="method-i-uri" class="permalink">Link</a>
           </div>
 
             <div class="description">
-              <p>String describing the full request URI.</p>
+              <p>URI object describing the full request URI.</p>
             </div>
 
 
@@ -303,9 +347,9 @@ String case is undefined, so perform case-insensitive comparisions.</p>
                 <a href="javascript:toggleSource('method-i-uri_source')" id="l_method-i-uri_source">show</a>
               </p>
               <div id="method-i-uri_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 132</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 168</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uri</span>
-  <span class="ruby-ivar">@full_uri</span>
+  <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-ivar">@full_uri</span>.<span class="ruby-identifier">to_s</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

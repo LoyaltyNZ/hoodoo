@@ -243,7 +243,7 @@ module Hoodoo
           # Rationalise and convert the date time to UTC.
 
           date_time      = Hoodoo::Utilities.rationalise_datetime( date_time ).utc
-          safe_date_time = self.sanitize( date_time ) # ActiveRecord provides #sanitize
+          safe_date_time = self.connection.quoted_date( date_time )
 
           # Create strings that specify the required attributes escaped and
           # joined by commas for use in a SQL query, for both main and history
@@ -269,7 +269,7 @@ module Hoodoo
                 SELECT #{ safe_history_name_string },"effective_start","effective_end"
                 FROM #{ dating_table_name }
               ) AS u
-              WHERE "effective_start" <= #{ safe_date_time } AND ("effective_end" > #{ safe_date_time } OR "effective_end" IS NULL)
+              WHERE "effective_start" <= '#{ safe_date_time }' AND ("effective_end" > '#{ safe_date_time }' OR "effective_end" IS NULL)
             ) AS #{ self.table_name }
           }
 

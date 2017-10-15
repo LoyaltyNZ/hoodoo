@@ -24,7 +24,7 @@ module Hoodoo; module Services; class Middleware
       #
       attr_reader :owning_middleware_instance
 
-      # The inbound Rack request a Rack::Request instance.
+      # The inbound Rack request; a <tt>Rack::Request</tt> instance.
       #
       attr_reader :rack_request
 

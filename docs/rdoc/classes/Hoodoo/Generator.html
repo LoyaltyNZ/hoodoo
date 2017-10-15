@@ -133,21 +133,23 @@ itself (so, just any extra arguments passed in).</p>
                 <a href="javascript:toggleSource('method-i-run-21_source')" id="l_method-i-run-21_source">show</a>
               </p>
               <div id="method-i-run-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 43</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 44</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">run!</span>( <span class="ruby-identifier">args</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args_empty?</span>(<span class="ruby-identifier">args</span>)
 
   <span class="ruby-identifier">name</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-h&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--help&#39;</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span>   <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-h&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--help&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">empty?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_version</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-v&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--version&#39;</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;SERVICE_NAME must match #{ NAME_REGEX.inspect }&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">naughty_name?</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;&#39;#{ name }&#39; already exists&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>( <span class="ruby-node">&quot;./#{ name }&quot;</span> )
 
-  <span class="ruby-identifier">git</span> = <span class="ruby-identifier">args</span>[ <span class="ruby-number">2</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>[ <span class="ruby-number">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--from&#39;</span>
+  <span class="ruby-identifier">path</span>  = <span class="ruby-identifier">args</span>[ <span class="ruby-number">2</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>[ <span class="ruby-number">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--path&#39;</span>
+  <span class="ruby-identifier">git</span>   = <span class="ruby-identifier">args</span>[ <span class="ruby-number">2</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>[ <span class="ruby-number">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--from&#39;</span>
   <span class="ruby-identifier">git</span> <span class="ruby-operator">||=</span> <span class="ruby-string">&#39;git@github.com:LoyaltyNZ/service_shell.git&#39;</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">create_service</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">git</span> )
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">create_service</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">git</span>, <span class="ruby-identifier">path</span> )
 <span class="ruby-keyword">end</span></pre>
               </div>
             </div>

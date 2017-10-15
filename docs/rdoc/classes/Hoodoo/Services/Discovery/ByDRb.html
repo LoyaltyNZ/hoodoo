@@ -182,7 +182,7 @@ href="ByDRb.html#method-i-discover_remote">discover_remote</a>.</p>
 <p>Options hash as described below.</p>
 </dd></dl>
 
-<p>Options keys are currently all required:</p>
+<p>Options keys are:</p>
 <dl class="rdoc-list note-list"><dt><code>host</code>
 <dd>
 <p>Host name as a string for location of service endpoint, over HTTP (usually,
@@ -194,6 +194,9 @@ local development is assumed).</p>
 <dd>
 <p>Path on the above host and port of service endpoint.</p>
 </dd></dl>
+
+<p>If any are missing or <code>nil</code>, remote announcement is aborted and
+the return value is correspondingly <code>nil</code>.</p>
             </div>
 
 
@@ -204,21 +207,23 @@ local development is assumed).</p>
                 <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
               </p>
               <div id="method-i-announce_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 75</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 78</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:host</span> ]
   <span class="ruby-identifier">port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:port</span> ]
   <span class="ruby-identifier">path</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:path</span> ]
 
-  <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-node">&quot;http://#{ host }:#{ port }#{ path }&quot;</span>
+  <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-keyword">unless</span> <span class="ruby-identifier">host</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">port</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-node">&quot;http://#{ host }:#{ port }#{ path }&quot;</span>
+  <span class="ruby-keyword">end</span>
 
-  <span class="ruby-comment"># Announce our local services if we managed to find the host and port,</span>
-  <span class="ruby-comment"># but no point otherwise; the values could be anything. In a &#39;guard&#39;</span>
-  <span class="ruby-comment"># based environment, first-run determines host and port but subsequent</span>
-  <span class="ruby-comment"># runs do not - yet it stays the same, so it works out OK there.</span>
+  <span class="ruby-comment"># Announce our local services only if we have an endpoint URI. In a</span>
+  <span class="ruby-comment"># &#39;guard&#39; based environment, first-run determines host and port but</span>
+  <span class="ruby-comment"># subsequent runs do not - yet it stays the same, so it works out</span>
+  <span class="ruby-comment"># OK there.</span>
   <span class="ruby-comment">#</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">host</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">port</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">endpoint_uri_string</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
     <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">add</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )
   <span class="ruby-keyword">end</span>
 
@@ -300,7 +305,7 @@ instance if the endpoint is found, else <code>nil</code>.</p>
                 <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
               </p>
               <div id="method-i-discover_remote_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 104</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_drb/by_drb.rb, line 109</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">endpoint_uri_string</span> = <span class="ruby-identifier">drb_service</span>().<span class="ruby-identifier">find</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">endpoint_uri_string</span> )

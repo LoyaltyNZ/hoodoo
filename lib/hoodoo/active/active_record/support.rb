@@ -70,7 +70,8 @@ module Hoodoo
         #
         mapping = {
           'created_after'  => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :created_at ),
-          'created_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :created_at )
+          'created_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :created_at ),
+          'created_by'     => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( :created_by )
         }
 
         if mapping.keys.length != ( mapping.keys | Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys ).length

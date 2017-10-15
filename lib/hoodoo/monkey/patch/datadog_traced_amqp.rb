@@ -37,22 +37,27 @@ module Hoodoo
             # the response. It calls the original implementation via +super+.
             #
             # +http_message+:: Hash describing the message to send.
-            #
             # +full_uri+::     URI being sent to. This is somewhat meaningless
-            #                  when using AMQP but NewRelic requires it.
+            #                  when using AMQP but useful for analytics data.
             #
             def monkey_send_request( http_message, full_uri )
               amqp_response = nil
 
               Datadog.tracer.trace( 'alchemy.request' ) do |span|
-                span.service = 'alchemy'
+                span.service   = 'alchemy'
                 span.span_type = 'alchemy'
-                span.resource = http_message[ 'verb' ]
+                span.resource  = http_message[ 'verb' ]
                 span.set_tag( 'target.path', http_message[ 'path'] )
 
-                # Add Datadog trace IDs to the HTTP message
+                # Add Datadog trace IDs to the HTTP message. For compatibility
+                # with Hoodoo V1 services using a fork of DDTrace, we send both
+                # old headers ("X-DDTrace...") and new ("X-DataDog-...")
+
+                http_message[ 'headers' ][ 'X_DATADOG_TRACE_ID'        ] = span.trace_id.to_s
+                http_message[ 'headers' ][ 'X_DATADOG_PARENT_ID'       ] = span.span_id.to_s
+
                 http_message[ 'headers' ][ 'X_DDTRACE_PARENT_TRACE_ID' ] = span.trace_id.to_s
-                http_message[ 'headers' ][ 'X_DDTRACE_PARENT_SPAN_ID' ] = span.span_id.to_s
+                http_message[ 'headers' ][ 'X_DDTRACE_PARENT_SPAN_ID'  ] = span.span_id.to_s
 
                 amqp_response = super( http_message, full_uri )
               end

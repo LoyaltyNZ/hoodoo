@@ -95,10 +95,11 @@ are unset, body data is <em>not</em> logged.</p>
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
               </p>
               <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 67</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 71</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Add custom attributes to the NewRelic transaction.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-operator">::</span><span class="ruby-constant">NewRelic</span><span class="ruby-operator">::</span><span class="ruby-constant">Agent</span>.<span class="ruby-identifier">add_custom_attributes</span>(
     {
       <span class="ruby-value">:target_action</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interaction</span>.<span class="ruby-identifier">requested_action</span>,
@@ -107,6 +108,7 @@ are unset, body data is <em>not</em> logged.</p>
   )
 
   <span class="ruby-comment"># Call the original logging method.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">interaction</span> )
 
 <span class="ruby-keyword">end</span></pre>

@@ -10,6 +10,7 @@
 
 require 'singleton'
 require 'fileutils'
+require 'pathname'
 
 module Hoodoo
 
@@ -45,25 +46,33 @@ module Hoodoo
 
       name = args.first
 
-      return show_usage if name == '-h' || name == '--help'
+      return show_usage   if name == '-h' || name == '--help' || name.nil? || name.empty?
+      return show_version if name == '-v' || name == '--version'
 
       return usage_and_warning( "SERVICE_NAME must match #{ NAME_REGEX.inspect }" ) if naughty_name?( name )
       return usage_and_warning( "'#{ name }' already exists" ) if File.exist?( "./#{ name }" )
 
-      git = args[ 2 ] if args[ 1 ] == '--from'
+      path  = args[ 2 ] if args[ 1 ] == '--path'
+      git   = args[ 2 ] if args[ 1 ] == '--from'
       git ||= 'git@github.com:LoyaltyNZ/service_shell.git'
 
-      return create_service( name, git )
+      return create_service( name, git, path )
     end
 
   private
 
-    def create_service( name, git )
-      if create_dir( name )               &&
-         clone_service_shell( name, git ) &&
-         remove_dot_git( name, git )      &&
-         replace_strings( name )
+    # Name of new service, mandatory GitHub repo path of the shell to start
+    # with, or override local filesystem path to copy from (pass "nil" to
+    # not do that).
+    #
+    def create_service( name, git, path )
+      ok = create_dir( name )
+      ok = clone_service_shell( name, git ) if ok &&   path.nil?
+      ok = copy_service_shell( name, path ) if ok && ! path.nil?
+      ok = remove_dot_git( name, git )      if ok
+      ok = replace_strings( name )          if ok
 
+      if ok
         puts "Success! ./#{name} created."
         Kernel::exit( KERNEL_EXIT_SUCCESS )
       else
@@ -78,6 +87,14 @@ module Hoodoo
 
     def clone_service_shell( name, git )
       `git clone #{ git } #{ name }`
+      $?.to_i == 0
+    end
+
+    def copy_service_shell( name, path )
+      source_path = Pathname.new( path ).to_s << '/.'
+      dest_path   = File.join( '.', name )
+
+      FileUtils.cp_r( source_path, dest_path, verbose: true )
       $?.to_i == 0
     end
 
@@ -123,9 +140,32 @@ module Hoodoo
     end
 
     def show_usage
-      puts "Usage: hoodoo SERVICE_NAME [--from <git-repository>]"
-      puts "  e.g. hoodoo service_cron"
-      puts "       hoodoo service_person --from git@github.com:YOURNAME/service_shell_fork.git"
+      puts
+      puts "Creates a service shell at the PWD, customised with the given service name."
+      puts
+      puts "  hoodoo <service-name> [--from <git-repository> | --path <full-pathname>]"
+      puts
+      puts "For example:"
+      puts
+      puts "  hoodoo service_cron"
+      puts "  hoodoo service_person  --from git@github.com:YOURNAME/service_shell_fork.git"
+      puts "  hoodoo service_product --path /path/to/local/service/shell/container"
+      puts
+      puts "See also:"
+      puts
+      puts "  hoodoo --help    shows this help"
+      puts "  hoodoo --version shows the require-able gem version"
+      puts
+
+      Kernel::exit( KERNEL_EXIT_FAILURE )
+    end
+
+    def show_version
+      require 'hoodoo/version'
+
+      puts
+      puts "Accessible Hoodoo gem is #{ Hoodoo::VERSION } (#{ Hoodoo::DATE })"
+      puts
 
       Kernel::exit( KERNEL_EXIT_FAILURE )
     end

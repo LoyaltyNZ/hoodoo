@@ -51,8 +51,16 @@ describe Hoodoo::Monkey::Patch::DatadogTracedAMQP, :order => :defined do
     end
   end
 
-  it_behaves_like 'an AMQP-based middleware/client endpoint',
-                  {'X_DDTRACE_PARENT_TRACE_ID'=>'trace_id', 'X_DDTRACE_PARENT_SPAN_ID' => 'span_id'}
+  it_behaves_like(
+    'an AMQP-based middleware/client endpoint',
+    {
+      'X_DATADOG_TRACE_ID'        => 'trace_id',
+      'X_DATADOG_PARENT_ID'       => 'span_id',
+
+      'X_DDTRACE_PARENT_TRACE_ID' => 'trace_id',
+      'X_DDTRACE_PARENT_SPAN_ID'  => 'span_id',
+    }
+  )
 
   context 'afterwards' do
     it 'has non-zero NewRelic method call counts' do

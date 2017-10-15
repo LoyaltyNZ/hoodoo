@@ -26,7 +26,6 @@ module Hoodoo
         # Example:
         #
         #     class SomeModel < ActiveRecord::Base
-        #
         #       validates :somefield, uuid: true
         #     end
         #
