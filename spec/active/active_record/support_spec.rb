@@ -59,7 +59,7 @@ describe Hoodoo::ActiveRecord::Support do
     end
   end
 
-  context '#full_scope_for' do
+  context '#full_scope_for and #add_undated_scope_to' do
 
     # Here we not only test the full scope generator with all mixins included,
     # and test them all in a *deactivated* state, we also check that inheritance
@@ -214,13 +214,25 @@ describe Hoodoo::ActiveRecord::Support do
 
         pending 'translated' # Scope verification for '#translated'
 
-        # In this last one, we actually check full_scope_for; activations are in
-        # the subclass so we drive the non-context versions directly to verify
-        # that the context chain worked.
+        # Finally, we actually check full_scope_for / add_undated_scope_to;
+        # activations are in the subclass so we drive the non-context versions
+        # directly to verify that the context chain worked.
 
         it 'everything' do
           auto_scope   = described_class.full_scope_for( RSpecFullScopeForTestSubclass, @context ).to_sql()
           manual_scope = RSpecFullScopeForTestSubclass.secure( @context ).dated( @context ).translated( @context ).to_sql()
+
+          expect( auto_scope ).to eq( manual_scope )
+        end
+
+        it 'undated' do
+          auto_scope = described_class.add_undated_scope_to(
+            RSpecFullScopeForTestSubclass.all(),
+            RSpecFullScopeForTestSubclass,
+            @context
+          ).to_sql()
+
+          manual_scope = RSpecFullScopeForTestSubclass.secure( @context ).translated( @context ).to_sql()
 
           expect( auto_scope ).to eq( manual_scope )
         end
@@ -282,6 +294,18 @@ describe Hoodoo::ActiveRecord::Support do
         it 'everything' do
           auto_scope   = described_class.full_scope_for( RSpecFullScopeForManuallyDated, @context ).to_sql()
           manual_scope = RSpecFullScopeForManuallyDated.manually_dated( @context ).secure( @context ).translated( @context ).to_sql()
+
+          expect( auto_scope ).to eq( manual_scope )
+        end
+
+        it 'undated' do
+          auto_scope = described_class.add_undated_scope_to(
+            RSpecFullScopeForManuallyDated.all(),
+            RSpecFullScopeForManuallyDated,
+            @context
+          ).to_sql()
+
+          manual_scope = RSpecFullScopeForManuallyDated.secure( @context ).translated( @context ).to_sql()
 
           expect( auto_scope ).to eq( manual_scope )
         end

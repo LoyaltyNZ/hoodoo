@@ -289,7 +289,7 @@ module Hoodoo
         #
         # +unquoted_column_names+:: (Optional) An Array of Strings giving one
         #                           or more column names to use for the query.
-        #                           If omitted, all model attribtues are used
+        #                           If omitted, all model attributes are used
         #                           as columns. If the "id" column is not
         #                           included in the Array, it will be added
         #                           anyway as this column is mandatory. The

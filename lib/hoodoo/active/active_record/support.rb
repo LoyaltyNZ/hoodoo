@@ -142,15 +142,44 @@ module Hoodoo
           prevailing_scope = prevailing_scope.manually_dated( context )
         end
 
+        return self.add_undated_scope_to( prevailing_scope, klass, context )
+      end
+
+      # Back-end of sorts for ::full_scope_for. Given a base scope (e.g.
+      # '<tt>Model.all</tt>'), applies all available appropriate scoping
+      # additions included by that model, such as Hoodoo::ActiveRecord::Secure
+      # and Hoodoo::ActiveRecord::Translated, _except_ for the dating modules
+      # Hoodoo::ActiveRecord::Dated and Hoodoo::ActiveRecord::ManuallyDated.
+      #
+      # If you wish to use dating as well, call ::full_scope_for instead.
+      #
+      # +base_scope+:: The ActiveRecord::Relation instance providing the base
+      #                scope to which additions will be made.
+      #
+      # +klass+::      The ActiveRecord::Base subclass _class_ (not instance)
+      #                which is making the call here. This is the entity which
+      #                is checked for module inclusions to determine how the
+      #                query chain should be assembled.
+      #
+      # +context+::    Hoodoo::Services::Context instance describing a call
+      #                context. This is typically a value passed to one of
+      #                the Hoodoo::Services::Implementation instance methods
+      #                that a resource subclass implements.
+      #
+      # Returns the given input scope, with additional conditions added for
+      # any Hoodoo ActiveRecord extension modules included by the ActiveRecord
+      # model class that the scope targets.
+      #
+      def self.add_undated_scope_to( base_scope, klass, context )
         if klass.include?( Hoodoo::ActiveRecord::Secure )
-          prevailing_scope = prevailing_scope.secure( context )
+          base_scope = base_scope.secure( context )
         end
 
         if klass.include?( Hoodoo::ActiveRecord::Translated )
-          prevailing_scope = prevailing_scope.translated( context )
+          base_scope = base_scope.translated( context )
         end
 
-        return prevailing_scope
+        return base_scope
       end
 
     end

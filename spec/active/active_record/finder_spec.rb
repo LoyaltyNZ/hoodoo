@@ -1,6 +1,10 @@
 require 'spec_helper'
 require 'active_record'
 
+# Automatic and manual dating tests have their own test files and Finder
+# module features specific to dating are covered there, to keep things more
+# simple here.
+#
 # The "counting" tests must run first and in-order internally, else e.g. an
 # ANALYZE might happen before the pre-ANALYZE test, breaking the results.
 # Other tests that create objects in the table can cause the estimated count

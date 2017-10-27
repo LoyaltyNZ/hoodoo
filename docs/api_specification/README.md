@@ -179,28 +179,29 @@ When a `408 Request Timeout` is received, the general recommendation is, after a
 
 Resource-level errors generally arise if a problem is detected during request processing in the Hoodoo service layer.
 
-| HTTP response code       | `code`                             | `reference`    | Meaning |
-|--------------------------|------------------------------------|----------------|---------|
-| 404 Not Found            | `generic.not_found`                | "{ident}"      | The resource described by the UUID given in the `reference` field was not found; relevant for API calls that take UUIDs in URLs. |
-| 422 Unprocessable Entity | `generic.malformed`                | Undefined      | A payload was malformed and could not be parsed. |
-| 422 Unprocessable Entity | `generic.required_field_missing`   | "{field_name}" | The field at `reference` is required and is empty or not supplied. |
-| 422 Unprocessable Entity | `generic.invalid_string`           | "{field_name}" | The field at `reference` is not a valid string. |
-| 422 Unprocessable Entity | `generic.invalid_integer`          | "{field_name}" | The field at `reference` is not a valid integer. |
-| 422 Unprocessable Entity | `generic.invalid_float`            | "{field_name}" | The field at `reference` is not a valid JSON floating point number. |
-| 422 Unprocessable Entity | `generic.invalid_decimal`          | "{field_name}" | The field at `reference` is not a valid JSON floating point number expressed as a string. |
-| 422 Unprocessable Entity | `generic.invalid_boolean`          | "{field_name}" | The field at `reference` is not a valid boolean. |
-| 422 Unprocessable Entity | `generic.invalid_enum`             | "{field_name}" | The field at `reference` is not a valid enumeration - either its value is not a string, or is not one of the permitted enumeration values. |
-| 422 Unprocessable Entity | `generic.invalid_date`             | "{field_name}" | The field at `reference` is not a valid [ISO 8601 subset date](http://www.w3.org/TR/xmlschema-2/#dateTime) date. |
-| 422 Unprocessable Entity | `generic.invalid_time`             | "{field_name}" | The field at `reference` is not a valid [ISO 8601 subset time](http://www.w3.org/TR/xmlschema-2/#dateTime) time. |
-| 422 Unprocessable Entity | `generic.invalid_datetime`         | "{field_name}" | The field at `reference` is not a valid [ISO 8601 subset date-time](http://www.w3.org/TR/xmlschema-2/#dateTime) date-time. |
-| 422 Unprocessable Entity | `generic.invalid_uuid`             | "{field_name}" | The field at `reference` does not look like a valid platform UUID, or should refer to another existing resource but the requested related resource instance cannot be found (for POST/PATCH operations). |
-| 422 Unprocessable Entity | `generic.invalid_array`            | "{field_name}" | The field at `reference` should refer to a JSON array, but seems to refer to something else. |
-| 422 Unprocessable Entity | `generic.invalid_object`           | "{field_name}" | The field at `reference` should refer to a JSON object, but seems to refer to something else. |
-| 422 Unprocessable Entity | `generic.invalid_hash`             | "{field_name}" | The field at `reference` should refer to a JSON object matching a certain key/value Hash-like pattern, but seems to refer to something else or has incorrect keys or values. |
-| 422 Unprocessable Entity | `generic.invalid_duplication`      | "{field_name}" | The field at `reference` contains a duplicate value and duplicates are not allowed in the call context. |
+| HTTP response code       | `code`                             | `reference`           | Meaning |
+|--------------------------|------------------------------------|-----------------------|---------|
+| 404 Not Found            | `generic.not_found`                | "{ident}"             | The resource described by the UUID given in the `reference` field was not found; relevant for API calls that take UUIDs in URLs. |
+| 404 Not Found            | `generic.contemporary_exists`      | "{ident}"             | Typically paired with `generic.not_found`; if a [_dated_ query](#http_x_dated_at) found no record, this error indicates that an _undated_ query would find a contemporary equivalent. |
+| 422 Unprocessable Entity | `generic.malformed`                | Undefined             | A payload was malformed and could not be parsed. |
+| 422 Unprocessable Entity | `generic.required_field_missing`   | "{field_name}"        | The field at `reference` is required and is empty or not supplied. |
+| 422 Unprocessable Entity | `generic.invalid_string`           | "{field_name}"        | The field at `reference` is not a valid string. |
+| 422 Unprocessable Entity | `generic.invalid_integer`          | "{field_name}"        | The field at `reference` is not a valid integer. |
+| 422 Unprocessable Entity | `generic.invalid_float`            | "{field_name}"        | The field at `reference` is not a valid JSON floating point number. |
+| 422 Unprocessable Entity | `generic.invalid_decimal`          | "{field_name}"        | The field at `reference` is not a valid JSON floating point number expressed as a string. |
+| 422 Unprocessable Entity | `generic.invalid_boolean`          | "{field_name}"        | The field at `reference` is not a valid boolean. |
+| 422 Unprocessable Entity | `generic.invalid_enum`             | "{field_name}"        | The field at `reference` is not a valid enumeration - either its value is not a string, or is not one of the permitted enumeration values. |
+| 422 Unprocessable Entity | `generic.invalid_date`             | "{field_name}"        | The field at `reference` is not a valid [ISO 8601 subset date](http://www.w3.org/TR/xmlschema-2/#dateTime) date. |
+| 422 Unprocessable Entity | `generic.invalid_time`             | "{field_name}"        | The field at `reference` is not a valid [ISO 8601 subset time](http://www.w3.org/TR/xmlschema-2/#dateTime) time. |
+| 422 Unprocessable Entity | `generic.invalid_datetime`         | "{field_name}"        | The field at `reference` is not a valid [ISO 8601 subset date-time](http://www.w3.org/TR/xmlschema-2/#dateTime) date-time. |
+| 422 Unprocessable Entity | `generic.invalid_uuid`             | "{field_name}"        | The field at `reference` does not look like a valid platform UUID, or should refer to another existing resource but the requested related resource instance cannot be found (for POST/PATCH operations). |
+| 422 Unprocessable Entity | `generic.invalid_array`            | "{field_name}"        | The field at `reference` should refer to a JSON array, but seems to refer to something else. |
+| 422 Unprocessable Entity | `generic.invalid_object`           | "{field_name}"        | The field at `reference` should refer to a JSON object, but seems to refer to something else. |
+| 422 Unprocessable Entity | `generic.invalid_hash`             | "{field_name}"        | The field at `reference` should refer to a JSON object matching a certain key/value Hash-like pattern, but seems to refer to something else or has incorrect keys or values. |
+| 422 Unprocessable Entity | `generic.invalid_duplication`      | "{field_name}"        | The field at `reference` contains a duplicate value and duplicates are not allowed in the call context. |
 | 422 Unprocessable Entity | `generic.invalid_state`            | "{destination_state}" | A resource with a `state` field cannot change from its current state to the one requested in `reference`. |
-| 422 Unprocessable Entity | `generic.invalid_parameters`       | Undefined      | Failing all more specific cases, parameters were invalid in some other way; more information is not available, though the `message` string *might* be of assistance. |
-| 422 Unprocessable Entity | `generic.mutually_exclusive`       | "{field_names}"      | The fields listed at `reference` are mutually exclusive. |
+| 422 Unprocessable Entity | `generic.invalid_parameters`       | Undefined             | Failing all more specific cases, parameters were invalid in some other way; more information is not available, though the `message` string *might* be of assistance. |
+| 422 Unprocessable Entity | `generic.mutually_exclusive`       | "{field_names}"       | The fields listed at `reference` are mutually exclusive. |
 
 Remember that error responses to API callers are described as a *collection* of these data types. This can be most apparent when there are inbound data validation failures across multiple fields in the request, resulting in multiple entries in the collection.
 
@@ -549,6 +550,8 @@ Note that specifying date/times in the future _according to the platform's clock
 
 * Make sure your calling computer's time is also synchronised via a mechanism like NTP
 * Do not set an X-Dated-At header within 30 minutes of your concept of "now".
+
+In the event that a resource instance is not found at a given date-time, the `generic.not_found` error is returned. The implementation of a history-aware resource may additionally return `generic.contemporary_exists` in the same response if it wants to let the caller know that an "undated", contemporary version of the record exists. This tells the caller that the requested resource is not found _yet_, but appears in the history at a date-time after that requested in the request's `X-Dated-At` header.
 
 See also [`X-Dated-From`](#http_x_dated_from).
 

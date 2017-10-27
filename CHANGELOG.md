@@ -1,5 +1,13 @@
 # Hoodoo v2.x
 
+## 2.1.0 (2017-10-27)
+
+* (TBD: Describe new methods with CDN links)
+
+
+
+
+
 ## 2.0.0 (2017-10-13)
 
 * Hoodoo and therefore Hoodoo services now require Ruby 2.2.x or later with Rack v2. Rack v1 and older AMQP support has been removed as it was causing dependency problems with other updated gems that were becoming impractical to resolve, which in turn meant Ruby 2.1.x support was equally impractical.

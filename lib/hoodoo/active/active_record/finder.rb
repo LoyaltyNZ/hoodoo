@@ -118,6 +118,29 @@ module Hoodoo
           Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
         end
 
+        # As #scoped_in, but intentionally omits any historical dating modules
+        # from the returned scope. The scope might then address both historic
+        # and contemporary records, depending on whether you are using manual
+        # or automatic dating.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # See also:
+        #
+        # * Hoodoo::ActiveRecord::Dated
+        # * Hoodoo::ActiveRecord::ManuallyDated
+        #
+        def scoped_undated_in( context )
+          Hoodoo::ActiveRecord::Support.add_undated_scope_to(
+            self.all(), # "all" -> returns anonymous scope
+            self,
+            context
+          )
+        end
+
         # "Polymorphic" find - support for finding a model by fields other
         # than just +:id+, based on a single unique identifier. Use #acquire
         # just like you'd use +find_by_id+ and only bother with it if you
@@ -253,10 +276,32 @@ module Hoodoo
         #             the Hoodoo::Services::Implementation instance methods
         #             that a resource subclass implements.
         #
-        # Returns a found model instance or +nil+ for no match.
+        # Additional _named_ parameters are:
         #
-        def acquire_in( context )
-          return scoped_in( context ).acquire( context.request.ident )
+        # +add_errors+:: Optional boolean defaulting to +false+ which, if
+        #                +true+, adds '<tt>generic.not_found</tt>' and for
+        #                historically dated queries, may add
+        #                '<tt>generic.contemporary_exists</tt>' to the
+        #                +context+ error collection. If using this option,
+        #                check <tt>context.response.halt_processing?</tt>
+        #                after the +acquire_in+ call.
+        #
+        # See also:
+        #
+        # * Hoodoo::Services::Response#not_found
+        #
+        # Returns a found model instance or +nil+ for no match / on error.
+        #
+        def acquire_in( context, add_errors: false )
+          ident  = context.request.ident
+          result = scoped_in( context ).acquire( ident )
+
+          context.response.not_found(
+            ident,
+            contemporary_exists: scoped_undated_in( context ).acquire( ident ).present?
+          ) if add_errors && result.nil?
+
+          return result
         end
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which

@@ -23,6 +23,7 @@ describe Hoodoo::ActiveRecord::Dated do
 
       class RSpecModelEffectiveDateTest < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
+
         dating_enabled()
       end
 
@@ -43,6 +44,7 @@ describe Hoodoo::ActiveRecord::Dated do
 
       class RSpecModelEffectiveDateTestOverride < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Dated
+        include Hoodoo::ActiveRecord::Finder
 
         dating_enabled( :history_table_name => :r_spec_model_effective_date_history_entries )
       end
@@ -132,6 +134,61 @@ describe Hoodoo::ActiveRecord::Dated do
 
       it 'knows when something is not automatically dated' do
         expect( RSpecNotDated.dating_enabled? ).to eq( false )
+      end
+    end
+
+    context 'with Hoodoo::ActiveRecord::Finder support' do
+      context '#scoped_in' do
+        before :each do
+
+          # Get a good-enough-for-test interaction which has a context
+          # that contains a Session we can modify.
+
+          @interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+          @interaction.context = Hoodoo::Services::Context.new(
+            Hoodoo::Services::Session.new,
+            @interaction.context.request,
+            @interaction.context.response,
+            @interaction
+          )
+
+          @context = @interaction.context
+          @session = @interaction.context.session
+        end
+
+        it 'generates appropriate scope' do
+          if model_klass == RSpecModelEffectiveDateTestOverride
+            @session.scoping = { :authorised_uuids => [ 'uuid 1', 'uuid 2' ], :authorised_code => 'code 1' }
+
+            expect( Hoodoo::ActiveRecord::Support ).to(
+              receive( :full_scope_for ).once().with(
+                model_klass, @context
+              ).and_call_original()
+            )
+
+            sql = model_klass.scoped_in( @context ).to_sql
+
+            expect( sql ).to include( "UNION ALL" )
+            expect( sql ).to include( "WHERE \"effective_start\" <= '" )
+            expect( sql ).to include( "' AND (\"effective_end\" > '" )
+          end
+        end
+
+        it 'generates appropriate undated scope' do
+          if model_klass == RSpecModelEffectiveDateTestOverride
+            @session.scoping = { :authorised_uuids => [ 'uuid 1', 'uuid 2' ], :authorised_code => 'code 1' }
+
+            expect( Hoodoo::ActiveRecord::Support ).to(
+              receive( :add_undated_scope_to ).once().with(
+                kind_of( ActiveRecord::Relation ), model_klass, @context
+              ).and_call_original()
+            )
+
+            sql = model_klass.scoped_undated_in( @context ).to_sql
+
+            expect( sql ).to eq( "SELECT \"r_spec_model_effective_date_test_overrides\".* FROM \"r_spec_model_effective_date_test_overrides\"" )
+          end
+        end
       end
     end
 

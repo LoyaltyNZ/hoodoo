@@ -299,18 +299,68 @@ module Hoodoo; module Services
       return @errors.merge!( errors_object )
     end
 
-    # Set the standard not found error message (generic.not_found), to
-    # be used durning a 'show' call when the requested resource does not
-    # exist.
+    # Set the standard not found error message '<tt>generic.not_found</tt>',
+    # to be used durning a 'show' call when the requested resource does not
+    # exist. If the optional +contemporary_exists+ flag is used, an additional
+    # error entry of '<tt>generic.contemporary_exists</tt>' is included.
     #
     # +ident+::  The identifier of the resource which was not found
     #
-    # Example:
+    # Additional _named_ parameters are:
+    #
+    # +contemporary_exists+:: Optional boolean defaulting to +false+ which,
+    #                         if +true+, adds
+    #                         '<tt>generic.contemporary_exists</tt>' in
+    #                         addition to '<tt>generic.not_found</tt>'.
+    #
+    #
+    # Low level example:
     #
     #      return response.not_found( ident ) if resource.nil?
     #
-    def not_found( ident )
-      @errors.add_error( 'generic.not_found', :reference => { :ident => ident } )
+    # Example for source implementations with a +context+ available:
+    #
+    #     resource = SomeModel.acquire_in( context )
+    #
+    #     if resource.nil?
+    #
+    #       # You'd call "#dated_historical_and_current" if using
+    #       # automatic dating, or "#manually_dated_contemporary" for
+    #       # manual dating (which is recommended over automatic).
+    #       #
+    #       contemporary_resource = SomeModel.
+    #                               secure( context ).
+    #                               manually_dated_contemporary().
+    #                               acquire( context.request.ident )
+    #
+    #       # Use of ActiveRecord means some ActiveSupport extensions
+    #       # such as "#present?" will be available.
+    #       #
+    #       return context.response.not_found(
+    #         context.request.ident,
+    #         contemporary_exists: contemporary_resource.present?
+    #       )
+    #     end
+    #
+    # An even higher level approach through +context+:
+    #
+    #   resource = SomeModel.acquire_in( context, add_errors: true )
+    #   return if context.response.halt_processing?
+    #
+    # ...this does the error addition for you "behind the scenes" and frees
+    # application authors of the burden of constructing an appropriately
+    # secure but undated scope for the contemporary resource lookup.
+    #
+    # See also:
+    #
+    # * Hoodoo::ActiveRecord::Finder#acquire_in
+    # * Hoodoo::ActiveRecord::Secure#secure
+    # * Hoodoo::ActiveRecord::ManuallyDated#manually_dated_contemporary
+    # * Hoodoo::ActiveRecord::Finder#acquire
+    #
+    def not_found( ident, contemporary_exists: false )
+      @errors.add_error( 'generic.not_found',           :reference => { :ident => ident } )
+      @errors.add_error( 'generic.contemporary_exists', :reference => { :ident => ident } ) if contemporary_exists
     end
 
     # Convert the internal response data into something that Rack expects.
