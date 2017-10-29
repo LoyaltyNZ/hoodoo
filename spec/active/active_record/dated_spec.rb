@@ -53,6 +53,18 @@ describe Hoodoo::ActiveRecord::Dated do
 
   shared_examples Hoodoo::ActiveRecord::Dated do
 
+    before( :each ) do
+      interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+      interaction.context = Hoodoo::Services::Context.new(
+        Hoodoo::Services::Session.new,
+        interaction.context.request,
+        interaction.context.response,
+        interaction
+      )
+
+      @context = interaction.context
+    end
+
     before( :all ) do
 
       # Create some example data for finding. The data has two different UUIDs
@@ -137,61 +149,6 @@ describe Hoodoo::ActiveRecord::Dated do
       end
     end
 
-    context 'with Hoodoo::ActiveRecord::Finder support' do
-      context '#scoped_in' do
-        before :each do
-
-          # Get a good-enough-for-test interaction which has a context
-          # that contains a Session we can modify.
-
-          @interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
-          @interaction.context = Hoodoo::Services::Context.new(
-            Hoodoo::Services::Session.new,
-            @interaction.context.request,
-            @interaction.context.response,
-            @interaction
-          )
-
-          @context = @interaction.context
-          @session = @interaction.context.session
-        end
-
-        it 'generates appropriate scope' do
-          if model_klass == RSpecModelEffectiveDateTestOverride
-            @session.scoping = { :authorised_uuids => [ 'uuid 1', 'uuid 2' ], :authorised_code => 'code 1' }
-
-            expect( Hoodoo::ActiveRecord::Support ).to(
-              receive( :full_scope_for ).once().with(
-                model_klass, @context
-              ).and_call_original()
-            )
-
-            sql = model_klass.scoped_in( @context ).to_sql
-
-            expect( sql ).to include( "UNION ALL" )
-            expect( sql ).to include( "WHERE \"effective_start\" <= '" )
-            expect( sql ).to include( "' AND (\"effective_end\" > '" )
-          end
-        end
-
-        it 'generates appropriate undated scope' do
-          if model_klass == RSpecModelEffectiveDateTestOverride
-            @session.scoping = { :authorised_uuids => [ 'uuid 1', 'uuid 2' ], :authorised_code => 'code 1' }
-
-            expect( Hoodoo::ActiveRecord::Support ).to(
-              receive( :add_undated_scope_to ).once().with(
-                kind_of( ActiveRecord::Relation ), model_klass, @context
-              ).and_call_original()
-            )
-
-            sql = model_klass.scoped_undated_in( @context ).to_sql
-
-            expect( sql ).to eq( "SELECT \"r_spec_model_effective_date_test_overrides\".* FROM \"r_spec_model_effective_date_test_overrides\"" )
-          end
-        end
-      end
-    end
-
     context '#dated_at' do
       it 'returns counts correctly' do
         expect( model_klass.dated_at( @now - 10.hours ).count ).to be 0
@@ -226,26 +183,16 @@ describe Hoodoo::ActiveRecord::Dated do
 
     context '#dated' do
       it 'returns counts correctly' do
-        # The contents of the Context are irrelevant aside from the fact that it
-        # needs a request to store the dated_at value.
-        request = Hoodoo::Services::Request.new
-        context = Hoodoo::Services::Context.new( nil, request, nil, nil )
+        @context.request.dated_at = @now - 10.hours
+        expect( model_klass.dated( @context ).count ).to be 0
 
-        context.request.dated_at = @now - 10.hours
-        expect( model_klass.dated( context ).count ).to be 0
-
-        context.request.dated_at = @now
-        expect( model_klass.dated( context ).count ).to be 2
+        @context.request.dated_at = @now
+        expect( model_klass.dated( @context ).count ).to be 2
       end
 
       def test_expectation( time, expected_data )
-        # The contents of the Context are irrelevant aside from the fact that it
-        # needs a request to store the dated_at value.
-        request = Hoodoo::Services::Request.new
-        context = Hoodoo::Services::Context.new( nil, request, nil, nil )
-        context.request.dated_at = time
-
-        expect( model_klass.dated( context ).pluck( :data ) ).to match_array( expected_data )
+        @context.request.dated_at = time
+        expect( model_klass.dated( @context ).pluck( :data ) ).to match_array( expected_data )
       end
 
       it 'returns no records before any were effective' do
@@ -265,27 +212,14 @@ describe Hoodoo::ActiveRecord::Dated do
       end
 
       it 'works with further filtering' do
-
-        # The contents of the Context are irrelevant aside from the fact that it
-        # needs a request to store the dated_at value.
-        request = Hoodoo::Services::Request.new
-        context = Hoodoo::Services::Context.new( nil, request, nil, nil )
-        context.request.dated_at = @now
-
-        expect( model_klass.dated( context ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
+        @context.request.dated_at = @now
+        expect( model_klass.dated( @context ).where( :id => @uuid_a ).pluck( :data ) ).to eq( [ "six" ] )
       end
 
       it 'works with dating last' do
-
-        # The contents of the Context are irrelevant aside from the fact that it
-        # needs a request to store the dated_at value.
-        request = Hoodoo::Services::Request.new
-        context = Hoodoo::Services::Context.new( nil, request, nil, nil )
-        context.request.dated_at = @now
-
-        expect( model_klass.where( :id => @uuid_a ).dated( context ).pluck( :data ) ).to eq( [ "six" ] )
+        @context.request.dated_at = @now
+        expect( model_klass.where( :id => @uuid_a ).dated( @context ).pluck( :data ) ).to eq( [ "six" ] )
       end
-
     end
 
     context '#dated_historical_and_current' do
@@ -325,7 +259,107 @@ describe Hoodoo::ActiveRecord::Dated do
       end
     end
 
-  end
+    # These appear in the shared examples to take advantage of the test
+    # data that's set up, but only work when "model_klass" is the
+    # Finder-extended "RSpecModelEffectiveDateTestOverride".
+    #
+    # Hence "next unless..." in each example (using "skip" in a "before"
+    # filter would result in RSpect listing pending tests; they are not
+    # pending at all).
+
+    context 'with Hoodoo::ActiveRecord::Finder support' do
+      context '#scoped_in' do
+        it 'generates appropriate scope' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          expect( Hoodoo::ActiveRecord::Support ).to(
+            receive( :full_scope_for ).once().with(
+              RSpecModelEffectiveDateTestOverride, @context
+            ).and_call_original()
+          )
+
+          sql = RSpecModelEffectiveDateTestOverride.scoped_in( @context ).to_sql
+
+          expect( sql ).to include( "UNION ALL" )
+          expect( sql ).to include( "' AND (\"effective_end\" > '" )
+        end
+
+        it 'generates appropriate undated scope' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          expect( Hoodoo::ActiveRecord::Support ).to(
+            receive( :add_undated_scope_to ).once().with(
+              kind_of( ActiveRecord::Relation ), RSpecModelEffectiveDateTestOverride, @context
+            ).and_call_original()
+          )
+
+          sql = RSpecModelEffectiveDateTestOverride.scoped_undated_in( @context ).to_sql
+
+          expect( sql ).to eq( "SELECT \"r_spec_model_effective_date_test_overrides\".* FROM \"r_spec_model_effective_date_test_overrides\"" )
+        end
+      end
+
+      context '#acquire_in' do
+        it 'finds current' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          @context.request.dated_at            = nil
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+          expect( result.data                        ).to eq( 'six' )
+        end
+
+        it 'finds historic' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          @context.request.dated_at            = @now - 4.hours
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+          expect( result.data                        ).to eq( 'one' )
+        end
+
+        it 'indicates correctly that a contemporary exists whem it should' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          @context.request.dated_at            = @now - 1.year
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 2    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 1 ][ 'code'      ] ).to eq( 'generic.contemporary_exists' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+          expect( @context.response.errors.errors[ 1 ][ 'reference' ] ).to eq( @uuid_a )
+        end
+
+        it 'indicates correctly that no contemporary exists' do
+          next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+          alt_uuid                             = Hoodoo::UUID.generate
+          @context.request.dated_at            = @now - 5.seconds
+          @context.request.uri_path_components = [ alt_uuid ]
+
+          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( alt_uuid )
+        end
+      end
+    end
+
+  end # 'shared_examples Hoodoo::ActiveRecord::Dated do'
 
   context "using default effective dating config" do
 
