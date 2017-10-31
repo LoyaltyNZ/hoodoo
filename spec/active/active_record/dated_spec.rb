@@ -5,7 +5,6 @@ describe Hoodoo::ActiveRecord::Dated do
 
   before :all do
     spec_helper_silence_stdout() do
-
       ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => :string ) do | t |
         t.text :data
         t.timestamps :null => true
@@ -373,20 +372,6 @@ describe Hoodoo::ActiveRecord::Dated do
               sleep( 0.1 ) # Be sure that there's nothing left at "now", within timer resolution
             end
           end
-
-
-
-
-
-          DO THIS SAME REFACTOR FOR MANUAL TESTS
-          AND DRIVE-BY FIX ALL EXAMPLES WHERE WE HAVE
-          THE ERRONEOUS "ID: FALSE" - NOTE THAT
-          ACTIVERECORD 5 MAY OBJECT BADLY AND MISBEHAVE
-          WITH THIS VS ACTIVERECORD 4. SERVICE UPDATES?
-
-
-
-
 
           it 'finds no contemporary record' do
             next unless model_klass == RSpecModelEffectiveDateTestOverride

@@ -274,41 +274,35 @@ describe Hoodoo::Services::Response do
   end
 
   context '#not_found' do
-
     let(:ident) { 'an_ident' }
+    before { @r.not_found(ident) }
 
-    context 'without "contemporary_exists"' do
-      before { @r.not_found(ident) }
-
-      it 'sets the generic.not_found code' do
-        expect(@r.errors.errors.count).to eq(1)
-        expect(@r.errors.errors.first['code']).to eq('generic.not_found')
-      end
-      it 'sets the reference to be the ident passed in' do
-        expect(@r.errors.errors.first['reference']).to eq(ident)
-      end
-      it 'sets halt processing to true' do
-        expect(@r.halt_processing?).to eq(true)
-      end
+    it 'sets the generic.not_found code' do
+      expect(@r.errors.errors.count).to eq(1)
+      expect(@r.errors.errors.first['code']).to eq('generic.not_found')
     end
-
-    context 'with "contemporary_exists"' do
-      before { @r.not_found(ident, contemporary_exists: true) }
-
-      it 'sets the generic.not_found and generic.contemporary_exists codes, in that order' do
-        expect(@r.errors.errors.count).to eq(2)
-        expect(@r.errors.errors.first['code']).to eq('generic.not_found')
-        expect(@r.errors.errors.last['code']).to eq('generic.contemporary_exists')
-      end
-      it 'sets the references to be the ident passed in' do
-        expect(@r.errors.errors.first['reference']).to eq(ident)
-        expect(@r.errors.errors.last['reference']).to eq(ident)
-      end
-      it 'sets halt processing to true' do
-        expect(@r.halt_processing?).to eq(true)
-      end
+    it 'sets the reference to be the ident passed in' do
+      expect(@r.errors.errors.first['reference']).to eq(ident)
     end
+    it 'sets halt processing to true' do
+      expect(@r.halt_processing?).to eq(true)
+    end
+  end
 
+  context '#contemporary_exists' do
+    let(:ident) { 'an_ident' }
+    before { @r.contemporary_exists(ident) }
+
+    it 'sets the generic.contemporary_exists code' do
+      expect(@r.errors.errors.count).to eq(1)
+      expect(@r.errors.errors.first['code']).to eq('generic.contemporary_exists')
+    end
+    it 'sets the reference to be the ident passed in' do
+      expect(@r.errors.errors.first['reference']).to eq(ident)
+    end
+    it 'sets halt processing to true' do
+      expect(@r.halt_processing?).to eq(true)
+    end
   end
 
   context '#set_resources and #set_estimated_resources' do

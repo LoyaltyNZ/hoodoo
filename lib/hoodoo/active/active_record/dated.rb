@@ -177,6 +177,17 @@ module Hoodoo
 
           self.nz_co_loyalty_hoodoo_dated_with = history_klass
 
+          # Enable the monkey patch to the Finder module's '#acquire_in' class
+          # method, if need be.
+
+          if self.include?( Hoodoo::ActiveRecord::Finder )
+            Hoodoo::Monkey.register(
+              target_unit:      self,
+              extension_module: Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions
+            )
+
+            Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions )
+          end
         end
 
         # If a prior call has been made to #dating_enabled then this method

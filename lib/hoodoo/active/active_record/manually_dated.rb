@@ -487,10 +487,22 @@ module Hoodoo
             }
           )
 
-          # Lastly, we must specify an acquisition scope that's based on
-          # the "uuid" column only and *not* the "id" column.
+          # We must specify an acquisition scope that's based on the "uuid"
+          # column only and *not* the "id" column.
 
           acquire_with_id_substitute( :uuid )
+
+          # Finally, enable the monkey patch to the Finder module's
+          # '#acquire_in' class method, if need be.
+
+          if self.include?( Hoodoo::ActiveRecord::Finder )
+            Hoodoo::Monkey.register(
+              target_unit:      self,
+              extension_module: Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions
+            )
+
+            Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions )
+          end
 
         end
 

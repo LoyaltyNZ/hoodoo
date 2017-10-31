@@ -6,11 +6,10 @@ describe Hoodoo::ActiveRecord::Base do
     spec_helper_silence_stdout() do
       tblname = :r_spec_model_base_tests
 
-      ActiveRecord::Migration.create_table( tblname, :id => false ) do | t |
-        t.string( :id, :limit => 32, :null => false )
+      ActiveRecord::Migration.create_table( tblname, :id => :string ) do | t |
       end
 
-      ActiveRecord::Migration.add_index( tblname, :id, :unique => true )
+      ActiveRecord::Migration.change_column( tblname, :id, :string, :limit => 32 )
 
       class RSpecModelBaseTest < Hoodoo::ActiveRecord::Base
       end

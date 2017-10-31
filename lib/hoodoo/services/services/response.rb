@@ -306,40 +306,55 @@ module Hoodoo; module Services
     #
     # +ident+::  The identifier of the resource which was not found
     #
-    # Additional _named_ parameters are:
-    #
-    # +contemporary_exists+:: Optional boolean defaulting to +false+ which,
-    #                         if +true+, adds
-    #                         '<tt>generic.contemporary_exists</tt>' in
-    #                         addition to '<tt>generic.not_found</tt>'.
-    #
-    #
     # Low level example:
     #
     #      return response.not_found( ident ) if resource.nil?
     #
-    # Example for source implementations with a +context+ available:
+    # High level example for resource implementations with a +context+
+    # available:
+    #
+    #   resource = SomeModel.acquire_in( context, add_errors: true )
+    #   return if context.response.halt_processing?
+    #
+    # See also:
+    #
+    # * #contemporary_exists
+    # * Hoodoo::ActiveRecord::Finder#acquire_in
+    #
+    def not_found( ident )
+      @errors.add_error( 'generic.not_found', :reference => { :ident => ident } )
+    end
+
+    # Set the standard not found error message
+    # '<tt>generic.contemporary_exists<</tt>', to be optionally used during a
+    # 'show' call when the requested historical-dating-aware resource does not
+    # exist at a requested historic date/time, but a contemporary version is
+    # present.
+    #
+    # +ident+::  The identifier of the resource which was not found
+    #
+    # Example for resource implementations with a +context+ available:
     #
     #     resource = SomeModel.acquire_in( context )
     #
     #     if resource.nil?
     #
-    #       # You'd call "#dated_historical_and_current" if using
-    #       # automatic dating, or "#manually_dated_contemporary" for
-    #       # manual dating (which is recommended over automatic).
+    #       ident = context.request.ident # For brevity below
+    #
+    #       # You'd omit "#manually_dated_contemporary" if using automatic
+    #       # dating (but manual dating is recommended over automatic for
+    #       # performance reasons).
     #       #
     #       contemporary_resource = SomeModel.
-    #                               secure( context ).
+    #                               scoped_undated_in( context ).
     #                               manually_dated_contemporary().
     #                               acquire( context.request.ident )
     #
     #       # Use of ActiveRecord means some ActiveSupport extensions
     #       # such as "#present?" will be available.
     #       #
-    #       return context.response.not_found(
-    #         context.request.ident,
-    #         contemporary_exists: contemporary_resource.present?
-    #       )
+    #       context.response.not_found( ident )
+    #       context.response.contemporary_exists( ident ) if contemporary_resource.present?
     #     end
     #
     # An even higher level approach through +context+:
@@ -347,20 +362,20 @@ module Hoodoo; module Services
     #   resource = SomeModel.acquire_in( context, add_errors: true )
     #   return if context.response.halt_processing?
     #
-    # ...this does the error addition for you "behind the scenes" and frees
+    # ...this does the error additions for you "behind the scenes" and frees
     # application authors of the burden of constructing an appropriately
-    # secure but undated scope for the contemporary resource lookup.
+    # secure and "now-dated" scope for the contemporary resource lookup.
     #
     # See also:
     #
+    # * #not_found
     # * Hoodoo::ActiveRecord::Finder#acquire_in
-    # * Hoodoo::ActiveRecord::Secure#secure
+    # * Hoodoo::ActiveRecord::Finder#scoped_undated_in
     # * Hoodoo::ActiveRecord::ManuallyDated#manually_dated_contemporary
     # * Hoodoo::ActiveRecord::Finder#acquire
     #
-    def not_found( ident, contemporary_exists: false )
-      @errors.add_error( 'generic.not_found',           :reference => { :ident => ident } )
-      @errors.add_error( 'generic.contemporary_exists', :reference => { :ident => ident } ) if contemporary_exists
+    def contemporary_exists( ident )
+      @errors.add_error( 'generic.contemporary_exists', :reference => { :ident => ident } )
     end
 
     # Convert the internal response data into something that Rack expects.

@@ -12,6 +12,8 @@
 module Hoodoo
 end
 
+require 'hoodoo/monkey/monkey'
+
 require 'hoodoo/utilities'
 require 'hoodoo/transient_store'
 require 'hoodoo/communicators'

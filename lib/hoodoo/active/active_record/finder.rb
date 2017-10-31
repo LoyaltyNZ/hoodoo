@@ -293,13 +293,21 @@ module Hoodoo
         # Returns a found model instance or +nil+ for no match / on error.
         #
         def acquire_in( context, add_errors: false )
+
+          # The method is patched internally by Hoodoo::ActiveRecord::Dated
+          # and Hoodoo::ActiveRecord::ManuallyDated. The patches add in a
+          # +generic.contemporary_exists+ error using appropriate checks for
+          # a contemporary record, where necessary. This way, any performance
+          # overhead that might be introduced by the added code is only
+          # present when a class uses one of the dating modules.
+          #
+          # It's an internal patch and not intended for additional external
+          # changes, so it does not use the public "monkey_" naming prefix.
+
           ident  = context.request.ident
           result = scoped_in( context ).acquire( ident )
 
-          context.response.not_found(
-            ident,
-            contemporary_exists: scoped_undated_in( context ).acquire( ident ).present?
-          ) if add_errors && result.nil?
+          context.response.not_found( ident ) if add_errors && result.nil?
 
           return result
         end

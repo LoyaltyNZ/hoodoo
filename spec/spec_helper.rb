@@ -167,7 +167,10 @@ end
 [ Hoodoo::Monkey::Patch, Hoodoo::Monkey::Chaos ].each do | monkey |
   monkey.constants.each do | extension_module_name |
     extension_module = monkey.const_get( extension_module_name )
-    Hoodoo::Monkey.disable( extension_module: extension_module )
+
+     # Ignore "not registered" exceptions for not-yet-registered patches.
+     #
+    Hoodoo::Monkey.disable( extension_module: extension_module ) rescue nil
   end
 end
 

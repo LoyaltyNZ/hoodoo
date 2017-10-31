@@ -15,8 +15,7 @@ require 'active_record'
 describe Hoodoo::ActiveRecord::Finder, :order => :defined do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => false ) do | t |
-        t.text :id
+      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => :string ) do | t |
         t.text :uuid
         t.text :code
         t.text :field_one
@@ -26,6 +25,8 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         t.timestamps :null => true
         t.text :created_by
       end
+
+      ActiveRecord::Migration.change_column( :r_spec_model_finder_tests, :id, :string, :limit => 32 )
     end
 
     class RSpecModelFinderTest < ActiveRecord::Base

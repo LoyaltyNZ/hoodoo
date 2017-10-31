@@ -11,9 +11,8 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_manual_date_tests, :id => false ) do | t |
+      ActiveRecord::Migration.create_table( :r_spec_model_manual_date_tests, :id => :string ) do | t |
         t.string :uuid, :null => false, :length => 32
-        t.string :id,   :null => false, :length => 32
 
         t.text :data
         t.text :unique
@@ -22,6 +21,8 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
       end
+
+      ActiveRecord::Migration.change_column( :r_spec_model_manual_date_tests, :id, :string, :limit => 32 )
 
       # Documentation recommends these constraints in migrations, so ensure
       # everything works when they're present.
