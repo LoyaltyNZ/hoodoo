@@ -6,18 +6,19 @@ describe Hoodoo::ActiveRecord::Dated do
   before :all do
     spec_helper_silence_stdout() do
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => false ) do | t |
-        t.text :id,  :null => false
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests, :id => :string ) do | t |
         t.text :data
         t.timestamps :null => true
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests_history_entries, :id => false ) do | t |
-        t.text     :id,              :null => false
+      ActiveRecord::Migration.change_column( :r_spec_model_effective_date_tests, :id, :string, :limit => 32 )
+
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_tests_history_entries, :id => :string ) do | t |
         t.text     :uuid,            :null => false
         t.text     :data
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
+
         t.timestamps :null => true
       end
 
@@ -27,18 +28,19 @@ describe Hoodoo::ActiveRecord::Dated do
         dating_enabled()
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => false ) do | t |
-        t.text :id,  :null => false
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_test_overrides, :id => :string ) do | t |
         t.text :data
         t.timestamps :null => true
       end
 
-      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_history_entries, :id => false ) do | t |
-        t.text     :id,              :null => false
+      ActiveRecord::Migration.change_column( :r_spec_model_effective_date_test_overrides, :id, :string, :limit => 32 )
+
+      ActiveRecord::Migration.create_table( :r_spec_model_effective_date_history_entries, :id => :string ) do | t |
         t.text     :uuid,            :null => false
         t.text     :data
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
+
         t.timestamps :null => true
       end
 
@@ -63,9 +65,6 @@ describe Hoodoo::ActiveRecord::Dated do
       )
 
       @context = interaction.context
-    end
-
-    before( :all ) do
 
       # Create some example data for finding. The data has two different UUIDs
       # which I'll referer to as A and B. The following tables contain the
@@ -300,61 +299,139 @@ describe Hoodoo::ActiveRecord::Dated do
       end
 
       context '#acquire_in' do
-        it 'finds current' do
-          next unless model_klass == RSpecModelEffectiveDateTestOverride
+        context 'with contemporary' do
+          it 'finds the contemporary record' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
 
-          @context.request.dated_at            = nil
-          @context.request.uri_path_components = [ @uuid_a ]
+            @context.request.dated_at            = nil
+            @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to_not be_nil
 
-          expect( @context.response.halt_processing? ).to eq( false )
-          expect( result.data                        ).to eq( 'six' )
+            expect( @context.response.halt_processing? ).to eq( false )
+            expect( result.data                        ).to eq( 'six' )
+          end
+
+          it 'finds a historic record' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+            @context.request.dated_at            = @now - 4.hours
+            @context.request.uri_path_components = [ @uuid_a ]
+
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to_not be_nil
+
+            expect( @context.response.halt_processing? ).to eq( false )
+            expect( result.data                        ).to eq( 'one' )
+          end
+
+          it 'indicates correctly that a contemporary exists during a far-backdated lookup' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+            @context.request.dated_at            = @now - 1.year
+            @context.request.uri_path_components = [ @uuid_a ]
+
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to be_nil
+
+            expect( @context.response.halt_processing?    ).to eq( true )
+            expect( @context.response.errors.errors.count ).to eq( 2    )
+
+            expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+            expect( @context.response.errors.errors[ 1 ][ 'code'      ] ).to eq( 'generic.contemporary_exists' )
+            expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+            expect( @context.response.errors.errors[ 1 ][ 'reference' ] ).to eq( @uuid_a )
+          end
         end
 
-        it 'finds historic' do
-          next unless model_klass == RSpecModelEffectiveDateTestOverride
+        context 'with a UUID that matches no existing record' do
+          it 'indicates correctly that no record exists and does not say a contemporary is present' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
 
-          @context.request.dated_at            = @now - 4.hours
-          @context.request.uri_path_components = [ @uuid_a ]
+            alt_uuid                             = Hoodoo::UUID.generate
+            @context.request.dated_at            = @now - 5.seconds
+            @context.request.uri_path_components = [ alt_uuid ]
 
-          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to be_nil
 
-          expect( @context.response.halt_processing? ).to eq( false )
-          expect( result.data                        ).to eq( 'one' )
+            expect( @context.response.halt_processing?    ).to eq( true )
+            expect( @context.response.errors.errors.count ).to eq( 1    )
+
+            expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+            expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( alt_uuid )
+          end
         end
 
-        it 'indicates correctly that a contemporary exists whem it should' do
-          next unless model_klass == RSpecModelEffectiveDateTestOverride
+        context 'without contemporary' do
+          before( :each ) do
+            if model_klass == RSpecModelEffectiveDateTestOverride
+              record = RSpecModelEffectiveDateTestOverride.find( @uuid_a )
+              record.destroy!
 
-          @context.request.dated_at            = @now - 1.year
-          @context.request.uri_path_components = [ @uuid_a ]
+              sleep( 0.1 ) # Be sure that there's nothing left at "now", within timer resolution
+            end
+          end
 
-          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
 
-          expect( @context.response.halt_processing?    ).to eq( true )
-          expect( @context.response.errors.errors.count ).to eq( 2    )
 
-          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
-          expect( @context.response.errors.errors[ 1 ][ 'code'      ] ).to eq( 'generic.contemporary_exists' )
-          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
-          expect( @context.response.errors.errors[ 1 ][ 'reference' ] ).to eq( @uuid_a )
-        end
 
-        it 'indicates correctly that no contemporary exists' do
-          next unless model_klass == RSpecModelEffectiveDateTestOverride
 
-          alt_uuid                             = Hoodoo::UUID.generate
-          @context.request.dated_at            = @now - 5.seconds
-          @context.request.uri_path_components = [ alt_uuid ]
+          DO THIS SAME REFACTOR FOR MANUAL TESTS
+          AND DRIVE-BY FIX ALL EXAMPLES WHERE WE HAVE
+          THE ERRONEOUS "ID: FALSE" - NOTE THAT
+          ACTIVERECORD 5 MAY OBJECT BADLY AND MISBEHAVE
+          WITH THIS VS ACTIVERECORD 4. SERVICE UPDATES?
 
-          result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
 
-          expect( @context.response.halt_processing?    ).to eq( true )
-          expect( @context.response.errors.errors.count ).to eq( 1    )
 
-          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
-          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( alt_uuid )
+
+
+          it 'finds no contemporary record' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+            @context.request.dated_at            = nil
+            @context.request.uri_path_components = [ @uuid_a ]
+
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to be_nil
+
+            expect( @context.response.halt_processing?    ).to eq( true )
+            expect( @context.response.errors.errors.count ).to eq( 1    )
+
+            expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+            expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+          end
+
+          it 'finds a historic record' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+            @context.request.dated_at            = @now - 4.hours
+            @context.request.uri_path_components = [ @uuid_a ]
+
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to_not be_nil
+
+            expect( @context.response.halt_processing? ).to eq( false )
+            expect( result.data                        ).to eq( 'one' )
+          end
+
+          it 'indicates correctly that no contemporary exists during a far-backdated lookup' do
+            next unless model_klass == RSpecModelEffectiveDateTestOverride
+
+            @context.request.dated_at            = @now - 1.year
+            @context.request.uri_path_components = [ @uuid_a ]
+
+            result = RSpecModelEffectiveDateTestOverride.acquire_in( @context, add_errors: true )
+            expect( result ).to be_nil
+
+            expect( @context.response.halt_processing?    ).to eq( true )
+            expect( @context.response.errors.errors.count ).to eq( 1    )
+
+            expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+            expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+          end
         end
       end
     end
