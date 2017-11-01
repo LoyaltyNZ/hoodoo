@@ -622,7 +622,7 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         expect( found ).to be_nil
       end
 
-      context 'enhanced by #acquire_in_and_update' do
+      context 'enhanced by #acquire_in!' do
         before :each do
           @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
         end
@@ -636,21 +636,21 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
           expect( RSpecModelFinderTest ).to receive( :acquire_in ).with( @context ).and_call_original()
 
           @context.request.uri_path_components = [ @scoped_1.id ]
-          found = RSpecModelFinderTest.acquire_in_and_update( @context )
+          found = RSpecModelFinderTest.acquire_in!( @context )
 
           expect( found ).to eq( @scoped_1 )
         end
 
         it 'does not add errors when an instance is found' do
           @context.request.uri_path_components = [ @scoped_1.id ]
-          RSpecModelFinderTest.acquire_in_and_update( @context )
+          RSpecModelFinderTest.acquire_in!( @context )
 
           expect( @context.response.halt_processing? ).to eq( false )
         end
 
         it 'adds "not_found" if an instance is absent' do
           @context.request.uri_path_components = [ Hoodoo::UUID.generate() ]
-          RSpecModelFinderTest.acquire_in_and_update( @context )
+          RSpecModelFinderTest.acquire_in!( @context )
 
           expect( @context.response.halt_processing? ).to eq( true )
           expect( @context.response.errors.errors.count ).to eq( 1 )

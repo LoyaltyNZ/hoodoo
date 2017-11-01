@@ -305,7 +305,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = nil
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to_not be_nil
 
             expect( @context.response.halt_processing? ).to eq( false )
@@ -318,7 +318,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = @now - 4.hours
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to_not be_nil
 
             expect( @context.response.halt_processing? ).to eq( false )
@@ -331,7 +331,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = @now - 1.year
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to be_nil
 
             expect( @context.response.halt_processing?    ).to eq( true )
@@ -352,7 +352,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = @now - 5.seconds
             @context.request.uri_path_components = [ alt_uuid ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to be_nil
 
             expect( @context.response.halt_processing?    ).to eq( true )
@@ -379,7 +379,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = nil
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to be_nil
 
             expect( @context.response.halt_processing?    ).to eq( true )
@@ -395,7 +395,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = @now - 4.hours
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to_not be_nil
 
             expect( @context.response.halt_processing? ).to eq( false )
@@ -408,7 +408,7 @@ describe Hoodoo::ActiveRecord::Dated do
             @context.request.dated_at            = @now - 1.year
             @context.request.uri_path_components = [ @uuid_a ]
 
-            result = RSpecModelEffectiveDateTestOverride.acquire_in_and_update( @context )
+            result = RSpecModelEffectiveDateTestOverride.acquire_in!( @context )
             expect( result ).to be_nil
 
             expect( @context.response.halt_processing?    ).to eq( true )
