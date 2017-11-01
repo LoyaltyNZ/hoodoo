@@ -26,7 +26,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'simplecov-rcov',   '~> 0.2'
 
   # TODO: v5 (SDoc dependency issue)
-  s.add_development_dependency 'rdoc',             '~> 4.3' # See also 'sdoc' in Gemfile
+  s.add_development_dependency 'rdoc',             '~> 5.1' # See also 'sdoc' in Gemfile
   s.add_development_dependency 'rack-test',        '~> 0.6'
   s.add_development_dependency 'rspec',            '~> 3.5'
   s.add_development_dependency 'rspec-mocks',      '~> 3.5'
