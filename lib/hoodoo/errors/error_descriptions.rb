@@ -97,7 +97,7 @@ module Hoodoo
 
       errors_for 'generic' do
         error 'not_found',              status: 404, message: 'Resource not found',            reference: [ :ident ]
-        error 'contemporary_exists',    status: 404, message: 'Contepmorary record exists',    reference: [ :ident ]
+        error 'contemporary_exists',    status: 404, message: 'Contemporary record exists',    reference: [ :ident ]
         error 'malformed',              status: 422, message: 'Malformed payload'
         error 'required_field_missing', status: 422, message: 'Required field missing',        reference: [ :field_name ]
         error 'invalid_string',         status: 422, message: 'Invalid string format',         reference: [ :field_name ]
