@@ -36,7 +36,7 @@ The use of the verb `PATCH` indicates that both partial or full resource updates
 
 At a minimum, a resource implementation consists of between one and five instance methods of a `Hoodoo::Services::Implementation` subclass, one for each supported action. All have [identical input parameter signatures](#implementation) but differing requirements for their side effects.
 
-Hoodoo responds to CORS requests via the `OPTIONS` verb automatically, with no code required by service authors.
+Hoodoo responds to [CORS requests](https://enable-cors.org) via the `OPTIONS` verb automatically, with no code required by service authors.
 
 ### Routing
 
