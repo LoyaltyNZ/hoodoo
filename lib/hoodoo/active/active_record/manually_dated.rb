@@ -111,9 +111,9 @@ module Hoodoo
     #
     # === Show and List
     #
-    # You might use Hoodoo::ActiveRecord::Finder#list_in or
-    # Hoodoo::ActiveRecord::Finder#acquire_in for +list+ or +show+ actions;
-    # such code changes from e.g.:
+    # You might use Hoodoo::ActiveRecord::Finder::ClassMethods#list_in or
+    # Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in for +list+ or
+    # +show+ actions; such code changes from e.g.:
     #
     #     SomeModel.list_in( context )
     #

@@ -4,7 +4,8 @@
 #
 # Purpose:: Supplementary helper class included by "finder.rb". See
 #           Hoodoo::ActiveRecord::Finder, especially
-#           Hoodoo::ActiveRecord::Finder#search_with, for details.
+#           Hoodoo::ActiveRecord::Finder::ClassMethods#search_with, for
+#           details.
 # ----------------------------------------------------------------------
 #           09-Jul-2015 (ADH): Created.
 ########################################################################

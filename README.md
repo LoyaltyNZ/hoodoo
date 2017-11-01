@@ -10,7 +10,7 @@ See [Hoodoo Guides](https://loyaltynz.github.io/hoodoo/) for extensive documenta
 
 Add the gem to your `Gemfile`:
 
-    gem 'hoodoo', '~> 1.0'
+    gem 'hoodoo', '~> 2.0'
 
 Require hoodoo when needed:
 
@@ -65,6 +65,7 @@ Some additional higher level hand written documentation may also be present as M
 
 * [Andrew Amesbury](https://github.com/aames)
 * [Andrew Pett](https://github.com/aspett)
+* [Ben Greville](https://github.com/bengreville)
 * [Charles Peach](https://github.com/charlespeach)
 * [Dave Harris](https://github.com/daveharris)
 * [David Mitchell](https://github.com/davidamitchell)

@@ -196,8 +196,9 @@ module Hoodoo
         #
         #     SomeModel.where( :foo => :bar ).acquire( context.request.ident )
         #
-        # Usually for convenience you should use #acquire_in instead, or only
-        # call #acquire with (say) a secure scope via for example a call to
+        # Usually for convenience you should use #acquire_in_and_update or
+        # acquire_in instead, or only call #acquire with (say) a secure scope
+        # via for example a call to
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. Other scopes may
         # be needed depending on the mixins your model uses.
         #
@@ -282,7 +283,7 @@ module Hoodoo
         #
         # See also:
         #
-        # * Hoodoo::Services::Response#acquire_in_and_update
+        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
         # * Hoodoo::Services::Response#not_found
         # * Hoodoo::Services::Response#contemporary_exists
         #
@@ -295,13 +296,16 @@ module Hoodoo
         # A higher level equivalent of #acquire_in in which the given context
         # will be updated with error information if the requested item cannot
         # be found. Although modifying the passed-in context may be considered
-        # an unclean pattern, it does allow extensions to that mechanism; and
-        # indeed in the presence of the Hoodoo::ActiveRecord::Dated or
+        # an unclean pattern, it does allow extensions to that mechanism. For
+        # example, in the presence of the Hoodoo::ActiveRecord::Dated or
         # Hoodoo::ActiveRecord::ManuallyDated modules, an additional error
-        # entry of <tt>generic.contemporary_exists</tt> will be included if
-        # conditions warrant it. At the time of writing only this and/or
-        # <tt>generic.not_found</tt> will be added, but in future other mixin
-        # modules may cause other additions.
+        # entry of +generic.contemporary_exists+ will be added if conditions
+        # warrant it.
+        #
+        # At the time of writing only this and/or +generic.not_found+ can be
+        # added, but in future other mixin modules may cause other additions,
+        # making preferential use of this method over #acquire_in a good way
+        # to future-proof against such changes.
         #
         # To be sure that these additions work, always include this module
         # before any others (unless documentation indicates a differing
@@ -317,7 +321,7 @@ module Hoodoo
         #
         # See also:
         #
-        # * Hoodoo::Services::Response#acquire_in
+        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
         # * Hoodoo::Services::Response#not_found
         # * Hoodoo::Services::Response#contemporary_exists
         #
@@ -352,16 +356,19 @@ module Hoodoo
         end
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
-        # are to be used to "find-by-identifier" through calls #acquire and
-        # #acquire_in. See those methods for more details.
+        # are to be used to "find-by-identifier" through calls #acquire,
+        # #acquire_in and #acquire_in_and_update. See those methods for more
+        # details.
         #
         # Fields will be searched in the order listed. If duplicate items are
         # present, the first occurrence is kept and the rest are removed.
         #
         # *args:: One or more field names as Strings or Symbols.
         #
-        # See also: #acquired_with
-        #           #acquire_with_id_substitute
+        # See also:
+        #
+        # * #acquired_with
+        # * #acquire_with_id_substitute
         #
         def acquire_with( *args )
           self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s )
@@ -369,30 +376,32 @@ module Hoodoo
         end
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
-        # are being used to "find-by-identifier" through calls to #acquire
-        # and #acquire_in. The returned Array contains de-duplicated String
-        # values only.
+        # are being used to "find-by-identifier" through calls to #acquire,
+        # #acquire_in and #acquire_in_and_update. The returned Array contains
+        # de-duplicated String values only.
         #
-        # See also: #acquire_with
-        #           #acquire_with_id_substitute
+        # See also:
+        #
+        # * #acquire_with
+        # * #acquire_with_id_substitute
         #
         def acquired_with
           self.nz_co_loyalty_hoodoo_show_id_fields || []
         end
 
-        # The #acquire_with method allows methods like #acquire and
-        # #acquire_in to transparently find a record based on _one_ _or_
-        # _more_ columns in the database. The columns (and corresponding
-        # model attributes) specified through a call to #acquire_with will
-        # normally be used _in_ _addition_ _to_ a lookup on the +id+
-        # column, but in rare circumstances you might need to bypass that
-        # and use an entirely different field. This is distinct from the
+        # The #acquire_with method allows methods like #acquire, #acquire_in
+        # and #acquire_in_and_update to transparently find a record based on
+        # _one_ _or_ _more_ columns in the database. The columns (and
+        # corresponding model attributes) specified through a call to
+        # #acquire_with will normally be used _in_ _addition_ _to_ a lookup on
+        # the +id+ column, but in rare circumstances you might need to bypass
+        # that and use an entirely different field. This is distinct from the
         # ActiveRecord-level concept of the model's primary key column.
         #
         # To permanently change the use of the +id+ attribute as the first
-        # search parameter in #acquire and #acquire_in, by modifying the
-        # behaviour of #acquisition_scope, call here and pass in the new
-        # attribute name.
+        # search parameter in #acquire, #acquire_in and #acquire_in_and_update
+        # by modifying the behaviour of #acquisition_scope, call here and pass
+        # in the new attribute name.
         #
         # +attr+:: Attribute name as a Symbol or String to use _instead_
         #          of +id+, as a default mandatory column in
@@ -402,10 +411,10 @@ module Hoodoo
           self.nz_co_loyalty_hoodoo_show_id_substitute = attr.to_sym
         end
 
-        # Back-end to #acquire and therefore, in turn, #acquire_in. Returns
-        # an ActiveRecord::Relation instance which scopes the search for a
-        # record by +id+ and across any other columns specified by
-        # #acquire_with, via SQL +OR+.
+        # Back-end to #acquire and therefore, in turn, #acquire_in and
+        # #acquire_in_and_update. Returns an ActiveRecord::Relation instance
+        # which scopes the search for a record by +id+ and across any other
+        # columns specified by #acquire_with, via SQL +OR+.
         #
         # If you need to change the use of attribute +id+, specify a
         # different attribute with #acquire_with_id_substitute. In that case,
@@ -825,7 +834,9 @@ module Hoodoo
         # for +filter_with+ tends to work reasonably when the query is
         # negated for filter use via <tt>...NOT(...)...</tt>. Examining the
         # implementation of Hoodoo::ActiveRecord::Finder::SearchHelper may
-        # help if confused. See also:
+        # help if confused.
+        #
+        # See also:
         #
         # * https://en.wikipedia.org/wiki/Null_(SQL)
         #
