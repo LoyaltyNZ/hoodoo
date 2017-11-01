@@ -313,7 +313,7 @@ module Hoodoo; module Services
     # High level example for resource implementations with a +context+
     # available:
     #
-    #   resource = SomeModel.acquire_in( context, add_errors: true )
+    #   resource = SomeModel.acquire_in_and_update( context )
     #   return if context.response.halt_processing?
     #
     # See also:

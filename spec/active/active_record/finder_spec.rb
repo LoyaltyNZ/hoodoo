@@ -70,14 +70,6 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
       )
     end
 
-    class RSpecModelFinderTestWithDating < ActiveRecord::Base
-      self.primary_key = :id
-      self.table_name = :r_spec_model_finder_tests
-
-      include Hoodoo::ActiveRecord::Finder
-      include Hoodoo::ActiveRecord::Dated
-    end
-
     class RSpecModelFinderTestWithHelpers < ActiveRecord::Base
       include Hoodoo::ActiveRecord::Finder
 
@@ -289,9 +281,9 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
             # The outer 'before' code ensures an accurate initial count of 3,
             # but we're going add in a few more unestimated items.
             #
-            @uncounted1 = RSpecModelFinderTest.new.save!
-            @uncounted2 = RSpecModelFinderTest.new.save!
-            @uncounted3 = RSpecModelFinderTest.new.save!
+            @uncounted1 = RSpecModelFinderTest.new( :id => 'unc_id1' ).save!
+            @uncounted2 = RSpecModelFinderTest.new( :id => 'unc_id2' ).save!
+            @uncounted3 = RSpecModelFinderTest.new( :id => 'unc_id3' ).save!
 
             @subsequent_accurate_count = RSpecModelFinderTest.count
           end
@@ -628,6 +620,42 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         @context.request.uri_path_components = [ @scoped_3.id ]
         found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one + '!' ).acquire_in( @context )
         expect( found ).to be_nil
+      end
+
+      context 'enhanced by #acquire_in_and_update' do
+        before :each do
+          @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+        end
+
+        # This test proves that the higher level interface uses the lower
+        # level interface and, as such, we judge that only the extra added
+        # features need test coverage, rather than repeating all of the
+        # coverage already done for #acquire_in.
+        #
+        it 'acquires via #acquire_in' do
+          expect( RSpecModelFinderTest ).to receive( :acquire_in ).with( @context ).and_call_original()
+
+          @context.request.uri_path_components = [ @scoped_1.id ]
+          found = RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( found ).to eq( @scoped_1 )
+        end
+
+        it 'does not add errors when an instance is found' do
+          @context.request.uri_path_components = [ @scoped_1.id ]
+          RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+        end
+
+        it 'adds "not_found" if an instance is absent' do
+          @context.request.uri_path_components = [ Hoodoo::UUID.generate() ]
+          RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1 )
+          expect( @context.response.errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.not_found' )
+        end
       end
     end
 

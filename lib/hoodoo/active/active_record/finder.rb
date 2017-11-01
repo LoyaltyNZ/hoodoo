@@ -269,6 +269,10 @@ module Hoodoo
         # The same applies to forgetting dated scopes, translated scopes, or
         # anything else that #scoped_in might include for you.
         #
+        # An even higher-level method, taking care of error handling as well,
+        # is #acquire_in_and_update. You may prefer to call this higher level
+        # interface if you don't object to the way it modifies +context+.
+        #
         # Parameters:
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -276,23 +280,60 @@ module Hoodoo
         #             the Hoodoo::Services::Implementation instance methods
         #             that a resource subclass implements.
         #
-        # Additional _named_ parameters are:
-        #
-        # +add_errors+:: Optional boolean defaulting to +false+ which, if
-        #                +true+, adds '<tt>generic.not_found</tt>' and for
-        #                historically dated queries, may add
-        #                '<tt>generic.contemporary_exists</tt>' to the
-        #                +context+ error collection. If using this option,
-        #                check <tt>context.response.halt_processing?</tt>
-        #                after the +acquire_in+ call.
-        #
         # See also:
         #
+        # * Hoodoo::Services::Response#acquire_in_and_update
         # * Hoodoo::Services::Response#not_found
+        # * Hoodoo::Services::Response#contemporary_exists
         #
         # Returns a found model instance or +nil+ for no match / on error.
         #
-        def acquire_in( context, add_errors: false )
+        def acquire_in( context )
+          scoped_in( context ).acquire( context.request.ident )
+        end
+
+        # A higher level equivalent of #acquire_in in which the given context
+        # will be updated with error information if the requested item cannot
+        # be found. Although modifying the passed-in context may be considered
+        # an unclean pattern, it does allow extensions to that mechanism; and
+        # indeed in the presence of the Hoodoo::ActiveRecord::Dated or
+        # Hoodoo::ActiveRecord::ManuallyDated modules, an additional error
+        # entry of <tt>generic.contemporary_exists</tt> will be included if
+        # conditions warrant it. At the time of writing only this and/or
+        # <tt>generic.not_found</tt> will be added, but in future other mixin
+        # modules may cause other additions.
+        #
+        # To be sure that these additions work, always include this module
+        # before any others (unless documentation indicates a differing
+        # inclusion order requirement), so that the dating module is able to
+        # detect the presence of this Finder module and enable the extensions.
+        #
+        # Parameters:
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # See also:
+        #
+        # * Hoodoo::Services::Response#acquire_in
+        # * Hoodoo::Services::Response#not_found
+        # * Hoodoo::Services::Response#contemporary_exists
+        #
+        # Returns a found model instance or +nil+ for no match / on error,
+        # wherein +context+ will have been updated with error details.
+        #
+        # Example, following on from those for #acquire_in:
+        #
+        #     def show( context )
+        #       resource = SomeModel.acquire_in_and_update( context )
+        #       return if context.response.halt_processing? # Or just use 'if resource.nil?'
+        #
+        #       # ...else render...
+        #     end
+        #
+        def acquire_in_and_update( context )
 
           # The method is patched internally by Hoodoo::ActiveRecord::Dated
           # and Hoodoo::ActiveRecord::ManuallyDated. The patches add in a
@@ -304,10 +345,8 @@ module Hoodoo
           # It's an internal patch and not intended for additional external
           # changes, so it does not use the public "monkey_" naming prefix.
 
-          ident  = context.request.ident
-          result = scoped_in( context ).acquire( ident )
-
-          context.response.not_found( ident ) if add_errors && result.nil?
+          result = acquire_in( context )
+          context.response.not_found( context.request.ident ) if result.nil?
 
           return result
         end

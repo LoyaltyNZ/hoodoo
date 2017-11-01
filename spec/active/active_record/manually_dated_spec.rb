@@ -338,7 +338,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = nil
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTestOverride.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
 
           expect( @context.response.halt_processing? ).to eq( false )
           expect( result.data                        ).to eq( 'six' )
@@ -348,7 +348,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = @now - 4.hours
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTestOverride.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
 
           expect( @context.response.halt_processing? ).to eq( false )
           expect( result.data                        ).to eq( 'one' )
@@ -358,7 +358,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = @now - 1.year
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTestOverride.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
 
           expect( @context.response.halt_processing?    ).to eq( true )
           expect( @context.response.errors.errors.count ).to eq( 2    )
@@ -376,7 +376,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = @now - 5.seconds
           @context.request.uri_path_components = [ alt_uuid ]
 
-          result = RSpecModelManualDateTestOverride.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
 
           expect( @context.response.halt_processing?    ).to eq( true )
           expect( @context.response.errors.errors.count ).to eq( 1    )
@@ -402,7 +402,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = nil
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTest.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
           expect( result ).to be_nil
 
           expect( @context.response.halt_processing?    ).to eq( true )
@@ -416,7 +416,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = @now - 4.hours
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTest.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
           expect( result ).to_not be_nil
 
           expect( @context.response.halt_processing? ).to eq( false )
@@ -427,7 +427,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           @context.request.dated_at            = @now - 1.year
           @context.request.uri_path_components = [ @uuid_a ]
 
-          result = RSpecModelManualDateTest.acquire_in( @context, add_errors: true )
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
           expect( result ).to be_nil
 
           expect( @context.response.halt_processing?    ).to eq( true )
