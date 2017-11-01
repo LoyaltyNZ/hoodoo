@@ -9,6 +9,8 @@
 #           12-Apr-2016 (ADH): Created.
 ########################################################################
 
+require 'hoodoo/monkey/monkey'
+
 require 'hoodoo/monkey/patch/active_record_dated_finder_additions'
 require 'hoodoo/monkey/patch/active_record_manually_dated_finder_additions'
 require 'hoodoo/monkey/patch/datadog_traced_amqp'
