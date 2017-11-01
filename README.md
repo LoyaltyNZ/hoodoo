@@ -15,7 +15,7 @@ bundle install
 bundle exec jekyll serve
 ```
 
-...to run a local server on port 4000 for previewing edits.
+...to run a local server on port 4000 for previewing edits; visit http://localhost:4000/hoodoo/ for the root Home page.
 
 ## Acknowledgements
 
