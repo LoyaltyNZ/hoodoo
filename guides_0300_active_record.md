@@ -273,9 +273,10 @@ It is time to replace the stub written earlier into `service/implementations/per
 
 #### Show
 
+##### Lower level API use: `acquire_in`
+
 ```ruby
 class PersonImplementation < Hoodoo::Services::Implementation
-
   def show( context )
     person = Person.acquire_in( context )
 
@@ -285,13 +286,35 @@ class PersonImplementation < Hoodoo::Services::Implementation
       context.response.set_resource( render_in( context, person ) )
     end
   end
+end
 ```
 
 The Finder mixin method [`acquire_in`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in) is used to retrieve based on any lookup parameters defined by the model, coupled with any security, dating or translation aspects which might be in use. In this example we aren't doing anything special but the idiomatic pattern is easy to use in any event.
 
-The convenience method of [`not_found`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Response.html#method-i-not_found) is used on the [`response` object]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Context.html) to easily add an appropriately well formed error if we cannot find the requested instance, else it is set as the response data via a private renderer method you'll see at the end of the class.
+The convenience method of [`not_found`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Response.html#method-i-not_found) is used on the [`response` object]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Response.html) to easily add an appropriately well formed error if we cannot find the requested instance, else it is set as the response data via a private renderer method you'll see at the end of the class.
 
-To provide a value for `set_response`, a private convenience method `render_in` is called. Its definition is shown later.
+To provide a value for `set_response`, an example private convenience method `render_in` is called. Its definition is [shown later](#idiomatic_rendering).
+
+##### Higher level API use: `acquire_in!`
+
+A higher level method is available if you want to reduce boilerplate code.
+
+The Finder mixin method [`acquire_in!`]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in-21) internally calls `acquire_in`, then potentially alters the given context so that the response data contains appropriate errors should the record not be found. This is the recommended interface for standard `show` action behaviour. Not only does it understand addition of `generic.not_found` for missing records, it can also add `generic.contemporary_exists` when appropriate, should the [historical ("effective") dating system](#Dating) be in use. It would also be able to add any other appropriate errors that might be defined over time; all that would be needed is a Gem update of Hoodoo, rather than having to change all individual resource implementations within a service.
+
+The result is a smaller and potentially more future-proof implementation, but with the "design cost" of the inline modification of the passed-in `context` parameter:
+
+```ruby
+class PersonImplementation < Hoodoo::Services::Implementation
+  def show( context )
+    person = Person.acquire_in!( context )
+    return if context.response.halt_processing?
+
+    context.response.set_resource( render_in( context, person ) )
+  end
+end
+```
+
+As before, to provide a value for `set_response`, the example private convenience method `render_in` is called. Its definition is [shown later](#idiomatic_rendering).
 
 #### List
 
@@ -383,7 +406,7 @@ The API specification also mentions the `X-Deja-Vu` HTTP header which, if used, 
 
 When it comes to deletion methods, the use of Active Record's `delete` method here means [callbacks are not run](http://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-delete); generally callbacks are something of an anti-pattern and discouraged. If you _do_ use them though don't forget to use something like the Active Record [`destroy` method](http://api.rubyonrails.org/classes/ActiveRecord/Persistence.html#method-i-destroy) instead of `delete`, though this might mean you have extra return values or exceptions to deal with.
 
-#### Idiomatic rendering
+#### <a name="idiomatic_rendering"></a>Idiomatic rendering
 
 Here is the aforementioned private method `render_in`:
 
