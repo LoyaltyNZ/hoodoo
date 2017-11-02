@@ -34,7 +34,9 @@ Hoodoo supports exactly 5 _actions_, mapped by HTTP verb:
 
 The use of the verb `PATCH` indicates that both partial or full resource updates are supported. Omission of a field in an inbound payload means "do not change".
 
-At a minimum, a resource implementation consists of between one and five instance methods of a `Hoodoo::Services::Implementation` subclass, one for each supported action. All have identical input parameter signatures but differing requirements for their side effects.
+At a minimum, a resource implementation consists of between one and five instance methods of a `Hoodoo::Services::Implementation` subclass, one for each supported action. All have [identical input parameter signatures](#implementation) but differing requirements for their side effects.
+
+Hoodoo responds to [CORS requests](https://enable-cors.org) via the `OPTIONS` verb automatically, with no code required by service authors.
 
 ### Routing
 
@@ -114,7 +116,7 @@ require 'rack'
 require 'hoodoo'
 ```
 
-### The implementation class
+### <a name="implementation"></a>The implementation class
 
 Hoodoo _service_ classes refer to interface class(es) for the resource(s) hosted by that service. In turn, the _interface_ classes refer to the implementation class(es). That means -- no matter what order we actually _write_ the code -- that we need to _define_ the implementation class first in the parse order. Class names are entirely up to you, though the pattern of `FooImplementation` and `FooInterface` is recommended.
 
@@ -126,9 +128,7 @@ class TimeImplementation < Hoodoo::Services::Implementation
 end
 ```
 
-You can define whatever `private` or `protected` methods you want, except for names `#show`, `#list`, `create`, `#update` and `#delete`. These are reserved and called by Hoodoo in response to incoming API requests. They all have the same signature shown above, with the `context` variable, which provides information on the inbound request and is used to define your response. The `context` object is also used to request an endpoint for a resource-to-resource call -- an _inter-resource_ call -- via its `#resource` method. For more, see the [RDoc page for the Context class]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Context.html).
-
-Method `#verify` is also reserved; see the [RDoc page for the Implementation class]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Implementation.html) and the [Security Guide]({{ site.baseurl }}/guides_0200_security.html) for full information.
+The five action method names are `#show`, `#list`, `create`, `#update` and `#delete`. These are reserved and called by Hoodoo in response to incoming API requests. They all have the same signature shown above, with the `context` variable, which provides information on the inbound request and is used to define your response. The `context` object is also used to request an endpoint for a resource-to-resource call -- an _inter-resource_ call -- via its `#resource` method. For more, see the [RDoc page for the Context class]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Context.html).
 
 > **Important:** Hoodoo specifies that a representation of a resource is returned in API responses for _all_ actions.
 
@@ -139,6 +139,20 @@ In this example we are just returning an arbitrary Hash, but resource representa
 If the implementation fails, it should add one or more error messages to its response object via the `#add_errors` method. If the implementation throws an uncaught exception, Hoodoo itself will catch it and return a well-formed HTTP 500 / `platform.fault` error.
 
 > **Important:** While many parts of Hoodoo accept parameters as Symbols or Strings, for inbound payloads and rendered data, Hoodoo does _not_ use an "indifferent access" Hash. Keys in outbound data **must be Strings** and keys in all inbound data **will be Strings**.
+
+#### Security additions
+
+Additional optional method `#verify` is used as part of the security layer; see the [RDoc page for the Implementation class]({{ site.custom.rdoc_root_url }}/classes/Hoodoo/Services/Implementation.html) and the [Security Guide]({{ site.baseurl }}/guides_0200_security.html) for full information.
+
+#### Before and After filters
+
+Hoodoo supports exactly two filters, both with the same signature as the action methods; a single `context` parameter is given. The methods are simply called `#before` and `#after`. The first can be used to provide additional checks or input changes before any action method is called; the latter can be used to check or modify output, or take additional actions such as bespoke extended output data logging.
+
+Generally speaking filter methods can be easily misused and lead to a degree of "invisible magic" in a request-response processing chain, which is why Hoodoo only provides very simple, limited facilities. They should be used as sparingly as possible.
+
+#### Arising reserved method names
+
+You can define whatever `private` or `protected` methods you want, but you must avoid the reserved method names already listed - actions `#show`, `#list`, `create`, `#update` and `#delete`; filters `#before` and `#after`; and security checker `#verify`.
 
 ### The interface class
 
@@ -540,7 +554,7 @@ The folder structure for the service's test suite is:
 
 ```
 └── spec
-    ├── factories                  - Use of this is optional, via FactoryGirl;
+    ├── factories                  - Use of this is optional, via FactoryBot;
     │   └── .gitkeep                 contents are included by 'spec_helper.rb'
     ├── generators                 - Shell's own generator tests; self-checks;
     │   └── *.rb                     you can keep or delete at your discretion
@@ -562,7 +576,7 @@ The folder structure for the service's test suite is:
     └── support                    - Contents are included by 'spec_helper.rb'
         ├── app_for_integration.rb - Read the comments in these files to
         ├── database_cleaner.rb      understand how each one helps you with
-        ├── factory_girl.rb          tests or what changes you might need to
+        ├── factory_bot.rb           tests or what changes you might need to
         └── rack_test.rb             make.
 ```
 
