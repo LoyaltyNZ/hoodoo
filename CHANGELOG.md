@@ -1,5 +1,21 @@
 # Hoodoo v2.x
 
+## 2.1.0 (2017-11-02)
+
+Introduces a new [generic error](https://github.com/LoyaltyNZ/hoodoo/blob/master/docs/api_specification/README.md#error.common.codes.generic), `generic.contemporary_exists`. Supporting service code can use this either manually, or with assistance methods listed below, to indicate that - in some date-based context - a contemporary ("now") version of some resource instance exists, but it doesn't exist in the context of the date at hand. This is only appropriate if using the [Hoodoo::ActiveRecord::Dated](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Dated.html) or [Hoodoo::ActiveRecord::ManuallyDated](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ManuallyDated.html) modules, or if implementing a comparable change tracking mechanism independently.
+
+* [Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in) has a new companion interface, [Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in_and_update). This is convenient but the trade-off is modification of the passed-in +context+ value. The method adds errors itself; `generic.not_found` for simple cases, along with the new `generic.contemporary_exists` if a dating module exists and the relevant conditions arise.
+
+* [Hoodoo::Services::Response#contemporary_exists](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Response.html#method-i-contemporary_exists) does the same as [Hoodoo::Services::Response#not_found](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Response.html#method-i-not_found) but adds the new `generic.contemporary_exists` error code, for callers who prefer to use [Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in) and manually add appropriate errors.
+
+This pairing and ordering of `generic.not_found` with `generic.contemporary_exists` is recommended in general if adding the new error to existing responses, to reduce the chances of compatibility problems with existing API callers. For new resource implementations, there may be cases where it makes sense to only use `generic.contemporary_exists`.
+
+Supporting new methods are:
+
+* [Hoodoo::ActiveRecord::Finder::ClassMethods#scoped_undated_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-scoped_undated_in) is a supporting method that works like [Hoodoo::ActiveRecord::Finder::ClassMethods#scoped_in](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Finder/ClassMethods.html#method-i-scoped_in), but specifically omits any dating-aware scope components, leaving just things like security and translation layers in place. Depending on the dating mechanism in use, the caller may then need to manually chain in additional scopes; for example, with [Hoodoo::ActiveRecord::ManuallyDated](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ManuallyDated.html), an undated scope will address all contemporary _and_ historic records within the single database table it uses for each manually dated ActiveRecord model.
+
+* [Hoodoo::ActiveRecord::Support#add_undated_scope_to](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Support.html#method-c-add_undated_scope_to) is, in essence, to [Hoodoo::ActiveRecord::Support#full_scope_for](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/docs/rdoc/classes/Hoodoo/ActiveRecord/Support.html#method-c-full_scope_for) as `#scoped_undated_in` is to `scoped_in` (see above).
+
 ## 2.0.0 (2017-10-13)
 
 * Hoodoo and therefore Hoodoo services now require Ruby 2.2.x or later with Rack v2. Rack v1 and older AMQP support has been removed as it was causing dependency problems with other updated gems that were becoming impractical to resolve, which in turn meant Ruby 2.1.x support was equally impractical.

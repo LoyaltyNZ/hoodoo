@@ -299,18 +299,79 @@ module Hoodoo; module Services
       return @errors.merge!( errors_object )
     end
 
-    # Set the standard not found error message (generic.not_found), to
-    # be used durning a 'show' call when the requested resource does not
-    # exist.
+    # Add the standard error message '+generic.not_found+' to this response.
+    # Used during a 'show' call when the requested resource does not exist.
     #
-    # +ident+::  The identifier of the resource which was not found
+    # +ident+:: The identifier of the resource which was not found
     #
-    # Example:
+    # Low level example:
     #
     #      return response.not_found( ident ) if resource.nil?
     #
+    # High level example for resource implementations with a +context+
+    # available, through which this method is called automatically:
+    #
+    #   resource = SomeModel.acquire_in_and_update( context )
+    #   return if context.response.halt_processing?
+    #
+    # See also:
+    #
+    # * #contemporary_exists
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
+    #
     def not_found( ident )
       @errors.add_error( 'generic.not_found', :reference => { :ident => ident } )
+    end
+
+    # Add the standard error message '+generic.contemporary_exists+' to this
+    # response. Optionally used during a 'show' call for a historical
+    # dating-aware resource, when an instance does not exist at a requested
+    # historic date/time, but a contemporary version is present.
+    #
+    # +ident+:: The identifier of the resource which was not found
+    #
+    # Example for resource implementations with a +context+ available:
+    #
+    #     resource = SomeModel.acquire_in( context )
+    #
+    #     if resource.nil?
+    #       ident = context.request.ident
+    #       context.response.not_found( ident )
+    #
+    #       # You'd omit "#manually_dated_contemporary" if using automatic
+    #       # dating (but manual dating is recommended over automatic for
+    #       # performance reasons).
+    #       #
+    #       contemporary_resource = SomeModel.
+    #                               scoped_undated_in( context ).
+    #                               manually_dated_contemporary().
+    #                               acquire( ident )
+    #
+    #       # Use of ActiveRecord means some ActiveSupport extensions
+    #       # such as "#present?" will be available.
+    #       #
+    #       context.response.contemporary_exists( ident ) if contemporary_resource.present?
+    #     end
+    #
+    # An even higher level approach through +context+, through which this
+    # method is called automatically:
+    #
+    #   resource = SomeModel.acquire_in_and_update( context )
+    #   return if context.response.halt_processing?
+    #
+    # This frees application authors of the burden of constructing an
+    # appropriately secure and "now-dated" scope for the contemporary resource
+    # lookup.
+    #
+    # See also:
+    #
+    # * #not_found
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
+    # * Hoodoo::ActiveRecord::Finder::ClassMethods#scoped_undated_in
+    # * Hoodoo::ActiveRecord::ManuallyDated::ClassMethods#manually_dated_contemporary
+    #
+    def contemporary_exists( ident )
+      @errors.add_error( 'generic.contemporary_exists', :reference => { :ident => ident } )
     end
 
     # Convert the internal response data into something that Rack expects.

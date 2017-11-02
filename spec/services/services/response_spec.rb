@@ -274,14 +274,30 @@ describe Hoodoo::Services::Response do
   end
 
   context '#not_found' do
-
     let(:ident) { 'an_ident' }
     before { @r.not_found(ident) }
 
     it 'sets the generic.not_found code' do
+      expect(@r.errors.errors.count).to eq(1)
       expect(@r.errors.errors.first['code']).to eq('generic.not_found')
     end
-    it 'sets the the reference to be the ident passed in' do
+    it 'sets the reference to be the ident passed in' do
+      expect(@r.errors.errors.first['reference']).to eq(ident)
+    end
+    it 'sets halt processing to true' do
+      expect(@r.halt_processing?).to eq(true)
+    end
+  end
+
+  context '#contemporary_exists' do
+    let(:ident) { 'an_ident' }
+    before { @r.contemporary_exists(ident) }
+
+    it 'sets the generic.contemporary_exists code' do
+      expect(@r.errors.errors.count).to eq(1)
+      expect(@r.errors.errors.first['code']).to eq('generic.contemporary_exists')
+    end
+    it 'sets the reference to be the ident passed in' do
       expect(@r.errors.errors.first['reference']).to eq(ident)
     end
     it 'sets halt processing to true' do

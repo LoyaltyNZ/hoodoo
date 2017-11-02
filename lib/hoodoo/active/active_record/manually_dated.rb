@@ -111,9 +111,9 @@ module Hoodoo
     #
     # === Show and List
     #
-    # You might use Hoodoo::ActiveRecord::Finder#list_in or
-    # Hoodoo::ActiveRecord::Finder#acquire_in for +list+ or +show+ actions;
-    # such code changes from e.g.:
+    # You might use Hoodoo::ActiveRecord::Finder::ClassMethods#list_in or
+    # Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in for +list+ or
+    # +show+ actions; such code changes from e.g.:
     #
     #     SomeModel.list_in( context )
     #
@@ -487,10 +487,22 @@ module Hoodoo
             }
           )
 
-          # Lastly, we must specify an acquisition scope that's based on
-          # the "uuid" column only and *not* the "id" column.
+          # We must specify an acquisition scope that's based on the "uuid"
+          # column only and *not* the "id" column.
 
           acquire_with_id_substitute( :uuid )
+
+          # Finally, enable the monkey patch to the Finder module's
+          # '#acquire_in' class method, if need be.
+
+          if self.include?( Hoodoo::ActiveRecord::Finder )
+            Hoodoo::Monkey.register(
+              target_unit:      self,
+              extension_module: Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions
+            )
+
+            Hoodoo::Monkey.enable( extension_module: Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions )
+          end
 
         end
 

@@ -11,9 +11,8 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_manual_date_tests, :id => false ) do | t |
+      ActiveRecord::Migration.create_table( :r_spec_model_manual_date_tests, :id => :string ) do | t |
         t.string :uuid, :null => false, :length => 32
-        t.string :id,   :null => false, :length => 32
 
         t.text :data
         t.text :unique
@@ -22,6 +21,8 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         t.datetime :effective_start, :null => false
         t.datetime :effective_end,   :null => false
       end
+
+      ActiveRecord::Migration.change_column( :r_spec_model_manual_date_tests, :id, :string, :limit => 32 )
 
       # Documentation recommends these constraints in migrations, so ensure
       # everything works when they're present.
@@ -49,6 +50,7 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
     class RSpecModelManualDateTest < ActiveRecord::Base
       include Hoodoo::ActiveRecord::ManuallyDated
+
       manual_dating_enabled()
 
       validates_each :data do | record, attribute, value |
@@ -56,6 +58,13 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
           record.errors.add( attribute, 'contains bad text' )
         end
       end
+    end
+
+    class RSpecModelManualDateTestOverride < ActiveRecord::Base
+      include Hoodoo::ActiveRecord::ManuallyDated
+
+      self.table_name = :r_spec_model_manual_date_tests
+      manual_dating_enabled()
     end
   end
 
@@ -275,6 +284,158 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
       it 'finds only contemporary entries' do
         expect( RSpecModelManualDateTest.manually_dated_contemporary.pluck( :data ) ).to match_array( [ 'five', 'six' ] )
+      end
+    end
+  end
+
+  # ==========================================================================
+  # Hoodoo::ActiveRecord::Finder interaction
+  # ==========================================================================
+
+  context 'with Hoodoo::ActiveRecord::Finder support' do
+    before :each do
+      interaction = Hoodoo::Services::Middleware::Interaction.new( {}, nil )
+      interaction.context = Hoodoo::Services::Context.new(
+        Hoodoo::Services::Session.new,
+        interaction.context.request,
+        interaction.context.response,
+        interaction
+      )
+
+      @context = interaction.context
+    end
+
+    context '#scoped_in' do
+      it 'generates appropriate scope' do
+        expect( Hoodoo::ActiveRecord::Support ).to(
+          receive( :full_scope_for ).once().with(
+            RSpecModelManualDateTestOverride, @context
+          ).and_call_original()
+        )
+
+        sql = RSpecModelManualDateTestOverride.scoped_in( @context ).to_sql
+
+        expect( sql ).to_not include( "UNION ALL" ) # This is only present in auto-dating, not manual dating
+        expect( sql ).to     include( " AND \"r_spec_model_manual_date_tests\".\"effective_end\" > '" )
+      end
+
+      it 'generates appropriate undated scope' do
+        expect( Hoodoo::ActiveRecord::Support ).to(
+          receive( :add_undated_scope_to ).once().with(
+            kind_of( ActiveRecord::Relation ), RSpecModelManualDateTestOverride, @context
+          ).and_call_original()
+        )
+
+        sql = RSpecModelManualDateTestOverride.scoped_undated_in( @context ).to_sql
+
+        expect( sql ).to eq( "SELECT \"r_spec_model_manual_date_tests\".* FROM \"r_spec_model_manual_date_tests\"" )
+      end
+    end
+
+    context '#acquire_in' do
+      context 'with contemporary' do
+        it 'finds the contemporary record' do
+          @context.request.dated_at            = nil
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+          expect( result.data                        ).to eq( 'six' )
+        end
+
+        it 'finds a historic record' do
+          @context.request.dated_at            = @now - 4.hours
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+          expect( result.data                        ).to eq( 'one' )
+        end
+
+        it 'indicates correctly that a contemporary exists during a far-backdated lookup' do
+          @context.request.dated_at            = @now - 1.year
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 2    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 1 ][ 'code'      ] ).to eq( 'generic.contemporary_exists' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+          expect( @context.response.errors.errors[ 1 ][ 'reference' ] ).to eq( @uuid_a )
+        end
+      end
+
+      context 'with a UUID that matches no existing record' do
+        it 'indicates correctly that no record exists and does not say a contemporary is present' do
+          alt_uuid                             = Hoodoo::UUID.generate
+          @context.request.dated_at            = @now - 5.seconds
+          @context.request.uri_path_components = [ alt_uuid ]
+
+          result = RSpecModelManualDateTestOverride.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( alt_uuid )
+        end
+      end
+
+      context 'without contemporary' do
+        before( :each ) do
+          @context.request.dated_at = nil
+
+          RSpecModelManualDateTest.manually_dated_destruction_in(
+            @context,
+            ident: @uuid_a
+          )
+
+          sleep( ( 0.1 ** Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES ) * 2 )
+        end
+
+        it 'finds no contemporary record' do
+          @context.request.dated_at            = nil
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
+          expect( result ).to be_nil
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+        end
+
+        it 'finds a historic record' do
+          @context.request.dated_at            = @now - 4.hours
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
+          expect( result ).to_not be_nil
+
+          expect( @context.response.halt_processing? ).to eq( false )
+          expect( result.data                        ).to eq( 'one' )
+        end
+
+        it 'indicates correctly that no contemporary exists during a far-backdated lookup' do
+          @context.request.dated_at            = @now - 1.year
+          @context.request.uri_path_components = [ @uuid_a ]
+
+          result = RSpecModelManualDateTest.acquire_in_and_update( @context )
+          expect( result ).to be_nil
+
+          expect( @context.response.halt_processing?    ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1    )
+
+          expect( @context.response.errors.errors[ 0 ][ 'code'      ] ).to eq( 'generic.not_found' )
+          expect( @context.response.errors.errors[ 0 ][ 'reference' ] ).to eq( @uuid_a )
+        end
       end
     end
   end

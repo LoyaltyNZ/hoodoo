@@ -29,8 +29,7 @@ describe Hoodoo::ActiveRecord::Writer do
 
     before( :all ) do
       spec_helper_silence_stdout() do
-        ActiveRecord::Migration.create_table(:r_spec_model_writer_tests, :id => false) do | t |
-          t.text :id
+        ActiveRecord::Migration.create_table(:r_spec_model_writer_tests, :id => :string) do | t |
           t.text :uuid
           t.text :code
           t.text :random_field
@@ -38,6 +37,7 @@ describe Hoodoo::ActiveRecord::Writer do
           t.timestamps :null => false
         end
 
+        ActiveRecord::Migration.change_column( :r_spec_model_writer_tests, :id, :string, :limit => 32 )
         ActiveRecord::Migration.add_index(:r_spec_model_writer_tests, :code, unique: true)
       end
     end

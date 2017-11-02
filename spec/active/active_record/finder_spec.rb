@@ -1,6 +1,10 @@
 require 'spec_helper'
 require 'active_record'
 
+# Automatic and manual dating tests have their own test files and Finder
+# module features specific to dating are covered there, to keep things more
+# simple here.
+#
 # The "counting" tests must run first and in-order internally, else e.g. an
 # ANALYZE might happen before the pre-ANALYZE test, breaking the results.
 # Other tests that create objects in the table can cause the estimated count
@@ -11,8 +15,7 @@ require 'active_record'
 describe Hoodoo::ActiveRecord::Finder, :order => :defined do
   before :all do
     spec_helper_silence_stdout() do
-      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => false ) do | t |
-        t.text :id
+      ActiveRecord::Migration.create_table( :r_spec_model_finder_tests, :id => :string ) do | t |
         t.text :uuid
         t.text :code
         t.text :field_one
@@ -22,6 +25,8 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         t.timestamps :null => true
         t.text :created_by
       end
+
+      ActiveRecord::Migration.change_column( :r_spec_model_finder_tests, :id, :string, :limit => 32 )
     end
 
     class RSpecModelFinderTest < ActiveRecord::Base
@@ -63,14 +68,6 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
           [ "#{ attr } ILIKE ?", value ]
         }
       )
-    end
-
-    class RSpecModelFinderTestWithDating < ActiveRecord::Base
-      self.primary_key = :id
-      self.table_name = :r_spec_model_finder_tests
-
-      include Hoodoo::ActiveRecord::Finder
-      include Hoodoo::ActiveRecord::Dated
     end
 
     class RSpecModelFinderTestWithHelpers < ActiveRecord::Base
@@ -284,9 +281,9 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
             # The outer 'before' code ensures an accurate initial count of 3,
             # but we're going add in a few more unestimated items.
             #
-            @uncounted1 = RSpecModelFinderTest.new.save!
-            @uncounted2 = RSpecModelFinderTest.new.save!
-            @uncounted3 = RSpecModelFinderTest.new.save!
+            @uncounted1 = RSpecModelFinderTest.new( :id => 'unc_id1' ).save!
+            @uncounted2 = RSpecModelFinderTest.new( :id => 'unc_id2' ).save!
+            @uncounted3 = RSpecModelFinderTest.new( :id => 'unc_id3' ).save!
 
             @subsequent_accurate_count = RSpecModelFinderTest.count
           end
@@ -623,6 +620,42 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         @context.request.uri_path_components = [ @scoped_3.id ]
         found = RSpecModelFinderTest.where( :field_one => @scoped_3.field_one + '!' ).acquire_in( @context )
         expect( found ).to be_nil
+      end
+
+      context 'enhanced by #acquire_in_and_update' do
+        before :each do
+          @session.scoping = { :authorised_uuids => [ 'uuid 1' ], :authorised_code => 'code 1' }
+        end
+
+        # This test proves that the higher level interface uses the lower
+        # level interface and, as such, we judge that only the extra added
+        # features need test coverage, rather than repeating all of the
+        # coverage already done for #acquire_in.
+        #
+        it 'acquires via #acquire_in' do
+          expect( RSpecModelFinderTest ).to receive( :acquire_in ).with( @context ).and_call_original()
+
+          @context.request.uri_path_components = [ @scoped_1.id ]
+          found = RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( found ).to eq( @scoped_1 )
+        end
+
+        it 'does not add errors when an instance is found' do
+          @context.request.uri_path_components = [ @scoped_1.id ]
+          RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( false )
+        end
+
+        it 'adds "not_found" if an instance is absent' do
+          @context.request.uri_path_components = [ Hoodoo::UUID.generate() ]
+          RSpecModelFinderTest.acquire_in_and_update( @context )
+
+          expect( @context.response.halt_processing? ).to eq( true )
+          expect( @context.response.errors.errors.count ).to eq( 1 )
+          expect( @context.response.errors.errors[ 0 ][ 'code' ] ).to eq( 'generic.not_found' )
+        end
       end
     end
 

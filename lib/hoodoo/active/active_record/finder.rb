@@ -118,6 +118,29 @@ module Hoodoo
           Hoodoo::ActiveRecord::Support.full_scope_for( self, context )
         end
 
+        # As #scoped_in, but intentionally omits any historical dating modules
+        # from the returned scope. The scope might then address both historic
+        # and contemporary records, depending on whether you are using manual
+        # or automatic dating.
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # See also:
+        #
+        # * Hoodoo::ActiveRecord::Dated
+        # * Hoodoo::ActiveRecord::ManuallyDated
+        #
+        def scoped_undated_in( context )
+          Hoodoo::ActiveRecord::Support.add_undated_scope_to(
+            self.all(), # "all" -> returns anonymous scope
+            self,
+            context
+          )
+        end
+
         # "Polymorphic" find - support for finding a model by fields other
         # than just +:id+, based on a single unique identifier. Use #acquire
         # just like you'd use +find_by_id+ and only bother with it if you
@@ -173,8 +196,9 @@ module Hoodoo
         #
         #     SomeModel.where( :foo => :bar ).acquire( context.request.ident )
         #
-        # Usually for convenience you should use #acquire_in instead, or only
-        # call #acquire with (say) a secure scope via for example a call to
+        # Usually for convenience you should use #acquire_in_and_update or
+        # acquire_in instead, or only call #acquire with (say) a secure scope
+        # via for example a call to
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. Other scopes may
         # be needed depending on the mixins your model uses.
         #
@@ -246,6 +270,10 @@ module Hoodoo
         # The same applies to forgetting dated scopes, translated scopes, or
         # anything else that #scoped_in might include for you.
         #
+        # An even higher-level method, taking care of error handling as well,
+        # is #acquire_in_and_update. You may prefer to call this higher level
+        # interface if you don't object to the way it modifies +context+.
+        #
         # Parameters:
         #
         # +context+:: Hoodoo::Services::Context instance describing a call
@@ -253,23 +281,94 @@ module Hoodoo
         #             the Hoodoo::Services::Implementation instance methods
         #             that a resource subclass implements.
         #
-        # Returns a found model instance or +nil+ for no match.
+        # See also:
+        #
+        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
+        # * Hoodoo::Services::Response#not_found
+        # * Hoodoo::Services::Response#contemporary_exists
+        #
+        # Returns a found model instance or +nil+ for no match / on error.
         #
         def acquire_in( context )
-          return scoped_in( context ).acquire( context.request.ident )
+          scoped_in( context ).acquire( context.request.ident )
+        end
+
+        # A higher level equivalent of #acquire_in in which the given context
+        # will be updated with error information if the requested item cannot
+        # be found. Although modifying the passed-in context may be considered
+        # an unclean pattern, it does allow extensions to that mechanism. For
+        # example, in the presence of the Hoodoo::ActiveRecord::Dated or
+        # Hoodoo::ActiveRecord::ManuallyDated modules, an additional error
+        # entry of +generic.contemporary_exists+ will be added if conditions
+        # warrant it.
+        #
+        # At the time of writing only this and/or +generic.not_found+ can be
+        # added, but in future other mixin modules may cause other additions,
+        # making preferential use of this method over #acquire_in a good way
+        # to future-proof against such changes.
+        #
+        # To be sure that these additions work, always include this module
+        # before any others (unless documentation indicates a differing
+        # inclusion order requirement), so that the dating module is able to
+        # detect the presence of this Finder module and enable the extensions.
+        #
+        # Parameters:
+        #
+        # +context+:: Hoodoo::Services::Context instance describing a call
+        #             context. This is typically a value passed to one of
+        #             the Hoodoo::Services::Implementation instance methods
+        #             that a resource subclass implements.
+        #
+        # See also:
+        #
+        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in
+        # * Hoodoo::Services::Response#not_found
+        # * Hoodoo::Services::Response#contemporary_exists
+        #
+        # Returns a found model instance or +nil+ for no match / on error,
+        # wherein +context+ will have been updated with error details.
+        #
+        # Example, following on from those for #acquire_in:
+        #
+        #     def show( context )
+        #       resource = SomeModel.acquire_in_and_update( context )
+        #       return if context.response.halt_processing? # Or just use 'if resource.nil?'
+        #
+        #       # ...else render...
+        #     end
+        #
+        def acquire_in_and_update( context )
+
+          # The method is patched internally by Hoodoo::ActiveRecord::Dated
+          # and Hoodoo::ActiveRecord::ManuallyDated. The patches add in a
+          # +generic.contemporary_exists+ error using appropriate checks for
+          # a contemporary record, where necessary. This way, any performance
+          # overhead that might be introduced by the added code is only
+          # present when a class uses one of the dating modules.
+          #
+          # It's an internal patch and not intended for additional external
+          # changes, so it does not use the public "monkey_" naming prefix.
+
+          result = acquire_in( context )
+          context.response.not_found( context.request.ident ) if result.nil?
+
+          return result
         end
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
-        # are to be used to "find-by-identifier" through calls #acquire and
-        # #acquire_in. See those methods for more details.
+        # are to be used to "find-by-identifier" through calls #acquire,
+        # #acquire_in and #acquire_in_and_update. See those methods for more
+        # details.
         #
         # Fields will be searched in the order listed. If duplicate items are
         # present, the first occurrence is kept and the rest are removed.
         #
         # *args:: One or more field names as Strings or Symbols.
         #
-        # See also: #acquired_with
-        #           #acquire_with_id_substitute
+        # See also:
+        #
+        # * #acquired_with
+        # * #acquire_with_id_substitute
         #
         def acquire_with( *args )
           self.nz_co_loyalty_hoodoo_show_id_fields = args.map( & :to_s )
@@ -277,30 +376,32 @@ module Hoodoo
         end
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
-        # are being used to "find-by-identifier" through calls to #acquire
-        # and #acquire_in. The returned Array contains de-duplicated String
-        # values only.
+        # are being used to "find-by-identifier" through calls to #acquire,
+        # #acquire_in and #acquire_in_and_update. The returned Array contains
+        # de-duplicated String values only.
         #
-        # See also: #acquire_with
-        #           #acquire_with_id_substitute
+        # See also:
+        #
+        # * #acquire_with
+        # * #acquire_with_id_substitute
         #
         def acquired_with
           self.nz_co_loyalty_hoodoo_show_id_fields || []
         end
 
-        # The #acquire_with method allows methods like #acquire and
-        # #acquire_in to transparently find a record based on _one_ _or_
-        # _more_ columns in the database. The columns (and corresponding
-        # model attributes) specified through a call to #acquire_with will
-        # normally be used _in_ _addition_ _to_ a lookup on the +id+
-        # column, but in rare circumstances you might need to bypass that
-        # and use an entirely different field. This is distinct from the
+        # The #acquire_with method allows methods like #acquire, #acquire_in
+        # and #acquire_in_and_update to transparently find a record based on
+        # _one_ _or_ _more_ columns in the database. The columns (and
+        # corresponding model attributes) specified through a call to
+        # #acquire_with will normally be used _in_ _addition_ _to_ a lookup on
+        # the +id+ column, but in rare circumstances you might need to bypass
+        # that and use an entirely different field. This is distinct from the
         # ActiveRecord-level concept of the model's primary key column.
         #
         # To permanently change the use of the +id+ attribute as the first
-        # search parameter in #acquire and #acquire_in, by modifying the
-        # behaviour of #acquisition_scope, call here and pass in the new
-        # attribute name.
+        # search parameter in #acquire, #acquire_in and #acquire_in_and_update
+        # by modifying the behaviour of #acquisition_scope, call here and pass
+        # in the new attribute name.
         #
         # +attr+:: Attribute name as a Symbol or String to use _instead_
         #          of +id+, as a default mandatory column in
@@ -310,10 +411,10 @@ module Hoodoo
           self.nz_co_loyalty_hoodoo_show_id_substitute = attr.to_sym
         end
 
-        # Back-end to #acquire and therefore, in turn, #acquire_in. Returns
-        # an ActiveRecord::Relation instance which scopes the search for a
-        # record by +id+ and across any other columns specified by
-        # #acquire_with, via SQL +OR+.
+        # Back-end to #acquire and therefore, in turn, #acquire_in and
+        # #acquire_in_and_update. Returns an ActiveRecord::Relation instance
+        # which scopes the search for a record by +id+ and across any other
+        # columns specified by #acquire_with, via SQL +OR+.
         #
         # If you need to change the use of attribute +id+, specify a
         # different attribute with #acquire_with_id_substitute. In that case,
@@ -733,7 +834,9 @@ module Hoodoo
         # for +filter_with+ tends to work reasonably when the query is
         # negated for filter use via <tt>...NOT(...)...</tt>. Examining the
         # implementation of Hoodoo::ActiveRecord::Finder::SearchHelper may
-        # help if confused. See also:
+        # help if confused.
+        #
+        # See also:
         #
         # * https://en.wikipedia.org/wiki/Null_(SQL)
         #

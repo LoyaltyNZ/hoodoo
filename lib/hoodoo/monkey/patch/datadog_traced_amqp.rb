@@ -8,7 +8,7 @@
 #
 #           See Hoodoo::Monkey::Patch::DatadogTracedAMQP for more.
 # ----------------------------------------------------------------------
-#           22-June-2017 (JRW): Created.
+#           22-Jun-2017 (JRW): Created.
 ########################################################################
 
 module Hoodoo
