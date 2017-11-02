@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Discovery::ForLocal">
+
+    <meta name="description" content="Describe a resource endpoint location in a way that allows it to be method-called from the service middleware directly.">
+    <meta property="og:description" content="Describe a resource endpoint location in a way that allows it to be method-called from the service middleware directly.">
+
+    <meta name="keywords" content="Hoodoo::Services::Discovery::ForLocal class">
+    <meta name="keywords" content="new">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Discovery::ForLocal
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/discovery/results/for_local_rb.html">lib/hoodoo/services/discovery/results/for_local.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Describe a resource endpoint location in a way that allows it to be
 method-called from the service middleware directly.</p>
 
@@ -52,20 +59,16 @@ cleanest to follow the same pattern.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -73,23 +76,20 @@ cleanest to follow the same pattern.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-base_path'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-base_path'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>base_path</td>
             <td class='attr-desc'><p>The base path of this resource and version - for example, “/v1/products” or
 “/v2/members”. String.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-de_facto_base_path'>
+        </tr>
+        <tr valign='top' id='attribute-i-de_facto_base_path'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>de_facto_base_path</td>
             <td class='attr-desc'><p>The de facto routing equivalent of <a
@@ -97,70 +97,70 @@ href="ForLocal.html#attribute-i-base_path">base_path</a>. This is not a
 custom path based on the interface&#39;s declared endpoint; it is derived
 directlyf rom resource or version - for example, “/1/Product” or
 “/2/Member”. String.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-de_facto_routing_regexp'>
+        </tr>
+        <tr valign='top' id='attribute-i-de_facto_routing_regexp'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>de_facto_routing_regexp</td>
             <td class='attr-desc'><p>As <a href="ForLocal.html#attribute-i-routing_regexp">routing_regexp</a>,
 but matches <a
 href="ForLocal.html#attribute-i-de_facto_base_path">de_facto_base_path</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-implementation_instance'>
+        </tr>
+        <tr valign='top' id='attribute-i-implementation_instance'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>implementation_instance</td>
             <td class='attr-desc'><p>The <a href="../Implementation.html">Hoodoo::Services::Implementation</a>
 subclass <em>instance</em> which implements the interface described by <a
 href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-interface_class'>
+        </tr>
+        <tr valign='top' id='attribute-i-interface_class'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>interface_class</td>
             <td class='attr-desc'><p>The <a href="../Interface.html">Hoodoo::Services::Interface</a> subclass
 <em>class</em> describing the resource interface.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-resource'>
+        </tr>
+        <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-routing_regexp'>
+        </tr>
+        <tr valign='top' id='attribute-i-routing_regexp'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>routing_regexp</td>
             <td class='attr-desc'><p>A regular expression which matches the <a
 href="ForLocal.html#attribute-i-base_path">base_path</a> and any identifier
 data, allowing inbound URI-based requests to be routed to this endpoint.
 Regexp instance.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-version'>
+        </tr>
+        <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>version</td>
             <td class='attr-desc'><p>Resource endpoint version, as an Integer (e.g. 2).</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version:, base_path:, routing_regexp:, de_facto_base_path:, de_facto_routing_regexp:, interface_class:, implementation_instance: )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( resource:, version:, base_path:, routing_regexp:, de_facto_base_path:, de_facto_routing_regexp:, interface_class:, implementation_instance: )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForLocal.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create an instance with named parameters as follows:</p>
+        <div class="description">
+            <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt>resource
 <dd>
 <p>See <a href="ForLocal.html#attribute-i-resource">resource</a>.</p>
@@ -190,18 +190,19 @@ href="ForLocal.html#attribute-i-interface_class">interface_class</a>.</p>
 <p>See <a
 href="ForLocal.html#attribute-i-implementation_instance">implementation_instance</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_local.rb, line 81</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
                 <span class="ruby-identifier">base_path</span>,,
                 <span class="ruby-identifier">routing_regexp</span>,,
@@ -219,9 +220,9 @@ href="ForLocal.html#attribute-i-implementation_instance">implementation_instance
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface_class</span>         = <span class="ruby-identifier">interface_class</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">implementation_instance</span> = <span class="ruby-identifier">implementation_instance</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

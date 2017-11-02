@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Presenters::BaseDSL">
+
+    <meta name="description" content="A mixin to be used by any presenter that wants to support the Hoodoo::Presenters family of schema DSL methods. See e.g. Hoodoo::Presenters::Base. Mixed in by e.g.">
+    <meta property="og:description" content="A mixin to be used by any presenter that wants to support the Hoodoo::Presenters family of schema DSL methods. See e.g. Hoodoo::Presenters::Base. Mixed in by e.g.">
+
+    <meta name="keywords" content="Hoodoo::Presenters::BaseDSL class">
+    <meta name="keywords" content="object, array, hash, integer, string, float, decimal, boolean, date, datetime, text, enum, tags, uuid, type, resource, internationalised, is_internationalised?">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>A mixin to be used by any presenter that wants to support the <a
 href="../Presenters.html">Hoodoo::Presenters</a> family of schema DSL
 methods. See e.g. <a href="Base.html">Hoodoo::Presenters::Base</a>. Mixed
@@ -40,126 +47,122 @@ instance can nest definitions of fields inside itself using this DSL.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-array">array</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-array">array</a>
+                </li>
+            </ul>
         </dd>
         <dt>B</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-boolean">boolean</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-boolean">boolean</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-date">date</a>,
-              </li>
-              <li>
-                <a href="#method-i-datetime">datetime</a>,
-              </li>
-              <li>
-                <a href="#method-i-decimal">decimal</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-date">date</a>,
+                </li>
+                <li>
+                    <a href="#method-i-datetime">datetime</a>,
+                </li>
+                <li>
+                    <a href="#method-i-decimal">decimal</a>
+                </li>
+            </ul>
         </dd>
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-enum">enum</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-enum">enum</a>
+                </li>
+            </ul>
         </dd>
         <dt>F</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-float">float</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-float">float</a>
+                </li>
+            </ul>
         </dd>
         <dt>H</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-hash">hash</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-hash">hash</a>
+                </li>
+            </ul>
         </dd>
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-integer">integer</a>,
-              </li>
-              <li>
-                <a href="#method-i-internationalised">internationalised</a>,
-              </li>
-              <li>
-                <a href="#method-i-is_internationalised-3F">is_internationalised?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-integer">integer</a>,
+                </li>
+                <li>
+                    <a href="#method-i-internationalised">internationalised</a>,
+                </li>
+                <li>
+                    <a href="#method-i-is_internationalised-3F">is_internationalised?</a>
+                </li>
+            </ul>
         </dd>
         <dt>O</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-object">object</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-object">object</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-resource">resource</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-resource">resource</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-string">string</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-string">string</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-tags">tags</a>,
-              </li>
-              <li>
-                <a href="#method-i-text">text</a>,
-              </li>
-              <li>
-                <a href="#method-i-type">type</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-tags">tags</a>,
+                </li>
+                <li>
+                    <a href="#method-i-text">text</a>,
+                </li>
+                <li>
+                    <a href="#method-i-type">type</a>
+                </li>
+            </ul>
         </dd>
         <dt>U</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-uuid">uuid</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-uuid">uuid</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -168,20 +171,17 @@ instance can nest definitions of fields inside itself using this DSL.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-array">
-              <b>array</b>( name, options = {}, &amp;block )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-array">
+            <b>array</b>( name, options = {}, &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-array" name="method-i-array" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON array with the supplied name and options. If there is a block
+        <div class="description">
+            <p>Define a JSON array with the supplied name and options. If there is a block
 provided, then more DSL calls inside the block define how each array entry
 must look; otherwise array entries are not validated / are undefined unless
 the <code>:type</code> option is specified (see below).</p>
@@ -335,32 +335,33 @@ end
 #   &quot;numbers&quot; =&gt; [ BigDecimal.new( &#39;2.2511&#39; ) ]
 # }
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-array_source')" id="l_method-i-array_source">show</a>
-              </p>
-              <div id="method-i-array_source" class="dyn-source">
+            </p>
+            <div id="method-i-array_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 167</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">array</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">array</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">ary</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Array</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">ary</span>.<span class="ruby-identifier">is_internationalised?</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-boolean">
-              <b>boolean</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-boolean">
+            <b>boolean</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-boolean" name="method-i-boolean" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON boolean with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON boolean with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -368,31 +369,32 @@ end
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-boolean_source')" id="l_method-i-boolean_source">show</a>
-              </p>
-              <div id="method-i-boolean_source" class="dyn-source">
+            </p>
+            <div id="method-i-boolean_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 374</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">boolean</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">boolean</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Boolean</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-date">
-              <b>date</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-date">
+            <b>date</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-date" name="method-i-date" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON date with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON date with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -400,31 +402,32 @@ end
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-date_source')" id="l_method-i-date_source">show</a>
-              </p>
-              <div id="method-i-date_source" class="dyn-source">
+            </p>
+            <div id="method-i-date_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 383</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">date</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">date</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Date</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-datetime">
-              <b>datetime</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-datetime">
+            <b>datetime</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-datetime" name="method-i-datetime" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON datetime with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON datetime with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -432,31 +435,32 @@ end
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-datetime_source')" id="l_method-i-datetime_source">show</a>
-              </p>
-              <div id="method-i-datetime_source" class="dyn-source">
+            </p>
+            <div id="method-i-datetime_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 392</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">datetime</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">datetime</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">DateTime</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-decimal">
-              <b>decimal</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-decimal">
+            <b>decimal</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-decimal" name="method-i-decimal" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON decimal with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON decimal with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -465,31 +469,32 @@ end
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
 mandatory <code>:precision =&gt; [decimal-precision-number]</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-decimal_source')" id="l_method-i-decimal_source">show</a>
-              </p>
-              <div id="method-i-decimal_source" class="dyn-source">
+            </p>
+            <div id="method-i-decimal_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 365</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">decimal</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">decimal</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Decimal</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-enum">
-              <b>enum</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-enum">
+            <b>enum</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-enum" name="method-i-enum" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON string which can only have a restricted set of exactly
+        <div class="description">
+            <p>Define a JSON string which can only have a restricted set of exactly
 matched values, with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
 <dd>
@@ -499,31 +504,32 @@ matched values, with the supplied name and options.</p>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
 mandatory <code>:from =&gt; [array-of-allowed-strings-or-symbols]</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-enum_source')" id="l_method-i-enum_source">show</a>
-              </p>
-              <div id="method-i-enum_source" class="dyn-source">
+            </p>
+            <div id="method-i-enum_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 414</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enum</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">enum</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Enum</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-float">
-              <b>float</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-float">
+            <b>float</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-float" name="method-i-float" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON float with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON float with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -531,31 +537,32 @@ mandatory <code>:from =&gt; [array-of-allowed-strings-or-symbols]</code></p>
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-float_source')" id="l_method-i-float_source">show</a>
-              </p>
-              <div id="method-i-float_source" class="dyn-source">
+            </p>
+            <div id="method-i-float_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 355</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">float</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">float</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Float</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-hash">
-              <b>hash</b>( name, options = {}, &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-hash">
+            <b>hash</b>( name, options = {}, &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-hash" name="method-i-hash" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON object with the supplied name and optional constraints on
+        <div class="description">
+            <p>Define a JSON object with the supplied name and optional constraints on
 properties (like hash keys) and property values (like hash values) that the
 object may contain, in abstract terms.</p>
 <dl class="rdoc-list note-list"><dt><code>name</code>
@@ -730,32 +737,33 @@ Person.validate( data )
 #      &quot;message&quot;=&gt;&quot;Field `identifiers.postgresql` is longer than maximum length `8`&quot;,
 #      &quot;reference&quot;=&gt;&quot;identifiers.postgresql&quot;}]
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-hash_source')" id="l_method-i-hash_source">show</a>
-              </p>
-              <div id="method-i-hash_source" class="dyn-source">
+            </p>
+            <div id="method-i-hash_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 326</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">hash</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">hash</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Hash</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">is_internationalised?</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-integer">
-              <b>integer</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-integer">
+            <b>integer</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-integer" name="method-i-integer" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON integer with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON integer with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -763,31 +771,32 @@ Person.validate( data )
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-integer_source')" id="l_method-i-integer_source">show</a>
-              </p>
-              <div id="method-i-integer_source" class="dyn-source">
+            </p>
+            <div id="method-i-integer_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 336</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">integer</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">integer</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Integer</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-internationalised">
-              <b>internationalised</b>( options = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-internationalised">
+            <b>internationalised</b>( options = nil )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-internationalised" name="method-i-internationalised" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declares that this Type or Resource contains fields which will may carry
+        <div class="description">
+            <p>Declares that this Type or Resource contains fields which will may carry
 human-readable data subject to platform interntionalisation rules. A
 Resource which is internationalised automatically gains a
 <code>language</code> field (part of the Platform API&#39;s Common Fields)
@@ -820,59 +829,61 @@ member&#39;s name:</p>
   end
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-internationalised_source')" id="l_method-i-internationalised_source">show</a>
-              </p>
-              <div id="method-i-internationalised_source" class="dyn-source">
+            </p>
+            <div id="method-i-internationalised_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 683</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">internationalised</span>( <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@internationalised</span> = <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-is_internationalised-3F">
-              <b>is_internationalised?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-is_internationalised-3F">
+            <b>is_internationalised?</b>()
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-is_internationalised-3F" name="method-i-is_internationalised-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>An enquiry method related to, but not part of the DSL; returns
+        <div class="description">
+            <p>An enquiry method related to, but not part of the DSL; returns
 <code>true</code> if the schema instance is internationalised, else
 <code>false</code>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-is_internationalised-3F_source')" id="l_method-i-is_internationalised-3F_source">show</a>
-              </p>
-              <div id="method-i-is_internationalised-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-is_internationalised-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 691</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">is_internationalised?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-operator">!</span><span class="ruby-operator">!</span> <span class="ruby-ivar">@internationalised</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-object">
-              <b>object</b>( name, options = {}, &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-object">
+            <b>object</b>( name, options = {}, &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-object" name="method-i-object" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON object with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON object with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key.</p>
@@ -901,34 +912,35 @@ href="BaseDSL.html#method-i-type">type</a> for more information.</p>
   end
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-object_source')" id="l_method-i-object_source">show</a>
-              </p>
-              <div id="method-i-object_source" class="dyn-source">
+            </p>
+            <div id="method-i-object_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 44</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">object</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">object</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Hoodoo::Presenters::Base#Object must have block&#39;</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
 
   <span class="ruby-identifier">obj</span> = <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>, <span class="ruby-identifier">options</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">internationalised</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">is_internationalised?</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-resource">
-              <b>resource</b>( resource_info, options = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-resource">
+            <b>resource</b>( resource_info, options = nil )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declare that a resource of a given name is included at this point. This is
+        <div class="description">
+            <p>Declare that a resource of a given name is included at this point. This is
 only normally done within the description of the schema for an interface.
 The fields of the given named resource are considered to be defined inline
 at the point of declaration - essentially, it&#39;s macro expansion.</p>
@@ -974,18 +986,19 @@ required. That is, the following two declarations behave identically:</p>
 
 resource Outlet, :required =&gt; true # Pointless option!
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
-              </p>
-              <div id="method-i-resource_source" class="dyn-source">
+            </p>
+            <div id="method-i-resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 636</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">resource_info</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Class</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">resource_info</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
@@ -1000,17 +1013,17 @@ resource Outlet, :required =&gt; true # Pointless option!
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">get_schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-string">
-              <b>string</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-string">
+            <b>string</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-string" name="method-i-string" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON string with the supplied name and options.</p>
+        <div class="description">
+            <p>Define a JSON string with the supplied name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The JSON key</p>
@@ -1019,31 +1032,32 @@ resource Outlet, :required =&gt; true # Pointless option!
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code> and
 mandatory <code>:length =&gt; [max-length-in-chars]</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-string_source')" id="l_method-i-string_source">show</a>
-              </p>
-              <div id="method-i-string_source" class="dyn-source">
+            </p>
+            <div id="method-i-string_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 346</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">string</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">string</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">String</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-tags">
-              <b>tags</b>( field_name, options = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-tags">
+            <b>tags</b>( field_name, options = nil )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-tags" name="method-i-tags" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declares that this Type or Resource has a string field of unlimited length
+        <div class="description">
+            <p>Declares that this Type or Resource has a string field of unlimited length
 that contains comma-separated tag strings.</p>
 <dl class="rdoc-list note-list"><dt><code>field_name</code>
 <dd>
@@ -1067,32 +1081,33 @@ href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a>.</p>
   end
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-tags_source')" id="l_method-i-tags_source">show</a>
-              </p>
-              <div id="method-i-tags_source" class="dyn-source">
+            </p>
+            <div id="method-i-tags_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 437</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">tags</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Tags</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-text">
-              <b>text</b>( name, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-text">
+            <b>text</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-text" name="method-i-text" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define a JSON string of unlimited length with the supplied name and
+        <div class="description">
+            <p>Define a JSON string of unlimited length with the supplied name and
 options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
@@ -1101,31 +1116,32 @@ options.</p>
 <dd>
 <p>A <code>Hash</code> of options, e.g. <code>:required =&gt; true</code></p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-text_source')" id="l_method-i-text_source">show</a>
-              </p>
-              <div id="method-i-text_source" class="dyn-source">
+            </p>
+            <div id="method-i-text_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 402</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">text</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">text</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">property</span>( <span class="ruby-identifier">name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Text</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-type">
-              <b>type</b>( type_info, options = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-type">
+            <b>type</b>( type_info, options = nil )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-type" name="method-i-type" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declare that a nested type of a given name is included at this point. This
+        <div class="description">
+            <p>Declare that a nested type of a given name is included at this point. This
 is only normally done within an <code>array</code> or <code>object</code>
 declaration. The fields of the given named type are considered to be
 defined inline at the point of declaration - essentially, it&#39;s macro
@@ -1235,18 +1251,19 @@ Resource could define other fields too, though this would be risky as the
 Type might gain same-named fields in future, leading to undefined
 behaviour. At such a time, a degree of cut-and-paste and removing the
 <code>type</code> call from the Resource definition would probably be wise.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-type_source')" id="l_method-i-type_source">show</a>
-              </p>
-              <div id="method-i-type_source" class="dyn-source">
+            </p>
+            <div id="method-i-type_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 577</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">type</span>( <span class="ruby-identifier">type_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">type</span>( <span class="ruby-identifier">type_info</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">type_info</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Class</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">type_info</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
@@ -1261,17 +1278,17 @@ behaviour. At such a time, a degree of cut-and-paste and removing the
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instance_exec</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">klass</span>.<span class="ruby-identifier">get_schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-uuid">
-              <b>uuid</b>( field_name, options = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-uuid">
+            <b>uuid</b>( field_name, options = nil )
             <a href="../../../classes/Hoodoo/Presenters/BaseDSL.html#method-i-uuid" name="method-i-uuid" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declares that this Type or Resource _refers to_ another Resource instance
+        <div class="description">
+            <p>Declares that this Type or Resource _refers to_ another Resource instance
 via its <a href="UUID.html">UUID</a>. There&#39;s no need to declare the
 presence of the <a href="UUID.html">UUID</a> field _for the instance
 itself_ on all resource definitions as that&#39;s implicit; this <a
@@ -1307,24 +1324,25 @@ Product resource instance:</p>
   end
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-uuid_source')" id="l_method-i-uuid_source">show</a>
-              </p>
-              <div id="method-i-uuid_source" class="dyn-source">
+            </p>
+            <div id="method-i-uuid_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base_dsl.rb, line 470</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">uuid</span>( <span class="ruby-identifier">field_name</span>, <span class="ruby-identifier">options</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">options</span> <span class="ruby-operator">||=</span> {}
   <span class="ruby-identifier">property</span>(<span class="ruby-identifier">field_name</span>, <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>, <span class="ruby-identifier">options</span>)
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

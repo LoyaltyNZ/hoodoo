@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Middleware">
+
+    <meta name="description" content="Rack middleware, declared in (e.g.) a config.">
+    <meta property="og:description" content="Rack middleware, declared in (e.g.) a config.">
+
+    <meta name="keywords" content="Hoodoo::Services::Middleware class">
+    <meta name="keywords" content="environment, has_memcached?, memcached_host, on_queue?, service_name, de_facto_path_for, logger, set_logger, set_log_folder, set_verbose_logging, verbose_logging?, test_session, set_test_session, record_host_and_port, flush_services_for_test, new, call, inter_resource_endpoint_for, inter_resource_local, monkey_log_inbound_request">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Middleware
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
@@ -43,7 +50,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="../../Rack.html">Rack</a> middleware, declared in (e.g.) a
 <code>config.ru</code> file in the usual way:</p>
 
@@ -89,173 +96,169 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
     </div>
 
 
-
-
     <!-- Sections -->
     <div class="sectiontitle">Sections</div>
     <ul>
         <li><a href="#Public+constants">Public constants</a></li>
     </ul>
 
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/AMQPLogWriter.html">Hoodoo::Services::Middleware::AMQPLogWriter</a>
+            <span class="type">CLASS</span>
+            <a href="Middleware/AMQPLogWriter.html">Hoodoo::Services::Middleware::AMQPLogWriter</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/ExceptionReporting.html">Hoodoo::Services::Middleware::ExceptionReporting</a>
+            <span class="type">CLASS</span>
+            <a href="Middleware/ExceptionReporting.html">Hoodoo::Services::Middleware::ExceptionReporting</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/InterResourceLocal.html">Hoodoo::Services::Middleware::InterResourceLocal</a>
+            <span class="type">CLASS</span>
+            <a href="Middleware/InterResourceLocal.html">Hoodoo::Services::Middleware::InterResourceLocal</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/InterResourceRemote.html">Hoodoo::Services::Middleware::InterResourceRemote</a>
+            <span class="type">CLASS</span>
+            <a href="Middleware/InterResourceRemote.html">Hoodoo::Services::Middleware::InterResourceRemote</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
+            <span class="type">CLASS</span>
+            <a href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-call">call</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-call">call</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-de_facto_path_for">de_facto_path_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-de_facto_path_for">de_facto_path_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-environment">environment</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-environment">environment</a>
+                </li>
+            </ul>
         </dd>
         <dt>F</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-flush_services_for_test">flush_services_for_test</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-flush_services_for_test">flush_services_for_test</a>
+                </li>
+            </ul>
         </dd>
         <dt>H</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-has_memcached-3F">has_memcached?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-has_memcached-3F">has_memcached?</a>
+                </li>
+            </ul>
         </dd>
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-inter_resource_endpoint_for">inter_resource_endpoint_for</a>,
-              </li>
-              <li>
-                <a href="#method-i-inter_resource_local">inter_resource_local</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-inter_resource_endpoint_for">inter_resource_endpoint_for</a>,
+                </li>
+                <li>
+                    <a href="#method-i-inter_resource_local">inter_resource_local</a>
+                </li>
+            </ul>
         </dd>
         <dt>L</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-logger">logger</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-logger">logger</a>
+                </li>
+            </ul>
         </dd>
         <dt>M</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-memcached_host">memcached_host</a>,
-              </li>
-              <li>
-                <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-memcached_host">memcached_host</a>,
+                </li>
+                <li>
+                    <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>O</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-on_queue-3F">on_queue?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-on_queue-3F">on_queue?</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-record_host_and_port">record_host_and_port</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-record_host_and_port">record_host_and_port</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-service_name">service_name</a>,
-              </li>
-              <li>
-                <a href="#method-c-set_log_folder">set_log_folder</a>,
-              </li>
-              <li>
-                <a href="#method-c-set_logger">set_logger</a>,
-              </li>
-              <li>
-                <a href="#method-c-set_test_session">set_test_session</a>,
-              </li>
-              <li>
-                <a href="#method-c-set_verbose_logging">set_verbose_logging</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-service_name">service_name</a>,
+                </li>
+                <li>
+                    <a href="#method-c-set_log_folder">set_log_folder</a>,
+                </li>
+                <li>
+                    <a href="#method-c-set_logger">set_logger</a>,
+                </li>
+                <li>
+                    <a href="#method-c-set_test_session">set_test_session</a>,
+                </li>
+                <li>
+                    <a href="#method-c-set_verbose_logging">set_verbose_logging</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-test_session">test_session</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-test_session">test_session</a>
+                </li>
+            </ul>
         </dd>
         <dt>V</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-verbose_logging-3F">verbose_logging?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-verbose_logging-3F">verbose_logging?</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -269,22 +272,261 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
 
 
 
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='ALLOWED_ACTIONS'>
+            <td class="attr-name">ALLOWED_ACTIONS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[
+:list,
+:show,
+:create,
+:update,
+:delete,
+]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>All allowed action names in implementations, used for internal checks. This
+is also the default supported set of actions. Symbols.</p></td>
+        </tr>
+        <tr valign='top' id='ALLOWED_HTTP_METHODS'>
+            <td class="attr-name">ALLOWED_HTTP_METHODS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Set.new( %w( GET POST PATCH DELETE ) )</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>All allowed HTTP methods, related to <a
+href="Middleware.html#ALLOWED_ACTIONS">ALLOWED_ACTIONS</a>.</p></td>
+        </tr>
+        <tr valign='top' id='ALLOWED_QUERIES_LIST'>
+            <td class="attr-name">ALLOWED_QUERIES_LIST</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[
+&#39;offset&#39;,
+&#39;limit&#39;,
+&#39;sort&#39;,
+&#39;direction&#39;,
+&#39;search&#39;,
+&#39;filter&#39;
+]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (list actions only). Strings.</p>
+
+<p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
+clients will be calling with previously documented query strings and
+removing any entries from the list below could cause their requests to be
+rejected with a &#39;platform.malformed&#39; error.</p></td>
+        </tr>
+        <tr valign='top' id='ALLOWED_QUERIES_ALL'>
+            <td class="attr-name">ALLOWED_QUERIES_ALL</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[
+&#39;_embed&#39;,
+&#39;_reference&#39;
+]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (all actions). Strings. Adds to the
+::ALLOWED_QUERIES_LIST for list actions.</p>
+
+<p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
+clients will be calling with previously documented query strings and
+removing any entries from the list below could cause their requests to be
+rejected with a &#39;platform.malformed&#39; error.</p></td>
+        </tr>
+        <tr valign='top' id='SUPPORTED_MEDIA_TYPES'>
+            <td class="attr-name">SUPPORTED_MEDIA_TYPES</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[ &#39;application/json&#39; ]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed media types in Content-Type headers.</p></td>
+        </tr>
+        <tr valign='top' id='SUPPORTED_ENCODINGS'>
+            <td class="attr-name">SUPPORTED_ENCODINGS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[ &#39;utf-8&#39; ]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed (required) charsets in Content-Type headers.</p></td>
+        </tr>
+        <tr valign='top' id='PROHIBITED_INBOUND_FIELDS'>
+            <td class="attr-name">PROHIBITED_INBOUND_FIELDS</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Prohibited fields in creations or updates - these are the common fields
+specified in the API, which are emergent in the platform or are set via
+other routes (e.g. “language” comes from HTTP headers in requests). This is
+obtained via the <a
+href="../Presenters/CommonResourceFields.html">Hoodoo::Presenters::CommonResourceFields</a>
+class and its described field schema, so see that for details.</p></td>
+        </tr>
+        <tr valign='top' id='MAXIMUM_PAYLOAD_SIZE'>
+            <td class="attr-name">MAXIMUM_PAYLOAD_SIZE</td>
+            <td>=</td>
+            <td class="attr-value"><pre>1048576</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Somewhat arbitrary maximum incoming payload size to prevent ham-fisted DOS
+attempts to consume RAM.</p></td>
+        </tr>
+        <tr valign='top' id='MAXIMUM_LOGGED_PAYLOAD_SIZE'>
+            <td class="attr-name">MAXIMUM_LOGGED_PAYLOAD_SIZE</td>
+            <td>=</td>
+            <td class="attr-value"><pre>1024</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload (inbound data) size.</p></td>
+        </tr>
+        <tr valign='top' id='MAXIMUM_LOGGED_RESPONSE_SIZE'>
+            <td class="attr-name">MAXIMUM_LOGGED_RESPONSE_SIZE</td>
+            <td>=</td>
+            <td class="attr-value"><pre>1024</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> response (outbound data) size.</p></td>
+        </tr>
+        <tr valign='top' id='DEFAULT_TEST_SESSION'>
+            <td class="attr-name">DEFAULT_TEST_SESSION</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::Services::Session.new</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>The default test session; a <a
+href="Session.html">Hoodoo::Services::Session</a> instance with the
+following characteristics:</p>
+<dl class="rdoc-list note-list"><dt><a href="Session.html">Session</a> ID
+<dd>
+<p><code>01234567890123456789012345678901</code></p>
+</dd><dt>Caller ID
+<dd>
+<p><code>c5ea12fb7f414a46850e73ee1bf6d95e</code></p>
+</dd><dt>Caller Version
+<dd>
+<p>1</p>
+</dd><dt><a href="Permissions.html">Permissions</a>
+<dd>
+<p>Default/else/“allow” to allow all actions</p>
+</dd><dt>Identity
+<dd>
+<p>Has <code>caller_id</code> as its only field</p>
+</dd><dt>Scoping
+<dd>
+<p>All secured HTTP headers are allowed</p>
+</dd></dl>
+
+<p>Expires at:       Now plus 2 days</p>
+
+<p>See also <a href="Middleware.html#method-c-test_session">::test_session</a>
+and <a
+href="Middleware.html#method-c-set_test_session">::set_test_session</a>.</p></td>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_VALUE_DATE_PROC'>
+            <td class="attr-name">FRAMEWORK_QUERY_VALUE_DATE_PROC</td>
+            <td>=</td>
+            <td class="attr-value"><pre>-&gt; ( value ) {
+Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ?
+Hoodoo::Utilities.rationalise_datetime( value )           :
+nil
+}</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>A validation Proc for <a
+href="Middleware.html#FRAMEWORK_QUERY_DATA">FRAMEWORK_QUERY_DATA</a> - see
+that for details. This one ensures that the value is a valid ISO 8601
+subset date/time string and evaluates to the parsed version of that string
+if so.</p></td>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_VALUE_UUID_PROC'>
+            <td class="attr-name">FRAMEWORK_QUERY_VALUE_UUID_PROC</td>
+            <td>=</td>
+            <td class="attr-value"><pre>-&gt; ( value ) {
+value = Hoodoo::UUID.valid?( value ) &amp;&amp; value
+value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39; if &#39;value&#39; falsy
+}</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>A validation Proc for <a
+href="Middleware.html#FRAMEWORK_QUERY_DATA">FRAMEWORK_QUERY_DATA</a> - see
+that for details. This one ensures that the value is a valid <a
+href="../UUID.html">UUID</a> and evaluates to that <a
+href="../UUID.html">UUID</a> string if so.</p></td>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_DATA'>
+            <td class="attr-name">FRAMEWORK_QUERY_DATA</td>
+            <td>=</td>
+            <td class="attr-value"><pre>{
+&#39;created_after&#39;  =&gt; FRAMEWORK_QUERY_VALUE_DATE_PROC,
+&#39;created_before&#39; =&gt; FRAMEWORK_QUERY_VALUE_DATE_PROC,
+&#39;created_by&#39;     =&gt; FRAMEWORK_QUERY_VALUE_UUID_PROC
+}</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Out-of-box search and filter query keys. Interfaces can override the
+support for these inside the <a
+href="Interface.html#method-i-to_list">Hoodoo::Services::Interface#to_list</a>
+block using <a
+href="Interface/ToListDSL.html#method-i-do_not_search">Hoodoo::Services::Interface::ToListDSL#do_not_search</a>
+and <a
+href="Interface/ToListDSL.html#method-i-do_not_filter">Hoodoo::Services::Interface::ToListDSL#do_not_filter</a>.</p>
+
+<p>Keys, in order, are:</p>
+<ul><li>
+<p>Query key to detect records with a <code>created_at</code> date that is
+after the given value, in supporting resource; if used as a filter instead
+of a search string, would find records on-or-before the date.</p>
+</li><li>
+<p>Query key to detect records with a <code>created_at</code> date that is
+before the given value, in supporting resource; if used as a filter instead
+of a search string, would find records on-or-after the date.</p>
+</li></ul>
+
+<p>Values are either a validation Proc or <code>nil</code> for no validation.
+The Proc takes the search query value as its sole input paraeter and must
+evaluate to the input value either unmodified or in some canonicalised form
+if it is valid, else to <code>nil</code> if the input value is invalid. The
+canonicalisation is typically used to coerce a URI query string based
+String type into a more useful comparable entity such as an Integer or
+DateTime.</p>
+
+<p><strong>IMPORTANT</strong> - if this list is changed, any database support
+modules - e.g. in <a
+href="../ActiveRecord/Support.html">Hoodoo::ActiveRecord::Support</a> -
+will need any internal mapping of “framework query keys to
+module-appropriate query code” updating.</p></td>
+        </tr>
+    </table>
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-de_facto_path_for">
-              <b>de_facto_path_for</b>( resource, version )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-de_facto_path_for">
+            <b>de_facto_path_for</b>( resource, version )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-de_facto_path_for" name="method-c-de_facto_path_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>For a given resource name and version, return the <em>de</em>
+        <div class="description">
+            <p>For a given resource name and version, return the <em>de</em>
 <em>facto</em> routing path based on version and name with no
 modifications.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
@@ -295,31 +537,32 @@ symbol.</p>
 <dd>
 <p>Implemented version of the endpoint. Integer.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-de_facto_path_for_source')" id="l_method-c-de_facto_path_for_source">show</a>
-              </p>
-              <div id="method-c-de_facto_path_for_source" class="dyn-source">
+            </p>
+            <div id="method-c-de_facto_path_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 296</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-node">&quot;/#{ version }/#{ resource }&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-environment">
-              <b>environment</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-environment">
+            <b>environment</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-environment" name="method-c-environment" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Utility - returns the execution environment as a Rails-like environment
+        <div class="description">
+            <p>Utility - returns the execution environment as a Rails-like environment
 object which answers queries like <code>production?</code> or
 <code>staging?</code> with <code>true</code> or <code>false</code>
 according to the <code>RACK_ENV</code> environment variable setting.</p>
@@ -330,46 +573,48 @@ according to the <code>RACK_ENV</code> environment variable setting.</p>
   # ...do something only if RACK_ENV=&quot;production&quot;
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-environment_source')" id="l_method-c-environment_source">show</a>
-              </p>
-              <div id="method-c-environment_source" class="dyn-source">
+            </p>
+            <div id="method-c-environment_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 242</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">environment</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">environment</span>
   <span class="ruby-identifier">@@environment</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">StringInquirer</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;RACK_ENV&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;development&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-flush_services_for_test">
-              <b>flush_services_for_test</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-flush_services_for_test">
+            <b>flush_services_for_test</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-flush_services_for_test" name="method-c-flush_services_for_test" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>For test purposes, dump the internal service records and flush the DRb
+        <div class="description">
+            <p>For test purposes, dump the internal service records and flush the DRb
 service, if it is running. Existing middleware instances will be
 invalidated. New instances must be created to re-scan their services
 internally and (where required) inform the DRb process of the endpoints.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-flush_services_for_test_source')" id="l_method-c-flush_services_for_test_source">show</a>
-              </p>
-              <div id="method-c-flush_services_for_test_source" class="dyn-source">
+            </p>
+            <div id="method-c-flush_services_for_test_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 445</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
   <span class="ruby-identifier">@@services</span>     = []
   <span class="ruby-identifier">@@service_name</span> = <span class="ruby-keyword">nil</span>
 
@@ -378,45 +623,46 @@ internally and (where required) inform the DRb process of the endpoints.</p>
     <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">flush_services_for_test</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">respond_to?</span>( <span class="ruby-value">:flush_services_for_test</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-has_memcached-3F">
-              <b>has_memcached?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-has_memcached-3F">
+            <b>has_memcached?</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-has_memcached-3F" name="method-c-has_memcached-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Do we have Memcached available? If not, assume local development with
+        <div class="description">
+            <p>Do we have Memcached available? If not, assume local development with
 higher level queue services not available. Most service authors should not
 ever need to check this.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-has_memcached-3F_source')" id="l_method-c-has_memcached-3F_source">show</a>
-              </p>
-              <div id="method-c-has_memcached-3F_source" class="dyn-source">
+            </p>
+            <div id="method-c-has_memcached-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 250</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">has_memcached?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_memcached?</span>
   <span class="ruby-identifier">m</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-logger">
-              <b>logger</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-logger">
+            <b>logger</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-logger" name="method-c-logger" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Access the middleware&#39;s logging instance. Call <code>report</code> on
+        <div class="description">
+            <p>Access the middleware&#39;s logging instance. Call <code>report</code> on
 this to make structured log entries. See <a
 href="../Logger/WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>
 along with <a href="../Logger.html">Hoodoo::Logger</a> for other calls you
@@ -473,76 +719,79 @@ file-based logger depending on whether or not a queue is available.</p>
 
 <p>See Hoodoo::Services::Interface#secure_logs_for for information about
 security considerations when using logs.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-logger_source')" id="l_method-c-logger_source">show</a>
-              </p>
-              <div id="method-c-logger_source" class="dyn-source">
+            </p>
+            <div id="method-c-logger_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 336</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">logger</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-memcached_host">
-              <b>memcached_host</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-memcached_host">
+            <b>memcached_host</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-memcached_host" name="method-c-memcached_host" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return a Memcached host (IP address/port combination) as a String if
+        <div class="description">
+            <p>Return a Memcached host (IP address/port combination) as a String if
 defined in environment variable MEMCACHED_HOST (with MEMCACHE_URL also
 accepted as a legacy fallback).</p>
 
 <p>If this returns <code>nil</code> or an empty string, there&#39;s no defined
 Memcached host available.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-memcached_host_source')" id="l_method-c-memcached_host_source">show</a>
-              </p>
-              <div id="method-c-memcached_host_source" class="dyn-source">
+            </p>
+            <div id="method-c-memcached_host_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 262</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">memcached_host</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>
   <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( app )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( app )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Initialize the middleware instance.</p>
+        <div class="description">
+            <p>Initialize the middleware instance.</p>
 
 <p><code>app</code> <a href="../../Rack.html">Rack</a> app instance to which
 calls should be passed.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 459</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">app</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
 
@@ -630,75 +879,77 @@ calls should be passed.</p>
 
   <span class="ruby-identifier">announce_presence_of</span>( <span class="ruby-identifier">@@services</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-on_queue-3F">
-              <b>on_queue?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-on_queue-3F">
+            <b>on_queue?</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-on_queue-3F" name="method-c-on_queue-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Are we running on the queue, else (implied) a local HTTP server?</p>
-            </div>
+        <div class="description">
+            <p>Are we running on the queue, else (implied) a local HTTP server?</p>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-on_queue-3F_source')" id="l_method-c-on_queue-3F_source">show</a>
-              </p>
-              <div id="method-c-on_queue-3F_source" class="dyn-source">
+            </p>
+            <div id="method-c-on_queue-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 268</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">on_queue?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_URI&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-record_host_and_port">
-              <b>record_host_and_port</b>( options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-record_host_and_port">
+            <b>record_host_and_port</b>( options = {} )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-record_host_and_port" name="method-c-record_host_and_port" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Record internally the HTTP host and port during local development via e.g
+        <div class="description">
+            <p>Record internally the HTTP host and port during local development via e.g
 <code>rackup</code> or testing with rspec. This is usually not called
 directly except via the <a href="../../Rack.html">Rack</a> startup monkey
 patch code in <code>rack_monkey_patch.rb</code>.</p>
 
 <p>Options hash <code>:Host</code> and <code>:Port</code> entries are
 recorded.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-record_host_and_port_source')" id="l_method-c-record_host_and_port_source">show</a>
-              </p>
-              <div id="method-c-record_host_and_port_source" class="dyn-source">
+            </p>
+            <div id="method-c-record_host_and_port_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 434</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-service_name">
-              <b>service_name</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-service_name">
+            <b>service_name</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-service_name" name="method-c-service_name" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return a service &#39;name&#39; derived from the service&#39;s collection
+        <div class="description">
+            <p>Return a service &#39;name&#39; derived from the service&#39;s collection
 of declared resources. The name will be the same across any instances of
 the service that implement the same resources. This can be used for e.g.
 AMQP-based queue-named operations, that want to target the same resource
@@ -707,31 +958,32 @@ collection regardless of instance.</p>
 <p>This method will not work unless the middleware has parsed the set of
 service interface declarations (during instance initialisation). If a least
 one middleware instance has already been created, it is safe to call.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-service_name_source')" id="l_method-c-service_name_source">show</a>
-              </p>
-              <div id="method-c-service_name_source" class="dyn-source">
+            </p>
+            <div id="method-c-service_name_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 284</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">service_name</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">service_name</span>
   <span class="ruby-identifier">@@service_name</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-set_log_folder">
-              <b>set_log_folder</b>( base_path )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-set_log_folder">
+            <b>set_log_folder</b>( base_path )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-set_log_folder" name="method-c-set_log_folder" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>If using the middleware logger (see <a
+        <div class="description">
+            <p>If using the middleware logger (see <a
 href="Middleware.html#method-c-logger">::logger</a>) with no external
 custom logger set up (see <a
 href="Middleware.html#method-c-set_logger">::set_logger</a>), call here to
@@ -749,31 +1001,32 @@ security considerations when using logs.</p>
 inside (see <a
 href="Middleware.html#method-c-environment">::environment</a>).</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-set_log_folder_source')" id="l_method-c-set_log_folder_source">show</a>
-              </p>
-              <div id="method-c-set_log_folder_source" class="dyn-source">
+            </p>
+            <div id="method-c-set_log_folder_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 376</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-set_logger">
-              <b>set_logger</b>( logger )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-set_logger">
+            <b>set_logger</b>( logger )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-set_logger" name="method-c-set_logger" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>The middleware sets up a logger itself (see <a
+        <div class="description">
+            <p>The middleware sets up a logger itself (see <a
 href="Middleware.html#method-c-logger">::logger</a>) with various log
 mechanisms set up (mostly) without service author intervention.</p>
 
@@ -789,18 +1042,19 @@ all middleware logging from this point onwards. The value will subsequently
 be returned by the <a href="Middleware.html#method-c-logger">::logger</a>
 class method.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-set_logger_source')" id="l_method-c-set_logger_source">show</a>
-              </p>
-              <div id="method-c-set_logger_source" class="dyn-source">
+            </p>
+            <div id="method-c-set_logger_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 353</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -808,17 +1062,17 @@ class method.</p>
   <span class="ruby-identifier">@@external_logger</span> = <span class="ruby-keyword">true</span>
   <span class="ruby-identifier">@@logger</span>          = <span class="ruby-identifier">logger</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-set_test_session">
-              <b>set_test_session</b>( session )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-set_test_session">
+            <b>set_test_session</b>( session )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-set_test_session" name="method-c-set_test_session" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the test session instance. See <a
+        <div class="description">
+            <p>Set the test session instance. See <a
 href="Middleware.html#method-c-test_session">::test_session</a> for
 details.</p>
 <dl class="rdoc-list note-list"><dt>session
@@ -828,31 +1082,32 @@ the test session instance for any subsequently-made requests. If
 <code>nil</code>, the test session system acts as if an invalid or missing
 session ID had been supplied.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-set_test_session_source')" id="l_method-c-set_test_session_source">show</a>
-              </p>
-              <div id="method-c-set_test_session_source" class="dyn-source">
+            </p>
+            <div id="method-c-set_test_session_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 421</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">session</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-set_verbose_logging">
-              <b>set_verbose_logging</b>( verbose )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-set_verbose_logging">
+            <b>set_verbose_logging</b>( verbose )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-set_verbose_logging" name="method-c-set_verbose_logging" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set verbose logging. With verbose logging enabled, additional payload data
+        <div class="description">
+            <p>Set verbose logging. With verbose logging enabled, additional payload data
 is added - most notably, full session details (where possible) are included
 in each log message. These can increase log data size considerably, but may
 be useful if you encounter session-related errors or general operational
@@ -864,31 +1119,32 @@ issues and need log data to provide more insights.</p>
 <p><code>true</code> to enable verbose logging, <code>false</code> to disable
 it. The default is <code>false</code>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-set_verbose_logging_source')" id="l_method-c-set_verbose_logging_source">show</a>
-              </p>
-              <div id="method-c-set_verbose_logging_source" class="dyn-source">
+            </p>
+            <div id="method-c-set_verbose_logging_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 392</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">set_verbose_logging</span>( <span class="ruby-identifier">verbose</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_verbose_logging</span>( <span class="ruby-identifier">verbose</span> )
   <span class="ruby-identifier">@@verbose_logging</span> = <span class="ruby-identifier">verbose</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-test_session">
-              <b>test_session</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-test_session">
+            <b>test_session</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-test_session" name="method-c-test_session" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>A <a href="Session.html">Hoodoo::Services::Session</a> instance to use for
+        <div class="description">
+            <p>A <a href="Session.html">Hoodoo::Services::Session</a> instance to use for
 tests or when no local Memcached instance is known about (environment
 variable <code>MEMCACHED_HOST</code> is not set). The session is
 (eventually) read each time a request is made via <a
@@ -898,75 +1154,79 @@ href="Middleware.html#method-i-call">call</a>).</p>
 <p>“Out of the box”, <a
 href="Middleware.html#DEFAULT_TEST_SESSION">DEFAULT_TEST_SESSION</a> is
 used.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-test_session_source')" id="l_method-c-test_session_source">show</a>
-              </p>
-              <div id="method-c-test_session_source" class="dyn-source">
+            </p>
+            <div id="method-c-test_session_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 410</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">test_session</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">test_session</span>
   <span class="ruby-identifier">@@test_session</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-verbose_logging-3F">
-              <b>verbose_logging?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-verbose_logging-3F">
+            <b>verbose_logging?</b>()
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-verbose_logging-3F" name="method-c-verbose_logging-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Returns <code>true</code> if verbose logging is enabled, else
+        <div class="description">
+            <p>Returns <code>true</code> if verbose logging is enabled, else
 <code>false</code>. For more, see <a
 href="Middleware.html#method-c-set_verbose_logging">::set_verbose_logging</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-verbose_logging-3F_source')" id="l_method-c-verbose_logging-3F_source">show</a>
-              </p>
-              <div id="method-c-verbose_logging-3F_source" class="dyn-source">
+            </p>
+            <div id="method-c-verbose_logging-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 399</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">verbose_logging?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">verbose_logging?</span>
   <span class="ruby-keyword">defined?</span>( <span class="ruby-identifier">@@verbose_logging</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">@@verbose_logging</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-call">
-              <b>call</b>( env )
-            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-call" name="method-i-call" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Run a <a href="../../Rack.html">Rack</a> request, returning the [status,
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-call">
+            <b>call</b>( env )
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-call" name="method-i-call" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Run a <a href="../../Rack.html">Rack</a> request, returning the [status,
 headers, body-array] data as per the <a href="../../Rack.html">Rack</a>
 protocol requirements.</p>
 
 <p><code>env</code> <a href="../../Rack.html">Rack</a> environment.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-call_source')" id="l_method-i-call_source">show</a>
-              </p>
-              <div id="method-i-call_source" class="dyn-source">
+            </p>
+            <div id="method-i-call_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 553</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">call</span>( <span class="ruby-identifier">env</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
   <span class="ruby-comment"># and send back a 500 response as per API documentation (if possible).</span>
@@ -1029,24 +1289,24 @@ protocol requirements.</p>
       <span class="ruby-comment"># An exception in the exception handler! Oh dear.</span>
       <span class="ruby-comment">#</span>
       <span class="ruby-identifier">rack_response</span> = <span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Response</span>.<span class="ruby-identifier">new</span>
-      <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">status</span> = <span class="ruby-number">500</span>
+      <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">status</span> = <span class="ruby-value">500</span>
       <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">write</span>( <span class="ruby-string">&#39;Middleware exception in exception handler&#39;</span> )
       <span class="ruby-keyword">return</span> <span class="ruby-identifier">rack_response</span>.<span class="ruby-identifier">finish</span>
 
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-inter_resource_endpoint_for">
-              <b>inter_resource_endpoint_for</b>( resource, version, interaction )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-inter_resource_endpoint_for">
+            <b>inter_resource_endpoint_for</b>( resource, version, interaction )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-inter_resource_endpoint_for" name="method-i-inter_resource_endpoint_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return something that behaves like a <a
+        <div class="description">
+            <p>Return something that behaves like a <a
 href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a> subclass
 instance which can be used for inter-resource communication, whether the
 target endpoint implementation is local or remote.</p>
@@ -1064,18 +1324,19 @@ href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
 instance describing the inbound call, the processing of which is leading to
 a request for an inter-resource call by an endpoint implementation.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-inter_resource_endpoint_for_source')" id="l_method-i-inter_resource_endpoint_for_source">show</a>
-              </p>
-              <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 638</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
@@ -1162,17 +1423,17 @@ a request for an inter-resource call by an endpoint implementation.</p>
     )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-inter_resource_local">
-              <b>inter_resource_local</b>( source_interaction:, discovery_result:, endpoint:, action:, ident: nil, body_hash: nil, query_hash: nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-inter_resource_local">
+            <b>inter_resource_local</b>( source_interaction:, discovery_result:, endpoint:, action:, ident: nil, body_hash: nil, query_hash: nil )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-inter_resource_local" name="method-i-inter_resource_local" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Make a local (non-HTTP local Ruby method call) inter-resource call. This is
+        <div class="description">
+            <p>Make a local (non-HTTP local Ruby method call) inter-resource call. This is
 fast compared to any remote resource call, even though there is still a lot
 of overhead involved in setting up data so that the target resource “sees”
 the call in the same way as any other.</p>
@@ -1196,7 +1457,9 @@ instance describing the target of the inter-resource call;</p>
 subclass instance (used for e.g. locale, dated-at);</p>
 </dd><dt><code>action</code>
 <dd>
-<p>A Hoodoo::Services::Middleware::ALLOWED_ACTIONS entry;</p>
+<p>A <a
+href="Middleware.html#ALLOWED_ACTIONS">Hoodoo::Services::Middleware::ALLOWED_ACTIONS</a>
+entry;</p>
 </dd><dt><code>ident</code>
 <dd>
 <p><a href="../UUID.html">UUID</a> or other unique identifier of a resource
@@ -1221,18 +1484,19 @@ not automatically modified. Callers MUST use the methods provided by <a
 href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a> to
 detect and handle error conditions, unless for some reason they wish to
 ignore inter-resource call errors.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
-              </p>
-              <div id="method-i-inter_resource_local_source" class="dyn-source">
+            </p>
+            <div id="method-i-inter_resource_local_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 767</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,
                           <span class="ruby-identifier">action</span>,,
@@ -1467,17 +1731,17 @@ ignore inter-resource call errors.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-monkey_log_inbound_request">
-              <b>monkey_log_inbound_request</b>( interaction )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-monkey_log_inbound_request">
+            <b>monkey_log_inbound_request</b>( interaction )
             <a href="../../../classes/Hoodoo/Services/Middleware.html#method-i-monkey_log_inbound_request" name="method-i-monkey_log_inbound_request" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Make an “inbound” call log based on the given interaction.</p>
+        <div class="description">
+            <p>Make an “inbound” call log based on the given interaction.</p>
 <dl class="rdoc-list note-list"><dt>interaction
 <dd>
 <p><a
@@ -1489,18 +1753,19 @@ being optional). If <code>target_interface</code> and
 logged according to secure log settings in the interface; if these values
 are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
-              </p>
-              <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
+            </p>
+            <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1013</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">build_common_log_data_for</span>( <span class="ruby-identifier">interaction</span> )
 
@@ -1563,19 +1828,18 @@ are unset, body data is <em>not</em> logged.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-
-      <div class="contenttitle" id="Public+constants">
+        </div>
+    </div>
+    <div class="contenttitle" id="Public+constants">
         Public constants
-      </div>
+    </div>
 
 
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='ALLOWED_ACTIONS'>
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='ALLOWED_ACTIONS'>
             <td class="attr-name">ALLOWED_ACTIONS</td>
             <td>=</td>
             <td class="attr-value"><pre>[
@@ -1585,23 +1849,23 @@ are unset, body data is <em>not</em> logged.</p>
 :update,
 :delete,
 ]</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>All allowed action names in implementations, used for internal checks. This
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>All allowed action names in implementations, used for internal checks. This
 is also the default supported set of actions. Symbols.</p></td>
-            </tr>
-          <tr valign='top' id='ALLOWED_HTTP_METHODS'>
+        </tr>
+        <tr valign='top' id='ALLOWED_HTTP_METHODS'>
             <td class="attr-name">ALLOWED_HTTP_METHODS</td>
             <td>=</td>
             <td class="attr-value"><pre>Set.new( %w( GET POST PATCH DELETE ) )</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>All allowed HTTP methods, related to <a
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>All allowed HTTP methods, related to <a
 href="Middleware.html#ALLOWED_ACTIONS">ALLOWED_ACTIONS</a>.</p></td>
-            </tr>
-          <tr valign='top' id='ALLOWED_QUERIES_LIST'>
+        </tr>
+        <tr valign='top' id='ALLOWED_QUERIES_LIST'>
             <td class="attr-name">ALLOWED_QUERIES_LIST</td>
             <td>=</td>
             <td class="attr-value"><pre>[
@@ -1612,102 +1876,102 @@ href="Middleware.html#ALLOWED_ACTIONS">ALLOWED_ACTIONS</a>.</p></td>
 &#39;search&#39;,
 &#39;filter&#39;
 ]</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (list actions only). Strings.</p>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (list actions only). Strings.</p>
 
 <p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
 clients will be calling with previously documented query strings and
 removing any entries from the list below could cause their requests to be
 rejected with a &#39;platform.malformed&#39; error.</p></td>
-            </tr>
-          <tr valign='top' id='ALLOWED_QUERIES_ALL'>
+        </tr>
+        <tr valign='top' id='ALLOWED_QUERIES_ALL'>
             <td class="attr-name">ALLOWED_QUERIES_ALL</td>
             <td>=</td>
             <td class="attr-value"><pre>[
 &#39;_embed&#39;,
 &#39;_reference&#39;
 ]</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (all actions). Strings. Adds to the
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed common fields in query strings (all actions). Strings. Adds to the
 ::ALLOWED_QUERIES_LIST for list actions.</p>
 
 <p>Only ever <strong>add</strong> to this list. As the API evolves, legacy
 clients will be calling with previously documented query strings and
 removing any entries from the list below could cause their requests to be
 rejected with a &#39;platform.malformed&#39; error.</p></td>
-            </tr>
-          <tr valign='top' id='SUPPORTED_MEDIA_TYPES'>
+        </tr>
+        <tr valign='top' id='SUPPORTED_MEDIA_TYPES'>
             <td class="attr-name">SUPPORTED_MEDIA_TYPES</td>
             <td>=</td>
             <td class="attr-value"><pre>[ &#39;application/json&#39; ]</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed media types in Content-Type headers.</p></td>
-            </tr>
-          <tr valign='top' id='SUPPORTED_ENCODINGS'>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed media types in Content-Type headers.</p></td>
+        </tr>
+        <tr valign='top' id='SUPPORTED_ENCODINGS'>
             <td class="attr-name">SUPPORTED_ENCODINGS</td>
             <td>=</td>
             <td class="attr-value"><pre>[ &#39;utf-8&#39; ]</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Allowed (required) charsets in Content-Type headers.</p></td>
-            </tr>
-          <tr valign='top' id='PROHIBITED_INBOUND_FIELDS'>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Allowed (required) charsets in Content-Type headers.</p></td>
+        </tr>
+        <tr valign='top' id='PROHIBITED_INBOUND_FIELDS'>
             <td class="attr-name">PROHIBITED_INBOUND_FIELDS</td>
             <td>=</td>
             <td class="attr-value"><pre>Hoodoo::Presenters::CommonResourceFields.get_schema().properties.keys</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Prohibited fields in creations or updates - these are the common fields
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Prohibited fields in creations or updates - these are the common fields
 specified in the API, which are emergent in the platform or are set via
 other routes (e.g. “language” comes from HTTP headers in requests). This is
 obtained via the <a
 href="../Presenters/CommonResourceFields.html">Hoodoo::Presenters::CommonResourceFields</a>
 class and its described field schema, so see that for details.</p></td>
-            </tr>
-          <tr valign='top' id='MAXIMUM_PAYLOAD_SIZE'>
+        </tr>
+        <tr valign='top' id='MAXIMUM_PAYLOAD_SIZE'>
             <td class="attr-name">MAXIMUM_PAYLOAD_SIZE</td>
             <td>=</td>
             <td class="attr-value"><pre>1048576</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Somewhat arbitrary maximum incoming payload size to prevent ham-fisted DOS
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Somewhat arbitrary maximum incoming payload size to prevent ham-fisted DOS
 attempts to consume RAM.</p></td>
-            </tr>
-          <tr valign='top' id='MAXIMUM_LOGGED_PAYLOAD_SIZE'>
+        </tr>
+        <tr valign='top' id='MAXIMUM_LOGGED_PAYLOAD_SIZE'>
             <td class="attr-name">MAXIMUM_LOGGED_PAYLOAD_SIZE</td>
             <td>=</td>
             <td class="attr-value"><pre>1024</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload (inbound data) size.</p></td>
-            </tr>
-          <tr valign='top' id='MAXIMUM_LOGGED_RESPONSE_SIZE'>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> payload (inbound data) size.</p></td>
+        </tr>
+        <tr valign='top' id='MAXIMUM_LOGGED_RESPONSE_SIZE'>
             <td class="attr-name">MAXIMUM_LOGGED_RESPONSE_SIZE</td>
             <td>=</td>
             <td class="attr-value"><pre>1024</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> response (outbound data) size.</p></td>
-            </tr>
-          <tr valign='top' id='DEFAULT_TEST_SESSION'>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Maximum <strong>logged</strong> response (outbound data) size.</p></td>
+        </tr>
+        <tr valign='top' id='DEFAULT_TEST_SESSION'>
             <td class="attr-name">DEFAULT_TEST_SESSION</td>
             <td>=</td>
             <td class="attr-value"><pre>Hoodoo::Services::Session.new</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>The default test session; a <a
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>The default test session; a <a
 href="Session.html">Hoodoo::Services::Session</a> instance with the
 following characteristics:</p>
 <dl class="rdoc-list note-list"><dt><a href="Session.html">Session</a> ID
@@ -1735,8 +1999,8 @@ following characteristics:</p>
 <p>See also <a href="Middleware.html#method-c-test_session">::test_session</a>
 and <a
 href="Middleware.html#method-c-set_test_session">::set_test_session</a>.</p></td>
-            </tr>
-          <tr valign='top' id='FRAMEWORK_QUERY_VALUE_DATE_PROC'>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_VALUE_DATE_PROC'>
             <td class="attr-name">FRAMEWORK_QUERY_VALUE_DATE_PROC</td>
             <td>=</td>
             <td class="attr-value"><pre>-&gt; ( value ) {
@@ -1744,32 +2008,32 @@ Hoodoo::Utilities.valid_iso8601_subset_datetime?( value ) ?
 Hoodoo::Utilities.rationalise_datetime( value )           :
 nil
 }</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>A validation Proc for <a
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>A validation Proc for <a
 href="Middleware.html#FRAMEWORK_QUERY_DATA">FRAMEWORK_QUERY_DATA</a> - see
 that for details. This one ensures that the value is a valid ISO 8601
 subset date/time string and evaluates to the parsed version of that string
 if so.</p></td>
-            </tr>
-          <tr valign='top' id='FRAMEWORK_QUERY_VALUE_UUID_PROC'>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_VALUE_UUID_PROC'>
             <td class="attr-name">FRAMEWORK_QUERY_VALUE_UUID_PROC</td>
             <td>=</td>
             <td class="attr-value"><pre>-&gt; ( value ) {
 value = Hoodoo::UUID.valid?( value ) &amp;&amp; value
 value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39; if &#39;value&#39; falsy
 }</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>A validation Proc for <a
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>A validation Proc for <a
 href="Middleware.html#FRAMEWORK_QUERY_DATA">FRAMEWORK_QUERY_DATA</a> - see
 that for details. This one ensures that the value is a valid <a
 href="../UUID.html">UUID</a> and evaluates to that <a
 href="../UUID.html">UUID</a> string if so.</p></td>
-            </tr>
-          <tr valign='top' id='FRAMEWORK_QUERY_DATA'>
+        </tr>
+        <tr valign='top' id='FRAMEWORK_QUERY_DATA'>
             <td class="attr-name">FRAMEWORK_QUERY_DATA</td>
             <td>=</td>
             <td class="attr-value"><pre>{
@@ -1777,10 +2041,10 @@ href="../UUID.html">UUID</a> string if so.</p></td>
 &#39;created_before&#39; =&gt; FRAMEWORK_QUERY_VALUE_DATE_PROC,
 &#39;created_by&#39;     =&gt; FRAMEWORK_QUERY_VALUE_UUID_PROC
 }</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Out-of-box search and filter query keys. Interfaces can override the
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Out-of-box search and filter query keys. Interfaces can override the
 support for these inside the <a
 href="Interface.html#method-i-to_list">Hoodoo::Services::Interface#to_list</a>
 block using <a
@@ -1812,12 +2076,11 @@ modules - e.g. in <a
 href="../ActiveRecord/Support.html">Hoodoo::ActiveRecord::Support</a> -
 will need any internal mapping of “framework query keys to
 module-appropriate query code” updating.</p></td>
-            </tr>
-      </table>
+        </tr>
+    </table>
 
 
-
-    <!-- Methods -->
+<!-- Methods -->
 </div>
 
     </div>

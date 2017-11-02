@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapper">
+
+    <meta name="description" content="Wrapper class for an AMQP request which conforms to the API that NewRelic expects.">
+    <meta property="og:description" content="Wrapper class for an AMQP request which conforms to the API that NewRelic expects.">
+
+    <meta name="keywords" content="Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapper class">
+    <meta name="keywords" content="new, [], to_hash">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Monkey::Patch::NewRelicTracedAMQP::AlchemyFluxHTTPResponseWrapper
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../../files/lib/hoodoo/monkey/patch/newrelic_traced_amqp_rb.html">lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb</a></li>
@@ -31,15 +38,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Wrapper class for an AMQP request which conforms to the API that NewRelic
 expects.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -49,27 +52,27 @@ expects.</p>
     <dl class="methods">
         <dt>#</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-5B-5D">[]</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-5B-5D">[]</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-to_hash">to_hash</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-to_hash">to_hash</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -78,98 +81,99 @@ expects.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( response_hash )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( response_hash )
             <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPResponseWrapper.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>The <code>response_hash</code> to be wrapped.</p>
+        <div class="description">
+            <p>The <code>response_hash</code> to be wrapped.</p>
 <dl class="rdoc-list note-list"><dt>response_hash
 <dd>
 <p>Hash describing the response returned from Alchemy Flux. See that gem for
 details.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 184</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">response_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">response_hash</span> )
   <span class="ruby-ivar">@response_hash</span> = <span class="ruby-identifier">response_hash</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-5B-5D">
-              <b>[]</b>( key )
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPResponseWrapper.html#method-i-5B-5D" name="method-i-5B-5D" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Look up a key in the headers Hash first, but if absent try the top-level
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-5B-5D">
+            <b>[]</b>( key )
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPResponseWrapper.html#method-i-5B-5D" name="method-i-5B-5D" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Look up a key in the headers Hash first, but if absent try the top-level
 response Hash instead.</p>
 <dl class="rdoc-list note-list"><dt>key
 <dd>
 <p>Hash key to look up.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-5B-5D_source')" id="l_method-i-5B-5D_source">show</a>
-              </p>
-              <div id="method-i-5B-5D_source" class="dyn-source">
+            </p>
+            <div id="method-i-5B-5D_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 193</span>
-<span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-keyword ruby-title">key</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-operator">[]</span>( <span class="ruby-identifier">key</span> )
   <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-identifier">key</span> ] <span class="ruby-operator">||</span> <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-identifier">key</span> ]
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-to_hash">
-              <b>to_hash</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_hash">
+            <b>to_hash</b>()
             <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicTracedAMQP/AlchemyFluxHTTPResponseWrapper.html#method-i-to_hash" name="method-i-to_hash" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return the HTTP headers for this response as a Hash.</p>
-            </div>
+        <div class="description">
+            <p>Return the HTTP headers for this response as a Hash.</p>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-to_hash_source')" id="l_method-i-to_hash_source">show</a>
-              </p>
-              <div id="method-i-to_hash_source" class="dyn-source">
+            </p>
+            <div id="method-i-to_hash_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb, line 199</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_hash</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_hash</span>
   <span class="ruby-ivar">@response_hash</span>[ <span class="ruby-string">&#39;headers&#39;</span> ].<span class="ruby-identifier">dup</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

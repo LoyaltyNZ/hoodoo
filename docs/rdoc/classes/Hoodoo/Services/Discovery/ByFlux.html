@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Discovery::ByFlux">
+
+    <meta name="description" content="Discover resource endpoint locations via Alchemy Flux.  For Flux, it&#39;s less about discovery as it is about convention and announcing.">
+    <meta property="og:description" content="Discover resource endpoint locations via Alchemy Flux.  For Flux, it&#39;s less about discovery as it is about convention and announcing.">
+
+    <meta name="keywords" content="Hoodoo::Services::Discovery::ByFlux class">
+    <meta name="keywords" content="announce_remote, discover_remote">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Discovery::ByFlux
-                <span class="parent">&lt;
-                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_flux_rb.html">lib/hoodoo/services/discovery/discoverers/by_flux.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Discover resource endpoint locations via Alchemy Flux.</p>
 
 <p>For Flux, it&#39;s less about discovery as it is about convention and
@@ -58,28 +65,24 @@ AMQP Flux endpoint class”.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-announce_remote">announce_remote</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-announce_remote">announce_remote</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-discover_remote">discover_remote</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-discover_remote">discover_remote</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -88,20 +91,17 @@ AMQP Flux endpoint class”.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-announce_remote">
-              <b>announce_remote</b>( resource, version, options = {} )
+    <div class="sectiontitle">Instance Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-announce_remote">
+            <b>announce_remote</b>( resource, version, options = {} )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByFlux.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Announce the location of an instance to Alchemy Flux.</p>
+        <div class="description">
+            <p>Announce the location of an instance to Alchemy Flux.</p>
 
 <p>Call via Hoodoo::Services::Discovery::Base#announce.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
@@ -128,18 +128,19 @@ Keys MUST be Symbols. Associated required values are:</p>
 <p>Array of <a href="ForLocal.html">Hoodoo::Services::Discovery::ForLocal</a>
 instances describing available resources in this local service.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
-              </p>
-              <div id="method-i-announce_remote_source" class="dyn-source">
+            </p>
+            <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_flux.rb, line 58</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
 
   <span class="ruby-identifier">alchemy_resource_paths</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;ALCHEMY_RESOURCE_PATHS&#39;</span> ]
   <span class="ruby-identifier">alchemy_service_name</span>   = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;ALCHEMY_SERVICE_NAME&#39;</span>   ]
@@ -185,17 +186,17 @@ instances describing available resources in this local service.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-discover_remote">
-              <b>discover_remote</b>( resource, version )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-discover_remote">
+            <b>discover_remote</b>( resource, version )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByFlux.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Discover the location of an instance.</p>
+        <div class="description">
+            <p>Discover the location of an instance.</p>
 
 <p>Returns a <a href="ForAMQP.html">Hoodoo::Services::Discovery::ForAMQP</a>
 instance if the endpoint is found, else <code>nil</code>.</p>
@@ -210,18 +211,19 @@ href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
 <p>Passed to <a
 href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
-              </p>
-              <div id="method-i-discover_remote_source" class="dyn-source">
+            </p>
+            <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_flux.rb, line 115</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">de_facto_path</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-identifier">de_facto_path_for</span>(
     <span class="ruby-identifier">resource</span>,
     <span class="ruby-identifier">version</span>
@@ -232,9 +234,9 @@ href="ByFlux.html#method-i-discover_remote">discover_remote</a>.</p>
     <span class="ruby-identifier">version</span><span class="ruby-operator">:</span>  <span class="ruby-identifier">version</span>
   )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

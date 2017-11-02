@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter">
+
+    <meta name="description" content="Subclass this method to create a custom class used to contact external exception monitoring / reporting engine. Examples include:  Raygun:      raygun.io  Honeybadger: www.honeybadger.">
+    <meta property="og:description" content="Subclass this method to create a custom class used to contact external exception monitoring / reporting engine. Examples include:  Raygun:      raygun.io  Honeybadger: www.honeybadger.">
+
+    <meta name="keywords" content="Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter class">
+    <meta name="keywords" content="report, contextual_report, communicate, user_data_for">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter
-                <span class="parent">&lt;
-                    <a href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="../../../Communicators/Slow.html">Hoodoo::Communicators::Slow</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../../files/lib/hoodoo/services/middleware/exception_reporting/base_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Subclass this method to create a custom class used to contact external
 exception monitoring / reporting engine. Examples include:</p>
 <ul><li>
@@ -67,39 +74,35 @@ href="../ExceptionReporting.html#method-c-add">Hoodoo::Services::Middleware::Exc
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-communicate">communicate</a>,
-              </li>
-              <li>
-                <a href="#method-i-contextual_report">contextual_report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-communicate">communicate</a>,
+                </li>
+                <li>
+                    <a href="#method-i-contextual_report">contextual_report</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-report">report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-report">report</a>
+                </li>
+            </ul>
         </dd>
         <dt>U</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-user_data_for">user_data_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-user_data_for">user_data_for</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -115,20 +118,17 @@ href="../ExceptionReporting.html#method-c-add">Hoodoo::Services::Middleware::Exc
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-communicate">
-              <b>communicate</b>( object )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-communicate">
+            <b>communicate</b>( object )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-communicate" name="method-i-communicate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method,
+        <div class="description">
+            <p>Subclasses <strong>MUST</strong> <strong>NOT</strong> override this method,
 which is part of the base class implementation and implements <a
 href="../../../Communicators/Slow.html#method-i-communicate">Hoodoo::Communicators::Slow#communicate</a>.
 It calls through to the <a
@@ -142,18 +142,19 @@ expects.</p>
 href="Payload.html">Hoodoo::Services::Middleware::ExceptionReporting::Payload</a>
 instance.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-communicate_source')" id="l_method-i-communicate_source">show</a>
-              </p>
-              <div id="method-i-communicate_source" class="dyn-source">
+            </p>
+            <div id="method-i-communicate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 121</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">communicate</span>( <span class="ruby-identifier">object</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">communicate</span>( <span class="ruby-identifier">object</span> )
 
   <span class="ruby-identifier">env</span> = <span class="ruby-identifier">object</span>.<span class="ruby-identifier">rack_env</span> <span class="ruby-operator">||</span> ( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span> <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span> )
 
@@ -173,17 +174,17 @@ instance.</p>
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">report</span>( <span class="ruby-identifier">object</span>.<span class="ruby-identifier">exception</span>, <span class="ruby-identifier">env</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-contextual_report">
-              <b>contextual_report</b>( e, context )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-contextual_report">
+            <b>contextual_report</b>( e, context )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-contextual_report" name="method-i-contextual_report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Similar to <a href="BaseReporter.html#method-i-report">report</a>, with the
+        <div class="description">
+            <p>Similar to <a href="BaseReporter.html#method-i-report">report</a>, with the
 same caveats; but has more information available.</p>
 
 <p>Subclasses report an exception for errors that occur within a fully handled
@@ -208,31 +209,32 @@ parameters must be provided; none are optional.</p>
 <p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
 describing an in-flight request/response cycle.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-contextual_report_source')" id="l_method-i-contextual_report_source">show</a>
-              </p>
-              <div id="method-i-contextual_report_source" class="dyn-source">
+            </p>
+            <div id="method-i-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 107</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses may implement #contextual_report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-report">
-              <b>report</b>( e, env = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-report">
+            <b>report</b>( e, env = nil )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Subclasses implement this method. The middleware creates the singleton
+        <div class="description">
+            <p>Subclasses implement this method. The middleware creates the singleton
 instance of the subclass, then calls your implementation of the method when
 it catches an exception in its top level handler. The subclass
 implementation sends details of the exception to the desired exception
@@ -276,32 +278,34 @@ end
 inbound request, for exception reports made in the context of <a
 href="../../../../Rack.html">Rack</a> request handling.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
-              </p>
-              <div id="method-i-report_source" class="dyn-source">
+            </p>
+            <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-user_data_for">
-              <b>user_data_for</b>( context )
-            <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-user_data_for" name="method-i-user_data_for" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>When passed a request context, extracts information that can be given as
+    <div class="sectiontitle">Instance Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-user_data_for">
+            <b>user_data_for</b>( context )
+            <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/BaseReporter.html#method-i-user_data_for" name="method-i-user_data_for" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>When passed a request context, extracts information that can be given as
 “user data” (or similar) to an exception reporting endpoint, if it supports
 such a concept.</p>
 <dl class="rdoc-list note-list"><dt><code>context</code>
@@ -309,18 +313,19 @@ such a concept.</p>
 <p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
 describing an in-flight request/response cycle.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-user_data_for_source')" id="l_method-i-user_data_for_source">show</a>
-              </p>
-              <div id="method-i-user_data_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-user_data_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">user_data_for</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">user_data_for</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">hash</span> = {
       <span class="ruby-value">:interaction_id</span> =<span class="ruby-operator">&gt;</span>   <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">interaction_id</span>,
@@ -352,9 +357,9 @@ describing an in-flight request/response cycle.</p>
 
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Context">
+
+    <meta name="description" content="A collection of objects which describe the context in which a service is being called.">
+    <meta property="og:description" content="A collection of objects which describe the context in which a service is being called.">
+
+    <meta name="keywords" content="Hoodoo::Services::Context class">
+    <meta name="keywords" content="new, resource">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Context
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/services/services/context_rb.html">lib/hoodoo/services/services/context.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>A collection of objects which describe the context in which a service is
 being called. The service reads session and request information and returns
 results of its processing via the associated response object.</p>
@@ -41,28 +48,24 @@ results of its processing via the associated response object.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-resource">resource</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-resource">resource</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -70,15 +73,12 @@ results of its processing via the associated response object.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-owning_interaction'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-owning_interaction'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>owning_interaction</td>
             <td class='attr-desc'><p>The <a
@@ -86,47 +86,47 @@ href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
 instance for which this context exists (the &#39;owning&#39; instance).
 Generally speaking this is only needed internally as part of the
 inter-resource call mechanism.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-request'>
+        </tr>
+        <tr valign='top' id='attribute-i-request'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>request</td>
             <td class='attr-desc'><p>The <a href="Request.html">Hoodoo::Services::Request</a> instance giving
 details about the inbound request. Relevant information will depend upon
 the endpoint service implementation action being addressed.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-response'>
+        </tr>
+        <tr valign='top' id='attribute-i-response'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>response</td>
             <td class='attr-desc'><p>The <a href="Response.html">Hoodoo::Services::Response</a> instance that a
 service implementation updates with results of its processing.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-session'>
+        </tr>
+        <tr valign='top' id='attribute-i-session'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>session</td>
             <td class='attr-desc'><p>The <a href="Session.html">Hoodoo::Services::Session</a> instance
 describing the authorised call context. If a resource implementation is
 handling a public action this may be <code>nil</code>, else it will be a
 valid instance.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( session, request, response, owning_interaction )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( session, request, response, owning_interaction )
             <a href="../../../classes/Hoodoo/Services/Context.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create a new instance. There is almost certainly never any need to call
+        <div class="description">
+            <p>Create a new instance. There is almost certainly never any need to call
 this unless you&#39;re the <a
 href="Middleware/Interaction.html">Hoodoo::Services::Middleware::Interaction</a>
 constructor! If you want to build a context for (say) test purposes,
@@ -145,35 +145,37 @@ context instance this provides.</p>
 <dd>
 <p>See interaction.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">session</span>, <span class="ruby-identifier">request</span>, <span class="ruby-identifier">response</span>, <span class="ruby-identifier">owning_interaction</span> )
   <span class="ruby-ivar">@session</span>            = <span class="ruby-identifier">session</span>
   <span class="ruby-ivar">@request</span>            = <span class="ruby-identifier">request</span>
   <span class="ruby-ivar">@response</span>           = <span class="ruby-identifier">response</span>
   <span class="ruby-ivar">@owning_interaction</span> = <span class="ruby-identifier">owning_interaction</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-resource">
-              <b>resource</b>( resource, version = 1, options = {} )
-            <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-resource">
+            <b>resource</b>( resource, version = 1, options = {} )
+            <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p><a href="Request.html">Request</a> (and lazy-initialize) a new resource
 endpoint instance for talking to a resource&#39;s interface. See <a
 href="../Client/Endpoint.html">Hoodoo::Client::Endpoint</a>.</p>
 
@@ -238,18 +240,19 @@ explicitly pasisng a <code>nil</code> value for the option; otherwise,
 can be specified as <code>nil</code> or omitted with no change in
 behaviour.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-resource_source')" id="l_method-i-resource_source">show</a>
-              </p>
-              <div id="method-i-resource_source" class="dyn-source">
+            </p>
+            <div id="method-i-resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/context.rb, line 117</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resource</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">middleware</span> = <span class="ruby-ivar">@owning_interaction</span>.<span class="ruby-identifier">owning_middleware_instance</span>
   <span class="ruby-identifier">endpoint</span>   = <span class="ruby-identifier">middleware</span>.<span class="ruby-identifier">inter_resource_endpoint_for</span>(
     <span class="ruby-identifier">resource</span>,
@@ -283,9 +286,9 @@ behaviour.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">endpoint</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

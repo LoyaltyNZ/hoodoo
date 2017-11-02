@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::ErrorMapping">
+
+    <meta name="description" content="Support mixin for models subclassed from ActiveRecord::Base providing a mapping between ActiveRecord validation errors and platform errors via Hoodoo::ErrorDescriptions and Hoodoo::Errors.">
+    <meta property="og:description" content="Support mixin for models subclassed from ActiveRecord::Base providing a mapping between ActiveRecord validation errors and platform errors via Hoodoo::ErrorDescriptions and Hoodoo::Errors.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::ErrorMapping class">
+    <meta name="keywords" content="adds_errors_to?, platform_errors">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="Support.html">Support</a> mixin for models subclassed from <a
 href="Base.html">ActiveRecord::Base</a> providing a mapping between <a
 href="../ActiveRecord.html">ActiveRecord</a> validation errors and platform
@@ -50,28 +57,24 @@ href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-adds_errors_to-3F">adds_errors_to?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-adds_errors_to-3F">adds_errors_to?</a>
+                </li>
+            </ul>
         </dd>
         <dt>P</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-platform_errors">platform_errors</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-platform_errors">platform_errors</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -80,20 +83,17 @@ href="../Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-adds_errors_to-3F">
-              <b>adds_errors_to?</b>( collection )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-adds_errors_to-3F">
+            <b>adds_errors_to?</b>( collection )
             <a href="../../../classes/Hoodoo/ActiveRecord/ErrorMapping.html#method-i-adds_errors_to-3F" name="method-i-adds_errors_to-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Validates the model instance and adds mapped-to-platform errors to a given
+        <div class="description">
+            <p>Validates the model instance and adds mapped-to-platform errors to a given
 <a href="../Errors.html">Hoodoo::Errors</a> instance, if any validation
 errors occur. For <a href="../ActiveRecord.html">ActiveRecord</a>
 validation documentation, see:</p>
@@ -259,18 +259,19 @@ href="../Services/Response.html#attribute-i-errors">Hoodoo::Services::Response#e
 The collection you pass is updated if there are any errors recorded in the
 model, by adding equivalent structured errors to the collection.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-adds_errors_to-3F_source')" id="l_method-i-adds_errors_to-3F_source">show</a>
-              </p>
-              <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>()
 
@@ -302,17 +303,17 @@ model, by adding equivalent structured errors to the collection.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">any?</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-platform_errors">
-              <b>platform_errors</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-platform_errors">
+            <b>platform_errors</b>()
             <a href="../../../classes/Hoodoo/ActiveRecord/ErrorMapping.html#method-i-platform_errors" name="method-i-platform_errors" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Validate the model instance and return a <a
+        <div class="description">
+            <p>Validate the model instance and return a <a
 href="../Errors.html">Hoodoo::Errors</a> instance which contains no
 platform errors if there are no model validation errors, else
 mapped-to-platform errors if validation errors are encountered. For <a
@@ -355,26 +356,27 @@ code, too:</p>
 
 <pre><code>return if context.response.add_errors( model.platform_errors )
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-platform_errors_source')" id="l_method-i-platform_errors_source">show</a>
-              </p>
-              <div id="method-i-platform_errors_source" class="dyn-source">
+            </p>
+            <div id="method-i-platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/error_mapping.rb, line 250</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">platform_errors</span>
   <span class="ruby-identifier">collection</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">collection</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

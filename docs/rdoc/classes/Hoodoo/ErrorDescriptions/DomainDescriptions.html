@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ErrorDescriptions::DomainDescriptions">
+
+    <meta name="description" content="Contain a description of errors for a particular domain, where the domain is a grouping string such as “platform”, “generic”, or a short service name.">
+    <meta property="og:description" content="Contain a description of errors for a particular domain, where the domain is a grouping string such as “platform”, “generic”, or a short service name.">
+
+    <meta name="keywords" content="Hoodoo::ErrorDescriptions::DomainDescriptions class">
+    <meta name="keywords" content="new, error">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::ErrorDescriptions::DomainDescriptions
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/errors/error_descriptions_rb.html">lib/hoodoo/errors/error_descriptions.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Contain a description of errors for a particular domain, where the domain
 is a grouping string such as “platform”, “generic”, or a short service
 name. Usually driven via <a
@@ -43,28 +50,24 @@ directly.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-error">error</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-error">error</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -72,73 +75,72 @@ directly.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-descriptions'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-descriptions'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>descriptions</td>
             <td class='attr-desc'><p>Hash of all descriptions, keyed by full error code, with options hash data
 as values (see <a href="DomainDescriptions.html#method-i-error">error</a>
 for details).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-domain'>
+        </tr>
+        <tr valign='top' id='attribute-i-domain'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>domain</td>
             <td class='attr-desc'><p>Domain name for this description instance (string).</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( domain )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( domain )
             <a href="../../../classes/Hoodoo/ErrorDescriptions/DomainDescriptions.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Initialize a new instance for the given domain.</p>
+        <div class="description">
+            <p>Initialize a new instance for the given domain.</p>
 <dl class="rdoc-list note-list"><dt>domain
 <dd>
 <p>The domain string - for most service-based callers, usually a short service
 name like <code>members</code> or <code>transactions</code>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 184</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">domain</span> )
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 185</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">domain</span> )
   <span class="ruby-ivar">@domain</span>       = <span class="ruby-identifier">domain</span>
   <span class="ruby-ivar">@descriptions</span> = {}
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-error">
-              <b>error</b>( name, options )
-            <a href="../../../classes/Hoodoo/ErrorDescriptions/DomainDescriptions.html#method-i-error" name="method-i-error" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Describe an error.</p>
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-error">
+            <b>error</b>( name, options )
+            <a href="../../../classes/Hoodoo/ErrorDescriptions/DomainDescriptions.html#method-i-error" name="method-i-error" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Describe an error.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
 <p>The error name - the bit after the “<code>.</code>” in the code, e.g.
@@ -165,18 +167,19 @@ collection, required reference(s) from this array must be provided by the
 error-adding caller else an exception will be raised. This ensures correct,
 fully qualified error data is logged and sent to clients.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-error_source')" id="l_method-i-error_source">show</a>
-              </p>
-              <div id="method-i-error_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 212</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
+            </p>
+            <div id="method-i-error_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/errors/error_descriptions.rb, line 213</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">error</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">options</span>       = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">required_keys</span> = [ <span class="ruby-string">&#39;status&#39;</span>, <span class="ruby-string">&#39;message&#39;</span> ]
 
@@ -191,9 +194,9 @@ fully qualified error data is logged and sent to clients.</p>
 
   <span class="ruby-ivar">@descriptions</span>[ <span class="ruby-node">&quot;#{ @domain }.#{ name }&quot;</span> ] = <span class="ruby-identifier">options</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

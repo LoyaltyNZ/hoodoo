@@ -166,6 +166,7 @@ Searchdoc.Panel.prototype = $.extend({}, Searchdoc.Navigation, new function() {
         });
 
         this.$result.click(function(e) {
+            e.preventDefault();
             _this.$current.removeClass('current');
             _this.$current = $(e.target).closest('li').addClass('current');
             _this.select();
@@ -237,17 +238,17 @@ Searchdoc.Panel.prototype = $.extend({}, Searchdoc.Navigation, new function() {
 
     function renderItem(result) {
         var li = document.createElement('li'),
-            html = '',
-            badge = result.badge;
-        html += '<h1>' + hlt(result.title);
+        html = '',
+        badge = result.badge;
+        html += '<a href="../' + result.path + '">' + hlt(result.title);
         if (result.params) html += '<i>' + result.params + '</i>';
-        html += '</h1>';
+        html += '</a>';
         html += '<p>';
         if (typeof badge != 'undefined') {
-            html += '<span class="badge badge_' + (badge % 6 + 1) + '">' + escapeHTML(this.data.badges[badge] || 'unknown') + '</span>';
+            html += '<span class="badge badge_' + (badge % 6 + 1) + '">' + stripHTML(this.data.badges[badge] || 'unknown') + '</span>';
         }
         html += hlt(result.namespace) + '</p>';
-        if (result.snippet) html += '<p class="snippet">' + escapeHTML(result.snippet.replace(/^<p>/, '')) + '</p>';
+        if (result.snippet) html += '<p class="snippet">' + stripHTML(result.snippet.replace(/^<p>/, '')) + '</p>';
         li.innerHTML = html;
         jQuery.data(li, 'path', result.path);
         return li;
@@ -261,6 +262,25 @@ Searchdoc.Panel.prototype = $.extend({}, Searchdoc.Navigation, new function() {
         return html.replace(/[&<>]/g, function(c) {
             return '&#' + c.charCodeAt(0) + ';';
         });
+    }
+
+    function stripHTML(html) {
+        var in_tag = false;
+        var output = "";
+
+        for (var i = 0; i < html.length; i++) {
+            if (html[i] == '<'){
+                in_tag = true;
+            } else if (html[i] == '>') {
+                in_tag = false;
+                i++;
+            }
+
+            if (!in_tag && i < html.length)
+                output += html[i];
+        }
+
+        return output;
     }
 
 });
@@ -285,6 +305,7 @@ Searchdoc.Tree.prototype = $.extend({}, Searchdoc.Navigation, new function() {
         }
         var _this = this;
         this.$list.click(function(e) {
+            e.preventDefault();
             var $target = $(e.target),
                 $li = $target.closest('li');
             if ($target.hasClass('icon')) {
@@ -399,22 +420,23 @@ Searchdoc.Tree.prototype = $.extend({}, Searchdoc.Navigation, new function() {
     function renderItem(item, level) {
         var li = document.createElement('li'),
             cnt = document.createElement('div'),
-            h1 = document.createElement('h1'),
+            a = document.createElement('a'),
             p = document.createElement('p'),
             icon, i;
 
+        a.href = '../' + item[1];
         li.appendChild(cnt);
         li.style.paddingLeft = getOffset(level);
         cnt.className = 'content';
         if (!item[1]) li.className = 'empty ';
-        cnt.appendChild(h1);
+        cnt.appendChild(a);
         // cnt.appendChild(p);
-        h1.appendChild(document.createTextNode(item[0]));
+        a.appendChild(document.createTextNode(item[0]));
         // p.appendChild(document.createTextNode(item[4]));
         if (item[2]) {
             i = document.createElement('i');
             i.appendChild(document.createTextNode(item[2]));
-            h1.appendChild(i);
+            a.appendChild(i);
         }
         if (item[3].length > 0) {
             icon = document.createElement('div');
