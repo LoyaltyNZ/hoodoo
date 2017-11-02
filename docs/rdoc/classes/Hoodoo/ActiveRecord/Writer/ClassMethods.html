@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Writer::ClassMethods">
+
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer.included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Writer.included.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Writer::ClassMethods class">
+    <meta name="keywords" content="persist_in">
 </head>
 
 <body>
@@ -28,15 +35,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Collection of class methods that get defined on an including class via <a
 href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a>.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -46,11 +49,11 @@ href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a
     <dl class="methods">
         <dt>P</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-persist_in">persist_in</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-persist_in">persist_in</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -59,20 +62,17 @@ href="../Writer.html#method-c-included">Hoodoo::ActiveRecord::Writer.included</a
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-persist_in">
-              <b>persist_in</b>( context, attributes )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-persist_in">
+            <b>persist_in</b>( context, attributes )
             <a href="../../../../classes/Hoodoo/ActiveRecord/Writer/ClassMethods.html#method-i-persist_in" name="method-i-persist_in" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <h2 id="method-i-persist_in-label-Overview">Overview</h2>
+        <div class="description">
+            <h2 id="method-i-persist_in-label-Overview">Overview</h2>
 
 <p>Service authors <em>SHOULD</em> use this method when persisting data with
 <a href="../../ActiveRecord.html">ActiveRecord</a> if there is a risk of
@@ -218,26 +218,27 @@ aware of this if using complex transaction behaviour along with
   self.save
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-persist_in_source')" id="l_method-i-persist_in_source">show</a>
-              </p>
-              <div id="method-i-persist_in_source" class="dyn-source">
+            </p>
+            <div id="method-i-persist_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/writer.rb, line 311</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">persist_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">persist_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">attributes</span> )
   <span class="ruby-identifier">instance</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">attributes</span> )
   <span class="ruby-identifier">instance</span>.<span class="ruby-identifier">persist_in</span>( <span class="ruby-identifier">context</span> )
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">instance</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

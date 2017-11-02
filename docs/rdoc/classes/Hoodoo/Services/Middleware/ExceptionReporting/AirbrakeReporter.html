@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter">
+
+    <meta name="description" content="Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass giving Hoodoo::Services::Middleware::ExceptionReporting access to Airbrake for error reporting. See airbrake.io.">
+    <meta property="og:description" content="Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter subclass giving Hoodoo::Services::Middleware::ExceptionReporting access to Airbrake for error reporting. See airbrake.io.">
+
+    <meta name="keywords" content="Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter class">
+    <meta name="keywords" content="report, contextual_report">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter
-                <span class="parent">&lt;
-                    <a href="BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../../files/lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter_rb.html">lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a
 href="BaseReporter.html">Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter</a>
 subclass giving <a
@@ -75,28 +82,24 @@ ability of the Airbrake gem:</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-contextual_report">contextual_report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-contextual_report">contextual_report</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-report">report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-report">report</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -105,20 +108,17 @@ ability of the Airbrake gem:</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-contextual_report">
-              <b>contextual_report</b>( e, context )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-contextual_report">
+            <b>contextual_report</b>( e, context )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/AirbrakeReporter.html#method-i-contextual_report" name="method-i-contextual_report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Report an exception for errors that occur within a fully handled <a
+        <div class="description">
+            <p>Report an exception for errors that occur within a fully handled <a
 href="../../../../Rack.html">Rack</a> request context, with a high level
 processed <a href="../../../../Hoodoo.html">Hoodoo</a> representation
 available.</p>
@@ -130,18 +130,19 @@ available.</p>
 <p><a href="../../Context.html">Hoodoo::Services::Context</a> instance
 describing an in-flight request/response cycle.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-contextual_report_source')" id="l_method-i-contextual_report_source">show</a>
-              </p>
-              <div id="method-i-contextual_report_source" class="dyn-source">
+            </p>
+            <div id="method-i-contextual_report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 77</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">contextual_report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">opts</span> = {
     <span class="ruby-value">:rack_env</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">owning_interaction</span>.<span class="ruby-identifier">rack_request</span>.<span class="ruby-identifier">env</span>,
     <span class="ruby-value">:backtrace</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>(),
@@ -151,17 +152,17 @@ describing an in-flight request/response cycle.</p>
 
   <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_sync</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-report">
-              <b>report</b>( e, env )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-report">
+            <b>report</b>( e, env )
             <a href="../../../../../classes/Hoodoo/Services/Middleware/ExceptionReporting/AirbrakeReporter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Report an exception to Airbrake.</p>
+        <div class="description">
+            <p>Report an exception to Airbrake.</p>
 <dl class="rdoc-list note-list"><dt>e
 <dd>
 <p>Exception (or subclass) instance to be reported.</p>
@@ -173,18 +174,19 @@ href="../../../../Rack.html">Rack</a> request handling. In the case of
 Airbrake, the call may just hang unless a <a
 href="../../../../Rack.html">Rack</a> environment is provided.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
-              </p>
-              <div id="method-i-report_source" class="dyn-source">
+            </p>
+            <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">env</span> )
   <span class="ruby-identifier">opts</span> = { <span class="ruby-value">:backtrace</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Kernel</span>.<span class="ruby-identifier">caller</span>() }
   <span class="ruby-identifier">opts</span>[ <span class="ruby-value">:rack_env</span> ] = <span class="ruby-identifier">env</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">env</span>.<span class="ruby-identifier">nil?</span>
 
@@ -194,9 +196,9 @@ href="../../../../Rack.html">Rack</a> environment is provided.</p>
   <span class="ruby-comment">#</span>
   <span class="ruby-constant">Airbrake</span>.<span class="ruby-identifier">notify_sync</span>( <span class="ruby-identifier">e</span>, <span class="ruby-identifier">opts</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

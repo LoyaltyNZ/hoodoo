@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Finder">
+
+    <meta name="description" content="Mixin for models subclassed from ActiveRecord::Base providing support methods to handle common show and list filtering actions based on inbound data and create instances in a request context aware fas.">
+    <meta property="og:description" content="Mixin for models subclassed from ActiveRecord::Base providing support methods to handle common show and list filtering actions based on inbound data and create instances in a request context aware fas.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Finder class">
+    <meta name="keywords" content="included, instantiate">
 </head>
 
 <body>
@@ -30,7 +37,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Mixin for models subclassed from <a href="Base.html">ActiveRecord::Base</a>
 providing support methods to handle common <code>show</code> and
 <code>list</code> filtering actions based on inbound data and create
@@ -63,36 +70,32 @@ included automatically.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
+            <span class="type">MODULE</span>
+            <a href="Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Finder/SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
+            <span class="type">CLASS</span>
+            <a href="Finder/SearchHelper.html">Hoodoo::ActiveRecord::Finder::SearchHelper</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-included">included</a>,
-              </li>
-              <li>
-                <a href="#method-c-instantiate">instantiate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-included">included</a>,
+                </li>
+                <li>
+                    <a href="#method-c-instantiate">instantiate</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -101,20 +104,17 @@ included automatically.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-included">
-              <b>included</b>( model )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-included">
+            <b>included</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/Finder.html#method-c-included" name="method-c-included" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Instantiates this module when it is included.</p>
+        <div class="description">
+            <p>Instantiates this module when it is included.</p>
 
 <p>Example:</p>
 
@@ -131,18 +131,19 @@ href="Secure.html">Hoodoo::ActiveRecord::Secure</a>.</p>
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
-              </p>
-              <div id="method-c-included_source" class="dyn-source">
+            </p>
+            <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 52</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_fields</span>,
     <span class="ruby-value">:nz_co_loyalty_hoodoo_show_id_substitute</span>,
@@ -162,17 +163,17 @@ this module.</p>
 
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-instantiate">
-              <b>instantiate</b>( model )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-instantiate">
+            <b>instantiate</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/Finder.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+        <div class="description">
+            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
 subclass, all of the <a
 href="Finder/ClassMethods.html">Hoodoo::ActiveRecord::Finder::ClassMethods</a>
 methods are defined as class methods on the including class.</p>
@@ -185,18 +186,19 @@ auto-included first if it isn&#39;t already.</p>
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
-              </p>
-              <div id="method-c-instantiate_source" class="dyn-source">
+            </p>
+            <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/finder.rb, line 83</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 
   <span class="ruby-identifier">framework_data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Support</span>.<span class="ruby-identifier">framework_search_and_filter_data</span>()
@@ -207,9 +209,9 @@ this module.</p>
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_search_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">framework_data</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_filter_with</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">framework_data</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
 <script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::TransientStore">
+
+    <meta name="description" content="A simple abstraction over transient storage engines such as Memcached or Redis, making it it easier for client code to switch engines with very few changes.">
+    <meta property="og:description" content="A simple abstraction over transient storage engines such as Memcached or Redis, making it it easier for client code to switch engines with very few changes.">
+
+    <meta name="keywords" content="Hoodoo::TransientStore class">
+    <meta name="keywords" content="register, deregister, supported_storage_engines, new, set, get, delete, close">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::TransientStore
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../files/lib/hoodoo/transient_store/mocks/dalli_client_rb.html">lib/hoodoo/transient_store/mocks/dalli_client.rb</a></li>
@@ -37,7 +44,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>A simple abstraction over transient storage engines such as <a
 href="https://memcached.org">Memcached</a> or <a
 href="https://redis.io">Redis</a>, making it it easier for client code to
@@ -51,91 +58,87 @@ use the new engine.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">CLASS</span>
-          <a href="TransientStore/Base.html">Hoodoo::TransientStore::Base</a>
+            <span class="type">CLASS</span>
+            <a href="TransientStore/Base.html">Hoodoo::TransientStore::Base</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="TransientStore/Memcached.html">Hoodoo::TransientStore::Memcached</a>
+            <span class="type">CLASS</span>
+            <a href="TransientStore/Memcached.html">Hoodoo::TransientStore::Memcached</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="TransientStore/MemcachedRedisMirror.html">Hoodoo::TransientStore::MemcachedRedisMirror</a>
+            <span class="type">CLASS</span>
+            <a href="TransientStore/MemcachedRedisMirror.html">Hoodoo::TransientStore::MemcachedRedisMirror</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="TransientStore/Mocks.html">Hoodoo::TransientStore::Mocks</a>
+            <span class="type">CLASS</span>
+            <a href="TransientStore/Mocks.html">Hoodoo::TransientStore::Mocks</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="TransientStore/Redis.html">Hoodoo::TransientStore::Redis</a>
+            <span class="type">CLASS</span>
+            <a href="TransientStore/Redis.html">Hoodoo::TransientStore::Redis</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-close">close</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-close">close</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-delete">delete</a>,
-              </li>
-              <li>
-                <a href="#method-c-deregister">deregister</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-delete">delete</a>,
+                </li>
+                <li>
+                    <a href="#method-c-deregister">deregister</a>
+                </li>
+            </ul>
         </dd>
         <dt>G</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-get">get</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-get">get</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-register">register</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-register">register</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-set">set</a>,
-              </li>
-              <li>
-                <a href="#method-c-supported_storage_engines">supported_storage_engines</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-set">set</a>,
+                </li>
+                <li>
+                    <a href="#method-c-supported_storage_engines">supported_storage_engines</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -143,40 +146,37 @@ use the new engine.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-default_maximum_lifespan'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-default_maximum_lifespan'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>default_maximum_lifespan</td>
             <td class='attr-desc'><p>Read this instance&#39;s default item maximum lifespan, in seconds. See
 also <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-default_namespace'>
+        </tr>
+        <tr valign='top' id='attribute-i-default_namespace'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>default_namespace</td>
             <td class='attr-desc'><p>Read this instance&#39;s default storage namespace, as a String. See also
 <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-storage_engine'>
+        </tr>
+        <tr valign='top' id='attribute-i-storage_engine'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>storage_engine</td>
             <td class='attr-desc'><p>Read this instance&#39;s storage engine; see <a
 href="TransientStore.html#method-c-supported_storage_engines">::supported_storage_engines</a>
 and <a href="TransientStore.html#method-c-new">::new</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-storage_engine_instance'>
+        </tr>
+        <tr valign='top' id='attribute-i-storage_engine_instance'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>storage_engine_instance</td>
             <td class='attr-desc'><p>Read the storage engine instance for the <a
@@ -185,20 +185,20 @@ this allows engine-specific configuration to be set where available, though
 this is strongly discouraged as it couples client code to the engine in
 use, defeating the main rationale behind the <a
 href="TransientStore.html">TransientStore</a> abstraction.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-deregister">
-              <b>deregister</b>( as: )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-deregister">
+            <b>deregister</b>( as: )
             <a href="../../classes/Hoodoo/TransientStore.html#method-c-deregister" name="method-c-deregister" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Remove a storage engine plugin class from the supported collection. Any
+        <div class="description">
+            <p>Remove a storage engine plugin class from the supported collection. Any
 existing <a href="TransientStore.html">Hoodoo::TransientStore</a> instances
 using the removed class will not be affected, but new instances cannot be
 made.</p>
@@ -208,31 +208,32 @@ made.</p>
 <dd>
 <p>The value given to register in the corresponding <code>as</code> parameter.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-deregister_source')" id="l_method-c-deregister_source">show</a>
-              </p>
-              <div id="method-c-deregister_source" class="dyn-source">
+            </p>
+            <div id="method-c-deregister_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 69</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">deregister</span>( <span class="ruby-identifier">as</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">deregister</span>( <span class="ruby-identifier">as</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">@@supported_storage_engines</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-identifier">as</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( storage_engine:, storage_host_uri:, default_maximum_lifespan: 604800, default_namespace: &#39;nz_co_loyalty_hoodoo_transient_store_&#39; )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( storage_engine:, storage_host_uri:, default_maximum_lifespan: 604800, default_namespace: &#39;nz_co_loyalty_hoodoo_transient_store_&#39; )
             <a href="../../classes/Hoodoo/TransientStore.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Instantiate a new Transient storage object through which temporary data can
+        <div class="description">
+            <p>Instantiate a new Transient storage object through which temporary data can
 be stored or retrieved.</p>
 
 <p>The <a href="TransientStore.html">TransientStore</a> abstraction is a high
@@ -271,21 +272,22 @@ item; default is 604800 seconds or 7 days.</p>
 <code>nz_co_loyalty_hoodoo_transient_store_</code> by default, though this
 can be overridden here. Pass a String or Symbol.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 143</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>(
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>(
   <span class="ruby-identifier">storage_engine</span>,,
   <span class="ruby-identifier">storage_host_uri</span>,,
-  <span class="ruby-identifier">default_maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-number">604800</span>,
+  <span class="ruby-identifier">default_maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-value">604800</span>,
   <span class="ruby-identifier">default_namespace</span><span class="ruby-operator">:</span>        <span class="ruby-string">&#39;nz_co_loyalty_hoodoo_transient_store_&#39;</span>
 )
 
@@ -309,17 +311,17 @@ can be overridden here. Pass a String or Symbol.</p>
   )
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-register">
-              <b>register</b>( as:, using: )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-register">
+            <b>register</b>( as:, using: )
             <a href="../../classes/Hoodoo/TransientStore.html#method-c-register" name="method-c-register" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Register a new storage engine plugin class. It <em>MUST</em> inherit from
+        <div class="description">
+            <p>Register a new storage engine plugin class. It <em>MUST</em> inherit from
 and thus follow the template laid out in <a
 href="TransientStore/Base.html">Hoodoo::TransientStore::Base</a>.</p>
 
@@ -343,18 +345,19 @@ to be associated with the name given in <code>as</code>.</p>
   using: Hoodoo::TransientStore::Memcached
 )
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-register_source')" id="l_method-c-register_source">show</a>
-              </p>
-              <div id="method-c-register_source" class="dyn-source">
+            </p>
+            <div id="method-c-register_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 45</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">as</span>,, <span class="ruby-identifier">using</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">as</span>,, <span class="ruby-identifier">using</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">as</span> = <span class="ruby-identifier">as</span>.<span class="ruby-identifier">to_sym</span>
 
   <span class="ruby-identifier">@@supported_storage_engines</span> = {} <span class="ruby-keyword">unless</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-identifier">@@supported_storage_engines</span> )
@@ -369,75 +372,78 @@ to be associated with the name given in <code>as</code>.</p>
 
   <span class="ruby-identifier">@@supported_storage_engines</span>[ <span class="ruby-identifier">as</span> ] = <span class="ruby-identifier">using</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-supported_storage_engines">
-              <b>supported_storage_engines</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-supported_storage_engines">
+            <b>supported_storage_engines</b>()
             <a href="../../classes/Hoodoo/TransientStore.html#method-c-supported_storage_engines" name="method-c-supported_storage_engines" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return an array of the names of all supported storage engine names known to
+        <div class="description">
+            <p>Return an array of the names of all supported storage engine names known to
 the <a href="TransientStore.html">Hoodoo::TransientStore</a> class. Any one
 of those names can be used with the <a
 href="TransientStore.html#method-c-new">::new</a>
 <code>storage_engine</code> parameter.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-supported_storage_engines_source')" id="l_method-c-supported_storage_engines_source">show</a>
-              </p>
-              <div id="method-c-supported_storage_engines_source" class="dyn-source">
+            </p>
+            <div id="method-c-supported_storage_engines_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 77</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">supported_storage_engines</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">supported_storage_engines</span>
   <span class="ruby-identifier">@@supported_storage_engines</span>.<span class="ruby-identifier">keys</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-close">
-              <b>close</b>()
-            <a href="../../classes/Hoodoo/TransientStore.html#method-i-close" name="method-i-close" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>If you aren&#39;t going to use this instance again, it is good manners to
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-close">
+            <b>close</b>()
+            <a href="../../classes/Hoodoo/TransientStore.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>If you aren&#39;t going to use this instance again, it is good manners to
 immediately close its connection(s) to any storage engines by calling here.</p>
 
 <p>No useful return value is generated and exceptions are ignored.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
-              </p>
-              <div id="method-i-close_source" class="dyn-source">
+            </p>
+            <div id="method-i-close_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 323</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">close</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">close</span>
   <span class="ruby-ivar">@storage_engine_instance</span>.<span class="ruby-identifier">close</span>() <span class="ruby-keyword">rescue</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-delete">
-              <b>delete</b>( key: )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-delete">
+            <b>delete</b>( key: )
             <a href="../../classes/Hoodoo/TransientStore.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Delete data previously stored with <a
+        <div class="description">
+            <p>Delete data previously stored with <a
 href="TransientStore.html#method-i-set">set</a>.</p>
 
 <p><em>Named</em> parameters are:</p>
@@ -460,18 +466,19 @@ engine raised an exception describing the problem.</p>
 
 <p>Only non-empty String or Symbol keys are permitted, else an exception will
 be raised.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
-              </p>
-              <div id="method-i-delete_source" class="dyn-source">
+            </p>
+            <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 299</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">key</span><span class="ruby-operator">:</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;delete&#39;</span> )
 
   <span class="ruby-keyword">begin</span>
@@ -488,17 +495,17 @@ be raised.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-get">
-              <b>get</b>( key:, allow_throw: false )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-get">
+            <b>get</b>( key:, allow_throw: false )
             <a href="../../classes/Hoodoo/TransientStore.html#method-i-get" name="method-i-get" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Retrieve data previously stored with <a
+        <div class="description">
+            <p>Retrieve data previously stored with <a
 href="TransientStore.html#method-i-set">set</a>.</p>
 
 <p><em>Named</em> parameters are:</p>
@@ -518,18 +525,19 @@ early from the storage engine&#39;s pool.</p>
 
 <p>Only non-empty String or Symbol keys are permitted, else an exception will
 be raised.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-get_source')" id="l_method-i-get_source">show</a>
-              </p>
-              <div id="method-i-get_source" class="dyn-source">
+            </p>
+            <div id="method-i-get_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 272</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">allow_throw</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">allow_throw</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;get&#39;</span> )
 
   <span class="ruby-keyword">begin</span>
@@ -538,17 +546,17 @@ be raised.</p>
     <span class="ruby-identifier">raise</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">allow_throw</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set">
-              <b>set</b>( key:, payload:, maximum_lifespan: nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set">
+            <b>set</b>( key:, payload:, maximum_lifespan: nil )
             <a href="../../classes/Hoodoo/TransientStore.html#method-i-set" name="method-i-set" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set (write) a given payload into the storage engine with the given payload
+        <div class="description">
+            <p>Set (write) a given payload into the storage engine with the given payload
 and maximum lifespan.</p>
 
 <p>Payloads must only contain simple types such as Hash, Array, String and
@@ -610,18 +618,19 @@ href="TransientStore.html#method-i-delete">delete</a> rather than leaving
 it to expire. This maximises the storage engine&#39;s pool free space and
 so minimises the chance of early item eviction.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_source')" id="l_method-i-set_source">show</a>
-              </p>
-              <div id="method-i-set_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store.rb, line 227</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set</span>( <span class="ruby-identifier">key</span>,, <span class="ruby-identifier">payload</span>,, <span class="ruby-identifier">maximum_lifespan</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">key</span> = <span class="ruby-identifier">normalise_key</span>( <span class="ruby-identifier">key</span>, <span class="ruby-string">&#39;set&#39;</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">payload</span>.<span class="ruby-identifier">nil?</span>
@@ -648,9 +657,9 @@ so minimises the chance of early item eviction.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

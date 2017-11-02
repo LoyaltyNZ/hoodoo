@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Secure::ClassMethods">
+
+    <meta name="description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Secure.included.">
+    <meta property="og:description" content="Collection of class methods that get defined on an including class via Hoodoo::ActiveRecord::Secure.included.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Secure::ClassMethods class">
+    <meta name="keywords" content="secure, secure_with, secured_with">
 </head>
 
 <body>
@@ -28,15 +35,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Collection of class methods that get defined on an including class via <a
 href="../Secure.html#method-c-included">Hoodoo::ActiveRecord::Secure.included</a>.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -46,56 +49,53 @@ href="../Secure.html#method-c-included">Hoodoo::ActiveRecord::Secure.included</a
     <dl class="methods">
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-secure">secure</a>,
-              </li>
-              <li>
-                <a href="#method-i-secure_with">secure_with</a>,
-              </li>
-              <li>
-                <a href="#method-i-secured_with">secured_with</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-secure">secure</a>,
+                </li>
+                <li>
+                    <a href="#method-i-secure_with">secure_with</a>,
+                </li>
+                <li>
+                    <a href="#method-i-secured_with">secured_with</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
 
 
 
-
-
-
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='DEFAULT_SECURE_PROC'>
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='DEFAULT_SECURE_PROC'>
             <td class="attr-name">DEFAULT_SECURE_PROC</td>
             <td>=</td>
             <td class="attr-value"><pre>Proc.new { | model_class, database_column_name, session_field_value | [ { database_column_name =&gt; session_field_value } ] }</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Internal.</p>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Internal.</p>
 
 <p>See <a href="ClassMethods.html#method-i-secure">secure</a> for details -
 this is the Proc used by default if no alternative argument generator is
 given in the longhand form&#39;s value Hash&#39;s <code>:using</code> key.</p></td>
-            </tr>
-      </table>
+        </tr>
+    </table>
 
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-secure">
-              <b>secure</b>( context )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-secure">
+            <b>secure</b>( context )
             <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secure" name="method-i-secure" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>The core of out-of-the-box <a href="../../../Hoodoo.html">Hoodoo</a> data
+        <div class="description">
+            <p>The core of out-of-the-box <a href="../../../Hoodoo.html">Hoodoo</a> data
 access security layer.</p>
 
 <p>Parameters:</p>
@@ -422,18 +422,19 @@ example above.</p>
 <p>You must return _AN ARRAY_ of arguments that will be passed to
 <code>where</code> via <code>where( *returned_values )</code> as part of
 the wider query chain.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-secure_source')" id="l_method-i-secure_source">show</a>
-              </p>
-              <div id="method-i-secure_source" class="dyn-source">
+            </p>
+            <div id="method-i-secure_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 372</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
 
@@ -466,17 +467,17 @@ the wider query chain.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">prevailing_scope</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-secure_with">
-              <b>secure_with</b>( map )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-secure_with">
+            <b>secure_with</b>( map )
             <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secure_with" name="method-i-secure_with" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declare the mapping between database columns and Session scoping entries.
+        <div class="description">
+            <p>Declare the mapping between database columns and Session scoping entries.
 See <a href="ClassMethods.html#method-i-secure">secure</a> for details and
 examples.</p>
 
@@ -491,53 +492,55 @@ object, or can be a Hash of options; see <a
 href="ClassMethods.html#method-i-secure">secure</a> for full details and
 examples.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-secure_with_source')" id="l_method-i-secure_with_source">show</a>
-              </p>
-              <div id="method-i-secure_with_source" class="dyn-source">
+            </p>
+            <div id="method-i-secure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 417</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_with</span>( <span class="ruby-identifier">map</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-secured_with">
-              <b>secured_with</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-secured_with">
+            <b>secured_with</b>()
             <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/ClassMethods.html#method-i-secured_with" name="method-i-secured_with" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Retrieve the mapping declared between database columns and Session scoping
+        <div class="description">
+            <p>Retrieve the mapping declared between database columns and Session scoping
 entries via <a
 href="ClassMethods.html#method-i-secure_with">secure_with</a>. Returns a
 map as passed to <a
 href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
 <code>nil</code> if no such declaration has been made.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-secured_with_source')" id="l_method-i-secured_with_source">show</a>
-              </p>
-              <div id="method-i-secured_with_source" class="dyn-source">
+            </p>
+            <div id="method-i-secured_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 425</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secured_with</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

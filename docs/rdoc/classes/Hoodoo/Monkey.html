@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
 <script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Monkey">
+
+    <meta name="description" content="Hoodoo provides monkey patching hook points as first class citizens and includes a registration, enabling and disabling mechanism through the Hoodoo::Monkey class.">
+    <meta property="og:description" content="Hoodoo provides monkey patching hook points as first class citizens and includes a registration, enabling and disabling mechanism through the Hoodoo::Monkey class.">
+
+    <meta name="keywords" content="Hoodoo::Monkey class">
+    <meta name="keywords" content="register, enable, disable">
 </head>
 
 <body>
@@ -23,6 +30,8 @@
         </h1>
         <ul class="files">
             <li><a href="../../files/lib/hoodoo/monkey/monkey_rb.html">lib/hoodoo/monkey/monkey.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/monkey/patch/active_record_dated_finder_additions_rb.html">lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb</a></li>
+            <li><a href="../../files/lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions_rb.html">lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions.rb</a></li>
             <li><a href="../../files/lib/hoodoo/monkey/patch/datadog_traced_amqp_rb.html">lib/hoodoo/monkey/patch/datadog_traced_amqp.rb</a></li>
             <li><a href="../../files/lib/hoodoo/monkey/patch/newrelic_middleware_analytics_rb.html">lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb</a></li>
             <li><a href="../../files/lib/hoodoo/monkey/patch/newrelic_traced_amqp_rb.html">lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb</a></li>
@@ -31,7 +40,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="../Hoodoo.html">Hoodoo</a> provides monkey patching hook points as
 first class citizens and includes a registration, enabling and disabling
 mechanism through the <a href="Monkey.html">Hoodoo::Monkey</a> class.</p>
@@ -99,49 +108,45 @@ patch modules.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Monkey/Chaos.html">Hoodoo::Monkey::Chaos</a>
+            <span class="type">MODULE</span>
+            <a href="Monkey/Chaos.html">Hoodoo::Monkey::Chaos</a>
         </li>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Monkey/Patch.html">Hoodoo::Monkey::Patch</a>
+            <span class="type">MODULE</span>
+            <a href="Monkey/Patch.html">Hoodoo::Monkey::Patch</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-disable">disable</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-disable">disable</a>
+                </li>
+            </ul>
         </dd>
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-enable">enable</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-enable">enable</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-register">register</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-register">register</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -150,20 +155,17 @@ patch modules.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-disable">
-              <b>disable</b>( target_unit: nil, extension_module: )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-disable">
+            <b>disable</b>( target_unit: nil, extension_module: )
             <a href="../../classes/Hoodoo/Monkey.html#method-c-disable" name="method-c-disable" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Disable a patch previously enabled with <a
+        <div class="description">
+            <p>Disable a patch previously enabled with <a
 href="Monkey.html#method-c-enable">::enable</a> (see there for more
 information).</p>
 
@@ -181,18 +183,19 @@ registered target.</p>
 </dd></dl>
 
 <p>Disabling the same extension multiple times has no side effects.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-disable_source')" id="l_method-c-disable_source">show</a>
-              </p>
-              <div id="method-c-disable_source" class="dyn-source">
+            </p>
+            <div id="method-c-disable_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 264</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">disable</span>( <span class="ruby-identifier">target_unit</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">disable</span>( <span class="ruby-identifier">target_unit</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::disable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -220,17 +223,17 @@ registered target.</p>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-enable">
-              <b>enable</b>( extension_module: )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-enable">
+            <b>enable</b>( extension_module: )
             <a href="../../classes/Hoodoo/Monkey.html#method-c-enable" name="method-c-enable" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Enable a given monkey patch, using the extension module parameter value
+        <div class="description">
+            <p>Enable a given monkey patch, using the extension module parameter value
 given to a prior call to <a
 href="Monkey.html#method-c-register">::register</a> (see there for more
 information).</p>
@@ -259,18 +262,19 @@ target.</p>
 </dd></dl>
 
 <p>Enabling the same extension multiple times has no side effects.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-enable_source')" id="l_method-c-enable_source">show</a>
-              </p>
-              <div id="method-c-enable_source" class="dyn-source">
+            </p>
+            <div id="method-c-enable_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 205</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">enable</span>( <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
   <span class="ruby-keyword">if</span> ( <span class="ruby-identifier">target_units_hash</span> = <span class="ruby-identifier">@@modules</span>[ <span class="ruby-identifier">extension_module</span> ] ).<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;Hoodoo::Monkey::enable: Extension module &#39;#{ extension_module.inspect }&#39; is not registered&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -312,17 +316,17 @@ target.</p>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-register">
-              <b>register</b>( target_unit:, extension_module: )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-register">
+            <b>register</b>( target_unit:, extension_module: )
             <a href="../../classes/Hoodoo/Monkey.html#method-c-register" name="method-c-register" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Register a set of monkey patch modules with <a
+        <div class="description">
+            <p>Register a set of monkey patch modules with <a
 href="Monkey.html">Hoodoo::Monkey</a> - see the top-level <a
 href="Monkey.html">Hoodoo::Monkey</a> documentation for an introduction and
 some high level guidelines for monkey patch code.</p>
@@ -409,18 +413,19 @@ Foo.bar
 
 <p>You can register the same extension modules for multiple target units, but
 it can only be enabled or disabled all in one go for all targets.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-register_source')" id="l_method-c-register_source">show</a>
-              </p>
-              <div id="method-c-register_source" class="dyn-source">
+            </p>
+            <div id="method-c-register_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/monkey.rb, line 151</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">target_unit</span>,, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">register</span>( <span class="ruby-identifier">target_unit</span>,, <span class="ruby-identifier">extension_module</span><span class="ruby-operator">:</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_defined?</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span>, <span class="ruby-keyword">false</span> )
     <span class="ruby-identifier">instance_methods_module</span> = <span class="ruby-identifier">extension_module</span>.<span class="ruby-identifier">const_get</span>( <span class="ruby-string">&#39;InstanceExtensions&#39;</span> )
@@ -448,9 +453,9 @@ it can only be enabled or disabled all in one go for all targets.</p>
   ]
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

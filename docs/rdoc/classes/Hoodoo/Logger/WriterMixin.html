@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Logger::WriterMixin">
+
+    <meta name="description" content="This mixin is used by Hoodoo::Logger::FastWriter and Hoodoo::Logger::SlowWriter. See those two classes for details.">
+    <meta property="og:description" content="This mixin is used by Hoodoo::Logger::FastWriter and Hoodoo::Logger::SlowWriter. See those two classes for details.">
+
+    <meta name="keywords" content="Hoodoo::Logger::WriterMixin class">
+    <meta name="keywords" content="report">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>This mixin is used by <a
 href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
 href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a>. See those two
@@ -39,20 +46,16 @@ classes for details.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-report">report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-report">report</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -61,20 +64,17 @@ classes for details.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-report">
-              <b>report</b>( log_level, component, code, data )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-report">
+            <b>report</b>( log_level, component, code, data )
             <a href="../../../classes/Hoodoo/Logger/WriterMixin.html#method-i-report" name="method-i-report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
+        <div class="description">
+            <p><a href="FastWriter.html">Hoodoo::Logger::FastWriter</a> and <a
 href="SlowWriter.html">Hoodoo::Logger::SlowWriter</a> subclasses implement
 this method.</p>
 
@@ -110,23 +110,24 @@ service implementation&#39;s behaviour.</p>
 be logged. Converted to a string with <code>inspect</code> for flat output
 use in an unstructured context.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
-              </p>
-              <div id="method-i-report_source" class="dyn-source">
+            </p>
+            <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writer_mixin.rb, line 47</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-identifier">raise</span>( <span class="ruby-string">&#39;Subclasses must implement #report&#39;</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

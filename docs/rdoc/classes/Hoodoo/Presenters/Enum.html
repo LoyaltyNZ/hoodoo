@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Presenters::Enum">
+
+    <meta name="description" content="A JSON String schema member. An enumeration (of sorts) - a list of discrete string values that are permitted for the value of a field of this type.">
+    <meta property="og:description" content="A JSON String schema member. An enumeration (of sorts) - a list of discrete string values that are permitted for the value of a field of this type.">
+
+    <meta name="keywords" content="Hoodoo::Presenters::Enum class">
+    <meta name="keywords" content="new, validate">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Presenters::Enum
-                <span class="parent">&lt;
-                    <a href="Field.html">Hoodoo::Presenters::Field</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="Field.html">Hoodoo::Presenters::Field</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/presenters/types/enum_rb.html">lib/hoodoo/presenters/types/enum.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>A JSON <a href="String.html">String</a> schema member. An enumeration (of
 sorts) - a list of discrete string values that are permitted for the value
 of a field of this type. Matches must be exact (case sensitive, no
@@ -44,28 +51,24 @@ key <code>:from</code> in the options hash provided to the constructor.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>V</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-validate">validate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-validate">validate</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -73,34 +76,31 @@ key <code>:from</code> in the options hash provided to the constructor.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-from'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-from'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>from</td>
             <td class='attr-desc'><p><a href="Array.html">Array</a> of permitted enumeration values. This may be
 written with non-String values but they will be converted to Strings when
 read back.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( name, options = {} )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( name, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/Enum.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Initialize a <a href="String.html">String</a> instance with the appropriate
+        <div class="description">
+            <p>Initialize a <a href="String.html">String</a> instance with the appropriate
 name and options.</p>
 <dl class="rdoc-list note-list"><dt>name
 <dd>
@@ -110,18 +110,19 @@ name and options.</p>
 <p>A <code>Hash</code> of options, e.g. :required =&gt; true, :from =&gt; [
 :array, :of, :allowed, :enum, :values ].</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 25</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
 
   <span class="ruby-ivar">@from</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:from</span> ]
@@ -132,31 +133,33 @@ name and options.</p>
     <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-string">&#39;Hoodoo::Presenters::Enum must have a :from array listing allowed values&#39;</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-validate">
-              <b>validate</b>( data, path = &#39;&#39; )
+        </div>
+    </div>
+
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-validate">
+            <b>validate</b>( data, path = &#39;&#39; )
             <a href="../../../classes/Hoodoo/Presenters/Enum.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Check if data is a valid <a href="String.html">String</a> and return a <a
+        <div class="description">
+            <p>Check if data is a valid <a href="String.html">String</a> and return a <a
 href="../Errors.html">Hoodoo::Errors</a> instance.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
-              </p>
-              <div id="method-i-validate_source" class="dyn-source">
+            </p>
+            <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/enum.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
@@ -170,9 +173,9 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
 
   <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Discovery::ForHTTP">
+
+    <meta name="description" content="Describe a resource endpoint location in a way that allows it to be contacted over HTTP.">
+    <meta property="og:description" content="Describe a resource endpoint location in a way that allows it to be contacted over HTTP.">
+
+    <meta name="keywords" content="Hoodoo::Services::Discovery::ForHTTP class">
+    <meta name="keywords" content="new">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Discovery::ForHTTP
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/discovery/results/for_http_rb.html">lib/hoodoo/services/discovery/results/for_http.rb</a></li>
@@ -31,15 +38,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Describe a resource endpoint location in a way that allows it to be
 contacted over HTTP.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -49,11 +52,11 @@ contacted over HTTP.</p>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -61,15 +64,12 @@ contacted over HTTP.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-ca_file'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-ca_file'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>ca_file</td>
             <td class='attr-desc'><p>An optional String indicating a relative or absolute file path to the
@@ -81,18 +81,18 @@ href="../../Client.html">Hoodoo::Client</a>.</p>
 
 <p>Default <code>nil</code> value should be used in nearly all cases and uses
 Ruby OpenSSL defaults which are generally Operating System provided.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-endpoint_uri'>
+        </tr>
+        <tr valign='top' id='attribute-i-endpoint_uri'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>endpoint_uri</td>
             <td class='attr-desc'><p>Full URI (as a URI object) at which the resource endpoint implementation
 can be contacted.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-http_open_timeout'>
+        </tr>
+        <tr valign='top' id='attribute-i-http_open_timeout'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>http_open_timeout</td>
             <td class='attr-desc'><p>Optional Float indicating the Net::HTTP open timeout value.</p>
@@ -107,10 +107,10 @@ is aborted and a <code>platform.timeout</code> error returned.</p>
 
 <p>This operates at the HTTP transport level and is independent of any higher
 level timeouts that might be set up.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-http_timeout'>
+        </tr>
+        <tr valign='top' id='attribute-i-http_timeout'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>http_timeout</td>
             <td class='attr-desc'><p>Optional Float indicating the Net::HTTP read timeout value.</p>
@@ -128,43 +128,43 @@ href="ForHTTP.html#attribute-i-http_open_timeout">http_open_timeout</a>.</p>
 
 <p>This operates at the HTTP transport level and is independent of any higher
 level timeouts that might be set up.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-proxy_uri'>
+        </tr>
+        <tr valign='top' id='attribute-i-proxy_uri'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>proxy_uri</td>
             <td class='attr-desc'><p>Full URI (as a URI object) of an HTTP proxy to use as an override to
 <code>ENV['HTTP_PROXY']</code> which Ruby itself will otherwise read. Will
 be <code>nil</code> for no proxy override.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-resource'>
+        </tr>
+        <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-version'>
+        </tr>
+        <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>version</td>
             <td class='attr-desc'><p>Resource endpoint version, as an Integer (e.g. 2).</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil, http_timeout: nil, http_open_timeout: nil )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( resource:, version:, endpoint_uri:, proxy_uri: nil, ca_file: nil, http_timeout: nil, http_open_timeout: nil )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForHTTP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create an instance with named parameters as follows:</p>
+        <div class="description">
+            <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt>resource
 <dd>
 <p>See <a href="ForHTTP.html#attribute-i-resource">resource</a>.</p>
@@ -190,18 +190,19 @@ Optional.</p>
 href="ForHTTP.html#attribute-i-http_open_timeout">http_open_timeout</a>.
 Optional.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_http.rb, line 95</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,,
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>,,
                 <span class="ruby-identifier">version</span>,,
                 <span class="ruby-identifier">endpoint_uri</span>,,
                 <span class="ruby-identifier">proxy_uri</span><span class="ruby-operator">:</span>         <span class="ruby-keyword">nil</span>,
@@ -217,9 +218,9 @@ Optional.</p>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_timeout</span>      = <span class="ruby-identifier">http_timeout</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">http_open_timeout</span> = <span class="ruby-identifier">http_open_timeout</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

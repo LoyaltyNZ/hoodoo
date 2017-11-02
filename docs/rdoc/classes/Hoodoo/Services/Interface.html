@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Interface">
+
+    <meta name="description" content="Service implementation authors subclass this to describe the interface that they implement for a particular Resource, as documented in the Loyalty Platform API.">
+    <meta property="og:description" content="Service implementation authors subclass this to describe the interface that they implement for a particular Resource, as documented in the Loyalty Platform API.">
+
+    <meta name="keywords" content="Hoodoo::Services::Interface class">
+    <meta name="keywords" content="endpoint, version, actions, public_actions, secure_log_for, embeds, to_list, to_create, to_update, update_same_as_create, errors_for, additional_permissions_for, interface, to_list">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Interface
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/services/services/interface_rb.html">lib/hoodoo/services/services/interface.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="Service.html">Service</a> implementation authors subclass this to
 describe the interface that they implement for a particular Resource, as
 documented in the Loyalty Platform API.</p>
@@ -43,107 +50,103 @@ href="Interface.html#method-c-interface">::interface</a> for details.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
+            <span class="type">CLASS</span>
+            <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>
+            <span class="type">CLASS</span>
+            <a href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-actions">actions</a>,
-              </li>
-              <li>
-                <a href="#method-i-additional_permissions_for">additional_permissions_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-actions">actions</a>,
+                </li>
+                <li>
+                    <a href="#method-i-additional_permissions_for">additional_permissions_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-embeds">embeds</a>,
-              </li>
-              <li>
-                <a href="#method-i-endpoint">endpoint</a>,
-              </li>
-              <li>
-                <a href="#method-i-errors_for">errors_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-embeds">embeds</a>,
+                </li>
+                <li>
+                    <a href="#method-i-endpoint">endpoint</a>,
+                </li>
+                <li>
+                    <a href="#method-i-errors_for">errors_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-interface">interface</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-interface">interface</a>
+                </li>
+            </ul>
         </dd>
         <dt>P</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-public_actions">public_actions</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-public_actions">public_actions</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-secure_log_for">secure_log_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-secure_log_for">secure_log_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-to_create">to_create</a>,
-              </li>
-              <li>
-                <a href="#method-i-to_list">to_list</a>,
-              </li>
-              <li>
-                <a href="#method-c-to_list">to_list</a>,
-              </li>
-              <li>
-                <a href="#method-i-to_update">to_update</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-to_create">to_create</a>,
+                </li>
+                <li>
+                    <a href="#method-i-to_list">to_list</a>,
+                </li>
+                <li>
+                    <a href="#method-c-to_list">to_list</a>,
+                </li>
+                <li>
+                    <a href="#method-i-to_update">to_update</a>
+                </li>
+            </ul>
         </dd>
         <dt>U</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-update_same_as_create">update_same_as_create</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-update_same_as_create">update_same_as_create</a>
+                </li>
+            </ul>
         </dd>
         <dt>V</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-version">version</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-version">version</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -151,15 +154,12 @@ href="Interface.html#method-c-interface">::interface</a> for details.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-c-actions'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-c-actions'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>actions</td>
             <td class='attr-desc'><p>Supported action methods as a Set of symbols with one or more of
@@ -167,10 +167,10 @@ href="Interface.html#method-c-interface">::interface</a> for details.</p>
 <code>:update</code> or <code>:delete</code>. The presence of a Symbol
 indicates a supported action. If empty, no actions are supported. The
 default is for all actions to be present in the Set.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-additional_permissions'>
+        </tr>
+        <tr valign='top' id='attribute-c-additional_permissions'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>additional_permissions</td>
             <td class='attr-desc'><p>A Hash, keyed by String equivalents of the Symbols in
@@ -178,10 +178,10 @@ Hoodoo::Services::Middleware::ALLOWED_ACTIONS, where the values are <a
 href="Permissions.html">Hoodoo::Services::Permissions</a> instances
 describing extended permissions for the related action. See
 ::additional_permissions_for.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-embeds'>
+        </tr>
+        <tr valign='top' id='attribute-c-embeds'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>embeds</td>
             <td class='attr-desc'><p>Array of strings listing allowed embeddable things. Each string matches the
@@ -199,38 +199,38 @@ split up comma-separated value for query string <code>_embed</code> or
 
 <pre><code>[ &#39;foo&#39;, &#39;bar&#39; ]
 </code></pre></td>
-          </tr>
-          <tr valign='top' id='attribute-c-endpoint'>
+        </tr>
+        <tr valign='top' id='attribute-c-endpoint'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>endpoint</td>
             <td class='attr-desc'><p>Endpoint path as declared by service, without preceding “/”, possibly as a
 symbol - e.g. <code>:products</code> for “/<a href="...">products</a>” as
 an implied endpoint.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-errors_for'>
+        </tr>
+        <tr valign='top' id='attribute-c-errors_for'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>errors_for</td>
             <td class='attr-desc'><p>A <a href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a>
 instance describing all errors that the interface might return, including
 the default set of platform and generic errors. If nil, there are no
 additional error codes beyond the default set.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-implementation'>
+        </tr>
+        <tr valign='top' id='attribute-c-implementation'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>implementation</td>
             <td class='attr-desc'><p><a href="Implementation.html">Implementation</a> class for the service. An
 <a href="Implementation.html">Hoodoo::Services::Implementation</a> subclass
 - the class, not an instance of it.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-public_actions'>
+        </tr>
+        <tr valign='top' id='attribute-c-public_actions'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>public_actions</td>
             <td class='attr-desc'><p>Public action methods as a Set of symbols with one or more of
@@ -239,27 +239,27 @@ additional error codes beyond the default set.</p></td>
 indicates an action open to the public and not subject to session security.
 If empty, all actions are protected by session security. The default is an
 empty Set.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-resource'>
+        </tr>
+        <tr valign='top' id='attribute-c-resource'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>Name of the resource the interface addresses as a symbol, e.g.
 <code>:Product</code>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-secure_log_for'>
+        </tr>
+        <tr valign='top' id='attribute-c-secure_log_for'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>secure_log_for</td>
             <td class='attr-desc'><p>Secure log actions set by <a
 href="Interface.html#method-i-secure_log_for">secure_log_for</a> - see that
 call for details. The default is an empty Hash.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-to_create'>
+        </tr>
+        <tr valign='top' id='attribute-c-to_create'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>to_create</td>
             <td class='attr-desc'><p>A <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
@@ -267,10 +267,10 @@ instance describing the schema for client JSON coming in for calls that
 create instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
 implementation becomes entirely responsible for data validation).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-to_update'>
+        </tr>
+        <tr valign='top' id='attribute-c-to_update'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>to_update</td>
             <td class='attr-desc'><p>A <a href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>
@@ -278,58 +278,60 @@ instance describing the schema for client JSON coming in for calls that
 modify instances of the resource that the service&#39;s interface is
 addressing. If <code>nil</code>, arbitrary data is acceptable (the
 implementation becomes entirely responsible for data validation).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-c-version'>
+        </tr>
+        <tr valign='top' id='attribute-c-version'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>version</td>
             <td class='attr-desc'><p>Major version of interface as an integer. All service endpoint routes have
 “v{version}/” as a prefix, e.g. “/<a href="...">v1/products</a>”.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-to_list">
-              <b>to_list</b>()
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-to_list">
+            <b>to_list</b>()
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-c-to_list" name="method-c-to_list" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>A <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
+        <div class="description">
+            <p>A <a href="Interface/ToList.html">Hoodoo::Services::Interface::ToList</a>
 instance describing the list parameters for the interface as a Set of
 Strings. See also <a
 href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-to_list_source')" id="l_method-c-to_list_source">show</a>
-              </p>
-              <div id="method-c-to_list_source" class="dyn-source">
+            </p>
+            <div id="method-c-to_list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 879</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_list</span>
   <span class="ruby-ivar">@to_list</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@to_list</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Class Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-interface">
-              <b>interface</b>( resource, &amp;block )
-            <a href="../../../classes/Hoodoo/Services/Interface.html#method-c-interface" name="method-c-interface" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Define the subclass Service&#39;s interface. A DSL is used with methods
+    <div class="sectiontitle">Class Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-interface">
+            <b>interface</b>( resource, &amp;block )
+            <a href="../../../classes/Hoodoo/Services/Interface.html#method-c-interface" name="method-c-interface" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Define the subclass Service&#39;s interface. A DSL is used with methods
 documented in the Hoodoo::Services::InterfaceDSL class.</p>
 
 <p>The absolute bare minimum interface description just states that a
@@ -370,18 +372,19 @@ wants to take over all of that itself.</p>
 href="Interface.html#method-i-endpoint">endpoint</a> is the only mandatory
 call.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-interface_source')" id="l_method-c-interface_source">show</a>
-              </p>
-              <div id="method-c-interface_source" class="dyn-source">
+            </p>
+            <div id="method-c-interface_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 779</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">interface</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@to_list</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@to_list</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToList</span>.<span class="ruby-identifier">new</span>
@@ -393,7 +396,7 @@ call.</p>
 
   <span class="ruby-identifier">interface</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">instance_eval</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">version</span> <span class="ruby-number">1</span>
+    <span class="ruby-identifier">version</span> <span class="ruby-value">1</span>
     <span class="ruby-identifier">embeds</span> <span class="ruby-comment"># Nothing</span>
     <span class="ruby-identifier">actions</span> <span class="ruby-operator">*</span><span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
     <span class="ruby-identifier">public_actions</span> <span class="ruby-comment"># None</span>
@@ -407,18 +410,19 @@ call.</p>
   <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-actions">
-              <b>actions</b>( *supported_actions )
-            <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-actions" name="method-i-actions" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>List the actions that the service implementation supports. If you don&#39;t
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-actions">
+            <b>actions</b>( *supported_actions )
+            <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-actions" name="method-i-actions" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>List the actions that the service implementation supports. If you don&#39;t
 call this, the middleware assumes that all actions are available; else it
 only calls for supported actions. If you declared an empty array, your
 implementation would never be called.</p>
@@ -434,18 +438,19 @@ are given.</p>
 
 <pre><code>actions :list, :show
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-actions_source')" id="l_method-i-actions_source">show</a>
-              </p>
-              <div id="method-i-actions_source" class="dyn-source">
+            </p>
+            <div id="method-i-actions_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 373</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">supported_actions</span> )
   <span class="ruby-identifier">supported_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">supported_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -455,17 +460,17 @@ are given.</p>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:actions=</span>, <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">supported_actions</span> ) )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-additional_permissions_for">
-              <b>additional_permissions_for</b>( action, &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-additional_permissions_for">
+            <b>additional_permissions_for</b>( action, &amp;block )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-additional_permissions_for" name="method-i-additional_permissions_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declare additional permissions that you require for a given action.</p>
+        <div class="description">
+            <p>Declare additional permissions that you require for a given action.</p>
 
 <p>If the implementation of a resource endpoint involves making calls out to
 other resources, then you need to consider how authorisation is granted to
@@ -566,18 +571,19 @@ Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
 href="Permissions.html">Hoodoo::Services::Permissions</a> instance; make
 method calls on this instance to describe the required permissions.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-additional_permissions_for_source')" id="l_method-i-additional_permissions_for_source">show</a>
-              </p>
-              <div id="method-i-additional_permissions_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-additional_permissions_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 726</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">additional_permissions_for</span>( <span class="ruby-identifier">action</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">action</span> = <span class="ruby-identifier">action</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
@@ -591,17 +597,17 @@ method calls on this instance to describe the required permissions.</p>
   <span class="ruby-identifier">additional_permissions</span>[ <span class="ruby-identifier">action</span> ] = <span class="ruby-identifier">p</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:additional_permissions=</span>, <span class="ruby-identifier">additional_permissions</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-embeds">
-              <b>embeds</b>( *embeds )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-embeds">
+            <b>embeds</b>( *embeds )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-embeds" name="method-i-embeds" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>An array of supported embed keys (as per documentation, so singular or
+        <div class="description">
+            <p>An array of supported embed keys (as per documentation, so singular or
 plural as per resource interface descriptions in the Loyalty Platform API).
 Things which can be embedded can also be referenced, via the
 <code>_embed</code> and <code>_reference</code> query string keys.</p>
@@ -627,31 +633,32 @@ return:</p>
 
 <pre><code>[ &#39;vouchers&#39;, &#39;balances&#39;, &#39;member&#39; ]
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-embeds_source')" id="l_method-i-embeds_source">show</a>
-              </p>
-              <div id="method-i-embeds_source" class="dyn-source">
+            </p>
+            <div id="method-i-embeds_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 496</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">embeds</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">embeds</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:embeds=</span>, <span class="ruby-identifier">embeds</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_s</span> } )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-endpoint">
-              <b>endpoint</b>( uri_path_fragment, implementation_class )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-endpoint">
+            <b>endpoint</b>( uri_path_fragment, implementation_class )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-endpoint" name="method-i-endpoint" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Mandatory part of the interface DSL. Declare the interface&#39;s URL
+        <div class="description">
+            <p>Mandatory part of the interface DSL. Declare the interface&#39;s URL
 endpoint and the <a
 href="Implementation.html">Hoodoo::Services::Implementation</a> subclass to
 be invoked when client requests are sent to a URL matching the endpoint.</p>
@@ -679,18 +686,19 @@ match <code>/products_and_things</code>.</p>
 subclass (the class itself, not an instance of it) that should be used when
 a request matching the path fragment is received.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-endpoint_source')" id="l_method-i-endpoint_source">show</a>
-              </p>
-              <div id="method-i-endpoint_source" class="dyn-source">
+            </p>
+            <div id="method-i-endpoint_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 333</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">endpoint</span>( <span class="ruby-identifier">uri_path_fragment</span>, <span class="ruby-identifier">implementation_class</span> )
 
   <span class="ruby-comment"># http://www.ruby-doc.org/core-2.2.3/Module.html#method-i-3C</span>
   <span class="ruby-comment">#</span>
@@ -701,17 +709,17 @@ a request matching the path fragment is received.</p>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:endpoint=</span>,       <span class="ruby-identifier">uri_path_fragment</span>    )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:implementation=</span>, <span class="ruby-identifier">implementation_class</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-errors_for">
-              <b>errors_for</b>( domain, &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-errors_for">
+            <b>errors_for</b>( domain, &amp;block )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-errors_for" name="method-i-errors_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declares custom errors that are part of this defined interface. This calls
+        <div class="description">
+            <p>Declares custom errors that are part of this defined interface. This calls
 directly through to <a
 href="../ErrorDescriptions.html#method-i-errors_for">Hoodoo::ErrorDescriptions#errors_for</a>,
 so see that for details.</p>
@@ -737,18 +745,19 @@ href="../ErrorDescriptions.html">Hoodoo::ErrorDescriptions</a> DSL calls.</p>
   error &#39;duplicate_transaction&#39;, status: 409, message: &#39;Duplicate transaction&#39;, :required =&gt; [ :client_uid ]
 end
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-errors_for_source')" id="l_method-i-errors_for_source">show</a>
-              </p>
-              <div id="method-i-errors_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-errors_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 623</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">descriptions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">errors_for</span>
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">nil?</span>
@@ -757,17 +766,17 @@ end
 
   <span class="ruby-identifier">descriptions</span>.<span class="ruby-identifier">errors_for</span>( <span class="ruby-identifier">domain</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-public_actions">
-              <b>public_actions</b>( *public_actions )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-public_actions">
+            <b>public_actions</b>( *public_actions )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-public_actions" name="method-i-public_actions" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>List any actions which are public - NOT PROTECTED BY SESSIONS. For public
+        <div class="description">
+            <p>List any actions which are public - NOT PROTECTED BY SESSIONS. For public
 actions, no X-Session-ID or similar header is consulted and no session data
 will be associated with your <a
 href="Context.html">Hoodoo::Services::Context</a> instance when action
@@ -786,18 +795,19 @@ prohibited from making calls to protected actions in other resources.</p>
 use symbols, not strings. An exception is raised if unrecognised actions
 are given.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-public_actions_source')" id="l_method-i-public_actions_source">show</a>
-              </p>
-              <div id="method-i-public_actions_source" class="dyn-source">
+            </p>
+            <div id="method-i-public_actions_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 402</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">public_actions</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">public_actions</span> )
   <span class="ruby-identifier">public_actions</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>.<span class="ruby-identifier">to_sym</span> }
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">public_actions</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -807,17 +817,17 @@ are given.</p>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:public_actions=</span>, <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">public_actions</span> ) )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-secure_log_for">
-              <b>secure_log_for</b>( secure_log_actions = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-secure_log_for">
+            <b>secure_log_for</b>( secure_log_actions = {} )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-secure_log_for" name="method-i-secure_log_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set secure log actions.</p>
+        <div class="description">
+            <p>Set secure log actions.</p>
 <dl class="rdoc-list note-list"><dt>secure_log_actions
 <dd>
 <p>A Hash, described below.</p>
@@ -875,18 +885,19 @@ sent back, will be logged for an <code>:update</code> action:</p>
 <p>The default is an empty Hash; all actions have both inbound request body
 data and outbound response body data logged by <a
 href="../../Hoodoo.html">Hoodoo</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-secure_log_for_source')" id="l_method-i-secure_log_for_source">show</a>
-              </p>
-              <div id="method-i-secure_log_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-secure_log_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 462</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">secure_log_for</span>( <span class="ruby-identifier">secure_log_actions</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">secure_log_for</span>( <span class="ruby-identifier">secure_log_actions</span> = {} )
   <span class="ruby-identifier">secure_log_actions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">symbolize</span>( <span class="ruby-identifier">secure_log_actions</span> )
   <span class="ruby-identifier">invalid</span> = <span class="ruby-identifier">secure_log_actions</span>.<span class="ruby-identifier">keys</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span><span class="ruby-operator">::</span><span class="ruby-constant">ALLOWED_ACTIONS</span>
 
@@ -896,17 +907,17 @@ href="../../Hoodoo.html">Hoodoo</a>.</p>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:secure_log_for=</span>, <span class="ruby-identifier">secure_log_actions</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-to_create">
-              <b>to_create</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_create">
+            <b>to_create</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-to_create" name="method-i-to_create" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Optional description of the JSON parameters (schema) that the
+        <div class="description">
+            <p>Optional description of the JSON parameters (schema) that the
 interface&#39;s implementation requires for calls creating resource
 instances. The block uses the DSL from <a
 href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>, so you can
@@ -953,34 +964,35 @@ end
 href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>, describing
 the fields used for resource creation.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-to_create_source')" id="l_method-i-to_create_source">show</a>
-              </p>
-              <div id="method-i-to_create_source" class="dyn-source">
+            </p>
+            <div id="method-i-to_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 557</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_create</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_create=</span>, <span class="ruby-identifier">obj</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-to_list">
-              <b>to_list</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_list">
+            <b>to_list</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-to_list" name="method-i-to_list" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Specify parameters related to common index parameters. The block contains
+        <div class="description">
+            <p>Specify parameters related to common index parameters. The block contains
 calls to the DSL described by <a
 href="Interface/ToListDSL.html">Hoodoo::Services::Interface::ToListDSL</a>.
 The default values should be described by your platform&#39;s API -
@@ -991,34 +1003,35 @@ sort     :created_at =&gt; [ :desc, :asc ]
 search   nil
 filter   nil
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-to_list_source')" id="l_method-i-to_list_source">show</a>
-              </p>
-              <div id="method-i-to_list_source" class="dyn-source">
+            </p>
+            <div id="method-i-to_list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 510</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_list</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Interface</span><span class="ruby-operator">::</span><span class="ruby-constant">ToListDSL</span>.<span class="ruby-identifier">new</span>(
     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">instance_variable_get</span>( <span class="ruby-string">&#39;@to_list&#39;</span> ),
     <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
   )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-to_update">
-              <b>to_update</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_update">
+            <b>to_update</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-to_update" name="method-i-to_update" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>As <a href="Interface.html#method-i-to_create">to_create</a>, but applies
+        <div class="description">
+            <p>As <a href="Interface.html#method-i-to_create">to_create</a>, but applies
 when modifying existing resource instances. To avoid repeating yourself, if
 your modification and creation parameter requirements are identical, call
 <a
@@ -1035,18 +1048,19 @@ relevance to the rendering stage only and have no effect here.</p>
 href="../Presenters/Object.html">Hoodoo::Presenters::Object</a>, describing
 the fields used for resource modification.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-to_update_source')" id="l_method-i-to_update_source">show</a>
-              </p>
-              <div id="method-i-to_update_source" class="dyn-source">
+            </p>
+            <div id="method-i-to_update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 576</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_update</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Class</span>.<span class="ruby-identifier">new</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
   <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 
@@ -1060,17 +1074,17 @@ the fields used for resource modification.</p>
 
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update=</span>, <span class="ruby-identifier">obj</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-update_same_as_create">
-              <b>update_same_as_create</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-update_same_as_create">
+            <b>update_same_as_create</b>()
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-update_same_as_create" name="method-i-update_same_as_create" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declares that the expected JSON fields described in a <a
+        <div class="description">
+            <p>Declares that the expected JSON fields described in a <a
 href="Interface.html#method-i-to_create">to_create</a> call are the same as
 those required for modifying resources too.</p>
 
@@ -1080,31 +1094,32 @@ those required for modifying resources too.</p>
 </code></pre>
 
 <p>…and that&#39;s all. There are no parameters or blocks needed.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-update_same_as_create_source')" id="l_method-i-update_same_as_create_source">show</a>
-              </p>
-              <div id="method-i-update_same_as_create_source" class="dyn-source">
+            </p>
+            <div id="method-i-update_same_as_create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 600</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update_same_as_create</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update_same_as_create</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:to_update</span>, <span class="ruby-operator">&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">to_create</span>().<span class="ruby-identifier">get_schema_definition</span>() )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-version">
-              <b>version</b>( major_version )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-version">
+            <b>version</b>( major_version )
             <a href="../../../classes/Hoodoo/Services/Interface.html#method-i-version" name="method-i-version" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Declare the <em>major</em> version of the interface being implemented. All
+        <div class="description">
+            <p>Declare the <em>major</em> version of the interface being implemented. All
 service endpoints appear at “/v{version}/{endpoint}” relative to whatever
 root an edge layer defines. If a service interface does not specifiy its
 version, <code>1</code> is assumed.</p>
@@ -1115,23 +1130,24 @@ different since the resulting route to reach them will be different too.</p>
 <dd>
 <p>Integer major version number, e.g <code>2</code>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-version_source')" id="l_method-i-version_source">show</a>
-              </p>
-              <div id="method-i-version_source" class="dyn-source">
+            </p>
+            <div id="method-i-version_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/interface.rb, line 355</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">version</span>( <span class="ruby-identifier">major_version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">version</span>( <span class="ruby-identifier">major_version</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:version=</span>, <span class="ruby-identifier">major_version</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">to_i</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>
