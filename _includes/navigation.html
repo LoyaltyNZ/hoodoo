@@ -9,6 +9,18 @@
           </div>
         </div>
 
+        <div class="article_navigation_guides">
+          <h4>Guides</h4>
+
+          <ul>
+{% for page in site.pages %}
+  {% if page.categories contains 'guide' %}
+            <li><a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a></li>
+  {% endif %}
+{% endfor %}
+          </ul>
+        </div>
+
         <div class="article_navigation_reference">
           <h4>Reference</h4>
 
@@ -23,17 +35,10 @@
                 Hoodoo RDoc
               </a>
             </li>
-          </ul>
-        </div>
-
-        <div class="article_navigation_guides">
-          <h4>Guides</h4>
-
-          <ul>
-{% for page in site.pages %}
-  {% if page.categories contains 'guide' %}
-            <li><a href="{{ site.baseurl }}{{ page.url }}">{{ page.title }}</a></li>
-  {% endif %}
-{% endfor %}
+            <li>
+              <a href="{{ site.custom.github_repo_url }}">
+                GitHub
+              </a>
+            </li>
           </ul>
         </div>
