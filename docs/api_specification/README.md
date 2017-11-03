@@ -1,6 +1,6 @@
 # Hoodoo API Specification
 
-_Release 7, 2017-11-02_
+_Release 7, 2017-11-03_
 
 [](TOCS)
 * [Overview](#ao)
@@ -1349,4 +1349,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2016-12-06 | Release 4 | ADH    | Describe new framework-level search/query strings of `created_after` and `created_before`. Mention potential for using this instead of very large offset values. |
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
 | 2017-10-13 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |
-| 2017-11-02 | Release 7 | ADH    | Add +generic.contemporary_exists+ error and associated information. |
+| 2017-11-03 | Release 7 | ADH    | Add +generic.contemporary_exists+ error and associated information. |
