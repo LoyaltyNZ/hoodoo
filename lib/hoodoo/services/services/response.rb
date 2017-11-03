@@ -311,7 +311,7 @@ module Hoodoo; module Services
     # High level example for resource implementations with a +context+
     # available, through which this method is called automatically:
     #
-    #   resource = SomeModel.acquire_in_and_update( context )
+    #   resource = SomeModel.acquire_in!( context )
     #   return if context.response.halt_processing?
     #
     # See also:
@@ -356,7 +356,7 @@ module Hoodoo; module Services
     # An even higher level approach through +context+, through which this
     # method is called automatically:
     #
-    #   resource = SomeModel.acquire_in_and_update( context )
+    #   resource = SomeModel.acquire_in!( context )
     #   return if context.response.halt_processing?
     #
     # This frees application authors of the burden of constructing an

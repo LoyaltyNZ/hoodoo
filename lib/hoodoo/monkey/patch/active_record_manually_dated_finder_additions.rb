@@ -3,8 +3,8 @@
 # (C)::     Loyalty New Zealand 2017
 #
 # Purpose:: Extend
-#           Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
-#           so that it adds error +generic.contemporary_exists+ to the
+#           Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in! so
+#           that it adds error +generic.contemporary_exists+ to the
 #           provided +context+ if a dated instance is absent.
 # ----------------------------------------------------------------------
 #           01-Nov-2017 (ADH): Created.
@@ -14,8 +14,8 @@ module Hoodoo
   module Monkey
     module Patch
 
-      # Extend Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
-      # so that it adds error +generic.contemporary_exists+ to the provided
+      # Extend Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in! so
+      # that it adds error +generic.contemporary_exists+ to the provided
       # +context+ if a dated instance is absent.
       #
       module ActiveRecordManuallyDatedFinderAdditions
@@ -26,12 +26,12 @@ module Hoodoo
         #
         module ClassExtensions
 
-          # See Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
-          # for details. Calls that method then, upon error, checks to see if a
+          # See Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in! for
+          # details. Calls that method then, upon error, checks to see if a
           # contemporary version of the resource exists and adds error
           # +generic.contemporary_exists+ to the given +context+ if so.
           #
-          def acquire_in_and_update( context )
+          def acquire_in!( context )
             result = super( context )
 
             if result.nil?

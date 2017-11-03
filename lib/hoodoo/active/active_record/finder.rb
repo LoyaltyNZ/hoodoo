@@ -196,11 +196,10 @@ module Hoodoo
         #
         #     SomeModel.where( :foo => :bar ).acquire( context.request.ident )
         #
-        # Usually for convenience you should use #acquire_in_and_update or
-        # acquire_in instead, or only call #acquire with (say) a secure scope
-        # via for example a call to
-        # Hoodoo::ActiveRecord::Secure::ClassMethods#secure. Other scopes may
-        # be needed depending on the mixins your model uses.
+        # Usually for convenience you should use #acquire_in! or acquire_in
+        # instead, or only call #acquire with (say) a secure scope via for
+        # example a call to Hoodoo::ActiveRecord::Secure::ClassMethods#secure.
+        # Other scopes may be needed depending on the mixins your model uses.
         #
         # +ident+:: The value to search for in the fields (attributes)
         #           specified via #acquire_with, matched using calls to
@@ -271,8 +270,8 @@ module Hoodoo
         # anything else that #scoped_in might include for you.
         #
         # An even higher-level method, taking care of error handling as well,
-        # is #acquire_in_and_update. You may prefer to call this higher level
-        # interface if you don't object to the way it modifies +context+.
+        # is #acquire_in!. You may prefer to call this higher level interface
+        # if you don't object to the way it modifies +context+.
         #
         # Parameters:
         #
@@ -283,7 +282,7 @@ module Hoodoo
         #
         # See also:
         #
-        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update
+        # * Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in!
         # * Hoodoo::Services::Response#not_found
         # * Hoodoo::Services::Response#contemporary_exists
         #
@@ -331,13 +330,13 @@ module Hoodoo
         # Example, following on from those for #acquire_in:
         #
         #     def show( context )
-        #       resource = SomeModel.acquire_in_and_update( context )
+        #       resource = SomeModel.acquire_in!( context )
         #       return if context.response.halt_processing? # Or just use 'if resource.nil?'
         #
         #       # ...else render...
         #     end
         #
-        def acquire_in_and_update( context )
+        def acquire_in!( context )
 
           # The method is patched internally by Hoodoo::ActiveRecord::Dated
           # and Hoodoo::ActiveRecord::ManuallyDated. The patches add in a
@@ -357,8 +356,7 @@ module Hoodoo
 
         # Describe the list of model fields _in_ _addition_ _to_ +id+ which
         # are to be used to "find-by-identifier" through calls #acquire,
-        # #acquire_in and #acquire_in_and_update. See those methods for more
-        # details.
+        # #acquire_in and #acquire_in!. See those methods for more details.
         #
         # Fields will be searched in the order listed. If duplicate items are
         # present, the first occurrence is kept and the rest are removed.
@@ -377,7 +375,7 @@ module Hoodoo
 
         # Return the list of model fields _in_ _addition_ _to_ +id+ which
         # are being used to "find-by-identifier" through calls to #acquire,
-        # #acquire_in and #acquire_in_and_update. The returned Array contains
+        # #acquire_in and #acquire_in!. The returned Array contains
         # de-duplicated String values only.
         #
         # See also:
@@ -390,18 +388,18 @@ module Hoodoo
         end
 
         # The #acquire_with method allows methods like #acquire, #acquire_in
-        # and #acquire_in_and_update to transparently find a record based on
-        # _one_ _or_ _more_ columns in the database. The columns (and
-        # corresponding model attributes) specified through a call to
-        # #acquire_with will normally be used _in_ _addition_ _to_ a lookup on
-        # the +id+ column, but in rare circumstances you might need to bypass
-        # that and use an entirely different field. This is distinct from the
-        # ActiveRecord-level concept of the model's primary key column.
+        # and #acquire_in! to transparently find a record based on _one_ _or_
+        # _more_ columns in the database. The columns (and corresponding model
+        # attributes) specified through a call to #acquire_with will normally
+        # be used _in_ _addition_ _to_ a lookup on the +id+ column, but in rare
+        # circumstances you might need to bypass that and use an entirely
+        # different field. This is distinct from the ActiveRecord-level concept
+        # of the model's primary key column.
         #
         # To permanently change the use of the +id+ attribute as the first
-        # search parameter in #acquire, #acquire_in and #acquire_in_and_update
-        # by modifying the behaviour of #acquisition_scope, call here and pass
-        # in the new attribute name.
+        # search parameter in #acquire, #acquire_in and #acquire_in! by
+        # modifying the behaviour of #acquisition_scope, call here and pass in
+        # the new attribute name.
         #
         # +attr+:: Attribute name as a Symbol or String to use _instead_
         #          of +id+, as a default mandatory column in
@@ -412,9 +410,9 @@ module Hoodoo
         end
 
         # Back-end to #acquire and therefore, in turn, #acquire_in and
-        # #acquire_in_and_update. Returns an ActiveRecord::Relation instance
-        # which scopes the search for a record by +id+ and across any other
-        # columns specified by #acquire_with, via SQL +OR+.
+        # #acquire_in!. Returns an ActiveRecord::Relation instance which
+        # scopes the search for a record by +id+ and across any other columns
+        # specified by #acquire_with, via SQL +OR+.
         #
         # If you need to change the use of attribute +id+, specify a
         # different attribute with #acquire_with_id_substitute. In that case,
@@ -696,9 +694,9 @@ module Hoodoo
         #
         #     counter = Proc.new do | sql |
         #       begin
-        #         sql = sql.gsub( "'", "''" ) # Escape SQL for insertion below
+        #         escaped_sql = sql.gsub( "'", "''" )
         #         ActiveRecord::Base.connection.execute(
-        #           "SELECT estimated_count('#{ sql }')"
+        #           "SELECT estimated_count('#{ escaped_sql }')"
         #         ).first[ 'estimated_count' ].to_i
         #       rescue
         #         nil

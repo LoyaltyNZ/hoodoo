@@ -547,7 +547,7 @@ end
 <p>An even higher level approach through <code>context</code>, through which
 this method is called automatically:</p>
 
-<pre><code>resource = SomeModel.acquire_in_and_update( context )
+<pre><code>resource = SomeModel.acquire_in!( context )
 return if context.response.halt_processing?
 </code></pre>
 
@@ -778,7 +778,7 @@ resource does not exist.</p>
 <p>High level example for resource implementations with a <code>context</code>
 available, through which this method is called automatically:</p>
 
-<pre><code>resource = SomeModel.acquire_in_and_update( context )
+<pre><code>resource = SomeModel.acquire_in!( context )
 return if context.response.halt_processing?
 </code></pre>
 
