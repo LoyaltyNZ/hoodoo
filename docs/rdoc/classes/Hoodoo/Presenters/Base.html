@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Presenters::Base">
+
+    <meta name="description" content="Base functionality for JSON validation and presenter (rendering) layers. Subclass this to define a schema against which validation of inbound data or rendering of outbound data can be performed.">
+    <meta property="og:description" content="Base functionality for JSON validation and presenter (rendering) layers. Subclass this to define a schema against which validation of inbound data or rendering of outbound data can be performed.">
+
+    <meta name="keywords" content="Hoodoo::Presenters::Base class">
+    <meta name="keywords" content="schema, render, render_in, validate, walk, is_internationalised?, get_schema, get_schema_definition">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Presenters::Base
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/presenters/base_rb.html">lib/hoodoo/presenters/base.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="Base.html">Base</a> functionality for JSON validation and
 presenter (rendering) layers. Subclass this to define a schema against
 which validation of inbound data or rendering of outbound data can be
@@ -43,66 +50,62 @@ of the schema.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>G</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-get_schema">get_schema</a>,
-              </li>
-              <li>
-                <a href="#method-c-get_schema_definition">get_schema_definition</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-get_schema">get_schema</a>,
+                </li>
+                <li>
+                    <a href="#method-c-get_schema_definition">get_schema_definition</a>
+                </li>
+            </ul>
         </dd>
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-is_internationalised-3F">is_internationalised?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-is_internationalised-3F">is_internationalised?</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-render">render</a>,
-              </li>
-              <li>
-                <a href="#method-c-render_in">render_in</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-render">render</a>,
+                </li>
+                <li>
+                    <a href="#method-c-render_in">render_in</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-schema">schema</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-schema">schema</a>
+                </li>
+            </ul>
         </dd>
         <dt>V</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-validate">validate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-validate">validate</a>
+                </li>
+            </ul>
         </dd>
         <dt>W</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-walk">walk</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-walk">walk</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -111,96 +114,96 @@ of the schema.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-get_schema">
-              <b>get_schema</b>()
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-get_schema">
+            <b>get_schema</b>()
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-get_schema" name="method-c-get_schema" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return the schema graph. See also get_schema_definition.</p>
-            </div>
+        <div class="description">
+            <p>Return the schema graph. See also get_schema_definition.</p>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-get_schema_source')" id="l_method-c-get_schema_source">show</a>
-              </p>
-              <div id="method-c-get_schema_source" class="dyn-source">
+            </p>
+            <div id="method-c-get_schema_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 287</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema</span>
   <span class="ruby-ivar">@schema</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-get_schema_definition">
-              <b>get_schema_definition</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-get_schema_definition">
+            <b>get_schema_definition</b>()
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-get_schema_definition" name="method-c-get_schema_definition" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Read back the block that defined the schema graph. See also get_schema.</p>
-            </div>
+        <div class="description">
+            <p>Read back the block that defined the schema graph. See also get_schema.</p>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-get_schema_definition_source')" id="l_method-c-get_schema_definition_source">show</a>
-              </p>
-              <div id="method-c-get_schema_definition_source" class="dyn-source">
+            </p>
+            <div id="method-c-get_schema_definition_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 294</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">get_schema_definition</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">get_schema_definition</span>
   <span class="ruby-ivar">@schema_definition</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-is_internationalised-3F">
-              <b>is_internationalised?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-is_internationalised-3F">
+            <b>is_internationalised?</b>()
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-is_internationalised-3F" name="method-c-is_internationalised-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Does this presenter use internationalisation? Returns <code>true</code> if
+        <div class="description">
+            <p>Does this presenter use internationalisation? Returns <code>true</code> if
 so, else <code>false</code>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-is_internationalised-3F_source')" id="l_method-c-is_internationalised-3F_source">show</a>
-              </p>
-              <div id="method-c-is_internationalised-3F_source" class="dyn-source">
+            </p>
+            <div id="method-c-is_internationalised-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 281</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">is_internationalised?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_internationalised?</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">is_internationalised?</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-render">
-              <b>render</b>( data, uuid = nil, created_at = nil, language = &#39;en-nz&#39;, created_by = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-render">
+            <b>render</b>( data, uuid = nil, created_at = nil, language = &#39;en-nz&#39;, created_by = nil )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-render" name="method-c-render" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Given some data that should conform to the subclass presenter&#39;s schema,
+        <div class="description">
+            <p>Given some data that should conform to the subclass presenter&#39;s schema,
 render it to go from the input Ruby <a href="Hash.html">Hash</a>, to an
 output Ruby <a href="Hash.html">Hash</a> which will include default values
 - if any - present in the schema and will drop input fields not present in
@@ -271,18 +274,19 @@ but this is omitted, then a value of “en-nz” is used as a default.</p>
 the Session under which the resource instance was created. Absent if
 omitted.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-render_source')" id="l_method-c-render_source">show</a>
-              </p>
-              <div id="method-c-render_source" class="dyn-source">
+            </p>
+            <div id="method-c-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>,
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>,
                  <span class="ruby-identifier">uuid</span>       = <span class="ruby-keyword">nil</span>,
                  <span class="ruby-identifier">created_at</span> = <span class="ruby-keyword">nil</span>,
                  <span class="ruby-identifier">language</span>   = <span class="ruby-string">&#39;en-nz&#39;</span>,
@@ -309,8 +313,8 @@ omitted.</p>
     <span class="ruby-comment"># uses much the same approach).</span>
 
     <span class="ruby-identifier">name</span>  = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>
-    <span class="ruby-identifier">index</span> = ( <span class="ruby-identifier">name</span>.<span class="ruby-identifier">rindex</span>( <span class="ruby-string">&#39;::&#39;</span> ) <span class="ruby-operator">||</span> <span class="ruby-number">-2</span> ) <span class="ruby-operator">+</span> <span class="ruby-number">2</span>
-    <span class="ruby-identifier">kind</span>  = <span class="ruby-identifier">name</span>[ <span class="ruby-identifier">index</span> <span class="ruby-operator">..</span> <span class="ruby-number">-1</span> ]
+    <span class="ruby-identifier">index</span> = ( <span class="ruby-identifier">name</span>.<span class="ruby-identifier">rindex</span>( <span class="ruby-string">&#39;::&#39;</span> ) <span class="ruby-operator">||</span> <span class="ruby-value">-2</span> ) <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+    <span class="ruby-identifier">kind</span>  = <span class="ruby-identifier">name</span>[ <span class="ruby-identifier">index</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span> ]
 
     <span class="ruby-identifier">target</span>.<span class="ruby-identifier">merge!</span>( {
       <span class="ruby-string">&#39;id&#39;</span>         =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">uuid</span>,
@@ -325,17 +329,17 @@ omitted.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-render_in">
-              <b>render_in</b>( context, data, options = {} )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-render_in">
+            <b>render_in</b>( context, data, options = {} )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-render_in" name="method-c-render_in" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>A higher level version of <a href="Base.html#method-c-render">::render</a>,
+        <div class="description">
+            <p>A higher level version of <a href="Base.html#method-c-render">::render</a>,
 typically called from <a href="../../Hoodoo.html">Hoodoo</a> services in
 their resource implementation code.</p>
 
@@ -409,18 +413,19 @@ href="../ActiveRecord/Secure/ClassMethods.html#method-i-secure_with">Hoodoo::Act
 this leads (potentially) to the generation of the <code>secured_with</code>
 field and object value in the rendered resource data.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-render_in_source')" id="l_method-c-render_in_source">show</a>
-              </p>
-              <div id="method-c-render_in_source" class="dyn-source">
+            </p>
+            <div id="method-c-render_in_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 194</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render_in</span>( <span class="ruby-identifier">context</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">uuid</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:uuid</span>         ]
   <span class="ruby-identifier">created_at</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_at</span>   ]
   <span class="ruby-identifier">created_by</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:created_by</span>   ]
@@ -454,50 +459,51 @@ field and object value in the rendered resource data.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">target</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-schema">
-              <b>schema</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-schema">
+            <b>schema</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-schema" name="method-c-schema" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Define the JSON schema for validation.</p>
+        <div class="description">
+            <p>Define the JSON schema for validation.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Block that makes calls to the DSL defined in <a
 href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> in order to define the
 schema.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-schema_source')" id="l_method-c-schema_source">show</a>
-              </p>
-              <div id="method-c-schema_source" class="dyn-source">
+            </p>
+            <div id="method-c-schema_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 26</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">schema</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Presenters</span><span class="ruby-operator">::</span><span class="ruby-constant">Object</span>.<span class="ruby-identifier">new</span>
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">instance_eval</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema_definition</span> = <span class="ruby-identifier">block</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-validate">
-              <b>validate</b>( data, as_resource = false )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-validate">
+            <b>validate</b>( data, as_resource = false )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-validate" name="method-c-validate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Is the given rendering of a resource valid? Returns an array of Error
+        <div class="description">
+            <p>Is the given rendering of a resource valid? Returns an array of Error
 Primitive types (as hashes); this will be empty if the data given is valid.</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
 <dd>
@@ -510,18 +516,19 @@ validated against &#39;this&#39; schema. Keys must be Strings, not Symbols.</p>
 <code>language</code>. Otherwise, only basic data schema is examined.
 Optional; default is <code>false</code>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-validate_source')" id="l_method-c-validate_source">show</a>
-              </p>
-              <div id="method-c-validate_source" class="dyn-source">
+            </p>
+            <div id="method-c-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 241</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">as_resource</span> = <span class="ruby-keyword">false</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">as_resource</span>
@@ -546,39 +553,40 @@ Optional; default is <code>false</code>.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-walk">
-              <b>walk</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-walk">
+            <b>walk</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/Base.html#method-c-walk" name="method-c-walk" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Walk the schema graph and invoke the given block on each field within it,
+        <div class="description">
+            <p>Walk the schema graph and invoke the given block on each field within it,
 passing the field instances to the block for each call.</p>
 
 <p>All fields including the top-level “root” property (which has an empty
 string for a name) will be passed to the block in order of definition,
 recursing into nested objects, arrays and so-on as each is encountered.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-walk_source')" id="l_method-c-walk_source">show</a>
-              </p>
-              <div id="method-c-walk_source" class="dyn-source">
+            </p>
+            <div id="method-c-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/base.rb, line 274</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-ivar">@schema</span>.<span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

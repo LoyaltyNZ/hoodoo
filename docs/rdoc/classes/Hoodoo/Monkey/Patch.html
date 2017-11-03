@@ -9,10 +9,16 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Monkey::Patch">
+
+    <meta name="description" content="Out-of-the-box regular monkey patches (versus chaos monkeys) for Hoodoo. These typically predictably extend or modify existing Hoodoo behaviour. See Hoodoo::Monkey for details.">
+    <meta property="og:description" content="Out-of-the-box regular monkey patches (versus chaos monkeys) for Hoodoo. These typically predictably extend or modify existing Hoodoo behaviour. See Hoodoo::Monkey for details.">
+
+    <meta name="keywords" content="Hoodoo::Monkey::Patch class">
 </head>
 
 <body>
@@ -23,6 +29,8 @@
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/monkey/monkey_rb.html">lib/hoodoo/monkey/monkey.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/monkey/patch/active_record_dated_finder_additions_rb.html">lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb</a></li>
+            <li><a href="../../../files/lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions_rb.html">lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/monkey/patch/datadog_traced_amqp_rb.html">lib/hoodoo/monkey/patch/datadog_traced_amqp.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/monkey/patch/newrelic_middleware_analytics_rb.html">lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb</a></li>
             <li><a href="../../../files/lib/hoodoo/monkey/patch/newrelic_traced_amqp_rb.html">lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb</a></li>
@@ -31,7 +39,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Out-of-the-box regular monkey patches (versus chaos monkeys) for <a
 href="../../Hoodoo.html">Hoodoo</a>. These typically predictably extend or
 modify existing <a href="../../Hoodoo.html">Hoodoo</a> behaviour. See <a
@@ -41,23 +49,28 @@ href="../Monkey.html">Hoodoo::Monkey</a> for details.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Patch/DatadogTracedAMQP.html">Hoodoo::Monkey::Patch::DatadogTracedAMQP</a>
+            <span class="type">MODULE</span>
+            <a href="Patch/ActiveRecordDatedFinderAdditions.html">Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions</a>
         </li>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Patch/NewRelicMiddlewareAnalytics.html">Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics</a>
+            <span class="type">MODULE</span>
+            <a href="Patch/ActiveRecordManuallyDatedFinderAdditions.html">Hoodoo::Monkey::Patch::ActiveRecordManuallyDatedFinderAdditions</a>
         </li>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a>
+            <span class="type">MODULE</span>
+            <a href="Patch/DatadogTracedAMQP.html">Hoodoo::Monkey::Patch::DatadogTracedAMQP</a>
+        </li>
+        <li>
+            <span class="type">MODULE</span>
+            <a href="Patch/NewRelicMiddlewareAnalytics.html">Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics</a>
+        </li>
+        <li>
+            <span class="type">MODULE</span>
+            <a href="Patch/NewRelicTracedAMQP.html">Hoodoo::Monkey::Patch::NewRelicTracedAMQP</a>
         </li>
     </ul>
 
@@ -67,12 +80,7 @@ href="../Monkey.html">Hoodoo::Monkey</a> for details.</p>
 
 
 
-
-
-
-
-
-    <!-- Methods -->
+<!-- Methods -->
 </div>
 
     </div>

@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Client::Endpoint::HTTPBased">
+
+    <meta name="description" content="Base class for endpoints that have an HTTP basis to their request and responses, even if the underlying transport is not HTTP.">
+    <meta property="og:description" content="Base class for endpoints that have an HTTP basis to their request and responses, even if the underlying transport is not HTTP.">
+
+    <meta name="keywords" content="Hoodoo::Client::Endpoint::HTTPBased class">
+    <meta name="keywords" content="get_data_for_request, get_data_for_response">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Client::Endpoint::HTTPBased
-                <span class="parent">&lt;
-                    <a href="../Endpoint.html">Hoodoo::Client::Endpoint</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="../Endpoint.html">Hoodoo::Client::Endpoint</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/client/endpoint/endpoints/http_based_rb.html">lib/hoodoo/client/endpoint/endpoints/http_based.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Base class for endpoints that have an <a href="HTTP.html">HTTP</a> basis to
 their request and responses, even if the underlying transport is not <a
 href="HTTP.html">HTTP</a>. This is basically a collection of library-like
@@ -49,40 +56,36 @@ href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">CLASS</span>
-          <a href="HTTPBased/DataForRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DataForRequest</a>
+            <span class="type">CLASS</span>
+            <a href="HTTPBased/DataForRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DataForRequest</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="HTTPBased/DescriptionOfRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest</a>
+            <span class="type">CLASS</span>
+            <a href="HTTPBased/DescriptionOfRequest.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfRequest</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="HTTPBased/DescriptionOfResponse.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse</a>
+            <span class="type">CLASS</span>
+            <a href="HTTPBased/DescriptionOfResponse.html">Hoodoo::Client::Endpoint::HTTPBased::DescriptionOfResponse</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>G</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-get_data_for_request">get_data_for_request</a>,
-              </li>
-              <li>
-                <a href="#method-i-get_data_for_response">get_data_for_response</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-get_data_for_request">get_data_for_request</a>,
+                </li>
+                <li>
+                    <a href="#method-i-get_data_for_response">get_data_for_response</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -91,20 +94,17 @@ href="AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-get_data_for_request">
-              <b>get_data_for_request</b>( description_of_request )
+    <div class="sectiontitle">Instance Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-get_data_for_request">
+            <b>get_data_for_request</b>( description_of_request )
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_request" name="method-i-get_data_for_request" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Preprocess a high level request description, returning <a
+        <div class="description">
+            <p>Preprocess a high level request description, returning <a
 href="HTTP.html">HTTP</a> orientated compiled data as a <a
 href="HTTPBased/DataForRequest.html">DataForRequest</a> instance.</p>
 <dl class="rdoc-list note-list"><dt><code>description_of_request</code>
@@ -112,18 +112,19 @@ href="HTTPBased/DataForRequest.html">DataForRequest</a> instance.</p>
 <p><a href="HTTPBased/DescriptionOfRequest.html">DescriptionOfRequest</a>
 instance.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-get_data_for_request_source')" id="l_method-i-get_data_for_request_source">show</a>
-              </p>
-              <div id="method-i-get_data_for_request_source" class="dyn-source">
+            </p>
+            <div id="method-i-get_data_for_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 184</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get_data_for_request</span>( <span class="ruby-identifier">description_of_request</span> )
   <span class="ruby-identifier">body_hash</span>  = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">body_hash</span>  )
   <span class="ruby-identifier">query_hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">query_hash</span> )
   <span class="ruby-identifier">ident</span>      = <span class="ruby-identifier">description_of_request</span>.<span class="ruby-identifier">ident</span>.<span class="ruby-identifier">to_s</span>
@@ -228,17 +229,17 @@ instance.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-get_data_for_response">
-              <b>get_data_for_response</b>( description_of_response )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-get_data_for_response">
+            <b>get_data_for_response</b>( description_of_response )
             <a href="../../../../classes/Hoodoo/Client/Endpoint/HTTPBased.html#method-i-get_data_for_response" name="method-i-get_data_for_response" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
+        <div class="description">
+            <p>Process a raw <a href="HTTP.html">HTTP</a> response description, returning
 an instance of <a
 href="../AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
 href="../AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> with either
@@ -248,18 +249,19 @@ processed body data inside, or error data associated.</p>
 <p><a href="HTTPBased/DescriptionOfResponse.html">DescriptionOfResponse</a>
 instance.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-get_data_for_response_source')" id="l_method-i-get_data_for_response_source">show</a>
-              </p>
-              <div id="method-i-get_data_for_response_source" class="dyn-source">
+            </p>
+            <div id="method-i-get_data_for_response_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoints/http_based.rb, line 296</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">get_data_for_response</span>( <span class="ruby-identifier">description_of_response</span> )
   <span class="ruby-identifier">code</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">http_status_code</span>
   <span class="ruby-identifier">body</span> = <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">raw_body_data</span>
 
@@ -277,17 +279,17 @@ instance.</p>
     )
 
     <span class="ruby-keyword">case</span> <span class="ruby-identifier">code</span>
-      <span class="ruby-keyword">when</span> <span class="ruby-number">404</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">404</span>
         <span class="ruby-keyword">return</span> <span class="ruby-identifier">generate_404_response_for</span>( <span class="ruby-identifier">description_of_response</span>.<span class="ruby-identifier">action</span> )
-      <span class="ruby-keyword">when</span> <span class="ruby-number">408</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">408</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>( <span class="ruby-string">&#39;platform.timeout&#39;</span> )
-      <span class="ruby-keyword">when</span> <span class="ruby-number">200</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">200</span>
         <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
           <span class="ruby-string">&#39;platform.fault&#39;</span>,
           <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Could not parse retrieved body data despite receiving HTTP status code 200&#39;</span>,
           <span class="ruby-value">:reference</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">RuntimeError</span>.<span class="ruby-identifier">new</span>( <span class="ruby-node">&quot;#{ body }&quot;</span> ) }
         )
-      <span class="ruby-keyword">when</span> <span class="ruby-number">204</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-value">204</span>
         <span class="ruby-keyword">if</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">response_options</span>[ <span class="ruby-string">&#39;deja_vu&#39;</span> ] <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;confirmed&#39;</span>
           <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
             <span class="ruby-string">&#39;platform.fault&#39;</span>,
@@ -356,9 +358,9 @@ instance.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">parsed</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

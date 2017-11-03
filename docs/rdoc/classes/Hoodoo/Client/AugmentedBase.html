@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Client::AugmentedBase">
+
+    <meta name="description" content="Base mixin for Hoodoo::Client::AugmentedHash and Hoodoo::Client::AugmentedArray, used by the Hoodoo::Client::Endpoint family for return values in its resource calling API - see:  Hoodoo::Client::Endpo.">
+    <meta property="og:description" content="Base mixin for Hoodoo::Client::AugmentedHash and Hoodoo::Client::AugmentedArray, used by the Hoodoo::Client::Endpoint family for return values in its resource calling API - see:  Hoodoo::Client::Endpo.">
+
+    <meta name="keywords" content="Hoodoo::Client::AugmentedBase class">
+    <meta name="keywords" content="adds_errors_to?, platform_errors, set_platform_errors">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Base mixin for <a
 href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> and <a
 href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>, used by the
@@ -59,36 +66,32 @@ callers wanting to communicate with resources from “outside the system”.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-adds_errors_to-3F">adds_errors_to?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-adds_errors_to-3F">adds_errors_to?</a>
+                </li>
+            </ul>
         </dd>
         <dt>P</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-platform_errors">platform_errors</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-platform_errors">platform_errors</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-set_platform_errors">set_platform_errors</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-set_platform_errors">set_platform_errors</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -96,15 +99,12 @@ callers wanting to communicate with resources from “outside the system”.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-response_options'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-response_options'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>response_options</td>
             <td class='attr-desc'><p>On success, this Hash may be updated with options describing
@@ -124,20 +124,20 @@ successful calls.</p>
 may be <code>nil</code>, though <a href="../../Hoodoo.html">Hoodoo</a>
 endeavours to avoid this and at least fill in <code>interaction_id</code>
 where possible.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-adds_errors_to-3F">
-              <b>adds_errors_to?</b>( collection )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-adds_errors_to-3F">
+            <b>adds_errors_to?</b>( collection )
             <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-adds_errors_to-3F" name="method-i-adds_errors_to-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>This call is typically used by resource endpoint implementations (“service
+        <div class="description">
+            <p>This call is typically used by resource endpoint implementations (“service
 authors”) during inter-resource calls, rather than by external entities
 calling into a system via <a href="../Client.html">Hoodoo::Client</a>.</p>
 
@@ -191,18 +191,19 @@ The collection you pass is updated with any errors noted internally via
 (usually-middleware-automatically-called) method <a
 href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-adds_errors_to-3F_source')" id="l_method-i-adds_errors_to-3F_source">show</a>
-              </p>
-              <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-adds_errors_to-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 81</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">adds_errors_to?</span>( <span class="ruby-identifier">collection</span> )
   <span class="ruby-identifier">to_add</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">platform_errors</span>()
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">to_add</span>.<span class="ruby-identifier">has_errors?</span>
@@ -212,17 +213,17 @@ href="AugmentedBase.html#method-i-set_platform_errors">set_platform_errors</a>.<
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-platform_errors">
-              <b>platform_errors</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-platform_errors">
+            <b>platform_errors</b>()
             <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-platform_errors" name="method-i-platform_errors" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>This call is typically used by external entities calling into a system via
+        <div class="description">
+            <p>This call is typically used by external entities calling into a system via
 <a href="../Client.html">Hoodoo::Client</a>.</p>
 
 <p>Returns a <a href="../Errors.html">Hoodoo::Errors</a> instance that&#39;s
@@ -270,31 +271,32 @@ one line of (very slightly less obvious) code, too:</p>
 
 <pre><code>return if context.response.add_errors( list.platform_errors )
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-platform_errors_source')" id="l_method-i-platform_errors_source">show</a>
-              </p>
-              <div id="method-i-platform_errors_source" class="dyn-source">
+            </p>
+            <div id="method-i-platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 133</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">platform_errors</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">platform_errors</span>
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Errors</span>.<span class="ruby-identifier">new</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set_platform_errors">
-              <b>set_platform_errors</b>( errors )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set_platform_errors">
+            <b>set_platform_errors</b>( errors )
             <a href="../../../classes/Hoodoo/Client/AugmentedBase.html#method-i-set_platform_errors" name="method-i-set_platform_errors" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Sets the <a href="../Errors.html">Hoodoo::Errors</a> instance used by <a
+        <div class="description">
+            <p>Sets the <a href="../Errors.html">Hoodoo::Errors</a> instance used by <a
 href="AugmentedBase.html#method-i-adds_errors_to-3F">adds_errors_to?</a> or
 returned by <a
 href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>.</p>
@@ -303,23 +305,24 @@ href="AugmentedBase.html#method-i-platform_errors">platform_errors</a>.</p>
 as part of general error handling, though client code may find other uses
 that are independent of the inter-resource call case wherein the method may
 be safely invoked.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_platform_errors_source')" id="l_method-i-set_platform_errors_source">show</a>
-              </p>
-              <div id="method-i-set_platform_errors_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_platform_errors_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/augmented_base.rb, line 145</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_platform_errors</span>( <span class="ruby-identifier">errors</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_platform_errors</span>( <span class="ruby-identifier">errors</span> )
   <span class="ruby-ivar">@nz_co_loyalty_platform_errors</span> = <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

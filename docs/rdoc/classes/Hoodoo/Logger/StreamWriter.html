@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Logger::StreamWriter">
+
+    <meta name="description" content="Writes unstructured messages to (presumed) fast output streams such as $stdout. Hoodoo::Logger::FastWriter subclass. See also Hoodoo::Logger.">
+    <meta property="og:description" content="Writes unstructured messages to (presumed) fast output streams such as $stdout. Hoodoo::Logger::FastWriter subclass. See also Hoodoo::Logger.">
+
+    <meta name="keywords" content="Hoodoo::Logger::StreamWriter class">
+    <meta name="keywords" content="new, report">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Logger::StreamWriter
-                <span class="parent">&lt;
-                    <a href="FastWriter.html">Hoodoo::Logger::FastWriter</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="FastWriter.html">Hoodoo::Logger::FastWriter</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/logger/writers/stream_writer_rb.html">lib/hoodoo/logger/writers/stream_writer.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Writes unstructured messages to (presumed) fast output streams such as
 <code>$stdout</code>. <a
 href="FastWriter.html">Hoodoo::Logger::FastWriter</a> subclass. See also <a
@@ -42,28 +49,24 @@ href="../Logger.html">Hoodoo::Logger</a>.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-report">report</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-report">report</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -72,7 +75,7 @@ href="../Logger.html">Hoodoo::Logger</a>.</p>
     <ul>
         <li>
             <a href="FlattenerMixin.html">
-              Hoodoo::Logger::FlattenerMixin
+                Hoodoo::Logger::FlattenerMixin
             </a>
         </li>
     </ul>
@@ -81,20 +84,17 @@ href="../Logger.html">Hoodoo::Logger</a>.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( output_stream = $stdout )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( output_stream = $stdout )
             <a href="../../../classes/Hoodoo/Logger/StreamWriter.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create a stream writer instance. Although you could initialize this class
+        <div class="description">
+            <p>Create a stream writer instance. Although you could initialize this class
 with a slow output stream, they&#39;re expected to be fast (e.g. terminal
 output) as this is a <a
 href="FastWriter.html">Hoodoo::Logger::FastWriter</a> subclass.</p>
@@ -106,50 +106,53 @@ href="FileWriter.html">Hoodoo::Logger::FileWriter</a> class instead.</p>
 <p>Optional I/O stream instance; default is +$stdout+. The instance must
 provide a <code>puts</code> implementation.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/stream_writer.rb, line 32</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">output_stream</span> = <span class="ruby-identifier">$stdout</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">output_stream</span> = <span class="ruby-identifier">$stdout</span> )
   <span class="ruby-ivar">@output_stream</span> = <span class="ruby-identifier">output_stream</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-report">
-              <b>report</b>( log_level, component, code, data )
+        </div>
+    </div>
+
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-report">
+            <b>report</b>( log_level, component, code, data )
             <a href="../../../classes/Hoodoo/Logger/StreamWriter.html#method-i-report" name="method-i-report" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>See <a
+        <div class="description">
+            <p>See <a
 href="WriterMixin.html#method-i-report">Hoodoo::Logger::WriterMixin#report</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-report_source')" id="l_method-i-report_source">show</a>
-              </p>
-              <div id="method-i-report_source" class="dyn-source">
+            </p>
+            <div id="method-i-report_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/logger/writers/stream_writer.rb, line 38</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">report</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> )
   <span class="ruby-ivar">@output_stream</span>.<span class="ruby-identifier">puts</span>( <span class="ruby-identifier">flatten</span>( <span class="ruby-identifier">log_level</span>, <span class="ruby-identifier">component</span>, <span class="ruby-identifier">code</span>, <span class="ruby-identifier">data</span> ) )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Presenters::Hash">
+
+    <meta name="description" content="A JSON hash schema member.">
+    <meta property="og:description" content="A JSON hash schema member.">
+
+    <meta name="keywords" content="Hoodoo::Presenters::Hash class">
+    <meta name="keywords" content="key, keys, validate, render, walk">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Presenters::Hash
-                <span class="parent">&lt;
-                    <a href="Field.html">Hoodoo::Presenters::Field</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="Field.html">Hoodoo::Presenters::Field</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/presenters/types/hash_rb.html">lib/hoodoo/presenters/types/hash.rb</a></li>
@@ -31,14 +38,10 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>A JSON hash schema member</p>
 
     </div>
-
-
-
-
 
 
 
@@ -48,38 +51,38 @@
     <dl class="methods">
         <dt>K</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-key">key</a>,
-              </li>
-              <li>
-                <a href="#method-i-keys">keys</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-key">key</a>,
+                </li>
+                <li>
+                    <a href="#method-i-keys">keys</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-render">render</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-render">render</a>
+                </li>
+            </ul>
         </dd>
         <dt>V</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-validate">validate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-validate">validate</a>
+                </li>
+            </ul>
         </dd>
         <dt>W</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-walk">walk</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-walk">walk</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -88,7 +91,7 @@
     <ul>
         <li>
             <a href="BaseDSL.html">
-              Hoodoo::Presenters::BaseDSL
+                Hoodoo::Presenters::BaseDSL
             </a>
         </li>
     </ul>
@@ -96,33 +99,30 @@
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-properties'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-properties'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>properties</td>
             <td class='attr-desc'><p>The properties of this object, a <code>hash</code> of <code>Field</code>
 instances.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-key">
-              <b>key</b>( name, options = {}, &amp;block )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-key">
+            <b>key</b>( name, options = {}, &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/Hash.html#method-i-key" name="method-i-key" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p><a href="Hash.html">Hash</a> DSL: Define a specific named key that is
+        <div class="description">
+            <p><a href="Hash.html">Hash</a> DSL: Define a specific named key that is
 allowed (or even required) in the hash. The optional block uses <a
 href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> to describe the
 required form of the key&#39;s value. If the block is omitted, any value is
@@ -171,18 +171,19 @@ end</code></pre>
     }
   }
 }</code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-key_source')" id="l_method-i-key_source">show</a>
-              </p>
-              <div id="method-i-key_source" class="dyn-source">
+            </p>
+            <div id="method-i-key_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 55</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">key</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">key</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@specific</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#keys and then \#key in the same hash definition - use one or the other&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -216,17 +217,17 @@ end</code></pre>
     <span class="ruby-identifier">internationalised</span>()
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-keys">
-              <b>keys</b>( options = {}, &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-keys">
+            <b>keys</b>( options = {}, &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/Hash.html#method-i-keys" name="method-i-keys" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p><a href="Hash.html">Hash</a> DSL: Define general parameters allowed for
+        <div class="description">
+            <p><a href="Hash.html">Hash</a> DSL: Define general parameters allowed for
 keys in a <a href="Hash.html">Hash</a> and, if a block is given, use <a
 href="BaseDSL.html">Hoodoo::Presenters::BaseDSL</a> to describe how any of
 the values in the <a href="Hash.html">Hash</a> must look.</p>
@@ -289,18 +290,19 @@ just a single text field. This JSON would validate against the definition:</p>
   }
 }
 </code></pre>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-keys_source')" id="l_method-i-keys_source">show</a>
-              </p>
-              <div id="method-i-keys_source" class="dyn-source">
+            </p>
+            <div id="method-i-keys_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 148</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">keys</span>( <span class="ruby-identifier">options</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@specific</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Can&#39;t use \#key and then \#keys in the same hash definition, or use \#keys more than once&quot;</span>
   <span class="ruby-keyword">end</span>
@@ -329,17 +331,17 @@ just a single text field. This JSON would validate against the definition:</p>
     <span class="ruby-identifier">internationalised</span>()
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-render">
-              <b>render</b>( data, target )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-render">
+            <b>render</b>( data, target )
             <a href="../../../classes/Hoodoo/Presenters/Hash.html#method-i-render" name="method-i-render" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Render a hash into the target hash based on the internal state that
+        <div class="description">
+            <p>Render a hash into the target hash based on the internal state that
 describes this instance&#39;s current path (position in the heirarchy of
 nested schema entities).</p>
 <dl class="rdoc-list note-list"><dt><code>data</code>
@@ -351,18 +353,19 @@ nested schema entities).</p>
 leading to nested Hashes is built via +super()+, with the final key entry
 yielding the rendered hash.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-render_source')" id="l_method-i-render_source">show</a>
-              </p>
-              <div id="method-i-render_source" class="dyn-source">
+            </p>
+            <div id="method-i-render_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 286</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">target</span> )
 
   <span class="ruby-comment"># Data provided is explicitly nil or not a hash? Don&#39;t need to render</span>
   <span class="ruby-comment"># anything beyond &#39;nil&#39; at the field (the not-hash case covers nil and</span>
@@ -424,30 +427,31 @@ yielding the rendered hash.</p>
     <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">rendered</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">rendered</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-validate">
-              <b>validate</b>( data, path = &#39;&#39; )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-validate">
+            <b>validate</b>( data, path = &#39;&#39; )
             <a href="../../../classes/Hoodoo/Presenters/Hash.html#method-i-validate" name="method-i-validate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Check if data is a valid <a href="Hash.html">Hash</a> and return a <a
+        <div class="description">
+            <p>Check if data is a valid <a href="Hash.html">Hash</a> and return a <a
 href="../Errors.html">Hoodoo::Errors</a> instance.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
-              </p>
-              <div id="method-i-validate_source" class="dyn-source">
+            </p>
+            <div id="method-i-validate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
@@ -540,34 +544,35 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
 
   <span class="ruby-identifier">errors</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-walk">
-              <b>walk</b>( &amp;block )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-walk">
+            <b>walk</b>( &amp;block )
             <a href="../../../classes/Hoodoo/Presenters/Hash.html#method-i-walk" name="method-i-walk" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Invoke a given block, passing this item; call recursively for any defined
+        <div class="description">
+            <p>Invoke a given block, passing this item; call recursively for any defined
 sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
 <dl class="rdoc-list note-list"><dt>&amp;block
 <dd>
 <p>Mandatory block, which is passed &#39;self&#39; when called.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-walk_source')" id="l_method-i-walk_source">show</a>
-              </p>
-              <div id="method-i-walk_source" class="dyn-source">
+            </p>
+            <div id="method-i-walk_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/hash.rb, line 354</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">walk</span>( <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
   <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>( <span class="ruby-keyword">self</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@properties</span>.<span class="ruby-identifier">nil?</span>
@@ -587,9 +592,9 @@ sub-fields too. See Hoodoo::Presenters::Base#walk for why.</p>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

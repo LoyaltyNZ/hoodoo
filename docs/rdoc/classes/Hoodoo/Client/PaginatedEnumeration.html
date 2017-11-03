@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Client::PaginatedEnumeration">
+
+    <meta name="description" content="Ruby mixin providing an enumeration mechanism, allowing the caller to iterate over all the resource instances in the list, automatically performing the necessary pagination behind the scenes.">
+    <meta property="og:description" content="Ruby mixin providing an enumeration mechanism, allowing the caller to iterate over all the resource instances in the list, automatically performing the necessary pagination behind the scenes.">
+
+    <meta name="keywords" content="Hoodoo::Client::PaginatedEnumeration class">
+    <meta name="keywords" content="enumerate_all">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Ruby mixin providing an enumeration mechanism, allowing the caller to
 iterate over all the resource instances in the list, automatically
 performing the necessary pagination behind the scenes.</p>
@@ -38,20 +45,16 @@ performing the necessary pagination behind the scenes.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-enumerate_all">enumerate_all</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-enumerate_all">enumerate_all</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -59,15 +62,12 @@ performing the necessary pagination behind the scenes.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-next_page_proc'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-next_page_proc'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>next_page_proc</td>
             <td class='attr-desc'><p>Proc called by <a
@@ -75,20 +75,20 @@ href="PaginatedEnumeration.html#method-i-enumerate_all">#enumerate_all</a>
 to provide the next &#39;page&#39; of values to be enumerated through.
 Returns an <a
 href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-enumerate_all">
-              <b>enumerate_all</b>()
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-enumerate_all">
+            <b>enumerate_all</b>()
             <a href="../../../classes/Hoodoo/Client/PaginatedEnumeration.html#method-i-enumerate_all" name="method-i-enumerate_all" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Yields each resource instance, automatically paginating through the entire
+        <div class="description">
+            <p>Yields each resource instance, automatically paginating through the entire
 set of resources.</p>
 
 <p>Provide a block to process each resource instance. For example:</p>
@@ -106,18 +106,19 @@ end</code></pre>
 href="AugmentedHash.html">Hoodoo::Client::AugmentedHash</a> representation
 of the requested resource instance. The caller must check for errors on the
 value yielded with each iteration, as per the example above.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-enumerate_all_source')" id="l_method-i-enumerate_all_source">show</a>
-              </p>
-              <div id="method-i-enumerate_all_source" class="dyn-source">
+            </p>
+            <div id="method-i-enumerate_all_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/paginated_enumeration.rb, line 43</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">enumerate_all</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">enumerate_all</span>
 
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Must provide a block to enumerate_all&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">block_given?</span>
 
@@ -126,7 +127,7 @@ value yielded with each iteration, as per the example above.</p>
 
   <span class="ruby-identifier">loop</span> <span class="ruby-keyword">do</span>
 
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
 
       <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">has_errors?</span>
         <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Client::PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication&#39;</span>
@@ -151,9 +152,9 @@ value yielded with each iteration, as per the example above.</p>
   <span class="ruby-keyword">end</span>
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

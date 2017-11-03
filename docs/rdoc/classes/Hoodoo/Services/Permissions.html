@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Permissions">
+
+    <meta name="description" content="The Permissions class provides a way to store and recall information on action behaviour for resources.">
+    <meta property="og:description" content="The Permissions class provides a way to store and recall information on action behaviour for resources.">
+
+    <meta name="keywords" content="Hoodoo::Services::Permissions class">
+    <meta name="keywords" content="new, set_default_fallback, set_default, set_resource_fallback, set_resource, permitted?, to_h, from_h!, merge!">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Permissions
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/data/types/permissions_rb.html">lib/hoodoo/data/types/permissions.rb</a></li>
@@ -35,7 +42,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>The <a href="Permissions.html">Permissions</a> class provides a way to
 store and recall information on action behaviour for resources. It is just
 a way to store and query this information; actually enforcing the result is
@@ -110,108 +117,147 @@ puts JSON.pretty_generate( p.to_h() )
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>F</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-from_h-21">from_h!</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-from_h-21">from_h!</a>
+                </li>
+            </ul>
         </dd>
         <dt>M</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-merge-21">merge!</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-merge-21">merge!</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>P</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-permitted-3F">permitted?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-permitted-3F">permitted?</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-set_default">set_default</a>,
-              </li>
-              <li>
-                <a href="#method-i-set_default_fallback">set_default_fallback</a>,
-              </li>
-              <li>
-                <a href="#method-i-set_resource">set_resource</a>,
-              </li>
-              <li>
-                <a href="#method-i-set_resource_fallback">set_resource_fallback</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-set_default">set_default</a>,
+                </li>
+                <li>
+                    <a href="#method-i-set_default_fallback">set_default_fallback</a>,
+                </li>
+                <li>
+                    <a href="#method-i-set_resource">set_resource</a>,
+                </li>
+                <li>
+                    <a href="#method-i-set_resource_fallback">set_resource_fallback</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-to_h">to_h</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-to_h">to_h</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
 
 
 
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='DENY'>
+            <td class="attr-name">DENY</td>
+            <td>=</td>
+            <td class="attr-value"><pre>&#39;deny&#39;</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Permission is denied; the action should not be permitted.</p></td>
+        </tr>
+        <tr valign='top' id='ALLOW'>
+            <td class="attr-name">ALLOW</td>
+            <td>=</td>
+            <td class="attr-value"><pre>&#39;allow&#39;</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Permission is granted; the action should be permitted.</p></td>
+        </tr>
+        <tr valign='top' id='ASK'>
+            <td class="attr-name">ASK</td>
+            <td>=</td>
+            <td class="attr-value"><pre>&#39;ask&#39;</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Something else (e.g. a service application) needs to be asked to see if it
+permits the action.</p></td>
+        </tr>
+        <tr valign='top' id='ALLOWED_POLICIES'>
+            <td class="attr-name">ALLOWED_POLICIES</td>
+            <td>=</td>
+            <td class="attr-value"><pre>[
+DENY,
+ALLOW,
+ASK
+]</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>All currently known (allowed/supported) permission policies.</p></td>
+        </tr>
+    </table>
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( hash = nil )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( hash = nil )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create a new <a href="Permissions.html">Permissions</a> instance,
+        <div class="description">
+            <p>Create a new <a href="Permissions.html">Permissions</a> instance,
 optionally from a Hash of the format returned by <a
 href="Permissions.html#method-i-to_h">to_h</a>.</p>
 
 <p>By default the object is initialised with a default fallback which denies
 all actions for all resources.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-ivar">@permissions</span> = {}
     <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-constant">DENY</span> )
@@ -219,49 +265,51 @@ all actions for all resources.</p>
     <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-from_h-21">
-              <b>from_h!</b>( hash )
-            <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-from_h-21" name="method-i-from_h-21" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Overwrite this instances&#39;s permissions with those from the given Hash.</p>
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-from_h-21">
+            <b>from_h!</b>( hash )
+            <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-from_h-21" name="method-i-from_h-21" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Overwrite this instances&#39;s permissions with those from the given Hash.</p>
 <dl class="rdoc-list note-list"><dt>hash
 <dd>
 <p><a href="Permissions.html">Permissions</a> hash, which must come (directly
 or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
 call.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
-              </p>
-              <div id="method-i-from_h-21_source" class="dyn-source">
+            </p>
+            <div id="method-i-from_h-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 214</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">from_h!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-merge-21">
-              <b>merge!</b>( hash )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-merge-21">
+            <b>merge!</b>( hash )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-merge-21" name="method-i-merge-21" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Merge the permissions described by the given Hash with those inside this
+        <div class="description">
+            <p>Merge the permissions described by the given Hash with those inside this
 instance. This will add to, or overwrite permissions with those from the
 given input Hash.</p>
 <dl class="rdoc-list note-list"><dt><code>hash</code>
@@ -270,34 +318,35 @@ given input Hash.</p>
 or indirectly) from a <a href="Permissions.html#method-i-to_h">to_h</a>
 call.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-merge-21_source')" id="l_method-i-merge-21_source">show</a>
-              </p>
-              <div id="method-i-merge-21_source" class="dyn-source">
+            </p>
+            <div id="method-i-merge-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 225</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">merge!</span>( <span class="ruby-identifier">hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">merge!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-ivar">@permissions</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_merge_into</span>(
     <span class="ruby-ivar">@permissions</span>,
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
   )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-permitted-3F">
-              <b>permitted?</b>( resource_name, action_name )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-permitted-3F">
+            <b>permitted?</b>( resource_name, action_name )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-permitted-3F" name="method-i-permitted-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>For the given resource, is the given action permitted? Returns one of the
+        <div class="description">
+            <p>For the given resource, is the given action permitted? Returns one of the
 <a href="Permissions.html#ALLOW">ALLOW</a>, <a
 href="Permissions.html#DENY">DENY</a> or <a
 href="Permissions.html#ASK">ASK</a> constant values.</p>
@@ -310,18 +359,19 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
 <p>Action as a String or Symbol, from: <code>list</code>, <code>show</code>,
 <code>create</code>, <code>update</code> or <code>delete</code>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-permitted-3F_source')" id="l_method-i-permitted-3F_source">show</a>
-              </p>
-              <div id="method-i-permitted-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-permitted-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">permitted?</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -338,17 +388,17 @@ href="Permissions.html#ASK">ASK</a> constant values.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">result</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DENY</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set_default">
-              <b>set_default</b>( action_name, permission )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set_default">
+            <b>set_default</b>( action_name, permission )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-set_default" name="method-i-set_default" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the default permission for the given action. If a resource does not
+        <div class="description">
+            <p>Set the default permission for the given action. If a resource does not
 have a specific entry for it in the <a
 href="Permissions.html">Permissions</a> object but the action matches the
 given name, then this permission is used.</p>
@@ -362,35 +412,36 @@ given name, then this permission is used.</p>
 href="Permissions.html#ALLOW">ALLOW</a> or <a
 href="Permissions.html#ASK">ASK</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_default_source')" id="l_method-i-set_default_source">show</a>
-              </p>
-              <div id="method-i-set_default_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_default_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 129</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_default</span>( <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ][ <span class="ruby-identifier">action_name</span> ] = <span class="ruby-identifier">permission</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set_default_fallback">
-              <b>set_default_fallback</b>( permission )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set_default_fallback">
+            <b>set_default_fallback</b>( permission )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-set_default_fallback" name="method-i-set_default_fallback" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the default fallback for actions. If a resource does not have a
+        <div class="description">
+            <p>Set the default fallback for actions. If a resource does not have a
 specific entry for it in the <a href="Permissions.html">Permissions</a>
 object and if the action does not have a default permission, then this
 permission used.</p>
@@ -400,34 +451,35 @@ permission used.</p>
 href="Permissions.html#ALLOW">ALLOW</a> or <a
 href="Permissions.html#ASK">ASK</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_default_fallback_source')" id="l_method-i-set_default_fallback_source">show</a>
-              </p>
-              <div id="method-i-set_default_fallback_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_default_fallback_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 113</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_default_fallback</span>( <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">action_name</span> = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;default&#39;</span> ][ <span class="ruby-string">&#39;else&#39;</span> ] = <span class="ruby-identifier">permission</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set_resource">
-              <b>set_resource</b>( resource_name, action_name, permission )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set_resource">
+            <b>set_resource</b>( resource_name, action_name, permission )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-set_resource" name="method-i-set_resource" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the permissions an action on a resource.</p>
+        <div class="description">
+            <p>Set the permissions an action on a resource.</p>
 <dl class="rdoc-list note-list"><dt>resource_name
 <dd>
 <p>Resource name as a Symbol or String, e.g. “<code>Purchase</code>” or
@@ -442,18 +494,19 @@ href="Permissions.html#ASK">ASK</a>.</p>
 href="Permissions.html#ALLOW">ALLOW</a> or <a
 href="Permissions.html#ASK">ASK</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_resource_source')" id="l_method-i-set_resource_source">show</a>
-              </p>
-              <div id="method-i-set_resource_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_resource_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 164</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_resource</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">action_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">action_name</span>   = <span class="ruby-identifier">action_name</span>.<span class="ruby-identifier">to_s</span>
 
@@ -462,17 +515,17 @@ href="Permissions.html#ASK">ASK</a>.</p>
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;actions&#39;</span> ][ <span class="ruby-identifier">action_name</span> ] = <span class="ruby-identifier">permission</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-set_resource_fallback">
-              <b>set_resource_fallback</b>( resource_name, permission )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-set_resource_fallback">
+            <b>set_resource_fallback</b>( resource_name, permission )
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-set_resource_fallback" name="method-i-set_resource_fallback" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the default fallback for a resource. If the resource is asked to
+        <div class="description">
+            <p>Set the default fallback for a resource. If the resource is asked to
 perform an action that&#39;s not otherwise listed in the resource&#39;s
 entry in the <a href="Permissions.html">Permissions</a> object, then this
 permission is used.</p>
@@ -486,55 +539,57 @@ permission is used.</p>
 href="Permissions.html#ALLOW">ALLOW</a> or <a
 href="Permissions.html#ASK">ASK</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-set_resource_fallback_source')" id="l_method-i-set_resource_fallback_source">show</a>
-              </p>
-              <div id="method-i-set_resource_fallback_source" class="dyn-source">
+            </p>
+            <div id="method-i-set_resource_fallback_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 146</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">set_resource_fallback</span>( <span class="ruby-identifier">resource_name</span>, <span class="ruby-identifier">permission</span> )
   <span class="ruby-identifier">resource_name</span> = <span class="ruby-identifier">resource_name</span>.<span class="ruby-identifier">to_s</span>
 
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ] <span class="ruby-operator">||=</span> {}
   <span class="ruby-ivar">@permissions</span>[ <span class="ruby-string">&#39;resources&#39;</span> ][ <span class="ruby-identifier">resource_name</span> ][ <span class="ruby-string">&#39;else&#39;</span> ] = <span class="ruby-identifier">permission</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-to_h">
-              <b>to_h</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_h">
+            <b>to_h</b>()
             <a href="../../../classes/Hoodoo/Services/Permissions.html#method-i-to_h" name="method-i-to_h" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Return a Hash representative of this permissions object, which can be
+        <div class="description">
+            <p>Return a Hash representative of this permissions object, which can be
 stored elsewhere, used to initialise another instance or written to an
 existing instance with <a
 href="Permissions.html#method-i-from_h-21">from_h!</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
-              </p>
-              <div id="method-i-to_h_source" class="dyn-source">
+            </p>
+            <div id="method-i-to_h_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/services/permissions.rb, line 205</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">to_h</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
   <span class="ruby-ivar">@permissions</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

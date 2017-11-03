@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Discovery::ForAMQP">
+
+    <meta name="description" content="Describe a resource endpoint location in a way that allows it to be contacted over AMQP (e.g. via Alchemy).">
+    <meta property="og:description" content="Describe a resource endpoint location in a way that allows it to be contacted over AMQP (e.g. via Alchemy).">
+
+    <meta name="keywords" content="Hoodoo::Services::Discovery::ForAMQP class">
+    <meta name="keywords" content="new">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Discovery::ForAMQP
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/discovery/results/for_amqp_rb.html">lib/hoodoo/services/discovery/results/for_amqp.rb</a></li>
@@ -31,15 +38,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Describe a resource endpoint location in a way that allows it to be
 contacted over AMQP (e.g. via Alchemy).</p>
 
     </div>
-
-
-
-
 
 
 
@@ -49,11 +52,11 @@ contacted over AMQP (e.g. via Alchemy).</p>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -61,47 +64,44 @@ contacted over AMQP (e.g. via Alchemy).</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-resource'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name described, as a Symbol (e.g. <code>:Purchase</code>).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-routing_path'>
+        </tr>
+        <tr valign='top' id='attribute-i-routing_path'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>routing_path</td>
             <td class='attr-desc'><p>Path at which the resource is expected to be found on the queue (routing
 via Topic Exchange and Alchemy Flux&#39;s translations of paths to keys).</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-version'>
+        </tr>
+        <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>version</td>
             <td class='attr-desc'><p>Resource endpoint version, as an Integer (e.g. 2).</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource:, version: )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( resource:, version: )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ForAMQP.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create an instance with named parameters as follows:</p>
+        <div class="description">
+            <p>Create an instance with named parameters as follows:</p>
 <dl class="rdoc-list note-list"><dt>resource
 <dd>
 <p>See <a href="ForAMQP.html#attribute-i-resource">resource</a>.</p>
@@ -109,18 +109,19 @@ via Topic Exchange and Alchemy Flux&#39;s translations of paths to keys).</p></t
 <dd>
 <p>See <a href="ForAMQP.html#attribute-i-version">version</a>.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/results/for_amqp.rb, line 39</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>,, <span class="ruby-identifier">version</span><span class="ruby-operator">:</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>,, <span class="ruby-identifier">version</span><span class="ruby-operator">:</span> )
 
   <span class="ruby-ivar">@resource</span>     = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-ivar">@version</span>      = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -130,9 +131,9 @@ via Topic Exchange and Alchemy Flux&#39;s translations of paths to keys).</p></t
   )
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

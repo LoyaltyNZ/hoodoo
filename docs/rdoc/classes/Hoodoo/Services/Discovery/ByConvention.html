@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Discovery::ByConvention">
+
+    <meta name="description" content="Discover - after a fashion - resource endpoint locations by convention, based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires ActiveSupport.  rubygems.">
+    <meta property="og:description" content="Discover - after a fashion - resource endpoint locations by convention, based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires ActiveSupport.  rubygems.">
+
+    <meta name="keywords" content="Hoodoo::Services::Discovery::ByConvention class">
+    <meta name="keywords" content="configure_with, announce_remote, discover_remote">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Discovery::ByConvention
-                <span class="parent">&lt;
-                    <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
-                </span>
+            <span class="parent">&lt;
+                <a href="../Discovery.html">Hoodoo::Services::Discovery</a>
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/discovery/discoverers/by_convention_rb.html">lib/hoodoo/services/discovery/discoverers/by_convention.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Discover - after a fashion - resource endpoint locations by convention,
 based on Rails-like pluralisation rules. For HTTP-based endpoints. Requires
 ActiveSupport.</p>
@@ -49,36 +56,32 @@ the returned data type.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>A</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-announce_remote">announce_remote</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-announce_remote">announce_remote</a>
+                </li>
+            </ul>
         </dd>
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-configure_with">configure_with</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-configure_with">configure_with</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-discover_remote">discover_remote</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-discover_remote">discover_remote</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -87,20 +90,17 @@ the returned data type.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-announce_remote">
-              <b>announce_remote</b>( resource, version, options = {} )
+    <div class="sectiontitle">Instance Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-announce_remote">
+            <b>announce_remote</b>( resource, version, options = {} )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByConvention.html#method-i-announce_remote" name="method-i-announce_remote" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Announce the location of an instance. This is really a no-op that runs
+        <div class="description">
+            <p>Announce the location of an instance. This is really a no-op that runs
 through and returns the result of <a
 href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
 
@@ -117,31 +117,32 @@ href="ByConvention.html#method-i-discover_remote">discover_remote</a>.</p>
 <dd>
 <p>Ignored.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-announce_remote_source')" id="l_method-i-announce_remote_source">show</a>
-              </p>
-              <div id="method-i-announce_remote_source" class="dyn-source">
+            </p>
+            <div id="method-i-announce_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 139</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">announce_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-configure_with">
-              <b>configure_with</b>( options )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-configure_with">
+            <b>configure_with</b>( options )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByConvention.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
+        <div class="description">
+            <p>Configure an instance. Call via Hoodoo::Services::Discovery::Base#new.
 Parameters:</p>
 <dl class="rdoc-list note-list"><dt>options
 <dd>
@@ -221,18 +222,19 @@ HTTP layer rewrites that redirect requests to paths that do map down to <a
 href="../../../Hoodoo.html">Hoodoo</a>, or perhaps map to a Hoodoo-like
 system that&#39;s not actually <a href="../../../Hoodoo.html">Hoodoo</a>
 itself but implemented in a compatible fashion.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
-              </p>
-              <div id="method-i-configure_with_source" class="dyn-source">
+            </p>
+            <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 120</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@base_uri</span>          = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:base_uri</span>  ] )
   <span class="ruby-ivar">@proxy_uri</span>         = <span class="ruby-constant">URI</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ] ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:proxy_uri</span> ].<span class="ruby-identifier">nil?</span>
 
@@ -241,17 +243,17 @@ itself but implemented in a compatible fashion.</p>
   <span class="ruby-ivar">@http_open_timeout</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:http_open_timeout</span> ]
   <span class="ruby-ivar">@routing</span>           = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:routing</span>           ] <span class="ruby-operator">||</span> {}
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-discover_remote">
-              <b>discover_remote</b>( resource, version )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-discover_remote">
+            <b>discover_remote</b>( resource, version )
             <a href="../../../../classes/Hoodoo/Services/Discovery/ByConvention.html#method-i-discover_remote" name="method-i-discover_remote" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Using the base URI string from the options in <a
+        <div class="description">
+            <p>Using the base URI string from the options in <a
 href="ByConvention.html#method-i-configure_with">#configure_with</a>,
 underscore and pluralize the resource name with ActiveSupport to produce a
 path. For example:</p>
@@ -276,18 +278,19 @@ the optional <code>routing</code> parameter in the constructor.</p>
 <dd>
 <p>Endpoint version as an Integer.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-discover_remote_source')" id="l_method-i-discover_remote_source">show</a>
-              </p>
-              <div id="method-i-discover_remote_source" class="dyn-source">
+            </p>
+            <div id="method-i-discover_remote_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/discovery/discoverers/by_convention.rb, line 165</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">discover_remote</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-identifier">custom_routes</span> = <span class="ruby-ivar">@routing</span>[ <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span> ]
 
   <span class="ruby-identifier">path</span> = <span class="ruby-keyword">unless</span> <span class="ruby-identifier">custom_routes</span>.<span class="ruby-identifier">nil?</span>
@@ -309,9 +312,9 @@ the optional <code>routing</code> parameter in the constructor.</p>
     <span class="ruby-identifier">http_open_timeout</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@http_open_timeout</span>
   )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

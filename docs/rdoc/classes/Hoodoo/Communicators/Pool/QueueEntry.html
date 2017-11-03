@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Communicators::Pool::QueueEntry">
+
+    <meta name="description" content="Internal implementation detail of Hoodoo::Communicators::Pool which is placed on a Ruby Queue and used as part of thread processing for slow communicators.">
+    <meta property="og:description" content="Internal implementation detail of Hoodoo::Communicators::Pool which is placed on a Ruby Queue and used as part of thread processing for slow communicators.">
+
+    <meta name="keywords" content="Hoodoo::Communicators::Pool::QueueEntry class">
+    <meta name="keywords" content="new, terminate?, sync?, dropped?">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Communicators::Pool::QueueEntry
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/communicators/pool_rb.html">lib/hoodoo/communicators/pool.rb</a></li>
@@ -31,7 +38,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Internal implementation detail of <a
 href="../Pool.html">Hoodoo::Communicators::Pool</a> which is placed on a
 Ruby Queue and used as part of thread processing for slow communicators.</p>
@@ -41,44 +48,40 @@ Ruby Queue and used as part of thread processing for slow communicators.</p>
 
 
 
-
-
-
-
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-dropped-3F">dropped?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-dropped-3F">dropped?</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-sync-3F">sync?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-sync-3F">sync?</a>
+                </li>
+            </ul>
         </dd>
         <dt>T</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-terminate-3F">terminate?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-terminate-3F">terminate?</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -86,62 +89,59 @@ Ruby Queue and used as part of thread processing for slow communicators.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-dropped'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-dropped'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>dropped</td>
             <td class='attr-desc'><p>If not <code>nil</code> or zero, the number of dropped messages that should
 be send to the slow communicator subclass&#39;s <a
 href="QueueEntry.html#attribute-i-dropped">dropped</a> method. See also <a
 href="QueueEntry.html#method-i-dropped-3F">dropped?</a></p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-payload'>
+        </tr>
+        <tr valign='top' id='attribute-i-payload'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>payload</td>
             <td class='attr-desc'><p>If the entry represents neither a termination request nor a dropped message
 count (see <a href="QueueEntry.html#method-i-terminate-3F">terminate?</a>
 and <a href="QueueEntry.html#method-i-dropped-3F">dropped?</a>), the
 payload to send to the slow communicator subclass&#39;s communicate method.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-sync'>
+        </tr>
+        <tr valign='top' id='attribute-i-sync'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>sync</td>
             <td class='attr-desc'><p>If <code>true</code>, the processing Thread should push one item with any
 payload onto its sync Queue. See also <a
 href="QueueEntry.html#method-i-sync-3F">sync?</a></p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-terminate'>
+        </tr>
+        <tr valign='top' id='attribute-i-terminate'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>terminate</td>
             <td class='attr-desc'><p>If <code>true</code>, the processing Thread should exit. See also <a
 href="QueueEntry.html#method-i-terminate-3F">terminate?</a>.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( payload: nil, dropped: nil, terminate: false, sync: false )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( payload: nil, dropped: nil, terminate: false, sync: false )
             <a href="../../../../classes/Hoodoo/Communicators/Pool/QueueEntry.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create a new instance, ready to be added to the Queue.</p>
+        <div class="description">
+            <p>Create a new instance, ready to be added to the Queue.</p>
 
 <p><strong>ONLY</strong> <strong>USE</strong> <strong>ONE</strong> of the
 named parameters:</p>
@@ -160,109 +160,114 @@ read from the Queue.</p>
 <dd>
 <p>Set to <code>true</code> to push a message onto the sync Queue.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 571</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">terminate</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>, <span class="ruby-identifier">sync</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">payload</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">dropped</span><span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">terminate</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>, <span class="ruby-identifier">sync</span><span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> )
   <span class="ruby-ivar">@payload</span>   = <span class="ruby-identifier">payload</span>
   <span class="ruby-ivar">@dropped</span>   = <span class="ruby-identifier">dropped</span>
   <span class="ruby-ivar">@terminate</span> = <span class="ruby-identifier">terminate</span>
   <span class="ruby-ivar">@sync</span>      = <span class="ruby-identifier">sync</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-dropped-3F">
-              <b>dropped?</b>()
-            <a href="../../../../classes/Hoodoo/Communicators/Pool/QueueEntry.html#method-i-dropped-3F" name="method-i-dropped-3F" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Returns <code>true</code> if this queue entry represents a dropped message
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-dropped-3F">
+            <b>dropped?</b>()
+            <a href="../../../../classes/Hoodoo/Communicators/Pool/QueueEntry.html#method-i-dropped-3F" name="method-i-dropped-3F" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Returns <code>true</code> if this queue entry represents a dropped message
 count (see <a href="QueueEntry.html#attribute-i-dropped">dropped</a>), else
 +false (see <a href="QueueEntry.html#method-i-terminate-3F">terminate?</a>
 then <a href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-dropped-3F_source')" id="l_method-i-dropped-3F_source">show</a>
-              </p>
-              <div id="method-i-dropped-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-dropped-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 595</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">dropped?</span>
-  <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">&gt;</span> <span class="ruby-number">0</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">dropped?</span>
+  <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-ivar">@dropped</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-sync-3F">
-              <b>sync?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-sync-3F">
+            <b>sync?</b>()
             <a href="../../../../classes/Hoodoo/Communicators/Pool/QueueEntry.html#method-i-sync-3F" name="method-i-sync-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Returns <code>true</code> if this queue entry represents a request to push
+        <div class="description">
+            <p>Returns <code>true</code> if this queue entry represents a request to push
 a message onto the processing Thread&#39;s sync Queue.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-sync-3F_source')" id="l_method-i-sync-3F_source">show</a>
-              </p>
-              <div id="method-i-sync-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-sync-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 588</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">sync?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">sync?</span>
   <span class="ruby-ivar">@sync</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-terminate-3F">
-              <b>terminate?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-terminate-3F">
+            <b>terminate?</b>()
             <a href="../../../../classes/Hoodoo/Communicators/Pool/QueueEntry.html#method-i-terminate-3F" name="method-i-terminate-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Returns <code>true</code> if encountering this queue entry should terminate
+        <div class="description">
+            <p>Returns <code>true</code> if encountering this queue entry should terminate
 the processing thread, else <code>false</code> (see <a
 href="QueueEntry.html#method-i-dropped-3F">dropped?</a> then <a
 href="QueueEntry.html#attribute-i-payload">payload</a>).</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-terminate-3F_source')" id="l_method-i-terminate-3F_source">show</a>
-              </p>
-              <div id="method-i-terminate-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-terminate-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/communicators/pool.rb, line 581</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">terminate?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">terminate?</span>
   <span class="ruby-ivar">@terminate</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

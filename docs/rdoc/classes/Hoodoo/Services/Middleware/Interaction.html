@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Services::Middleware::Interaction">
+
+    <meta name="description" content="Encapsulate all data related to an interaction (API call) within one object.">
+    <meta property="og:description" content="Encapsulate all data related to an interaction (API call) within one object.">
+
+    <meta name="keywords" content="Hoodoo::Services::Middleware::Interaction class">
+    <meta name="keywords" content="using_test_session, using_test_session?, new">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Services::Middleware::Interaction
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../../files/lib/hoodoo/services/middleware/interaction_rb.html">lib/hoodoo/services/middleware/interaction.rb</a></li>
@@ -31,15 +38,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Encapsulate all data related to an interaction (API call) within one
 object.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -49,22 +52,22 @@ object.</p>
     <dl class="methods">
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>U</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-using_test_session">using_test_session</a>,
-              </li>
-              <li>
-                <a href="#method-i-using_test_session-3F">using_test_session?</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-using_test_session">using_test_session</a>,
+                </li>
+                <li>
+                    <a href="#method-i-using_test_session-3F">using_test_session?</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -72,100 +75,97 @@ object.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-context'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-context'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>context</td>
             <td class='attr-desc'><p>A <a href="../Context.html">Hoodoo::Services::Context</a> instance
 representing this API call. May be updated/replaced during processing.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-interaction_id'>
+        </tr>
+        <tr valign='top' id='attribute-i-interaction_id'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>interaction_id</td>
             <td class='attr-desc'><p>Every interaction has a <a href="../../UUID.html">UUID</a> passed back in
 API responses via the X-Interaction-ID HTTP header. This is that <a
 href="../../UUID.html">UUID</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-owning_middleware_instance'>
+        </tr>
+        <tr valign='top' id='attribute-i-owning_middleware_instance'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>owning_middleware_instance</td>
             <td class='attr-desc'><p>API calls are handled by the middleware, so Interactions are created by <a
 href="../Middleware.html">Hoodoo::Services::Middleware</a> instances. This
 is that creating instance, or the instance that should be treated as if it
 were the creator.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-rack_request'>
+        </tr>
+        <tr valign='top' id='attribute-i-rack_request'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>rack_request</td>
             <td class='attr-desc'><p>The inbound <a href="../../../Rack.html">Rack</a> request; a
 <code>Rack::Request</code> instance.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-requested_action'>
+        </tr>
+        <tr valign='top' id='attribute-i-requested_action'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>requested_action</td>
             <td class='attr-desc'><p>The requested action, as a symbol; see
 Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-requested_content_encoding'>
+        </tr>
+        <tr valign='top' id='attribute-i-requested_content_encoding'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>requested_content_encoding</td>
             <td class='attr-desc'><p>The requested content encoding as a String - e.g. “utf-8”.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-requested_content_type'>
+        </tr>
+        <tr valign='top' id='attribute-i-requested_content_type'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>requested_content_type</td>
             <td class='attr-desc'><p>The requested content type as a String - e.g. “application/json”.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-target_implementation'>
+        </tr>
+        <tr valign='top' id='attribute-i-target_implementation'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>target_implementation</td>
             <td class='attr-desc'><p>The target <a
 href="../Implementation.html">Hoodoo::Services::Implementation</a> instance
 for the API call. See <a
 href="Interaction.html#attribute-i-target_interface">target_interface</a>.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-target_interface'>
+        </tr>
+        <tr valign='top' id='attribute-i-target_interface'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>target_interface</td>
             <td class='attr-desc'><p>The <a href="../Interface.html">Hoodoo::Services::Interface</a> subclass
 describing the resource interface that is the target of the API call.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( env, owning_middleware_instance, session = nil )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( env, owning_middleware_instance, session = nil )
             <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create a new <a href="Interaction.html">Interaction</a> instance, acquiring
+        <div class="description">
+            <p>Create a new <a href="Interaction.html">Interaction</a> instance, acquiring
 a new interaction ID automatically or picking up one from an
 X-Interaction-ID header if available.</p>
 
@@ -192,18 +192,19 @@ href="Interaction.html#attribute-i-owning_middleware_instance">owning_middleware
 href="Interaction.html#attribute-i-context">context</a> value; optional; if
 omitted, <code>nil</code> is used.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">env</span>, <span class="ruby-identifier">owning_middleware_instance</span>, <span class="ruby-identifier">session</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-ivar">@rack_request</span>   = <span class="ruby-operator">::</span><span class="ruby-constant">Rack</span><span class="ruby-operator">::</span><span class="ruby-constant">Request</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">env</span> )
   <span class="ruby-ivar">@interaction_id</span> = <span class="ruby-identifier">find_or_generate_interaction_id</span>()
   <span class="ruby-ivar">@context</span>        = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(
@@ -218,66 +219,69 @@ omitted, <code>nil</code> is used.</p>
     <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">start_with?</span>( <span class="ruby-string">&#39;HTTP_&#39;</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;CONTENT_TYPE&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;CONTENT_LENGTH&#39;</span>
   <span class="ruby-keyword">end</span>.<span class="ruby-identifier">freeze</span>()
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-using_test_session">
-              <b>using_test_session</b>()
-            <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-i-using_test_session" name="method-i-using_test_session" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p><a href="../../../Hoodoo.html">Hoodoo</a> middleware calls here to say
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-using_test_session">
+            <b>using_test_session</b>()
+            <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-i-using_test_session" name="method-i-using_test_session" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p><a href="../../../Hoodoo.html">Hoodoo</a> middleware calls here to say
 “I&#39;m using the test session” (or not), so that this can be enquired
 about via <a
 href="Interaction.html#method-i-using_test_session-3F">using_test_session?</a>
 if need be.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-using_test_session_source')" id="l_method-i-using_test_session_source">show</a>
-              </p>
-              <div id="method-i-using_test_session_source" class="dyn-source">
+            </p>
+            <div id="method-i-using_test_session_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 68</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">using_test_session</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">using_test_session</span>
   <span class="ruby-ivar">@using_test_session</span> = <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-using_test_session-3F">
-              <b>using_test_session?</b>()
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-using_test_session-3F">
+            <b>using_test_session?</b>()
             <a href="../../../../classes/Hoodoo/Services/Middleware/Interaction.html#method-i-using_test_session-3F" name="method-i-using_test_session-3F" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Returns <code>true</code> if <a href="../../../Hoodoo.html">Hoodoo</a> has
+        <div class="description">
+            <p>Returns <code>true</code> if <a href="../../../Hoodoo.html">Hoodoo</a> has
 previously called <a
 href="Interaction.html#method-i-using_test_session">using_test_session</a>.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-using_test_session-3F_source')" id="l_method-i-using_test_session-3F_source">show</a>
-              </p>
-              <div id="method-i-using_test_session-3F_source" class="dyn-source">
+            </p>
+            <div id="method-i-using_test_session-3F_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/interaction.rb, line 74</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">using_test_session?</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">using_test_session?</span>
   <span class="ruby-ivar">@using_test_session</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

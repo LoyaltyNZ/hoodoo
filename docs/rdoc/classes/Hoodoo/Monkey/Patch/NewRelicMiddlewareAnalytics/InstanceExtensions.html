@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics::InstanceExtensions">
+
+    <meta name="description" content="Instance methods to patch over Hoodoo::Services::Middleware.">
+    <meta property="og:description" content="Instance methods to patch over Hoodoo::Services::Middleware.">
+
+    <meta name="keywords" content="Hoodoo::Monkey::Patch::NewRelicMiddlewareAnalytics::InstanceExtensions class">
+    <meta name="keywords" content="monkey_log_inbound_request">
 </head>
 
 <body>
@@ -28,15 +35,11 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Instance methods to patch over <a
 href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
 
     </div>
-
-
-
-
 
 
 
@@ -46,11 +49,11 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
     <dl class="methods">
         <dt>M</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-monkey_log_inbound_request">monkey_log_inbound_request</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -59,20 +62,17 @@ href="../../../Services/Middleware.html">Hoodoo::Services::Middleware</a>.</p>
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-monkey_log_inbound_request">
-              <b>monkey_log_inbound_request</b>( interaction )
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-monkey_log_inbound_request">
+            <b>monkey_log_inbound_request</b>( interaction )
             <a href="../../../../../classes/Hoodoo/Monkey/Patch/NewRelicMiddlewareAnalytics/InstanceExtensions.html#method-i-monkey_log_inbound_request" name="method-i-monkey_log_inbound_request" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Add custom attributes to the NewRelic transaction. The original
+        <div class="description">
+            <p>Add custom attributes to the NewRelic transaction. The original
 implementation is called via <code>super</code>.</p>
 <dl class="rdoc-list note-list"><dt>interaction
 <dd>
@@ -85,18 +85,19 @@ being optional). If <code>target_interface</code> and
 logged according to secure log settings in the interface; if these values
 are unset, body data is <em>not</em> logged.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
-              </p>
-              <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
+            </p>
+            <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Add custom attributes to the NewRelic transaction.</span>
   <span class="ruby-comment">#</span>
@@ -112,9 +113,9 @@ are unset, body data is <em>not</em> logged.</p>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">interaction</span> )
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

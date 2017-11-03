@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::ManuallyDated">
+
+    <meta name="description" content="Support mixin for models subclassed from ActiveRecord::Base providing as-per-API-standard dating support with services needing to know that dating is enabled and cooperate with this mixin&#39;s API, r.">
+    <meta property="og:description" content="Support mixin for models subclassed from ActiveRecord::Base providing as-per-API-standard dating support with services needing to know that dating is enabled and cooperate with this mixin&#39;s API, r.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::ManuallyDated class">
+    <meta name="keywords" content="included, instantiate">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="Support.html">Support</a> mixin for models subclassed from <a
 href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
 dating support with services needing to know that dating is enabled and
@@ -121,7 +128,8 @@ only be used when scoped by date.</p>
 
 <p>Time accuracy is intentionally limited, to aid database indices and help
 avoid clock accuracy differences across operating systems or datbase
-engines. Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES
+engines. <a
+href="ManuallyDated.html#SECONDS_DECIMAL_PLACES">Hoodoo::ActiveRecord::ManuallyDated::SECONDS_DECIMAL_PLACES</a>
 describes the accuracy applicable.</p>
 
 <p>If a record is, say, both created and then deleted within the accuracy
@@ -143,9 +151,12 @@ you <strong>MUST</strong> include the ActiveRecord::Relation instances
 
 <h3 id="module-Hoodoo::ActiveRecord::ManuallyDated-label-Show+and+List">Show and List</h3>
 
-<p>You might use Hoodoo::ActiveRecord::Finder#list_in or
-Hoodoo::ActiveRecord::Finder#acquire_in for <code>list</code> or
-<code>show</code> actions; such code changes from e.g.:</p>
+<p>You might use <a
+href="Finder/ClassMethods.html#method-i-list_in">Hoodoo::ActiveRecord::Finder::ClassMethods#list_in</a>
+or <a
+href="Finder/ClassMethods.html#method-i-acquire_in">Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in</a>
+for <code>list</code> or <code>show</code> actions; such code changes from
+e.g.:</p>
 
 <pre><code>SomeModel.list_in( context )
 </code></pre>
@@ -390,63 +401,56 @@ end</code></pre>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">MODULE</span>
-          <a href="ManuallyDated/ClassMethods.html">Hoodoo::ActiveRecord::ManuallyDated::ClassMethods</a>
+            <span class="type">MODULE</span>
+            <a href="ManuallyDated/ClassMethods.html">Hoodoo::ActiveRecord::ManuallyDated::ClassMethods</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-included">included</a>,
-              </li>
-              <li>
-                <a href="#method-c-instantiate">instantiate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-included">included</a>,
+                </li>
+                <li>
+                    <a href="#method-c-instantiate">instantiate</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
 
 
 
-
-
-
-      <!-- Section constants -->
-      <div class="sectiontitle">Constants</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='SECONDS_DECIMAL_PLACES'>
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='SECONDS_DECIMAL_PLACES'>
             <td class="attr-name">SECONDS_DECIMAL_PLACES</td>
             <td>=</td>
             <td class="attr-value"><pre>2</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Rounding resolution, in terms of number of decimal places to which seconds
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Rounding resolution, in terms of number of decimal places to which seconds
 are rounded. Excessive accuracy makes for difficult, large indices in the
 database and may fall foul of system / database clock accuracy mismatches.</p></td>
-            </tr>
-          <tr valign='top' id='DATE_MAXIMUM'>
+        </tr>
+        <tr valign='top' id='DATE_MAXIMUM'>
             <td class="attr-name">DATE_MAXIMUM</td>
             <td>=</td>
             <td class="attr-value"><pre>Time.parse( &#39;9999-12-31T23:59:59.0Z&#39; ).round( SECONDS_DECIMAL_PLACES )</pre></td>
-          </tr>
-            <tr valign='top'>
-              <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>In order for indices to work properly on <code>effective_end</code> dates,
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>In order for indices to work properly on <code>effective_end</code> dates,
 <code>NULL</code> values cannot be permitted as SQL <code>NULL</code> is
 magic and means “has no value”, so such a value in a column prohibits
 indexing.</p>
@@ -468,21 +472,21 @@ href="../ActiveRecord.html">ActiveRecord</a> database adapter thus:</p>
 <pre><code>ActiveRecord::Base.connection.quoted_date( Hoodoo::ActiveRecord::ManuallyDated::DATE_MAXIMUM )
 # =&gt; returns &quot;9999-12-31 23:59:59.000000&quot; for PostgreSQL 9.4.
 </code></pre></td>
-            </tr>
-      </table>
+        </tr>
+    </table>
 
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-included">
-              <b>included</b>( model )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-included">
+            <b>included</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/ManuallyDated.html#method-c-included" name="method-c-included" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Instantiates this module when it is included.</p>
+        <div class="description">
+            <p>Instantiates this module when it is included.</p>
 
 <p>Example:</p>
 
@@ -500,18 +504,19 @@ href="Finder.html">Hoodoo::ActiveRecord::Finder</a>.</p>
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
-              </p>
-              <div id="method-c-included_source" class="dyn-source">
+            </p>
+            <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 386</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_manually_dated</span>,
     {
@@ -528,17 +533,17 @@ this module.</p>
 
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-instantiate">
-              <b>instantiate</b>( model )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-instantiate">
+            <b>instantiate</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/ManuallyDated.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+        <div class="description">
+            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
 subclass, all of the Hoodoo::ActiveRecord::ManullyDated::ClassMethods
 methods are defined as class methods on the including class.</p>
 <dl class="rdoc-list note-list"><dt><code>model</code>
@@ -546,23 +551,24 @@ methods are defined as class methods on the including class.</p>
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
-              </p>
-              <div id="method-c-instantiate_source" class="dyn-source">
+            </p>
+            <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 411</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

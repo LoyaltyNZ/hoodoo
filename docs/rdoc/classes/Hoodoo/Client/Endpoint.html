@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::Client::Endpoint">
+
+    <meta name="description" content="Base class for endpoint code.">
+    <meta property="og:description" content="Base class for endpoint code.">
+
+    <meta name="keywords" content="Hoodoo::Client::Endpoint class">
+    <meta name="keywords" content="endpoint_for, new, configure_with, response_class_for, generate_404_response_for, copy_updated_options_to, inject_enumeration_state, list, show, create, update, delete">
 </head>
 
 <body>
@@ -20,9 +27,9 @@
         <h1>
             <span class="type">Class</span>
             Hoodoo::Client::Endpoint
-                <span class="parent">&lt;
-                    Object
-                </span>
+            <span class="parent">&lt;
+                Object
+            </span>
         </h1>
         <ul class="files">
             <li><a href="../../../files/lib/hoodoo/client/endpoint/endpoint_rb.html">lib/hoodoo/client/endpoint/endpoint.rb</a></li>
@@ -39,7 +46,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p>Base class for endpoint code.</p>
 
 <p>This base class defines the API to which subclasses must adhere, so that
@@ -55,123 +62,119 @@ class instance variables recording a reference to a single endpoint object.</p>
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>
+            <span class="type">CLASS</span>
+            <a href="Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>
+            <span class="type">CLASS</span>
+            <a href="Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>
+            <span class="type">CLASS</span>
+            <a href="Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Endpoint/HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
+            <span class="type">CLASS</span>
+            <a href="Endpoint/HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
         </li>
         <li>
-          <span class="type">CLASS</span>
-          <a href="Endpoint/NotFound.html">Hoodoo::Client::Endpoint::NotFound</a>
+            <span class="type">CLASS</span>
+            <a href="Endpoint/NotFound.html">Hoodoo::Client::Endpoint::NotFound</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>C</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-configure_with">configure_with</a>,
-              </li>
-              <li>
-                <a href="#method-i-copy_updated_options_to">copy_updated_options_to</a>,
-              </li>
-              <li>
-                <a href="#method-i-create">create</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-configure_with">configure_with</a>,
+                </li>
+                <li>
+                    <a href="#method-i-copy_updated_options_to">copy_updated_options_to</a>,
+                </li>
+                <li>
+                    <a href="#method-i-create">create</a>
+                </li>
+            </ul>
         </dd>
         <dt>D</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-delete">delete</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-delete">delete</a>
+                </li>
+            </ul>
         </dd>
         <dt>E</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-endpoint_for">endpoint_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-endpoint_for">endpoint_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>G</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-generate_404_response_for">generate_404_response_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-generate_404_response_for">generate_404_response_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-inject_enumeration_state">inject_enumeration_state</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-inject_enumeration_state">inject_enumeration_state</a>
+                </li>
+            </ul>
         </dd>
         <dt>L</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-list">list</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-list">list</a>
+                </li>
+            </ul>
         </dd>
         <dt>N</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-new">new</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-new">new</a>
+                </li>
+            </ul>
         </dd>
         <dt>R</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-response_class_for">response_class_for</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-response_class_for">response_class_for</a>
+                </li>
+            </ul>
         </dd>
         <dt>S</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-show">show</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-show">show</a>
+                </li>
+            </ul>
         </dd>
         <dt>U</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-i-update">update</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-i-update">update</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -179,38 +182,35 @@ class instance variables recording a reference to a single endpoint object.</p>
 
 
 
-
-
-
-      <!-- Section attributes -->
-      <div class="sectiontitle">Attributes</div>
-      <table border='0' cellpadding='5'>
-          <tr valign='top' id='attribute-i-interaction'>
+    <!-- Section attributes -->
+    <div class="sectiontitle">Attributes</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='attribute-i-interaction'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>interaction</td>
             <td class='attr-desc'><p>The value of the <code>interaction</code> option key passed to the
 constructor. See the constructor and endpoint_for for more.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-locale'>
+        </tr>
+        <tr valign='top' id='attribute-i-locale'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>locale</td>
             <td class='attr-desc'><p>The locale passed to the constructor or some value provided later; a
 String, e.g. “en-gb”, or if <code>nil</code>, uses “en-nz” by default.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-resource'>
+        </tr>
+        <tr valign='top' id='attribute-i-resource'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>resource</td>
             <td class='attr-desc'><p>The resource name passed to the constructor, as a String.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-session_id'>
+        </tr>
+        <tr valign='top' id='attribute-i-session_id'>
             <td class='attr-rw'>
-              [RW]
+                [RW]
             </td>
             <td class='attr-name'>session_id</td>
             <td class='attr-desc'><p>The session <a href="../UUID.html">UUID</a> passed to the constructor or
@@ -218,27 +218,27 @@ some value provided later; used for the calls to the target resource via
 the X-Session-ID <a href="Endpoint/HTTP.html">HTTP</a> header or an
 equivalent. If <code>nil</code>, only public actions in the target resource
 will be accessible.</p></td>
-          </tr>
-          <tr valign='top' id='attribute-i-version'>
+        </tr>
+        <tr valign='top' id='attribute-i-version'>
             <td class='attr-rw'>
-              [R]
+                [R]
             </td>
             <td class='attr-name'>version</td>
             <td class='attr-desc'><p>The version number passed to the constructor, as an Integer.</p></td>
-          </tr>
-      </table>
+        </tr>
+    </table>
 
+<!-- Methods -->
 
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-endpoint_for">
-              <b>endpoint_for</b>( resource, version, options )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-endpoint_for">
+            <b>endpoint_for</b>( resource, version, options )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-c-endpoint_for" name="method-c-endpoint_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p><a href="Endpoint.html">Endpoint</a> factory - instantiates and endpoint
+        <div class="description">
+            <p><a href="Endpoint.html">Endpoint</a> factory - instantiates and endpoint
 for the given resource and implemented API version, using the given
 discoverer.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
@@ -312,18 +312,19 @@ instantiate an endpoint.</p>
 results in an empty Hash being returned, with no platform errors
 associated. This is the high-level transport neutral equivalent of (say) a
 204 <a href="Endpoint/HTTP.html">HTTP</a> response with no body.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-endpoint_for_source')" id="l_method-c-endpoint_for_source">show</a>
-              </p>
-              <div id="method-c-endpoint_for_source" class="dyn-source">
+            </p>
+            <div id="method-c-endpoint_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 88</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">discoverer</span>       = <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>( <span class="ruby-value">:discoverer</span> )
   <span class="ruby-identifier">discovery_result</span> = <span class="ruby-identifier">discoverer</span>.<span class="ruby-identifier">discover</span>( <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span> )
 
@@ -345,17 +346,17 @@ associated. This is the high-level transport neutral equivalent of (say) a
     <span class="ruby-keyword">return</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">new</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-new">
-              <b>new</b>( resource, version = 1, options )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-new">
+            <b>new</b>( resource, version = 1, options )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-c-new" name="method-c-new" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Create an endpoint instance that will be used to make requests to a given
+        <div class="description">
+            <p>Create an endpoint instance that will be used to make requests to a given
 resource.</p>
 <dl class="rdoc-list note-list"><dt>resource
 <dd>
@@ -447,18 +448,19 @@ reference data uses an array. Example:</p>
 <p>The Hash representation of the body data that might be sent in an <a
 href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
-              </p>
-              <div id="method-c-new_source" class="dyn-source">
+            </p>
+            <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 214</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-number">1</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> = <span class="ruby-value">1</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-ivar">@resource</span>         = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-ivar">@version</span>          = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
 
@@ -477,18 +479,19 @@ href="Endpoint/HTTP.html">HTTP</a> request (i.e. JSON, as a Hash).</p>
 
   <span class="ruby-identifier">configure_with</span>( <span class="ruby-ivar">@resource</span>, <span class="ruby-ivar">@version</span>, <span class="ruby-identifier">options</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-create">
-              <b>create</b>( body_hash, query_hash = nil )
-            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-create" name="method-i-create" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>Create a resource instance.</p>
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-create">
+            <b>create</b>( body_hash, query_hash = nil )
+            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-create" name="method-i-create" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Create a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>body_hash
 <dd>
 <p>See the constructor for details.</p>
@@ -508,31 +511,32 @@ instead) on the returned instance to detect and resolve error conditions
 <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
-              </p>
-              <div id="method-i-create_source" class="dyn-source">
+            </p>
+            <div id="method-i-create_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 412</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-delete">
-              <b>delete</b>( ident, query_hash = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-delete">
+            <b>delete</b>( ident, query_hash = nil )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-delete" name="method-i-delete" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Delete a resource instance.</p>
+        <div class="description">
+            <p>Delete a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
 <p>See the constructor for details.</p>
@@ -553,31 +557,32 @@ instead) on the returned instance to detect and resolve error conditions
 <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
-              </p>
-              <div id="method-i-delete_source" class="dyn-source">
+            </p>
+            <div id="method-i-delete_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 453</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-list">
-              <b>list</b>( query_hash = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-list">
+            <b>list</b>( query_hash = nil )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-list" name="method-i-list" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Obtain a list of resource instance representations.</p>
+        <div class="description">
+            <p>Obtain a list of resource instance representations.</p>
 <dl class="rdoc-list note-list"><dt>query_hash
 <dd>
 <p>See the constructor for more. This is the only way to search or filter the
@@ -602,31 +607,32 @@ errors.</p>
 <p>Call <a
 href="PaginatedEnumeration.html#method-i-enumerate_all">Hoodoo::Client::PaginatedEnumeration#enumerate_all</a>
 to enumerate over the list of resource instances with automatic pagination.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
-              </p>
-              <div id="method-i-list_source" class="dyn-source">
+            </p>
+            <div id="method-i-list_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 372</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-show">
-              <b>show</b>( ident, query_hash = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-show">
+            <b>show</b>( ident, query_hash = nil )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-show" name="method-i-show" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Obtain a resource instance representation.</p>
+        <div class="description">
+            <p>Obtain a resource instance representation.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
 <p>See the constructor for details.</p>
@@ -646,31 +652,32 @@ instead) on the returned instance to detect and resolve error conditions
 <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
-              </p>
-              <div id="method-i-show_source" class="dyn-source">
+            </p>
+            <div id="method-i-show_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 392</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-update">
-              <b>update</b>( ident, body_hash, query_hash = nil )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-update">
+            <b>update</b>( ident, body_hash, query_hash = nil )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-update" name="method-i-update" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Update a resource instance.</p>
+        <div class="description">
+            <p>Update a resource instance.</p>
 <dl class="rdoc-list note-list"><dt>ident
 <dd>
 <p>See the constructor for details.</p>
@@ -693,32 +700,34 @@ instead) on the returned instance to detect and resolve error conditions
 <em>before</em> examining its Hash-derived fields.</p>
 
 <p>The hash contents are undefined when errors are returned.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
-              </p>
-              <div id="method-i-update_source" class="dyn-source">
+            </p>
+            <div id="method-i-update_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 433</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-      <div class="sectiontitle">Instance Protected methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-i-configure_with">
-              <b>configure_with</b>( resource, version, options )
-            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
-          </div>
+        </div>
+    </div>
 
-            <div class="description">
-              <p>This protected method is implemented by subclasses and called from the
+    <div class="sectiontitle">Instance Protected methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-configure_with">
+            <b>configure_with</b>( resource, version, options )
+            <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-configure_with" name="method-i-configure_with" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>This protected method is implemented by subclasses and called from the
 initializer. Subclasses should store resource and version data however they
 want and validate any required options, raising errors if need be.</p>
 <dl class="rdoc-list note-list"><dt><code>resource</code>
@@ -731,31 +740,32 @@ want and validate any required options, raising errors if need be.</p>
 <dd>
 <p>Options Hash. Same as for initialize.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-configure_with_source')" id="l_method-i-configure_with_source">show</a>
-              </p>
-              <div id="method-i-configure_with_source" class="dyn-source">
+            </p>
+            <div id="method-i-configure_with_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 253</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">configure_with</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">options</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#configure_with&quot;</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-copy_updated_options_to">
-              <b>copy_updated_options_to</b>( target_endpoint )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-copy_updated_options_to">
+            <b>copy_updated_options_to</b>( target_endpoint )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-copy_updated_options_to" name="method-i-copy_updated_options_to" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Copy the current value of writable options in this <a
+        <div class="description">
+            <p>Copy the current value of writable options in this <a
 href="Endpoint.html">Endpoint</a> instance, to another <a
 href="Endpoint.html">Endpoint</a> instance. This is useful when one is
 wrapping another, but to the external user of the wrapping endpoint, they
@@ -769,18 +779,19 @@ it&#39;s wrapping something to provide special session management.</p>
 
 <p>WARNING: Any <code>nil</code> internal state values will <em>not</em> be
 copied.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-copy_updated_options_to_source')" id="l_method-i-copy_updated_options_to_source">show</a>
-              </p>
-              <div id="method-i-copy_updated_options_to_source" class="dyn-source">
+            </p>
+            <div id="method-i-copy_updated_options_to_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 303</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">copy_updated_options_to</span>( <span class="ruby-identifier">target_endpoint</span> )
   <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">session_id</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">locale</span>     = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>     <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">locale</span>.<span class="ruby-identifier">nil?</span>
 
@@ -793,17 +804,17 @@ copied.</p>
     <span class="ruby-identifier">target_endpoint</span>.<span class="ruby-identifier">send</span>( <span class="ruby-identifier">property_writer</span>, <span class="ruby-identifier">value</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">value</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-generate_404_response_for">
-              <b>generate_404_response_for</b>( action )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-generate_404_response_for">
+            <b>generate_404_response_for</b>( action )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-generate_404_response_for" name="method-i-generate_404_response_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Utility method to aid subclass authors. Not usually overridden.</p>
+        <div class="description">
+            <p>Utility method to aid subclass authors. Not usually overridden.</p>
 
 <p>Return an instance of <a
 href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
@@ -814,18 +825,19 @@ Found&#39; for the target resource, version and given action.</p>
 <dd>
 <p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-generate_404_response_for_source')" id="l_method-i-generate_404_response_for_source">show</a>
-              </p>
-              <div id="method-i-generate_404_response_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-generate_404_response_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 280</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">generate_404_response_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> ).<span class="ruby-identifier">new</span>
   <span class="ruby-identifier">data</span>.<span class="ruby-identifier">platform_errors</span>.<span class="ruby-identifier">add_error</span>(
     <span class="ruby-string">&#39;platform.not_found&#39;</span>,
@@ -834,17 +846,17 @@ Found&#39; for the target resource, version and given action.</p>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">data</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-inject_enumeration_state">
-              <b>inject_enumeration_state</b>( augmented_array, query_hash )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-inject_enumeration_state">
+            <b>inject_enumeration_state</b>( augmented_array, query_hash )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-inject_enumeration_state" name="method-i-inject_enumeration_state" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Set the <code>augmented_array</code>&#39;s <code>next_page_proc</code>
+        <div class="description">
+            <p>Set the <code>augmented_array</code>&#39;s <code>next_page_proc</code>
 attribute to a Proc that will call the list endpoint to retrieve the next
 batch of of Resources using the same query parameters.</p>
 <dl class="rdoc-list note-list"><dt><code>augmented_array</code>
@@ -859,41 +871,42 @@ for more.</p>
 
 <p>Returns the <code>augmented_array</code> passed in, with the
 <code>next_page_proc</code> value set.</p>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-inject_enumeration_state_source')" id="l_method-i-inject_enumeration_state_source">show</a>
-              </p>
-              <div id="method-i-inject_enumeration_state_source" class="dyn-source">
+            </p>
+            <div id="method-i-inject_enumeration_state_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">inject_enumeration_state</span> ( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span> ( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
 
   <span class="ruby-identifier">endpoint</span>                       = <span class="ruby-keyword">self</span>
   <span class="ruby-identifier">query_hash</span>                     = <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> {} <span class="ruby-operator">:</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">dup</span>
-  <span class="ruby-identifier">batch_size</span>                     = [ <span class="ruby-number">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
+  <span class="ruby-identifier">batch_size</span>                     = [ <span class="ruby-value">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
   <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">next_page_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] <span class="ruby-operator">||</span> <span class="ruby-number">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
     <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> )
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">augmented_array</span>
 
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-i-response_class_for">
-              <b>response_class_for</b>( action )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-response_class_for">
+            <b>response_class_for</b>( action )
             <a href="../../../classes/Hoodoo/Client/Endpoint.html#method-i-response_class_for" name="method-i-response_class_for" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Utility method to aid subclass authors. Not usually overridden.</p>
+        <div class="description">
+            <p>Utility method to aid subclass authors. Not usually overridden.</p>
 
 <p>Determine the response class needed for a given action - returns <a
 href="AugmentedArray.html">Hoodoo::Client::AugmentedArray</a> or <a
@@ -903,23 +916,24 @@ references, not instances).</p>
 <dd>
 <p>A Symbol from Hoodoo::Services::Middleware::ALLOWED_ACTIONS.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-i-response_class_for_source')" id="l_method-i-response_class_for_source">show</a>
-              </p>
-              <div id="method-i-response_class_for_source" class="dyn-source">
+            </p>
+            <div id="method-i-response_class_for_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 266</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">response_class_for</span>( <span class="ruby-identifier">action</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">response_class_for</span>( <span class="ruby-identifier">action</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">action</span>.<span class="ruby-identifier">equal?</span>( <span class="ruby-value">:list</span> ) <span class="ruby-operator">?</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedArray</span> <span class="ruby-operator">:</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span><span class="ruby-operator">::</span><span class="ruby-constant">AugmentedHash</span>
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>

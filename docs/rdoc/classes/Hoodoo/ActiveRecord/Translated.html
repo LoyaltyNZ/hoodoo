@@ -9,10 +9,17 @@
 <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../css/github.css" type="text/css" media="screen" />
 <script src="../../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="../../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/main.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
+
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Translated">
+
+    <meta name="description" content="Support mixin for models subclassed from ActiveRecord::Base providing as-per-API-standard internationalisation support. See Hoodoo::ActiveRecord::Translated::ClassMethods#translated for details.">
+    <meta property="og:description" content="Support mixin for models subclassed from ActiveRecord::Base providing as-per-API-standard internationalisation support. See Hoodoo::ActiveRecord::Translated::ClassMethods#translated for details.">
+
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Translated class">
+    <meta name="keywords" content="included, instantiate">
 </head>
 
 <body>
@@ -28,7 +35,7 @@
     <div id="bodyContent">
         <div id="content">
     <div class="description">
-      
+        
 <p><a href="Support.html">Support</a> mixin for models subclassed from <a
 href="Base.html">ActiveRecord::Base</a> providing as-per-API-standard
 internationalisation support. See <a
@@ -45,32 +52,28 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
 
 
 
-
-
-
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
         <li>
-          <span class="type">MODULE</span>
-          <a href="Translated/ClassMethods.html">Hoodoo::ActiveRecord::Translated::ClassMethods</a>
+            <span class="type">MODULE</span>
+            <a href="Translated/ClassMethods.html">Hoodoo::ActiveRecord::Translated::ClassMethods</a>
         </li>
     </ul>
-
 
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
         <dt>I</dt>
         <dd>
-          <ul>
-              <li>
-                <a href="#method-c-included">included</a>,
-              </li>
-              <li>
-                <a href="#method-c-instantiate">instantiate</a>
-              </li>
-          </ul>
+            <ul>
+                <li>
+                    <a href="#method-c-included">included</a>,
+                </li>
+                <li>
+                    <a href="#method-c-instantiate">instantiate</a>
+                </li>
+            </ul>
         </dd>
     </dl>
 
@@ -79,20 +82,17 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
 
 
 
+<!-- Methods -->
 
-
-
-
-    <!-- Methods -->
-      <div class="sectiontitle">Class Public methods</div>
-        <div class="method">
-          <div class="title method-title" id="method-c-included">
-              <b>included</b>( model )
+    <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-included">
+            <b>included</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/Translated.html#method-c-included" name="method-c-included" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>Instantiates this module when it is included.</p>
+        <div class="description">
+            <p>Instantiates this module when it is included.</p>
 
 <p>Example:</p>
 
@@ -106,18 +106,19 @@ end
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
-              </p>
-              <div id="method-c-included_source" class="dyn-source">
+            </p>
+            <div id="method-c-included_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/translated.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_translate_with</span>,
     {
@@ -129,17 +130,17 @@ this module.</p>
   <span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> ) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">model</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
-        <div class="method">
-          <div class="title method-title" id="method-c-instantiate">
-              <b>instantiate</b>( model )
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-instantiate">
+            <b>instantiate</b>( model )
             <a href="../../../classes/Hoodoo/ActiveRecord/Translated.html#method-c-instantiate" name="method-c-instantiate" class="permalink">Link</a>
-          </div>
+        </div>
 
-            <div class="description">
-              <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
+        <div class="description">
+            <p>When instantiated in an <a href="Base.html">ActiveRecord::Base</a>
 subclass, all of the <a
 href="Translated/ClassMethods.html">Hoodoo::ActiveRecord::Translated::ClassMethods</a>
 methods are defined as class methods on the including class.</p>
@@ -148,23 +149,24 @@ methods are defined as class methods on the including class.</p>
 <p>The <a href="Base.html">ActiveRecord::Base</a> descendant that is including
 this module.</p>
 </dd></dl>
-            </div>
+        </div>
 
 
 
-            <div class="sourcecode">
-              <p class="source-link">
+        <div class="sourcecode">
+
+            <p class="source-link">
                 Source:
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
-              </p>
-              <div id="method-c-instantiate_source" class="dyn-source">
+            </p>
+            <div id="method-c-instantiate_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/translated.rb, line 56</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword ruby-title">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
 </div>
 
     </div>
