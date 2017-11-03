@@ -19,7 +19,7 @@
     <meta property="og:description" content="Class methods to patch over an ActiveRecord::Base subclass which includes Hoodoo::ActiveRecord::Finder and Hoodoo::ActiveRecord::Dated.">
 
     <meta name="keywords" content="Hoodoo::Monkey::Patch::ActiveRecordDatedFinderAdditions::ClassExtensions class">
-    <meta name="keywords" content="acquire_in_and_update">
+    <meta name="keywords" content="acquire_in!">
 </head>
 
 <body>
@@ -55,7 +55,7 @@ href="../../../ActiveRecord/Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
         <dd>
             <ul>
                 <li>
-                    <a href="#method-i-acquire_in_and_update">acquire_in_and_update</a>
+                    <a href="#method-i-acquire_in-21">acquire_in!</a>
                 </li>
             </ul>
         </dd>
@@ -70,14 +70,14 @@ href="../../../ActiveRecord/Dated.html">Hoodoo::ActiveRecord::Dated</a>.</p>
 
     <div class="sectiontitle">Instance Public methods</div>
     <div class="method">
-        <div class="title method-title" id="method-i-acquire_in_and_update">
-            <b>acquire_in_and_update</b>( context )
-            <a href="../../../../../classes/Hoodoo/Monkey/Patch/ActiveRecordDatedFinderAdditions/ClassExtensions.html#method-i-acquire_in_and_update" name="method-i-acquire_in_and_update" class="permalink">Link</a>
+        <div class="title method-title" id="method-i-acquire_in-21">
+            <b>acquire_in!</b>( context )
+            <a href="../../../../../classes/Hoodoo/Monkey/Patch/ActiveRecordDatedFinderAdditions/ClassExtensions.html#method-i-acquire_in-21" name="method-i-acquire_in-21" class="permalink">Link</a>
         </div>
 
         <div class="description">
             <p>See <a
-href="../../../ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in_and_update">Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in_and_update</a>
+href="../../../ActiveRecord/Finder/ClassMethods.html#method-i-acquire_in-21">Hoodoo::ActiveRecord::Finder::ClassMethods#acquire_in!</a>
 for details. Calls that method then, upon error, checks to see if a
 contemporary version of the resource exists and adds error
 <code>generic.contemporary_exists</code> to the given <code>context</code>
@@ -90,11 +90,11 @@ if so.</p>
 
             <p class="source-link">
                 Source:
-                <a href="javascript:toggleSource('method-i-acquire_in_and_update_source')" id="l_method-i-acquire_in_and_update_source">show</a>
+                <a href="javascript:toggleSource('method-i-acquire_in-21_source')" id="l_method-i-acquire_in-21_source">show</a>
             </p>
-            <div id="method-i-acquire_in_and_update_source" class="dyn-source">
+            <div id="method-i-acquire_in-21_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_in_and_update</span>( <span class="ruby-identifier">context</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">acquire_in!</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">result</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">context</span> )
 
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span>
