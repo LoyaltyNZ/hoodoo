@@ -1,6 +1,6 @@
 # Hoodoo v2.x
 
-## 2.1.0 (2017-11-02)
+## 2.1.0 (2017-11-03)
 
 Introduces a new [generic error](https://github.com/LoyaltyNZ/hoodoo/blob/master/docs/api_specification/README.md#error.common.codes.generic), `generic.contemporary_exists`. Supporting service code can use this either manually, or with assistance methods listed below, to indicate that - in some date-based context - a contemporary ("now") version of some resource instance exists, but it doesn't exist in the context of the date at hand. This is only appropriate if using the [Hoodoo::ActiveRecord::Dated](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/Dated.html) or [Hoodoo::ActiveRecord::ManuallyDated](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/ActiveRecord/ManuallyDated.html) modules, or if implementing a comparable change tracking mechanism independently.
 
