@@ -2,4 +2,4 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'hoodoo/generator'
 
-exit Hoodoo::Generator.instance.run!(ARGV)
+exit Hoodoo::Generator.instance.run!

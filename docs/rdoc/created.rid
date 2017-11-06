@@ -1,4 +1,4 @@
-Fri, 03 Nov 2017 14:02:20 +1300
+Tue, 07 Nov 2017 08:09:33 +1300
 README.md	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -7,7 +7,7 @@ lib/hoodoo/active/active_record/base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/creator.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/dated.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/active/active_record/finder.rb	Fri, 03 Nov 2017 14:01:15 +1300
+lib/hoodoo/active/active_record/finder.rb	Mon, 06 Nov 2017 08:45:25 +1300
 lib/hoodoo/active/active_record/manually_dated.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/active/active_record/secure.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -46,7 +46,7 @@ lib/hoodoo/discovery.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/errors.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/errors/error_descriptions.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/errors/errors.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/generator.rb	Mon, 16 Oct 2017 08:58:00 +1300
+lib/hoodoo/generator.rb	Tue, 07 Nov 2017 08:06:49 +1300
 lib/hoodoo/logger.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/logger/fast_writer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/logger/flattener_mixin.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -59,8 +59,8 @@ lib/hoodoo/logger/writers/stream_writer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/middleware.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/monkey.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/monkey/monkey.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb	Fri, 03 Nov 2017 13:56:55 +1300
-lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions.rb	Fri, 03 Nov 2017 13:56:55 +1300
+lib/hoodoo/monkey/patch/active_record_dated_finder_additions.rb	Fri, 03 Nov 2017 15:14:34 +1300
+lib/hoodoo/monkey/patch/active_record_manually_dated_finder_additions.rb	Mon, 06 Nov 2017 08:45:21 +1300
 lib/hoodoo/monkey/patch/datadog_traced_amqp.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/monkey/patch/newrelic_middleware_analytics.rb	Mon, 16 Oct 2017 08:58:00 +1300
 lib/hoodoo/monkey/patch/newrelic_traced_amqp.rb	Mon, 16 Oct 2017 08:58:00 +1300
@@ -110,7 +110,7 @@ lib/hoodoo/services/services/implementation.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/interface.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/permissions.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/request.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/services/services/response.rb	Fri, 03 Nov 2017 13:56:55 +1300
+lib/hoodoo/services/services/response.rb	Fri, 03 Nov 2017 15:14:34 +1300
 lib/hoodoo/services/services/service.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/session.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/transient_store.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -125,4 +125,4 @@ lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Fri, 03 Nov 2017 14:01:34 +1300
+lib/hoodoo/version.rb	Tue, 07 Nov 2017 08:09:12 +1300
