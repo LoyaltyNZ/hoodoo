@@ -184,7 +184,7 @@ module Hoodoo
       puts "  hoodoo service_person  --from git@github.com:YOURNAME/service_shell_fork.git"
       puts "  hoodoo service_product --path /path/to/local/service/shell/container"
       puts
-      puts "The '--from' option is alised as '--git'. All options have single letter"
+      puts "The '--from' option is aliased as '--git'. All options have single letter"
       puts "equivalents. See also:"
       puts
       puts "  hoodoo --help    shows this help"
