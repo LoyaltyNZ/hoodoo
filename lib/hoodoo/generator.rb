@@ -11,6 +11,7 @@
 require 'singleton'
 require 'fileutils'
 require 'pathname'
+require 'getoptlong'
 
 module Hoodoo
 
@@ -36,25 +37,57 @@ module Hoodoo
     #
     NAME_REGEX = /^[a-zA-Z01-9_-]{2,30}$/
 
-    # Run the +hoodoo+ command implementation.
+    # Run the +hoodoo+ command implementation. Command line options are
+    # taken from the Ruby ARGV constant.
     #
-    # +args+:: Array of command line arguments, excluding the +hoodoo+
-    #          command itself (so, just any extra arguments passed in).
-    #
-    def run!( args )
-      return show_usage if args_empty?(args)
+    def run!
+      git  = nil
+      path = nil
 
-      name = args.first
+      return show_usage() if ARGV.length < 1
+      name = ARGV.shift() if ARGV.first[ 0 ] != '-'
 
-      return show_usage   if name == '-h' || name == '--help' || name.nil? || name.empty?
-      return show_version if name == '-v' || name == '--version'
+      opts = GetoptLong.new(
+        [ '--help',    '-h',       GetoptLong::NO_ARGUMENT       ],
+        [ '--version', '-v', '-V', GetoptLong::NO_ARGUMENT       ],
+        [ '--path',    '-p',       GetoptLong::REQUIRED_ARGUMENT ],
+        [ '--from',    '-f',       GetoptLong::REQUIRED_ARGUMENT ],
+        [ '--git',     '-g',       GetoptLong::REQUIRED_ARGUMENT ],
+      )
 
+      silence_stream( $stderr ) do
+        begin
+          opts.each do | opt, arg |
+            case opt
+              when '--help'
+                return show_usage()
+              when '--version'
+                return show_version()
+              when '--path'
+                path = arg
+              when '--from', '--git'
+                git = arg
+            end
+          end
+
+        rescue GetoptLong::InvalidOption, GetoptLong::MissingArgument => e
+          return usage_and_warning( e.message )
+
+        end
+      end
+
+      unless path.nil? || git.nil?
+        return usage_and_warning( 'Use the --path OR --from arguments, but not both' )
+      end
+
+      git ||= 'git@github.com:LoyaltyNZ/service_shell.git'
+
+      name = ARGV.shift() if name.nil?
+      return show_usage() if name.nil?
+
+      return usage_and_warning( "Unexpected extra arguments were given" ) if ARGV.count > 0
       return usage_and_warning( "SERVICE_NAME must match #{ NAME_REGEX.inspect }" ) if naughty_name?( name )
       return usage_and_warning( "'#{ name }' already exists" ) if File.exist?( "./#{ name }" )
-
-      path  = args[ 2 ] if args[ 1 ] == '--path'
-      git   = args[ 2 ] if args[ 1 ] == '--from'
-      git ||= 'git@github.com:LoyaltyNZ/service_shell.git'
 
       return create_service( name, git, path )
     end
@@ -143,7 +176,7 @@ module Hoodoo
       puts
       puts "Creates a service shell at the PWD, customised with the given service name."
       puts
-      puts "  hoodoo <service-name> [--from <git-repository> | --path <full-pathname>]"
+      puts "  hoodoo <service-name> [--from <git-repository> OR --path <full-pathname>]"
       puts
       puts "For example:"
       puts
@@ -151,7 +184,8 @@ module Hoodoo
       puts "  hoodoo service_person  --from git@github.com:YOURNAME/service_shell_fork.git"
       puts "  hoodoo service_product --path /path/to/local/service/shell/container"
       puts
-      puts "See also:"
+      puts "The '--from' option is aliased as '--git'. All options have single letter"
+      puts "equivalents. See also:"
       puts
       puts "  hoodoo --help    shows this help"
       puts "  hoodoo --version shows the require-able gem version"
@@ -171,9 +205,27 @@ module Hoodoo
     end
 
     def usage_and_warning( warning )
-      puts "WARNING: #{warning}"
       puts
-      show_usage
+      puts "-" * 80
+      puts "WARNING: #{warning}"
+      puts "-" * 80
+
+      return show_usage()
+    end
+
+    def silence_stream( stream, &block )
+      begin
+        old_stream = stream.dup
+        stream.reopen( File::NULL )
+        stream.sync = true
+
+        yield
+
+      ensure
+        stream.reopen( old_stream )
+        old_stream.close
+
+      end
     end
   end
 end

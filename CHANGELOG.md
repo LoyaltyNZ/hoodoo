@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.1.2 (2017-11-07)
+
+The `hoodoo` command option parsing has been overhauled and is now more robust, flexible and easier to maintain in future. Single letter versions of the arguments are available (e.g. `-f` for `--from`) and the `--from` argument is aliased as `--git`/`-g`.
+
 ## 2.1.1 (2017-11-03)
 
 No code changes over 2.1.0; minor RDoc fix for estimated counts (avoids mutating possibly frozen string).

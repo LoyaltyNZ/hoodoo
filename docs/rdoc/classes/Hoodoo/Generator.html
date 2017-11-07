@@ -112,17 +112,13 @@ underscore or hyphen; between 2 and 30 characters).</p></td>
     <div class="sectiontitle">Instance Public methods</div>
     <div class="method">
         <div class="title method-title" id="method-i-run-21">
-            <b>run!</b>( args )
+            <b>run!</b>()
             <a href="../../classes/Hoodoo/Generator.html#method-i-run-21" name="method-i-run-21" class="permalink">Link</a>
         </div>
 
         <div class="description">
-            <p>Run the <code>hoodoo</code> command implementation.</p>
-<dl class="rdoc-list note-list"><dt>args
-<dd>
-<p>Array of command line arguments, excluding the <code>hoodoo</code> command
-itself (so, just any extra arguments passed in).</p>
-</dd></dl>
+            <p>Run the <code>hoodoo</code> command implementation. Command line options
+are taken from the Ruby ARGV constant.</p>
         </div>
 
 
@@ -134,21 +130,55 @@ itself (so, just any extra arguments passed in).</p>
                 <a href="javascript:toggleSource('method-i-run-21_source')" id="l_method-i-run-21_source">show</a>
             </p>
             <div id="method-i-run-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 44</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">run!</span>( <span class="ruby-identifier">args</span> )
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args_empty?</span>(<span class="ruby-identifier">args</span>)
+                <pre><span class="ruby-comment"># File lib/hoodoo/generator.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">run!</span>
+  <span class="ruby-identifier">git</span>  = <span class="ruby-keyword">nil</span>
+  <span class="ruby-identifier">path</span> = <span class="ruby-keyword">nil</span>
 
-  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span>() <span class="ruby-keyword">if</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">1</span>
+  <span class="ruby-identifier">name</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>() <span class="ruby-keyword">if</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">first</span>[ <span class="ruby-value">0</span> ] <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;-&#39;</span>
 
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span>   <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-h&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--help&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">empty?</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_version</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;-v&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--version&#39;</span>
+  <span class="ruby-identifier">opts</span> = <span class="ruby-constant">GetoptLong</span>.<span class="ruby-identifier">new</span>(
+    [ <span class="ruby-string">&#39;--help&#39;</span>,    <span class="ruby-string">&#39;-h&#39;</span>,       <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>       ],
+    [ <span class="ruby-string">&#39;--version&#39;</span>, <span class="ruby-string">&#39;-v&#39;</span>, <span class="ruby-string">&#39;-V&#39;</span>, <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">NO_ARGUMENT</span>       ],
+    [ <span class="ruby-string">&#39;--path&#39;</span>,    <span class="ruby-string">&#39;-p&#39;</span>,       <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span> ],
+    [ <span class="ruby-string">&#39;--from&#39;</span>,    <span class="ruby-string">&#39;-f&#39;</span>,       <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span> ],
+    [ <span class="ruby-string">&#39;--git&#39;</span>,     <span class="ruby-string">&#39;-g&#39;</span>,       <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">REQUIRED_ARGUMENT</span> ],
+  )
 
+  <span class="ruby-identifier">silence_stream</span>( <span class="ruby-identifier">$stderr</span> ) <span class="ruby-keyword">do</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span> <span class="ruby-identifier">opt</span>, <span class="ruby-identifier">arg</span> <span class="ruby-operator">|</span>
+        <span class="ruby-keyword">case</span> <span class="ruby-identifier">opt</span>
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;--help&#39;</span>
+            <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span>()
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;--version&#39;</span>
+            <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_version</span>()
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;--path&#39;</span>
+            <span class="ruby-identifier">path</span> = <span class="ruby-identifier">arg</span>
+          <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;--from&#39;</span>, <span class="ruby-string">&#39;--git&#39;</span>
+            <span class="ruby-identifier">git</span> = <span class="ruby-identifier">arg</span>
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">InvalidOption</span>, <span class="ruby-constant">GetoptLong</span><span class="ruby-operator">::</span><span class="ruby-constant">MissingArgument</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-identifier">e</span>.<span class="ruby-identifier">message</span> )
+
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">path</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">git</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-string">&#39;Use the --path OR --from arguments, but not both&#39;</span> )
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">git</span> <span class="ruby-operator">||=</span> <span class="ruby-string">&#39;git@github.com:LoyaltyNZ/service_shell.git&#39;</span>
+
+  <span class="ruby-identifier">name</span> = <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">shift</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">show_usage</span>() <span class="ruby-keyword">if</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-string">&quot;Unexpected extra arguments were given&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;SERVICE_NAME must match #{ NAME_REGEX.inspect }&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">naughty_name?</span>( <span class="ruby-identifier">name</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">usage_and_warning</span>( <span class="ruby-node">&quot;&#39;#{ name }&#39; already exists&quot;</span> ) <span class="ruby-keyword">if</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">exist?</span>( <span class="ruby-node">&quot;./#{ name }&quot;</span> )
-
-  <span class="ruby-identifier">path</span>  = <span class="ruby-identifier">args</span>[ <span class="ruby-value">2</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>[ <span class="ruby-value">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--path&#39;</span>
-  <span class="ruby-identifier">git</span>   = <span class="ruby-identifier">args</span>[ <span class="ruby-value">2</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>[ <span class="ruby-value">1</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;--from&#39;</span>
-  <span class="ruby-identifier">git</span> <span class="ruby-operator">||=</span> <span class="ruby-string">&#39;git@github.com:LoyaltyNZ/service_shell.git&#39;</span>
 
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">create_service</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">git</span>, <span class="ruby-identifier">path</span> )
 <span class="ruby-keyword">end</span></pre>
