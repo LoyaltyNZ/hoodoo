@@ -103,7 +103,7 @@ module Hoodoo; module Services
         # https://github.com/airbrake/airbrake-ruby/issues/281
         #
         def sanitize_object( object )
-          object = object.dup if object.frozen?
+          object = ( object.dup rescue object ) if object.frozen?
           return object unless object.is_a?( Hash )
 
           sanitize_hash( object )
