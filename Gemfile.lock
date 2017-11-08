@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (2.1.2)
+    hoodoo (2.2.0)
       dalli (~> 2.7)
 
 GEM
@@ -61,7 +61,7 @@ GEM
     minitest (5.10.3)
     multi_xml (0.6.0)
     pg (0.21.0)
-    public_suffix (3.0.0)
+    public_suffix (3.0.1)
     rack (2.0.3)
     rack-test (0.7.0)
       rack (>= 1.0, < 3)

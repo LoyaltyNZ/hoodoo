@@ -1,4 +1,4 @@
-Tue, 07 Nov 2017 08:09:33 +1300
+Thu, 09 Nov 2017 12:39:48 +1300
 README.md	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -46,7 +46,7 @@ lib/hoodoo/discovery.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/errors.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/errors/error_descriptions.rb	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo/errors/errors.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/generator.rb	Tue, 07 Nov 2017 08:06:49 +1300
+lib/hoodoo/generator.rb	Tue, 07 Nov 2017 14:48:13 +1300
 lib/hoodoo/logger.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/logger/fast_writer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/logger/flattener_mixin.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -100,7 +100,7 @@ lib/hoodoo/services/middleware/endpoints/inter_resource_local.rb	Thu, 12 Oct 201
 lib/hoodoo/services/middleware/endpoints/inter_resource_remote.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/exception_reporting/base_reporter.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Mon, 16 Oct 2017 08:58:00 +1300
+lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Thu, 09 Nov 2017 12:37:02 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/interaction.rb	Mon, 16 Oct 2017 08:58:00 +1300
 lib/hoodoo/services/middleware/middleware.rb	Mon, 16 Oct 2017 08:58:00 +1300
@@ -125,4 +125,4 @@ lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Tue, 07 Nov 2017 08:09:12 +1300
+lib/hoodoo/version.rb	Thu, 09 Nov 2017 12:39:35 +1300
