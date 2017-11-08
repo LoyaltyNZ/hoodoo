@@ -57,6 +57,8 @@ module Hoodoo; module Services
         def report( e, env )
           opts = { :backtrace => Kernel.caller() }
           opts[ :rack_env ] = env unless env.nil?
+          e    = sanitize_object(e)
+          opts = sanitize_object(opts)
 
           # Since an ExceptionReporter is already a "slow communicatory",
           # Hoodoo is using threads for behaviour; we don't need the async
@@ -81,8 +83,36 @@ module Hoodoo; module Services
             :environment_name => Hoodoo::Services::Middleware.environment,
             :session          => user_data_for( context ) || 'unknown'
           }
+          e    = sanitize_object(e)
+          opts = sanitize_object(opts)
 
           Airbrake.notify_sync( e, opts )
+        end
+
+        private
+
+        # Recursive sanitisation method for deeply nested hash objects, returning
+        # the same object in a non frozen state.
+        #
+        # Why do I exist?
+        #
+        # Due to an airbrake-ruby issue where client arguments can be mutated when within a hash,
+        # a recursive sanitisation process must therefore take place before our inputs are sent
+        # to Airbrake, ensuring no frozen hash objects are present.
+        #
+        # https://github.com/airbrake/airbrake-ruby/issues/281
+        #
+        def sanitize_object( object )
+          object = object.dup if object.frozen?
+          return object unless object.is_a?( Hash )
+
+          sanitize_hash( object )
+        end
+
+        def sanitize_hash( object )
+          object.each do | key, value |
+            object[key] = sanitize_object( value )
+          end
         end
       end
 
