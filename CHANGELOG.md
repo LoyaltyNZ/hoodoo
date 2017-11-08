@@ -1,5 +1,12 @@
 # Hoodoo v2.x
 
+## 2.2.0 (2017-11-09)
+
+Exception handling abstraction fix - work around Airbrake 6/7 bug which causes it to attempt to modify frozen objects under certain circumstances. See:
+
+* Airbrake Ruby [Issue 281](https://github.com/airbrake/airbrake-ruby/issues/281)
+* Airbrake Ruby [PR 283](https://github.com/airbrake/airbrake-ruby/pull/283)
+
 ## 2.1.2 (2017-11-07)
 
 The `hoodoo` command option parsing has been overhauled and is now more robust, flexible and easier to maintain in future. Single letter versions of the arguments are available (e.g. `-f` for `--from`) and the `--from` argument is aliased as `--git`/`-g`.
