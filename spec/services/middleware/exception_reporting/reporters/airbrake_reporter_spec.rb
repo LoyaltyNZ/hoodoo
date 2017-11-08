@@ -16,33 +16,104 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
   end
 
   context '#report' do
-    it 'calls Airbrake correctly without an "env"' do
-      ex = RuntimeError.new( 'A' )
+    context 'with Airbrake mocks' do
+      it 'calls Airbrake correctly without an "env"' do
+        ex = RuntimeError.new( 'A' )
 
-      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
-        expect( e ).to be_a( Exception )
-        expect( opts ).to be_a( Hash )
-        expect( opts ).to have_key( :backtrace )
-        expect( opts ).to_not have_key( :rack_env )
+        expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
+          expect( e ).to be_a( Exception )
+          expect( opts ).to be_a( Hash )
+          expect( opts ).to have_key( :backtrace )
+          expect( opts ).to_not have_key( :rack_env )
+        end
+
+        Hoodoo::Services::Middleware::ExceptionReporting.report( ex )
       end
 
-      Hoodoo::Services::Middleware::ExceptionReporting.report( ex )
+      it 'calls Airbrake correctly with an "env"' do
+        ex       = RuntimeError.new( 'A' )
+        mock_env = { 'rack' => 'request' }
+
+        expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
+          expect( e ).to be_a( Exception )
+
+          expect( opts ).to be_a( Hash )
+          expect( opts ).to have_key( :backtrace )
+
+          expect( opts[ :rack_env ] ).to eq( mock_env )
+        end
+
+        Hoodoo::Services::Middleware::ExceptionReporting.report( ex, mock_env )
+      end
     end
 
-    it 'calls Airbrake correctly with an "env"' do
-      ex       = RuntimeError.new( 'A' )
-      mock_env = { 'rack' => 'request' }
+    context 'without Airbrake mocks' do
 
-      expect( Airbrake ).to receive( :notify_sync ).once do | e, opts |
-        expect( e ).to be_a( Exception )
-
-        expect( opts ).to be_a( Hash )
-        expect( opts ).to have_key( :backtrace )
-
-        expect( opts[ :rack_env ] ).to eq( mock_env )
+      # Airbrake does not allow the default notifier to be reconfigured, so we
+      # must set some dummy values here just once within this Airbrake-specific
+      # integration test. Without this, non-mocked tests do not run much of the
+      # Airbrake code that, over time, we have discovered should be tested.
+      #
+      before :all do
+        Airbrake.configure do | config |
+          config.project_id  = '123456'
+          config.project_key = Hoodoo::UUID.generate()
+        end
       end
 
-      Hoodoo::Services::Middleware::ExceptionReporting.report( ex, mock_env )
+      before :each do
+        WebMock.enable!
+
+        stub_request( :post,   /airbrake\.io\/api/ ).
+           to_return( :body    => "{}",
+                      :status  => 201,
+                      :headers => { 'Content-Length' => 2 } )
+      end
+
+      after :each do
+        WebMock.reset!
+        WebMock.disable!
+      end
+
+      it 'can send frozen exceptions' do
+        ex = RuntimeError.new( 'A' )
+
+        # Be sure that the adaptero called Airbrake and that Airbrake did try
+        # to internally send the message (which we'll catch with WebMock via
+        # the "before :each" filter above).
+        #
+        expect( Airbrake ).to receive( :notify_sync ).once.and_call_original
+        expect_any_instance_of( Airbrake::SyncSender ).to receive( :send ).once.and_call_original
+
+        # There shouldn't be any need to handle exceptions inside the
+        # communicator pool underneath the adaptor.
+        #
+        expect_any_instance_of( Hoodoo::Communicators::Pool ).to_not receive( :handle_exception )
+
+        Hoodoo::Services::Middleware::ExceptionReporting.report( ex.freeze() )
+        Hoodoo::Services::Middleware::ExceptionReporting.wait()
+      end
+
+      it 'can send frozen data large enough to require truncation' do
+        ex       = RuntimeError.new( 'A' )
+        mock_env = { 'rack' => 'request' }
+
+        1.upto( Airbrake::Notice::PAYLOAD_MAX_SIZE + 10 ) do | i |
+          mock_env[ Hoodoo::UUID.generate() ] = i
+        end
+
+        # See previous test (above) for an explanation of the expectations
+        # below.
+
+        expect( Airbrake ).to receive( :notify_sync ).once.and_call_original
+        expect_any_instance_of( Airbrake::Truncator ).to receive( :truncate_object ).at_least( :once ).and_call_original
+        expect_any_instance_of( Airbrake::SyncSender ).to receive( :send ).once.and_call_original
+
+        expect_any_instance_of( Hoodoo::Communicators::Pool ).to_not receive( :handle_exception )
+
+        Hoodoo::Services::Middleware::ExceptionReporting.report( ex, mock_env.freeze() )
+        Hoodoo::Services::Middleware::ExceptionReporting.wait()
+      end
     end
   end
 

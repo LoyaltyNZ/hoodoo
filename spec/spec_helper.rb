@@ -19,6 +19,16 @@ end
 
 require 'byebug'
 
+# Stubbing Net::HTTP with WebMock - disabled by default; only enable for
+# tests where you need it, as real Net::HTTP connections are used in many
+# other tests and must not be mocked.
+#
+# https://github.com/bblimke/webmock
+
+require 'webmock/rspec'
+
+WebMock.disable!
+
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
 # far from 'the real thing' for my liking. Instead, we use SQLite in memory
