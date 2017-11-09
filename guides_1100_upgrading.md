@@ -223,7 +223,7 @@ end
 
 Note the updates in the service shell from the last version supporting Hoodoo 1 to the at-time-of-writing version for Hoodoo 2. You should check through the diff and apply any changes you feel are relevant and valuable within your own service:
 
-* [Service shell changes on GitHub](https://github.com/LoyaltyNZ/service_shell/compare/fbb1d4f4c3eebfc627fca6153b9b5deeddb8e41a...bb1b8e0005ea763b38b545080bc7ad7fe65eb13b)
+* [Service shell changes on GitHub](https://github.com/LoyaltyNZ/service_shell/compare/fbb1d4f4c3eebfc627fca6153b9b5deeddb8e41a...9100ec0af9c2d5cbe2969390fb0aad5da6d3a81e)
 
 **In particular note the `Gemfile` and `Rakefile` updates**. Most of the rest of the changes will probably have been covered above already, but note that the migration generator ought to update for ActiveRecord 5.1 not 4.2 - previous steps may have done a search-and-replace that left it at 4.2 for all future migrations. Around line 76, check for:
 
