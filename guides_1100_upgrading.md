@@ -157,6 +157,18 @@ Instead, use `where`:
 Model.where( { some: conditions } ).delete_all()
 ```
 
+Validation conditions of `:if` and `:unless` used to take String arguments, with an implied use of `eval` in the implementation; these now been deprecated, so use lambdas instead; e.g. move from:
+
+```ruby
+validate :some_custom_validation_method, unless: "some_field.blank?"
+```
+
+...to:
+
+```ruby
+validate :some_custom_validation_method, unless: -> { some_field.blank? }
+```
+
 For other deprecations and removals, see the guides listed in the section below.
 
 #### Other issues
