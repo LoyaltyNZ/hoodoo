@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (2.2.0)
+    hoodoo (2.2.1)
       dalli (~> 2.7)
 
 GEM
@@ -31,7 +31,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     airbrake (7.1.0)
       airbrake-ruby (~> 2.5)
-    airbrake-ruby (2.5.1)
+    airbrake-ruby (2.6.0)
     alchemy-flux (1.1.0)
       amqp (~> 1.5)
       eventmachine (~> 1.0)
@@ -111,6 +111,7 @@ DEPENDENCIES
   activerecord (~> 5.1)
   activesupport (~> 5.1)
   airbrake (~> 7.1)
+  airbrake-ruby (~> 2.6)
   alchemy-flux (= 1.1)
   byebug (~> 9.0)
   database_cleaner (~> 1.6)

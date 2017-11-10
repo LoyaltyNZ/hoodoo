@@ -96,11 +96,12 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::AirbrakeReporter do
 
       it 'can send frozen data large enough to require truncation' do
         ex       = RuntimeError.new( 'A' )
-        mock_env = { 'rack' => 'request' }
-
-        1.upto( Airbrake::Notice::PAYLOAD_MAX_SIZE + 10 ) do | i |
-          mock_env[ Hoodoo::UUID.generate() ] = i
-        end
+        mock_env = {
+          'rack' => 'request',
+          'long' => {
+            'string' => ( '!' * Airbrake::Notice::MAX_NOTICE_SIZE ).freeze
+          }.freeze
+        }
 
         # See previous test (above) for an explanation of the expectations
         # below.

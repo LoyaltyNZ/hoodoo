@@ -37,6 +37,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'byebug',           '~> 9.0'
   s.add_development_dependency 'timecop',          '~> 0.8'
   s.add_development_dependency 'raygun4ruby',      '~> 2.6' # raygun.io
+  s.add_development_dependency 'airbrake-ruby',    '~> 2.6' # airbrake.io
   s.add_development_dependency 'airbrake',         '~> 7.1' # airbrake.io
   s.add_development_dependency 'le',               '~> 2.7' # logentries.com
 end
