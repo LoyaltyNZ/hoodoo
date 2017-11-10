@@ -1,5 +1,11 @@
 # Hoodoo v2.x
 
+## 2.2.1 (2017-11-10)
+
+We are very grateful for the fast fix of the Airbrake Ruby frozen Hash modification problems described for Hoodoo v2.2.0 below. Hoodoo's development mode `gemspec` has been updated to require v2.6.0 or later of Airbrake Ruby and the internal Hash duplication workaround has been removed.
+
+* Airbrake Ruby [PR 283](https://github.com/airbrake/airbrake-ruby/pull/283) (now merged)
+
 ## 2.2.0 (2017-11-09)
 
 Exception handling abstraction fix - work around Airbrake 6/7 bug which causes it to attempt to modify frozen objects under certain circumstances. See:
