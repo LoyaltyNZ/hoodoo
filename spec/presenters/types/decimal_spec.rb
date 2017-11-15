@@ -16,7 +16,7 @@ describe Hoodoo::Presenters::Decimal do
 
   describe '#validate' do
     it 'should return [] when valid decimal' do
-      expect(@inst.validate(BigDecimal.new(12.231,3)).errors).to eq([])
+      expect(@inst.validate('  -0.123245e2  ').errors).to eq([])
     end
 
     it 'should return correct error when data is not a decimal' do

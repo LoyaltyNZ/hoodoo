@@ -274,7 +274,7 @@ describe Hoodoo::Presenters::Array do
     'boolean'   => { :valid => [ true                    ], :invalid => [ 4.51, 'false'                    ] },
     'date'      => { :valid => [ Date.today.iso8601      ], :invalid => [ Date.today, '23rd January 2041'  ] },
     'date_time' => { :valid => [ DateTime.now.iso8601    ], :invalid => [ DateTime.now, '2017-01-27 12:00' ] },
-    'decimal'   => { :valid => [ BigDecimal.new(4.51, 2) ], :invalid => [ 4.51, '4.51'                     ] },
+    'decimal'   => { :valid => [ '4.51'                  ], :invalid => [ 4.51, BigDecimal.new( '4.51' )   ] },
     'enum'      => { :valid => [ 'one'                   ], :invalid => [ 'One', 1                         ] },
     'float'     => { :valid => [ 4.51                    ], :invalid => [ BigDecimal.new(4.51, 2), '4.51'  ] },
     'integer'   => { :valid => [ 4                       ], :invalid => [ '4'                              ] },
@@ -457,8 +457,8 @@ describe Hoodoo::Presenters::Array do
         it 'validates entries' do
           data = {
             'numbers' => [
-              BigDecimal.new( '42.21' ),
-              'not a decimal'
+              '42.21',
+              '41.0 not a decimal'
             ]
           }
 
