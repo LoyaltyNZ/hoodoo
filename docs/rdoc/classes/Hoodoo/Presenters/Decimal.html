@@ -81,7 +81,7 @@
         <tr valign='top'>
             <td>&nbsp;</td>
             <td colspan="2" class="attr-desc"><p>In theory this is derived from Rubinius source, but “master” didn&#39;t
-seem to include this at the time of writing. See:</p>
+seem to include it at the time of writing. See:</p>
 
 <p><a
 href="https://github.com/rubinius/rubinius">github.com/rubinius/rubinius</a>/
@@ -156,11 +156,18 @@ appropriate name and options.</p>
 
         <div class="description">
             <p>Check if data is a valid <a href="Decimal.html">Decimal</a> and return a <a
-href="../Errors.html">Hoodoo::Errors</a> instance. Decimals are expressed
-in JSON as Strings with any amount of leading or trailing space, can be
-positive or negative and may use simple (e.g.
+href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+
+<p>Decimals are expressed in JSON as Strings with any amount of leading or
+trailing space, can be positive or negative and may use simple (e.g.
 <code>&quot;-12.45&quot;</code>) or scientific (e.g.
-<code>&quot;-0.1245e2&quot;</code>) notation.</p>
+<code>&quot;-0.1245e2&quot;</code>) notation with a lower case or capital
+<code>E</code> in the latter case.</p>
+
+<p>A leading “0” before a decimal place may be omitted; “0.12” and “.12” are
+considered equivalent and valid. An optional leading “+” is allowed for
+positive numbers. Between digits, an underscore is permitted as a visual
+separator; “12_431_999” and “12431999” are equivalent and valid.</p>
         </div>
 
 
@@ -172,7 +179,7 @@ positive or negative and may use simple (e.g.
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 42</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )

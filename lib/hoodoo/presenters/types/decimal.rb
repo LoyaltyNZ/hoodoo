@@ -8,7 +8,7 @@ module Hoodoo
     class Decimal < Hoodoo::Presenters::Field
 
       # In theory this is derived from Rubinius source, but "master" didn't seem
-      # to include this at the time of writing. See:
+      # to include it at the time of writing. See:
       #
       # https://github.com/rubinius/rubinius/
       # https://stackoverflow.com/questions/1034418/determine-if-a-string-is-a-valid-float-value
@@ -35,9 +35,16 @@ module Hoodoo
       end
 
       # Check if data is a valid Decimal and return a Hoodoo::Errors instance.
+      #
       # Decimals are expressed in JSON as Strings with any amount of leading or
       # trailing space, can be positive or negative and may use simple (e.g.
-      # <tt>"-12.45"</tt>) or scientific (e.g. <tt>"-0.1245e2"</tt>) notation.
+      # <tt>"-12.45"</tt>) or scientific (e.g. <tt>"-0.1245e2"</tt>) notation
+      # with a lower case or capital <tt>E</tt> in the latter case.
+      #
+      # A leading "0" before a decimal place may be omitted; "0.12" and ".12"
+      # are considered equivalent and valid. An optional leading "+" is allowed
+      # for positive numbers. Between digits, an underscore is permitted as a
+      # visual separator; "12_431_999" and "12431999" are equivalent and valid.
       #
       def validate( data, path = '' )
         errors = super( data, path )

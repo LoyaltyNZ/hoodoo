@@ -16,14 +16,69 @@ describe Hoodoo::Presenters::Decimal do
 
   describe '#validate' do
     it 'should return [] when valid decimal' do
-      expect(@inst.validate('  -0.123245e2  ').errors).to eq([])
+      [
+        '0',
+        '0.0',
+        '  .123245e2  ',
+        '  .1_2_3_2_4_5E-2  ',
+        '  0.123245e+2  ',
+        '  0_3.123245E2  ',
+        '  03.123245E2_3  ',
+        '  12.3245  ',
+        '  12.3245',
+        '12.3245  ',
+        '12.3245',
+        '12.00',
+        '12',
+        '  -.123245e2  ',
+        '  -.123245E2  ',
+        '  -0.123245e2  ',
+        '  -0.123245E2  ',
+        '  -12.3245  ',
+        '  -12.3245',
+        '-12.3245  ',
+        '-12.3245',
+        '-12.00',
+        '-12',
+        '  +.123245e2  ',
+        '  +.123245E2  ',
+        '  +0.123245e2  ',
+        '  +0.123245E2  ',
+        '  +12.3245  ',
+        '  +12.3245',
+        '+12.3245  ',
+        '+12.3245',
+        '+12.00',
+        '+12'
+      ].each do | item |
+        expect( @inst.validate( item ).errors ).to eq( [] )
+      end
+
     end
 
     it 'should return correct error when data is not a decimal' do
-      errors = @inst.validate('asckn')
-
-      err = [  {'code'=>"generic.invalid_decimal", 'message'=>"Field `one` is an invalid decimal", 'reference'=>"one"}]
-      expect(errors.errors).to eq(err)
+      [
+        'hello',
+        '!23.00',
+        '24!',
+        '23.41 suffix',
+        '+0.123245j2',
+        '0.123245e+-2',
+        '+-0.123245e2',
+        '03_.123245E2',
+        '03_.123245E2',
+        '03._123245E2',
+        '03.123245_E2',
+        '03.123245E23_',
+      ].each do | item |
+        expect( @inst.validate( item ).errors ).to eq( [
+          {
+            'code'      => "generic.invalid_decimal",
+            'message'   => "Field `one` is an invalid decimal",
+            'reference' => "one"
+          }
+        ] )
+      end
     end
 
     it 'should not return error when not required and absent' do
