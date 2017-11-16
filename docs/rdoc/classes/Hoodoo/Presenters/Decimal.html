@@ -70,6 +70,25 @@
 
 
 
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='VALIDATOR'>
+            <td class="attr-name">VALIDATOR</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Regexp.new(&#39;^\s*[+-]?((\d+_?)*\d+(\.(\d+_?)*\d+)?|\.(\d+_?)*\d+)(\s*|([eE][+-]?(\d+_?)*\d+)\s*)$&#39;)</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>In theory this is derived from Rubinius source, but “master” didn&#39;t
+seem to include it at the time of writing. See:</p>
+
+<p><a
+href="https://github.com/rubinius/rubinius">github.com/rubinius/rubinius</a>/
+<a
+href="https://stackoverflow.com/questions/1034418/determine-if-a-string-is-a-valid-float-value">stackoverflow.com/questions/1034418/determine-if-a-string-is-a-valid-float-value</a></p></td>
+        </tr>
+    </table>
 
     <!-- Section attributes -->
     <div class="sectiontitle">Attributes</div>
@@ -114,7 +133,7 @@ appropriate name and options.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
             </p>
             <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 19</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-keyword">super</span>( <span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> )
 
@@ -138,6 +157,17 @@ appropriate name and options.</p>
         <div class="description">
             <p>Check if data is a valid <a href="Decimal.html">Decimal</a> and return a <a
 href="../Errors.html">Hoodoo::Errors</a> instance.</p>
+
+<p>Decimals are expressed in JSON as Strings with any amount of leading or
+trailing space, can be positive or negative and may use simple (e.g.
+<code>&quot;-12.45&quot;</code>) or scientific (e.g.
+<code>&quot;-0.1245e2&quot;</code>) notation with a lower case or capital
+<code>E</code> in the latter case.</p>
+
+<p>A leading “0” before a decimal place may be omitted; “0.12” and “.12” are
+considered equivalent and valid. An optional leading “+” is allowed for
+positive numbers. Between digits, an underscore is permitted as a visual
+separator; “12_431_999” and “12431999” are equivalent and valid.</p>
         </div>
 
 
@@ -149,12 +179,12 @@ href="../Errors.html">Hoodoo::Errors</a> instance.</p>
                 <a href="javascript:toggleSource('method-i-validate_source')" id="l_method-i-validate_source">show</a>
             </p>
             <div id="method-i-validate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 31</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/presenters/types/decimal.rb, line 49</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">validate</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> = <span class="ruby-string">&#39;&#39;</span> )
   <span class="ruby-identifier">errors</span> = <span class="ruby-keyword">super</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">path</span> )
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">errors</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">has_errors?</span> <span class="ruby-operator">||</span> ( <span class="ruby-operator">!</span> <span class="ruby-ivar">@required</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span> )
 
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">BigDecimal</span> )
+  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">String</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">match</span>( <span class="ruby-constant">VALIDATOR</span> ) <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
     <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add_error</span>(
       <span class="ruby-string">&#39;generic.invalid_decimal&#39;</span>,
       <span class="ruby-value">:message</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;Field `#{ full_path( path ) }` is an invalid decimal&quot;</span>,

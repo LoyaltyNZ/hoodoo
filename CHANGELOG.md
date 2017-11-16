@@ -1,5 +1,11 @@
 # Hoodoo v2.x
 
+## 2.2.2 (2017-11-16)
+
+Fixes long-standing bug in the "decimal" type used in the presenter layer. This previously expected quantities to be presented as BigDecimal objects, but JSON contains no Types that would be converted to such by Ruby; decimals would never validate. Fixed by instead expecting a String with regular expression check; test coverage updated.
+
+Valid decimal strings can have any amount of leading or trailing space, be positive or negative and in simple (e.g. `"-12.45"`) or scientific (e.g. `"-0.1245e2"`) notation.
+
 ## 2.2.1 (2017-11-10)
 
 We are very grateful for the fast fix of the Airbrake Ruby frozen Hash modification problems described for Hoodoo v2.2.0 below. Hoodoo's development mode `gemspec` has been updated to require v2.6.0 or later of Airbrake Ruby and the internal Hash duplication workaround has been removed.
