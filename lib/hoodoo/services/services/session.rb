@@ -420,6 +420,7 @@ module Hoodoo
       #
       # Similar to:
       # alias_method :memcached_host=, :transient_store_host=
+      #
       def memcached_host=( *args, &block )
         Hoodoo::Services::Middleware.logger.warn(
           'Hoodoo::Services::Session#memcached_host= is deprecated - use #transient_store_host='
