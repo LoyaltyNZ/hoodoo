@@ -119,20 +119,6 @@ module Hoodoo
       #
       attr_reader :expires_at
 
-      # Changes required:
-      # - make new attr_accessor :transient_store_host
-      # - alias memcached_host accessor and related methods to transient_store_host
-      # - change self.memcached_host setter in init() to transient_store_host
-      # - ensure default is set to memcached for backwards compatibility
-      # - ensure interface methods work correctly with redis DSL
-      # - do "something" with memcached and redis-soft mirroring, so that services can migrate using the following pattern:
-      #   Swapping transient store hosts (memcache to redis):
-      #     1. Configure a service with both memcache and redis credentials
-      #     2. Deploy, so sessions get written to both, however with a 48 hour expiry on memcache sessions
-      #     3. Redeploy service with only redis config after 48 hours of running step 2 (see TTL config)
-      #   ~ Migration complete ~
-      #
-
       # Transient store configuration
       #
       # Symbolised key describing the type of name/engine used.
@@ -406,7 +392,7 @@ module Hoodoo
         return :fail
       end
 
-      # Deprecated get interface (use #transient_store_host instead),
+      # Deprecated 'get' interface (use #transient_store_host instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
       # Supports backwards compatibility of options key +memcached_host+,
@@ -426,7 +412,7 @@ module Hoodoo
         self.send( :transient_store_host, *args, &block )
       end
 
-      # Deprecated set interface (use #transient_store_host= instead),
+      # Deprecated 'set' interface (use #transient_store_host= instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
       # Similar to:
