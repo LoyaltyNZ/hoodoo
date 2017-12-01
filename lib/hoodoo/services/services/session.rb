@@ -123,7 +123,7 @@ module Hoodoo
       #
       # Symbolised key describing the type of name/engine used.
       #
-      # Supported options include:
+      # Supported names include:
       #   - :memcached (default if no argument provided)
       #   - :redis
       #   - :memcached_redis_mirror
@@ -153,15 +153,18 @@ module Hoodoo
       #                           session. This can be set either now or later, but
       #                           the session cannot be saved without it.
       #
-      # +caller_version+::        Version of the Caller instance; defaults to zero.
+      # +caller_version+::        Version of the Caller instance. Defaults to zero.
       #
-      # +caller_fingerprint::     Optional Caller fingerprint UUID. Default to
+      # +caller_fingerprint::     Optional Caller fingerprint UUID. Defaults to
       #                           +nil+.
       #
-      # +transient_store_name+::  Name for the transient storage engine. Defaults to +:memcached+.
+      # +transient_store_name+::  Name for the transient storage engine.
+      #                           Supported names include:
+      #                             +:memcached+ (default)
+      #                             +:redis+
+      #                             +:memcached_redis_mirror+
       #
-      # +transient_store_host+::  Host name for transient storage engine. Supported
-      #                           options are Redis and Memcached
+      # +transient_store_host+::  Host for transient storage engine connections.
       #
       # +memcached_host+::        Host for Memcached connections (deprecated).
       #
