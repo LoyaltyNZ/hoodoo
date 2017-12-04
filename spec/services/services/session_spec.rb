@@ -49,9 +49,9 @@ describe Hoodoo::Services::Session do
         :caller_fingerprint => 'asdf'
       )
 
-      expect( s.memcached_host       ).to eq( 'abcd'                 )
-      expect( s.transient_store_host ).to eq( s.transient_store_host )
-      expect( s.transient_store_name ).to eq( :memcached             )
+      expect( s.memcached_host       ).to eq( 'abcd'     )
+      expect( s.transient_store_host ).to eq( 'abcd'     )
+      expect( s.transient_store_name ).to eq( :memcached )
     end
 
     it 'reports not expired when it has no expiry' do
