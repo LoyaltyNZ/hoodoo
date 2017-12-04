@@ -137,6 +137,7 @@ module Hoodoo
       # If you are using Memcached or Redis as a session store, you can set the
       # connection host either through this accessor, or via the
       # object's constructor.
+      #
       attr_accessor :transient_store_host
 
       # Create a new instance.
@@ -171,12 +172,12 @@ module Hoodoo
       def initialize( options = {} )
         @created_at = Time.now.utc
 
-        self.session_id             = options[ :session_id            ] || Hoodoo::UUID.generate()
-        self.transient_store_name   = options[ :transient_store_name  ] || :memcached
-        self.transient_store_host   = options[ :transient_store_host  ] || options[ :memcached_host ]
-        self.caller_id              = options[ :caller_id             ]
-        self.caller_version         = options[ :caller_version        ] || 0
-        self.caller_fingerprint     = options[ :caller_fingerprint    ]
+        self.session_id           = options[ :session_id           ] || Hoodoo::UUID.generate()
+        self.transient_store_name = options[ :transient_store_name ] || :memcached
+        self.transient_store_host = options[ :transient_store_host ] || options[ :memcached_host ]
+        self.caller_id            = options[ :caller_id            ]
+        self.caller_version       = options[ :caller_version       ] || 0
+        self.caller_fingerprint   = options[ :caller_fingerprint   ]
       end
 
       # Save this session to the transient store, in a manner that will allow
