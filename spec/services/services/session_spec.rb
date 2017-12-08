@@ -14,8 +14,8 @@ describe Hoodoo::Services::Session do
       expect( s.created_at                        ).to be_a( Time )
       expect( Hoodoo::UUID.valid?( s.session_id ) ).to eq( true )
       expect( s.memcached_host                    ).to be_nil
-      expect( s.transient_store_host              ).to eq( s.memcached_host )
-      expect( s.transient_store_name              ).to eq( :memcached )
+      expect( s.storage_host_uri                  ).to eq( s.memcached_host )
+      expect( s.storage_engine                    ).to eq( :memcached )
       expect( s.caller_id                         ).to be_nil
       expect( s.caller_version                    ).to eq( 0 )
       expect( s.caller_fingerprint                ).to be_nil
@@ -24,20 +24,20 @@ describe Hoodoo::Services::Session do
     it 'initialises with given options' do
       s = described_class.new(
         :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :redis,
+        :storage_host_uri     => 'abcd',
+        :storage_engine       => :redis,
         :caller_id            => '0987',
         :caller_version       => 2,
         :caller_fingerprint   => 'asdf'
       )
-      expect( s.created_at           ).to be_a( Time )
-      expect( s.session_id           ).to eq( '1234' )
-      expect( s.memcached_host       ).to eq( 'abcd' )
-      expect( s.transient_store_host ).to eq( 'abcd' )
-      expect( s.transient_store_name ).to eq( :redis )
-      expect( s.caller_id            ).to eq( '0987' )
-      expect( s.caller_version       ).to eq( 2      )
-      expect( s.caller_fingerprint   ).to eq( 'asdf' )
+      expect( s.created_at         ).to be_a( Time )
+      expect( s.session_id         ).to eq( '1234' )
+      expect( s.memcached_host     ).to eq( 'abcd' )
+      expect( s.storage_host_uri   ).to eq( 'abcd' )
+      expect( s.storage_engine     ).to eq( :redis )
+      expect( s.caller_id          ).to eq( '0987' )
+      expect( s.caller_version     ).to eq( 2      )
+      expect( s.caller_fingerprint ).to eq( 'asdf' )
     end
 
     it 'initialises with deprecated :memcached_host option' do
@@ -49,9 +49,9 @@ describe Hoodoo::Services::Session do
         :caller_fingerprint => 'asdf'
       )
 
-      expect( s.memcached_host       ).to eq( 'abcd'     )
-      expect( s.transient_store_host ).to eq( 'abcd'     )
-      expect( s.transient_store_name ).to eq( :memcached )
+      expect( s.memcached_host   ).to eq( 'abcd'     )
+      expect( s.storage_host_uri ).to eq( 'abcd'     )
+      expect( s.storage_engine   ).to eq( :memcached )
     end
 
     it 'reports not expired when it has no expiry' do
@@ -67,12 +67,12 @@ describe Hoodoo::Services::Session do
 
     it 'converts to a Hash' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 2,
-        :caller_fingerprint   => 'asdf'
+        :session_id         => '1234',
+        :storage_host_uri   => 'abcd',
+        :storage_engine     => :memcached,
+        :caller_id          => '0987',
+        :caller_version     => 2,
+        :caller_fingerprint => 'asdf'
       )
       p = Hoodoo::Services::Permissions.new
 
@@ -131,12 +131,12 @@ describe Hoodoo::Services::Session do
 
     it 'saves/loads to/from transient store' do
       s1 = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 2,
-        :caller_fingerprint   => 'asdf'
+        :session_id         => '1234',
+        :storage_host_uri   => 'abcd',
+        :storage_engine     => :memcached,
+        :caller_id          => '0987',
+        :caller_version     => 2,
+        :caller_fingerprint => 'asdf'
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -163,7 +163,7 @@ describe Hoodoo::Services::Session do
       expect( s2.created_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.created_at ) ) )
       expect( s2.expires_at ).to eq( Time.parse( Hoodoo::Utilities.standard_datetime( s1.expires_at ) ) )
       expect( s2.session_id ).to eq( s1.session_id )
-      expect( s2.transient_store_host ).to be_nil
+      expect( s2.storage_host_uri ).to be_nil
       expect( s2.caller_id ).to eq( s1.caller_id )
       expect( s2.caller_version ).to eq( s1.caller_version )
       expect( s2.caller_fingerprint ).to eq( s1.caller_fingerprint )
@@ -171,11 +171,11 @@ describe Hoodoo::Services::Session do
 
     it 'can be deleted' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       s.save_to_store
@@ -185,11 +185,11 @@ describe Hoodoo::Services::Session do
 
     it 'handles attempts to delete not-found things' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect( s.delete_from_store ).to eq( :ok )
@@ -204,10 +204,10 @@ describe Hoodoo::Services::Session do
       # Save a session with a high caller version
 
       s1 = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 4
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 4
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -216,10 +216,10 @@ describe Hoodoo::Services::Session do
       # is that session creation is underway when a caller gets updated.
 
       s2 = described_class.new(
-        :session_id           => '2345',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 3
+        :session_id       => '2345',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 3
       )
 
       expect( s2.save_to_store ).to eq( :outdated )
@@ -231,10 +231,10 @@ describe Hoodoo::Services::Session do
       # Save a session with a low caller version.
 
       s1 = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -242,10 +242,10 @@ describe Hoodoo::Services::Session do
       # Save another with a higher caller version.
 
       s2 = described_class.new(
-        :session_id           => '2345',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 2
+        :session_id       => '2345',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 2
       )
 
       expect( s2.save_to_store ).to eq( :ok )
@@ -262,10 +262,10 @@ describe Hoodoo::Services::Session do
       # Save a session with a low caller version
 
       s1 = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -277,10 +277,10 @@ describe Hoodoo::Services::Session do
       # Save another with a higher caller version.
 
       s2 = described_class.new(
-        :session_id           => '2345',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 2
+        :session_id       => '2345',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 2
       )
 
       expect( s2.save_to_store ).to eq( :ok )
@@ -300,10 +300,10 @@ describe Hoodoo::Services::Session do
       # Save a session for caller ID '0987'.
       #
       s1 = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect( s1.save_to_store ).to eq( :ok )
@@ -322,11 +322,11 @@ describe Hoodoo::Services::Session do
       # caller IDs/versions.
 
       s2 = described_class.new(
-        :session_id           => '2345',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => Hoodoo::UUID.generate(),
-        :caller_version       => 1
+        :session_id       => '2345',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => Hoodoo::UUID.generate(),
+        :caller_version   => 1
       )
 
       expect( s2.save_to_store ).to eq( :ok )
@@ -346,11 +346,11 @@ describe Hoodoo::Services::Session do
       # Save a session with a high caller version
 
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect( s ).to receive( :to_h ).and_wrap_original do | obj, args |
@@ -369,11 +369,11 @@ describe Hoodoo::Services::Session do
   context 'can explicitly update a caller' do
     before :each do
       @session = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
     end
 
@@ -489,11 +489,11 @@ describe Hoodoo::Services::Session do
 
     it 'handles unknown Hoodoo::TransientStore engine failures when saving' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       expect_any_instance_of( Hoodoo::TransientStore::Memcached ).to receive( :set ).once.and_call_original
@@ -511,11 +511,11 @@ describe Hoodoo::Services::Session do
 
     it 'handles unknown Hoodoo::TransientStore engine failures when deleting' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       s.save_to_store
@@ -530,11 +530,11 @@ describe Hoodoo::Services::Session do
 
     it 'handles unknown Hoodoo::TransientStore engine returned exceptions' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       s.save_to_store
@@ -549,11 +549,11 @@ describe Hoodoo::Services::Session do
 
     it 'logs and reports internal deletion exceptions' do
       s = described_class.new(
-        :session_id           => '1234',
-        :transient_store_host => 'abcd',
-        :transient_store_name => :memcached,
-        :caller_id            => '0987',
-        :caller_version       => 1
+        :session_id       => '1234',
+        :storage_host_uri => 'abcd',
+        :storage_engine   => :memcached,
+        :caller_id        => '0987',
+        :caller_version   => 1
       )
 
       s.save_to_store

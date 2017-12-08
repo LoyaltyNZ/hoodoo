@@ -119,26 +119,18 @@ module Hoodoo
       #
       attr_reader :expires_at
 
-      # Transient store configuration
-      #
-      # Symbolised key describing the type of name/engine used.
-      #
-      # Supported names include:
-      #   - :memcached (default if no argument provided)
-      #   - :redis
-      #   - :memcached_redis_mirror
-      #
-      attr_accessor :transient_store_name
+      # Declares the transient storage engine this session will write to.
+      # Both this and +storage_host_uri+ are used within Hoodoo::TransientStore::new
+      # which provides an abstraction
+      attr_accessor :storage_engine
 
-      # Host configuration for selected transient engine
-      #
-      # Connection IP address/port String for the selected transient engine.
+      # Connection IP address/port String for the selected storage engine.
       #
       # If you are using Memcached or Redis as a session store, you can set the
       # connection host either through this accessor, or via the
       # object's constructor.
       #
-      attr_accessor :transient_store_host
+      attr_accessor :storage_host_uri
 
       # Create a new instance.
       #
@@ -159,25 +151,25 @@ module Hoodoo
       # +caller_fingerprint::     Optional Caller fingerprint UUID. Defaults to
       #                           +nil+.
       #
-      # +transient_store_name+::  Name for the transient storage engine.
+      # +storage_engine+::        Name for the transient storage engine.
       #                           Supported names include:
       #                             +:memcached+ (default)
       #                             +:redis+
       #                             +:memcached_redis_mirror+
       #
-      # +transient_store_host+::  Host for transient storage engine connections.
+      # +storage_host_uri+::      Host for transient storage engine connections.
       #
       # +memcached_host+::        Host for Memcached connections (deprecated).
       #
       def initialize( options = {} )
         @created_at = Time.now.utc
 
-        self.session_id           = options[ :session_id           ] || Hoodoo::UUID.generate()
-        self.transient_store_name = options[ :transient_store_name ] || :memcached
-        self.transient_store_host = options[ :transient_store_host ] || options[ :memcached_host ]
-        self.caller_id            = options[ :caller_id            ]
-        self.caller_version       = options[ :caller_version       ] || 0
-        self.caller_fingerprint   = options[ :caller_fingerprint   ]
+        self.session_id         = options[ :session_id         ] || Hoodoo::UUID.generate()
+        self.storage_engine     = options[ :storage_engine     ] || :memcached
+        self.storage_host_uri   = options[ :storage_host_uri   ] || options[ :memcached_host ]
+        self.caller_id          = options[ :caller_id          ]
+        self.caller_version     = options[ :caller_version     ] || 0
+        self.caller_fingerprint = options[ :caller_fingerprint ]
       end
 
       # Save this session to the transient store, in a manner that will allow
@@ -396,35 +388,35 @@ module Hoodoo
         return :fail
       end
 
-      # Deprecated 'get' interface (use #transient_store_host instead),
+      # Deprecated 'get' interface (use #storage_host_uri instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
       # Supports backwards compatibility of options key +memcached_host+,
-      # aliases +transient_store_host+.
+      # aliases +storage_host_uri+.
       #
       # Provides same functionality as #alias_method, however includes a deprecation
       # warning
       #
       # Similar to:
-      # alias_method :memcached_host, :transient_store_host
+      # alias_method :memcached_host, :storage_host_uri
       #
       def memcached_host( *args, &block )
         Hoodoo::Services::Middleware.logger.warn(
-          'Hoodoo::Services::Session#memcached_host is deprecated - use #transient_store_host'
+          'Hoodoo::Services::Session#memcached_host is deprecated - use #storage_host_uri'
         )
 
         self.send( :transient_store_host, *args, &block )
       end
 
-      # Deprecated 'set' interface (use #transient_store_host= instead),
+      # Deprecated 'set' interface (use #storage_host_uri= instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
       # Similar to:
-      # alias_method :memcached_host=, :transient_store_host=
+      # alias_method :memcached_host=, :storage_host_uri=
       #
       def memcached_host=( *args, &block )
         Hoodoo::Services::Middleware.logger.warn(
-          'Hoodoo::Services::Session#memcached_host= is deprecated - use #transient_store_host='
+          'Hoodoo::Services::Session#memcached_host= is deprecated - use #storage_host_uri='
         )
 
         self.send( :transient_store_host=, *args, &block )
@@ -702,8 +694,8 @@ module Hoodoo
       # instance. Raises an exception if no connection can be established.
       #
       def get_store
-        engine = self.transient_store_name()
-        host   = self.transient_store_host()
+        engine = self.storage_engine()
+        host   = self.storage_host_uri()
         begin
           @@stores         ||= {}
           @@stores[ host ] ||= Hoodoo::TransientStore.new(
