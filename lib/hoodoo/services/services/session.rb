@@ -400,12 +400,12 @@ module Hoodoo
       # Similar to:
       # alias_method :memcached_host, :storage_host_uri
       #
-      def memcached_host( *args, &block )
+      def memcached_host
         Hoodoo::Services::Middleware.logger.warn(
           'Hoodoo::Services::Session#memcached_host is deprecated - use #storage_host_uri'
         )
 
-        self.send( :transient_store_host, *args, &block )
+        storage_host_uri()
       end
 
       # Deprecated 'set' interface (use #storage_host_uri= instead),
@@ -414,12 +414,12 @@ module Hoodoo
       # Similar to:
       # alias_method :memcached_host=, :storage_host_uri=
       #
-      def memcached_host=( *args, &block )
+      def memcached_host=( uri )
         Hoodoo::Services::Middleware.logger.warn(
           'Hoodoo::Services::Session#memcached_host= is deprecated - use #storage_host_uri='
         )
 
-        self.send( :transient_store_host=, *args, &block )
+        send(:storage_host_uri=, uri)
       end
 
       # Deprecated interface (use #update_caller_version_in_store instead),
