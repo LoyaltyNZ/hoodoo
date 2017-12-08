@@ -263,6 +263,26 @@ module Hoodoo; module Services
       ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
     end
 
+    # Return a uri (IP address/ port combination) for the selected transient
+    # storage engine. Checks for the engine agnostic STORAGE_HOST_URI first
+    # then uses memcached_host() as a legacy fallback.
+    #
+    def self.storage_host_uri
+      ENV[ 'STORAGE_HOST_URI' ] || self.memcached_host()
+    end
+
+    # Return a symbolised key for the transient storage engine as defined in
+    # the environment variable STORAGE_ENGINE (with :memcached as a legacy
+    # fallback if +memcached_host()+ is defined).
+    #
+    def self.storage_engine
+      if ENV[ 'STORAGE_ENGINE' ]
+        ENV[ 'STORAGE_ENGINE' ].to_sym
+      elsif self.has_memcached?
+        :memcached
+      end
+    end
+
     # Are we running on the queue, else (implied) a local HTTP server?
     #
     def self.on_queue?
@@ -401,9 +421,9 @@ module Hoodoo; module Services
     end
 
     # A Hoodoo::Services::Session instance to use for tests or when no
-    # local Memcached instance is known about (environment variable
-    # +MEMCACHED_HOST+ is not set). The session is (eventually) read each
-    # time a request is made via Rack (through #call).
+    # local TransientStore instance is known about (environment variable
+    # +STORAGE_HOST_URI+ and +STORAGE_NAME+ ARE not set). The session is
+    # (eventually) read each time a request is made via Rack (through #call).
     #
     # "Out of the box", DEFAULT_TEST_SESSION is used.
     #
@@ -951,7 +971,7 @@ module Hoodoo; module Services
 
       # If we get this far the interim session isn't needed. We might have
       # exited early due to errors above and left this behind, but that's not
-      # the end of the world - it'll expire out of Memcached eventually.
+      # the end of the world - it'll expire out of the TransientStore eventually.
 
       if session &&
          source_interaction.context &&
@@ -1620,8 +1640,8 @@ module Hoodoo; module Services
       end
     end
 
-    # Load a session from Memcached on the basis of a session ID header
-    # in the current interaction's Rack request data.
+    # Load a session from the selected TransientStore on the basis of a
+    # session ID header in the current interaction's Rack request data.
     #
     # On exit, the interaction context may have been updated. Be sure to
     # check +interaction.context.response.halt_processing?+ to see if
@@ -1638,8 +1658,9 @@ module Hoodoo; module Services
 
       if session_id != nil && ( test_session.nil? || test_session.session_id != session_id )
         session = Hoodoo::Services::Session.new(
-          :memcached_host => self.class.memcached_host(),
-          :session_id     => session_id
+          :storage_engine   => self.class.storage_engine(),
+          :storage_host_uri => self.class.storage_host_uri(),
+          :session_id       => session_id
         )
 
         result = session.load_from_store!( session_id )
