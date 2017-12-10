@@ -422,7 +422,7 @@ module Hoodoo; module Services
 
     # A Hoodoo::Services::Session instance to use for tests or when no
     # local TransientStore instance is known about (environment variable
-    # +STORAGE_HOST_URI+ and +STORAGE_NAME+ ARE not set). The session is
+    # +STORAGE_HOST_URI+ and +STORAGE_NAME+ are not set). The session is
     # (eventually) read each time a request is made via Rack (through #call).
     #
     # "Out of the box", DEFAULT_TEST_SESSION is used.
