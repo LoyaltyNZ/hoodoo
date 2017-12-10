@@ -1,4 +1,4 @@
-Fri, 01 Dec 2017 15:48:27 +1300
+Mon, 11 Dec 2017 10:20:40 +1300
 README.md	Mon, 13 Nov 2017 10:14:38 +1300
 lib/hoodoo.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/active.rb	Tue, 03 Oct 2017 09:55:34 +1300
@@ -103,7 +103,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 0
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Mon, 13 Nov 2017 10:15:26 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/middleware/interaction.rb	Mon, 13 Nov 2017 10:14:38 +1300
-lib/hoodoo/services/middleware/middleware.rb	Mon, 13 Nov 2017 10:14:38 +1300
+lib/hoodoo/services/middleware/middleware.rb	Fri, 08 Dec 2017 15:48:42 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/context.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/implementation.rb	Tue, 03 Oct 2017 09:55:34 +1300
@@ -112,7 +112,7 @@ lib/hoodoo/services/services/permissions.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/request.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/response.rb	Mon, 13 Nov 2017 10:14:38 +1300
 lib/hoodoo/services/services/service.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/services/services/session.rb	Fri, 01 Dec 2017 15:44:37 +1300
+lib/hoodoo/services/services/session.rb	Fri, 08 Dec 2017 14:36:31 +1300
 lib/hoodoo/transient_store.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/mocks/dalli_client.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/mocks/redis.rb	Tue, 03 Oct 2017 09:55:34 +1300

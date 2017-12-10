@@ -312,33 +312,26 @@ href="../ActiveRecord/Finder.html">Hoodoo::ActiveRecord::Finder</a>.</p>
             <td class='attr-desc'><p>A <a href="Session.html">Session</a> must have its own <a
 href="../UUID.html">UUID</a>.</p></td>
         </tr>
-        <tr valign='top' id='attribute-i-transient_store_host'>
+        <tr valign='top' id='attribute-i-storage_engine'>
             <td class='attr-rw'>
                 [RW]
             </td>
-            <td class='attr-name'>transient_store_host</td>
-            <td class='attr-desc'><p>Host configuration for selected transient engine</p>
-
-<p>Connection IP address/port String for the selected transient engine.</p>
+            <td class='attr-name'>storage_engine</td>
+            <td class='attr-desc'><p>Declares the transient storage engine this session will write to. Both this
+and <code>storage_host_uri</code> are used within <a
+href="../TransientStore.html#method-c-new">Hoodoo::TransientStore.new</a>
+which provides an abstraction</p></td>
+        </tr>
+        <tr valign='top' id='attribute-i-storage_host_uri'>
+            <td class='attr-rw'>
+                [RW]
+            </td>
+            <td class='attr-name'>storage_host_uri</td>
+            <td class='attr-desc'><p>Connection IP address/port String for the selected storage engine.</p>
 
 <p>If you are using Memcached or Redis as a session store, you can set the
 connection host either through this accessor, or via the object&#39;s
 constructor.</p></td>
-        </tr>
-        <tr valign='top' id='attribute-i-transient_store_name'>
-            <td class='attr-rw'>
-                [RW]
-            </td>
-            <td class='attr-name'>transient_store_name</td>
-            <td class='attr-desc'><p>Transient store configuration</p>
-
-<p>Symbolised key describing the type of name/engine used.</p>
-
-<p>Supported names include:</p>
-
-<pre><code>- :memcached (default if no argument provided)
-- :redis
-- :memcached_redis_mirror</code></pre></td>
         </tr>
     </table>
 
@@ -377,14 +370,14 @@ saved without it.</p>
 <dd>
 <p>Optional Caller fingerprint <a href="../UUID.html">UUID</a>. Defaults to
 <code>nil</code>.</p>
-</dd><dt><code>transient_store_name</code>
+</dd><dt><code>storage_engine</code>
 <dd>
 <p>Name for the transient storage engine. Supported names include:</p>
 
 <pre><code>+:memcached+ (default)
 +:redis+
 +:memcached_redis_mirror+</code></pre>
-</dd><dt><code>transient_store_host</code>
+</dd><dt><code>storage_host_uri</code>
 <dd>
 <p>Host for transient storage engine connections.</p>
 </dd><dt><code>memcached_host</code>
@@ -402,16 +395,16 @@ saved without it.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
             </p>
             <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 171</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 164</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-ivar">@created_at</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>             = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>            ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transient_store_name</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:transient_store_name</span>  ] <span class="ruby-operator">||</span> <span class="ruby-value">:memcached</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">transient_store_host</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:transient_store_host</span>  ] <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span> ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>              = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>             ]
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_version</span>        ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_fingerprint</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_fingerprint</span>    ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_id</span>         = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:session_id</span>         ] <span class="ruby-operator">||</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">UUID</span>.<span class="ruby-identifier">generate</span>()
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">storage_engine</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:storage_engine</span>     ] <span class="ruby-operator">||</span> <span class="ruby-value">:memcached</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">storage_host_uri</span>   = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:storage_host_uri</span>   ] <span class="ruby-operator">||</span> <span class="ruby-identifier">options</span>[ <span class="ruby-value">:memcached_host</span> ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>          = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_id</span>          ]
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_version</span>     = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_version</span>     ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_fingerprint</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:caller_fingerprint</span> ]
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -477,7 +470,7 @@ inter-resource call cannot proceed; it&#39;s an internal fault.</p>
                 <a href="javascript:toggleSource('method-i-augment_with_permissions_for_source')" id="l_method-i-augment_with_permissions_for_source">show</a>
             </p>
             <div id="method-i-augment_with_permissions_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 655</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 648</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">augment_with_permissions_for</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-comment"># Set up some convenience variables</span>
@@ -576,7 +569,7 @@ storage</p>
                 <a href="javascript:toggleSource('method-i-delete_from_store_source')" id="l_method-i-delete_from_store_source">show</a>
             </p>
             <div id="method-i-delete_from_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 481</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 474</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">delete_from_store</span>
   <span class="ruby-keyword">begin</span>
 
@@ -631,7 +624,7 @@ if it has either not expired, or has no expiry date set yet.</p>
                 <a href="javascript:toggleSource('method-i-expired-3F_source')" id="l_method-i-expired-3F_source">show</a>
             </p>
             <div id="method-i-expired-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 521</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 514</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">expired?</span>
   <span class="ruby-identifier">exp</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">expires_at</span>()
   <span class="ruby-identifier">now</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">utc</span>
@@ -667,7 +660,7 @@ href="Session.html#attribute-i-permissions">permissions</a>.</p>
                 <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
             </p>
             <div id="method-i-from_h-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 577</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 570</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
   <span class="ruby-identifier">hash</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">stringify</span>( <span class="ruby-identifier">hash</span> )
 
@@ -807,7 +800,7 @@ storage</p>
                 <a href="javascript:toggleSource('method-i-load_from_store-21_source')" id="l_method-i-load_from_store-21_source">show</a>
             </p>
             <div id="method-i-load_from_store-21_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 303</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 296</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">load_from_store!</span>( <span class="ruby-identifier">sid</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        = <span class="ruby-identifier">get_store</span>()
@@ -846,23 +839,23 @@ storage</p>
     </div>
     <div class="method">
         <div class="title method-title" id="method-i-memcached_host">
-            <b>memcached_host</b>( *args, &amp;block )
+            <b>memcached_host</b>()
             <a href="../../../classes/Hoodoo/Services/Session.html#method-i-memcached_host" name="method-i-memcached_host" class="permalink">Link</a>
         </div>
 
         <div class="description">
             <p>Deprecated &#39;get&#39; interface (use <a
-href="Session.html#attribute-i-transient_store_host">transient_store_host</a>
+href="Session.html#attribute-i-storage_host_uri">storage_host_uri</a>
 instead), dating back to when the <a href="Session.html">Session</a> engine
 was hard-coded to Memcached.</p>
 
 <p>Supports backwards compatibility of options key
-<code>memcached_host</code>, aliases <code>transient_store_host</code>.</p>
+<code>memcached_host</code>, aliases <code>storage_host_uri</code>.</p>
 
 <p>Provides same functionality as alias_method, however includes a deprecation
 warning</p>
 
-<p>Similar to: alias_method :memcached_host, :transient_store_host</p>
+<p>Similar to: alias_method :memcached_host, :storage_host_uri</p>
         </div>
 
 
@@ -874,30 +867,30 @@ warning</p>
                 <a href="javascript:toggleSource('method-i-memcached_host_source')" id="l_method-i-memcached_host_source">show</a>
             </p>
             <div id="method-i-memcached_host_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 410</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">memcached_host</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 403</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">memcached_host</span>
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
-    <span class="ruby-string">&#39;Hoodoo::Services::Session#memcached_host is deprecated - use #transient_store_host&#39;</span>
+    <span class="ruby-string">&#39;Hoodoo::Services::Session#memcached_host is deprecated - use #storage_host_uri&#39;</span>
   )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:transient_store_host</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">storage_host_uri</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
     </div>
     <div class="method">
         <div class="title method-title" id="method-i-memcached_host-3D">
-            <b>memcached_host=</b>( *args, &amp;block )
+            <b>memcached_host=</b>( uri )
             <a href="../../../classes/Hoodoo/Services/Session.html#method-i-memcached_host-3D" name="method-i-memcached_host-3D" class="permalink">Link</a>
         </div>
 
         <div class="description">
             <p>Deprecated &#39;set&#39; interface (use <a
-href="Session.html#attribute-i-transient_store_host">transient_store_host=</a>
+href="Session.html#attribute-i-storage_host_uri">storage_host_uri=</a>
 instead), dating back to when the <a href="Session.html">Session</a> engine
 was hard-coded to Memcached.</p>
 
-<p>Similar to: alias_method :memcached_host=, :transient_store_host=</p>
+<p>Similar to: alias_method :memcached_host=, :storage_host_uri=</p>
         </div>
 
 
@@ -909,13 +902,13 @@ was hard-coded to Memcached.</p>
                 <a href="javascript:toggleSource('method-i-memcached_host-3D_source')" id="l_method-i-memcached_host-3D_source">show</a>
             </p>
             <div id="method-i-memcached_host-3D_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 424</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">memcached_host=</span>( <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 417</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">memcached_host=</span>( <span class="ruby-identifier">uri</span> )
   <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
-    <span class="ruby-string">&#39;Hoodoo::Services::Session#memcached_host= is deprecated - use #transient_store_host=&#39;</span>
+    <span class="ruby-string">&#39;Hoodoo::Services::Session#memcached_host= is deprecated - use #storage_host_uri=&#39;</span>
   )
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:transient_store_host=</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span> )
+  <span class="ruby-identifier">send</span>(<span class="ruby-value">:storage_host_uri=</span>, <span class="ruby-identifier">uri</span>)
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -986,7 +979,7 @@ session is already outdated.</p>
                 <a href="javascript:toggleSource('method-i-save_to_store_source')" id="l_method-i-save_to_store_source">show</a>
             </p>
             <div id="method-i-save_to_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 203</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 196</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">save_to_store</span>
   <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">caller_id</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Session\#save_to_store: Cannot save this session as it has no assigned Caller UUID&#39;</span>
@@ -1113,7 +1106,7 @@ href="Session.html#method-i-from_h-21">from_h!</a>.</p>
                 <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
             </p>
             <div id="method-i-to_h_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 531</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 524</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
   <span class="ruby-identifier">hash</span> = {}
 
@@ -1184,7 +1177,7 @@ result in logged warnings.</p>
                 <a href="javascript:toggleSource('method-i-update_caller_version_in_memcached_source')" id="l_method-i-update_caller_version_in_memcached_source">show</a>
             </p>
             <div id="method-i-update_caller_version_in_memcached_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 440</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 433</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update_caller_version_in_memcached</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">store</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
@@ -1272,7 +1265,7 @@ engine</p>
                 <a href="javascript:toggleSource('method-i-update_caller_version_in_store_source')" id="l_method-i-update_caller_version_in_store_source">show</a>
             </p>
             <div id="method-i-update_caller_version_in_store_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 373</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/session.rb, line 366</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update_caller_version_in_store</span>( <span class="ruby-identifier">cid</span>, <span class="ruby-identifier">cv</span>, <span class="ruby-identifier">store</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-identifier">store</span>        <span class="ruby-operator">||=</span> <span class="ruby-identifier">get_store</span>()
