@@ -243,13 +243,27 @@ module Hoodoo; module Services
       @@environment ||= Hoodoo::StringInquirer.new( ENV[ 'RACK_ENV' ] || 'development' )
     end
 
-    # Do we have Memcached available? If not, assume local development with
-    # higher level queue services not available. Most service authors should
-    # not ever need to check this.
+    # Return a boolean value for whether Memcached is explicitly defined as
+    # the Hoodoo::TransientStore engine.
+    # This method is deprecated and use of #self.has_session_store? is
+    # preferred.
     #
     def self.has_memcached?
+      Hoodoo::Services::Middleware.logger.warn(
+        'Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?'
+      )
+
       m = self.memcached_host()
       m.nil? == false && m.empty? == false
+    end
+
+    # Return a boolean value for whether an environment variable declaring a
+    # Hoodoo::TransientStore engine has been set. If not, assume local
+    # development with higher level queue services not available.
+    #
+    def self.has_session_store?
+      engine = self.storage_host_uri()
+      engine.nil? == false && m.empty? == false
     end
 
     # Return a Memcached host (IP address/port combination) as a String if
