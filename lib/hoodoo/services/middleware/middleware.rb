@@ -277,17 +277,18 @@ module Hoodoo; module Services
       ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
     end
 
-    # Return a uri (IP address/ port combination) for the selected transient
-    # storage engine. Checks for the engine agnostic STORAGE_HOST_URI first
-    # then uses memcached_host() as a legacy fallback.
+    # Return a URI (IP address/ port combination) for the selected
+    # Hoodoo::TransientStore engine. Checks for the engine
+    # agnostic environment variable +SESSION_STORE_URI+ first then uses
+    # #memcached_host as a legacy fallback.
     #
     def self.session_store_uri
       ENV[ 'SESSION_STORE_URI' ] || self.memcached_host()
     end
 
     # Return a symbolised key for the transient storage engine as defined in
-    # the environment variable STORAGE_ENGINE (with :memcached as a legacy
-    # fallback if +memcached_host()+ is defined).
+    # the environment variable +SESSION_STORE_ENGINE+ (with +:memcached+ as a legacy
+    # fallback if #memcached_host is defined).
     #
     # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from ::supported_storage_engines.
     #
@@ -437,9 +438,10 @@ module Hoodoo; module Services
     end
 
     # A Hoodoo::Services::Session instance to use for tests or when no
-    # local TransientStore instance is known about (environment variable
-    # +STORAGE_HOST_URI+ and +STORAGE_NAME+ are not set). The session is
-    # (eventually) read each time a request is made via Rack (through #call).
+    # local Hoodoo::TransientStore instance is known about (environment
+    # variable +STORAGE_HOST_URI+ and +STORAGE_NAME+ are not set).
+    # The session is (eventually) read each time a request is made via
+    # Rack (through #call).
     #
     # "Out of the box", DEFAULT_TEST_SESSION is used.
     #
@@ -987,8 +989,9 @@ module Hoodoo; module Services
 
       # If we get this far the interim session isn't needed. We might have
       # exited early due to errors above and left this behind, but that's not
-      # the end of the world - it'll expire out of the TransientStore eventually.
-
+      # the end of the world - it'll expire out of the Hoodoo::TransientStore
+      # eventually.
+      #
       if session &&
          source_interaction.context &&
          source_interaction.context.session &&
@@ -1656,7 +1659,7 @@ module Hoodoo; module Services
       end
     end
 
-    # Load a session from the selected TransientStore on the basis of a
+    # Load a session from the selected Hoodoo::TransientStore on the basis of a
     # session ID header in the current interaction's Rack request data.
     #
     # On exit, the interaction context may have been updated. Be sure to
@@ -1679,7 +1682,7 @@ module Hoodoo; module Services
           :session_id       => session_id
         )
 
-        result = session.load_from_store!( session_id )
+        result  = session.load_from_store!( session_id )
         session = nil if result != :ok
       elsif ( self.class.environment.test? || self.class.environment.development? )
         interaction.using_test_session()
@@ -1689,7 +1692,7 @@ module Hoodoo; module Services
       # If there's no session and no local interfaces have any public
       # methods (everything is protected) then bail out early, as the
       # request can't possibly succeed.
-
+      #
       if session.nil? && interfaces_have_public_methods? == false
         return interaction.context.response.add_error( 'platform.invalid_session' )
       end
@@ -1698,7 +1701,7 @@ module Hoodoo; module Services
       # the context data is exposed to service implementations, the
       # session reference is read-only; don't break that protection;
       # instead build and use a replacement context.
-
+      #
       if session != interaction.context.session
         updated_context = Hoodoo::Services::Context.new(
           session,

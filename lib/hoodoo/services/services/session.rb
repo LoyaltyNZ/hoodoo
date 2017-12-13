@@ -53,7 +53,7 @@ module Hoodoo
       #
       # If you _change_ a Caller version in a Session, you _really_ should
       # call #save_to_store as soon as possible afterwards so that the
-      # change gets recognised in the transient store.
+      # change gets recognised in the Hoodoo::TransientStore.
       #
       attr_accessor :caller_version
 
@@ -120,14 +120,13 @@ module Hoodoo
       attr_reader :expires_at
 
       # Declares the transient storage engine this session will write to.
-      # Both this and +storage_host_uri+ are used within Hoodoo::TransientStore::new
-      # which provides an abstraction
+      # Both this and +storage_host_uri+ are used within
+      # Hoodoo::TransientStore::new which provides an abstraction.
+      #
       attr_accessor :storage_engine
 
-      # Connection IP address/port String for the selected storage engine.
-      #
-      # If you are using Memcached or Redis as a session store, you can set the
-      # connection host either through this accessor, or via the
+      # Connection IP address/port String for the selected storage engine. The
+      # connection host can be set either through this accessor, or via the
       # object's constructor.
       #
       attr_accessor :storage_host_uri
@@ -138,28 +137,25 @@ module Hoodoo
       #
       # Options are:
       #
-      # +session_id+::            UUID of this session. If unset, a new UUID is
-      #                           generated for you. You can read the UUID with
-      #                           the #session_id accessor method.
+      # +session_id+::        UUID of this session. If unset, a new UUID is
+      #                       generated for you. You can read the UUID with
+      #                       the #session_id accessor method.
       #
-      # +caller_id+::             UUID of the Caller instance associated with this
-      #                           session. This can be set either now or later, but
-      #                           the session cannot be saved without it.
+      # +caller_id+::         UUID of the Caller instance associated with this
+      #                       session. This can be set either now or later, but
+      #                       the session cannot be saved without it.
       #
-      # +caller_version+::        Version of the Caller instance. Defaults to zero.
+      # +caller_version+::    Version of the Caller instance. Defaults to zero.
       #
-      # +caller_fingerprint::     Optional Caller fingerprint UUID. Defaults to
-      #                           +nil+.
+      # +caller_fingerprint:: Optional Caller fingerprint UUID. Defaults to
+      #                       +nil+.
       #
-      # +storage_engine+::        Name for the transient storage engine.
-      #                           Supported names include:
-      #                             +:memcached+ (default)
-      #                             +:redis+
-      #                             +:memcached_redis_mirror+
+      # +storage_engine+::    An entry from ::supported_storage_engines.
       #
-      # +storage_host_uri+::      Host for transient storage engine connections.
+      # +storage_host_uri+::  URI for Hoodoo::TransientStore engine
+      #                       connections.
       #
-      # +memcached_host+::        Host for Memcached connections (deprecated).
+      # +memcached_host+::    Host for Memcached connections (deprecated).
       #
       def initialize( options = {} )
         @created_at = Time.now.utc
@@ -696,6 +692,7 @@ module Hoodoo
       def get_store
         engine = self.storage_engine()
         host   = self.storage_host_uri()
+
         begin
           @@stores         ||= {}
           @@stores[ host ] ||= Hoodoo::TransientStore.new(
