@@ -267,17 +267,19 @@ module Hoodoo; module Services
     # storage engine. Checks for the engine agnostic STORAGE_HOST_URI first
     # then uses memcached_host() as a legacy fallback.
     #
-    def self.storage_host_uri
-      ENV[ 'STORAGE_HOST_URI' ] || self.memcached_host()
+    def self.session_store_uri
+      ENV[ 'SESSION_STORE_URI' ] || self.memcached_host()
     end
 
     # Return a symbolised key for the transient storage engine as defined in
     # the environment variable STORAGE_ENGINE (with :memcached as a legacy
     # fallback if +memcached_host()+ is defined).
     #
-    def self.storage_engine
-      if ENV[ 'STORAGE_ENGINE' ]
-        ENV[ 'STORAGE_ENGINE' ].to_sym
+    # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from ::supported_storage_engines.
+    #
+    def self.session_store_engine
+      if ENV[ 'SESSION_STORE_ENGINE' ]
+        ENV[ 'SESSION_STORE_ENGINE' ].to_sym
       elsif self.has_memcached?
         :memcached
       end
@@ -1658,8 +1660,8 @@ module Hoodoo; module Services
 
       if session_id != nil && ( test_session.nil? || test_session.session_id != session_id )
         session = Hoodoo::Services::Session.new(
-          :storage_engine   => self.class.storage_engine(),
-          :storage_host_uri => self.class.storage_host_uri(),
+          :storage_engine   => self.class.session_store_engine(),
+          :storage_host_uri => self.class.session_store_uri(),
           :session_id       => session_id
         )
 
