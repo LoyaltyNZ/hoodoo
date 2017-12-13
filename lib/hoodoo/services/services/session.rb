@@ -690,8 +690,8 @@ module Hoodoo
 
     private
 
-      # Connect to the storage engine, using the +transient_store_name+ and
-      # +transient_store_host+ attributes. Returns a Hoodoo:TransientStore
+      # Connect to the storage engine, using the +storage_engine+ and
+      # +storage_host_uri+ attributes. Returns a Hoodoo:TransientStore
       # instance. Raises an exception if no connection can be established.
       #
       def get_store
