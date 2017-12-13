@@ -287,10 +287,11 @@ module Hoodoo; module Services
     end
 
     # Return a symbolised key for the transient storage engine as defined in
-    # the environment variable +SESSION_STORE_ENGINE+ (with +:memcached+ as a legacy
-    # fallback if #memcached_host is defined).
+    # the environment variable +SESSION_STORE_ENGINE+ (with +:memcached+ as a
+    # legacy fallback if #memcached_host is defined).
     #
-    # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from ::supported_storage_engines.
+    # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from
+    # ::supported_storage_engines.
     #
     def self.session_store_engine
       if ENV[ 'SESSION_STORE_ENGINE' ]

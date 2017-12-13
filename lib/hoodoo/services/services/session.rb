@@ -390,11 +390,11 @@ module Hoodoo
       # Supports backwards compatibility of options key +memcached_host+,
       # aliases +storage_host_uri+.
       #
-      # Provides same functionality as #alias_method, however includes a deprecation
-      # warning
+      # Provides same functionality as #alias_method, however includes a
+      # deprecation warning.
       #
       # Similar to:
-      # alias_method :memcached_host, :storage_host_uri
+      # +alias_method(:memcached_host, :storage_host_uri)+
       #
       def memcached_host
         Hoodoo::Services::Middleware.logger.warn(
