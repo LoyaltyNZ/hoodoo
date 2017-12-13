@@ -19,7 +19,7 @@
     <meta property="og:description" content="Rack middleware, declared in (e.g.) a config.">
 
     <meta name="keywords" content="Hoodoo::Services::Middleware class">
-    <meta name="keywords" content="environment, has_memcached?, memcached_host, storage_host_uri, storage_engine, on_queue?, service_name, de_facto_path_for, logger, set_logger, set_log_folder, set_verbose_logging, verbose_logging?, test_session, set_test_session, record_host_and_port, flush_services_for_test, new, call, inter_resource_endpoint_for, inter_resource_local, monkey_log_inbound_request">
+    <meta name="keywords" content="environment, has_memcached?, has_session_store?, memcached_host, session_store_uri, session_store_engine, on_queue?, service_name, de_facto_path_for, logger, set_logger, set_log_folder, set_verbose_logging, verbose_logging?, test_session, set_test_session, record_host_and_port, flush_services_for_test, new, call, inter_resource_endpoint_for, inter_resource_local, monkey_log_inbound_request">
 </head>
 
 <body>
@@ -166,7 +166,10 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
         <dd>
             <ul>
                 <li>
-                    <a href="#method-c-has_memcached-3F">has_memcached?</a>
+                    <a href="#method-c-has_memcached-3F">has_memcached?</a>,
+                </li>
+                <li>
+                    <a href="#method-c-has_session_store-3F">has_session_store?</a>
                 </li>
             </ul>
         </dd>
@@ -231,6 +234,12 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
                     <a href="#method-c-service_name">service_name</a>,
                 </li>
                 <li>
+                    <a href="#method-c-session_store_engine">session_store_engine</a>,
+                </li>
+                <li>
+                    <a href="#method-c-session_store_uri">session_store_uri</a>,
+                </li>
+                <li>
                     <a href="#method-c-set_log_folder">set_log_folder</a>,
                 </li>
                 <li>
@@ -240,13 +249,7 @@ provide an Alchemy endpoint (see the Alchemy Flux gem).</p>
                     <a href="#method-c-set_test_session">set_test_session</a>,
                 </li>
                 <li>
-                    <a href="#method-c-set_verbose_logging">set_verbose_logging</a>,
-                </li>
-                <li>
-                    <a href="#method-c-storage_engine">storage_engine</a>,
-                </li>
-                <li>
-                    <a href="#method-c-storage_host_uri">storage_host_uri</a>
+                    <a href="#method-c-set_verbose_logging">set_verbose_logging</a>
                 </li>
             </ul>
         </dd>
@@ -554,7 +557,7 @@ symbol.</p>
                 <a href="javascript:toggleSource('method-c-de_facto_path_for_source')" id="l_method-c-de_facto_path_for_source">show</a>
             </p>
             <div id="method-c-de_facto_path_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 316</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 336</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span> )
   <span class="ruby-node">&quot;/#{ version }/#{ resource }&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -619,7 +622,7 @@ internally and (where required) inform the DRb process of the endpoints.</p>
                 <a href="javascript:toggleSource('method-c-flush_services_for_test_source')" id="l_method-c-flush_services_for_test_source">show</a>
             </p>
             <div id="method-c-flush_services_for_test_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 465</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 486</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">flush_services_for_test</span>
   <span class="ruby-identifier">@@services</span>     = []
   <span class="ruby-identifier">@@service_name</span> = <span class="ruby-keyword">nil</span>
@@ -639,9 +642,13 @@ internally and (where required) inform the DRb process of the endpoints.</p>
         </div>
 
         <div class="description">
-            <p>Do we have Memcached available? If not, assume local development with
-higher level queue services not available. Most service authors should not
-ever need to check this.</p>
+            <p>Return a boolean value for whether Memcached is explicitly defined as the
+<a href="../TransientStore.html">Hoodoo::TransientStore</a> engine. In
+previous versions, a <code>nil</code> response used to indicate local
+development without a queue available, but that is not a valid assumption
+in modern code.</p>
+
+<p>This method is deprecated and use of has_session_store? is preferred.</p>
         </div>
 
 
@@ -653,10 +660,43 @@ ever need to check this.</p>
                 <a href="javascript:toggleSource('method-c-has_memcached-3F_source')" id="l_method-c-has_memcached-3F_source">show</a>
             </p>
             <div id="method-c-has_memcached-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 250</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 254</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_memcached?</span>
+  <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Middleware</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span>(
+    <span class="ruby-string">&#39;Hoodoo::Services::Middleware::Middleware#has_memcached? is deprecated - use #has_session_store?&#39;</span>
+  )
+
   <span class="ruby-identifier">m</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
   <span class="ruby-identifier">m</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-has_session_store-3F">
+            <b>has_session_store?</b>()
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-has_session_store-3F" name="method-c-has_session_store-3F" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Return a boolean value for whether an environment variable declaring a <a
+href="../TransientStore.html">Hoodoo::TransientStore</a> engine has been
+defined by service author.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-has_session_store-3F_source')" id="l_method-c-has_session_store-3F_source">show</a>
+            </p>
+            <div id="method-c-has_session_store-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 266</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_session_store?</span>
+  <span class="ruby-identifier">engine</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_store_uri</span>()
+  <span class="ruby-identifier">engine</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">engine</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -736,7 +776,7 @@ security considerations when using logs.</p>
                 <a href="javascript:toggleSource('method-c-logger_source')" id="l_method-c-logger_source">show</a>
             </p>
             <div id="method-c-logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 356</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 376</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">logger</span>
   <span class="ruby-identifier">@@logger</span> <span class="ruby-comment"># See self.set_up_basic_logging and self.set_logger</span>
 <span class="ruby-keyword">end</span></pre>
@@ -767,7 +807,7 @@ Memcached host available.</p>
                 <a href="javascript:toggleSource('method-c-memcached_host_source')" id="l_method-c-memcached_host_source">show</a>
             </p>
             <div id="method-c-memcached_host_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 262</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 278</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>
   <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHED_HOST&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;MEMCACHE_URL&#39;</span> ]
 <span class="ruby-keyword">end</span></pre>
@@ -796,7 +836,7 @@ calls should be passed.</p>
                 <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
             </p>
             <div id="method-c-new_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 479</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 500</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">app</span> )
 
   <span class="ruby-identifier">service_container</span> = <span class="ruby-identifier">app</span>
@@ -907,7 +947,7 @@ calls should be passed.</p>
                 <a href="javascript:toggleSource('method-c-on_queue-3F_source')" id="l_method-c-on_queue-3F_source">show</a>
             </p>
             <div id="method-c-on_queue-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 288</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 308</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">on_queue?</span>
   <span class="ruby-identifier">q</span> = <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;AMQ_URI&#39;</span> ]
   <span class="ruby-identifier">q</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span>
@@ -940,7 +980,7 @@ recorded.</p>
                 <a href="javascript:toggleSource('method-c-record_host_and_port_source')" id="l_method-c-record_host_and_port_source">show</a>
             </p>
             <div id="method-c-record_host_and_port_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 454</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 475</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">record_host_and_port</span>( <span class="ruby-identifier">options</span> = {} )
   <span class="ruby-identifier">@@recorded_host</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Host</span> ]
   <span class="ruby-identifier">@@recorded_port</span> = <span class="ruby-identifier">options</span>[ <span class="ruby-value">:Port</span> ]
@@ -975,9 +1015,76 @@ one middleware instance has already been created, it is safe to call.</p>
                 <a href="javascript:toggleSource('method-c-service_name_source')" id="l_method-c-service_name_source">show</a>
             </p>
             <div id="method-c-service_name_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 304</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 324</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">service_name</span>
   <span class="ruby-identifier">@@service_name</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-session_store_engine">
+            <b>session_store_engine</b>()
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-session_store_engine" name="method-c-session_store_engine" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Return a symbolised key for the transient storage engine as defined in the
+environment variable <code>SESSION_STORE_ENGINE</code> (with
+<code>:memcached</code> as a legacy fallback if memcached_host is defined).</p>
+<dl class="rdoc-list note-list"><dt>+ENV[ &#39;SESSION_STORE_ENGINE&#39; ]+
+<dd>
+<p>An entry from</p>
+</dd></dl>
+
+<p>::supported_storage_engines.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-session_store_engine_source')" id="l_method-c-session_store_engine_source">show</a>
+            </p>
+            <div id="method-c-session_store_engine_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 298</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_store_engine</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;SESSION_STORE_ENGINE&#39;</span> ]
+    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;SESSION_STORE_ENGINE&#39;</span> ].<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-keyword">elsif</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_memcached?</span>
+    <span class="ruby-value">:memcached</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-c-session_store_uri">
+            <b>session_store_uri</b>()
+            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-session_store_uri" name="method-c-session_store_uri" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Return a URI (IP address/ port combination) for the selected <a
+href="../TransientStore.html">Hoodoo::TransientStore</a> engine. Checks for
+the engine agnostic environment variable <code>SESSION_STORE_URI</code>
+first then uses memcached_host as a legacy fallback.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-session_store_uri_source')" id="l_method-c-session_store_uri_source">show</a>
+            </p>
+            <div id="method-c-session_store_uri_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 287</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">session_store_uri</span>
+  <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;SESSION_STORE_URI&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -1018,7 +1125,7 @@ href="Middleware.html#method-c-environment">::environment</a>).</p>
                 <a href="javascript:toggleSource('method-c-set_log_folder_source')" id="l_method-c-set_log_folder_source">show</a>
             </p>
             <div id="method-c-set_log_folder_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 396</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 416</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_log_folder</span>( <span class="ruby-identifier">base_path</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>( <span class="ruby-value">:add_file_logging</span>, <span class="ruby-identifier">base_path</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -1059,7 +1166,7 @@ class method.</p>
                 <a href="javascript:toggleSource('method-c-set_logger_source')" id="l_method-c-set_logger_source">show</a>
             </p>
             <div id="method-c-set_logger_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 373</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 393</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_logger</span>( <span class="ruby-identifier">logger</span> )
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Logger</span> )
     <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Hoodoo::Communicators::set_logger must be called with an instance of Hoodoo::Logger only&quot;</span>
@@ -1099,7 +1206,7 @@ session ID had been supplied.</p>
                 <a href="javascript:toggleSource('method-c-set_test_session_source')" id="l_method-c-set_test_session_source">show</a>
             </p>
             <div id="method-c-set_test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 441</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 462</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_test_session</span>( <span class="ruby-identifier">session</span> )
   <span class="ruby-identifier">@@test_session</span> = <span class="ruby-identifier">session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1136,71 +1243,9 @@ it. The default is <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-c-set_verbose_logging_source')" id="l_method-c-set_verbose_logging_source">show</a>
             </p>
             <div id="method-c-set_verbose_logging_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 412</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 432</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">set_verbose_logging</span>( <span class="ruby-identifier">verbose</span> )
   <span class="ruby-identifier">@@verbose_logging</span> = <span class="ruby-identifier">verbose</span>
-<span class="ruby-keyword">end</span></pre>
-            </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-storage_engine">
-            <b>storage_engine</b>()
-            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-storage_engine" name="method-c-storage_engine" class="permalink">Link</a>
-        </div>
-
-        <div class="description">
-            <p>Return a symbolised key for the transient storage engine as defined in the
-environment variable STORAGE_ENGINE (with :memcached as a legacy fallback
-if +memcached_host()+ is defined).</p>
-        </div>
-
-
-
-        <div class="sourcecode">
-
-            <p class="source-link">
-                Source:
-                <a href="javascript:toggleSource('method-c-storage_engine_source')" id="l_method-c-storage_engine_source">show</a>
-            </p>
-            <div id="method-c-storage_engine_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 278</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">storage_engine</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;STORAGE_ENGINE&#39;</span> ]
-    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;STORAGE_ENGINE&#39;</span> ].<span class="ruby-identifier">to_sym</span>
-  <span class="ruby-keyword">elsif</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">has_memcached?</span>
-    <span class="ruby-value">:memcached</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-            </div>
-        </div>
-    </div>
-    <div class="method">
-        <div class="title method-title" id="method-c-storage_host_uri">
-            <b>storage_host_uri</b>()
-            <a href="../../../classes/Hoodoo/Services/Middleware.html#method-c-storage_host_uri" name="method-c-storage_host_uri" class="permalink">Link</a>
-        </div>
-
-        <div class="description">
-            <p>Return a uri (IP address/ port combination) for the selected transient
-storage engine. Checks for the engine agnostic STORAGE_HOST_URI first then
-uses <a
-href="Middleware.html#method-c-memcached_host">::memcached_host</a>() as a
-legacy fallback.</p>
-        </div>
-
-
-
-        <div class="sourcecode">
-
-            <p class="source-link">
-                Source:
-                <a href="javascript:toggleSource('method-c-storage_host_uri_source')" id="l_method-c-storage_host_uri_source">show</a>
-            </p>
-            <div id="method-c-storage_host_uri_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 270</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">storage_host_uri</span>
-  <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;STORAGE_HOST_URI&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memcached_host</span>()
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>
@@ -1213,9 +1258,10 @@ legacy fallback.</p>
 
         <div class="description">
             <p>A <a href="Session.html">Hoodoo::Services::Session</a> instance to use for
-tests or when no local <a href="../TransientStore.html">TransientStore</a>
-instance is known about (environment variable <code>STORAGE_HOST_URI</code>
-and <code>STORAGE_NAME</code> ARE not set). The session is (eventually)
+tests or when no local <a
+href="../TransientStore.html">Hoodoo::TransientStore</a> instance is known
+about (environment variable <code>SESSION_STORE_ENGINE</code> and
+<code>SESSION_STORE_URI</code> are not set). The session is (eventually)
 read each time a request is made via <a href="../../Rack.html">Rack</a>
 (through <a href="Middleware.html#method-i-call">call</a>).</p>
 
@@ -1233,7 +1279,7 @@ used.</p>
                 <a href="javascript:toggleSource('method-c-test_session_source')" id="l_method-c-test_session_source">show</a>
             </p>
             <div id="method-c-test_session_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 430</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 451</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">test_session</span>
   <span class="ruby-identifier">@@test_session</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1261,7 +1307,7 @@ href="Middleware.html#method-c-set_verbose_logging">::set_verbose_logging</a>.</
                 <a href="javascript:toggleSource('method-c-verbose_logging-3F_source')" id="l_method-c-verbose_logging-3F_source">show</a>
             </p>
             <div id="method-c-verbose_logging-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 419</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 439</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">verbose_logging?</span>
   <span class="ruby-keyword">defined?</span>( <span class="ruby-identifier">@@verbose_logging</span> ) <span class="ruby-operator">?</span> <span class="ruby-identifier">@@verbose_logging</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span>
 <span class="ruby-keyword">end</span></pre>
@@ -1293,7 +1339,7 @@ protocol requirements.</p>
                 <a href="javascript:toggleSource('method-i-call_source')" id="l_method-i-call_source">show</a>
             </p>
             <div id="method-i-call_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 573</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 594</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">call</span>( <span class="ruby-identifier">env</span> )
 
   <span class="ruby-comment"># Global exception handler - catch problems in service implementations</span>
@@ -1403,7 +1449,7 @@ a request for an inter-resource call by an endpoint implementation.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_endpoint_for_source')" id="l_method-i-inter_resource_endpoint_for_source">show</a>
             </p>
             <div id="method-i-inter_resource_endpoint_for_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 658</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 679</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_resource_endpoint_for</span>( <span class="ruby-identifier">resource</span>, <span class="ruby-identifier">version</span>, <span class="ruby-identifier">interaction</span> )
   <span class="ruby-identifier">resource</span> = <span class="ruby-identifier">resource</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-identifier">version</span>  = <span class="ruby-identifier">version</span>.<span class="ruby-identifier">to_i</span>
@@ -1563,7 +1609,7 @@ ignore inter-resource call errors.</p>
                 <a href="javascript:toggleSource('method-i-inter_resource_local_source')" id="l_method-i-inter_resource_local_source">show</a>
             </p>
             <div id="method-i-inter_resource_local_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 787</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 808</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inter_resource_local</span>( <span class="ruby-identifier">source_interaction</span>,,
                           <span class="ruby-identifier">discovery_result</span>,,
                           <span class="ruby-identifier">endpoint</span>,,
@@ -1751,8 +1797,9 @@ ignore inter-resource call errors.</p>
 
   <span class="ruby-comment"># If we get this far the interim session isn&#39;t needed. We might have</span>
   <span class="ruby-comment"># exited early due to errors above and left this behind, but that&#39;s not</span>
-  <span class="ruby-comment"># the end of the world - it&#39;ll expire out of the TransientStore eventually.</span>
-
+  <span class="ruby-comment"># the end of the world - it&#39;ll expire out of the Hoodoo::TransientStore</span>
+  <span class="ruby-comment"># eventually.</span>
+  <span class="ruby-comment">#</span>
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
      <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span> <span class="ruby-operator">&amp;&amp;</span>
      <span class="ruby-identifier">source_interaction</span>.<span class="ruby-identifier">context</span>.<span class="ruby-identifier">session</span> <span class="ruby-operator">&amp;&amp;</span>
@@ -1832,7 +1879,7 @@ are unset, body data is <em>not</em> logged.</p>
                 <a href="javascript:toggleSource('method-i-monkey_log_inbound_request_source')" id="l_method-i-monkey_log_inbound_request_source">show</a>
             </p>
             <div id="method-i-monkey_log_inbound_request_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1033</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/middleware/middleware.rb, line 1055</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">monkey_log_inbound_request</span>( <span class="ruby-identifier">interaction</span> )
 
   <span class="ruby-identifier">data</span> = <span class="ruby-identifier">build_common_log_data_for</span>( <span class="ruby-identifier">interaction</span> )
