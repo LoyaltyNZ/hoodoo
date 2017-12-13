@@ -415,7 +415,7 @@ module Hoodoo
           'Hoodoo::Services::Session#memcached_host= is deprecated - use #storage_host_uri='
         )
 
-        send(:storage_host_uri=, uri)
+        self.storage_host_uri = uri
       end
 
       # Deprecated interface (use #update_caller_version_in_store instead),
