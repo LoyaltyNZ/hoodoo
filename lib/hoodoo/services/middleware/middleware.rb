@@ -244,7 +244,10 @@ module Hoodoo; module Services
     end
 
     # Return a boolean value for whether Memcached is explicitly defined as
-    # the Hoodoo::TransientStore engine.
+    # the Hoodoo::TransientStore engine. A +nil+ response used to indicate
+    # local development without a queue available but that is not a
+    # valid assumption in modern code.
+    #
     # This method is deprecated and use of #self.has_session_store? is
     # preferred.
     #
@@ -258,12 +261,11 @@ module Hoodoo; module Services
     end
 
     # Return a boolean value for whether an environment variable declaring a
-    # Hoodoo::TransientStore engine has been set. If not, assume local
-    # development with higher level queue services not available.
+    # Hoodoo::TransientStore engine has been defined by service author.
     #
     def self.has_session_store?
-      engine = self.storage_host_uri()
-      engine.nil? == false && m.empty? == false
+      engine = self.session_store_uri()
+      engine.nil? == false && engine.empty? == false
     end
 
     # Return a Memcached host (IP address/port combination) as a String if
@@ -440,7 +442,7 @@ module Hoodoo; module Services
 
     # A Hoodoo::Services::Session instance to use for tests or when no
     # local Hoodoo::TransientStore instance is known about (environment
-    # variable +STORAGE_HOST_URI+ and +STORAGE_NAME+ are not set).
+    # variable +SESSION_STORE_ENGINE+ and +SESSION_STORE_URI+ are not set).
     # The session is (eventually) read each time a request is made via
     # Rack (through #call).
     #

@@ -182,10 +182,17 @@ describe Hoodoo::Services::Middleware do
     it 'should know about TransientStore configuration via environment variable' do
       old_uri    = ENV[ 'SESSION_STORE_URI'    ]
       old_engine = ENV[ 'SESSION_STORE_ENGINE' ]
-      ENV[ 'SESSION_STORE_URI'     ] = 'foo'
+      ENV[ 'MEMCACHED_HOST'       ] = nil
+      ENV[ 'SESSION_STORE_URI'    ] = nil
+      ENV[ 'SESSION_STORE_ENGINE' ] = nil
+      expect( Hoodoo::Services::Middleware.has_session_store?   ).to eq( false )
+      expect( Hoodoo::Services::Middleware.session_store_engine ).to be_nil
+      expect( Hoodoo::Services::Middleware.session_store_uri    ).to be_nil
+      ENV[ 'SESSION_STORE_URI'    ] = 'foo'
       ENV[ 'SESSION_STORE_ENGINE' ] = 'redis'
-      expect( Hoodoo::Services::Middleware.session_store_uri    ).to eq('foo')
-      expect( Hoodoo::Services::Middleware.session_store_engine ).to eq(:redis)
+      expect( Hoodoo::Services::Middleware.has_session_store?   ).to eq( true   )
+      expect( Hoodoo::Services::Middleware.session_store_uri    ).to eq( 'foo'  )
+      expect( Hoodoo::Services::Middleware.session_store_engine ).to eq( :redis )
       ENV[ 'SESSION_STORE_URI'    ] = old_uri
       ENV[ 'SESSION_STORE_ENGINE' ] = old_engine
     end
