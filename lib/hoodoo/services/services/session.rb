@@ -287,7 +287,7 @@ module Hoodoo
       # * +:not_found+: The session was not found.
       #
       # * +:fail+: The session data could not be loaded (unexpected storage
-      #            engine failure).
+      #   engine failure).
       #
       def load_from_store!( sid )
         begin
@@ -357,7 +357,7 @@ module Hoodoo
       #   local Caller data must therefore already be out of date.
       #
       # * +:fail+: The Caller could not be updated (unexpected storage engine
-      #            failure).
+      #   failure).
       #
       def update_caller_version_in_store( cid, cv, store = nil )
         begin
@@ -384,17 +384,18 @@ module Hoodoo
         return :fail
       end
 
-      # Deprecated 'get' interface (use #storage_host_uri instead),
+      # Deprecated interface (use #storage_host_uri instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
       # Supports backwards compatibility of options key +memcached_host+,
       # aliases +storage_host_uri+.
       #
-      # Provides same functionality as #alias_method, however includes a
+      # Provides same functionality as +alias_method+, however includes a
       # deprecation warning.
       #
       # Similar to:
-      # +alias_method(:memcached_host, :storage_host_uri)+
+      #
+      #   alias_method( :memcached_host, :storage_host_uri )
       #
       def memcached_host
         Hoodoo::Services::Middleware.logger.warn(
@@ -404,11 +405,15 @@ module Hoodoo
         storage_host_uri()
       end
 
-      # Deprecated 'set' interface (use #storage_host_uri= instead),
+      # Deprecated interface (use #storage_host_uri= instead),
       # dating back to when the Session engine was hard-coded to Memcached.
       #
+      # Provides same functionality as +alias_method+, however includes a
+      # deprecation warning.
+      #
       # Similar to:
-      # alias_method :memcached_host=, :storage_host_uri=
+      #
+      #   alias_method( :memcached_host=, :storage_host_uri= )
       #
       def memcached_host=( uri )
         Hoodoo::Services::Middleware.logger.warn(
@@ -465,7 +470,7 @@ module Hoodoo
       # * +:ok+: The Session was deleted from the transient store successfully.
       #
       # * +:fail+: The session data could not be deleted (unexpected storage
-      #            engine failure).
+      #   engine failure).
       #
       def delete_from_store
         begin

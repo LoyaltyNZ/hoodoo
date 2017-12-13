@@ -244,11 +244,11 @@ module Hoodoo; module Services
     end
 
     # Return a boolean value for whether Memcached is explicitly defined as
-    # the Hoodoo::TransientStore engine. A +nil+ response used to indicate
-    # local development without a queue available but that is not a
-    # valid assumption in modern code.
+    # the Hoodoo::TransientStore engine. In previous versions, a +nil+ response
+    # used to indicate local development without a queue available, but that is
+    # not a valid assumption in modern code.
     #
-    # This method is deprecated and use of #self.has_session_store? is
+    # This method is deprecated and use of #has_session_store? is
     # preferred.
     #
     def self.has_memcached?
