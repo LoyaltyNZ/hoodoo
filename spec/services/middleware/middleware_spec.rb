@@ -180,28 +180,28 @@ describe Hoodoo::Services::Middleware do
   context 'utility methods' do
 
     it 'should know about TransientStore configuration via environment variable' do
-      old_uri    = ENV[ 'STORAGE_HOST_URI' ]
-      old_engine = ENV[ 'STORAGE_ENGINE'   ]
-      ENV[ 'STORAGE_HOST_URI' ] = 'foo'
-      ENV[ 'STORAGE_ENGINE'   ] = 'redis'
-      expect( Hoodoo::Services::Middleware.storage_host_uri ).to eq('foo')
-      expect( Hoodoo::Services::Middleware.storage_engine   ).to eq(:redis)
-      ENV[ 'STORAGE_HOST_URI' ] = old_uri
-      ENV[ 'STORAGE_ENGINE'   ] = old_engine
+      old_uri    = ENV[ 'SESSION_STORE_URI'    ]
+      old_engine = ENV[ 'SESSION_STORE_ENGINE' ]
+      ENV[ 'SESSION_STORE_URI'     ] = 'foo'
+      ENV[ 'SESSION_STORE_ENGINE' ] = 'redis'
+      expect( Hoodoo::Services::Middleware.session_store_uri    ).to eq('foo')
+      expect( Hoodoo::Services::Middleware.session_store_engine ).to eq(:redis)
+      ENV[ 'SESSION_STORE_URI'    ] = old_uri
+      ENV[ 'SESSION_STORE_ENGINE' ] = old_engine
     end
 
     it 'should know about Memcached via legacy environment variable' do
-      old_uri    = ENV[ 'MEMCACHED_HOST' ]
-      old_engine = ENV[ 'STORAGE_ENGINE' ]
-      ENV[ 'MEMCACHED_HOST' ] = nil
-      ENV[ 'STORAGE_ENGINE' ] = nil
+      old_uri    = ENV[ 'MEMCACHED_HOST'       ]
+      old_engine = ENV[ 'SESSION_STORE_ENGINE' ]
+      ENV[ 'MEMCACHED_HOST'       ] = nil
+      ENV[ 'SESSION_STORE_ENGINE' ] = nil
       expect( Hoodoo::Services::Middleware.has_memcached? ).to eq(false)
-      expect( Hoodoo::Services::Middleware.storage_engine ).to be_nil
-      ENV[ 'MEMCACHED_HOST' ] = 'foo'
+      expect( Hoodoo::Services::Middleware.session_store_engine ).to be_nil
+      ENV[ 'MEMCACHED_HOST'       ] = 'foo'
       expect( Hoodoo::Services::Middleware.has_memcached? ).to eq(true)
-      expect( Hoodoo::Services::Middleware.storage_engine ).to eq(:memcached)
-      ENV[ 'MEMCACHED_HOST' ] = old_uri
-      ENV[ 'STORAGE_ENGINE' ] = old_engine
+      expect( Hoodoo::Services::Middleware.session_store_engine ).to eq(:memcached)
+      ENV[ 'MEMCACHED_HOST'       ] = old_uri
+      ENV[ 'SESSION_STORE_ENGINE' ] = old_engine
     end
 
     it 'should know about Memcached via legacy environment variable' do
