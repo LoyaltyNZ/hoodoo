@@ -280,14 +280,13 @@ module Hoodoo; module Services
     end
 
     # Return configuration for the selected Hoodoo::TransientStore engine,
-    # either as String (IP address/ port combination) or a JSON serialised Hash.
+    # either as a flat String (IP address/ port combination) or a serialised
+    # JSON string with symbolised keys, defining a URI for each supported
+    # storage engine defined (required if +ENV[ 'SESSION_STORE_ENGINE' ]+
+    # defines a multi-engine strategy).
+    #
     # Checks for the engine agnostic environment variable +SESSION_STORE_URI+
     # first then uses #memcached_host as a legacy fallback.
-    #
-    # +ENV[ 'SESSION_STORE_URI' ]+:: Accepts either a flat String defining a
-    # URI e.g. 'localhost:4567', or a JSON serialised Hash with symbolised keys
-    # defining a URI for each supported storage engine defined (required if
-    # +ENV[ 'SESSION_STORE_ENGINE' ]+ defines a multi-engine strategy).
     #
     def self.session_store_uri
       ENV[ 'SESSION_STORE_URI' ] || self.memcached_host()
@@ -298,7 +297,7 @@ module Hoodoo; module Services
     # legacy fallback if #memcached_host is defined).
     #
     # +ENV[ 'SESSION_STORE_ENGINE' ]+:: An entry from
-    # ::supported_storage_engines.
+    #                                   ::supported_storage_engines.
     #
     def self.session_store_engine
       if ENV[ 'SESSION_STORE_ENGINE' ]

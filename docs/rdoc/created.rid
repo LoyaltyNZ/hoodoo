@@ -1,4 +1,4 @@
-Thu, 14 Dec 2017 10:34:42 +1300
+Fri, 15 Dec 2017 12:17:58 +1300
 README.md	Mon, 13 Nov 2017 10:14:38 +1300
 lib/hoodoo.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/active.rb	Tue, 03 Oct 2017 09:55:34 +1300
@@ -103,7 +103,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Tue, 0
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Mon, 13 Nov 2017 10:15:26 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/middleware/interaction.rb	Mon, 13 Nov 2017 10:14:38 +1300
-lib/hoodoo/services/middleware/middleware.rb	Thu, 14 Dec 2017 10:19:35 +1300
+lib/hoodoo/services/middleware/middleware.rb	Fri, 15 Dec 2017 12:17:28 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/context.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/implementation.rb	Tue, 03 Oct 2017 09:55:34 +1300
@@ -112,17 +112,17 @@ lib/hoodoo/services/services/permissions.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/request.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/services/services/response.rb	Mon, 13 Nov 2017 10:14:38 +1300
 lib/hoodoo/services/services/service.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/services/services/session.rb	Thu, 14 Dec 2017 10:34:09 +1300
+lib/hoodoo/services/services/session.rb	Thu, 14 Dec 2017 11:05:08 +1300
 lib/hoodoo/transient_store.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/mocks/dalli_client.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/mocks/redis.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/transient_store.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/transient_store/transient_store/base.rb	Tue, 03 Oct 2017 09:55:34 +1300
+lib/hoodoo/transient_store/transient_store/base.rb	Fri, 15 Dec 2017 11:41:46 +1300
 lib/hoodoo/transient_store/transient_store/memcached.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Tue, 03 Oct 2017 09:55:34 +1300
+lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Fri, 15 Dec 2017 12:13:32 +1300
 lib/hoodoo/transient_store/transient_store/redis.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/utilities.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/utilities/utilities.rb	Tue, 03 Oct 2017 09:55:34 +1300
+lib/hoodoo/utilities/utilities.rb	Fri, 15 Dec 2017 11:11:09 +1300
 lib/hoodoo/utilities/uuid.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/version.rb	Fri, 01 Dec 2017 10:07:01 +1300
