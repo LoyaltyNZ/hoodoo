@@ -260,12 +260,12 @@ module Hoodoo; module Services
       m.nil? == false && m.empty? == false
     end
 
-    # Return a boolean value for whether an environment variable declaring a
-    # Hoodoo::TransientStore engine has been defined by service author.
+    # Return a boolean value for whether an environment variable declaring
+    # Hoodoo::TransientStore engine URI(s) have been defined by service author.
     #
     def self.has_session_store?
-      engine = self.session_store_uri()
-      engine.nil? == false && engine.empty? == false
+      config = self.session_store_uri()
+      config.nil? == false && config.empty? == false
     end
 
     # Return a Memcached host (IP address/port combination) as a String if
@@ -279,10 +279,15 @@ module Hoodoo; module Services
       ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
     end
 
-    # Return a URI (IP address/ port combination) for the selected
-    # Hoodoo::TransientStore engine. Checks for the engine
-    # agnostic environment variable +SESSION_STORE_URI+ first then uses
-    # #memcached_host as a legacy fallback.
+    # Return configuration for the selected Hoodoo::TransientStore engine,
+    # either as String (IP address/ port combination) or a JSON serialised Hash.
+    # Checks for the engine agnostic environment variable +SESSION_STORE_URI+
+    # first then uses #memcached_host as a legacy fallback.
+    #
+    # +ENV[ 'SESSION_STORE_URI' ]+:: Accepts either a flat String defining a
+    # URI e.g. 'localhost:4567', or a JSON serialised Hash with symbolised keys
+    # defining a URI for each supported storage engine defined (required if
+    # +ENV[ 'SESSION_STORE_ENGINE' ]+ defines a multi-engine strategy).
     #
     def self.session_store_uri
       ENV[ 'SESSION_STORE_URI' ] || self.memcached_host()

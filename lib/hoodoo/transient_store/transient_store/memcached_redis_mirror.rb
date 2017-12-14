@@ -55,21 +55,38 @@ module Hoodoo
       #
       attr_accessor :get_keys_from
 
+      # Helper method for deserialising JSON objects and enforcing hash
+      # keys are symbolised.
+      #
+      def deserialize_and_symbolize( obj )
+        obj = JSON.parse( obj ) rescue obj
+
+        Hoodoo::Utilities.symbolize( obj )
+      end
+
       # See Hoodoo::TransientStore::Base::new for details.
       #
       # Do not instantiate this class directly. Use
       # Hoodoo::TransientStore::new.
       #
       # The +storage_host_uri+ parameter is necessarily unusual here. It must
-      # be _a Hash_ with Symbol keys +:memcached+ and +:redis+, those values
-      # giving the actual storage engine host URI for the respective engines.
+      # be either _a Hash_ with Symbol keys +:memcached+ and +:redis+, or a
+      # serialised JSON string representing the same information. These values
+      # define the actual storage engine host URI for the respective engines.
       # For example, to connect to locally running engines configured on their
       # default ports, pass this Hash in +storage_host_uri+:
       #
-      #     {
-      #       :memcached => 'localhost:11211',
-      #       :redis     => 'redis://localhost:6379'
-      #     }
+      #   {
+      #     :memcached => 'localhost:11211',
+      #     :redis     => 'redis://localhost:6379'
+      #   }
+      #
+      #   OR
+      #
+      #   "{
+      #     \"memcached\": \"localhost:11211\",
+      #     \"redis\":     \"redis://localhost:6379\"
+      #   }"
       #
       # See Hoodoo::TransientStore::Memcached::new and
       # Hoodoo::TransientStore::Redis::new for details of connection URI
@@ -78,6 +95,8 @@ module Hoodoo
       # The value of the +namespace+ parameter applies equally to both engines.
       #
       def initialize( storage_host_uri:, namespace: )
+        storage_host_uri = deserialize_and_symbolize( storage_host_uri )
+
         super # Pass all arguments through -> *not* 'super()'
 
         unless storage_host_uri.is_a?( Hash ) &&
