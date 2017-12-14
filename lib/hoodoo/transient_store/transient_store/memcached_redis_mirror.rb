@@ -55,15 +55,6 @@ module Hoodoo
       #
       attr_accessor :get_keys_from
 
-      # Helper method for deserialising JSON objects and enforcing hash
-      # keys are symbolised.
-      #
-      def deserialize_and_symbolize( obj )
-        obj = JSON.parse( obj ) rescue obj
-
-        Hoodoo::Utilities.symbolize( obj )
-      end
-
       # See Hoodoo::TransientStore::Base::new for details.
       #
       # Do not instantiate this class directly. Use
@@ -187,6 +178,17 @@ module Hoodoo
       def close
         @memcached_store.close() rescue nil # Rescue so that Redis "close()" is still attempted.
             @redis_store.close()
+      end
+
+      private
+
+      # Helper method for deserialising JSON objects and enforcing hash
+      # keys are symbolised.
+      #
+      def deserialize_and_symbolize( obj )
+        obj = JSON.parse( obj ) rescue obj
+
+        Hoodoo::Utilities.symbolize( obj )
       end
 
     end
