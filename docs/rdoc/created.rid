@@ -1,4 +1,4 @@
-Fri, 15 Dec 2017 12:17:58 +1300
+Tue, 09 Jan 2018 09:36:58 +1300
 README.md	Mon, 13 Nov 2017 10:14:38 +1300
 lib/hoodoo.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/active.rb	Tue, 03 Oct 2017 09:55:34 +1300
@@ -119,7 +119,7 @@ lib/hoodoo/transient_store/mocks/redis.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/transient_store.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/transient_store/transient_store/base.rb	Fri, 15 Dec 2017 11:41:46 +1300
 lib/hoodoo/transient_store/transient_store/memcached.rb	Tue, 03 Oct 2017 09:55:34 +1300
-lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Fri, 15 Dec 2017 12:13:32 +1300
+lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Tue, 09 Jan 2018 09:34:13 +1300
 lib/hoodoo/transient_store/transient_store/redis.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/utilities.rb	Tue, 03 Oct 2017 09:55:34 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Tue, 03 Oct 2017 09:55:34 +1300

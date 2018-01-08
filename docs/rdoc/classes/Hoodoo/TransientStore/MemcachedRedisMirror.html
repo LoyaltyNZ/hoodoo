@@ -182,10 +182,11 @@ configured on their default ports, pass this Hash in
   :memcached =&gt; &#39;localhost:11211&#39;,
   :redis     =&gt; &#39;redis://localhost:6379&#39;
 }
+</code></pre>
 
-OR
+<p>…or:</p>
 
-&quot;{
+<pre><code>&quot;{
   \&quot;memcached\&quot;: \&quot;localhost:11211\&quot;,
   \&quot;redis\&quot;:     \&quot;redis://localhost:6379\&quot;
 }&quot;
@@ -211,9 +212,9 @@ engines.</p>
             <div id="method-c-new_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb, line 88</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">initialize</span>( <span class="ruby-identifier">storage_host_uri</span>,, <span class="ruby-identifier">namespace</span><span class="ruby-operator">:</span> )
-  <span class="ruby-identifier">storage_host_uri</span> = <span class="ruby-identifier">deserialize_and_symbolize</span>( <span class="ruby-identifier">storage_host_uri</span> )
-
   <span class="ruby-keyword">super</span> <span class="ruby-comment"># Pass all arguments through -&gt; *not* &#39;super()&#39;</span>
+
+  <span class="ruby-identifier">storage_host_uri</span> = <span class="ruby-identifier">deserialize_and_symbolize</span>( <span class="ruby-identifier">storage_host_uri</span> ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">storage_host_uri</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">String</span> )
 
   <span class="ruby-keyword">unless</span> <span class="ruby-identifier">storage_host_uri</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> ) <span class="ruby-operator">&amp;&amp;</span>
          <span class="ruby-identifier">storage_host_uri</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-value">:memcached</span> ) <span class="ruby-operator">&amp;&amp;</span>
