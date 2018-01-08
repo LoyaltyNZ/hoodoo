@@ -67,17 +67,17 @@ module Hoodoo
       # For example, to connect to locally running engines configured on their
       # default ports, pass this Hash in +storage_host_uri+:
       #
-      #   {
-      #     :memcached => 'localhost:11211',
-      #     :redis     => 'redis://localhost:6379'
-      #   }
+      #     {
+      #       :memcached => 'localhost:11211',
+      #       :redis     => 'redis://localhost:6379'
+      #     }
       #
-      #   OR
+      # ...or:
       #
-      #   "{
-      #     \"memcached\": \"localhost:11211\",
-      #     \"redis\":     \"redis://localhost:6379\"
-      #   }"
+      #     "{
+      #       \"memcached\": \"localhost:11211\",
+      #       \"redis\":     \"redis://localhost:6379\"
+      #     }"
       #
       # See Hoodoo::TransientStore::Memcached::new and
       # Hoodoo::TransientStore::Redis::new for details of connection URI
