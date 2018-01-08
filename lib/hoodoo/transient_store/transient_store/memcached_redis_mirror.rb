@@ -86,9 +86,9 @@ module Hoodoo
       # The value of the +namespace+ parameter applies equally to both engines.
       #
       def initialize( storage_host_uri:, namespace: )
-        storage_host_uri = deserialize_and_symbolize( storage_host_uri )
-
         super # Pass all arguments through -> *not* 'super()'
+
+        storage_host_uri = deserialize_and_symbolize( storage_host_uri ) if storage_host_uri.is_a?( String )
 
         unless storage_host_uri.is_a?( Hash ) &&
                storage_host_uri.has_key?( :memcached ) &&
