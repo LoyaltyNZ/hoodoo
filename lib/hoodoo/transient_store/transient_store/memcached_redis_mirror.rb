@@ -185,10 +185,11 @@ module Hoodoo
       # Helper method for deserialising JSON objects and enforcing hash
       # keys are symbolised.
       #
-      def deserialize_and_symbolize( obj )
-        obj = JSON.parse( obj ) rescue obj
+      def deserialize_and_symbolize( serialized_string )
+        Hoodoo::Utilities.symbolize( JSON.parse( serialized_string ) )
 
-        Hoodoo::Utilities.symbolize( obj )
+      rescue JSON::ParserError
+        raise 'Hoodoo::TransientStore::MemcachedRedisMirror: Bad storage host URI data passed to constructor'
       end
 
     end
