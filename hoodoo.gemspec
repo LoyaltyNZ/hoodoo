@@ -29,7 +29,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'rack-test',        '~> 0.6'
   s.add_development_dependency 'rspec',            '~> 3.5'
   s.add_development_dependency 'rspec-mocks',      '~> 3.5'
-  s.add_development_dependency 'webmock',          '~> 3.1'
+  s.add_development_dependency 'webmock',          '~> 3.3'
   s.add_development_dependency 'activerecord',     '~> 5.1'
   s.add_development_dependency 'activesupport',    '~> 5.1'
   s.add_development_dependency 'database_cleaner', '~> 1.6'

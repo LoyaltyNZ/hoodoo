@@ -4,8 +4,7 @@ require 'tempfile'
 describe Hoodoo::Logger::FileWriter do
 
   before :all do
-    temp_name = Dir::Tmpname.make_tmpname( 'hoodoo_rspec_', nil )
-    @temp_path = File.join( Dir::Tmpname.tmpdir, temp_name )
+    @temp_path = spec_helper_tmpfile_path()
   end
 
   after :all do
