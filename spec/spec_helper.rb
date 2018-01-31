@@ -380,11 +380,11 @@ def spec_helper_count_database_calls_in( &block )
   return count
 end
 
-# In Ruby 2.5.0 the Ruby team removed access to standard library "tmpnam":
+# In Ruby 2.5.0 the Ruby team removed <tt>Dir::Tmpname.make_tmpname</tt>:
 #
 # https://github.com/ruby/ruby/commit/25d56ea7b7b52dc81af30c92a9a0e2d2dab6ff27
 #
-# Instead we must make our best attempt in plain Ruby, e.g.:
+# Instead we must make our best attempt in plain Ruby ourselves, e.g.:
 #
 # https://github.com/rails/rails/issues/31458
 # https://github.com/rails/rails/pull/31462/files
