@@ -54,6 +54,9 @@ unless Service.config.env.test? || Service.config.env.development?
   Airbrake.configure do | config |
     config.project_id  = 'YOUR_AIRBRAKE_PROJECT_ID'
     config.project_key = 'YOUR_AIRBRAKE_PROJECT_KEY'
+
+    config.app_version = File.read( File.expand_path( '../../../VERSION', __FILE__ ) ).strip
+    config.environment = Service.config.env
   end
 
   Hoodoo::Services::Middleware::ExceptionReporting.add(
