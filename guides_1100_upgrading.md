@@ -103,6 +103,99 @@ end
 
 
 
+### Datadog 0.10.x to 0.11.x or later
+
+If you're using Datadog, a bundle update for this minor version change introduces a completely new syntax for initialisation. This is a little surprising but the new approach is quite a lot cleaner. Full details are at [http://gems.datadoghq.com/trace/docs/](http://gems.datadoghq.com/trace/docs/).
+
+For the out-of-box Hoodoo service shell configuration, the following changes are needed to both the Datadog initializer Ruby file and `config.ru`.
+
+#### Before
+
+In `config/initializers/datadog.rb`:
+
+```ruby
+require 'ddtrace/contrib/rack/middlewares'
+
+Datadog::Monkey.patch_module( :active_record )
+
+tracer = Datadog.tracer
+
+tracer.configure(
+  :enabled   => ! [ 'test','development' ].include?( ENV[ 'RACK_ENV' ] ),
+  :hostname  => ENV[ 'DD_AGENT_PORT_8126_TCP_ADDR' ],
+  :port      => ENV[ 'DD_AGENT_PORT_8126_TCP_PORT' ]
+)
+
+Service.config.com_datadoghq_datadog_tracer = tracer
+```
+
+In `config.ru`, you may have had something like this, including a mention of your service's name:
+
+```ruby
+# Datadog automatic Rack monitoring.
+#
+# https://datadoghq.com
+# https://github.com/DataDog/ddtrace-rb
+#
+
+require 'ddtrace/contrib/rack/middlewares'
+
+use Datadog::Contrib::Rack::TraceMiddleware, {
+    tracer: Service.config.com_datadoghq_datadog_tracer,
+    default_service: 'your_service_name'
+}
+```
+
+#### After
+
+Inside `config/initializers/datadog.rb`, everything is configured in a single block and the service's name moves from `config.ru` into this file:
+
+```ruby
+# For more information see:
+#
+# * http://gems.datadoghq.com/trace/docs/
+# * https://github.com/DataDog/docker-dd-agent
+#
+require 'ddtrace'
+
+Datadog.configure do | c |
+
+  # Datadog tracing is only enabled in non-test/non-development environments.
+  #
+  c.tracer enabled:  [ 'test', 'development' ].exclude?( ENV[ 'RACK_ENV' ] ),
+           hostname: ENV[ 'DD_AGENT_PORT_8126_TCP_ADDR' ],
+           port:     ENV[ 'DD_AGENT_PORT_8126_TCP_PORT' ]
+
+  c.use :rack, distributed_tracing: true,
+               service_name:        'your_service_name'
+
+  # Examples below are optional. If you use Net/HTTP to call out to external
+  # services, or for inter-resource calls on a non-AMQP deployment, keep the
+  # ":http" middleware; likewise ":active_record" if you use that for
+  # persistent storage. The ":dalli" middleware is for Memcached, typically
+  # used as a session store. These and other integrations are described at:
+  #
+  #   http://gems.datadoghq.com/trace/docs/#Available_Integrations
+  #
+  c.use :http, distributed_tracing: true
+  c.use :active_record
+  c.use :dalli
+
+end
+
+```
+
+Inside `config.ru`, things get much simpler:
+
+```ruby
+# Enable DataDog monitoring.
+
+require 'ddtrace'
+use Datadog::Contrib::Rack::TraceMiddleware
+```
+
+
+
 ### ActiveRecord v4 to v5
 
 There are a number of changes you should make here.
