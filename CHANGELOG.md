@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.2.3 (2018-02-19)
+
+General maintenance update and test matrix support for Ruby 2.5.0. No core function changes, fixes or new features.
+
 ## 2.2.2 (2017-11-16)
 
 Fixes long-standing bug in the "decimal" type used in the presenter layer. This previously expected quantities to be presented as BigDecimal objects, but JSON contains no Types that would be converted to such by Ruby; decimals would never validate. Fixed by instead expecting a String with regular expression check; test coverage updated.
