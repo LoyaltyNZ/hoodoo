@@ -137,7 +137,6 @@ In `config.ru`, you may have had something like this, including a mention of you
 # https://datadoghq.com
 # https://github.com/DataDog/ddtrace-rb
 #
-
 require 'ddtrace/contrib/rack/middlewares'
 
 use Datadog::Contrib::Rack::TraceMiddleware, {
@@ -189,8 +188,7 @@ Inside `config.ru`, things get much simpler:
 
 ```ruby
 # Enable DataDog monitoring.
-
-require 'ddtrace'
+#
 use Datadog::Contrib::Rack::TraceMiddleware
 ```
 
