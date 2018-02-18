@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a collection of pages all providing various guides to Hoodoo, in the manner of [Rails Guides](http://guides.rubyonrails.org). The site is automatically published at [http://pond.github.io/hoodoo/](https://pond.github.io/hoodoo/) whenever the `gh-pages` branch receives a commit.
+This is a collection of pages all providing various guides to Hoodoo, in the manner of [Rails Guides](http://guides.rubyonrails.org). The site is automatically published at [http://loyaltynz.github.io/hoodoo/](https://loyaltynz.github.io/hoodoo/) whenever the `gh-pages` branch receives a commit.
 
 ## Jekyll
 
