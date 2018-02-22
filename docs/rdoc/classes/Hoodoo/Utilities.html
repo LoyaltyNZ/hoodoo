@@ -19,7 +19,7 @@
     <meta property="og:description" content="Useful tools, especially for those working without Rails components.">
 
     <meta name="keywords" content="Hoodoo::Utilities class">
-    <meta name="keywords" content="symbolize, stringify, deep_dup, deep_merge_into, hash_diff, hash_key_paths, collated_hash_from, to_integer?, spare_port, valid_iso8601_subset_datetime?, valid_iso8601_subset_date?, standard_datetime, nanosecond_iso8601, rationalise_datetime">
+    <meta name="keywords" content="symbolize, stringify, deep_dup, deep_merge_into, hash_diff, hash_key_paths, collated_hash_from, to_integer?, spare_port, valid_iso8601_subset_datetime?, valid_iso8601_subset_date?, is_in_future?, clear_clock_drift_configuration_cache!, standard_datetime, nanosecond_iso8601, rationalise_datetime">
 </head>
 
 <body>
@@ -50,6 +50,9 @@
         <dd>
             <ul>
                 <li>
+                    <a href="#method-c-clear_clock_drift_configuration_cache-21">clear_clock_drift_configuration_cache!</a>,
+                </li>
+                <li>
                     <a href="#method-c-collated_hash_from">collated_hash_from</a>
                 </li>
             </ul>
@@ -73,6 +76,14 @@
                 </li>
                 <li>
                     <a href="#method-c-hash_key_paths">hash_key_paths</a>
+                </li>
+            </ul>
+        </dd>
+        <dt>I</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-c-is_in_future-3F">is_in_future?</a>
                 </li>
             </ul>
         </dd>
@@ -160,6 +171,34 @@
 <!-- Methods -->
 
     <div class="sectiontitle">Class Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-c-clear_clock_drift_configuration_cache-21">
+            <b>clear_clock_drift_configuration_cache!</b>()
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-clear_clock_drift_configuration_cache-21" name="method-c-clear_clock_drift_configuration_cache-21" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>This method is intended really just for testing purposes; it clears the
+internal cache of clock drift tolerance read from environment variable
+<code>HOODOO_CLOCK_DRIFT_TOLERANCE</code>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-clear_clock_drift_configuration_cache-21_source')" id="l_method-c-clear_clock_drift_configuration_cache-21_source">show</a>
+            </p>
+            <div id="method-c-clear_clock_drift_configuration_cache-21_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 384</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">clear_clock_drift_configuration_cache!</span>
+  <span class="ruby-identifier">@@clock_drift_tolerance</span> = <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
     <div class="method">
         <div class="title method-title" id="method-c-collated_hash_from">
             <b>collated_hash_from</b>( array, dupes = false )
@@ -493,6 +532,68 @@ Hoodoo::Utilities.hash_key_paths( hash )
         </div>
     </div>
     <div class="method">
+        <div class="title method-title" id="method-c-is_in_future-3F">
+            <b>is_in_future?</b>( input )
+            <a href="../../classes/Hoodoo/Utilities.html#method-c-is_in_future-3F" name="method-c-is_in_future-3F" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Is the given Time, DateTime or String instance specifying a date-time that
+is in the future relevant to this executing environment&#39;s concept of
+“now”, allowing for <code>CLOCK_DRIFT_TOLERANCE</code>? Returns
+<code>true</code> if so, else <code>false</code>.</p>
+
+<p>Future date (clock drift) tolerance is specified in seconds using the
+<code>HOODOO_CLOCK_DRIFT_TOLERANCE</code> environment variable. The default
+is 30 seconds, as described in the relevant <a
+href="../Hoodoo.html">Hoodoo</a> Guide:</p>
+
+<pre><code>http://loyaltynz.github.io/hoodoo/guides_1000_env_vars.html#hoodoo_clock_drift_tolerance
+</code></pre>
+<dl class="rdoc-list note-list"><dt><code>input</code>
+<dd>
+<p>A value that&#39;s passed to <a
+href="Utilities.html#method-c-rationalise_datetime">::rationalise_datetime</a>
+with the result checked against `now` allowing for clock drift.</p>
+</dd></dl>
+
+<p>If the given input is not parseable as a date-time like object, then the
+method it will throw a RuntimeError exception via <a
+href="Utilities.html#method-c-rationalise_datetime">::rationalise_datetime</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-c-is_in_future-3F_source')" id="l_method-c-is_in_future-3F_source">show</a>
+            </p>
+            <div id="method-c-is_in_future-3F_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 361</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">is_in_future?</span>( <span class="ruby-identifier">input</span> )
+
+  <span class="ruby-comment"># See also ::clear_clock_drift_configuration_cache!.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">@@clock_drift_tolerance</span> <span class="ruby-operator">||=</span> (
+    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;HOODOO_CLOCK_DRIFT_TOLERANCE&#39;</span> ].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span>
+                                            <span class="ruby-value">30</span> <span class="ruby-operator">:</span>
+    <span class="ruby-constant">ENV</span>[ <span class="ruby-string">&#39;HOODOO_CLOCK_DRIFT_TOLERANCE&#39;</span> ].<span class="ruby-identifier">to_i</span>
+  )
+
+  <span class="ruby-identifier">value</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
+
+  <span class="ruby-comment"># Unlike Time, integer addition to DateTime adds days. There are 86400</span>
+  <span class="ruby-comment"># seconds per day, so below we add @@clock_drift_tolerance seconds.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">value</span> <span class="ruby-operator">&gt;</span> <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Rational</span>(<span class="ruby-identifier">@@clock_drift_tolerance</span>, <span class="ruby-value">86400</span>)
+
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
         <div class="title method-title" id="method-c-nanosecond_iso8601">
             <b>nanosecond_iso8601</b>( time_or_date_time )
             <a href="../../classes/Hoodoo/Utilities.html#method-c-nanosecond_iso8601" name="method-c-nanosecond_iso8601" class="permalink">Link</a>
@@ -521,7 +622,7 @@ nanosecond precision.</p>
                 <a href="javascript:toggleSource('method-c-nanosecond_iso8601_source')" id="l_method-c-nanosecond_iso8601_source">show</a>
             </p>
             <div id="method-c-nanosecond_iso8601_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 363</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 408</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nanosecond_iso8601</span>( <span class="ruby-identifier">time_or_date_time</span> )
   <span class="ruby-identifier">time_or_date_time</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">9</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -556,7 +657,7 @@ DateTime instance; in these cases, an equivalent DateTime is returned. If
                 <a href="javascript:toggleSource('method-c-rationalise_datetime_source')" id="l_method-c-rationalise_datetime_source">show</a>
             </p>
             <div id="method-c-rationalise_datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 376</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 421</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">rationalise_datetime</span>( <span class="ruby-identifier">input</span> )
   <span class="ruby-keyword">begin</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
@@ -636,7 +737,7 @@ abilities. At the time of writing, 6 decimal places are included.</p>
                 <a href="javascript:toggleSource('method-c-standard_datetime_source')" id="l_method-c-standard_datetime_source">show</a>
             </p>
             <div id="method-c-standard_datetime_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 349</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/utilities/utilities.rb, line 394</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">standard_datetime</span>( <span class="ruby-identifier">date_or_time_or_date_time</span> )
   <span class="ruby-identifier">date_or_time_or_date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">iso8601</span>( <span class="ruby-value">6</span> )
 <span class="ruby-keyword">end</span></pre>

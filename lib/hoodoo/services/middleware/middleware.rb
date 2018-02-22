@@ -260,14 +260,36 @@ module Hoodoo; module Services
     # host available.
     #
     def self.memcached_host
-      ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
+
+      # See also ::clear_memcached_configuration_cache!.
+      #
+      @@memcached_host ||= ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
+
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of Memcached data read from environment variables.
+    #
+    def self.clear_memcached_configuration_cache!
+      @@memcached_host = nil
     end
 
     # Are we running on the queue, else (implied) a local HTTP server?
     #
     def self.on_queue?
-      q = ENV[ 'AMQ_URI' ]
-      q.nil? == false && q.empty? == false
+
+      # See also ::clear_queue_configuration_cache!.
+      #
+      @@amq_uri ||= ENV[ 'AMQ_URI' ]
+      @@amq_uri.nil? == false && @@amq_uri.empty? == false
+
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of AMQP queue data read from environment variables.
+    #
+    def self.clear_queue_configuration_cache!
+      @@amq_uri = nil
     end
 
     # Return a service 'name' derived from the service's collection of

@@ -21,7 +21,10 @@ shared_examples 'an AMQP-based middleware/client endpoint' do |optional_extra_he
   before :each do
     @optional_extra_header_hash = optional_extra_header_hash || {}
     @old_queue = ENV[ 'AMQ_URI' ]
+
     ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
+    Hoodoo::Services::Middleware.clear_queue_configuration_cache!
+
     @mw = Hoodoo::Services::Middleware.new( RSpecTestServiceExoticStub.new )
 
     @cvar = false
@@ -39,6 +42,7 @@ shared_examples 'an AMQP-based middleware/client endpoint' do |optional_extra_he
 
   after :each do
     ENV[ 'AMQ_URI' ] = @old_queue
+    Hoodoo::Services::Middleware.clear_queue_configuration_cache!
 
     if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
       if @cvar == true

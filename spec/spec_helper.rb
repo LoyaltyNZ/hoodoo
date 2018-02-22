@@ -380,6 +380,19 @@ def spec_helper_count_database_calls_in( &block )
   return count
 end
 
+# Change a named environment varible's value and call a given block.
+# Afterwards, restore the old value of that variable.
+
+def spec_helper_change_environment( name, value, &block )
+  old_value = ENV[ name ]
+  begin
+    ENV[ name ] = value
+    yield
+  ensure
+    ENV[ name ] = old_value
+  end
+end
+
 # In Ruby 2.5.0 the Ruby team removed <tt>Dir::Tmpname.make_tmpname</tt>:
 #
 # https://github.com/ruby/ruby/commit/25d56ea7b7b52dc81af30c92a9a0e2d2dab6ff27

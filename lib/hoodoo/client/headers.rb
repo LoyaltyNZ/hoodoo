@@ -65,7 +65,7 @@ module Hoodoo
       #
       DATETIME_IN_PAST_ONLY_PROPERTY_PROC = -> ( value ) {
         value = Hoodoo::Utilities.valid_iso8601_subset_datetime?( value )
-        value = nil if value && value > DateTime.now
+        value = nil if value && Hoodoo::Utilities.is_in_future?( value )
         value || nil # => 'value' if 'value' is truthy, 'nil' if 'value' falsy
       }
 

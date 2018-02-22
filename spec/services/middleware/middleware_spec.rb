@@ -178,31 +178,86 @@ describe Hoodoo::Services::Middleware do
   end
 
   context 'utility methods' do
+    before :each do
+      Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
+    end
+
+    after :each do
+      Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
+    end
+
     it 'should know about Memcached via environment variable' do
-      old = ENV[ 'MEMCACHED_HOST' ]
-      ENV[ 'MEMCACHED_HOST' ] = nil
-      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
-      ENV[ 'MEMCACHED_HOST' ] = 'foo'
-      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
-      ENV[ 'MEMCACHED_HOST' ] = old
+      spec_helper_change_environment( 'MEMCACHED_HOST', nil ) do
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      end
+
+      spec_helper_change_environment( 'MEMCACHED_HOST', 'foo' ) do
+        Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      end
+    end
+
+    it 'caches Memcached environment variable value' do
+      spec_helper_change_environment( 'MEMCACHED_HOST', 'foo' ) do
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+
+        # Cached value -> result of check remains 'true', since prior
+        # result is cached.
+        #
+        spec_helper_change_environment( 'MEMCACHED_HOST', nil ) do
+          expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+        end
+      end
     end
 
     it 'should know about Memcached via legacy environment variable' do
-      old = ENV[ 'MEMCACHED_HOST' ]
-      ENV[ 'MEMCACHED_HOST' ] = nil
-      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
-      ENV[ 'MEMCACHED_HOST' ] = 'foo'
-      expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
-      ENV[ 'MEMCACHED_HOST' ] = old
+      spec_helper_change_environment( 'MEMCACHE_URL', nil ) do
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(false)
+      end
+
+      spec_helper_change_environment( 'MEMCACHE_URL', 'foo' ) do
+        Hoodoo::Services::Middleware.clear_memcached_configuration_cache!
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+      end
+    end
+
+    it 'caches legacy Memcached environment variable value' do
+      spec_helper_change_environment( 'MEMCACHE_URL', 'foo' ) do
+        expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+
+        # Cached value -> result of check remains 'true', since prior
+        # result is cached.
+        #
+        spec_helper_change_environment( 'MEMCACHE_URL', nil ) do
+          expect(Hoodoo::Services::Middleware.has_memcached?).to eq(true)
+        end
+      end
     end
 
     it 'should know about a queue' do
-      old = ENV[ 'AMQ_URI' ]
-      ENV[ 'AMQ_URI' ] = nil
-      expect(Hoodoo::Services::Middleware.on_queue?).to eq(false)
-      ENV[ 'AMQ_URI' ] = 'foo'
-      expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
-      ENV[ 'AMQ_URI' ] = old
+      spec_helper_change_environment( 'AMQ_URI', nil ) do
+        expect(Hoodoo::Services::Middleware.on_queue?).to eq(false)
+      end
+
+      spec_helper_change_environment( 'AMQ_URI', 'foo' ) do
+        Hoodoo::Services::Middleware.clear_queue_configuration_cache!
+        expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
+      end
+    end
+
+    it 'caches queue environment variable value' do
+      spec_helper_change_environment( 'AMQ_URI', 'foo' ) do
+        expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
+
+        # Cached value -> result of check remains 'true', since prior
+        # result is cached.
+        #
+        spec_helper_change_environment( 'AMQ_URI', nil ) do
+          expect(Hoodoo::Services::Middleware.on_queue?).to eq(true)
+        end
+      end
     end
   end
 
