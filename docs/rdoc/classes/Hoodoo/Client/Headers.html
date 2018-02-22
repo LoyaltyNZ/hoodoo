@@ -149,7 +149,7 @@ href="http://www.w3.org/TR/html5/forms.html#url-encoded-form-data">www.w3.org/TR
             <td>=</td>
             <td class="attr-value"><pre>-&gt; ( value ) {
 value = Hoodoo::Utilities.valid_iso8601_subset_datetime?( value )
-value = nil if value &amp;&amp; value &gt; DateTime.now
+value = nil if value &amp;&amp; Hoodoo::Utilities.is_in_future?( value )
 value || nil # =&gt; &#39;value&#39; if &#39;value&#39; is truthy, &#39;nil&#39; if &#39;value&#39; falsy
 }</pre></td>
         </tr>

@@ -1,4 +1,4 @@
-Mon, 19 Feb 2018 11:16:05 +1300
+Thu, 22 Feb 2018 14:10:51 +1300
 README.md	Thu, 02 Nov 2017 13:32:33 +1300
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -26,7 +26,7 @@ lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Thu, 12 Oct 2017 08:31:46 +
 lib/hoodoo/client/endpoint/endpoints/http.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/http_based.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/not_found.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/client/headers.rb	Thu, 12 Oct 2017 08:31:46 +1300
+lib/hoodoo/client/headers.rb	Thu, 22 Feb 2018 13:23:00 +1300
 lib/hoodoo/client/paginated_enumeration.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/communicators.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/communicators/fast.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -103,7 +103,7 @@ lib/hoodoo/services/middleware/exception_reporting/exception_reporting.rb	Thu, 1
 lib/hoodoo/services/middleware/exception_reporting/reporters/airbrake_reporter.rb	Fri, 10 Nov 2017 14:00:17 +1300
 lib/hoodoo/services/middleware/exception_reporting/reporters/raygun_reporter.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/middleware/interaction.rb	Mon, 16 Oct 2017 08:58:00 +1300
-lib/hoodoo/services/middleware/middleware.rb	Mon, 16 Oct 2017 08:58:00 +1300
+lib/hoodoo/services/middleware/middleware.rb	Thu, 22 Feb 2018 13:56:53 +1300
 lib/hoodoo/services/middleware/rack_monkey_patch.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/context.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/services/services/implementation.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -123,6 +123,6 @@ lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Thu, 12 Oct
 lib/hoodoo/transient_store/transient_store/redis.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/utilities/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
+lib/hoodoo/utilities/utilities.rb	Thu, 22 Feb 2018 13:34:35 +1300
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Mon, 19 Feb 2018 11:14:47 +1300
+lib/hoodoo/version.rb	Thu, 22 Feb 2018 13:23:00 +1300

@@ -76,6 +76,21 @@ describe Hoodoo::Client::Headers do
         expect( described_class::DATETIME_IN_PAST_ONLY_PROPERTY_PROC.call( date_time_str ) ).to be_nil
       end
     end
+
+    # We assume good coverage for the Utility method below. If this header
+    # Proc is calling that and appears to be responding to its return value,
+    # that's good enough for us here.
+    #
+    it 'uses Hoodoo::Utilities::is_in_future? for is-future checks' do
+      date_time = DateTime.now - 10.seconds
+      date_time_str = Hoodoo::Utilities.nanosecond_iso8601( date_time )
+
+      expect( Hoodoo::Utilities ).to receive( :is_in_future? ).with( date_time ).once.and_return( false )
+      expect( described_class::DATETIME_IN_PAST_ONLY_PROPERTY_PROC.call( date_time_str ) ).to eq( date_time )
+
+      expect( Hoodoo::Utilities ).to receive( :is_in_future? ).with( date_time ).once.and_return( true )
+      expect( described_class::DATETIME_IN_PAST_ONLY_PROPERTY_PROC.call( date_time_str ) ).to be_nil
+    end
   end
 
   it 'DATETIME_WRITER_PROC calls rationalisation method' do

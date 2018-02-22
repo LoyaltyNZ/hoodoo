@@ -485,6 +485,66 @@ describe Hoodoo::Utilities do
     end
   end
 
+  describe '#is_in_future?' do
+    before :each do
+      @old_drift = ENV[ 'HOODOO_CLOCK_DRIFT_TOLERANCE' ]
+      ENV.delete( 'HOODOO_CLOCK_DRIFT_TOLERANCE' )
+      Hoodoo::Utilities.clear_clock_drift_configuration_cache!
+
+      @default = 30
+    end
+
+    after :all do
+      ENV[ 'HOODOO_CLOCK_DRIFT_TOLERANCE' ] = @old_drift
+    end
+
+    it 'says "no" for "now"' do
+      expect( Hoodoo::Utilities.is_in_future?( Time.now ) ).to eq( false )
+    end
+
+    it 'says "no" inside default drift allowance' do
+      expect( Hoodoo::Utilities.is_in_future?( Time.now + ( @default / 2 ) ) ).to eq( false )
+    end
+
+    # Hoodoo Guides: "...less than or equal to... ...is permitted...".
+    #
+    it 'says "no" at default drift allowance' do
+      expect( Hoodoo::Utilities.is_in_future?( Time.now + @default ) ).to eq( false )
+    end
+
+    it 'says "yes" outside default drift allowance' do
+      expect( Hoodoo::Utilities.is_in_future?( Time.now + @default + 1 ) ).to eq( true )
+    end
+
+    it 'drift allowance can be reconfigured' do
+      spec_helper_change_environment( 'HOODOO_CLOCK_DRIFT_TOLERANCE', '10' ) do
+        Hoodoo::Utilities.clear_clock_drift_configuration_cache!
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + 10 ) ).to eq( false )
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + 11 ) ).to eq( true )
+      end
+    end
+
+    it 'drift allowance can be set to zero' do
+      spec_helper_change_environment( 'HOODOO_CLOCK_DRIFT_TOLERANCE', '0' ) do
+        Hoodoo::Utilities.clear_clock_drift_configuration_cache!
+        expect( Hoodoo::Utilities.is_in_future?( Time.now ) ).to eq( false )
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + 0.1 ) ).to eq( true )
+      end
+    end
+
+    it 'drift configuration is cached' do
+      expect( Hoodoo::Utilities.is_in_future?( Time.now + @default + 1 ) ).to eq( true )
+
+      # Configuring the environment variable for a much longer tolerance
+      # without resetting the internal cache variable should result in
+      # the old value still being used.
+      #
+      spec_helper_change_environment( 'HOODOO_CLOCK_DRIFT_TOLERANCE', ( @default * 2 ).to_s ) do
+        expect( Hoodoo::Utilities.is_in_future?( Time.now + @default + 1 ) ).to eq( true )
+      end
+    end
+  end
+
   describe '#standard_iso8601' do
     before :each do
       @old_tz = ENV[ 'TZ' ]

@@ -99,7 +99,9 @@ describe Hoodoo::Services::Middleware do
   context 'off queue' do
     before :each do
       @old_queue = ENV[ 'AMQ_URI' ]
+
       ENV[ 'AMQ_URI' ] = nil
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
 
       @cvar = false
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
@@ -110,6 +112,7 @@ describe Hoodoo::Services::Middleware do
 
     after :each do
       ENV[ 'AMQ_URI' ] = @old_queue
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true
@@ -146,7 +149,9 @@ describe Hoodoo::Services::Middleware do
   context 'on queue' do
     before :each do
       @old_queue = ENV[ 'AMQ_URI' ]
+
       ENV[ 'AMQ_URI' ] = 'amqp://test:test@127.0.0.1'
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
 
       @cvar = false
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
@@ -157,6 +162,7 @@ describe Hoodoo::Services::Middleware do
 
     after :each do
       ENV[ 'AMQ_URI' ] = @old_queue
+      Hoodoo::Services::Middleware.clear_queue_configuration_cache!
 
       if Hoodoo::Services::Middleware.class_variable_defined?( '@@alchemy' )
         if @cvar == true

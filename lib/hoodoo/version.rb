@@ -12,11 +12,11 @@ module Hoodoo
   # The Hoodoo gem version. If this changes, be sure to re-run
   # <tt>bundle install</tt> or <tt>bundle update</tt>.
   #
-  VERSION = '2.2.3'
+  VERSION = '2.3.0'
 
   # The Hoodoo gem date. If this changes, be sure to re-run
   # <tt>bundle install</tt> or <tt>bundle update</tt>.
   #
-  DATE = '2018-02-19'
+  DATE = '2018-02-22'
 
 end
