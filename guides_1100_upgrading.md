@@ -325,6 +325,12 @@ end
 
 
 
+### Recommended but optional changes
+
+* If you have resources that allow a caller to include a date-time in some part of the implementation, with validation to ensure that the date-time is not in the future, update the code to use method [`Hoodoo::Utilities::is_in_future?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F) for consistency with similar checks elsewhere. See the [`HOODOO_CLOCK_DRIFT_TOLERANCE` environment variable documentation](guides_1000_env_vars.md#hoodoo_clock_drift_tolerance) for more information.
+
+
+
 ### Final changes
 
 Note the updates in the service shell from the last version supporting Hoodoo 1 to the at-time-of-writing version for Hoodoo 2. You should check through the diff and apply any changes you feel are relevant and valuable within your own service:
