@@ -280,8 +280,6 @@ module Hoodoo; module Services
 
       # See also ::clear_queue_configuration_cache!.
       #
-      # q = ENV[ 'AMQ_URI' ]
-      # q.nil? == false && q.empty? == false
       @@amq_uri ||= ENV[ 'AMQ_URI' ]
       @@amq_uri.nil? == false && @@amq_uri.empty? == false
 
