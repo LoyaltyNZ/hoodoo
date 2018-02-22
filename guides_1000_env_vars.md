@@ -14,7 +14,9 @@ Various environment variables can be used to override defaults or otherwise modi
 
     SOME_ENV=some_value bundle exec guard
 
-Hoodoo itself responds to some of these, while the service shell adds a few more that it reads during initialisation.
+Hoodoo itself responds to some of these, while the service shell adds a few more that it reads during initialisation. Values are usually cached, so you should restart your service(s) if the values of variables described below are changed.
+
+
 
 ## Environment variable list
 
@@ -45,6 +47,20 @@ If Hoodoo' service session engine is in testing mode (used when Memcached is not
 #### `HOODOO_DISCOVERY_BY_DRB_PORT_OVERRIDE`
 
 When running in a non-queue (traditional HTTP) environment under local machine development, inter-resource calls made between independent service application instances are possible because a DRb-based daemon is launched behind the scenes and all services talk to this to register the location of their endpoints. They must all agree on the port number to use for contacting this daemon. By default it is 8787, or override with this environment variable. When a service application starts, its Hoodoo middleware instance will detect the new port and start a DRb daemon on that port if no existing daemon is already listening there.
+
+#### <a name="hoodoo_clock_drift_tolerance"></a>`HOODOO_CLOCK_DRIFT_TOLERANCE`
+
+When date-aware mechanisms are in use - for example, the [`X-Dated-At`](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification#http_x_dated_at) and [`X-Dated-From`](https://github.com/LoyaltyNZ/hoodoo/tree/master/docs/api_specification#http_x_dated_from) HTTP headers - Hoodoo applies a "not in the future" check based on `Time.now`. Since this is the time of the _server on which the Hoodoo service is running_ it is unlikely to exactly match the time of a calling client. Even though use of [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) can mean clocks are reasonably accurate, API call rejections may occur if this "in future" check was applied strictly, because the calling client's concept of `now` may well be ahead of the server's concept of `now`, even if only by a small amount.
+
+On multi-node deployments, an inter-resource call to another service might result in a different server node responding, so the same problem can manifest within a higher level API call in confusing ways. For example, an inbound API call might specify no date at all, but the implementation of the resource handling that call may use `Time.now` to lock date-times for inter-resource lookups on downstream dating-aware resources via the `X-Dated-At` header internally. If such a call happened to be handled by a server node with a clock fractionally behind the calling node, then the client might end up receiving a confusing error about an invalid `X-Dated-At` HTTP header even though they not knowingly used one.
+
+Hoodoo v2.2.x and earlier used strict checks so these problems were evident. Workarounds were inelegant and counter-intuitive. Hoodoo v2.3.0 introduced the `HOODOO_CLOCK_DRIFT_TOLERANCE` environment variable which specifies an **integer number of seconds** of allowed drift. If any date-aware system managed by Hoodoo encounters a time that appears to be ahead of `Time.now` but only by *less than or equal to* the specified number of seconds, the call will be permitted. If the requested time exceeds the drift allowance, it will be rejected. A value of zero will give behaviour identical to Hoodoo v2.2.x or earlier but this is **not recommended**.
+
+The default setting in Hoodoo v2.3.0 and later is **30 seconds**.
+
+> Authors of resource implementations that accept and manually range-check "not in future" date-times are encouraged to use method [`Hoodoo::Utilities::is_in_future?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F), available in Hoodoo v2.3.0 or later, to lean on this mechanism and provide consistent clock drift tolerance across all aspects of the implementation.
+
+
 
 ### Service shell
 
