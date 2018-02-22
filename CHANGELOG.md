@@ -4,7 +4,7 @@
 
 * Maintenance `bundle update`.
 * Introduces environment variable [`HOODOO_CLOCK_DRIFT_TOLERANCE`](http://loyaltynz.github.io/hoodoo/guides_1000_env_vars.html#hoodoo_clock_drift_tolerance) and related method [`Hoodoo::Utilities::is_in_future?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F).
-* Internal cacheing for a few more environment variables, yielding a small performance improvement.
+* Internal caching for a few more environment variables, yielding a small performance improvement.
 
 ## 2.2.3 (2018-02-19)
 
