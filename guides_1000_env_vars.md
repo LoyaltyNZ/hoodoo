@@ -62,15 +62,6 @@ The default setting in Hoodoo v2.3.0 and later is **30 seconds**.
 
 
 
-test Hoodoo::Utilities.is_in_future?
-test DATETIME_IN_PAST_ONLY_PROPERTY_PROC with clock drift in mind
-
-
-
-
-
-
-
 ### Service shell
 
 #### `DATABASE_URL`
