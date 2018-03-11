@@ -48,6 +48,7 @@ module Hoodoo
                 span.span_type = 'alchemy'
                 span.resource  = http_message[ 'verb' ]
                 span.set_tag( 'target.path', http_message[ 'path'] )
+                span.set_tag( 'interaction.id', http_message[ 'headers' ][ 'X-Interaction-ID' ] )
 
                 # Add Datadog trace IDs to the HTTP message. For compatibility
                 # with Hoodoo V1 services using a fork of DDTrace, we send both

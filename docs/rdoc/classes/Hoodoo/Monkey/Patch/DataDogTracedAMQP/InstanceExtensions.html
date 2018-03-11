@@ -103,6 +103,7 @@ for analytics data.</p>
     <span class="ruby-identifier">span</span>.<span class="ruby-identifier">span_type</span> = <span class="ruby-string">&#39;alchemy&#39;</span>
     <span class="ruby-identifier">span</span>.<span class="ruby-identifier">resource</span>  = <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;verb&#39;</span> ]
     <span class="ruby-identifier">span</span>.<span class="ruby-identifier">set_tag</span>( <span class="ruby-string">&#39;target.path&#39;</span>, <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;path&#39;</span>] )
+    <span class="ruby-identifier">span</span>.<span class="ruby-identifier">set_tag</span>( <span class="ruby-string">&#39;interaction.id&#39;</span>, <span class="ruby-identifier">http_message</span>[ <span class="ruby-string">&#39;headers&#39;</span> ][ <span class="ruby-string">&#39;X-Interaction-ID&#39;</span> ] )
 
     <span class="ruby-comment"># Add Datadog trace IDs to the HTTP message. For compatibility</span>
     <span class="ruby-comment"># with Hoodoo V1 services using a fork of DDTrace, we send both</span>
