@@ -1,5 +1,11 @@
 # Hoodoo v2.x
 
+## 2.4.0 (2018-03-18)
+
+* Fix in presenter layer wherein rendering would fail unless `::ActiveRecord::Base` is defined
+* Bump development dependency of PostgreSQL gem `pg` to version 1.x; PostgreSQL 9.2 or later required; see the gem's [change history](https://bitbucket.org/ged/ruby-pg/src/d8734ec382c9af8bd8bbe062d3668c93dd4ecf5b/History.rdoc?at=default&fileviewer=file-view-default) for more information
+* Maintenance `bundle update`
+
 ## 2.3.0 (2018-02-22)
 
 * Maintenance `bundle update`.
