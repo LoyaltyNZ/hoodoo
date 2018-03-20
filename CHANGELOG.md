@@ -1,7 +1,8 @@
 # Hoodoo v2.x
 
-## 2.3.1 (2018-03-21)
+## 2.4.0 (2018-03-21)
 
+* Add the interaction ID to Datadog tracing [as span `interaction.id`](https://github.com/LoyaltyNZ/hoodoo/pull/248/files#diff-fd75040abee557d577b5765501df2550).
 * Maintenance `bundle update`.
 * Fix in presenter layer wherein rendering would fail unless `::ActiveRecord::Base` is defined.
 * Fix routing expressions to anchor accidental ambiguous routes to start of path (e.g. `/1/Foo/1/Bar` where both resources exist will now correctly route to v1 of `Foo` with `1` and `Bar` treated as URI path components).
