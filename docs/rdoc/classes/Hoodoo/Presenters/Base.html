@@ -436,7 +436,7 @@ field and object value in the rendered resource data.</p>
 
   <span class="ruby-identifier">target</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">render</span>( <span class="ruby-identifier">data</span>, <span class="ruby-identifier">uuid</span>, <span class="ruby-identifier">created_at</span>, <span class="ruby-identifier">language</span>, <span class="ruby-identifier">created_by</span> )
 
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-operator">::</span><span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span> )
     <span class="ruby-identifier">result_hash</span>     = {}
     <span class="ruby-identifier">extra_scope_map</span> = <span class="ruby-identifier">secured_with</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">secured_with</span>()
 
