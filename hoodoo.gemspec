@@ -33,7 +33,7 @@ Gem::Specification.new do | s |
   s.add_development_dependency 'activerecord',     '~> 5.1'
   s.add_development_dependency 'activesupport',    '~> 5.1'
   s.add_development_dependency 'database_cleaner', '~> 1.6'
-  s.add_development_dependency 'pg',               '~> 0.21'
+  s.add_development_dependency 'pg',               '~> 1.0'
   s.add_development_dependency 'byebug',           '~> 9.0'
   s.add_development_dependency 'timecop',          '~> 0.8'
   s.add_development_dependency 'raygun4ruby',      '~> 2.6' # raygun.io

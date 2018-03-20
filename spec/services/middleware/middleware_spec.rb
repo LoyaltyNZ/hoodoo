@@ -1717,7 +1717,7 @@ class RSpecTestServiceAltStubImplementation < Hoodoo::Services::Implementation
 end
 
 class RSpecTestServiceAltStubInterface < Hoodoo::Services::Interface
-  interface :RSpecTestResource do
+  interface :RSpecTestResourceAlt do
     version 2
     endpoint :rspec_test_service_alt_stub, RSpecTestServiceAltStubImplementation
   end
@@ -1744,22 +1744,148 @@ describe Hoodoo::Services::Middleware do
       expect(last_response.status).to eq(404)
     end
 
-    it 'should route to the V1 endpoint' do
-      expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:list)
-      get '/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+    context 'should route to the V1 endpoint' do
+      before :each do
+        expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:list)
+      end
+
+      after :each do
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'with custom route and no trailing slash' do
+        get '/v1/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with custom route and trailing slash' do
+        get '/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and no trailing slash' do
+        get '/1/RSpecTestResource', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and trailing slash' do
+        get '/1/RSpecTestResource/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
     end
 
-    it 'should route to the V2 endpoint' do
-      expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list)
-      get '/v2/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+    context 'should route to the V2 endpoint' do
+      before :each do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list)
+      end
+
+      after :each do
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'with custom route and no trailing slash' do
+        get '/v2/rspec_test_service_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with custom route and trailing slash' do
+        get '/v2/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and no trailing slash' do
+        get '/2/RSpecTestResource', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and trailing slash' do
+        get '/2/RSpecTestResource/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
     end
 
-    it 'should route to the V2 alternative endpoint' do
-      expect_any_instance_of(RSpecTestServiceAltStubImplementation).to receive(:list)
-      get '/v2/rspec_test_service_alt_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
-      expect(last_response.status).to eq(200)
+    context 'should route to the V2 alternative endpoint' do
+      before :each do
+        expect_any_instance_of(RSpecTestServiceAltStubImplementation).to receive(:list)
+      end
+
+      it 'with custom route and no trailing slash' do
+        get '/v2/rspec_test_service_alt_stub', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with custom route and trailing slash' do
+        get '/v2/rspec_test_service_alt_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and no trailing slash' do
+        get '/2/RSpecTestResourceAlt', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+
+      it 'with de facto route and trailing slash' do
+        get '/2/RSpecTestResourceAlt/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+      end
+    end
+
+    context 'with trailing route matches' do
+      context 'should not mis-match' do
+        it 'custom routes with a junk lead-in' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to_not receive(:list)
+          get '/v1/junk/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect(last_response.status).to eq(404)
+        end
+
+        it 'custom routes with a resource match lead-in' do
+          expect_any_instance_of(RSpecTestServiceAltStubImplementation).to receive(:show)
+          get '/v2/rspec_test_service_alt_stub/v1/rspec_test_service_stub/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect(last_response.status).to eq(200)
+        end
+
+        it 'de facto routes with a junk lead-in' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to_not receive(:list)
+          get '/1/Junk/1/RSpecTestResource/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect(last_response.status).to eq(404)
+        end
+
+        it 'de facto routes with a resource match lead-in' do
+          expect_any_instance_of(RSpecTestServiceAltStubImplementation).to receive(:show)
+          get '/2/RSpecTestResourceAlt/1/RSpecTestResource/', nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+          expect(last_response.status).to eq(200)
+        end
+      end
+
+      context 'should pass the remainder as the "ident"' do
+        after :each do
+          expect(last_response.status).to eq(200)
+        end
+
+        it 'on custom routes' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:update) do | instance, context |
+            expect(context.request.ident).to eq('v2')
+            expect(context.request.uri_path_components).to eq(['v2', 'rspec_test_service_alt_stub'])
+          end
+
+          patch '/v1/rspec_test_service_stub/v2/rspec_test_service_alt_stub', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+
+        it 'on de facto routes' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:update) do | instance, context |
+            expect(context.request.ident).to eq('2')
+            expect(context.request.uri_path_components).to eq(['2', 'RSpecTestResourceAlt'])
+          end
+
+          patch '/1/RSpecTestResource/2/RSpecTestResourceAlt', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+
+        it 'on mixed routes (1)' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:update) do | instance, context |
+            expect(context.request.ident).to eq('v2')
+            expect(context.request.uri_path_components).to eq(['v2', 'rspec_test_service_alt_stub'])
+          end
+
+          patch '/1/RSpecTestResource/v2/rspec_test_service_alt_stub', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+
+        it 'on mixed routes (2)' do
+          expect_any_instance_of(RSpecTestServiceV1StubImplementation).to receive(:update) do | instance, context |
+            expect(context.request.ident).to eq('2')
+            expect(context.request.uri_path_components).to eq(['2', 'RSpecTestResourceAlt'])
+          end
+
+          patch '/v1/rspec_test_service_stub/2/RSpecTestResourceAlt', '{}', { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        end
+      end
     end
   end
 

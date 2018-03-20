@@ -1,5 +1,13 @@
 # Hoodoo v2.x
 
+## 2.4.0 (2018-03-21)
+
+* Add the interaction ID to Datadog tracing [as span `interaction.id`](https://github.com/LoyaltyNZ/hoodoo/pull/248/files#diff-fd75040abee557d577b5765501df2550).
+* Maintenance `bundle update`.
+* Fix in presenter layer wherein rendering would fail unless `::ActiveRecord::Base` is defined.
+* Fix routing expressions to anchor accidental ambiguous routes to start of path (e.g. `/1/Foo/1/Bar` where both resources exist will now correctly route to v1 of `Foo` with `1` and `Bar` treated as URI path components).
+* Bump development dependency of PostgreSQL gem `pg` to version 1.x; PostgreSQL 9.2 or later required; see the gem's [change history](https://bitbucket.org/ged/ruby-pg/src/d8734ec382c9af8bd8bbe062d3668c93dd4ecf5b/History.rdoc?at=default&fileviewer=file-view-default) for more information.
+
 ## 2.3.0 (2018-02-22)
 
 * Maintenance `bundle update`.
