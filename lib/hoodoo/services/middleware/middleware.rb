@@ -538,12 +538,12 @@ module Hoodoo; module Services
         # everything else.
         #
         custom_path   = "/v#{ interface.version }/#{ interface.endpoint }"
-        custom_regexp = /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/
+        custom_regexp = /^\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/
 
         # Same as above, but for the de facto routing.
         #
         de_facto_path   = self.class.de_facto_path_for( interface.resource, interface.version )
-        de_facto_regexp = /\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/
+        de_facto_regexp = /^\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/
 
         Hoodoo::Services::Discovery::ForLocal.new(
           :resource                => interface.resource,
