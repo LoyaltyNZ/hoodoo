@@ -915,12 +915,12 @@ calls should be passed.</p>
     <span class="ruby-comment"># everything else.</span>
     <span class="ruby-comment">#</span>
     <span class="ruby-identifier">custom_path</span>   = <span class="ruby-node">&quot;/v#{ interface.version }/#{ interface.endpoint }&quot;</span>
-    <span class="ruby-identifier">custom_regexp</span> = <span class="ruby-node">/\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/</span>
+    <span class="ruby-identifier">custom_regexp</span> = <span class="ruby-node">/^\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/</span>
 
     <span class="ruby-comment"># Same as above, but for the de facto routing.</span>
     <span class="ruby-comment">#</span>
     <span class="ruby-identifier">de_facto_path</span>   = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">de_facto_path_for</span>( <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">resource</span>, <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">version</span> )
-    <span class="ruby-identifier">de_facto_regexp</span> = <span class="ruby-node">/\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/</span>
+    <span class="ruby-identifier">de_facto_regexp</span> = <span class="ruby-node">/^\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/</span>
 
     <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Services</span><span class="ruby-operator">::</span><span class="ruby-constant">Discovery</span><span class="ruby-operator">::</span><span class="ruby-constant">ForLocal</span>.<span class="ruby-identifier">new</span>(
       <span class="ruby-value">:resource</span>                =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">resource</span>,
