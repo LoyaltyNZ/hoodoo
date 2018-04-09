@@ -51,7 +51,7 @@ module Hoodoo
         #
         def self.eqls_wildcard( wildcard_value )
           Proc.new do | security_value |
-            security_value.eql?( wildcard_value )
+            security_value.eql?( wildcard_value ) rescue false
           end
         end
 
@@ -65,7 +65,7 @@ module Hoodoo
         #
         def self.includes_wildcard( wildcard_value )
           Proc.new do | security_values |
-            security_values.include?( wildcard_value )
+            security_values.include?( wildcard_value ) rescue false
           end
         end
 
@@ -78,11 +78,11 @@ module Hoodoo
         # Returns a Proc suitable for passing to the +:exemptions+ option for
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with.
         #
-        def self.wildcard_matches( wildcard_regexp )
+        def self.matches_wildcard( wildcard_regexp )
           wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
 
           Proc.new do | security_value |
-            wildcard_regexp.match?( security_value )
+            wildcard_regexp.match?( security_value ) rescue false
           end
         end
 
@@ -97,12 +97,16 @@ module Hoodoo
         # Returns a Proc suitable for passing to the +:exemptions+ option for
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with.
         #
-        def self.wildcard_matches_enumerable( wildcard_regexp )
+        def self.matches_wildcard_enumerable( wildcard_regexp )
           wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
 
           Proc.new do | security_values |
-            security_values.each do | security_value |
-              return true if wildcard_regexp.match?( security_value )
+            begin
+              security_values.each do | security_value |
+                return true if wildcard_regexp.match?( security_value )
+              end
+            rescue
+              false
             end
           end
         end
