@@ -326,7 +326,7 @@ instance.</p>
     <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">dataset_size</span>           = <span class="ruby-identifier">size</span>
     <span class="ruby-identifier">parsed</span>.<span class="ruby-identifier">estimated_dataset_size</span> = <span class="ruby-identifier">estimated_size</span>
 
-  <span class="ruby-keyword">elsif</span> ( <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;kind&#39;</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Errors&#39;</span> )
+  <span class="ruby-keyword">elsif</span> ( ( <span class="ruby-identifier">code</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">200</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">code</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">299</span> ) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">parsed</span>[ <span class="ruby-string">&#39;kind&#39;</span> ] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;Errors&#39;</span> )
 
     <span class="ruby-comment"># This isn&#39;t an array, it&#39;s an AugmentedHash describing errors.</span>
     <span class="ruby-comment"># Turn this into a formal errors collection.</span>

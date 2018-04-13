@@ -342,7 +342,6 @@ module Hoodoo
 
         end
 
-
       public
 
         # Obtain a list of resource instance representations.
