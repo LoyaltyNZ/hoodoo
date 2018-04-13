@@ -65,6 +65,7 @@ module Hoodoo
         #
         def self.includes_wildcard( wildcard_value )
           Proc.new do | security_values |
+            security_values.is_a?( Enumerable ) &&
             security_values.include?( wildcard_value ) rescue false
           end
         end
@@ -81,8 +82,27 @@ module Hoodoo
         def self.matches_wildcard( wildcard_regexp )
           wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
 
+          # Use security_value's #match? (if present) to ensure that we have
+          # an expected "matchable" type. This is only available in Ruby 2.4
+          # or later, so a patch is performed below for earlier Rubies.
+          #
           Proc.new do | security_value |
-            wildcard_regexp.match?( security_value ) rescue false
+            security_value.respond_to?( :match? ) &&
+            security_value.match?( wildcard_regexp ) rescue false
+          end
+        end
+
+        # Ruby 2.4.0 and later introduce the Regexp#match? family, which is
+        # the fastest way to determine a simple does-or-does-not match
+        # condition. Ruby 2.3.x and earlier need different, slower code.
+        #
+        unless ''.respond_to?( :match? )
+          def self.matches_wildcard( wildcard_regexp )
+            wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
+
+            Proc.new do | security_value |
+              wildcard_regexp.match( security_value ) != nil rescue false
+            end
           end
         end
 
@@ -98,12 +118,12 @@ module Hoodoo
         # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with.
         #
         def self.matches_wildcard_enumerable( wildcard_regexp )
-          wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
+          match_proc = self.matches_wildcard( wildcard_regexp )
 
           Proc.new do | security_values |
             begin
-              security_values.each do | security_value |
-                return true if wildcard_regexp.match?( security_value )
+              security_values.any? do | security_value |
+                match_proc.call( security_value )
               end
             rescue
               false

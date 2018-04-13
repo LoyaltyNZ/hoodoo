@@ -3,8 +3,19 @@ require 'spec_helper'
 describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
   class TestAllMatchersObject
+    include Enumerable
+
     def     eql?( thing ); true; end
     def include?( thing ); true; end
+    def   match?( thing ); true; end
+  end
+
+  class TestRescueAllMatchersObject
+    include Enumerable
+
+    def     eql?( thing ); raise "boo!"; end
+    def include?( thing ); raise "boo!"; end
+    def   match?( thing ); raise "boo!"; end
   end
 
   context '::eqls_wildcard' do
@@ -14,7 +25,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
     it 'matches when it should' do
       expect( @proc.call( '!' ) ).to eql( true )
-      expect( @proc.call( Eql.new ) ).to eql( true )
+      expect( @proc.call( TestAllMatchersObject.new ) ).to eql( true )
     end
 
     it 'misses when it should' do
@@ -28,9 +39,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
     end
 
     it 'rescues' do
-      uneql = Object.new
-      uneql.instance_eval( 'undef :eql?' )
-      expect( @proc.call( uneql ) ).to eql( false )
+      expect( @proc.call( TestRescueAllMatchersObject.new ) ).to eql( false )
     end
   end
 
@@ -40,18 +49,95 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
     end
 
     it 'matches when it should' do
+      expect( @proc.call( [ '!' ] ) ).to eql( true )
+      expect( @proc.call( [ '!', 1, 2, 3, 4 ] ) ).to eql( true )
+      expect( @proc.call( [ 1, 2, '!', 3, 4 ] ) ).to eql( true )
+      expect( @proc.call( [ 1, 2, 3, 4, '!' ] ) ).to eql( true )
+      expect( @proc.call( TestAllMatchersObject.new ) ).to eql( true )
     end
 
     it 'misses when it should' do
+      expect( @proc.call( '!' ) ).to eql( false )
+      expect( @proc.call( [ '*' ] ) ).to eql( false )
+      expect( @proc.call( [ ' !' ] ) ).to eql( false )
+      expect( @proc.call( [ '! ' ] ) ).to eql( false )
+      expect( @proc.call( [ "!\n" ] ) ).to eql( false )
+      expect( @proc.call( 42 ) ).to eql( false )
+      expect( @proc.call( { :hello => :world } ) ).to eql( false )
     end
 
     it 'rescues' do
+      expect( @proc.call( TestRescueAllMatchersObject.new ) ).to eql( false )
     end
   end
 
   context '::matches_wildcard' do
+    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard( param ) }
+    let( :param ) { '^..!.*' }
+
+    shared_examples 'a ::matches_wildcard Proc' do
+      it 'and matches when it should' do
+        expect( proc().call( '12!' ) ).to eql( true )
+        expect( proc().call( '12!3' ) ).to eql( true )
+        expect( proc().call( TestAllMatchersObject.new ) ).to eql( true )
+      end
+
+      it 'and misses when it should' do
+        expect( proc().call( '123!4' ) ).to eql( false )
+        expect( proc().call( '1!4' ) ).to eql( false )
+        expect( proc().call( 42 ) ).to eql( false )
+        expect( proc().call( { :hello => :world } ) ).to eql( false )
+        expect( proc().call( [ 1, 2, 3, 4 ] ) ).to eql( false )
+      end
+
+      it 'and rescues' do
+        expect( proc().call( TestRescueAllMatchersObject.new ) ).to eql( false )
+      end
+    end
+
+    context 'constructed with a String' do
+      it_behaves_like 'a ::matches_wildcard Proc'
+    end
+
+    context 'constructed with a Regexp' do
+      let( :param ) { /^..!.*/ }
+      it_behaves_like 'a ::matches_wildcard Proc'
+    end
   end
 
   context '::matches_wildcard_enumerable' do
+    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard_enumerable( param ) }
+    let( :param ) { '^..!.*' }
+
+    shared_examples 'a ::matches_wildcard Proc' do
+      it 'and matches when it should' do
+        expect( proc().call( [ '12!34', '1', 2, :three, 4 ] ) ).to eql( true )
+        expect( proc().call( [ '1', 2, :three, '12!34', 4 ] ) ).to eql( true )
+        expect( proc().call( [ '1', 2, :three, 4, '12!34' ] ) ).to eql( true )
+        expect( proc().call( [ '12!' ] ) ).to eql( true )
+        expect( proc().call( [ TestAllMatchersObject.new ] ) ).to eql( true )
+      end
+
+      it 'and misses when it should' do
+        expect( proc().call( [ '123!34' ] ) ).to eql( false )
+        expect( proc().call( [ '1!4' ] ) ).to eql( false )
+        expect( proc().call( { :hello => :world } ) ).to eql( false )
+        expect( proc().call( [ 1, 2, 3, 4 ] ) ).to eql( false )
+      end
+
+      it 'and rescues' do
+        expect( proc().call( 42 ) ).to eql( false )
+        expect( proc().call( [ TestRescueAllMatchersObject.new ] ) ).to eql( false )
+      end
+    end
+
+    context 'constructed with a String' do
+      it_behaves_like 'a ::matches_wildcard Proc'
+    end
+
+    context 'constructed with a Regexp' do
+      let( :param ) { /^..!.*/ }
+      it_behaves_like 'a ::matches_wildcard Proc'
+    end
   end
 end

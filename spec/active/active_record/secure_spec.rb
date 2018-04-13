@@ -36,6 +36,21 @@ describe Hoodoo::ActiveRecord::Secure do
         )
       end
 
+      class RSpecModelSecureTestWithExemptions < ActiveRecord::Base
+        include Hoodoo::ActiveRecord::Secure
+
+        secure_with(
+          :creator => {
+            :session_field_name => 'authorised_creators',
+            :exemptions         => Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR
+          },
+          'distributor' => {
+            :session_field_name => :authorised_distributor,
+            :exemptions         => Hoodoo::ActiveRecord::Secure::OBJECT_EQLS_STAR
+          }
+        )
+      end
+
       class RSpecModelSecureTestC < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Secure
 
