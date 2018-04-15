@@ -358,7 +358,7 @@ module Hoodoo
               parsed.dataset_size           = size
               parsed.estimated_dataset_size = estimated_size
 
-            elsif ( parsed[ 'kind' ] == 'Errors' )
+            elsif ( ( code < 200 || code > 299 ) && parsed[ 'kind' ] == 'Errors' )
 
               # This isn't an array, it's an AugmentedHash describing errors.
               # Turn this into a formal errors collection.

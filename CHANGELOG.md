@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.4.1 (2018-04-13)
+
+* Maintenance `bundle update`.
+* Fixes a `Hoodoo::Client` bug with the Errors resource. Any JSON response with `Errors` in `kind` was promoted to an error-like condition internally, but when dealing with an endpoint that actually _implements the Errors resource interface_ then you expect to get such payloads back for non-error conditions. Fixed by simply also checking the HTTP status code in the HTTP-endpoint-like base class underneath the client system. Proof-of-bug (and of fix) tests added.
+
 ## 2.4.0 (2018-03-21)
 
 * Add the interaction ID to Datadog tracing [as span `interaction.id`](https://github.com/LoyaltyNZ/hoodoo/pull/248/files#diff-fd75040abee557d577b5765501df2550).
