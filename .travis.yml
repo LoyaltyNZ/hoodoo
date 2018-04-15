@@ -3,10 +3,10 @@
 language: ruby
 matrix:
   include:
-    - rvm: 2.5.0
-    - rvm: 2.4.3
-    - rvm: 2.3.6
-    - rvm: 2.2.9
+    - rvm: 2.5.1
+    - rvm: 2.4.4
+    - rvm: 2.3.7
+    - rvm: 2.2.10
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
