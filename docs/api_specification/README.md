@@ -376,7 +376,7 @@ encstr = CGI.escape( CGI.escape( str ) )
 
 ###### <a name="crby"></a>`created_by`
 
-Since version 2.0.0 (2017-09-29), Hoodoo provides framework-level search and filter query keys of `created_by` to search for resources created by a [Caller](#caller.resource) with a particular fingerprint. A resource interface may choose to opt-out of one or both of these keys for searching and/or filtering because it doesn't support storing the resource creator's fingerprint data with its persisted resource information, but documentation for the resource should say if this is the case.
+Since version 2.0.0 (2017-09-29), Hoodoo provides framework-level search and filter query keys of `created_by` to search for resources created by a [Caller](#caller.resource) with a particular fingerprint. A resource interface may choose to opt-out of this keys for searching and/or filtering because it doesn't support storing the resource creator's fingerprint data with its persisted resource information, but documentation for the resource should say if this is the case.
 
 #### <a name="apicbre"></a>Embedding
 
