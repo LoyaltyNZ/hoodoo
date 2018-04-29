@@ -410,11 +410,11 @@ module Hoodoo
     end
 
     # Turn a given value of various types into a DateTime instance or +nil+.
-    # If the input value is not +nil+, a DateTime instance, a Time instance
-    # or something that <tt>DateTime.parse</tt> can handle, the method will
-    # throw a RuntimeError exception.
+    # If the input value is not +nil+, a DateTime instance, a Time instance,
+    # a Date instance or something else that <tt>DateTime.parse</tt> can
+    # handle, the method will throw a RuntimeError exception.
     #
-    # +input+:: A Time or DateTime instance, or a String that can be
+    # +input+:: A Time, Date or DateTime instance, or a String that can be
     #           converted to a DateTime instance; in these cases, an
     #           equivalent DateTime is returned. If +nil+, returns +nil+.
     #
@@ -422,7 +422,7 @@ module Hoodoo
       begin
         if input.nil? || input.is_a?( DateTime )
           input
-        elsif input.is_a?( Time )
+        elsif input.is_a?( Time ) || input.is_a?( Date )
           input.to_datetime
         else
           DateTime.parse( input )
