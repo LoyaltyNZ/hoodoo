@@ -1,5 +1,5 @@
-Fri, 13 Apr 2018 15:20:19 +1200
-README.md	Thu, 29 Mar 2018 08:39:51 +1300
+Mon, 30 Apr 2018 09:42:05 +1200
+README.md	Mon, 16 Apr 2018 14:32:37 +1200
 lib/hoodoo.rb	Thu, 02 Nov 2017 08:44:50 +1300
 lib/hoodoo/active.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_model/uuid_validator.rb	Thu, 29 Mar 2018 08:39:52 +1300
@@ -7,10 +7,10 @@ lib/hoodoo/active/active_record/base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/creator.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/dated.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/error_mapping.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/active/active_record/finder.rb	Thu, 05 Apr 2018 08:43:05 +1200
+lib/hoodoo/active/active_record/finder.rb	Mon, 16 Apr 2018 14:22:45 +1200
 lib/hoodoo/active/active_record/manually_dated.rb	Tue, 10 Apr 2018 09:31:43 +1200
 lib/hoodoo/active/active_record/search_helper.rb	Thu, 29 Mar 2018 08:39:52 +1300
-lib/hoodoo/active/active_record/secure.rb	Fri, 13 Apr 2018 15:07:24 +1200
+lib/hoodoo/active/active_record/secure.rb	Mon, 30 Apr 2018 09:36:04 +1200
 lib/hoodoo/active/active_record/support.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/active/active_record/translated.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/active/active_record/uuid.rb	Thu, 29 Mar 2018 08:39:52 +1300
@@ -20,17 +20,17 @@ lib/hoodoo/client/augmented_array.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_base.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/augmented_hash.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/client.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/client/endpoint/endpoint.rb	Fri, 13 Apr 2018 15:09:48 +1200
+lib/hoodoo/client/endpoint/endpoint.rb	Mon, 16 Apr 2018 14:33:46 +1200
 lib/hoodoo/client/endpoint/endpoints/amqp.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/auto_session.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/endpoint/endpoints/http.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/client/endpoint/endpoints/http_based.rb	Fri, 13 Apr 2018 15:17:44 +1200
+lib/hoodoo/client/endpoint/endpoints/http_based.rb	Mon, 16 Apr 2018 14:33:46 +1200
 lib/hoodoo/client/endpoint/endpoints/not_found.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/client/headers.rb	Thu, 29 Mar 2018 08:39:52 +1300
 lib/hoodoo/client/paginated_enumeration.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/communicators.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/communicators/fast.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/communicators/pool.rb	Fri, 13 Apr 2018 15:07:24 +1200
+lib/hoodoo/communicators/pool.rb	Mon, 30 Apr 2018 09:36:04 +1200
 lib/hoodoo/communicators/slow.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/data.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/data/resources/caller.rb	Thu, 12 Oct 2017 08:31:46 +1300
@@ -123,6 +123,6 @@ lib/hoodoo/transient_store/transient_store/memcached_redis_mirror.rb	Thu, 12 Oct
 lib/hoodoo/transient_store/transient_store/redis.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities.rb	Thu, 12 Oct 2017 08:31:46 +1300
 lib/hoodoo/utilities/string_inquirer.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/utilities/utilities.rb	Thu, 29 Mar 2018 08:39:52 +1300
+lib/hoodoo/utilities/utilities.rb	Mon, 30 Apr 2018 09:36:52 +1200
 lib/hoodoo/utilities/uuid.rb	Thu, 12 Oct 2017 08:31:46 +1300
-lib/hoodoo/version.rb	Fri, 13 Apr 2018 15:20:01 +1200
+lib/hoodoo/version.rb	Mon, 30 Apr 2018 09:37:23 +1200
