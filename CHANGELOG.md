@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.4.2 (2018-04-30)
+
+* Maintenance `bundle update`.
+* Allow Date instances to be passed to [`Hoodoo::Utilities::rationalise_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-rationalise_datetime).
+
 ## 2.4.1 (2018-04-13)
 
 * Maintenance `bundle update`.

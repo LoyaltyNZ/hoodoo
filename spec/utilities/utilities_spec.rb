@@ -608,6 +608,11 @@ describe Hoodoo::Utilities do
       expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now.to_datetime )
     end
 
+    it 'accepts a Date and returns a DateTime' do
+      now = Date.today
+      expect( Hoodoo::Utilities.rationalise_datetime( now ) ).to eq( now.to_datetime )
+    end
+
     # If this fails your system might report time to beyond-nanosecond
     # precision, so the str-to-DateTime result mismatches the original
     # DateTime in the fractional seconds.
