@@ -638,11 +638,12 @@ nanosecond precision.</p>
         <div class="description">
             <p>Turn a given value of various types into a DateTime instance or
 <code>nil</code>. If the input value is not <code>nil</code>, a DateTime
-instance, a Time instance or something that <code>DateTime.parse</code> can
-handle, the method will throw a RuntimeError exception.</p>
+instance, a Time instance, a Date instance or something else that
+<code>DateTime.parse</code> can handle, the method will throw a
+RuntimeError exception.</p>
 <dl class="rdoc-list note-list"><dt><code>input</code>
 <dd>
-<p>A Time or DateTime instance, or a String that can be converted to a
+<p>A Time, Date or DateTime instance, or a String that can be converted to a
 DateTime instance; in these cases, an equivalent DateTime is returned. If
 <code>nil</code>, returns <code>nil</code>.</p>
 </dd></dl>
@@ -662,7 +663,7 @@ DateTime instance; in these cases, an equivalent DateTime is returned. If
   <span class="ruby-keyword">begin</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">DateTime</span> )
       <span class="ruby-identifier">input</span>
-    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Time</span> )
+    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Time</span> ) <span class="ruby-operator">||</span> <span class="ruby-identifier">input</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Date</span> )
       <span class="ruby-identifier">input</span>.<span class="ruby-identifier">to_datetime</span>
     <span class="ruby-keyword">else</span>
       <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">parse</span>( <span class="ruby-identifier">input</span> )
