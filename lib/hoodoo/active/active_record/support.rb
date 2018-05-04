@@ -71,7 +71,9 @@ module Hoodoo
         mapping = {
           'created_after'  => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :created_at ),
           'created_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :created_at ),
-          'created_by'     => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( :created_by )
+          'created_by'     => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_match( :created_by ),
+          'updated_after'  => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_gt( :updated_at ),
+          'updated_before' => Hoodoo::ActiveRecord::Finder::SearchHelper.cs_lt( :updated_at )
         }
 
         if mapping.keys.length != ( mapping.keys | Hoodoo::Services::Middleware::FRAMEWORK_QUERY_DATA.keys ).length

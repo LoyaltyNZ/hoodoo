@@ -18,6 +18,7 @@ _Release 7, 2017-11-03_
     * [Listing, pagination, searches and filters](#lppsf)
       * [Framework-level search and filter](#flsaf)
         * [`created_after` and `created_before`](#craftcrbef)
+        * [`updated_after` and `updated_before`](#upaftupbef)
         * [`created_by`](#crby)
     * [Embedding](#apicbre)
       * [Examples](#apicbree)
@@ -353,6 +354,10 @@ Since version 1.12.0 (2016-12-06), Hoodoo provides framework-level search and fi
 The filter of exclusive "created after" is equivalent to an inclusive search of "created on or before". Similarly, a filter of "created before" is equivalent to a search of "created on or after".
 
 Care should be taken to double-escape search values, especially given the potential presence of a `+` character for a timezone specifier. If only single-escaped, this would end up being interpreted by URI parsers as a space leading to an "invalid parameters" error. For example, suppose we have this time:
+
+###### <a name="upaftupbef"></a>`updated_after` and `updated_before`
+
+Support for framework-level search and filter query keys of `updated_after` and `updated_before` since version 2.4.3 (2016-05-04). `updated_after` and `updated_before` work similarly to `created_after` and `created_before` except using a resource representation's `updated_at` field.
 
 ```
 2016-08-06T08:30:21+12:00
@@ -1350,3 +1355,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
 | 2017-10-13 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |
 | 2017-11-03 | Release 7 | ADH    | Add +generic.contemporary_exists+ error and associated information. |
+| 2018-05-05 | Release 8 | MJN    | Describe new framework-level search/query string of `updated_after` and `updated_before`. |

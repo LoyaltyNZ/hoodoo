@@ -84,7 +84,8 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         :wild_field_one   => sh.ciaw_match_generic( 'field_one '),
         :field_two        => sh.cs_match_csv(),
         'field_three'     => sh.cs_match_array(),
-        'created_after'   => sh.cs_gte( 'updated_at' ), # Deliberate framework override
+        'created_after'   => sh.cs_gte( 'created_at' ), # Deliberate framework override
+        'updated_after'   => sh.cs_gte( 'updated_at' ), # Deliberate framework override
         'created_by'      => sh.ci_match_generic( 'code' )      # Deliberate framework override
       }
 
@@ -743,6 +744,27 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         expect( finder ).to eq([@b, @a])
 
         @list_params.search_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@c])
+
+        @list_params.search_data = {
+          'updated_before' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@a])
+
+        @list_params.search_data = {
+          'updated_before' => @tn - 1.week + 1.day
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@b, @a])
+
+        @list_params.search_data = {
           'created_by' => @cb1
         }
 
@@ -818,6 +840,28 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         expect( finder ).to eq([@b, @a])
 
         @list_params.search_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([])
+
+        @list_params.search_data = {
+          'updated_before' => @tn - 1.week
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([@a])
+
+        @list_params.search_data = {
+          'updated_before' => @tn - 1.week + 1.day
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([@b, @a])
+
+
+        @list_params.search_data = {
           'created_by' => @cb1
         }
 
@@ -890,18 +934,33 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
 
       it 'finds with framework override (to same column)' do
         @list_params.search_data = {
-          'created_after' => @tn - 1.week
+          'created_after' => @tn - 1.month
         }
 
         finder = RSpecModelFinderTestWithHelpers.list( @list_params )
         expect( finder ).to eq( [ @c_wh, @b_wh ] )
 
         @list_params.search_data = {
-          'created_after' => @tn + 1.day
+          'created_after' => @tn
         }
 
         finder = RSpecModelFinderTestWithHelpers.list( @list_params )
         expect( finder ).to eq( [ @c_wh ] )
+
+        @list_params.search_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+        expect( finder ).to eq( [ @c_wh, @b_wh ] )
+
+        @list_params.search_data = {
+          'updated_after' => @tn + 1.day
+        }
+
+        finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+        expect( finder ).to eq( [ @c_wh ] )
+
       end
 
       it 'finds by framework override (to different column)' do
@@ -929,6 +988,24 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
       it 'on created_before' do
         @list_params.search_data = {
           'created_before' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @a_wosf ] )
+      end
+
+      it 'on updated_after' do
+        @list_params.search_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @c_wosf ] )
+      end
+
+      it 'on updated_before' do
+        @list_params.search_data = {
+          'updated_before' => @tn - 1.week
         }
 
         finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
@@ -984,6 +1061,36 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         it 'on created_before' do
           @list_params.search_data = {
             'created_before' => @tn - 1.month
+          }
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+          expect( finder ).to eq( [ @a_sc_wosf ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+          expect( finder ).to eq( [ @a_sc_wosf_a ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+          expect( finder ).to eq( [ @a_sc_wosf_b ] )
+        end
+
+        it 'on updated_after' do
+          @list_params.search_data = {
+            'updated_after' => @tn - 1.week
+          }
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf_a ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf_b ] )
+        end
+
+        it 'on updated_before' do
+          @list_params.search_data = {
+            'updated_before' => @tn - 1.week
           }
 
           finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
@@ -1054,6 +1161,27 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
 
         @list_params.filter_data = {
           'created_before' => @tn - 1.month + 1.day
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@c])
+
+        @list_params.filter_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@b, @a])
+
+        @list_params.filter_data = {
+          'updated_before' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTest.list( @list_params )
+        expect( finder ).to eq([@c, @b])
+
+        @list_params.filter_data = {
+          'updated_before' => @tn - 1.week + 1.day
         }
 
         finder = RSpecModelFinderTest.list( @list_params )
@@ -1139,6 +1267,27 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         expect( finder ).to eq([@c])
 
         @list_params.filter_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([])
+
+        @list_params.filter_data = {
+          'updated_before' => @tn - 1.week
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([@c])
+
+        @list_params.filter_data = {
+          'updated_before' => @tn - 1.week + 1.day
+        }
+
+        finder = constraint.list( @list_params )
+        expect( finder ).to eq([@c])
+
+        @list_params.filter_data = {
           'created_by' => @cb1
         }
 
@@ -1216,18 +1365,33 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
 
       it 'filters with framework override' do
         @list_params.filter_data = {
-          'created_after' => @tn - 1.week
+          'created_after' => @tn - 1.month
         }
 
         finder = RSpecModelFinderTestWithHelpers.list( @list_params )
         expect( finder ).to eq( [ @a_wh ] )
 
         @list_params.filter_data = {
-          'created_after' => @tn + 1.day
+          'created_after' => @tn - 1.week
         }
 
         finder = RSpecModelFinderTestWithHelpers.list( @list_params )
         expect( finder ).to eq( [ @b_wh, @a_wh ] )
+
+        @list_params.filter_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+        expect( finder ).to eq( [ @a_wh ] )
+
+        @list_params.filter_data = {
+          'updated_after' => @tn + 1.day
+        }
+
+        finder = RSpecModelFinderTestWithHelpers.list( @list_params )
+        expect( finder ).to eq( [ @b_wh, @a_wh ] )
+
       end
     end
 
@@ -1246,6 +1410,24 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
       it 'on created_before' do
         @list_params.filter_data = {
           'created_before' => @tn - 1.month
+        }
+
+        finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @c_wosf, @b_wosf ] )
+      end
+
+      it 'on updated_after' do
+        @list_params.filter_data = {
+          'updated_after' => @tn - 1.week
+        }
+
+        finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
+        expect( finder ).to eq( [ @b_wosf, @a_wosf ] )
+      end
+
+      it 'on updated_before' do
+        @list_params.filter_data = {
+          'updated_before' => @tn - 1.week
         }
 
         finder = RSpecModelFinderWithoutSearchOrFilterTest.list( @list_params )
@@ -1301,6 +1483,36 @@ describe Hoodoo::ActiveRecord::Finder, :order => :defined do
         it 'on created_before' do
           @list_params.filter_data = {
             'created_before' => @tn - 1.month
+          }
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf, @b_sc_wosf ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf_a, @b_sc_wosf_a ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+          expect( finder ).to eq( [ @c_sc_wosf_b, @b_sc_wosf_b ] )
+        end
+
+        it 'on updated_after' do
+          @list_params.filter_data = {
+            'updated_after' => @tn - 1.week
+          }
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )
+          expect( finder ).to eq( [ @b_sc_wosf, @a_sc_wosf ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterATest.list( @list_params )
+          expect( finder ).to eq( [ @b_sc_wosf_a, @a_sc_wosf_a ] )
+
+          finder = RSpecModelFinderSubclassWithoutSearchOrFilterBTest.list( @list_params )
+          expect( finder ).to eq( [ @b_sc_wosf_b, @a_sc_wosf_b ] )
+        end
+
+        it 'on updated_before' do
+          @list_params.filter_data = {
+            'updated_before' => @tn - 1.week
           }
 
           finder = RSpecModelFinderSubclassWithoutSearchOrFilterTest.list( @list_params )

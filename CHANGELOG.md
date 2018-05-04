@@ -1,5 +1,10 @@
 # Hoodoo v2.x
 
+## 2.4.3 (2018-05-04)
+
+* Introduce search/filter query strings, starting with `updated_after` and `updated_before` (similar to `created_after` and `created_before`, but using `updated_at` instead of `created_at`)
+* Maintenance `bundle update`.
+
 ## 2.4.2 (2018-04-30)
 
 * Maintenance `bundle update`.

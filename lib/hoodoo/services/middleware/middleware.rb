@@ -226,7 +226,9 @@ module Hoodoo; module Services
     FRAMEWORK_QUERY_DATA = {
       'created_after'  => FRAMEWORK_QUERY_VALUE_DATE_PROC,
       'created_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC,
-      'created_by'     => FRAMEWORK_QUERY_VALUE_UUID_PROC
+      'created_by'     => FRAMEWORK_QUERY_VALUE_UUID_PROC,
+      'updated_after'  => FRAMEWORK_QUERY_VALUE_DATE_PROC,
+      'updated_before' => FRAMEWORK_QUERY_VALUE_DATE_PROC
     }
 
     # Utility - returns the execution environment as a Rails-like environment

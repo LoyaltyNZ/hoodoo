@@ -33,8 +33,8 @@ class RSpecTestServiceStubInterface < Hoodoo::Services::Interface
       sort :conventional => [:asc, :desc]
       search :foo, :bar
       filter :baz, :boo
-      do_not_search :created_before
-      do_not_filter :created_after
+      do_not_search :created_before, :updated_before
+      do_not_filter :created_after, :updated_after
     end
     to_create do
       text :foo, :required => true
@@ -962,6 +962,29 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('search: created_after')
       end
 
+      it 'should respond to permitted framework search query parameter "updated_after"' do
+        dt     = DateTime.parse( Time.now.round.iso8601 )
+        str    = dt.iso8601
+        encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.search_data).to eq({'updated_after' => dt})
+        end
+
+        get "/v2/rspec_test_service_stub?search=updated_after%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should reject malformed value in permitted framework search query parameter "updated_after"' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?search=updated_after%3Dthing", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: updated_after')
+      end
+
       it 'should respond to permitted framework search query parameter "created_by"' do
         encstr = Hoodoo::UUID.generate()
 
@@ -983,7 +1006,7 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('search: created_by')
       end
 
-      it 'should reject prohibited framework search query parameter' do
+      it 'should reject prohibited framework search query parameter (created_before)' do
         str    = Time.now.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
 
@@ -994,6 +1017,19 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('search: created_before')
+      end
+
+      it 'should reject prohibited framework search query parameter (updated_before)' do
+        str    = Time.now.iso8601
+        encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?search=updated_before%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('search: updated_before')
       end
 
       it 'should respond to filter query parameter (form 1)' do
@@ -1076,6 +1112,29 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('filter: created_before')
       end
 
+      it 'should respond to permitted framework filter query parameter "updated_before"' do
+        dt     = DateTime.parse( Time.now.round.iso8601 )
+        str    = dt.iso8601
+        encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to receive(:list).once do | ignored_rspec_mock_instance, context |
+          expect(context.request.list.filter_data).to eq({'updated_before' => dt})
+        end
+
+        get "/v2/rspec_test_service_stub?filter=updated_before%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(200)
+      end
+
+      it 'should reject malformed value in permitted framework filter query parameter "updated_before' do
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?filter=updated_before%3Dthing", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('filter: updated_before')
+      end
+
       it 'should respond to permitted framework filter query parameter "created_by"' do
         encstr = Hoodoo::UUID.generate()
 
@@ -1097,7 +1156,7 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['reference']).to eq('filter: created_by')
       end
 
-      it 'should reject prohibited framework filter query parameter' do
+      it 'should reject prohibited framework filter query parameter (created_after)' do
         str    = Time.now.iso8601
         encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
 
@@ -1108,6 +1167,19 @@ describe Hoodoo::Services::Middleware do
         expect(result['errors'][0]['code']).to eq('platform.malformed')
         expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
         expect(result['errors'][0]['reference']).to eq('filter: created_after')
+      end
+
+      it 'should reject prohibited framework filter query parameter (updated_after)' do
+        str    = Time.now.iso8601
+        encstr = CGI.escape( CGI.escape( str ) ) # Remember, search values within the subquery string must be double escaped
+
+        expect_any_instance_of(RSpecTestServiceStubImplementation).to_not receive(:list)
+        get "/v2/rspec_test_service_stub?filter=updated_after%3D#{ encstr }", nil, { 'CONTENT_TYPE' => 'application/json; charset=utf-8' }
+        expect(last_response.status).to eq(422)
+        result = JSON.parse(last_response.body)
+        expect(result['errors'][0]['code']).to eq('platform.malformed')
+        expect(result['errors'][0]['message']).to eq('One or more malformed or invalid query string parameters')
+        expect(result['errors'][0]['reference']).to eq('filter: updated_after')
       end
 
       it 'should respond to embed query parameter' do
