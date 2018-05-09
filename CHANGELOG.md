@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.4.3 (2018-05-10)
+
+* Maintenance `bundle update`.
+
 ## 2.4.2 (2018-04-30)
 
 * Maintenance `bundle update`.
