@@ -2,7 +2,8 @@
 
 ## 2.4.3 (2018-05-10)
 
-* Maintenance `bundle update`.
+* Relaxing alchemy-flux constraint for development and test to use the latest alchemy-flux
+* Maintenance `bundle update` for the latest alchemy-flux.
 
 ## 2.4.2 (2018-04-30)
 
