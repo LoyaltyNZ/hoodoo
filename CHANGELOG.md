@@ -2,8 +2,8 @@
 
 ## 2.4.3 (2018-05-10)
 
-* Relaxing alchemy-flux constraint for development and test to use the latest alchemy-flux
-* Maintenance `bundle update` for the latest alchemy-flux.
+* Relaxing alchemy-flux constraint for development and test to use the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
+* Maintenance `bundle update` for the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
 
 ## 2.4.2 (2018-04-30)
 
