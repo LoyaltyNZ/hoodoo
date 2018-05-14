@@ -63,12 +63,12 @@ module Hoodoo
       # implementation of such a Resource interface available! - as follows:
       #
       #     results = members.list(
-      #       :offset    => 50,
-      #       :limit     => 25,
-      #       :sort      => :created_at,
-      #       :direction => :asc,
-      #       :search    => { :surname => 'Smith' },
-      #       :_embed    => 'account'
+      #       offset:    50,
+      #       limit:     25,
+      #       sort:      'created_at',
+      #       direction: 'asc',
+      #       search:    { 'surname' => 'Smith' },
+      #       _embed:    'account'
       #     )
       #
       # This will return a Hoodoo::Client::AugmentedArray. This is an Array
