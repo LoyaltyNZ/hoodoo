@@ -24,7 +24,7 @@ describe Hoodoo::Services::Request do
   end
 
   context 'uri_path_components' do
-    it 'should record path components properly' do
+    it 'records path components properly' do
       ary = [ 'one', 'two', 'three' ]
       @r.uri_path_components = ary
 
@@ -32,7 +32,7 @@ describe Hoodoo::Services::Request do
       expect(@r.ident).to eq(ary.first)
     end
 
-    it 'should deal with nil path components properly' do
+    it 'deals with nil path components properly' do
       ary = nil
       @r.uri_path_components = ary
 
@@ -40,7 +40,7 @@ describe Hoodoo::Services::Request do
       expect(@r.ident).to be_nil
     end
 
-    it 'should deal with non-array path components properly' do
+    it 'deals with non-array path components properly' do
       ary = 'not an array'
       @r.uri_path_components = ary
 
@@ -65,49 +65,137 @@ describe Hoodoo::Services::Request do
     end
   end
 
-  context 'list parameters' do
-    it 'have correct default values' do
-      expect( @r.list.offset         ).to eq( 0                          )
-      expect( @r.list.limit          ).to eq( 50                         )
-      expect( @r.list.sort_data      ).to eq( { 'created_at' => 'desc' } )
-      expect( @r.list.search_data    ).to eq( {}                         )
-      expect( @r.list.filter_data    ).to eq( {}                         )
+  context '#list' do
+    it 'has correct default values' do
+      expect( @r.list.offset      ).to eq( 0                          )
+      expect( @r.list.limit       ).to eq( 50                         )
+      expect( @r.list.sort_data   ).to eq( { 'created_at' => 'desc' } )
+      expect( @r.list.search_data ).to eq( {}                         )
+      expect( @r.list.filter_data ).to eq( {}                         )
     end
 
-    it 'can be returned as a Hash' do
-      sort   = { 'created_at' => 'asc' }
-      search = { 'foo' => 'bar', 'bar' => { 'baz' => 3 } }
-      filter = { 'bar' => 'foo', 'baz' => { 'bar' => 2 } }
+    context 'and hashes via' do
+      before :each do
+        @offset = 1000
+        @limit  = 500
+        @sort   = { 'created_at' => 'asc' }
+        @search = { 'foo' => 'bar', 'bar' => { 'baz' => 3 } }
+        @filter = { 'bar' => 'foo', 'baz' => { 'bar' => 2 } }
 
-      @r.list.offset      = 1000
-      @r.list.limit       = 500
-      @r.list.sort_data   = sort
-      @r.list.search_data = search
-      @r.list.filter_data = filter
+        @replacement_hash = {
+          'offset'      => @offset,
+          'limit'       => @limit,
+          'sort_data'   => @sort,
+          'search_data' => @search,
+          'filter_data' => @filter
+        }
+      end
 
-      expect( @r.list.to_h ).to eq( {
-        'offset'      => 1000,
-        'limit'       => 500,
-        'sort_data'   => sort,
-        'search_data' => search,
-        'filter_data' => filter
-      } )
+      context '#to_h' do
+        before :each do
+          @r.list.offset      = @offset
+          @r.list.limit       = @limit
+          @r.list.sort_data   = @sort
+          @r.list.search_data = @search
+          @r.list.filter_data = @filter
+        end
 
-      # TODO: Extra checks to do:
-      #
-      # * Prove deep-dup by modifying search data in to_h response and
-      #   confirming that 'sort'/'search'/'filter' are not changed.
-      #
-      # * Prove we can load a generated Hash into a *new* instance and
-      #   get an object that matches the original.
+        it 'returns the expected Hash' do
+          expect( @r.list.to_h ).to eq( @replacement_hash )
+        end
 
-    end
+        it 'deep-duplicates the parameters' do
+          result = @r.list.to_h()
 
-    it 'can be loaded into instance as a Hash' do
+          old_sort_value = @sort[ @sort.keys.first ]
+          result[ 'sort_data' ][ @sort.keys.first ] == 'changed'
+          expect( @sort[ @sort.keys.first ] ).to eql( old_sort_value )
 
-      # TODO:
-      # @r.list.from_h!( ... )
+          old_search_value = @search[ @search.keys.first ]
+          result[ 'search_data' ][ @search.keys.first ] == 'changed'
+          expect( @search[ @search.keys.first ] ).to eql( old_search_value )
 
+          old_filter_value = @filter[ @filter.keys.first ]
+          result[ 'filter_data' ][ @filter.keys.first ] == 'changed'
+          expect( @filter[ @filter.keys.first ] ).to eql( old_filter_value )
+        end
+      end
+
+      context '#from_h!' do
+        it 'overwrites all parameters' do
+          request = Hoodoo::Services::Request.new
+
+          expect( request.list.offset      ).to eq( 0                          )
+          expect( request.list.limit       ).to eq( 50                         )
+          expect( request.list.sort_data   ).to eq( { 'created_at' => 'desc' } )
+          expect( request.list.search_data ).to eq( {}                         )
+          expect( request.list.filter_data ).to eq( {}                         )
+
+          request.list.from_h!( @replacement_hash )
+
+          expect( request.list.offset      ).to eq( @offset )
+          expect( request.list.limit       ).to eq( @limit  )
+          expect( request.list.sort_data   ).to eq( @sort   )
+          expect( request.list.search_data ).to eq( @search )
+          expect( request.list.filter_data ).to eq( @filter )
+        end
+
+        it 'overwrites only provided parameters' do
+          replacements = {
+            'offset'      => @offset,
+            'limit'       => @limit,
+            'sort_data'   => @sort,
+            'search_data' => @search,
+            'filter_data' => @filter
+          }
+
+          # Iterate over all the possible keys above and build a Hash that
+          # contains just one at a time. Make a new request, set the list
+          # options from the one-at-a-time Hash and verify that only that
+          # one parameter changed.
+
+          replacements.each do | replacement_key, replacement_value |
+            request = Hoodoo::Services::Request.new
+            clean   = {
+              'offset'      => request.list.offset,
+              'limit'       => request.list.limit,
+              'sort_data'   => request.list.sort_data,
+              'search_data' => request.list.search_data,
+              'filter_data' => request.list.filter_data
+            }
+
+            hash = { replacement_key => replacement_value }
+            request.list.from_h!( hash )
+
+            clean.each do | clean_key, clean_value |
+              if clean_key == replacement_key
+                expect( request.list.send( clean_key ) ).to eql( replacement_value )
+              else
+                expect( request.list.send( clean_key ) ).to eql( clean_value )
+              end
+            end
+          end
+        end
+      end
+
+      context '#to_h and #from_h! together' do
+        before :each do
+          @r.list.offset      = @offset
+          @r.list.limit       = @limit
+          @r.list.sort_data   = @sort
+          @r.list.search_data = @search
+          @r.list.filter_data = @filter
+        end
+
+        it 'translates from one list to another' do
+          hash = @r.list.to_h
+
+          request = Hoodoo::Services::Request.new
+          request.list.from_h!( hash )
+
+          expect( request.list.to_h ).to eql( @replacement_hash )
+        end
+      end
     end
 
     it 'supports deprecated accessors' do

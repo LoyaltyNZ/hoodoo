@@ -162,13 +162,7 @@ module Hoodoo; module Services
                 :embeds              => context.request.embeds,
                 :references          => context.request.references,
                 :headers             => context.request.headers,
-                :list                => {
-                  :offset      => context.request.list.offset,
-                  :limit       => context.request.list.limit,
-                  :sort_data   => context.request.list.sort_data,
-                  :search_data => context.request.list.search_data,
-                  :filter_data => context.request.list.filter_data
-                }
+                :list                => context.request.list.to_h
               }
             }
 
