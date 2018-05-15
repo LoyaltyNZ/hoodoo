@@ -79,6 +79,7 @@ Some additional higher level hand written documentation may also be present as M
 * [Max Copley](https://github.com/copley)
 * [Max Dietrich](https://github.com/mbdietrich)
 * [Natasha Dowse](https://github.com/natashadowse)
+* [Olivia Baddeley](https://github.com/OBaddeley)
 * [Patrick Copeland](https://github.com/pjscopeland)
 * [Rory Stephenson](https://github.com/thelollies)
 * [Wayne Hoover](https://github.com/waynehoover)

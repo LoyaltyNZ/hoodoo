@@ -7,7 +7,7 @@ gem 'sdoc', :git => 'https://github.com/pond/sdoc.git', :branch => 'master'
 
 group :development, :test do
   gem 'rack',         '~> 2.0'
-  gem 'alchemy-flux', '1.1'
+  gem 'alchemy-flux', '~> 1.2'
 end
 
 # Get other non-test dependencies via the gemspec.
