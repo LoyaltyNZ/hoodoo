@@ -72,14 +72,20 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
   end
 
   context '::matches_wildcard' do
-    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard( param ) }
     let( :param ) { '^..!.*' }
+    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard( param ) }
 
     shared_examples 'a ::matches_wildcard Proc' do
       it 'and matches when it should' do
         expect( proc().call( '12!' ) ).to eql( true )
         expect( proc().call( '12!3' ) ).to eql( true )
-        expect( proc().call( TestAllMatchersObject.new ) ).to eql( true )
+
+        if ''.respond_to?( :match? )
+          expect( proc().call( TestAllMatchersObject.new ) ).to eql( true )
+        else
+          expect_any_instance_of( Regexp ).to receive( :match ).and_return( true )
+          proc().call( TestAllMatchersObject.new )
+        end
       end
 
       it 'and misses when it should' do
@@ -91,7 +97,12 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
       end
 
       it 'and rescues' do
-        expect( proc().call( TestRescueAllMatchersObject.new ) ).to eql( false )
+        if ''.respond_to?( :match? )
+          expect( proc().call( TestRescueAllMatchersObject.new ) ).to eql( false )
+        else
+          expect_any_instance_of( Regexp ).to receive( :match ).and_raise( RuntimeError )
+          proc().call( TestRescueAllMatchersObject.new )
+        end
       end
     end
 
@@ -115,7 +126,13 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
         expect( proc().call( [ '1', 2, :three, '12!34', 4 ] ) ).to eql( true )
         expect( proc().call( [ '1', 2, :three, 4, '12!34' ] ) ).to eql( true )
         expect( proc().call( [ '12!' ] ) ).to eql( true )
-        expect( proc().call( [ TestAllMatchersObject.new ] ) ).to eql( true )
+
+        if ''.respond_to?( :match? )
+          expect( proc().call( [ TestAllMatchersObject.new ] ) ).to eql( true )
+        else
+          expect_any_instance_of( Regexp ).to receive( :match ).and_return( true )
+          proc().call( [ TestAllMatchersObject.new ] )
+        end
       end
 
       it 'and misses when it should' do
@@ -127,7 +144,13 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
       it 'and rescues' do
         expect( proc().call( 42 ) ).to eql( false )
-        expect( proc().call( [ TestRescueAllMatchersObject.new ] ) ).to eql( false )
+
+        if ''.respond_to?( :match? )
+          expect( proc().call( [ TestRescueAllMatchersObject.new ] ) ).to eql( false )
+        else
+          expect_any_instance_of( Regexp ).to receive( :match ).and_raise( RuntimeError )
+          proc().call( [ TestRescueAllMatchersObject.new ] )
+        end
       end
     end
 
