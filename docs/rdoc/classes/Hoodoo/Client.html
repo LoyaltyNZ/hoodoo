@@ -192,12 +192,12 @@ field &#39;surname&#39; matches &#39;Smith&#39; - assuming there&#39;s an
 implementation of such a Resource interface available! - as follows:</p>
 
 <pre><code>results = members.list(
-  :offset    =&gt; 50,
-  :limit     =&gt; 25,
-  :sort      =&gt; :created_at,
-  :direction =&gt; :asc,
-  :search    =&gt; { :surname =&gt; &#39;Smith&#39; },
-  :_embed    =&gt; &#39;account&#39;
+  offset:    50,
+  limit:     25,
+  sort:      &#39;created_at&#39;,
+  direction: &#39;asc&#39;,
+  search:    { &#39;surname&#39; =&gt; &#39;Smith&#39; },
+  _embed:    &#39;account&#39;
 )
 </code></pre>
 

@@ -429,7 +429,7 @@ question in its documentation).</p>
 <dd>
 <p>A hash of <em>unencoded</em> data that can be encoded to form a query
 string. Search and filter data is represented with nested hashes. Embed and
-reference data uses an array. Example:</p>
+reference data uses an array. All keys are Strings. Example:</p>
 
 <pre><code>{
   offset:    75,
@@ -888,13 +888,13 @@ for more.</p>
             </p>
             <div id="method-i-inject_enumeration_state_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span> ( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
 
   <span class="ruby-identifier">endpoint</span>                       = <span class="ruby-keyword">self</span>
   <span class="ruby-identifier">query_hash</span>                     = <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> {} <span class="ruby-operator">:</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">batch_size</span>                     = [ <span class="ruby-value">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
   <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">next_page_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
     <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> )
   <span class="ruby-keyword">end</span>
 
