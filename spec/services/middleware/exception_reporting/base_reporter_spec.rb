@@ -88,11 +88,11 @@ describe Hoodoo::Services::Middleware::ExceptionReporting::BaseReporter do
             :references          => [ 'r1', 'r2' ],
             :headers             => { 'HTTP_X_EXAMPLE' => '42' },
             :list                => {
-              'offset'      => 0,
-              'limit'       => 50,
-              'sort_data'   => { 'created_at' => 'desc' },
-              'search_data' => { 'example'    => '42'   },
-              'filter_data' => { 'unexample'  => '24'   }
+              :offset      => 0,
+              :limit       => 50,
+              :sort_data   => { 'created_at' => 'desc' },
+              :search_data => { 'example'    => '42'   },
+              :filter_data => { 'unexample'  => '24'   }
             }
           },
           :session => Hoodoo::Services::Middleware.test_session().to_h()
