@@ -63,6 +63,46 @@ module Hoodoo; module Services
         self.search_data = {}
         self.filter_data = {}
       end
+
+      # Represent the list data as a Hash, for uses such as persistence
+      # or loading into another session instance. The returned Hash is a
+      # full deep copy of any internal data; changing it will not alter
+      # the ListParameters object state.
+      #
+      # Top-level keys in the Hash are Strings corresponding to the names
+      # of accessor parameters:
+      #
+      #   * +"offset"+
+      #   * +"limit"+
+      #   * +"sort_data"+
+      #   * +"search_data"+
+      #   * +"filter_data"+
+      #
+      # Sort, search and filter data, if not empty, also have String keys.
+      #
+      # See also #from_h!.
+      #
+      def to_h
+        {
+          'offset'      => self.offset,
+          'limit'       => self.limit,
+          'sort_data'   => Hoodoo::Utilities.deep_dup( self.sort_data   ),
+          'search_data' => Hoodoo::Utilities.deep_dup( self.search_data ),
+          'filter_data' => Hoodoo::Utilities.deep_dup( self.filter_data )
+        }
+      end
+
+      # Load list parameters from a given Hash, of the form set by #to_h.
+      # Overwrites any corresponding internal attributes and takes full
+      # deep copies of sort, search and filter values.
+      #
+      def from_h!( hash )
+        self.offset      = hash[ 'offset' ] if hash.has_key?( 'offset' )
+        self.limit       = hash[ 'limit'  ] if hash.has_key?( 'limit'  )
+        self.sort_data   = Hoodoo::Utilities.deep_dup( hash[ 'sort_data'   ] ) if hash[ 'sort_data'   ].is_a?( Hash )
+        self.search_data = Hoodoo::Utilities.deep_dup( hash[ 'search_data' ] ) if hash[ 'search_data' ].is_a?( Hash )
+        self.filter_data = Hoodoo::Utilities.deep_dup( hash[ 'filter_data' ] ) if hash[ 'filter_data' ].is_a?( Hash )
+      end
     end
 
     # Requested locale for internationalised operations; +"en-nz"+ by

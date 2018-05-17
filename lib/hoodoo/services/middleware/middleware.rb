@@ -1292,6 +1292,11 @@ module Hoodoo; module Services
       #
       # For other kinds of data, check the secure actions to see if the body
       # should be included.
+      #
+      # TODO: This uses deprecated acccessors into the "context.request.list"
+      #       object, but it keeps the code simple. It'd be nice to just have
+      #       e.g. "data[ :list ] = context.request.list.to_h()" but the
+      #       change in log output format might break dependent clients.
 
       if context.response.body.is_a?( ::Array )
         attributes       = %i( list_offset list_limit list_sort_data list_search_data list_filter_data embeds references )

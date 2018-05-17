@@ -1,5 +1,14 @@
 # Hoodoo v2.x
 
+## 2.5.0 (2018-05-17)
+
+* Added [`Hoodoo::Services::Request::ListParameters#to_h`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-to_h) and [`Hoodoo::Servics::Request::ListParameters#from_h!`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-from_h-21) to assist various scenarios when dealing with search and filter data in `#list` implementations.
+
+## 2.4.3 (2018-05-10)
+
+* Relaxing alchemy-flux constraint for development and test to use the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
+* Maintenance `bundle update` for the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
+
 ## 2.4.2 (2018-04-30)
 
 * Maintenance `bundle update`.
