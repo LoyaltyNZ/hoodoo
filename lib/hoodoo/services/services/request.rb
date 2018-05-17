@@ -75,7 +75,7 @@ module Hoodoo; module Services
       #   * +"offset"+
       #   * +"limit"+
       #   * +"sort_data"+
-      #   * +"search_dat"+
+      #   * +"search_data"+
       #   * +"filter_data"+
       #
       # Sort, search and filter data, if not empty, also have String keys.
