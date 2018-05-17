@@ -1,5 +1,9 @@
 # Hoodoo v2.x
 
+## 2.5.1 (2018-05-18)
+
+* The hash in the implementation for v2.5.0 was not directly compatible with passing into a Hoodoo endpoint for things like proxying calls; this made it clumsy, when it was meant to assist. Fixed this, though it does mean anyone already using the code will have to update their implementation.
+
 ## 2.5.0 (2018-05-17)
 
 * Added [`Hoodoo::Services::Request::ListParameters#to_h`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-to_h) and [`Hoodoo::Servics::Request::ListParameters#from_h!`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-from_h-21) to assist various scenarios when dealing with search and filter data in `#list` implementations.
