@@ -111,12 +111,18 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
     #
     context 'with slow matcher' do
       before :each do
-        @unbound_method = String.instance_method( :match? )
-        String.send( :remove_method, :match? )
+        @unbound_method = nil
+
+        if ''.respond_to?( :match? )
+          @unbound_method = String.instance_method( :match? )
+          String.send( :remove_method, :match? )
+        end
       end
 
       after :each do
-        String.send( :define_method, :match?, @unbound_method )
+        unless @unbound_method.nil?
+          String.send( :define_method, :match?, @unbound_method )
+        end
       end
 
       context 'constructed with a String' do
