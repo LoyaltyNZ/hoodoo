@@ -41,6 +41,18 @@ module Hoodoo
       #
       class SecurityHelper
 
+        # Internally used by ::matches_wildcard for Ruby 2.4.0+ performance.
+        #
+        RUBY_FAST_WILDCARD_PROC_CONTENTS = %q{
+          security_value.match?( wildcard_regexp ) rescue false
+        }
+
+        # Internally used by ::matches_wildcard for Ruby < 2.4 compatibility.
+        #
+        RUBY_SLOW_WILDCARD_PROC_CONTENTS = %q{
+          wildcard_regexp.match( security_value ) != nil rescue false
+        }
+
         # Match a given wildcard, typically a String, to a single value
         # via <tt>#eql?</tt>.
         #
@@ -87,21 +99,15 @@ module Hoodoo
           # or later, so a patch is performed below for earlier Rubies.
           #
           Proc.new do | security_value |
-            security_value.respond_to?( :match? ) &&
-            security_value.match?( wildcard_regexp ) rescue false
-          end
-        end
 
-        # Ruby 2.4.0 and later introduce the Regexp#match? family, which is
-        # the fastest way to determine a simple does-or-does-not match
-        # condition. Ruby 2.3.x and earlier need different, slower code.
-        #
-        unless ''.respond_to?( :match? )
-          def self.matches_wildcard( wildcard_regexp )
-            wildcard_regexp = Regexp.new( wildcard_regexp ) unless wildcard_regexp.is_a?( Regexp )
-
-            Proc.new do | security_value |
-              wildcard_regexp.match( security_value ) != nil rescue false
+            # Ruby 2.4.0 and later introduce the Regexp#match? family, which
+            # is the fastest way to determine a simple does-or-does-not match
+            # condition. Ruby 2.3.x and earlier need different, slower code.
+            #
+            if ''.respond_to?( :match? )
+              eval( RUBY_FAST_WILDCARD_PROC_CONTENTS )
+            else
+              eval( RUBY_SLOW_WILDCARD_PROC_CONTENTS )
             end
           end
         end
