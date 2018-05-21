@@ -81,6 +81,30 @@ href="http://guides.rubyonrails.org/active_record_basics.html">guides.rubyonrail
 
 
 
+    <!-- Section constants -->
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        <tr valign='top' id='OBJECT_EQLS_STAR'>
+            <td class="attr-name">OBJECT_EQLS_STAR</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::ActiveRecord::Finder::SecurityHelper::eqls_wildcard( &#39;*&#39; )</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Convenience constant defining an equals-single-security-value wildcard
+security exemption using the String &#39;*&#39;.</p></td>
+        </tr>
+        <tr valign='top' id='ENUMERABLE_INCLUDES_STAR'>
+            <td class="attr-name">ENUMERABLE_INCLUDES_STAR</td>
+            <td>=</td>
+            <td class="attr-value"><pre>Hoodoo::ActiveRecord::Finder::SecurityHelper::includes_wildcard( &#39;*&#39; )</pre></td>
+        </tr>
+        <tr valign='top'>
+            <td>&nbsp;</td>
+            <td colspan="2" class="attr-desc"><p>Convenience constant defining an included-in-enumerable-security-value
+wildcard security excemption using the String &#39;*&#39;.</p></td>
+        </tr>
+    </table>
 
 
 <!-- Methods -->
@@ -118,7 +142,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-included_source')" id="l_method-c-included_source">show</a>
             </p>
             <div id="method-c-included_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 37</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">included</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">class_attribute</span>(
     <span class="ruby-value">:nz_co_loyalty_hoodoo_secure_with</span>,
@@ -161,7 +185,7 @@ this module.</p>
                 <a href="javascript:toggleSource('method-c-instantiate_source')" id="l_method-c-instantiate_source">show</a>
             </p>
             <div id="method-c-instantiate_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 57</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 59</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">instantiate</span>( <span class="ruby-identifier">model</span> )
   <span class="ruby-identifier">model</span>.<span class="ruby-identifier">extend</span>( <span class="ruby-constant">ClassMethods</span> )
 <span class="ruby-keyword">end</span></pre>
