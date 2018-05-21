@@ -240,6 +240,8 @@ describe Hoodoo::Client do
   end
 
   before :all do
+    $alternating_test = ( rand( 2 ) == 0 ) # 50% chance of starting true / false
+
     @old_test_session = Hoodoo::Services::Middleware.test_session()
     @port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService )
     @https_port = spec_helper_start_svc_app_in_thread_for( RSpecClientTestService, true )
@@ -293,13 +295,20 @@ describe Hoodoo::Client do
     endpoint_opts[ :assume_identity_of ] = @assume_identity_of unless @assume_identity_of.nil?
     endpoint_opts[ :deja_vu            ] = @deja_vu            if     @deja_vu == true
 
-    if rand( 2 ) == 0
+    # Alternate between checks of alternative locales and use of the
+    # native #resource interface versus the #endpoint alias.
+    #
+    if $alternating_test == true
       override_locale          = SecureRandom.urlsafe_base64( 2 )
       endpoint_opts[ :locale ] = override_locale
       @expected_locale         = override_locale.downcase
+
+      @endpoint = @client.endpoint( :RSpecClientTestTarget, 1, endpoint_opts )
+    else
+      @endpoint = @client.resource( :RSpecClientTestTarget, 1, endpoint_opts )
     end
 
-    @endpoint = @client.resource( :RSpecClientTestTarget, 1, endpoint_opts )
+    $alternating_test = ! $alternating_test
   end
 
   # Automatic expectations based on HEADER_TO_PROPERTY are fine here as they
