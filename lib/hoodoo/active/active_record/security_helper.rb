@@ -12,7 +12,7 @@
 
 module Hoodoo
   module ActiveRecord
-    module Finder
+    module Secure
 
       # Help build security exemption Procs to pass into
       # Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with via its options
@@ -28,7 +28,7 @@ module Hoodoo
       #           :creating_caller_uuid => :authorised_caller_uuids
       #         },
       #         {
-      #           :exemptions => Hoodoo::ActiveRecord::Finder::SecurityHelper::includes_wildcard( '*' )
+      #           :exemptions => Hoodoo::ActiveRecord::Secure::SecurityHelper::includes_wildcard( '*' )
       #         }
       #       )
       #     end

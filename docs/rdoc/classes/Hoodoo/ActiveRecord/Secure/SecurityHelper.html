@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Hoodoo::ActiveRecord::Finder::SecurityHelper</title>
+    <title>Hoodoo::ActiveRecord::Secure::SecurityHelper</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="../../../../css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="../../../../css/main.css" type="text/css" media="screen" />
@@ -13,12 +13,12 @@
 <script src="../../../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
 
 
-    <meta property="og:title" value="Hoodoo::ActiveRecord::Finder::SecurityHelper">
+    <meta property="og:title" value="Hoodoo::ActiveRecord::Secure::SecurityHelper">
 
     <meta name="description" content="Help build security exemption Procs to pass into Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with via its options Hash.">
     <meta property="og:description" content="Help build security exemption Procs to pass into Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with via its options Hash.">
 
-    <meta name="keywords" content="Hoodoo::ActiveRecord::Finder::SecurityHelper class">
+    <meta name="keywords" content="Hoodoo::ActiveRecord::Secure::SecurityHelper class">
     <meta name="keywords" content="eqls_wildcard, includes_wildcard, matches_wildcard, matches_wildcard_enumerable">
 </head>
 
@@ -26,7 +26,7 @@
     <div class="banner">
         <h1>
             <span class="type">Class</span>
-            Hoodoo::ActiveRecord::Finder::SecurityHelper
+            Hoodoo::ActiveRecord::Secure::SecurityHelper
             <span class="parent">&lt;
                 Object
             </span>
@@ -40,11 +40,11 @@
     <div class="description">
         
 <p>Help build security exemption Procs to pass into <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>
 via its options Hash. The following extends an example given in the
 documentation (at the time of writing here) for the underlying
 implementation method <a
-href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>:</p>
+href="ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure::ClassMethods#secure</a>:</p>
 
 <pre><code>class Audit &lt; ActiveRecord::Base
   include Hoodoo::ActiveRecord::Secure
@@ -54,7 +54,7 @@ href="../Secure/ClassMethods.html#method-i-secure">Hoodoo::ActiveRecord::Secure:
       :creating_caller_uuid =&gt; :authorised_caller_uuids
     },
     {
-      :exemptions =&gt; Hoodoo::ActiveRecord::Finder::SecurityHelper::includes_wildcard( &#39;*&#39; )
+      :exemptions =&gt; Hoodoo::ActiveRecord::Secure::SecurityHelper::includes_wildcard( &#39;*&#39; )
     }
   )
 end
@@ -144,7 +144,7 @@ for Ruby &lt; 2.4 compatibility.</p></td>
     <div class="method">
         <div class="title method-title" id="method-c-eqls_wildcard">
             <b>eqls_wildcard</b>( wildcard_value )
-            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SecurityHelper.html#method-c-eqls_wildcard" name="method-c-eqls_wildcard" class="permalink">Link</a>
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-eqls_wildcard" name="method-c-eqls_wildcard" class="permalink">Link</a>
         </div>
 
         <div class="description">
@@ -157,7 +157,7 @@ for Ruby &lt; 2.4 compatibility.</p></td>
 
 <p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
 for <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
         </div>
 
 
@@ -181,7 +181,7 @@ href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Se
     <div class="method">
         <div class="title method-title" id="method-c-includes_wildcard">
             <b>includes_wildcard</b>( wildcard_value )
-            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SecurityHelper.html#method-c-includes_wildcard" name="method-c-includes_wildcard" class="permalink">Link</a>
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-includes_wildcard" name="method-c-includes_wildcard" class="permalink">Link</a>
         </div>
 
         <div class="description">
@@ -194,7 +194,7 @@ via <code>#include?</code>.</p>
 
 <p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
 for <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
         </div>
 
 
@@ -219,7 +219,7 @@ href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Se
     <div class="method">
         <div class="title method-title" id="method-c-matches_wildcard">
             <b>matches_wildcard</b>( wildcard_regexp )
-            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SecurityHelper.html#method-c-matches_wildcard" name="method-c-matches_wildcard" class="permalink">Link</a>
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-matches_wildcard" name="method-c-matches_wildcard" class="permalink">Link</a>
         </div>
 
         <div class="description">
@@ -232,7 +232,7 @@ Regexps without any escaping but doing so reduces performance.</p>
 
 <p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
 for <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
         </div>
 
 
@@ -271,7 +271,7 @@ href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Se
     <div class="method">
         <div class="title method-title" id="method-c-matches_wildcard_enumerable">
             <b>matches_wildcard_enumerable</b>( wildcard_regexp )
-            <a href="../../../../classes/Hoodoo/ActiveRecord/Finder/SecurityHelper.html#method-c-matches_wildcard_enumerable" name="method-c-matches_wildcard_enumerable" class="permalink">Link</a>
+            <a href="../../../../classes/Hoodoo/ActiveRecord/Secure/SecurityHelper.html#method-c-matches_wildcard_enumerable" name="method-c-matches_wildcard_enumerable" class="permalink">Link</a>
         </div>
 
         <div class="description">
@@ -286,7 +286,7 @@ Regexps without any escaping but doing so reduces performance.</p>
 
 <p>Returns a Proc suitable for passing to the <code>:exemptions</code> option
 for <a
-href="../Secure/ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
+href="ClassMethods.html#method-i-secure_with">Hoodoo::ActiveRecord::Secure::ClassMethods#secure_with</a>.</p>
         </div>
 
 

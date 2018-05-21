@@ -375,7 +375,7 @@ secure_with( {
 
 <p>This leads to SQL along the following lines:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;[val]&#39;)</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))</code></pre>
 
 <p>…where <code>val</code> is from the Session
 <code>authorised_caller_uuids</code> data in the <code>scoping</code>
@@ -410,7 +410,7 @@ secure_with( {
 
 <p>…yields something like:</p>
 
-<pre><code>AND ( &quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;[val]&#39; OR &quot;model_table&quot;.&quot;other_column_name&quot; = &#39;[val]&#39; )</code></pre>
+<pre><code>AND ( &quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;) OR &quot;model_table&quot;.&quot;other_column_name&quot; IN (&#39;[val]&#39;) )</code></pre>
 
 <p>A Proc specified with <code>:using</code> is called with:</p>
 <ul><li>
@@ -440,9 +440,9 @@ cause problems!</p>
 <p>Noting that with any security exemption there is elevated risk, you can use
 the <code>:exemptions</code> key to provide a Proc which is passed the
 secure value(s) under consideration (the data taken directly from the
-session scoping section and evaluates to <code>true</code> if the value(s)
+session scoping section) and evaluates to <code>true</code> if the value(s)
 indicate that a security exemption applies, else evaluates “falsey” for
-normal behaviour. We say “value(s)” here as a single key yielding data from
+normal behaviour. We say “value(s)” here as a single key used to read from
 the scoping section of a session may yield either a simple value such as a
 String, or an Enumerable object such as an array of many Strings.</p>
 
@@ -451,7 +451,7 @@ to the secure scope chain being constructed for the secured <a
 href="../../ActiveRecord.html">ActiveRecord</a> query the caller will
 eventually run. Helper methods which construct common use case Procs are
 present in <a
-href="../Finder/SecurityHelper.html">Hoodoo::ActiveRecord::Finder::SecurityHelper</a>
+href="SecurityHelper.html">Hoodoo::ActiveRecord::Secure::SecurityHelper</a>
 and there are convenience constants defined in <a
 href="../Secure.html">Hoodoo::ActiveRecord::Secure</a>, such as
 Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR.</p>
@@ -473,15 +473,17 @@ secure_with( {
 
 <p>…which leads to SQL along the following lines:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;[val]&#39;)</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;[val]&#39;))</code></pre>
 
-<p>…then suppose we wanted to allow a session scoping value of &#39;*&#39; to
-bypass security (“see everythign”). We could use the single-object star
-matcher Proc in Hoodoo::ActiveRecord::Secure::OBJECT_EQLS_STAR here. At the
-time of writing, it is defined as the following Proc:</p>
+<p>…then suppose we wanted to allow a session scoping value of &#39;*&#39;
+bypass security (“see everything”). We could use the
+Enumerable-includes-star matcher Proc
+Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR here. At the time of
+writing, it is defined as the following Proc:</p>
 
-<pre><code>Proc.new do | security_value |
-  security_value.eql?( &#39;*&#39; )
+<pre><code>Proc.new do | security_values |
+  security_values.is_a?( Enumerable ) &amp;&amp;
+  security_values.include?( &#39;*&#39; ) rescue false
 end
 </code></pre>
 
@@ -490,16 +492,16 @@ end
 <pre><code>secure_with( {
   :creating_caller_uuid =&gt; {
     :session_field_name =&gt; :authorised_caller_uuids,
-    :exemptions         =&gt; Hoodoo::ActiveRecord::Secure::OBJECT_EQLS_STAR
+    :exemptions         =&gt; Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR
   }
 } )
 </code></pre>
 
-<p>Now, if the looked up value of the <code>authorised_caller_uuid</code>
-attribute in the prevailing Session scoping section data was “1234” then
+<p>If the looked up value of the <code>authorised_caller_uuids</code>
+attribute in the prevailing Session scoping section data was [“1234”], then
 the SQL query additions would occur as above:</p>
 
-<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; = &#39;1234&#39;)</code></pre>
+<pre><code>AND (&quot;model_table&quot;.&quot;creating_caller_uuid&quot; IN (&#39;1234&#39;))</code></pre>
 
 <p>…but if there is a value of “*”, the security layer will ignore the normal
 restrictions, resulting in no SQL additions whatsoever.</p>
@@ -511,6 +513,10 @@ heavyweight options are all possible. Remember, though, that all of this
 comes at a risk, since the mechanism is bypassing the normal scope chain
 security. If used improperly or somehow compromised, it will allow data to
 be read by an API caller that should not have been permitted to access it.</p>
+
+<p>See module <a
+href="SecurityHelper.html">Hoodoo::ActiveRecord::Secure::SecurityHelper</a>
+for methods to help with exemption Proc construction.</p>
         </div>
 
 
@@ -522,7 +528,7 @@ be read by an API caller that should not have been permitted to access it.</p>
                 <a href="javascript:toggleSource('method-i-secure_source')" id="l_method-i-secure_source">show</a>
             </p>
             <div id="method-i-secure_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 470</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 475</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">secure</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">prevailing_scope</span> = <span class="ruby-identifier">all</span>() <span class="ruby-comment"># &quot;Model.all&quot; -&gt; returns anonymous scope</span>
   <span class="ruby-identifier">extra_scope_map</span>  = <span class="ruby-identifier">secured_with</span>()
@@ -600,7 +606,7 @@ examples.</p>
                 <a href="javascript:toggleSource('method-i-secure_with_source')" id="l_method-i-secure_with_source">show</a>
             </p>
             <div id="method-i-secure_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 523</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 528</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">secure_with</span>( <span class="ruby-identifier">map</span> )
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span> = <span class="ruby-identifier">map</span>
 <span class="ruby-keyword">end</span></pre>
@@ -631,7 +637,7 @@ href="ClassMethods.html#method-i-secure_with">secure_with</a>, or
                 <a href="javascript:toggleSource('method-i-secured_with_source')" id="l_method-i-secured_with_source">show</a>
             </p>
             <div id="method-i-secured_with_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 531</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/secure.rb, line 536</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">secured_with</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_secure_with</span>
 <span class="ruby-keyword">end</span></pre>

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
+describe Hoodoo::ActiveRecord::Secure::SecurityHelper do
 
   class TestAllMatchersObject
     include Enumerable
@@ -20,7 +20,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
   context '::eqls_wildcard' do
     before :each do
-      @proc = Hoodoo::ActiveRecord::Finder::SecurityHelper.eqls_wildcard( '!' )
+      @proc = Hoodoo::ActiveRecord::Secure::SecurityHelper.eqls_wildcard( '!' )
     end
 
     it 'matches when it should' do
@@ -45,7 +45,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
   context '::includes_wildcard' do
     before :each do
-      @proc = Hoodoo::ActiveRecord::Finder::SecurityHelper.includes_wildcard( '!' )
+      @proc = Hoodoo::ActiveRecord::Secure::SecurityHelper.includes_wildcard( '!' )
     end
 
     it 'matches when it should' do
@@ -73,7 +73,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
 
   context '::matches_wildcard' do
     let( :param ) { '^..!.*' }
-    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard( param ) }
+    let( :proc  ) { Hoodoo::ActiveRecord::Secure::SecurityHelper.matches_wildcard( param ) }
 
     shared_examples 'a ::matches_wildcard Proc' do
       it 'and matches when it should' do
@@ -152,7 +152,7 @@ describe Hoodoo::ActiveRecord::Finder::SecurityHelper do
   end
 
   context '::matches_wildcard_enumerable' do
-    let( :proc  ) { Hoodoo::ActiveRecord::Finder::SecurityHelper.matches_wildcard_enumerable( param ) }
+    let( :proc  ) { Hoodoo::ActiveRecord::Secure::SecurityHelper.matches_wildcard_enumerable( param ) }
     let( :param ) { '^..!.*' }
 
     shared_examples 'a ::matches_wildcard Proc' do
