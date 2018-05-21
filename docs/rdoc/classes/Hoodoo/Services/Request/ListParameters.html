@@ -19,7 +19,7 @@
     <meta property="og:description" content="Encapsulation of all parameters related only to modifying a list of results. Other parameters may modify lists too, but they also modify other representations (e.g. single-resource &#39;show&#39;).">
 
     <meta name="keywords" content="Hoodoo::Services::Request::ListParameters class">
-    <meta name="keywords" content="new">
+    <meta name="keywords" content="new, to_h, from_h!">
 </head>
 
 <body>
@@ -51,11 +51,27 @@ representations (e.g. single-resource &#39;show&#39;).</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>F</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-i-from_h-21">from_h!</a>
+                </li>
+            </ul>
+        </dd>
         <dt>N</dt>
         <dd>
             <ul>
                 <li>
                     <a href="#method-c-new">new</a>
+                </li>
+            </ul>
+        </dd>
+        <dt>T</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-i-to_h">to_h</a>
                 </li>
             </ul>
         </dd>
@@ -137,6 +153,126 @@ each value is the direction to sort that field.</p></td>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>   = { <span class="ruby-string">&#39;created_at&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;desc&#39;</span> }
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> = {}
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> = {}
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="sectiontitle">Instance Public methods</div>
+    <div class="method">
+        <div class="title method-title" id="method-i-from_h-21">
+            <b>from_h!</b>( hash )
+            <a href="../../../../classes/Hoodoo/Services/Request/ListParameters.html#method-i-from_h-21" name="method-i-from_h-21" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Load list parameters from a given Hash, of the form set by <a
+href="ListParameters.html#method-i-to_h">to_h</a>. Overwrites any
+corresponding internal attributes and takes full deep copies of sort,
+search and filter values.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-from_h-21_source')" id="l_method-i-from_h-21_source">show</a>
+            </p>
+            <div id="method-i-from_h-21_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 112</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">from_h!</span>( <span class="ruby-identifier">hash</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>      = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;offset&#39;</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>       = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;limit&#39;</span>  ] <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>( <span class="ruby-string">&#39;limit&#39;</span>  )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ] ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;search&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> = <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;filter&#39;</span> ] ) <span class="ruby-keyword">if</span> <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;filter&#39;</span> ].<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Hash</span> )
+
+  <span class="ruby-identifier">sorts</span>      = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;sort&#39;</span>      ]
+  <span class="ruby-identifier">directions</span> = <span class="ruby-identifier">hash</span>[ <span class="ruby-string">&#39;direction&#39;</span> ]
+
+  <span class="ruby-comment"># Ensure the values are Arrays not just simple e.g. Strings,</span>
+  <span class="ruby-comment"># so that we can zip them up into a Hash for the &#39;sort_data&#39;</span>
+  <span class="ruby-comment"># attribute value. Merge the result onto the existing values.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-identifier">sorts</span>      = [ <span class="ruby-identifier">sorts</span>      ] <span class="ruby-keyword">unless</span>      <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+  <span class="ruby-identifier">directions</span> = [ <span class="ruby-identifier">directions</span> ] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">is_a?</span>( <span class="ruby-constant">Array</span> )
+
+       <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">compact!</span>
+  <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">compact!</span>
+
+       <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">concat</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">keys</span>[        <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span> ] <span class="ruby-operator">||</span> [] )
+  <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">concat</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">values</span>[ <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">..</span> <span class="ruby-value">-1</span> ] <span class="ruby-operator">||</span> [] )
+
+  <span class="ruby-comment"># The middleware enforces a URI query string match of the</span>
+  <span class="ruby-comment"># count of sort and direction specifiers, so we do the same.</span>
+  <span class="ruby-comment">#</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">length</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-string">&#39;Hoodoo::Services::Request::ListParameters#from_h!: Sort and direction array lengths must match&#39;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span> = <span class="ruby-constant">Hash</span>[ <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">zip</span>( <span class="ruby-identifier">directions</span> ) ]
+<span class="ruby-keyword">end</span></pre>
+            </div>
+        </div>
+    </div>
+    <div class="method">
+        <div class="title method-title" id="method-i-to_h">
+            <b>to_h</b>()
+            <a href="../../../../classes/Hoodoo/Services/Request/ListParameters.html#method-i-to_h" name="method-i-to_h" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Represent the list data as a Hash, for uses such as persistence or loading
+into another session instance. The returned Hash is a full deep copy of any
+internal data; changing it will not alter the <a
+href="ListParameters.html">ListParameters</a> object state.</p>
+
+<p>Top-level keys in the Hash are Strings corresponding to fields supported by
+the query Hash in <a
+href="../../Client/Endpoint.html#method-i-list">Hoodoo::Client::Endpoint#list</a>,
+intentionally compatible so that pass-through / proxy scenarios from
+resource implementation to another resource are assisted:</p>
+
+<pre><code>* +&quot;offset&quot;+
+* +&quot;limit&quot;+
+* +&quot;sort&quot;+ (keys from the Hash under attribute #sort_data)
+* +&quot;direction&quot;+ (values from the Hash under #sort_data)
+* +&quot;search&quot;+ (deep-duplcated value of attribute #search_data)
+* +&quot;filter&quot;+ (deep-duplcated value of attribute #filter_data)</code></pre>
+
+<p>Sort, direction, search and filter data, if not empty, also have String
+keys / values. A single sort-direction key-value pair will be flattened to
+a simple value, while multiple sort-direction pairs are given as Arrays.</p>
+
+<p>See also <a href="ListParameters.html#method-i-from_h-21">from_h!</a>.</p>
+        </div>
+
+
+
+        <div class="sourcecode">
+
+            <p class="source-link">
+                Source:
+                <a href="javascript:toggleSource('method-i-to_h_source')" id="l_method-i-to_h_source">show</a>
+            </p>
+            <div id="method-i-to_h_source" class="dyn-source">
+                <pre><span class="ruby-comment"># File lib/hoodoo/services/services/request.rb, line 91</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">to_h</span>
+  <span class="ruby-identifier">sorts</span>      = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
+  <span class="ruby-identifier">directions</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">sort_data</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span>( <span class="ruby-operator">&amp;</span> <span class="ruby-value">:to_s</span> )
+
+  <span class="ruby-identifier">sorts</span>      =      <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword">if</span>      <span class="ruby-identifier">sorts</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+  <span class="ruby-identifier">directions</span> = <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">directions</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>
+
+  {
+    <span class="ruby-string">&#39;offset&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">offset</span>,
+    <span class="ruby-string">&#39;limit&#39;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">limit</span>,
+    <span class="ruby-string">&#39;sort&#39;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">sorts</span>,
+    <span class="ruby-string">&#39;direction&#39;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">directions</span>,
+    <span class="ruby-string">&#39;search&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">search_data</span> ),
+    <span class="ruby-string">&#39;filter&#39;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Hoodoo</span><span class="ruby-operator">::</span><span class="ruby-constant">Utilities</span>.<span class="ruby-identifier">deep_dup</span>( <span class="ruby-keyword">self</span>.<span class="ruby-identifier">filter_data</span> )
+  }
 <span class="ruby-keyword">end</span></pre>
             </div>
         </div>

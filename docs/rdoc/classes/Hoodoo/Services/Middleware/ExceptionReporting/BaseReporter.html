@@ -339,13 +339,7 @@ describing an in-flight request/response cycle.</p>
         <span class="ruby-value">:embeds</span>              =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">embeds</span>,
         <span class="ruby-value">:references</span>          =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">references</span>,
         <span class="ruby-value">:headers</span>             =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">headers</span>,
-        <span class="ruby-value">:list</span>                =<span class="ruby-operator">&gt;</span> {
-          <span class="ruby-value">:offset</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">offset</span>,
-          <span class="ruby-value">:limit</span>       =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">limit</span>,
-          <span class="ruby-value">:sort_data</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">sort_data</span>,
-          <span class="ruby-value">:search_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">search_data</span>,
-          <span class="ruby-value">:filter_data</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">filter_data</span>
-        }
+        <span class="ruby-value">:list</span>                =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">list</span>.<span class="ruby-identifier">to_h</span>
       }
     }
 

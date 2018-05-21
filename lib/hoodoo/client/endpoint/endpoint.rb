@@ -189,7 +189,7 @@ module Hoodoo
       # +query_hash+:: A hash of _unencoded_ data that can be encoded to form
       #                a query string. Search and filter data is represented
       #                with nested hashes. Embed and reference data uses an
-      #                array. Example:
+      #                array. All keys are Strings. Example:
       #
       #                   {
       #                     offset:    75,
@@ -328,20 +328,19 @@ module Hoodoo
         # Returns the +augmented_array+ passed in, with the +next_page_proc+
         # value set.
         #
-        def inject_enumeration_state ( augmented_array, query_hash )
+        def inject_enumeration_state( augmented_array, query_hash )
 
           endpoint                       = self
           query_hash                     = query_hash.nil? ? {} : query_hash.dup
           batch_size                     = [ 1, augmented_array.size ].max
           augmented_array.next_page_proc = Proc.new do
-            query_hash[ :offset ] = ( query_hash[ :offset ] || 0 ) + batch_size
+            query_hash[ 'offset' ] = ( query_hash[ 'offset' ] || 0 ) + batch_size
             endpoint.list( query_hash )
           end
 
           return augmented_array
 
         end
-
 
       public
 

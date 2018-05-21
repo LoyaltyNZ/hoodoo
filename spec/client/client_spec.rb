@@ -66,6 +66,27 @@ class RSpecClientTestTargetImplementation < Hoodoo::Services::Implementation
         return
       end
 
+      # Deliberate 'return an error-like object but with a 200 response
+      # code' hook, as if implementing the Errors resource endpoint and
+      # successfully processing a request.
+      #
+      if context.request.ident == 'return_200_with_errors_body'
+        context.response.set_resource( {
+          'id'         => Hoodoo::UUID.generate(),
+          'kind'       => 'Errors',
+          'created_at' => Hoodoo::Utilities.standard_datetime( Time.now ),
+          'errors'     => [
+            {
+              'code'      => 'generic.not_found',
+              'message'   => 'Resource not found',
+              'reference' => '1234'
+            }
+          ]
+        } )
+
+        return
+      end
+
       context.response.set_resource( mock( context ) )
     end
 
@@ -343,6 +364,20 @@ describe Hoodoo::Client do
         result = @endpoint.list()
         expect( result.platform_errors.has_errors? ).to eq( true )
         expect( result.platform_errors.errors[ 0 ][ 'code' ] ).to eq( 'platform.invalid_session' )
+      end
+
+      # An endpoint returns an Errors resource *because it's meant to*, e.g.
+      # it's implementing the Errors resource and successfully processed a
+      # request; once upon a time, Hoodoo::Client misinterpreted the JSON
+      # response and treated it as an error condition. This test ensures
+      # that HTTP response codes are properly considered in conjunction, so
+      # that Errors payloads under 2xx response codes are non-error states.
+      #
+      it '(interprets errors properly)' do
+        result = @endpoint.show( 'return_200_with_errors_body' )
+
+        expect( result.platform_errors.has_errors? ).to eq( false )
+        expect( result[ 'kind' ] ).to eq( 'Errors' )
       end
     end
 

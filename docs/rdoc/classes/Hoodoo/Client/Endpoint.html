@@ -65,25 +65,30 @@ class instance variables recording a reference to a single endpoint object.</p>
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>
+              <a href="Endpoint/AMQP.html">Hoodoo::Client::Endpoint::AMQP</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>
+              <a href="Endpoint/AutoSession.html">Hoodoo::Client::Endpoint::AutoSession</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>
+              <a href="Endpoint/HTTP.html">Hoodoo::Client::Endpoint::HTTP</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Endpoint/HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
+              <a href="Endpoint/HTTPBased.html">Hoodoo::Client::Endpoint::HTTPBased</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Endpoint/NotFound.html">Hoodoo::Client::Endpoint::NotFound</a>
+              <a href="Endpoint/NotFound.html">Hoodoo::Client::Endpoint::NotFound</a>
         </li>
     </ul>
 
@@ -424,7 +429,7 @@ question in its documentation).</p>
 <dd>
 <p>A hash of <em>unencoded</em> data that can be encoded to form a query
 string. Search and filter data is represented with nested hashes. Embed and
-reference data uses an array. Example:</p>
+reference data uses an array. All keys are Strings. Example:</p>
 
 <pre><code>{
   offset:    75,
@@ -522,7 +527,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-create_source')" id="l_method-i-create_source">show</a>
             </p>
             <div id="method-i-create_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 412</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 411</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>( <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#create&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -568,7 +573,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-delete_source')" id="l_method-i-delete_source">show</a>
             </p>
             <div id="method-i-delete_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 453</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 452</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">delete</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#delete&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -618,7 +623,7 @@ to enumerate over the list of resource instances with automatic pagination.</p>
                 <a href="javascript:toggleSource('method-i-list_source')" id="l_method-i-list_source">show</a>
             </p>
             <div id="method-i-list_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 372</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 371</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#list&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -663,7 +668,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-show_source')" id="l_method-i-show_source">show</a>
             </p>
             <div id="method-i-show_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 392</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 391</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#show&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -711,7 +716,7 @@ instead) on the returned instance to detect and resolve error conditions
                 <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
             </p>
             <div id="method-i-update_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 433</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 432</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>( <span class="ruby-identifier">ident</span>, <span class="ruby-identifier">body_hash</span>, <span class="ruby-identifier">query_hash</span> = <span class="ruby-keyword">nil</span> )
   <span class="ruby-identifier">raise</span> <span class="ruby-string">&quot;Subclasses must implement Hoodoo::Client::Endpoint\#update&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -883,13 +888,13 @@ for more.</p>
             </p>
             <div id="method-i-inject_enumeration_state_source" class="dyn-source">
                 <pre><span class="ruby-comment"># File lib/hoodoo/client/endpoint/endpoint.rb, line 331</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span> ( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">inject_enumeration_state</span>( <span class="ruby-identifier">augmented_array</span>, <span class="ruby-identifier">query_hash</span> )
 
   <span class="ruby-identifier">endpoint</span>                       = <span class="ruby-keyword">self</span>
   <span class="ruby-identifier">query_hash</span>                     = <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> {} <span class="ruby-operator">:</span> <span class="ruby-identifier">query_hash</span>.<span class="ruby-identifier">dup</span>
   <span class="ruby-identifier">batch_size</span>                     = [ <span class="ruby-value">1</span>, <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">size</span> ].<span class="ruby-identifier">max</span>
   <span class="ruby-identifier">augmented_array</span>.<span class="ruby-identifier">next_page_proc</span> = <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-value">:offset</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
+    <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] = ( <span class="ruby-identifier">query_hash</span>[ <span class="ruby-string">&#39;offset&#39;</span> ] <span class="ruby-operator">||</span> <span class="ruby-value">0</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">batch_size</span>
     <span class="ruby-identifier">endpoint</span>.<span class="ruby-identifier">list</span>( <span class="ruby-identifier">query_hash</span> )
   <span class="ruby-keyword">end</span>
 
