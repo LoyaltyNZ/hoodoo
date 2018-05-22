@@ -19,7 +19,7 @@ describe Hoodoo::Services::Context do
     comprised_of RSpecTestContextInterface
   end
 
-  it 'should initialise correctly' do
+  it 'initialises correctly' do
     ses = Hoodoo::Services::Session.new
     req = Hoodoo::Services::Request.new
     res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
@@ -34,19 +34,33 @@ describe Hoodoo::Services::Context do
     expect(con.owning_interaction).to eq(int)
   end
 
-  it 'should report endpoints' do
-    ses = Hoodoo::Services::Session.new
-    req = Hoodoo::Services::Request.new
-    res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
-    mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
-    int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
+  context 'reports endpoints' do
+    before :each do
+      ses = Hoodoo::Services::Session.new
+      req = Hoodoo::Services::Request.new
+      res = Hoodoo::Services::Response.new( Hoodoo::UUID.generate() )
+      mid = Hoodoo::Services::Middleware.new( RSpecTestContext.new )
+      int = Hoodoo::Services::Middleware::Interaction.new( {}, mid )
 
-    con = Hoodoo::Services::Context.new( ses, req, res, int )
+      @con = Hoodoo::Services::Context.new( ses, req, res, int )
+    end
 
-    expect(con.resource(:RSpecTestResource)).to be_a( Hoodoo::Services::Middleware::InterResourceLocal )
-    expect(con.resource(:RSpecTestResource).instance_variable_get( '@discovery_result' ) ).to be_a( Hoodoo::Services::Discovery::ForLocal )
-    expect(con.resource(:RSpecTestResource).instance_variable_get( '@discovery_result' ) .interface_class).to eq( RSpecTestContextInterface )
-    expect(con.resource(:AnotherResource)).to be_a( Hoodoo::Services::Middleware::InterResourceRemote )
-    expect(con.resource(:AnotherResource).instance_variable_get( '@discovery_result' ) ).to be_a( Hoodoo::Services::Discovery::ForRemote )
+    shared_examples 'an endpoint' do | endpoint_method |
+      it 'with the expected properties' do
+        expect(@con.send(endpoint_method, :RSpecTestResource)).to be_a( Hoodoo::Services::Middleware::InterResourceLocal )
+        expect(@con.send(endpoint_method, :RSpecTestResource).instance_variable_get( '@discovery_result' ) ).to be_a( Hoodoo::Services::Discovery::ForLocal )
+        expect(@con.send(endpoint_method, :RSpecTestResource).instance_variable_get( '@discovery_result' ) .interface_class).to eq( RSpecTestContextInterface )
+        expect(@con.send(endpoint_method, :AnotherResource)).to be_a( Hoodoo::Services::Middleware::InterResourceRemote )
+        expect(@con.send(endpoint_method, :AnotherResource).instance_variable_get( '@discovery_result' ) ).to be_a( Hoodoo::Services::Discovery::ForRemote )
+      end
+    end
+
+    context 'via native "#resource" and' do
+      it_behaves_like 'an endpoint', :resource
+    end
+
+    context 'via alias "#endpoint" and' do
+      it_behaves_like 'an endpoint', :endpoint
+    end
   end
 end

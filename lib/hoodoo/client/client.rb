@@ -355,5 +355,11 @@ module Hoodoo
         return endpoint
       end
 
+      # Alias of #resource, as syntax sugar for those who prefer to think of
+      # the return value as an endpoint that is used to contact a resource,
+      # rather than a remote abstraction of the resource as an entity.
+      #
+      alias_method :endpoint, :resource
+
   end
 end
