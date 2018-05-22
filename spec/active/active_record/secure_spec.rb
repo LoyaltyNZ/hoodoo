@@ -17,6 +17,11 @@ describe Hoodoo::ActiveRecord::Secure do
       ActiveRecord::Migration.create_table( :r_spec_model_secure_test_as, &migration )
       ActiveRecord::Migration.create_table( :r_spec_model_secure_test_bs, &migration )
       ActiveRecord::Migration.create_table( :r_spec_model_secure_test_cs, &migration )
+      ActiveRecord::Migration.create_table( :r_spec_model_secure_test_ds, &migration )
+      ActiveRecord::Migration.create_table( :r_spec_model_secure_test_es, &migration )
+      ActiveRecord::Migration.create_table( :r_spec_model_secure_test_fs, &migration )
+
+      # ======================================================================
 
       class RSpecModelSecureTestA < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Secure
@@ -27,6 +32,8 @@ describe Hoodoo::ActiveRecord::Secure do
         )
       end
 
+      # ======================================================================
+
       class RSpecModelSecureTestB < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Secure
 
@@ -35,6 +42,8 @@ describe Hoodoo::ActiveRecord::Secure do
           'distributor' => { :session_field_name => :authorised_distributor } # Single item
         )
       end
+
+      # ======================================================================
 
       class RSpecModelSecureTestC < ActiveRecord::Base
         include Hoodoo::ActiveRecord::Secure
@@ -62,8 +71,48 @@ describe Hoodoo::ActiveRecord::Secure do
           }
         )
       end
+
+      # ======================================================================
+
+      class RSpecModelSecureTestD < ActiveRecord::Base
+        include Hoodoo::ActiveRecord::Secure
+
+        secure_with(
+          :creator => {
+            :session_field_name => 'authorised_creators',
+            :exemptions         => Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR
+          }
+        )
+      end
+
+      class RSpecModelSecureTestE < ActiveRecord::Base
+        include Hoodoo::ActiveRecord::Secure
+
+        secure_with(
+          'distributor' => {
+            :session_field_name => :authorised_distributor,
+            :exemptions         => Hoodoo::ActiveRecord::Secure::OBJECT_EQLS_STAR
+          }
+        )
+      end
+
+      class RSpecModelSecureTestF < ActiveRecord::Base
+        include Hoodoo::ActiveRecord::Secure
+
+        secure_with(
+          :field => {
+            :session_field_name => :authorised_suppliers,
+            :exemptions         => Proc.new { | security_values |
+              security_values.is_a?( Enumerable ) &&
+              security_values.include?( 'Dolphin' ) rescue false
+            }
+          }
+        )
+      end
     end
   end
+
+  # ==========================================================================
 
   before :each do
     # Get a good-enough-for-test interaction which has a context
@@ -202,6 +251,8 @@ describe Hoodoo::ActiveRecord::Secure do
     it_behaves_like 'a secure model'
   end
 
+  # ==========================================================================
+
   context 'works with custom Procs' do
     before :each do
       @scoped_4 = RSpecModelSecureTestC.new
@@ -264,6 +315,168 @@ describe Hoodoo::ActiveRecord::Secure do
       expect( found ).to be_nil
     end
   end
+
+  # ==========================================================================
+
+  # We assume that security_helper_spec.rb takes care of all of the security
+  # helper Proc generators, so all that's left to test is the out-of-box Procs
+  # defined in constants within 'secure.rb' and make sure a custom Proc works
+  # as expected.
+  #
+  context 'with security exemptions' do
+
+    # Call the shared examples with the Hash to set in the @session scoping
+    # value, then true/false values for whether a scoped find-by-ID query
+    # should find the three records created below (true => should find it).
+    #
+    shared_examples 'a secure model' do | session_scoping, s4_bool, s5_bool, s6_bool |
+      before :each do
+        @scoped_4 = @class_to_test.new
+        @scoped_4.creator     = 'C1'
+        @scoped_4.distributor = 'D1'
+        @scoped_4.field       = 'S1'
+        @scoped_4.save!
+
+        @scoped_5 = @class_to_test.new
+        @scoped_5.creator     = 'C2'
+        @scoped_5.distributor = 'D2'
+        @scoped_5.field       = 'S2'
+        @scoped_5.save!
+
+        @scoped_6 = @class_to_test.new
+        @scoped_6.creator     =  'C3'
+        @scoped_6.distributor =  'D3'
+        @scoped_6.field       =  'S3'
+        @scoped_6.save!
+
+        @results = [ @scoped4, @scoped5, @scoped6 ]
+      end
+
+      # Convenience method to DRY up a few tests later.
+      #
+      def expect_none
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_4.id )
+        expect( found ).to be_nil
+
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_5.id )
+        expect( found ).to be_nil
+
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_6.id )
+        expect( found ).to be_nil
+      end
+
+      it 'finds with exemptions from the class' do
+        @session.scoping = session_scoping
+
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_4.id )
+        expect( found ).to eq( s4_bool ? @scoped_4 : nil )
+
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_5.id )
+        expect( found ).to eq( s5_bool ? @scoped_5 : nil )
+
+        found = @class_to_test.secure( @context ).find_by_id( @scoped_6.id )
+        expect( found ).to eq( s6_bool ? @scoped_6 : nil )
+      end
+
+      # Only fully effective if at some point there is a "true, true, true"
+      # case which expects to match all. Otherwise, some of the expectations
+      # aren't useful (the "expects daft lookup to be nil" cases would be
+      # nil anyway, if 'false' indicates no-find-result-expected).
+      #
+      it 'finds with exemptions with a chain' do
+        @session.scoping = session_scoping
+
+        found = @class_to_test.where( :field => @scoped_4.field ).secure( @context ).find_by_id( @scoped_4.id )
+        expect( found ).to eq( s4_bool ? @scoped_4 : nil )
+
+        found = @class_to_test.where( :field => @scoped_4.field + '!' ).secure( @context ).find_by_id( @scoped_4.id )
+        expect( found ).to be_nil
+
+        found = @class_to_test.where( :field => @scoped_5.field ).secure( @context ).find_by_id( @scoped_5.id )
+        expect( found ).to eq( s5_bool ? @scoped_5 : nil )
+
+        found = @class_to_test.where( :field => @scoped_5.field + '!' ).secure( @context ).find_by_id( @scoped_5.id )
+        expect( found ).to be_nil
+
+        found = @class_to_test.where( :field => @scoped_6.field ).secure( @context ).find_by_id( @scoped_6.id )
+        expect( found ).to eq( s6_bool ? @scoped_6 : nil )
+
+        found = @class_to_test.where( :field => @scoped_6.field + '!' ).secure( @context ).find_by_id( @scoped_6.id )
+        expect( found ).to be_nil
+      end
+
+      it 'finds nothing if scope lacks required values' do
+        new_session_scoping = {}
+
+        session_scoping.each do | key, value |
+          new_session_scoping[ key ] = if value.is_a?( Array )
+            [ 'will not match any records' ]
+          else
+            'will not match any records'
+          end
+        end
+
+        @session.scoping = new_session_scoping
+        expect_none()
+      end
+
+      it 'finds nothing if scope lacks required keys' do
+        @session.scoping = { :some_authorised_thing => '*' }
+        expect_none()
+      end
+
+      it 'finds nothing if scope is missing' do
+        expect_none()
+      end
+    end
+
+    # A reminder of RSpecModelSecureTestD rules:
+    #
+    # :creator => {
+    #   :session_field_name => 'authorised_creators',
+    #   :exemptions         => Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR
+    # }
+    #
+    context 'works with ENUMERABLE_INCLUDES_STAR' do
+      before( :all ) { @class_to_test = RSpecModelSecureTestD }
+
+      it_behaves_like 'a secure model', { :authorised_creators  => [ 'C1', '*' ] }, true,  true, true
+      it_behaves_like 'a secure model', { 'authorised_creators' => [ 'C2'      ] }, false, true, false
+    end
+
+    # A reminder of RSpecModelSecureTestE rules:
+    #
+    # 'distributor' => {
+    #   :session_field_name => :authorised_distributor,
+    #   :exemptions         => Hoodoo::ActiveRecord::Secure::OBJECT_EQLS_STAR
+    # }
+    #
+    context 'works with OBJECT_EQLS_STAR' do
+      before( :all ) { @class_to_test = RSpecModelSecureTestE }
+
+      it_behaves_like 'a secure model', { :authorised_distributor  => '*'  }, true,  true,  true
+      it_behaves_like 'a secure model', { 'authorised_distributor' => 'D3' }, false, false, true
+    end
+
+    # A reminder of RSpecModelSecureTestF rules:
+    #
+    # :field => {
+    #   :session_field_name => :authorised_suppliers,
+    #   :exemptions         => Proc.new { | security_values |
+    #     security_values.is_a?( Enumerable ) &&
+    #     security_values.include?( 'Dolphin' ) rescue false
+    #   }
+    # }
+    #
+    context 'works with a custom Proc' do
+      before( :all ) { @class_to_test = RSpecModelSecureTestF }
+
+      it_behaves_like 'a secure model', { :authorised_suppliers  => [ 'Dolphin'  ] }, true, true,  true
+      it_behaves_like 'a secure model', { 'authorised_suppliers' => [ 'S1', 'S3' ] }, true, false, true
+    end
+  end
+
+  # ==========================================================================
 
   # See also presenters/base_spec.rb
   #

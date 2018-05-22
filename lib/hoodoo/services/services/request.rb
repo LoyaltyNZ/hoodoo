@@ -74,12 +74,12 @@ module Hoodoo; module Services
       # intentionally compatible so that pass-through / proxy scenarios from
       # resource implementation to another resource are assisted:
       #
-      #   * +"offset"+
-      #   * +"limit"+
-      #   * +"sort"+ (keys from the Hash under attribute #sort_data)
-      #   * +"direction"+ (values from the Hash under #sort_data)
-      #   * +"search"+ (deep-duplcated value of attribute #search_data)
-      #   * +"filter"+ (deep-duplcated value of attribute #filter_data)
+      # * +offset+
+      # * +limit+
+      # * +sort+ (keys from the Hash under attribute #sort_data)
+      # * +direction+ (values from the Hash under #sort_data)
+      # * +search+ (deep-duplicated value of attribute #search_data)
+      # * +filter+ (deep-duplicated value of attribute #filter_data)
       #
       # Sort, direction, search and filter data, if not empty, also have
       # String keys / values. A single sort-direction key-value pair will be

@@ -456,7 +456,7 @@ module Hoodoo
       #
       def handle_exception( exception, communicator )
         begin
-          report = "Slow communicator class #{ communicator.class.name } raised exception '#{ exception }': #{ exception.backtrace }"
+          report = "Communicator class #{ communicator.class.name } raised exception '#{ exception }': #{ exception.backtrace }"
           $stderr.puts( report )
 
         rescue
