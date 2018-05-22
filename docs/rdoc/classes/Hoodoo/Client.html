@@ -72,29 +72,35 @@ being contacted.</p>
     <!-- Namespace -->
     <div class="sectiontitle">Namespace</div>
     <ul>
+
         <li>
             <span class="type">MODULE</span>
-            <a href="Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>
+              <a href="Client/AugmentedBase.html">Hoodoo::Client::AugmentedBase</a>
         </li>
+
         <li>
             <span class="type">MODULE</span>
-            <a href="Client/PaginatedEnumeration.html">Hoodoo::Client::PaginatedEnumeration</a>
+              <a href="Client/PaginatedEnumeration.html">Hoodoo::Client::PaginatedEnumeration</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Client/AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
+              <a href="Client/AugmentedArray.html">Hoodoo::Client::AugmentedArray</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Client/AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
+              <a href="Client/AugmentedHash.html">Hoodoo::Client::AugmentedHash</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Client/Endpoint.html">Hoodoo::Client::Endpoint</a>
+              <a href="Client/Endpoint.html">Hoodoo::Client::Endpoint</a>
         </li>
+
         <li>
             <span class="type">CLASS</span>
-            <a href="Client/Headers.html">Hoodoo::Client::Headers</a>
+              <a href="Client/Headers.html">Hoodoo::Client::Headers</a>
         </li>
     </ul>
 
@@ -186,12 +192,12 @@ field &#39;surname&#39; matches &#39;Smith&#39; - assuming there&#39;s an
 implementation of such a Resource interface available! - as follows:</p>
 
 <pre><code>results = members.list(
-  :offset    =&gt; 50,
-  :limit     =&gt; 25,
-  :sort      =&gt; :created_at,
-  :direction =&gt; :asc,
-  :search    =&gt; { :surname =&gt; &#39;Smith&#39; },
-  :_embed    =&gt; &#39;account&#39;
+  offset:    50,
+  limit:     25,
+  sort:      &#39;created_at&#39;,
+  direction: &#39;asc&#39;,
+  search:    { &#39;surname&#39; =&gt; &#39;Smith&#39; },
+  _embed:    &#39;account&#39;
 )
 </code></pre>
 

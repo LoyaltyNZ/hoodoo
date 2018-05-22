@@ -276,7 +276,18 @@ module Hoodoo; module Services
     # host available.
     #
     def self.memcached_host
-      ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
+
+      # See also ::clear_memcached_configuration_cache!.
+      #
+      @@memcached_host ||= ENV[ 'MEMCACHED_HOST' ] || ENV[ 'MEMCACHE_URL' ]
+
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of Memcached data read from environment variables.
+    #
+    def self.clear_memcached_configuration_cache!
+      @@memcached_host = nil
     end
 
     # Return configuration for the selected Hoodoo::TransientStore engine,
@@ -310,8 +321,19 @@ module Hoodoo; module Services
     # Are we running on the queue, else (implied) a local HTTP server?
     #
     def self.on_queue?
-      q = ENV[ 'AMQ_URI' ]
-      q.nil? == false && q.empty? == false
+
+      # See also ::clear_queue_configuration_cache!.
+      #
+      @@amq_uri ||= ENV[ 'AMQ_URI' ]
+      @@amq_uri.nil? == false && @@amq_uri.empty? == false
+
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of AMQP queue data read from environment variables.
+    #
+    def self.clear_queue_configuration_cache!
+      @@amq_uri = nil
     end
 
     # Return a service 'name' derived from the service's collection of
@@ -561,12 +583,12 @@ module Hoodoo; module Services
         # everything else.
         #
         custom_path   = "/v#{ interface.version }/#{ interface.endpoint }"
-        custom_regexp = /\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/
+        custom_regexp = /^\/v#{ interface.version }\/#{ interface.endpoint }(\.|\/|$)(.*)/
 
         # Same as above, but for the de facto routing.
         #
         de_facto_path   = self.class.de_facto_path_for( interface.resource, interface.version )
-        de_facto_regexp = /\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/
+        de_facto_regexp = /^\/#{ interface.version }\/#{ interface.resource }(\.|\/|$)(.*)/
 
         Hoodoo::Services::Discovery::ForLocal.new(
           :resource                => interface.resource,
@@ -1316,6 +1338,11 @@ module Hoodoo; module Services
       #
       # For other kinds of data, check the secure actions to see if the body
       # should be included.
+      #
+      # TODO: This uses deprecated acccessors into the "context.request.list"
+      #       object, but it keeps the code simple. It'd be nice to just have
+      #       e.g. "data[ :list ] = context.request.list.to_h()" but the
+      #       change in log output format might break dependent clients.
 
       if context.response.body.is_a?( ::Array )
         attributes       = %i( list_offset list_limit list_sort_data list_search_data list_filter_data embeds references )

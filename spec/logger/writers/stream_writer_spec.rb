@@ -3,8 +3,7 @@ require 'time'
 
 describe Hoodoo::Logger::StreamWriter do
   before :all do
-    temp_name = Dir::Tmpname.make_tmpname( 'hoodoo_rspec_', nil )
-    @temp_path = File.join( Dir::Tmpname.tmpdir, temp_name )
+    @temp_path = spec_helper_tmpfile_path()
     @stream = File.open( @temp_path, 'ab' )
   end
 

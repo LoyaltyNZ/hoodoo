@@ -202,7 +202,7 @@ module Hoodoo
 
         target = self.render( data, uuid, created_at, language, created_by )
 
-        if secured_with.is_a?( ::ActiveRecord::Base )
+        if defined?( ::ActiveRecord ) && secured_with.is_a?( ::ActiveRecord::Base )
           result_hash     = {}
           extra_scope_map = secured_with.class.secured_with()
 

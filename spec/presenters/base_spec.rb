@@ -931,6 +931,24 @@ describe '#schema' do
       })
     end
 
+    context 'without ActiveRecord' do
+      before :each do
+        @old_ar = ::ActiveRecord
+        Object.send( :remove_const, :ActiveRecord )
+      end
+
+      after :each do
+        Object.send( :const_set, :ActiveRecord, @old_ar )
+      end
+
+      it 'renders' do
+        data = {}
+        expect(TestPresenter5.render_in(@con, data)).to eq({
+          'three' => 'default_three'
+        })
+      end
+    end
+
     # The "secured_with" option is tested in "secure_spec.rb" as lots of
     # tricky related setup is done there that would only end up being
     # coped in here otherwise.

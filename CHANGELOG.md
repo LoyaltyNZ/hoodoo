@@ -1,5 +1,46 @@
 # Hoodoo v2.x
 
+## 2.5.1 (2018-05-18)
+
+* The hash in the implementation for v2.5.0 was not directly compatible with passing into a Hoodoo endpoint for things like proxying calls; this made it clumsy, when it was meant to assist. Fixed this, though it does mean anyone already using the code will have to update their implementation.
+
+## 2.5.0 (2018-05-17)
+
+* Added [`Hoodoo::Services::Request::ListParameters#to_h`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-to_h) and [`Hoodoo::Servics::Request::ListParameters#from_h!`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Services/Request/ListParameters.html#method-i-from_h-21) to assist various scenarios when dealing with search and filter data in `#list` implementations.
+
+## 2.4.3 (2018-05-10)
+
+* Relaxing alchemy-flux constraint for development and test to use the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
+* Maintenance `bundle update` for the latest [Alchemy Flux](http://loyaltynz.github.io/alchemy-flux/doc/index.html).
+
+## 2.4.2 (2018-04-30)
+
+* Maintenance `bundle update`.
+* Allow Date instances to be passed to [`Hoodoo::Utilities::rationalise_datetime`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-rationalise_datetime).
+
+## 2.4.1 (2018-04-13)
+
+* Maintenance `bundle update`.
+* Fixes a `Hoodoo::Client` bug with the Errors resource. Any JSON response with `Errors` in `kind` was promoted to an error-like condition internally, but when dealing with an endpoint that actually _implements the Errors resource interface_ then you expect to get such payloads back for non-error conditions. Fixed by simply also checking the HTTP status code in the HTTP-endpoint-like base class underneath the client system. Proof-of-bug (and of fix) tests added.
+
+## 2.4.0 (2018-03-21)
+
+* Add the interaction ID to Datadog tracing [as span `interaction.id`](https://github.com/LoyaltyNZ/hoodoo/pull/248/files#diff-fd75040abee557d577b5765501df2550).
+* Maintenance `bundle update`.
+* Fix in presenter layer wherein rendering would fail unless `::ActiveRecord::Base` is defined.
+* Fix routing expressions to anchor accidental ambiguous routes to start of path (e.g. `/1/Foo/1/Bar` where both resources exist will now correctly route to v1 of `Foo` with `1` and `Bar` treated as URI path components).
+* Bump development dependency of PostgreSQL gem `pg` to version 1.x; PostgreSQL 9.2 or later required; see the gem's [change history](https://bitbucket.org/ged/ruby-pg/src/d8734ec382c9af8bd8bbe062d3668c93dd4ecf5b/History.rdoc?at=default&fileviewer=file-view-default) for more information.
+
+## 2.3.0 (2018-02-22)
+
+* Maintenance `bundle update`.
+* Introduces environment variable [`HOODOO_CLOCK_DRIFT_TOLERANCE`](http://loyaltynz.github.io/hoodoo/guides_1000_env_vars.html#hoodoo_clock_drift_tolerance) and related method [`Hoodoo::Utilities::is_in_future?`](https://cdn.rawgit.com/LoyaltyNZ/hoodoo/master/docs/rdoc/classes/Hoodoo/Utilities.html#method-c-is_in_future-3F).
+* Internal caching for a few more environment variables, yielding a small performance improvement.
+
+## 2.2.3 (2018-02-19)
+
+General maintenance update and test matrix support for Ruby 2.5.0. No core function changes, fixes or new features.
+
 ## 2.2.2 (2017-11-16)
 
 Fixes long-standing bug in the "decimal" type used in the presenter layer. This previously expected quantities to be presented as BigDecimal objects, but JSON contains no Types that would be converted to such by Ruby; decimals would never validate. Fixed by instead expecting a String with regular expression check; test coverage updated.

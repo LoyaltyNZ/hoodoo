@@ -63,6 +63,83 @@ module Hoodoo; module Services
         self.search_data = {}
         self.filter_data = {}
       end
+
+      # Represent the list data as a Hash, for uses such as persistence or
+      # loading into another session instance. The returned Hash is a full
+      # deep copy of any internal data; changing it will not alter the
+      # ListParameters object state.
+      #
+      # Top-level keys in the Hash are Strings corresponding to fields
+      # supported by the query Hash in Hoodoo::Client::Endpoint#list,
+      # intentionally compatible so that pass-through / proxy scenarios from
+      # resource implementation to another resource are assisted:
+      #
+      #   * +"offset"+
+      #   * +"limit"+
+      #   * +"sort"+ (keys from the Hash under attribute #sort_data)
+      #   * +"direction"+ (values from the Hash under #sort_data)
+      #   * +"search"+ (deep-duplcated value of attribute #search_data)
+      #   * +"filter"+ (deep-duplcated value of attribute #filter_data)
+      #
+      # Sort, direction, search and filter data, if not empty, also have
+      # String keys / values. A single sort-direction key-value pair will be
+      # flattened to a simple value, while multiple sort-direction pairs are
+      # given as Arrays.
+      #
+      # See also #from_h!.
+      #
+      def to_h
+        sorts      = self.sort_data.keys.map( & :to_s )
+        directions = self.sort_data.values.map( & :to_s )
+
+        sorts      =      sorts.first if      sorts.count == 1
+        directions = directions.first if directions.count == 1
+
+        {
+          'offset'    => self.offset,
+          'limit'     => self.limit,
+          'sort'      => sorts,
+          'direction' => directions,
+          'search'    => Hoodoo::Utilities.deep_dup( self.search_data ),
+          'filter'    => Hoodoo::Utilities.deep_dup( self.filter_data )
+        }
+      end
+
+      # Load list parameters from a given Hash, of the form set by #to_h.
+      # Overwrites any corresponding internal attributes and takes full
+      # deep copies of sort, search and filter values.
+      #
+      def from_h!( hash )
+        self.offset      = hash[ 'offset' ] if hash.has_key?( 'offset' )
+        self.limit       = hash[ 'limit'  ] if hash.has_key?( 'limit'  )
+        self.search_data = Hoodoo::Utilities.deep_dup( hash[ 'search' ] ) if hash[ 'search' ].is_a?( Hash )
+        self.filter_data = Hoodoo::Utilities.deep_dup( hash[ 'filter' ] ) if hash[ 'filter' ].is_a?( Hash )
+
+        sorts      = hash[ 'sort'      ]
+        directions = hash[ 'direction' ]
+
+        # Ensure the values are Arrays not just simple e.g. Strings,
+        # so that we can zip them up into a Hash for the 'sort_data'
+        # attribute value. Merge the result onto the existing values.
+        #
+        sorts      = [ sorts      ] unless      sorts.is_a?( Array )
+        directions = [ directions ] unless directions.is_a?( Array )
+
+             sorts.compact!
+        directions.compact!
+
+             sorts.concat( self.sort_data.keys[        sorts.count .. -1 ] || [] )
+        directions.concat( self.sort_data.values[ directions.count .. -1 ] || [] )
+
+        # The middleware enforces a URI query string match of the
+        # count of sort and direction specifiers, so we do the same.
+        #
+        if sorts.length != directions.length
+          raise 'Hoodoo::Services::Request::ListParameters#from_h!: Sort and direction array lengths must match'
+        end
+
+        self.sort_data = Hash[ sorts.zip( directions ) ]
+      end
     end
 
     # Requested locale for internationalised operations; +"en-nz"+ by

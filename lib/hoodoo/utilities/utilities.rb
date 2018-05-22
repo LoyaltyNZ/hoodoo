@@ -340,6 +340,51 @@ module Hoodoo
       return value.is_a?( ::Date ) && value
     end
 
+    # Is the given Time, DateTime or String instance specifying a date-time
+    # that is in the future relevant to this executing environment's concept
+    # of "now", allowing for +CLOCK_DRIFT_TOLERANCE+? Returns +true+ if so,
+    # else +false+.
+    #
+    # Future date (clock drift) tolerance is specified in seconds using the
+    # +HOODOO_CLOCK_DRIFT_TOLERANCE+ environment variable. The default is 30
+    # seconds, as described in the relevant Hoodoo Guide:
+    #
+    #   http://loyaltynz.github.io/hoodoo/guides_1000_env_vars.html#hoodoo_clock_drift_tolerance
+    #
+    # +input+:: A value that's passed to ::rationalise_datetime with the
+    #           result checked against `now` allowing for clock drift.
+    #
+    # If the given input is not parseable as a date-time like object, then
+    # the method it will throw a RuntimeError exception via
+    # ::rationalise_datetime.
+    #
+    def self.is_in_future?( input )
+
+      # See also ::clear_clock_drift_configuration_cache!.
+      #
+      @@clock_drift_tolerance ||= (
+        ENV[ 'HOODOO_CLOCK_DRIFT_TOLERANCE' ].nil? ?
+                                                30 :
+        ENV[ 'HOODOO_CLOCK_DRIFT_TOLERANCE' ].to_i
+      )
+
+      value = self.rationalise_datetime( input )
+
+      # Unlike Time, integer addition to DateTime adds days. There are 86400
+      # seconds per day, so below we add @@clock_drift_tolerance seconds.
+      #
+      value > DateTime.now + Rational(@@clock_drift_tolerance, 86400)
+
+    end
+
+    # This method is intended really just for testing purposes; it clears the
+    # internal cache of clock drift tolerance read from environment variable
+    # +HOODOO_CLOCK_DRIFT_TOLERANCE+.
+    #
+    def self.clear_clock_drift_configuration_cache!
+      @@clock_drift_tolerance = nil
+    end
+
     # Returns an ISO 8601 String equivalent of the given Time, Date or
     # DateTime instance as a full date-time with UTC timezone, with
     # "standard high precision" (for rendeirng consistency), subject to
@@ -365,11 +410,11 @@ module Hoodoo
     end
 
     # Turn a given value of various types into a DateTime instance or +nil+.
-    # If the input value is not +nil+, a DateTime instance, a Time instance
-    # or something that <tt>DateTime.parse</tt> can handle, the method will
-    # throw a RuntimeError exception.
+    # If the input value is not +nil+, a DateTime instance, a Time instance,
+    # a Date instance or something else that <tt>DateTime.parse</tt> can
+    # handle, the method will throw a RuntimeError exception.
     #
-    # +input+:: A Time or DateTime instance, or a String that can be
+    # +input+:: A Time, Date or DateTime instance, or a String that can be
     #           converted to a DateTime instance; in these cases, an
     #           equivalent DateTime is returned. If +nil+, returns +nil+.
     #
@@ -377,7 +422,7 @@ module Hoodoo
       begin
         if input.nil? || input.is_a?( DateTime )
           input
-        elsif input.is_a?( Time )
+        elsif input.is_a?( Time ) || input.is_a?( Date )
           input.to_datetime
         else
           DateTime.parse( input )

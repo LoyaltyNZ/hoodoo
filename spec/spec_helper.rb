@@ -19,15 +19,13 @@ end
 
 require 'byebug'
 
-# Stubbing Net::HTTP with WebMock - disabled by default; only enable for
-# tests where you need it, as real Net::HTTP connections are used in many
-# other tests and must not be mocked.
+# Stubbing Net::HTTP with WebMock - disabled by default via "before :suite"
+# later; only enable for tests where needed, as real Net::HTTP connections
+# are used in many other tests and must not be mocked.
 #
 # https://github.com/bblimke/webmock
 
 require 'webmock/rspec'
-
-WebMock.disable!
 
 # The ActiveRecord extensions need testing in the context of a database. I
 # did consider NullDB - https://github.com/nulldb/nulldb - but this was too
@@ -89,6 +87,8 @@ RSpec.configure do | config |
   database_name = 'hoodoo_test'
 
   config.before( :suite ) do
+
+    WebMock.disable!
 
     # Redirect $stderr before each test so a test log gets written without
     # disturbing the RSpec terminal output; make sure the session system is
@@ -378,4 +378,37 @@ def spec_helper_count_database_calls_in( &block )
 
   ActiveSupport::Notifications.subscribed( cb, 'sql.active_record', &block )
   return count
+end
+
+# Change a named environment varible's value and call a given block.
+# Afterwards, restore the old value of that variable.
+
+def spec_helper_change_environment( name, value, &block )
+  old_value = ENV[ name ]
+  begin
+    ENV[ name ] = value
+    yield
+  ensure
+    ENV[ name ] = old_value
+  end
+end
+
+# In Ruby 2.5.0 the Ruby team removed <tt>Dir::Tmpname.make_tmpname</tt>:
+#
+# https://github.com/ruby/ruby/commit/25d56ea7b7b52dc81af30c92a9a0e2d2dab6ff27
+#
+# Instead we must make our best attempt in plain Ruby ourselves, e.g.:
+#
+# https://github.com/rails/rails/issues/31458
+# https://github.com/rails/rails/pull/31462/files
+#
+# Since the above solution uses the process number via "$$" it should be safe
+# for just this test suite, so we use the same approach here. This method
+# returns the full file path for the temporary file, not just a leafname.
+#
+def spec_helper_tmpfile_path
+  time = Time.now.strftime( "%Y%m%d" )
+  name = "hoodoo-tests-#{ time }-#{ $$ }-#{ rand( 0x100000000 ).to_s( 36 ) }-fd"
+
+  File.join( Dir::Tmpname.tmpdir, name )
 end

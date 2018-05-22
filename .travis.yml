@@ -3,13 +3,22 @@
 language: ruby
 matrix:
   include:
-    - rvm: 2.4.2
-    - rvm: 2.3.5
-    - rvm: 2.2.8
+    - rvm: 2.5.1
+    - rvm: 2.4.4
+    - rvm: 2.3.7
+    - rvm: 2.2.10
 
 # http://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure/
 #
 sudo: false
+
+# Travis CI should be ashamed by this:
+#
+#   https://github.com/travis-ci/travis-ci/issues/8969
+#
+before_install:
+  - gem update --system
+  - gem install bundler
 
 # http://docs.travis-ci.com/user/caching/
 #
