@@ -101,6 +101,13 @@ describe Hoodoo::ActiveRecord::Writer do
           expect( result ).to eq( :success )
           expect_no_error( record )
         end
+
+        it 'via alias' do
+          record = klass.new( unique_attributes() )
+          result = record.update_in( @context )
+          expect( result ).to eq( :success )
+          expect_no_error( record )
+        end
       end
 
       context 'with AR validations present' do
@@ -137,6 +144,13 @@ describe Hoodoo::ActiveRecord::Writer do
         it 'via instance method' do
           record = klass.new( record_to_copy().attributes() )
           result = record.persist_in( @context )
+          expect( result ).to eq( :failure )
+          expect_correct_error( record, error_reference )
+        end
+
+        it 'via alias' do
+          record = klass.new( record_to_copy().attributes() )
+          result = record.update_in( @context )
           expect( result ).to eq( :failure )
           expect_correct_error( record, error_reference )
         end

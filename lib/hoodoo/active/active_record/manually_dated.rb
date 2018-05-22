@@ -393,8 +393,9 @@ module Hoodoo
         )
 
         unless model == Hoodoo::ActiveRecord::Base
-          model.send( :include, Hoodoo::ActiveRecord::UUID )
+          model.send( :include, Hoodoo::ActiveRecord::UUID   )
           model.send( :include, Hoodoo::ActiveRecord::Finder )
+
           instantiate( model )
         end
 
