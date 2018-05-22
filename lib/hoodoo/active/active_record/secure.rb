@@ -9,6 +9,8 @@
 #           25-Nov-2014 (ADH): Created.
 ########################################################################
 
+require 'hoodoo/active/active_record/security_helper'
+
 module Hoodoo
   module ActiveRecord
 
@@ -58,6 +60,16 @@ module Hoodoo
         model.extend( ClassMethods )
       end
 
+      # Convenience constant defining an equals-single-security-value wildcard
+      # security exemption using the String '*'.
+      #
+      OBJECT_EQLS_STAR = Hoodoo::ActiveRecord::Secure::SecurityHelper::eqls_wildcard( '*' )
+
+      # Convenience constant defining an included-in-enumerable-security-value
+      # wildcard security excemption using the String '*'.
+      #
+      ENUMERABLE_INCLUDES_STAR = Hoodoo::ActiveRecord::Secure::SecurityHelper::includes_wildcard( '*' )
+
       # Collection of class methods that get defined on an including class via
       # Hoodoo::ActiveRecord::Secure::included.
       #
@@ -69,7 +81,9 @@ module Hoodoo
         # alternative argument generator is given in the longhand form's
         # value Hash's +:using+ key.
         #
-        DEFAULT_SECURE_PROC = Proc.new { | model_class, database_column_name, session_field_value | [ { database_column_name => session_field_value } ] }
+        DEFAULT_SECURE_PROC = Proc.new do | model_class, database_column_name, session_field_value |
+          [ { database_column_name => session_field_value } ]
+        end
 
         # The core of out-of-the-box Hoodoo data access security layer.
         #
@@ -255,6 +269,9 @@ module Hoodoo
         # +using+::               See the _Advanced_ _query_ _conditions_
         #                         section later for details.
         #
+        # +exemptions+::          See the _Security_ _exemptions_ section later
+        #                         for details.
+        #
         # To help clarify the above, the following two calls to #secure_with
         # have exactly the same effect.
         #
@@ -320,7 +337,7 @@ module Hoodoo
         #
         # This leads to SQL along the following lines:
         #
-        #    AND ("model_table"."creating_caller_uuid" = '[val]')
+        #    AND ("model_table"."creating_caller_uuid" IN ('[val]'))
         #
         # ...where <tt>val</tt> is from the Session +authorised_caller_uuids+
         # data in the +scoping+ section (so this might be an SQL +IN+ rather
@@ -352,7 +369,7 @@ module Hoodoo
         #
         # ...yields something like:
         #
-        #     AND ( "model_table"."creating_caller_uuid" = '[val]' OR "model_table"."other_column_name" = '[val]' )
+        #     AND ( "model_table"."creating_caller_uuid" IN ('[val]') OR "model_table"."other_column_name" IN ('[val]') )
         #
         # A Proc specified with +:using+ is called with:
         #
@@ -369,6 +386,92 @@ module Hoodoo
         # +where+ via <tt>where( *returned_values )</tt> as part of the wider
         # query chain.
         #
+        # == Security exemptions
+        #
+        # Sometimes you might want a security bypass mechanism for things like
+        # a Superuser style caller that can "see everything". It's more secure,
+        # where possible and scalable, to simply have the session data match
+        # every known value of some particular secured-with quantity, but this
+        # might get unwieldy. "WHERE IN" queries with hundreds or thousands of
+        # listed items can cause problems!
+        #
+        # Noting that with any security exemption there is elevated risk, you
+        # can use the +:exemptions+ key to provide a Proc which is passed the
+        # secure value(s) under consideration (the data taken directly from
+        # the session scoping section) and evaluates to +true+ if the value(s)
+        # indicate that a security exemption applies, else evaluates "falsey"
+        # for normal behaviour. We say "value(s)" here as a single key used to
+        # read from the scoping section of a session may yield either a simple
+        # value such as a String, or an Enumerable object such as an array of
+        # many Strings.
+        #
+        # If the Proc evaluates to +true+, the result is no modification to the
+        # secure scope chain being constructed for the secured ActiveRecord
+        # query the caller will eventually run. Helper methods which construct
+        # common use case Procs are present in
+        # Hoodoo::ActiveRecord::Secure::SecurityHelper and there are
+        # convenience constants defined in Hoodoo::ActiveRecord::Secure, such
+        # as Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR.
+        #
+        # Taking an earlier example:
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => :authorised_caller_uuids
+        #     } )
+        #
+        #     # ...has this minimal longhand equivalent...
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name => :authorised_caller_uuids
+        #       }
+        #     } )
+        #
+        # ...which leads to SQL along the following lines:
+        #
+        #    AND ("model_table"."creating_caller_uuid" IN ('[val]'))
+        #
+        # ...then suppose we wanted to allow a session scoping value of '*'
+        # bypass security ("see everything"). We could use the
+        # Enumerable-includes-star matcher Proc
+        # Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR here. At the
+        # time of writing, it is defined as the following Proc:
+        #
+        #    Proc.new do | security_values |
+        #      security_values.is_a?( Enumerable ) &&
+        #      security_values.include?( '*' ) rescue false
+        #    end
+        #
+        # This is activated through the +:exemptions+ key:
+        #
+        #     secure_with( {
+        #       :creating_caller_uuid => {
+        #         :session_field_name => :authorised_caller_uuids,
+        #         :exemptions         => Hoodoo::ActiveRecord::Secure::ENUMERABLE_INCLUDES_STAR
+        #       }
+        #     } )
+        #
+        # If the looked up value of the +authorised_caller_uuids+ attribute
+        # in the prevailing Session scoping section data was ["1234"], then the
+        # SQL query additions would occur as above:
+        #
+        #    AND ("model_table"."creating_caller_uuid" IN ('1234'))
+        #
+        # ...but if there is a value of "*", the security layer will ignore the
+        # normal restrictions, resulting in no SQL additions whatsoever.
+        #
+        # Since a Proc is used to compare the data found in the session against
+        # some wildcard, things like checking an array of values for some magic
+        # bypass characters / key, using regular expression matching, or other
+        # more heavyweight options are all possible. Remember, though, that all
+        # of this comes at a risk, since the mechanism is bypassing the normal
+        # scope chain security. If used improperly or somehow compromised, it
+        # will allow data to be read by an API caller that should not have been
+        # permitted to access it.
+        #
+        # See module Hoodoo::ActiveRecord::Secure::SecurityHelper for methods
+        # to help with exemption Proc construction.
+        #
         def secure( context )
           prevailing_scope = all() # "Model.all" -> returns anonymous scope
           extra_scope_map  = secured_with()
@@ -377,25 +480,33 @@ module Hoodoo
             return none() if context.session.nil? || context.session.scoping.nil?
 
             extra_scope_map.each do | model_field_name, key_or_options |
-              params_proc = DEFAULT_SECURE_PROC
+              exemption_proc = nil
+              params_proc    = DEFAULT_SECURE_PROC
 
               if key_or_options.is_a?( Hash )
                 session_scoping_key = key_or_options[ :session_field_name ]
+                exemption_proc      = key_or_options[ :exemptions ]
                 params_proc         = key_or_options[ :using ] if key_or_options.has_key?( :using )
               else
                 session_scoping_key = key_or_options
               end
 
               if context.session.scoping.respond_to?( session_scoping_key )
-                args = params_proc.call(
-                  self,
-                  model_field_name,
-                  context.session.scoping.send( session_scoping_key )
-                )
-                prevailing_scope = prevailing_scope.where( *args )
+                security_value = context.session.scoping.send( session_scoping_key )
+
+                if exemption_proc.nil? || exemption_proc.call( security_value ) != true
+                  args = params_proc.call(
+                    self,
+                    model_field_name,
+                    security_value
+                  )
+                  prevailing_scope = prevailing_scope.where( *args )
+                end
+
               else
                 prevailing_scope = none()
                 break
+
               end
             end
           end
