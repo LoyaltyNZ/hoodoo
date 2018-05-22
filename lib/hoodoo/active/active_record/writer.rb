@@ -41,12 +41,17 @@ module Hoodoo
       #       # ...
       #     end
       #
+      # Depends upon and auto-includes Hoodoo::ActiveRecord::Creator
+      # and Hoodoo::ActiveRecord::ErrorMapping.
+      #
       # +model+:: The ActiveRecord::Base descendant that is including
       #           this module.
       #
       def self.included( model )
         unless model == Hoodoo::ActiveRecord::Base
+          model.send( :include, Hoodoo::ActiveRecord::Creator      )
           model.send( :include, Hoodoo::ActiveRecord::ErrorMapping )
+
           instantiate( model )
         end
 
@@ -75,18 +80,93 @@ module Hoodoo
         end
       end
 
-      # Instance equivalent of
-      # Hoodoo::ActiveRecord::Writer::ClassMethods.persist_in - see that for
-      # details. The class method just calls here, having constructed an
-      # instance based on the attributes it was given. If you have already
-      # built an instance yourself, just call this instance method equivalent
-      # instead.
+      # == Overview
       #
-      # As an instance-based method, the return value and error handling
-      # semantics differ from the class-based counterpart. Instead of
-      # checking "persisted?", check the return value of +persist_in+. This
-      # means you can also use +persist_in+ to save a previously persisted,
-      # but now updated record, should you so wish.
+      # Service authors _SHOULD_ use this method when persisting data with
+      # ActiveRecord if there is a risk of duplication constraint violation
+      # of any kind. This will include a violation on the UUID of a resource
+      # if you support external setting of this value via the body of a
+      # +create+ call containing the +id+ field, injected by Hoodoo as the
+      # result of an authorised use of the <tt>X-Resource-UUID</tt> HTTP
+      # header.
+      #
+      # You can use this method for both persisting new records or
+      # persisting updates, in the same way as ActiveRecord's +save+ is
+      # used for either.
+      #
+      #
+      # == Concurrency
+      #
+      # Services often run in highly concurrent environments and uniqueness
+      # constraint validations with ActiveRecord cannot protect against
+      # race conditions in such cases. Those work at the application level;
+      # the check to see if a record exists with a duplicate value in some
+      # given column is a separate operation from that which stores the
+      # record subsequently. As per the Rails Guides entry on the uniqueness
+      # validation at the time of writing:
+      #
+      # http://guides.rubyonrails.org/active_record_validations.html#uniqueness
+      #
+      # <i>"It does not create a uniqueness constraint in the database, so
+      # it may happen that two different database connections create two
+      # records with the same value for a column that you intend to be
+      # unique. To avoid that, you must create a unique index on both
+      # columns in your database."</i>
+      #
+      # You *MUST* always use a uniqueness constraint at the database level
+      # and *MAY* additionally use ActiveRecord validations for a higher
+      # level warning in all but race condition edge cases. If you then use
+      # this +persist_in+ method to store records, all duplication cases
+      # will be handled elegantly and reported as a
+      # <tt>generic.invalid_duplication</tt> error. In the event that a
+      # caller has used the <tt>X-Deja-Vu</tt> HTTP header, Hoodoo will take
+      # such an error and transform it into a non-error 204 HTTP response;
+      # so by using +persist_in+, you also ensure that your service
+      # participates successfully in this process without any additional
+      # coding effort. You get safe concurrency and protection against the
+      # inherent lack of idempotency in HTTP +POST+ operations via any
+      # must-be-unique fields (within your defined scope) automatically.
+      #
+      # Using this method for data storage instead of plain ActiveRecord
+      # +save+ or <tt>save!</tt> will also help your code auto-inherit any
+      # additional future write-related enhancements in Hoodoo should they
+      # arise, without necessarily needing service code changes.
+      #
+      #
+      # == Parameters
+      #
+      # +context+:: Hoodoo::Services::Context instance describing a call
+      #             context. This is typically a value passed to one of
+      #             the Hoodoo::Services::Implementation instance methods
+      #             that a resource subclass implements.
+      #
+      # Returns a Symbol of +:success+ or +:failure+ indicating the outcome
+      # of the same attempt. In the event of failure, the model will be
+      # invalid and not persisted; you can read errors immediately and should
+      # avoid unnecessarily re-running validations by calling +valid?+ or
+      # +validate+ on the instance.
+      #
+      #
+      # == Example
+      #
+      #     class Unique < ActiveRecord::Base
+      #       include Hoodoo::ActiveRecord::Writer
+      #       validates :unique_code, :presence => true, :uniqueness => true
+      #     end
+      #
+      # The migration to create the table for the Unique model _MUST_ have a
+      # uniqueness constraint on the +unique_code+ field, e.g.:
+      #
+      #     def change
+      #       add_column :uniques, :unique_code, :null => false
+      #       add_index :uniques, [ :unique_code ], :unique => true
+      #     end
+      #
+      # Then, inside the implementation class which uses the above model,
+      # where you have (say) written private methods +mapping_of+ which
+      # maps +context.request.body+ to an attributes Hash for persistence
+      # and +rendering_of+ which uses Hoodoo::Presenters::Base.render_in to
+      # properly render a representation of your resource, you would write:
       #
       #     def create( context )
       #       attributes = mapping_of( context.request.body )
@@ -109,18 +189,49 @@ module Hoodoo
       #       context.response.set_resource( rendering_of( context, model_instance ) )
       #     end
       #
-      # Parameters:
       #
-      # +context+:: Hoodoo::Services::Context instance describing a call
-      #             context. This is typically a value passed to one of
-      #             the Hoodoo::Services::Implementation instance methods
-      #             that a resource subclass implements.
+      # == See also
       #
-      # Returns a Symbol of +:success+ or +:failure+ indicating the outcome
-      # of the same attempt. In the event of failure, the model will be
-      # invalid and not persisted; you can read errors immediately and should
-      # avoid unnecessarily re-running validations by calling +valid?+ or
-      # +validate+ on the instance.
+      # There is a class method equivalent which combines creating a new record
+      # and persisting it in a single call. If you prefer that code style, see
+      # Hoodoo::ActiveRecord::Writer::ClassMethods.persist_in. In such cases,
+      # it could look quite odd to mix the class method and instance method
+      # variants for new records or existing record updates; as syntax sugar,
+      # an alias of the #persist_in instance method is available under the name
+      # #update_in, so that you can use the class method for creation and the
+      # aliased instance method for updates.
+      #
+      #
+      # == Nested transaction note
+      #
+      # Ordinarily an exception in a nested transaction does not roll back.
+      # ActiveRecord wraps all saves in a transaction "out of the box", so
+      # the following construct could have unexpected results...
+      #
+      #     Model.transaction do
+      #       instance.persist_in( context )
+      #     end
+      #
+      # ...if <tt>instance.valid?</tt> runs any SQL queries - which is very
+      # likely. PostgreSQL, for example, would then raise an exception; the
+      # inner transaction failed, leaving the outer one in an aborted state:
+      #
+      #     PG::InFailedSqlTransaction: ERROR:  current transaction is
+      #     aborted, commands ignored until end of transaction block
+      #
+      # ActiveRecord provides us with a way to define a transaction that
+      # does roll back via the <tt>requires_new: true</tt> option. Hoodoo
+      # thus protects callers from the above artefacts by ensuring that all
+      # saves are wrapped in an outer transaction that causes rollback in
+      # any parents. This sidesteps the unexpected behaviour, but service
+      # authors might sometimes need to be aware of this if using complex
+      # transaction behaviour along with <tt>persist_in</tt>.
+      #
+      # In pseudocode, the internal implementation is:
+      #
+      #     self.transaction( :requires_new => true ) do
+      #       self.save
+      #     end
       #
       def persist_in( context )
 
@@ -171,77 +282,28 @@ module Hoodoo
         return errors_occurred.nil? ? :success : :failure
       end
 
+      # Alias of #persist_in. Although that can be used for new records or
+      # updates, it's nice to have the syntax sugar of an "update in context"
+      # method to sit alongside things like #persist_in and
+      # Hoodoo::ActiveRecord::Creator::ClassMethods::new_in.
+      #
+      alias_method :update_in, :persist_in
+
       # Collection of class methods that get defined on an including class via
       # Hoodoo::ActiveRecord::Writer::included.
       #
       module ClassMethods
 
-        # == Overview
+        # A class-based equivalent of the
+        # Hoodoo::ActiveRecord::Writer#persist_in method which creates a
+        # record using Hoodoo::ActiveRecord::Creator::ClassMethods::new_in,
+        # then calls Hoodoo::ActiveRecord::Writer#persist_in to persist the
+        # data; see that for full details.
         #
-        # Service authors _SHOULD_ use this method when persisting data with
-        # ActiveRecord if there is a risk of duplication constraint violation
-        # of any kind. This will include a violation on the UUID of a resource
-        # if you support external setting of this value via the body of a
-        # +create+ call containing the +id+ field, injected by Hoodoo as the
-        # result of an authorised use of the <tt>X-Resource-UUID</tt> HTTP
-        # header.
-        #
-        # Services often run in highly concurrent environments and uniqueness
-        # constraint validations with ActiveRecord cannot protect against
-        # race conditions in such cases. IT works at the application level;
-        # the check to see if a record exists with a duplicate value in some
-        # given column is a separate operation from that which stores the
-        # record subsequently. As per the Rails Guides entry on the uniqueness
-        # validation at the time of writing:
-        #
-        # http://guides.rubyonrails.org/active_record_validations.html#uniqueness
-        #
-        # <i>"It does not create a uniqueness constraint in the database, so
-        # it may happen that two different database connections create two
-        # records with the same value for a column that you intend to be
-        # unique. To avoid that, you must create a unique index on both
-        # columns in your database."</i>
-        #
-        # You *MUST* always use a uniqueness constraint at the database level
-        # and *MAY* additionally use ActiveRecord validations for a higher
-        # level warning in all but race condition edge cases. If you then use
-        # this +persist_in+ method to store records, all duplication cases
-        # will be handled elegantly and reported as a
-        # <tt>generic.invalid_duplication</tt> error. In the event that a
-        # caller has used the <tt>X-Deja-Vu</tt> HTTP header, Hoodoo will take
-        # such an error and transform it into a non-error 204 HTTP response;
-        # so by using +persist_in+, you also ensure that your service
-        # participates successfully in this process without any additional
-        # coding effort. You get safe concurrency and protection against the
-        # inherent lack of idempotency in HTTP +POST+ operations via any
-        # must-be-unique fields (within your defined scope) automatically.
-        #
-        # Using this method for data storage instead of plain ActiveRecord
-        # +save+ or <tt>save!</tt> will also help your code auto-inherit any
-        # additional future write-related enhancements in Hoodoo should they
-        # arise, without necessarily needing service code changes.
-        #
-        #
-        # == Example
-        #
-        #     class Unique < ActiveRecord::Base
-        #       include Hoodoo::ActiveRecord::Writer
-        #       validates :unique_code, :presence => true, :uniqueness => true
-        #     end
-        #
-        # The migration to create the table for the Unique model _MUST_ have a
-        # uniqueness constraint on the +unique_code+ field, e.g.:
-        #
-        #     def change
-        #       add_column :uniques, :unique_code, :null => false
-        #       add_index :uniques, [ :unique_code ], :unique => true
-        #     end
-        #
-        # Then, inside the implementation class which uses the above model,
-        # where you have (say) written private methods +mapping_of+ which
-        # maps +context.request.body+ to an attributes Hash for persistence
-        # and +rendering_of+ which uses Hoodoo::Presenters::Base.render_in to
-        # properly render a representation of your resource, you would write:
+        # As a class-based method, the return value and error handling
+        # semantics differ from the instance-based counterpart. Instead of
+        # checking the return value of +persist_in+ for success or failure,
+        # use ActiveRecord's "persisted?":
         #
         #     def create( context )
         #       attributes = mapping_of( context.request.body )
@@ -276,40 +338,8 @@ module Hoodoo
         # See also the Hoodoo::ActiveRecord::Writer#persist_in instance method
         # equivalent of this class method.
         #
-        #
-        # == Nested transaction note
-        #
-        # Ordinarily an exception in a nested transaction does not roll back.
-        # ActiveRecord wraps all saves in a transaction "out of the box", so
-        # the following construct could have unexpected results...
-        #
-        #     Model.transaction do
-        #       instance.persist_in( context )
-        #     end
-        #
-        # ...if <tt>instance.valid?</tt> runs any SQL queries - which is very
-        # likely. PostgreSQL, for example, would then raise an exception; the
-        # inner transaction failed, leaving the outer one in an aborted state:
-        #
-        #     PG::InFailedSqlTransaction: ERROR:  current transaction is
-        #     aborted, commands ignored until end of transaction block
-        #
-        # ActiveRecord provides us with a way to define a transaction that
-        # does roll back via the <tt>requires_new: true</tt> option. Hoodoo
-        # thus protects callers from the above artefacts by ensuring that all
-        # saves are wrapped in an outer transaction that causes rollback in
-        # any parents. This sidesteps the unexpected behaviour, but service
-        # authors might sometimes need to be aware of this if using complex
-        # transaction behaviour along with <tt>persist_in</tt>.
-        #
-        # In pseudocode, the internal implementation is:
-        #
-        #     self.transaction( :requires_new => true ) do
-        #       self.save
-        #     end
-        #
         def persist_in( context, attributes )
-          instance = self.new( attributes )
+          instance = self.new_in( context, attributes )
           instance.persist_in( context )
 
           return instance
