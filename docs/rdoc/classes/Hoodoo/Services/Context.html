@@ -19,7 +19,7 @@
     <meta property="og:description" content="A collection of objects which describe the context in which a service is being called.">
 
     <meta name="keywords" content="Hoodoo::Services::Context class">
-    <meta name="keywords" content="new, resource">
+    <meta name="keywords" content="new, resource, endpoint">
 </head>
 
 <body>
@@ -51,6 +51,14 @@ results of its processing via the associated response object.</p>
     <!-- Method ref -->
     <div class="sectiontitle">Methods</div>
     <dl class="methods">
+        <dt>E</dt>
+        <dd>
+            <ul>
+                <li>
+                    <a href="#method-i-endpoint">endpoint</a>
+                </li>
+            </ul>
+        </dd>
         <dt>N</dt>
         <dd>
             <ul>
@@ -169,6 +177,25 @@ context instance this provides.</p>
 
     <div class="sectiontitle">Instance Public methods</div>
     <div class="method">
+        <div class="title method-title" id="method-i-endpoint">
+            <b>endpoint</b>( resource, version = 1, options = {} )
+            <a href="../../../classes/Hoodoo/Services/Context.html#method-i-endpoint" name="method-i-endpoint" class="permalink">Link</a>
+        </div>
+
+        <div class="description">
+            <p>Alias of <a href="Context.html#method-i-resource">resource</a>, as syntax
+sugar for those who prefer to think of the return value as an endpoint that
+is used to contact a resource, rather than a remote abstraction of the
+resource as an entity.</p>
+        </div>
+
+
+        <div class="aka">
+            Alias for: <a href="Context.html#method-i-resource">resource</a>
+        </div>
+
+    </div>
+    <div class="method">
         <div class="title method-title" id="method-i-resource">
             <b>resource</b>( resource, version = 1, options = {} )
             <a href="../../../classes/Hoodoo/Services/Context.html#method-i-resource" name="method-i-resource" class="permalink">Link</a>
@@ -242,6 +269,10 @@ behaviour.</p>
 </dd></dl>
         </div>
 
+        <div class="aka">
+            Also aliased as:
+            <a href="Context.html#method-i-endpoint">endpoint</a>
+        </div>
 
 
         <div class="sourcecode">
