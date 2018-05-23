@@ -121,7 +121,7 @@ happen for history-savvy updates performed by this mixin&#39;s code.</p>
                 <a href="javascript:toggleSource('method-i-manual_dating_enabled_source')" id="l_method-i-manual_dating_enabled_source">show</a>
             </p>
             <div id="method-i-manual_dating_enabled_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 437</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 438</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manual_dating_enabled</span>
   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> = <span class="ruby-keyword">true</span>
 
@@ -217,7 +217,7 @@ then this method returns <code>true</code>, else <code>false</code>.</p>
                 <a href="javascript:toggleSource('method-i-manual_dating_enabled-3F_source')" id="l_method-i-manual_dating_enabled-3F_source">show</a>
             </p>
             <div id="method-i-manual_dating_enabled-3F_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 512</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 513</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manual_dating_enabled?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">nz_co_loyalty_hoodoo_manually_dated</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
@@ -258,7 +258,7 @@ instance methods that a resource subclass implements.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_source')" id="l_method-i-manually_dated_source">show</a>
             </p>
             <div id="method-i-manually_dated_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 529</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 530</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated</span>( <span class="ruby-identifier">context</span> )
   <span class="ruby-identifier">date_time</span> = <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">dated_at</span> <span class="ruby-operator">||</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> )
@@ -296,7 +296,7 @@ constructed.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_at_source')" id="l_method-i-manually_dated_at_source">show</a>
             </p>
             <div id="method-i-manually_dated_at_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 545</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 546</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated_at</span>( <span class="ruby-identifier">date_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> )
   <span class="ruby-identifier">date_time</span>  = <span class="ruby-identifier">date_time</span>.<span class="ruby-identifier">to_time</span>.<span class="ruby-identifier">utc</span>.<span class="ruby-identifier">round</span>( <span class="ruby-constant">SECONDS_DECIMAL_PLACES</span> )
 
@@ -338,7 +338,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_contemporary_source')" id="l_method-i-manually_dated_contemporary_source">show</a>
             </p>
             <div id="method-i-manually_dated_contemporary_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 578</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 579</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated_contemporary</span>
   <span class="ruby-identifier">where</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -407,7 +407,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_destruction_in_source')" id="l_method-i-manually_dated_destruction_in_source">show</a>
             </p>
             <div id="method-i-manually_dated_destruction_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 756</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 757</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated_destruction_in</span>( <span class="ruby-identifier">context</span>,
                                    <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                                    <span class="ruby-identifier">scope</span><span class="ruby-operator">:</span> <span class="ruby-identifier">all</span>() )
@@ -449,7 +449,7 @@ to dating_enabled, else results will be undefined.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_historic_source')" id="l_method-i-manually_dated_historic_source">show</a>
             </p>
             <div id="method-i-manually_dated_historic_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 567</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 568</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated_historic</span>
   <span class="ruby-identifier">where</span>.<span class="ruby-identifier">not</span>( <span class="ruby-value">:effective_end</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">DATE_MAXIMUM</span> )
 <span class="ruby-keyword">end</span></pre>
@@ -538,7 +538,7 @@ the prevailing <code>ident</code> value.</p>
                 <a href="javascript:toggleSource('method-i-manually_dated_update_in_source')" id="l_method-i-manually_dated_update_in_source">show</a>
             </p>
             <div id="method-i-manually_dated_update_in_source" class="dyn-source">
-                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 634</span>
+                <pre><span class="ruby-comment"># File lib/hoodoo/active/active_record/manually_dated.rb, line 635</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">manually_dated_update_in</span>( <span class="ruby-identifier">context</span>,
                               <span class="ruby-identifier">ident</span><span class="ruby-operator">:</span>      <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">ident</span>,
                               <span class="ruby-identifier">attributes</span><span class="ruby-operator">:</span> <span class="ruby-identifier">context</span>.<span class="ruby-identifier">request</span>.<span class="ruby-identifier">body</span>,
