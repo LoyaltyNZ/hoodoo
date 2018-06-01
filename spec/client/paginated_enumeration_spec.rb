@@ -272,7 +272,7 @@ describe Hoodoo::Client do
       }.to raise_error( RuntimeError, 'Hoodoo::Client::PaginatedEnumeration#enumerate_all: Unexpected internal state combination of results set and results error indication' )
     end
 
-    context 'different "limit" sizes' do
+    context 'with different "limit" sizes' do
 
       let(:limits) {
         # Note: Smaller limits will make the tests very slow
@@ -296,6 +296,46 @@ describe Hoodoo::Client do
         end
 
       end
+
+    end
+
+    context 'with different "offset" values' do
+
+      let(:offsets) {
+        [ 0, 1, 2, 3, 250, 500, 998, 999, 1000, 1001 ]
+      }
+
+      shared_examples 'enumerator which' do | key |
+        it "obeys offsets via #{ key.inspect }" do
+
+          resources.each do | resource |
+            offsets.each do | offset |
+              numbers = []
+
+              resource[ :endpoint ].list( { key => offset } ).enumerate_all do | result |
+                expect( result.platform_errors.errors ).to eq( [] )
+                break if result.platform_errors.has_errors?
+                numbers << result[ 'number' ]
+              end
+
+              expected_data = resource[ :data ][ offset .. -1 ]
+
+              # If nil, the requested offset is beyond any actual data;
+              # expect empty result set.
+
+              if expected_data.nil?
+                expect( numbers ).to be_empty
+              else
+                expect( numbers ).to eq( expected_data )
+              end
+            end
+          end
+
+        end
+      end
+
+      it_behaves_like 'enumerator which', 'offset'
+      it_behaves_like 'enumerator which', :offset
 
     end
 
