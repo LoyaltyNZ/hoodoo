@@ -247,7 +247,7 @@ module Hoodoo
                       locale:                nil,
 
                       session_id:            nil,
-                      auto_session:          :true,
+                      auto_session:          true,
                       auto_session_resource: 'Session',
                       auto_session_version:  1,
                       caller_id:             nil,
