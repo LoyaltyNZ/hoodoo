@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    hoodoo (2.6.1)
+    hoodoo (2.7.0)
       dalli (~> 2.7)
 
 GEM
@@ -29,7 +29,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    airbrake (7.3.3)
+    airbrake (7.3.4)
       airbrake-ruby (~> 2.10)
     airbrake-ruby (2.10.0)
     alchemy-flux (1.2.1)
@@ -66,7 +66,7 @@ GEM
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rake (12.3.1)
-    raygun4ruby (2.7.0)
+    raygun4ruby (2.7.1)
       concurrent-ruby
       httparty (> 0.13.7)
       json
@@ -99,7 +99,7 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uuidtools (2.1.5)
-    webmock (3.4.1)
+    webmock (3.4.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
