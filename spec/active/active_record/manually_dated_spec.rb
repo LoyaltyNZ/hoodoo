@@ -533,6 +533,20 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
         run_expectations( result )
       end
 
+      # If 'ident' and 'attributes' are given, 'context' can be "nil".
+      #
+      it 'specifying "ident" and "attributes" with nil "context"' do
+        @context.request.instance_variable_set( '@ident', Hoodoo::UUID.generate() )
+
+        result = RSpecModelManualDateTest.manually_dated_update_in(
+          nil,
+          ident: @record.uuid,
+          attributes: { 'data' => @change_data_to }
+        )
+
+        run_expectations( result )
+      end
+
       it 'uses a given scope' do
 
         # We expect the custom scope to be customised to find an
@@ -722,6 +736,19 @@ describe Hoodoo::ActiveRecord::ManuallyDated do
 
         result = RSpecModelManualDateTest.manually_dated_destruction_in(
           @context,
+          ident: @record.uuid
+        )
+
+        run_expectations( result )
+      end
+
+      # If 'ident' is given, 'context' can be "nil".
+      #
+      it 'specifying "ident" with nil "context"' do
+        @context.request.instance_variable_set( '@ident', Hoodoo::UUID.generate() )
+
+        result = RSpecModelManualDateTest.manually_dated_destruction_in(
+          nil,
           ident: @record.uuid
         )
 
