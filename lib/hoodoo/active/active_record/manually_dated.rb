@@ -747,7 +747,8 @@ module Hoodoo
         # Additional _named_ parameters are:
         #
         # +ident+::      UUID (32-digit +id+ column value) of the record to be
-        #                updated. If omitted, +context.request.ident+ is used.
+        #                updated. If present, the +context+ parameter may be
+        #                +nil+. If omitted, +context.request.ident+ is used.
         #
         # +scope+::      ActiveRecord::Relation instance providing the scope
         #                to use for database locks and acquiring the record
