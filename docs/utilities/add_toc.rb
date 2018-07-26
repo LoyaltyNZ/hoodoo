@@ -11,9 +11,19 @@
 # of the new TOC, so that subsequent runs just replace that TOC with
 # an updated copy.
 #
+# The processor assumes a single top-level heading at level 1 which is
+# expected to be the document's overall title and not included in the
+# TOC. Only level 2 or below will be read. You need to write unique
+# named anchors for headings for things to work; use this syntax:
+#
+#   ## <a name="heading_name"></a>Heading text
+#
+# ...for the processor to find the named anchor correctly.
+#
 # Call with "ruby add_toc.rb" and an optional space separated list of
 # leafnames on the CLI which are relative to this script. If omitted,
-# file "api_specification.md" in the PWD will be processed by default.
+# a collection of internally hard-coded leafnames will be processed
+# by default.
 
 dir   = File.dirname(__FILE__)
 paths = []
@@ -44,10 +54,20 @@ paths.each do | path |
     heading.gsub!(/^\#\#\#/,       '  * ')
     heading.gsub!(/^\#\#/,         '* ')
 
-    # Replace "* <a name="foo"></a> Heading text" with
-    # MarkDown reference syntax "* [Heading text](#foo)"
-
-    heading.gsub!(/\*\s*?(\<a name\=\"(.*?)\"\>\<\/a\>)(.*)$/, '* [\3](#\2)')
+    # Replace "* <a name="foo"></a> Heading text" with MarkDown reference
+    # syntax "* [Heading text](#foo)".
+    #
+    # Sometimes a document has a link that's not in a canonical form and
+    # can be hard to guess when writing documentation. In that case, a new
+    # canonical link can be inserted directly in front with the old one
+    # kept to avoid breaking any existing links to the old named anchor.
+    # The regular expression skips any subsequent patterns.
+    #
+    # Example:
+    #
+    #   ### <a name="canonical"></a><a name="old_thing"></a>Heading text
+    #
+    heading.gsub!(/\*\s*?(\<a name\=\"(.*?)\"\>\<\/a\>)(\<a name\=\"(.*?)\"\>\<\/a\>)*(.*)$/, '* [\5](#\2)')
 
     heading
   end
@@ -60,7 +80,7 @@ paths.each do | path |
   # "^#"; replace all lines in between with the headings (making sure
   # we add a blank line after and put back the "#" we overwrite).
 
-  str.sub!(/^\[\]\(TOCS\)\s*$.*\[\]\(TOCE\)\s*$/m, "[](TOCS)\n" + headings + "\n[](TOCE)\n")
+  str.sub!(/^\[\]\(TOCS\)\s*$.*\[\]\(TOCE\)\s*$/m, "[](TOCS)\n\n" + headings + "\n\n[](TOCE)\n")
 
   # Write the updated result
 

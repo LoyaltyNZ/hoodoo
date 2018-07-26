@@ -1,8 +1,9 @@
 # Hoodoo API Specification
 
-_Release 7, 2017-11-03_
+_Release 8, 2018-07-27_
 
 [](TOCS)
+
 * [Overview](#ao)
 * [API call basics](#apicb)
   * [Generalised representation](#apicbgr)
@@ -67,6 +68,7 @@ _Release 7, 2017-11-03_
       * [Interface](#errors.resource.interface)
       * [Representation](#errors.resource.representation)
 * [Change history](#change_history)
+
 [](TOCE)
 
 ## <a name="ao"></a>Overview
@@ -563,11 +565,13 @@ See also [`X-Dated-From`](#http_x_dated_from).
 
 The `X-Dated-From` HTTP header is only relevant for HTTP `POST` operations which create resource instances.
 
-This feature is only supported by resources that also support the [`X-Dated-At`](#http_x_dated_at) header. Such resources can be updated, so they may change over time but allow historical versions of their representations to be returned. If an attempt is made to read a resource representation at a date-time from before it was created, the system will return a "not found" response. With the `X-Dated-From` header, you can modify this creation date from the default, which is the instantaneous server date-time of 'now' at the point the resource instance is persisted, to a date-time of your choosing.
+This feature is only guaranteed to be supported by resources that also support the [`X-Dated-At`](#http_x_dated_at) header. Such resources can be updated, so they may change over time but allow historical versions of their representations to be returned. If an attempt is made to read a resource representation at a date-time from before it was created, the system will return a "not found" response. With the `X-Dated-From` header, you can modify this creation date from the default, which is the instantaneous server date-time of 'now' at the point the resource instance is persisted, to a date-time of your choosing.
+
+Some resources may support `X-Dated-From` even if they do not support historical representation. Such a resource is really just allowing the caller to specify the resulting value of the `created_at` field. This can be useful when resources are related to some real-world concept, with a resource instance's creation time linked to the associated real-world concept's own creation time.
 
 Note the subtle difference between this header and things like e.g. a `backdated_to` field in a resource. The former is only for resources that support historical representation, while the latter is for immutable resources that don't require historical representation but _do_ depend upon other resources that change over time.
 
-If the header is given when creating a resource which does not support historical representation, the system will simply create a "at-processing-time" representation of that resource - the header value is ignored. Resources which _do_ support the header must explicitly state so in their documented interface descriptions.
+Resources which support this header must explicitly state so in their documented interface descriptions. If the header is given when creating a resource which does not support it, the system will simply create a "at-processing-time" representation of that resource, with a `created_at` field value of "now" - the header value is ignored.
 
 As with `X-Dated-At,` specifying date/times in the future is _not permitted_ so you must follow the same [usage guidelines](#http_x_dated_at).
 
@@ -1350,3 +1354,4 @@ It is likely to be helpful if you augment this with your own selection of search
 | 2017-08-17 | Release 5 | ADH    | Describe new standard optional resource field `created_by`, for resource fingerprints. |
 | 2017-10-13 | Release 6 | ADH    | Hoodoo 2; describe new framework-level search/query string of `created_by`. |
 | 2017-11-03 | Release 7 | ADH    | Add +generic.contemporary_exists+ error and associated information. |
+| 2018-07-27 | Release 8 | ADH    | Extension of conditions under which `X-Dated-From` HTTP header may be supported by a resource. |
